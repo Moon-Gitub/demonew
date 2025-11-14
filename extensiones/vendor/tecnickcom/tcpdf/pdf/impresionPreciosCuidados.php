@@ -1,0 +1,172 @@
+<?php
+
+require_once "../../../controladores/productos.controlador.php";
+require_once "../../../modelos/productos.modelo.php";
+
+class imprimirPreciosProductos {
+
+public $lista;
+
+public function traerImpresionPrecios(){
+
+//REQUERIMOS LA CLASE TCPDF
+require_once('tcpdf_include.php');
+
+$pdf = new TCPDF("P", PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+$pdf->startPageGroup();
+
+$pdf->AddPage();
+
+// define barcode style
+$style = array(
+    'position' => '',
+    'align' => 'C',
+    'stretch' => false,
+    'fitwidth' => true,
+    'cellfitalign' => '',
+    'border' => false,
+    //'fgcolor' => array(30,186,237),
+    'fgcolor' => array(0,0,0),
+    'bgcolor' => false, //array(255,255,255),
+    'text' => true,
+    'font' => 'helvetica',
+    'fontsize' => 8,
+    'stretchtext' => 4
+);
+
+// ---------------------------------------------------------
+
+//TRAEMOS LOS PRODUCTOS A IMPRIMIR
+$productos = json_decode($this->lista, true);
+
+$enHoja=0;
+$yDescripcion = 10;
+$yPrecio = 24;
+$yCodigo = 44;
+
+foreach ($productos as $key => $value) {
+
+if($enHoja == 4) {
+$pdf->AddPage();
+$enHoja=0;
+$yDescripcion = 10;
+$yPrecio = 24;
+$yCodigo = 44;
+
+}elseif ($enHoja == 3) {
+$yDescripcion = 187;
+$yPrecio = 201;
+$yCodigo = 221;
+}elseif ($enHoja == 2) {
+$yDescripcion = 128;
+$yPrecio = 142;
+$yCodigo = 162;
+}elseif ($enHoja == 1) {
+$yDescripcion = 69;
+$yPrecio = 83;
+$yCodigo = 103;
+}
+
+$producto = ControladorProductos::ctrMostrarProductos('id', $value["id"], 'id');
+	
+//
+// IMAGEN FONDO
+//
+$bloque1 = <<<EOF
+
+<table>
+		
+		<tr style="text-align: center;">
+
+		
+
+			<td><img src="images/preciosCuidados.jpg" height="145" width="325"></td>
+
+			
+
+		</tr>
+
+	</table>
+EOF;
+
+$pdf->writeHTML($bloque1, false, false, false, false, '');
+
+//
+// DESCRIPCION (ENTRAN 32 CARACTERES)
+//
+
+//$pdf->SetTextColor(238,57,138);
+$pdf->SetTextColor(0,0,0);
+$pdf->SetFont('', 'B', 8);
+$pdf->SetXY(50, $yDescripcion);
+
+$pdf->MultiCell(70, 5, $producto[descripcion], 0, 'C', 0, 0, '', '', true);
+
+//
+// PRECIO
+//
+//$pdf->SetTextColor(238,57,138);
+$pdf->SetTextColor(0,0,0);
+$pdf->SetFont('', 'B', 25);
+$pdf->SetXY(78, $yPrecio);
+if($producto["estadoPromocion"]) {
+$fecha_actual = strtotime(date("Y-m-d H:i:00",time()));
+$fecha_promo = strtotime($producto["fechaPromo"]);
+	
+if($fecha_actual > $fecha_promo)
+	{
+	$precioRedondo = number_format($producto["precio_venta"], 2, ',','.');
+	}else
+	{
+	$precioRedondo = number_format($producto["precioPromo"], 2, ',','.');
+	}
+}else{
+$precioRedondo = number_format($producto["precio_venta"], 2, ',','.');
+}
+$bloquePrecio = <<<EOF
+
+$ $precioRedondo
+
+EOF;
+$pdf->writeHTML($bloquePrecio, false, false, false, false, '');
+
+//
+// CODIGO (EAN 13)
+//
+$pdf->SetFont('', 'B', 8);
+$pdf->SetXY(80, $yCodigo);
+$pdf->writeHTML("codigo:".$producto["codigo"], 'ARIAL', '', '', '', 22, 0.4, $style, 'N');
+
+$enHoja++;
+
+$bloqueEspacio = <<<EOF
+
+	<br>
+	<br>
+	<br>
+	<br>
+<br>
+
+EOF;
+$pdf->writeHTML($bloqueEspacio, false, false, false, false, '');
+
+}
+
+//$pdf->writeHTML($bloqueCodBarra, false, false, false, false, '');
+
+// ---------------------------------------------------------
+//SALIDA DEL ARCHIVO 
+
+//$pdf->Output('factura.pdf', 'D');
+$pdf->Output('precios-gondola.pdf');
+
+}
+
+}
+
+$precios = new imprimirPreciosProductos();
+$precios -> lista = $_GET["lista"];
+$precios -> traerImpresionPrecios();
+
+?>
