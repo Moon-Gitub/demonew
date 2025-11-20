@@ -1,5 +1,14 @@
 <?php
 
+// Cargar vendor autoload primero (para phpdotenv)
+require_once "extensiones/vendor/autoload.php";
+
+// Cargar variables de entorno desde .env
+if (file_exists(__DIR__ . '/.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv->load();
+}
+
 require_once "controladores/plantilla.controlador.php";
 require_once "controladores/usuarios.controlador.php";
 require_once "controladores/categorias.controlador.php";
@@ -43,7 +52,9 @@ require_once "parametros.php";
 require_once "controladores/sistema_cobro.controlador.php";
 require_once "modelos/sistema_cobro.modelo.php";
 
-require_once "extensiones/vendor/autoload.php";
+//MERCADOPAGO
+require_once "controladores/mercadopago.controlador.php";
+require_once "modelos/mercadopago.modelo.php";
 
 $plantilla = new ControladorPlantilla();
 $plantilla -> ctrPlantilla();
