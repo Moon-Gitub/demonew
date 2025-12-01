@@ -10,7 +10,7 @@ class ModeloMercadoPago {
 	static public function mdlRegistrarIntentoPago($datos) {
 
 		try {
-			$stmt = Conexion::conectar()->prepare("INSERT INTO mercadopago_intentos
+			$stmt = Conexion::conectarMoon()->prepare("INSERT INTO mercadopago_intentos
 				(id_cliente_moon, preference_id, monto, descripcion, fecha_creacion, estado)
 				VALUES (:id_cliente, :preference_id, :monto, :descripcion, :fecha_creacion, :estado)");
 
@@ -42,7 +42,7 @@ class ModeloMercadoPago {
 	static public function mdlRegistrarPagoConfirmado($datos) {
 
 		try {
-			$stmt = Conexion::conectar()->prepare("INSERT INTO mercadopago_pagos
+			$stmt = Conexion::conectarMoon()->prepare("INSERT INTO mercadopago_pagos
 				(id_cliente_moon, payment_id, preference_id, monto, estado, fecha_pago, payment_type, payment_method_id, datos_json)
 				VALUES (:id_cliente, :payment_id, :preference_id, :monto, :estado, :fecha_pago, :payment_type, :payment_method_id, :datos_json)");
 
@@ -77,7 +77,7 @@ class ModeloMercadoPago {
 	static public function mdlVerificarPagoProcesado($paymentId) {
 
 		try {
-			$stmt = Conexion::conectar()->prepare("SELECT COUNT(*) as total FROM mercadopago_pagos WHERE payment_id = :payment_id");
+			$stmt = Conexion::conectarMoon()->prepare("SELECT COUNT(*) as total FROM mercadopago_pagos WHERE payment_id = :payment_id");
 
 			$stmt->bindParam(":payment_id", $paymentId, PDO::PARAM_STR);
 			$stmt->execute();
@@ -101,7 +101,7 @@ class ModeloMercadoPago {
 	static public function mdlObtenerHistorialPagos($idCliente) {
 
 		try {
-			$stmt = Conexion::conectar()->prepare("SELECT * FROM mercadopago_pagos
+			$stmt = Conexion::conectarMoon()->prepare("SELECT * FROM mercadopago_pagos
 				WHERE id_cliente_moon = :id_cliente
 				ORDER BY fecha_pago DESC");
 
@@ -125,7 +125,7 @@ class ModeloMercadoPago {
 	static public function mdlRegistrarWebhook($datos) {
 
 		try {
-			$stmt = Conexion::conectar()->prepare("INSERT INTO mercadopago_webhooks
+			$stmt = Conexion::conectarMoon()->prepare("INSERT INTO mercadopago_webhooks
 				(topic, resource_id, datos_json, fecha_recibido, procesado)
 				VALUES (:topic, :resource_id, :datos_json, :fecha_recibido, :procesado)");
 
@@ -156,7 +156,7 @@ class ModeloMercadoPago {
 	static public function mdlMarcarWebhookProcesado($webhookId) {
 
 		try {
-			$stmt = Conexion::conectar()->prepare("UPDATE mercadopago_webhooks
+			$stmt = Conexion::conectarMoon()->prepare("UPDATE mercadopago_webhooks
 				SET procesado = 1, fecha_procesado = :fecha_procesado
 				WHERE id = :id");
 
@@ -185,7 +185,7 @@ class ModeloMercadoPago {
 	static public function mdlActualizarEstadoIntento($preferenceId, $estado) {
 
 		try {
-			$stmt = Conexion::conectar()->prepare("UPDATE mercadopago_intentos
+			$stmt = Conexion::conectarMoon()->prepare("UPDATE mercadopago_intentos
 				SET estado = :estado, fecha_actualizacion = :fecha_actualizacion
 				WHERE preference_id = :preference_id");
 

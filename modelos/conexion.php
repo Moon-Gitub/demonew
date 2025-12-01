@@ -2,6 +2,7 @@
 
 class Conexion{
 
+	// Valores por defecto (para compatibilidad si no existe .env)
 	static public $hostDB = 'localhost';
 	static public $nameDB = 'demo_db';
 	static public $userDB = 'demo_user';
@@ -19,35 +20,56 @@ class Conexion{
 		);
 	}
 
+	/**
+	 * CONEXIÓN A BASE DE DATOS LOCAL DEL SISTEMA POS
+	 */
 	static public function conectar(){
-		$host = self::$hostDB;
-		$db = self::$nameDB;
-		$user = self::$userDB;
-		$pass = self::$passDB;
 
-		$link = new PDO("mysql:host=$host;dbname=$db","$user","$pass");
-		
-		$link->exec("set names utf8");
+		// Intentar obtener desde .env, sino usar valores por defecto
+		$host = getenv('DB_HOST') ?: self::$hostDB;
+		$db = getenv('DB_NAME') ?: self::$nameDB;
+		$user = getenv('DB_USER') ?: self::$userDB;
+		$pass = getenv('DB_PASS') ?: self::$passDB;
 
-		return $link;
+		try {
+			$link = new PDO("mysql:host=$host;dbname=$db","$user","$pass");
+			$link->exec("set names utf8");
+			return $link;
+		} catch (PDOException $e) {
+			error_log("Error conectando a BD local: " . $e->getMessage());
+			throw new Exception("Error de conexión a base de datos local");
+		}
 
 	}
 
-	//CONECTAR A BD MOON PARA VER ESTADO CLIENTE
+	/**
+	 * CONEXIÓN A BASE DE DATOS MOON (SISTEMA DE COBRO)
+	 * Esta BD está en servidor remoto de Moon Desarrollos
+	 */
 	static public function conectarMoon(){
 
-		$host = self::$hostDB;
-		$db = self::$nameDB;
-		$user = self::$userDB;
-		$pass = self::$passDB;
+		// Intentar obtener desde .env
+		$host = getenv('MOON_DB_HOST');
+		$db = getenv('MOON_DB_NAME');
+		$user = getenv('MOON_DB_USER');
+		$pass = getenv('MOON_DB_PASS');
 
-		$link = new PDO("mysql:host=$host;dbname=$db","$user","$pass");
+		// Si no están en .env, usar valores por defecto (misma BD local - compatibilidad)
+		if (!$host || !$db || !$user || !$pass) {
+			$host = self::$hostDB;
+			$db = self::$nameDB;
+			$user = self::$userDB;
+			$pass = self::$passDB;
+		}
 
-
-		$link->exec("set names utf8");
-
-		return $link;
-		
+		try {
+			$link = new PDO("mysql:host=$host;dbname=$db","$user","$pass");
+			$link->exec("set names utf8");
+			return $link;
+		} catch (PDOException $e) {
+			error_log("Error conectando a BD Moon: " . $e->getMessage());
+			throw new Exception("Error de conexión a base de datos Moon");
+		}
 
 	}
 

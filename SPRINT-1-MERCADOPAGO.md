@@ -79,11 +79,16 @@ Funcionalidad:
 
 ### CRÍTICO - Para que funcione en producción:
 
-1. **Ejecutar el script SQL en la base de datos**
+1. **Ejecutar el script SQL en la BASE DE DATOS MOON (NO en la local)**
    ```bash
-   mysql -u demo_user -p demo_db < db/crear-tablas-mercadopago.sql
+   # ⚠️ IMPORTANTE: Las tablas van en la BD MOON (remota), NO en demo_db
+   mysql -h 107.161.23.241 -u moondesa_moon -p moondesa_moon < db/crear-tablas-mercadopago.sql
    ```
-   ⚠️ **IMPORTANTE:** Esto debe hacerse en el servidor de producción/hosting
+
+   **¿Por qué en la BD Moon?**
+   - Porque el sistema de cobro es de Moon Desarrollos
+   - Los clientes y cuenta corriente ya están en esa BD
+   - Ver: `ARQUITECTURA-BASES-DATOS.md` para más detalles
 
 2. **Reemplazar credenciales de TEST por PRODUCCIÓN**
    - Editar archivo `.env`
