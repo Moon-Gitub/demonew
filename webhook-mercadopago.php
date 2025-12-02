@@ -9,14 +9,18 @@
  * https://tu-dominio.com/webhook-mercadopago.php
  */
 
-// Cargar variables de entorno si existe el archivo
+// Cargar vendor autoload y configuración
 if (file_exists(__DIR__ . '/extensiones/vendor/autoload.php')) {
     require_once __DIR__ . '/extensiones/vendor/autoload.php';
+}
 
-    if (file_exists(__DIR__ . '/.env')) {
-        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-        $dotenv->load();
-    }
+// Cargar configuración
+require_once __DIR__ . '/config.php';
+
+// Cargar variables de entorno desde .env (si existe y si Dotenv está instalado)
+if (file_exists(__DIR__ . '/.env') && class_exists('Dotenv\Dotenv')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv->load();
 }
 
 // Cargar dependencias
