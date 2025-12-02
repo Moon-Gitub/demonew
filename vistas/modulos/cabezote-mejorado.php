@@ -3,8 +3,8 @@
 //      SISTEMA DE COBRO MEJORADO
 //==================================
 
-// ID del cliente (configurar según tu sistema)
-$idCliente = 7;
+// ID del cliente (obtener desde config.php)
+$idCliente = intval(getenv('MOON_CLIENTE_ID') ?: 7);
 
 // Obtener credenciales desde .env o usar por defecto
 $credencialesMP = ControladorMercadoPago::ctrObtenerCredenciales();

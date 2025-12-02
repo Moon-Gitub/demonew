@@ -54,6 +54,14 @@ if (!getenv('MP_ACCESS_TOKEN')) {
 }
 
 // ==============================================
+// SISTEMA DE COBRO MOON
+// ==============================================
+// ID del cliente en la BD Moon (cambiar según corresponda)
+if (!getenv('MOON_CLIENTE_ID')) {
+    putenv('MOON_CLIENTE_ID=7');
+}
+
+// ==============================================
 // CONFIGURACIÓN DE APLICACIÓN
 // ==============================================
 if (!getenv('APP_ENV')) {

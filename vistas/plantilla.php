@@ -157,8 +157,8 @@
 
      echo '<input type="hidden" id="tiempoMaximoSesion" value="'.ini_get("session.gc_maxlifetime").'">';
 
-      //CABEZOTE
-      include "modulos/cabezote.php";
+      //CABEZOTE CON SISTEMA DE COBRO MERCADOPAGO
+      include "modulos/cabezote-mejorado.php";
 
       //MENU
       include "modulos/menu.php";
