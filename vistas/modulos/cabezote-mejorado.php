@@ -3,30 +3,38 @@
 //      SISTEMA DE COBRO MEJORADO
 //==================================
 
-// ID del cliente (obtener desde config.php)
-$idCliente = intval(getenv('MOON_CLIENTE_ID') ?: 7);
+// Verificar si el sistema de cobro está disponible
+try {
+    // Verificar conexión a BD Moon
+    $testConexion = Conexion::conectarMoon();
+    if (!$testConexion) {
+        throw new Exception("BD Moon no disponible");
+    }
 
-// Obtener credenciales desde .env o usar por defecto
-$credencialesMP = ControladorMercadoPago::ctrObtenerCredenciales();
-$clavePublicaMercadoPago = $credencialesMP['public_key'];
-$accesTokenMercadoPago = $credencialesMP['access_token'];
+    // ID del cliente (obtener desde config.php)
+    $idCliente = intval(getenv('MOON_CLIENTE_ID') ?: 7);
 
-// URL de respuesta
-if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
-    $rutaRespuesta = "https://";
-else
-    $rutaRespuesta = "http://";
+    // Obtener credenciales desde .env o usar por defecto
+    $credencialesMP = ControladorMercadoPago::ctrObtenerCredenciales();
+    $clavePublicaMercadoPago = $credencialesMP['public_key'];
+    $accesTokenMercadoPago = $credencialesMP['access_token'];
 
-$rutaRespuesta .= $_SERVER['HTTP_HOST'];
-$rutaRespuesta .= "/index.php?ruta=procesar-pago";
+    // URL de respuesta
+    if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+        $rutaRespuesta = "https://";
+    else
+        $rutaRespuesta = "http://";
 
-// Obtener datos del cliente
-$clienteMoon = ControladorSistemaCobro::ctrMostrarClientesCobro($idCliente);
-$ctaCteCliente = ControladorSistemaCobro::ctrMostrarSaldoCuentaCorriente($idCliente);
-$ctaCteMov = ControladorSistemaCobro::ctrMostrarMovimientoCuentaCorriente($idCliente);
+    $rutaRespuesta .= $_SERVER['HTTP_HOST'];
+    $rutaRespuesta .= "/index.php?ruta=procesar-pago";
 
-// Calcular monto con recargos usando el controlador mejorado
-$datosCobro = ControladorMercadoPago::ctrCalcularMontoCobro($clienteMoon, $ctaCteCliente);
+    // Obtener datos del cliente
+    $clienteMoon = ControladorSistemaCobro::ctrMostrarClientesCobro($idCliente);
+    $ctaCteCliente = ControladorSistemaCobro::ctrMostrarSaldoCuentaCorriente($idCliente);
+    $ctaCteMov = ControladorSistemaCobro::ctrMostrarMovimientoCuentaCorriente($idCliente);
+
+    // Calcular monto con recargos usando el controlador mejorado
+    $datosCobro = ControladorMercadoPago::ctrCalcularMontoCobro($clienteMoon, $ctaCteCliente);
 
 $abonoMensual = $datosCobro['monto'];
 $mensajeCliente = $datosCobro['mensaje'];
@@ -408,3 +416,11 @@ $(function(){
     <?php } ?>
 });
 </script>
+
+<?php
+} catch (Exception $e) {
+    // Si falla el sistema de cobro, cargar cabezote normal
+    error_log("Sistema de cobro no disponible: " . $e->getMessage());
+    include "cabezote.php";
+}
+?>

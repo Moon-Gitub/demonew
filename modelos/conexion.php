@@ -68,7 +68,8 @@ class Conexion{
 			return $link;
 		} catch (PDOException $e) {
 			error_log("Error conectando a BD Moon: " . $e->getMessage());
-			throw new Exception("Error de conexión a base de datos Moon");
+			// No lanzar excepción, retornar null para hacer el sistema de cobro opcional
+			return null;
 		}
 
 	}
