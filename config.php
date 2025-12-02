@@ -31,16 +31,16 @@ if (!getenv('DB_CHARSET')) {
 // BASE DE DATOS MOON - SISTEMA DE COBRO
 // ==============================================
 if (!getenv('MOON_DB_HOST')) {
-    putenv('MOON_DB_HOST=107.161.23.241');
+    putenv('MOON_DB_HOST=107.161.23.11');
 }
 if (!getenv('MOON_DB_NAME')) {
-    putenv('MOON_DB_NAME=moondesa_moon');
+    putenv('MOON_DB_NAME=cobrosposmooncom_db');
 }
 if (!getenv('MOON_DB_USER')) {
-    putenv('MOON_DB_USER=moondesa_moon');
+    putenv('MOON_DB_USER=cobrosposmooncom_dbuser');
 }
 if (!getenv('MOON_DB_PASS')) {
-    putenv('MOON_DB_PASS=F!b+hn#i3Vk-');
+    putenv('MOON_DB_PASS=[Us{ynaJAA_o2A_!');
 }
 
 // ==============================================
