@@ -1,10 +1,13 @@
 <?php
 
-// Cargar vendor autoload primero (para phpdotenv)
+// Cargar vendor autoload primero
 require_once "extensiones/vendor/autoload.php";
 
-// Cargar variables de entorno desde .env
-if (file_exists(__DIR__ . '/.env')) {
+// Cargar configuración
+require_once "config.php";
+
+// Cargar variables de entorno desde .env (si existe y si Dotenv está instalado)
+if (file_exists(__DIR__ . '/.env') && class_exists('Dotenv\Dotenv')) {
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
     $dotenv->load();
 }
