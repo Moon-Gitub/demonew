@@ -44,14 +44,13 @@ if (!getenv('MOON_DB_PASS')) {
 }
 
 // ==============================================
-// MERCADOPAGO - CREDENCIALES
+// MERCADOPAGO - CREDENCIALES DE PRODUCCIÓN
 // ==============================================
-// IMPORTANTE: Reemplazar con credenciales reales
 if (!getenv('MP_PUBLIC_KEY')) {
-    putenv('MP_PUBLIC_KEY=TEST-TU_PUBLIC_KEY_AQUI');
+    putenv('MP_PUBLIC_KEY=APP_USR-33156d44-12df-4039-8c92-1635d8d3edde');
 }
 if (!getenv('MP_ACCESS_TOKEN')) {
-    putenv('MP_ACCESS_TOKEN=TEST-TU_ACCESS_TOKEN_AQUI');
+    putenv('MP_ACCESS_TOKEN=APP_USR-6921807486493458-102300-5f1cec174eb674c42c9782860caf640c-2916747261');
 }
 
 // ==============================================
