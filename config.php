@@ -58,7 +58,7 @@ if (!getenv('MP_ACCESS_TOKEN')) {
 // ==============================================
 // ID del cliente en la BD Moon (cambiar según corresponda)
 if (!getenv('MOON_CLIENTE_ID')) {
-    putenv('MOON_CLIENTE_ID=7');
+    putenv('MOON_CLIENTE_ID=2');
 }
 
 // ==============================================

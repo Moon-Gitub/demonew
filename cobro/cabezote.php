@@ -30,7 +30,8 @@
 	//==================================
 	//CONEXION A MOONDESARROLLOS
 	//ACÁ SE DEBE COLOCAR EL ID DEL CLIENTE(SISTEMA DE COBRO).
-	$idCliente = 7;
+	// Se obtiene desde .env, si no existe usa 7 como fallback
+	$idCliente = intval(getenv('MOON_CLIENTE_ID') ?: 7);
 	$clavePublicaMercadoPago = 'APP_USR-3cb7e729-47de-4703-8d21-a07136e22d34';	
 	$accesTokenMercadoPago = 'APP_USR-3927436741225472-082909-292500aeed544c3108afcfa534c55e57-1188183100';
 	
