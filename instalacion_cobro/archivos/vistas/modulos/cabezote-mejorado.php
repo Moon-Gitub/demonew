@@ -75,21 +75,16 @@ try {
         }
     }
 
-    // Calcular monto con recargos usando el controlador mejorado
-    $datosCobro = ControladorMercadoPago::ctrCalcularMontoCobro($clienteMoon, $ctaCteCliente);
+    // Calcular monto con recargos usando el controlador del sistema de cobro
+    // El controlador verifica automáticamente el campo aplicar_recargos del cliente
+    // y aplica recargos SOLO sobre servicios mensuales si corresponde
+    $datosCobro = ControladorMercadoPago::ctrCalcularMontoCobro($clienteMoon, $ctaCteCliente, $subtotalMensuales, $subtotalOtros);
 
-$abonoMensual = $datosCobro['monto'];
-$mensajeCliente = $datosCobro['mensaje'];
-$tieneRecargo = $datosCobro['tiene_recargo'];
-$porcentajeRecargo = $datosCobro['porcentaje_recargo'];
-
-// Recalcular el monto aplicando recargo SOLO a servicios mensuales
-if ($tieneRecargo) {
-    $montoRecargo = $subtotalMensuales * ($porcentajeRecargo / 100);
-    $abonoMensual = $subtotalMensuales + $subtotalOtros + $montoRecargo;
-} else {
-    $abonoMensual = $subtotalMensuales + $subtotalOtros;
-}
+    $abonoMensual = $datosCobro['monto'];
+    $mensajeCliente = $datosCobro['mensaje'];
+    $tieneRecargo = $datosCobro['tiene_recargo'];
+    $porcentajeRecargo = $datosCobro['porcentaje_recargo'];
+    $aplicarRecargos = $datosCobro['aplicar_recargos'];
 
 $muestroModal = false;
 $fijoModal = false;
@@ -401,6 +396,12 @@ MODAL COBRO MEJORADO
                                         <i class="fa fa-exclamation-triangle"></i> Recargo por mora sobre servicios mensuales (<?php echo $porcentajeRecargo; ?>%)
                                     </td>
                                     <td style="padding: 8px 5px; text-align: right; font-weight: 600; color: #856404;">$<?php echo number_format($montoRecargoReal, 2, ',', '.'); ?></td>
+                                </tr>
+                                <?php } elseif (!$aplicarRecargos && $subtotalMensuales > 0) { ?>
+                                <tr style="background: #d4edda;">
+                                    <td colspan="2" style="padding: 8px 5px; color: #155724; font-size: 12px; text-align: center;">
+                                        <i class="fa fa-check-circle"></i> Cliente exento de recargos por mora
+                                    </td>
                                 </tr>
                                 <?php } ?>
                             </table>

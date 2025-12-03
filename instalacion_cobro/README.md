@@ -118,6 +118,7 @@ Después de instalar, verifica:
 - ✅ Desglose detallado de cargos pendientes
 - ✅ Separación: Servicios Mensuales vs Otros Cargos
 - ✅ Recargos selectivos (solo servicios mensuales)
+- ✅ **Control por cliente de aplicación de recargos**
 - ✅ Integración completa con MercadoPago
 - ✅ Bloqueo del sistema después del día 26
 
@@ -132,7 +133,30 @@ Después de instalar, verifica:
 | 25-26| 30%     | Puede cerrar | Mora Máxima |
 | 27+  | 30%     | **NO puede cerrar** | **BLOQUEADO** |
 
-**IMPORTANTE:** Los recargos se aplican **SOLO sobre servicios mensuales POS**, no sobre otros cargos como trabajos extras o renovaciones.
+**IMPORTANTE:**
+- Los recargos se aplican **SOLO sobre servicios mensuales POS**, no sobre otros cargos como trabajos extras o renovaciones.
+- Cada cliente puede ser configurado individualmente para aplicar o no recargos mediante el campo `aplicar_recargos` en la tabla `clientes`.
+- Por defecto, todos los clientes tienen recargos habilitados (valor = 1).
+
+### Control de Recargos por Cliente
+
+El sistema permite controlar si un cliente debe tener recargos por mora o no:
+
+```sql
+-- Para EXIMIR a un cliente de recargos:
+UPDATE clientes SET aplicar_recargos = 0 WHERE id = [id_del_cliente];
+
+-- Para APLICAR recargos nuevamente:
+UPDATE clientes SET aplicar_recargos = 1 WHERE id = [id_del_cliente];
+
+-- Ver estado actual:
+SELECT id, nombre, aplicar_recargos FROM clientes WHERE id = [id_del_cliente];
+```
+
+**Casos de uso:**
+- Clientes VIP o con contrato especial: exentos de recargos
+- Clientes en período de prueba: sin recargos
+- Acuerdos comerciales especiales: sin recargos por X tiempo
 
 ## 📚 Documentación Adicional
 

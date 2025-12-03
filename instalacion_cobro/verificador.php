@@ -239,6 +239,18 @@ if (file_exists('../.env') && class_exists('Dotenv\Dotenv')) {
                         echo '<span class="status ' . ($existe ? 'ok' : 'error') . '">' . ($existe ? '✓ Existe' : '✗ No existe') . '</span>';
                         echo '</div>';
                     }
+
+                    // Verificar campo aplicar_recargos en tabla clientes
+                    $totalChecks++;
+                    $stmtCampo = $conn->query("SHOW COLUMNS FROM clientes LIKE 'aplicar_recargos'");
+                    $campoExiste = $stmtCampo->rowCount() > 0;
+
+                    if ($campoExiste) $passedChecks++; else $failedChecks++;
+
+                    echo '<div class="check-item ' . ($campoExiste ? 'ok' : 'error') . '">';
+                    echo '<span>Campo aplicar_recargos en tabla clientes</span>';
+                    echo '<span class="status ' . ($campoExiste ? 'ok' : 'error') . '">' . ($campoExiste ? '✓ Existe' : '✗ No existe') . '</span>';
+                    echo '</div>';
                 } else {
                     $failedChecks++;
                     echo '<div class="check-item error">';

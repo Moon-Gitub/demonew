@@ -26,69 +26,115 @@ class ControladorMercadoPago {
 	/*=============================================
 	CALCULAR MONTO DE COBRO CON RECARGOS
 	=============================================*/
-	static public function ctrCalcularMontoCobro($clienteMoon, $ctaCteCliente) {
+	static public function ctrCalcularMontoCobro($clienteMoon, $ctaCteCliente, $subtotalMensuales = null, $subtotalOtros = null) {
 
 		date_default_timezone_set('America/Argentina/Mendoza');
 		$diaActual = date('d');
 		$mesActual = date('m');
 		$añoActual = date('Y');
 
+		// Verificar si este cliente tiene habilitados los recargos
+		// Por defecto SÍ aplica recargos si el campo no existe (1 = SÍ, 0 = NO)
+		$aplicarRecargos = isset($clienteMoon['aplicar_recargos']) ? intval($clienteMoon['aplicar_recargos']) : 1;
+
 		// El monto a cobrar es el saldo actual de la cuenta corriente del cliente (lo que debe)
 		$saldoCuenta = floatval($ctaCteCliente["saldo"]);
-		$abonoMensual = $saldoCuenta;
+
+		// Si no se proporcionan subtotales separados, usar el saldo total
+		$subtotalMensuales = ($subtotalMensuales !== null) ? floatval($subtotalMensuales) : $saldoCuenta;
+		$subtotalOtros = ($subtotalOtros !== null) ? floatval($subtotalOtros) : 0;
+
+		$abonoBase = $subtotalMensuales + $subtotalOtros;
 		$mensajeCliente = "";
 		$montoFinal = 0;
 		$tieneRecargo = false;
 		$porcentajeRecargo = 0;
 
 		// Lógica de recargos según el día del mes
+		// Los recargos se aplican SOLO sobre servicios mensuales
+		// Y SOLO si el cliente tiene aplicar_recargos = 1
 		if ($diaActual > 4 && $diaActual <= 9) {
-			$mensajeCliente = 'Debes abonar $' . number_format($abonoMensual, 2, ',', '.') . ' como abono mensual';
-			$montoFinal = $abonoMensual;
+			$mensajeCliente = 'Debes abonar $' . number_format($abonoBase, 2, ',', '.') . ' como abono mensual';
+			$montoFinal = $abonoBase;
 
 		} else if ($diaActual >= 10 && $diaActual <= 14) {
-			$recargo1 = $abonoMensual * 0.10; // 10% de recargo
-			$montoFinal = $abonoMensual + $recargo1;
-			$mensajeCliente = 'Debes abonar $' . number_format($montoFinal, 2, ',', '.') . ' (Incluye 10% de recargo por mora)';
-			$tieneRecargo = true;
-			$porcentajeRecargo = 10;
+			// 10% de recargo SOLO sobre servicios mensuales Y si aplica recargos
+			if ($aplicarRecargos && $subtotalMensuales > 0) {
+				$recargo1 = $subtotalMensuales * 0.10;
+				$montoFinal = $abonoBase + $recargo1;
+				$mensajeCliente = 'Debes abonar $' . number_format($montoFinal, 2, ',', '.') . ' (Incluye 10% de recargo por mora sobre servicios mensuales)';
+				$tieneRecargo = true;
+				$porcentajeRecargo = 10;
+			} else {
+				$montoFinal = $abonoBase;
+				$mensajeCliente = $aplicarRecargos
+					? 'Debes abonar $' . number_format($abonoBase, 2, ',', '.')
+					: 'Debes abonar $' . number_format($abonoBase, 2, ',', '.') . ' (Cliente exento de recargos por mora)';
+			}
 
 		} else if ($diaActual >= 15 && $diaActual <= 19) {
-			$recargo2 = $abonoMensual * 0.15; // 15% de recargo
-			$montoFinal = $abonoMensual + $recargo2;
-			$mensajeCliente = 'Debes abonar $' . number_format($montoFinal, 2, ',', '.') . ' (Incluye 15% de recargo por mora)';
-			$tieneRecargo = true;
-			$porcentajeRecargo = 15;
+			// 15% de recargo SOLO sobre servicios mensuales Y si aplica recargos
+			if ($aplicarRecargos && $subtotalMensuales > 0) {
+				$recargo2 = $subtotalMensuales * 0.15;
+				$montoFinal = $abonoBase + $recargo2;
+				$mensajeCliente = 'Debes abonar $' . number_format($montoFinal, 2, ',', '.') . ' (Incluye 15% de recargo por mora sobre servicios mensuales)';
+				$tieneRecargo = true;
+				$porcentajeRecargo = 15;
+			} else {
+				$montoFinal = $abonoBase;
+				$mensajeCliente = $aplicarRecargos
+					? 'Debes abonar $' . number_format($abonoBase, 2, ',', '.')
+					: 'Debes abonar $' . number_format($abonoBase, 2, ',', '.') . ' (Cliente exento de recargos por mora)';
+			}
 
 		} else if ($diaActual >= 20 && $diaActual <= 24) {
-			$recargo3 = $abonoMensual * 0.20; // 20% de recargo
-			$montoFinal = $abonoMensual + $recargo3;
-			$mensajeCliente = 'Debes abonar $' . number_format($montoFinal, 2, ',', '.') . ' (Incluye 20% de recargo por mora)';
-			$tieneRecargo = true;
-			$porcentajeRecargo = 20;
+			// 20% de recargo SOLO sobre servicios mensuales Y si aplica recargos
+			if ($aplicarRecargos && $subtotalMensuales > 0) {
+				$recargo3 = $subtotalMensuales * 0.20;
+				$montoFinal = $abonoBase + $recargo3;
+				$mensajeCliente = 'Debes abonar $' . number_format($montoFinal, 2, ',', '.') . ' (Incluye 20% de recargo por mora sobre servicios mensuales)';
+				$tieneRecargo = true;
+				$porcentajeRecargo = 20;
+			} else {
+				$montoFinal = $abonoBase;
+				$mensajeCliente = $aplicarRecargos
+					? 'Debes abonar $' . number_format($abonoBase, 2, ',', '.')
+					: 'Debes abonar $' . number_format($abonoBase, 2, ',', '.') . ' (Cliente exento de recargos por mora)';
+			}
 
 		} else if ($diaActual >= 25) {
-			$recargo4 = $abonoMensual * 0.30; // 30% de recargo
-			$montoFinal = $abonoMensual + $recargo4;
-			$mensajeCliente = 'Debes abonar $' . number_format($montoFinal, 2, ',', '.') . ' (Incluye 30% de recargo por mora)';
-			$tieneRecargo = true;
-			$porcentajeRecargo = 30;
+			// 30% de recargo SOLO sobre servicios mensuales Y si aplica recargos
+			if ($aplicarRecargos && $subtotalMensuales > 0) {
+				$recargo4 = $subtotalMensuales * 0.30;
+				$montoFinal = $abonoBase + $recargo4;
+				$mensajeCliente = 'Debes abonar $' . number_format($montoFinal, 2, ',', '.') . ' (Incluye 30% de recargo por mora sobre servicios mensuales)';
+				$tieneRecargo = true;
+				$porcentajeRecargo = 30;
+			} else {
+				$montoFinal = $abonoBase;
+				$mensajeCliente = $aplicarRecargos
+					? 'Debes abonar $' . number_format($abonoBase, 2, ',', '.')
+					: 'Debes abonar $' . number_format($abonoBase, 2, ',', '.') . ' (Cliente exento de recargos por mora)';
+			}
 
 		} else {
 			// Días 1-4: Sin recargo aún
-			$mensajeCliente = 'Tu abono mensual es de $' . number_format($abonoMensual, 2, ',', '.') . '. Recuerda abonar antes del día 5 para evitar recargos.';
-			$montoFinal = $abonoMensual;
+			$mensajeCliente = 'Tu abono mensual es de $' . number_format($abonoBase, 2, ',', '.') . '. Recuerda abonar antes del día 5 para evitar recargos.';
+			$montoFinal = $abonoBase;
 		}
 
 		return array(
 			'monto' => $montoFinal,
-			'abono_base' => $abonoMensual,
+			'abono_base' => $abonoBase,
 			'tiene_recargo' => $tieneRecargo,
 			'porcentaje_recargo' => $porcentajeRecargo,
 			'mensaje' => $mensajeCliente,
 			'saldo_actual' => $saldoCuenta,
 			'dia_actual' => $diaActual,
-			'periodo' => "$mesActual/$añoActual"
+			'periodo' => "$mesActual/$añoActual",
+			'aplicar_recargos' => $aplicarRecargos,
+			'subtotal_mensuales' => $subtotalMensuales,
+			'subtotal_otros' => $subtotalOtros
 		);
 	}
 

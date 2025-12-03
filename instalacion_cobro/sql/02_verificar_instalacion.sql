@@ -75,7 +75,17 @@ SELECT
 FROM information_schema.columns
 WHERE table_schema = DATABASE()
   AND table_name = 'clientes_cuenta_corriente'
-  AND column_name = 'tipo';
+  AND column_name = 'tipo'
+UNION ALL
+SELECT
+    '',
+    'clientes',
+    'aplicar_recargos',
+    IF(COUNT(*) > 0, '✓ OK', '✗ FALTA') AS Estado
+FROM information_schema.columns
+WHERE table_schema = DATABASE()
+  AND table_name = 'clientes'
+  AND column_name = 'aplicar_recargos';
 
 -- Contar registros en las tablas nuevas
 SELECT

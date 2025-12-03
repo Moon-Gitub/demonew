@@ -106,6 +106,20 @@ Ejecuta el script SQL:
 mysql -h 107.161.23.11 -u usuario_bd -p nombre_bd < instalacion_cobro/sql/01_crear_tablas_mercadopago.sql
 ```
 
+### 3.3 Agregar control de recargos por cliente
+
+Ejecuta el script SQL para agregar el campo `aplicar_recargos`:
+
+**Opción A:** Desde phpMyAdmin:
+1. Clic en "SQL" (arriba)
+2. Copia y pega el contenido de `sql/03_agregar_control_recargos.sql`
+3. Clic en "Continuar"
+
+**Opción B:** Desde terminal:
+```bash
+mysql -h 107.161.23.11 -u usuario_bd -p nombre_bd < instalacion_cobro/sql/03_agregar_control_recargos.sql
+```
+
 ✅ **Verificar:** Ejecuta `sql/02_verificar_instalacion.sql` y confirma que todas las tablas muestran ✓ OK.
 
 ---
@@ -409,6 +423,30 @@ El sistema de cobro está instalado y listo para usar.
 3. **Haz una prueba de pago completa**
 4. **Revisa que el pago se registre en la BD**
 5. **Cuando todo funcione, cambia a credenciales de PRODUCCIÓN**
+
+### Control de Recargos por Cliente
+
+El sistema incluye control individual de recargos por cliente. Por defecto, todos los clientes tienen recargos habilitados.
+
+**Para eximir a un cliente de recargos:**
+```sql
+UPDATE clientes SET aplicar_recargos = 0 WHERE id = [id_del_cliente];
+```
+
+**Para aplicar recargos nuevamente:**
+```sql
+UPDATE clientes SET aplicar_recargos = 1 WHERE id = [id_del_cliente];
+```
+
+**Ver estado actual:**
+```sql
+SELECT id, nombre, aplicar_recargos FROM clientes WHERE id = [id_del_cliente];
+```
+
+**Casos de uso comunes:**
+- Clientes VIP o con contrato especial
+- Clientes en período de prueba
+- Acuerdos comerciales especiales sin recargos
 
 ---
 
