@@ -33,9 +33,9 @@ class ControladorMercadoPago {
 		$mesActual = date('m');
 		$añoActual = date('Y');
 
+		// El monto a cobrar es el saldo actual de la cuenta corriente del cliente (lo que debe)
 		$saldoCuenta = floatval($ctaCteCliente["saldo"]);
-		// Usar abono_mensual si existe, sino usar el saldo como monto base
-		$abonoMensual = isset($clienteMoon["abono_mensual"]) ? floatval($clienteMoon["abono_mensual"]) : $saldoCuenta;
+		$abonoMensual = $saldoCuenta;
 		$mensajeCliente = "";
 		$montoFinal = 0;
 		$tieneRecargo = false;
