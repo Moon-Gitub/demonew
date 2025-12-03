@@ -54,28 +54,26 @@ try {
 
         // 4. Verificar tabla clientes
         echo "<h2>4️⃣ TODOS los clientes (Tabla: <code>clientes</code>):</h2>";
-        $stmt = $conexion->query("SELECT id, nombre, email, estado_bloqueo, estado FROM clientes ORDER BY id ASC");
+        $stmt = $conexion->query("SELECT id, nombre, email, estado_bloqueo FROM clientes ORDER BY id ASC");
         $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if (count($clientes) > 0) {
             echo "<p><strong>Total de clientes:</strong> " . count($clientes) . "</p>";
             echo "<table border='1' cellpadding='5' style='border-collapse: collapse; width: 100%;'>";
             echo "<tr style='background: #f0f0f0;'>";
-            echo "<th>ID</th><th>Nombre</th><th>Email</th><th>Estado Bloqueo</th><th>Estado Cliente</th>";
+            echo "<th>ID</th><th>Nombre</th><th>Email</th><th>Estado Bloqueo</th>";
             echo "</tr>";
             foreach ($clientes as $cliente) {
                 $colorBloqueo = $cliente['estado_bloqueo'] == 1 ? '#ffcccc' : '#ccffcc';
-                $colorEstado = $cliente['estado'] == 1 ? '' : 'opacity: 0.5; text-decoration: line-through;';
-                echo "<tr style='background: $colorBloqueo; $colorEstado'>";
+                echo "<tr style='background: $colorBloqueo;'>";
                 echo "<td><strong>{$cliente['id']}</strong></td>";
                 echo "<td>{$cliente['nombre']}</td>";
                 echo "<td>{$cliente['email']}</td>";
                 echo "<td>" . ($cliente['estado_bloqueo'] == 1 ? '🔴 BLOQUEADO' : '✅ Desbloqueado') . "</td>";
-                echo "<td>" . ($cliente['estado'] == 1 ? '✅ Activo' : '❌ Desactivado') . "</td>";
                 echo "</tr>";
             }
             echo "</table>";
-            echo "<p><em>Nota: Filas tachadas = clientes desactivados</em></p>";
+            echo "<p><em>Nota: Fondo rojo = bloqueado, verde = desbloqueado</em></p>";
         } else {
             echo "⚠️ No hay clientes registrados";
         }
@@ -91,7 +89,6 @@ try {
             echo "ID: {$clienteMoon['id']}\n";
             echo "Nombre: {$clienteMoon['nombre']}\n";
             echo "Email: {$clienteMoon['email']}\n";
-            echo "Estado: " . ($clienteMoon['estado'] == 1 ? '✅ Activo' : '❌ Desactivado') . "\n";
             echo "Estado Bloqueo: " . ($clienteMoon['estado_bloqueo'] == 1 ? '🔴 BLOQUEADO' : '✅ Desbloqueado') . "\n";
             echo "</pre>";
         } else {
