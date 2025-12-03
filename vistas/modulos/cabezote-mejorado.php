@@ -121,23 +121,29 @@ if($ctaCteCliente["saldo"] <= 0) {
     if(!isset($_GET["preference_id"])) {
         require_once 'extensiones/vendor/autoload.php';
 
-        MercadoPago\SDK::setAccessToken($accesTokenMercadoPago);
-        $preference = new MercadoPago\Preference();
+        // SDK de MercadoPago v3.x
+        use MercadoPago\MercadoPagoConfig;
+        use MercadoPago\Client\Preference\PreferenceClient;
 
-        $item = new MercadoPago\Item();
-        $item->title = "Mensual-POS Moon Desarrollos";
-        $item->quantity = 1;
-        $item->unit_price = $abonoMensual;
+        MercadoPagoConfig::setAccessToken($accesTokenMercadoPago);
 
-        $preference->items = array($item);
-        $preference->external_reference = strval($idCliente);
-        $preference->back_urls = array(
-            "success" => $rutaRespuesta,
-            "failure" => $rutaRespuesta
-        );
-        $preference->auto_return = "approved";
-        $preference->binary_mode = true;
-        $preference->save();
+        $client = new PreferenceClient();
+        $preference = $client->create([
+            "items" => [
+                [
+                    "title" => "Mensual-POS Moon Desarrollos",
+                    "quantity" => 1,
+                    "unit_price" => $abonoMensual
+                ]
+            ],
+            "external_reference" => strval($idCliente),
+            "back_urls" => [
+                "success" => $rutaRespuesta,
+                "failure" => $rutaRespuesta
+            ],
+            "auto_return" => "approved",
+            "binary_mode" => true
+        ]);
 
         // Registrar intento de pago
         $datosIntento = array(
