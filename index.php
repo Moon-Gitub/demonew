@@ -3,14 +3,15 @@
 // Cargar vendor autoload primero
 require_once "extensiones/vendor/autoload.php";
 
-// Cargar configuración
-require_once "config.php";
-
-// Cargar variables de entorno desde .env (si existe y si Dotenv está instalado)
+// Cargar variables de entorno desde .env PRIMERO (si existe y si Dotenv está instalado)
+// IMPORTANTE: Se carga antes de config.php para que .env tenga prioridad
 if (file_exists(__DIR__ . '/.env') && class_exists('Dotenv\Dotenv')) {
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
     $dotenv->load();
 }
+
+// Cargar configuración (valores por defecto)
+require_once "config.php";
 
 require_once "controladores/plantilla.controlador.php";
 require_once "controladores/usuarios.controlador.php";

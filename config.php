@@ -57,8 +57,9 @@ if (!getenv('MP_ACCESS_TOKEN')) {
 // SISTEMA DE COBRO MOON
 // ==============================================
 // ID del cliente en la BD Moon (cambiar según corresponda)
+// NOTA: Este es el valor por defecto, el .env tiene prioridad
 if (!getenv('MOON_CLIENTE_ID')) {
-    putenv('MOON_CLIENTE_ID=2');
+    putenv('MOON_CLIENTE_ID=14');
 }
 
 // ==============================================
