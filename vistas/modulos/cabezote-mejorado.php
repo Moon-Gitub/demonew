@@ -121,13 +121,10 @@ if($ctaCteCliente["saldo"] <= 0) {
     if(!isset($_GET["preference_id"])) {
         require_once 'extensiones/vendor/autoload.php';
 
-        // SDK de MercadoPago v3.x
-        use MercadoPago\MercadoPagoConfig;
-        use MercadoPago\Client\Preference\PreferenceClient;
+        // SDK de MercadoPago v3.x (usando nombres completos de clase)
+        \MercadoPago\MercadoPagoConfig::setAccessToken($accesTokenMercadoPago);
 
-        MercadoPagoConfig::setAccessToken($accesTokenMercadoPago);
-
-        $client = new PreferenceClient();
+        $client = new \MercadoPago\Client\Preference\PreferenceClient();
         $preference = $client->create([
             "items" => [
                 [
