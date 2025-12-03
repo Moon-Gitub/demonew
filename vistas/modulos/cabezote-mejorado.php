@@ -33,14 +33,47 @@ try {
     $ctaCteCliente = ControladorSistemaCobro::ctrMostrarSaldoCuentaCorriente($idCliente);
     $ctaCteMov = ControladorSistemaCobro::ctrMostrarMovimientoCuentaCorriente($idCliente);
 
-    // Obtener movimientos pendientes (cargos tipo 0 que conforman la deuda)
+    // Obtener el saldo pendiente actual
+    $saldoPendiente = floatval($ctaCteCliente["saldo"]);
+
+    // Obtener movimientos tipo 0 (cargos) ordenados por fecha descendente
     $conexionMoon = Conexion::conectarMoon();
     $stmtMovs = $conexionMoon->prepare("SELECT * FROM clientes_cuenta_corriente
                                         WHERE id_cliente = :id AND tipo = 0
                                         ORDER BY fecha DESC");
     $stmtMovs->bindParam(":id", $idCliente, PDO::PARAM_INT);
     $stmtMovs->execute();
-    $movimientosPendientes = $stmtMovs->fetchAll();
+    $todosLosCargos = $stmtMovs->fetchAll();
+
+    // Filtrar solo los cargos que forman parte del saldo pendiente
+    // Tomamos los más recientes hasta alcanzar el saldo pendiente
+    $movimientosPendientes = [];
+    $sumaAcumulada = 0;
+
+    foreach ($todosLosCargos as $cargo) {
+        if ($sumaAcumulada < $saldoPendiente) {
+            $movimientosPendientes[] = $cargo;
+            $sumaAcumulada += floatval($cargo['importe']);
+        } else {
+            break; // Ya alcanzamos el saldo pendiente
+        }
+    }
+
+    // Separar servicios mensuales de otros cargos
+    $serviciosMensuales = [];
+    $otrosCargos = [];
+    $subtotalMensuales = 0;
+    $subtotalOtros = 0;
+
+    foreach ($movimientosPendientes as $mov) {
+        if (stripos($mov['descripcion'], 'Servicio POS') !== false) {
+            $serviciosMensuales[] = $mov;
+            $subtotalMensuales += floatval($mov['importe']);
+        } else {
+            $otrosCargos[] = $mov;
+            $subtotalOtros += floatval($mov['importe']);
+        }
+    }
 
     // Calcular monto con recargos usando el controlador mejorado
     $datosCobro = ControladorMercadoPago::ctrCalcularMontoCobro($clienteMoon, $ctaCteCliente);
@@ -49,6 +82,14 @@ $abonoMensual = $datosCobro['monto'];
 $mensajeCliente = $datosCobro['mensaje'];
 $tieneRecargo = $datosCobro['tiene_recargo'];
 $porcentajeRecargo = $datosCobro['porcentaje_recargo'];
+
+// Recalcular el monto aplicando recargo SOLO a servicios mensuales
+if ($tieneRecargo) {
+    $montoRecargo = $subtotalMensuales * ($porcentajeRecargo / 100);
+    $abonoMensual = $subtotalMensuales + $subtotalOtros + $montoRecargo;
+} else {
+    $abonoMensual = $subtotalMensuales + $subtotalOtros;
+}
 
 $muestroModal = false;
 $fijoModal = false;
@@ -140,24 +181,24 @@ if($ctaCteCliente["saldo"] <= 0) {
 
         // Construir items dinámicamente desde los movimientos pendientes
         $items = [];
-        $subtotalItems = 0;
 
+        // Agregar todos los cargos (servicios mensuales y otros)
         foreach ($movimientosPendientes as $mov) {
             $items[] = [
                 "title" => $mov['descripcion'],
                 "quantity" => 1,
                 "unit_price" => floatval($mov['importe'])
             ];
-            $subtotalItems += floatval($mov['importe']);
         }
 
         // Agregar recargo como item separado si aplica
-        if ($tieneRecargo) {
-            $montoRecargo = $subtotalItems * ($porcentajeRecargo / 100);
+        // El recargo se aplica SOLO sobre servicios mensuales
+        if ($tieneRecargo && $subtotalMensuales > 0) {
+            $montoRecargoItems = $subtotalMensuales * ($porcentajeRecargo / 100);
             $items[] = [
-                "title" => "Recargo por mora (" . $porcentajeRecargo . "%)",
+                "title" => "Recargo por mora sobre servicios mensuales (" . $porcentajeRecargo . "%)",
                 "quantity" => 1,
-                "unit_price" => $montoRecargo
+                "unit_price" => $montoRecargoItems
             ];
         }
 
@@ -324,27 +365,42 @@ MODAL COBRO MEJORADO
                             </h4>
                             <table style="width: 100%; font-size: 14px;">
                                 <?php
-                                $subtotal = 0;
-                                foreach ($movimientosPendientes as $mov) {
-                                    $subtotal += floatval($mov['importe']);
-                                    echo '<tr style="border-bottom: 1px solid #eee;">';
-                                    echo '<td style="padding: 8px 0; color: #495057;">' . $mov['descripcion'] . '</td>';
-                                    echo '<td style="padding: 8px 0; text-align: right; font-weight: 600; color: #dc3545;">$' . number_format($mov['importe'], 2, ',', '.') . '</td>';
-                                    echo '</tr>';
+                                // Mostrar servicios mensuales (con posible recargo)
+                                if (count($serviciosMensuales) > 0) {
+                                    echo '<tr><td colspan="2" style="padding: 8px 0; font-weight: 600; color: #667eea; font-size: 13px;">SERVICIOS MENSUALES POS</td></tr>';
+                                    foreach ($serviciosMensuales as $mov) {
+                                        echo '<tr style="border-bottom: 1px solid #eee;">';
+                                        echo '<td style="padding: 8px 0 8px 15px; color: #495057;">' . $mov['descripcion'] . '</td>';
+                                        echo '<td style="padding: 8px 0; text-align: right; font-weight: 600; color: #dc3545;">$' . number_format($mov['importe'], 2, ',', '.') . '</td>';
+                                        echo '</tr>';
+                                    }
                                 }
+
+                                // Mostrar otros cargos (sin recargo)
+                                if (count($otrosCargos) > 0) {
+                                    echo '<tr><td colspan="2" style="padding: 8px 0; font-weight: 600; color: #6c757d; font-size: 13px; padding-top: 15px;">OTROS CARGOS</td></tr>';
+                                    foreach ($otrosCargos as $mov) {
+                                        echo '<tr style="border-bottom: 1px solid #eee;">';
+                                        echo '<td style="padding: 8px 0 8px 15px; color: #495057;">' . $mov['descripcion'] . '</td>';
+                                        echo '<td style="padding: 8px 0; text-align: right; font-weight: 600; color: #dc3545;">$' . number_format($mov['importe'], 2, ',', '.') . '</td>';
+                                        echo '</tr>';
+                                    }
+                                }
+
+                                $subtotalGeneral = $subtotalMensuales + $subtotalOtros;
                                 ?>
                                 <tr style="border-top: 2px solid #dee2e6;">
                                     <td style="padding: 10px 0; font-weight: 600; color: #495057;">SUBTOTAL</td>
-                                    <td style="padding: 10px 0; text-align: right; font-weight: 700; color: #495057; font-size: 16px;">$<?php echo number_format($subtotal, 2, ',', '.'); ?></td>
+                                    <td style="padding: 10px 0; text-align: right; font-weight: 700; color: #495057; font-size: 16px;">$<?php echo number_format($subtotalGeneral, 2, ',', '.'); ?></td>
                                 </tr>
-                                <?php if($tieneRecargo) {
-                                    $montoRecargo = $subtotal * ($porcentajeRecargo / 100);
+                                <?php if($tieneRecargo && $subtotalMensuales > 0) {
+                                    $montoRecargoReal = $subtotalMensuales * ($porcentajeRecargo / 100);
                                 ?>
                                 <tr style="background: #fff3cd;">
-                                    <td style="padding: 8px 5px; color: #856404;">
-                                        <i class="fa fa-exclamation-triangle"></i> Recargo por mora (<?php echo $porcentajeRecargo; ?>%)
+                                    <td style="padding: 8px 5px; color: #856404; font-size: 12px;">
+                                        <i class="fa fa-exclamation-triangle"></i> Recargo por mora sobre servicios mensuales (<?php echo $porcentajeRecargo; ?>%)
                                     </td>
-                                    <td style="padding: 8px 5px; text-align: right; font-weight: 600; color: #856404;">$<?php echo number_format($montoRecargo, 2, ',', '.'); ?></td>
+                                    <td style="padding: 8px 5px; text-align: right; font-weight: 600; color: #856404;">$<?php echo number_format($montoRecargoReal, 2, ',', '.'); ?></td>
                                 </tr>
                                 <?php } ?>
                             </table>
