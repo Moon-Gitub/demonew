@@ -53,30 +53,37 @@ try {
         echo "</ul>";
 
         // 4. Verificar tabla clientes
-        echo "<h2>4️⃣ Clientes registrados:</h2>";
-        $stmt = $conexion->query("SELECT id, nombre, email, estado_bloqueo FROM clientes ORDER BY id DESC LIMIT 10");
+        echo "<h2>4️⃣ TODOS los clientes (Tabla: <code>clientes</code>):</h2>";
+        $stmt = $conexion->query("SELECT id, nombre, email, estado_bloqueo, estado FROM clientes ORDER BY id ASC");
         $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if (count($clientes) > 0) {
-            echo "<table border='1' cellpadding='5' style='border-collapse: collapse;'>";
-            echo "<tr><th>ID</th><th>Nombre</th><th>Email</th><th>Estado Bloqueo</th></tr>";
+            echo "<p><strong>Total de clientes:</strong> " . count($clientes) . "</p>";
+            echo "<table border='1' cellpadding='5' style='border-collapse: collapse; width: 100%;'>";
+            echo "<tr style='background: #f0f0f0;'>";
+            echo "<th>ID</th><th>Nombre</th><th>Email</th><th>Estado Bloqueo</th><th>Estado Cliente</th>";
+            echo "</tr>";
             foreach ($clientes as $cliente) {
-                $color = $cliente['estado_bloqueo'] == 1 ? 'background: #ffcccc;' : '';
-                echo "<tr style='$color'>";
-                echo "<td>{$cliente['id']}</td>";
+                $colorBloqueo = $cliente['estado_bloqueo'] == 1 ? '#ffcccc' : '#ccffcc';
+                $colorEstado = $cliente['estado'] == 1 ? '' : 'opacity: 0.5; text-decoration: line-through;';
+                echo "<tr style='background: $colorBloqueo; $colorEstado'>";
+                echo "<td><strong>{$cliente['id']}</strong></td>";
                 echo "<td>{$cliente['nombre']}</td>";
                 echo "<td>{$cliente['email']}</td>";
-                echo "<td>" . ($cliente['estado_bloqueo'] == 1 ? '🔴 BLOQUEADO' : '✅ Activo') . "</td>";
+                echo "<td>" . ($cliente['estado_bloqueo'] == 1 ? '🔴 BLOQUEADO' : '✅ Desbloqueado') . "</td>";
+                echo "<td>" . ($cliente['estado'] == 1 ? '✅ Activo' : '❌ Desactivado') . "</td>";
                 echo "</tr>";
             }
             echo "</table>";
+            echo "<p><em>Nota: Filas tachadas = clientes desactivados</em></p>";
         } else {
             echo "⚠️ No hay clientes registrados";
         }
 
         // 5. Verificar cliente específico
-        echo "<h2>5️⃣ Cliente ID " . getenv('MOON_CLIENTE_ID') . " (configurado en .env):</h2>";
+        echo "<h2>5️⃣ Cliente configurado en .env (Tabla: <code>clientes</code>):</h2>";
         $idCliente = intval(getenv('MOON_CLIENTE_ID') ?: 7);
+        echo "<p><strong>ID del cliente:</strong> $idCliente</p>";
 
         $clienteMoon = ControladorSistemaCobro::ctrMostrarClientesCobro($idCliente);
         if ($clienteMoon) {
@@ -84,22 +91,24 @@ try {
             echo "ID: {$clienteMoon['id']}\n";
             echo "Nombre: {$clienteMoon['nombre']}\n";
             echo "Email: {$clienteMoon['email']}\n";
-            echo "Estado Bloqueo: " . ($clienteMoon['estado_bloqueo'] == 1 ? '🔴 BLOQUEADO' : '✅ Activo') . "\n";
+            echo "Estado: " . ($clienteMoon['estado'] == 1 ? '✅ Activo' : '❌ Desactivado') . "\n";
+            echo "Estado Bloqueo: " . ($clienteMoon['estado_bloqueo'] == 1 ? '🔴 BLOQUEADO' : '✅ Desbloqueado') . "\n";
             echo "</pre>";
         } else {
             echo "❌ No se encontró el cliente con ID $idCliente";
         }
 
         // 6. Verificar cuenta corriente
-        echo "<h2>6️⃣ Cuenta Corriente del Cliente:</h2>";
+        echo "<h2>6️⃣ Cuenta Corriente (Tabla: <code>clientes_cuenta_corriente</code>):</h2>";
         $ctaCte = ControladorSistemaCobro::ctrMostrarSaldoCuentaCorriente($idCliente);
         if ($ctaCte) {
             echo "<pre>";
+            echo "Cliente ID: $idCliente\n";
             echo "Saldo: $" . number_format($ctaCte['saldo'], 2) . "\n";
             if ($ctaCte['saldo'] > 0) {
-                echo "Estado: ⚠️ TIENE DEUDA\n";
+                echo "Estado: ⚠️ TIENE DEUDA DE $" . number_format($ctaCte['saldo'], 2) . "\n";
             } else {
-                echo "Estado: ✅ AL DÍA\n";
+                echo "Estado: ✅ AL DÍA (Sin deuda)\n";
             }
             echo "</pre>";
         } else {
@@ -112,17 +121,17 @@ try {
         // Intentos
         $stmt = $conexion->query("SELECT COUNT(*) as total FROM mercadopago_intentos");
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        echo "• mercadopago_intentos: {$result['total']} registros<br>";
+        echo "• <strong>Tabla:</strong> <code>mercadopago_intentos</code> → {$result['total']} registros<br>";
 
         // Pagos
         $stmt = $conexion->query("SELECT COUNT(*) as total FROM mercadopago_pagos");
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        echo "• mercadopago_pagos: {$result['total']} registros<br>";
+        echo "• <strong>Tabla:</strong> <code>mercadopago_pagos</code> → {$result['total']} registros<br>";
 
         // Webhooks
         $stmt = $conexion->query("SELECT COUNT(*) as total FROM mercadopago_webhooks");
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        echo "• mercadopago_webhooks: {$result['total']} registros<br>";
+        echo "• <strong>Tabla:</strong> <code>mercadopago_webhooks</code> → {$result['total']} registros<br>";
 
     } else {
         echo "❌ La conexión retornó null<br>";
