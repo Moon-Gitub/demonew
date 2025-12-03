@@ -1,73 +1,88 @@
 <?php
 /**
  * ARCHIVO DE CONFIGURACIÓN
- *
- * Este archivo define las variables de entorno necesarias para el sistema.
- * Prioridad:
- * 1. Variables de entorno del servidor (getenv)
- * 2. Valores definidos en este archivo
+ * 
+ * ⚠️ IMPORTANTE: Este sistema usa ÚNICAMENTE el archivo .env para configuración
+ * 
+ * Este archivo solo existe para mantener compatibilidad con código legacy.
+ * TODAS las variables deben estar definidas en el archivo .env en la raíz del proyecto.
+ * 
+ * Si el archivo .env no existe o falta alguna variable, el sistema mostrará un error.
+ * Esto es intencional para evitar usar valores por defecto incorrectos.
+ * 
+ * ============================================================================
+ * VARIABLES REQUERIDAS EN .env:
+ * ============================================================================
+ * 
+ * # BASE DE DATOS LOCAL - SISTEMA POS
+ * DB_HOST=localhost
+ * DB_NAME=tu_base_de_datos
+ * DB_USER=tu_usuario
+ * DB_PASS=tu_contraseña
+ * DB_CHARSET=UTF8MB4
+ * 
+ * # BASE DE DATOS MOON - SISTEMA DE COBRO
+ * MOON_DB_HOST=107.161.23.11
+ * MOON_DB_NAME=cobrosposmooncom_db
+ * MOON_DB_USER=cobrosposmooncom_dbuser
+ * MOON_DB_PASS=tu_password
+ * 
+ * # MERCADOPAGO - CREDENCIALES DE PRODUCCIÓN
+ * MP_PUBLIC_KEY=APP_USR-tu-public-key
+ * MP_ACCESS_TOKEN=APP_USR-tu-access-token
+ * 
+ * # SISTEMA DE COBRO MOON
+ * MOON_CLIENTE_ID=14
+ * 
+ * # CONFIGURACIÓN DE APLICACIÓN
+ * APP_ENV=production
+ * APP_DEBUG=false
+ * 
+ * ============================================================================
  */
 
-// ==============================================
-// BASE DE DATOS LOCAL - SISTEMA POS
-// ==============================================
-if (!getenv('DB_HOST')) {
-    putenv('DB_HOST=localhost');
-}
-if (!getenv('DB_NAME')) {
-    putenv('DB_NAME=demo_db');
-}
-if (!getenv('DB_USER')) {
-    putenv('DB_USER=demo_user');
-}
-if (!getenv('DB_PASS')) {
-    putenv('DB_PASS=aK4UWccl2ceg');
-}
-if (!getenv('DB_CHARSET')) {
-    putenv('DB_CHARSET=UTF8MB4');
+// Verificar que el archivo .env existe
+if (!file_exists(__DIR__ . '/.env')) {
+    die('
+    <h1 style="color: red;">⚠️ ERROR: Archivo .env no encontrado</h1>
+    <p>El sistema requiere un archivo <strong>.env</strong> en la raíz del proyecto.</p>
+    <p>Por favor crea el archivo .env con todas las variables necesarias.</p>
+    <p>Ubicación esperada: ' . __DIR__ . '/.env</p>
+    ');
 }
 
-// ==============================================
-// BASE DE DATOS MOON - SISTEMA DE COBRO
-// ==============================================
-if (!getenv('MOON_DB_HOST')) {
-    putenv('MOON_DB_HOST=107.161.23.11');
-}
-if (!getenv('MOON_DB_NAME')) {
-    putenv('MOON_DB_NAME=cobrosposmooncom_db');
-}
-if (!getenv('MOON_DB_USER')) {
-    putenv('MOON_DB_USER=cobrosposmooncom_dbuser');
-}
-if (!getenv('MOON_DB_PASS')) {
-    putenv('MOON_DB_PASS=[Us{ynaJAA_o2A_!');
+// Verificar que las variables críticas estén definidas
+$variablesRequeridas = [
+    'DB_HOST',
+    'DB_NAME', 
+    'DB_USER',
+    'DB_PASS',
+    'MOON_DB_HOST',
+    'MOON_DB_NAME',
+    'MOON_DB_USER',
+    'MOON_DB_PASS',
+    'MP_PUBLIC_KEY',
+    'MP_ACCESS_TOKEN',
+    'MOON_CLIENTE_ID'
+];
+
+$variablesFaltantes = [];
+foreach ($variablesRequeridas as $variable) {
+    if (!getenv($variable)) {
+        $variablesFaltantes[] = $variable;
+    }
 }
 
-// ==============================================
-// MERCADOPAGO - CREDENCIALES DE PRODUCCIÓN
-// ==============================================
-if (!getenv('MP_PUBLIC_KEY')) {
-    putenv('MP_PUBLIC_KEY=APP_USR-33156d44-12df-4039-8c92-1635d8d3edde');
-}
-if (!getenv('MP_ACCESS_TOKEN')) {
-    putenv('MP_ACCESS_TOKEN=APP_USR-6921807486493458-102300-5f1cec174eb674c42c9782860caf640c-2916747261');
-}
-
-// ==============================================
-// SISTEMA DE COBRO MOON
-// ==============================================
-// ID del cliente en la BD Moon (cambiar según corresponda)
-// NOTA: Este es el valor por defecto, el .env tiene prioridad
-if (!getenv('MOON_CLIENTE_ID')) {
-    putenv('MOON_CLIENTE_ID=14');
+if (!empty($variablesFaltantes)) {
+    die('
+    <h1 style="color: red;">⚠️ ERROR: Variables faltantes en .env</h1>
+    <p>Las siguientes variables requeridas no están definidas en el archivo .env:</p>
+    <ul>
+        <li><strong>' . implode('</strong></li><li><strong>', $variablesFaltantes) . '</strong></li>
+    </ul>
+    <p>Por favor agrega estas variables al archivo .env en la raíz del proyecto.</p>
+    ');
 }
 
-// ==============================================
-// CONFIGURACIÓN DE APLICACIÓN
-// ==============================================
-if (!getenv('APP_ENV')) {
-    putenv('APP_ENV=production');
-}
-if (!getenv('APP_DEBUG')) {
-    putenv('APP_DEBUG=false');
-}
+// Si llegamos aquí, todas las variables están configuradas correctamente
+// El sistema funcionará exclusivamente con los valores del .env
