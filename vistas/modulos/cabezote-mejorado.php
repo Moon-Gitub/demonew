@@ -73,7 +73,12 @@ if($ctaCteCliente["saldo"] <= 0) {
         $badgeNavbar = '<span class="label label-danger">' . number_format($abonoMensual, 0) . '</span>';
 
     } else {
-        if ($diaActual > 4 && $diaActual <= 9) {
+        if ($diaActual >= 1 && $diaActual <= 4) {
+            // Días 1-4: Mostrar modal pero sin recargos aún
+            $muestroModal = true;
+            $badgeNavbar = '<span class="label label-success">' . number_format($abonoMensual, 0) . '</span>';
+
+        } elseif ($diaActual > 4 && $diaActual <= 9) {
             $muestroModal = true;
             $badgeNavbar = '<span class="label label-info">' . number_format($abonoMensual, 0) . '</span>';
 
