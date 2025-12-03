@@ -138,15 +138,32 @@ if($ctaCteCliente["saldo"] <= 0) {
         // SDK de MercadoPago v3.x (usando nombres completos de clase)
         \MercadoPago\MercadoPagoConfig::setAccessToken($accesTokenMercadoPago);
 
+        // Construir items dinámicamente desde los movimientos pendientes
+        $items = [];
+        $subtotalItems = 0;
+
+        foreach ($movimientosPendientes as $mov) {
+            $items[] = [
+                "title" => $mov['descripcion'],
+                "quantity" => 1,
+                "unit_price" => floatval($mov['importe'])
+            ];
+            $subtotalItems += floatval($mov['importe']);
+        }
+
+        // Agregar recargo como item separado si aplica
+        if ($tieneRecargo) {
+            $montoRecargo = $subtotalItems * ($porcentajeRecargo / 100);
+            $items[] = [
+                "title" => "Recargo por mora (" . $porcentajeRecargo . "%)",
+                "quantity" => 1,
+                "unit_price" => $montoRecargo
+            ];
+        }
+
         $client = new \MercadoPago\Client\Preference\PreferenceClient();
         $preference = $client->create([
-            "items" => [
-                [
-                    "title" => "Mensual-POS Moon Desarrollos",
-                    "quantity" => 1,
-                    "unit_price" => $abonoMensual
-                ]
-            ],
+            "items" => $items,
             "external_reference" => strval($idCliente),
             "back_urls" => [
                 "success" => $rutaRespuesta,
