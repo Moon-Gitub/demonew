@@ -31,7 +31,7 @@ $porcentajeRecargo = $datosCobro['porcentaje_recargo'];
 
     <?php
 
-    if ($estado == 'approved' && $paymentId) {
+    if (($estado == 'approved' || $estado == 'pending') && $paymentId) {
 
         try {
             // 1. Guardar el pago en la tabla mercadopago_pagos
@@ -54,38 +54,57 @@ $porcentajeRecargo = $datosCobro['porcentaje_recargo'];
                 if ($resultadoPago === "ok") {
                     // 2. Actualizar estado del intento
                     if ($preferenceId) {
-                        ModeloMercadoPago::mdlActualizarEstadoIntento($preferenceId, 'completado');
+                        $nuevoEstado = ($estado == 'approved') ? 'completado' : 'pendiente';
+                        ModeloMercadoPago::mdlActualizarEstadoIntento($preferenceId, $nuevoEstado);
                     }
 
-                    // 3. Registrar interés si corresponde (recargo por mora)
-                    if ($tieneRecargo) {
-                        $montoInteres = $abonoMensual - $abonoBase;
-                        if ($montoInteres > 0) {
-                            ControladorSistemaCobro::ctrRegistrarInteresCuentaCorriente($idCliente, $montoInteres);
+                    // Solo aplicar a cuenta corriente si está APPROVED
+                    if ($estado == 'approved') {
+                        // 3. Registrar interés si corresponde (recargo por mora)
+                        if ($tieneRecargo) {
+                            $montoInteres = $abonoMensual - $abonoBase;
+                            if ($montoInteres > 0) {
+                                ControladorSistemaCobro::ctrRegistrarInteresCuentaCorriente($idCliente, $montoInteres);
+                            }
                         }
-                    }
 
-                    // 4. Registrar el pago en cuenta corriente
-                    ControladorSistemaCobro::ctrRegistrarMovimientoCuentaCorriente($idCliente, $abonoMensual);
+                        // 4. Registrar el pago en cuenta corriente
+                        ControladorSistemaCobro::ctrRegistrarMovimientoCuentaCorriente($idCliente, $abonoMensual);
 
-                    // 5. Desbloquear cliente si estaba bloqueado
-                    if ($clienteMoon["estado_bloqueo"] == "1") {
-                        ControladorSistemaCobro::ctrActualizarClientesCobro($idCliente, 0);
-                    }
-
-                    echo '<script>
-                    swal({
-                        type: "success",
-                        title: "¡Pago exitoso!",
-                        text: "Tu pago de $' . number_format($abonoMensual, 2, ',', '.') . ' ha sido registrado correctamente",
-                        showConfirmButton: true,
-                        confirmButtonText: "Cerrar"
-                    }).then((result) => {
-                        if (result.value) {
-                            window.location = "inicio";
+                        // 5. Desbloquear cliente si estaba bloqueado
+                        if ($clienteMoon["estado_bloqueo"] == "1") {
+                            ControladorSistemaCobro::ctrActualizarClientesCobro($idCliente, 0);
                         }
-                    })
-                    </script>';
+
+                        echo '<script>
+                        swal({
+                            type: "success",
+                            title: "¡Pago exitoso!",
+                            text: "Tu pago de $' . number_format($abonoMensual, 2, ',', '.') . ' ha sido registrado correctamente",
+                            showConfirmButton: true,
+                            confirmButtonText: "Cerrar"
+                        }).then((result) => {
+                            if (result.value) {
+                                window.location = "inicio";
+                            }
+                        })
+                        </script>';
+                    } else {
+                        // Pago pendiente - guardado pero no aplicado
+                        echo '<script>
+                        swal({
+                            type: "warning",
+                            title: "Pago pendiente",
+                            text: "Tu pago de $' . number_format($abonoMensual, 2, ',', '.') . ' está siendo procesado. Te notificaremos cuando se confirme.",
+                            showConfirmButton: true,
+                            confirmButtonText: "Cerrar"
+                        }).then((result) => {
+                            if (result.value) {
+                                window.location = "inicio";
+                            }
+                        })
+                        </script>';
+                    }
 
                 } else {
                     throw new Exception("Error al guardar el pago en la base de datos");
@@ -124,22 +143,6 @@ $porcentajeRecargo = $datosCobro['porcentaje_recargo'];
             })
             </script>';
         }
-
-    } elseif ($estado == 'pending') {
-
-        echo '<script>
-        swal({
-            type: "warning",
-            title: "Pago pendiente",
-            text: "Tu pago está siendo procesado. Te notificaremos cuando se confirme.",
-            showConfirmButton: true,
-            confirmButtonText: "Cerrar"
-        }).then((result) => {
-            if (result.value) {
-                window.location = "inicio";
-            }
-        })
-        </script>';
 
     } else {
         // Pago rechazado o cancelado
