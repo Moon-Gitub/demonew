@@ -33,6 +33,15 @@ try {
     $ctaCteCliente = ControladorSistemaCobro::ctrMostrarSaldoCuentaCorriente($idCliente);
     $ctaCteMov = ControladorSistemaCobro::ctrMostrarMovimientoCuentaCorriente($idCliente);
 
+    // Obtener movimientos pendientes (cargos tipo 0 que conforman la deuda)
+    $conexionMoon = Conexion::conectarMoon();
+    $stmtMovs = $conexionMoon->prepare("SELECT * FROM clientes_cuenta_corriente
+                                        WHERE id_cliente = :id AND tipo = 0
+                                        ORDER BY fecha DESC");
+    $stmtMovs->bindParam(":id", $idCliente, PDO::PARAM_INT);
+    $stmtMovs->execute();
+    $movimientosPendientes = $stmtMovs->fetchAll();
+
     // Calcular monto con recargos usando el controlador mejorado
     $datosCobro = ControladorMercadoPago::ctrCalcularMontoCobro($clienteMoon, $ctaCteCliente);
 
@@ -279,35 +288,49 @@ MODAL COBRO MEJORADO
                 </div>
 
                 <div class="row">
-                    <!-- Información del Cliente -->
+                    <!-- Información del Cliente y Detalle de Cargos -->
                     <div class="col-sm-6">
                         <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
                             <h4 style="margin-top: 0; color: #495057; border-bottom: 2px solid #dee2e6; padding-bottom: 10px;">
-                                <i class="fa fa-user"></i> Detalle del Servicio
+                                <i class="fa fa-user"></i> Detalle del Cliente
                             </h4>
                             <div style="margin: 15px 0;">
                                 <strong style="color: #6c757d; display: block; margin-bottom: 5px;">CLIENTE</strong>
                                 <p style="font-size: 16px; margin: 0;"><?php echo $clienteMoon["nombre"]; ?></p>
                             </div>
-                            <div style="margin: 15px 0;">
-                                <strong style="color: #6c757d; display: block; margin-bottom: 5px;">SERVICIO</strong>
-                                <p style="font-size: 16px; margin: 0;">
-                                    <i class="fa fa-desktop" style="color: #667eea;"></i>
-                                    <?php echo $ctaCteMov["descripcion"] ? $ctaCteMov["descripcion"] : "Mensual-POS"; ?>
-                                </p>
-                            </div>
+                        </div>
 
-                            <?php if($tieneRecargo) { ?>
-                            <div style="background: #fff3cd; padding: 12px; border-radius: 6px; margin-top: 15px; border-left: 3px solid #ffc107;">
-                                <strong style="color: #856404;">
-                                    <i class="fa fa-exclamation-triangle"></i>
-                                    Recargo aplicado: <?php echo $porcentajeRecargo; ?>%
-                                </strong>
-                                <p style="margin: 5px 0 0 0; font-size: 13px; color: #856404;">
-                                    Por pago fuera de término
-                                </p>
-                            </div>
-                            <?php } ?>
+                        <!-- Desglose de Cargos Pendientes -->
+                        <div style="background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; margin-bottom: 20px;">
+                            <h4 style="margin-top: 0; color: #495057; border-bottom: 2px solid #dee2e6; padding-bottom: 10px;">
+                                <i class="fa fa-list"></i> Detalle de Cargos Pendientes
+                            </h4>
+                            <table style="width: 100%; font-size: 14px;">
+                                <?php
+                                $subtotal = 0;
+                                foreach ($movimientosPendientes as $mov) {
+                                    $subtotal += floatval($mov['importe']);
+                                    echo '<tr style="border-bottom: 1px solid #eee;">';
+                                    echo '<td style="padding: 8px 0; color: #495057;">' . $mov['descripcion'] . '</td>';
+                                    echo '<td style="padding: 8px 0; text-align: right; font-weight: 600; color: #dc3545;">$' . number_format($mov['importe'], 2, ',', '.') . '</td>';
+                                    echo '</tr>';
+                                }
+                                ?>
+                                <tr style="border-top: 2px solid #dee2e6;">
+                                    <td style="padding: 10px 0; font-weight: 600; color: #495057;">SUBTOTAL</td>
+                                    <td style="padding: 10px 0; text-align: right; font-weight: 700; color: #495057; font-size: 16px;">$<?php echo number_format($subtotal, 2, ',', '.'); ?></td>
+                                </tr>
+                                <?php if($tieneRecargo) {
+                                    $montoRecargo = $subtotal * ($porcentajeRecargo / 100);
+                                ?>
+                                <tr style="background: #fff3cd;">
+                                    <td style="padding: 8px 5px; color: #856404;">
+                                        <i class="fa fa-exclamation-triangle"></i> Recargo por mora (<?php echo $porcentajeRecargo; ?>%)
+                                    </td>
+                                    <td style="padding: 8px 5px; text-align: right; font-weight: 600; color: #856404;">$<?php echo number_format($montoRecargo, 2, ',', '.'); ?></td>
+                                </tr>
+                                <?php } ?>
+                            </table>
                         </div>
                     </div>
 
