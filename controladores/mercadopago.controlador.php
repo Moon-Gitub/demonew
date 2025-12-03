@@ -34,7 +34,8 @@ class ControladorMercadoPago {
 		$añoActual = date('Y');
 
 		$saldoCuenta = floatval($ctaCteCliente["saldo"]);
-		$abonoMensual = floatval($clienteMoon["abono_mensual"]);
+		// Usar abono_mensual si existe, sino usar el saldo como monto base
+		$abonoMensual = isset($clienteMoon["abono_mensual"]) ? floatval($clienteMoon["abono_mensual"]) : $saldoCuenta;
 		$mensajeCliente = "";
 		$montoFinal = 0;
 		$tieneRecargo = false;
