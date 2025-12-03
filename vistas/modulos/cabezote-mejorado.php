@@ -33,14 +33,31 @@ try {
     $ctaCteCliente = ControladorSistemaCobro::ctrMostrarSaldoCuentaCorriente($idCliente);
     $ctaCteMov = ControladorSistemaCobro::ctrMostrarMovimientoCuentaCorriente($idCliente);
 
-    // Obtener movimientos pendientes (cargos tipo 0 que conforman la deuda)
+    // Obtener el saldo pendiente actual
+    $saldoPendiente = floatval($ctaCteCliente["saldo"]);
+
+    // Obtener movimientos tipo 0 (cargos) ordenados por fecha descendente
     $conexionMoon = Conexion::conectarMoon();
     $stmtMovs = $conexionMoon->prepare("SELECT * FROM clientes_cuenta_corriente
                                         WHERE id_cliente = :id AND tipo = 0
                                         ORDER BY fecha DESC");
     $stmtMovs->bindParam(":id", $idCliente, PDO::PARAM_INT);
     $stmtMovs->execute();
-    $movimientosPendientes = $stmtMovs->fetchAll();
+    $todosLosCargos = $stmtMovs->fetchAll();
+
+    // Filtrar solo los cargos que forman parte del saldo pendiente
+    // Tomamos los más recientes hasta alcanzar el saldo pendiente
+    $movimientosPendientes = [];
+    $sumaAcumulada = 0;
+
+    foreach ($todosLosCargos as $cargo) {
+        if ($sumaAcumulada < $saldoPendiente) {
+            $movimientosPendientes[] = $cargo;
+            $sumaAcumulada += floatval($cargo['importe']);
+        } else {
+            break; // Ya alcanzamos el saldo pendiente
+        }
+    }
 
     // Calcular monto con recargos usando el controlador mejorado
     $datosCobro = ControladorMercadoPago::ctrCalcularMontoCobro($clienteMoon, $ctaCteCliente);
