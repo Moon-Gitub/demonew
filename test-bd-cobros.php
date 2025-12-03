@@ -52,54 +52,76 @@ try {
         }
         echo "</ul>";
 
-        // 4. Verificar tabla clientes
-        echo "<h2>4️⃣ TODOS los clientes (Tabla: <code>clientes</code>):</h2>";
-        $stmt = $conexion->query("SELECT id, nombre, email, estado_bloqueo, estado FROM clientes ORDER BY id ASC");
+        // 4. Mostrar estructura de tabla clientes
+        echo "<h2>4️⃣ Estructura de tabla <code>clientes</code>:</h2>";
+        $stmt = $conexion->query("DESCRIBE clientes");
+        $estructura = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        echo "<table border='1' cellpadding='5' style='border-collapse: collapse;'>";
+        echo "<tr style='background: #f0f0f0;'><th>Columna</th><th>Tipo</th><th>Null</th><th>Default</th></tr>";
+        foreach ($estructura as $col) {
+            echo "<tr>";
+            echo "<td><strong>{$col['Field']}</strong></td>";
+            echo "<td>{$col['Type']}</td>";
+            echo "<td>{$col['Null']}</td>";
+            echo "<td>" . ($col['Default'] ?: 'NULL') . "</td>";
+            echo "</tr>";
+        }
+        echo "</table><br>";
+
+        // 5. Verificar tabla clientes
+        echo "<h2>5️⃣ TODOS los clientes (Tabla: <code>clientes</code>):</h2>";
+        $stmt = $conexion->query("SELECT * FROM clientes ORDER BY id ASC");
         $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if (count($clientes) > 0) {
             echo "<p><strong>Total de clientes:</strong> " . count($clientes) . "</p>";
-            echo "<table border='1' cellpadding='5' style='border-collapse: collapse; width: 100%;'>";
+
+            // Obtener columnas dinámicamente
+            $columnas = array_keys($clientes[0]);
+
+            echo "<table border='1' cellpadding='5' style='border-collapse: collapse; width: 100%; font-size: 12px;'>";
             echo "<tr style='background: #f0f0f0;'>";
-            echo "<th>ID</th><th>Nombre</th><th>Email</th><th>Estado Bloqueo</th><th>Estado Cliente</th>";
+            foreach ($columnas as $col) {
+                echo "<th>$col</th>";
+            }
             echo "</tr>";
+
             foreach ($clientes as $cliente) {
-                $colorBloqueo = $cliente['estado_bloqueo'] == 1 ? '#ffcccc' : '#ccffcc';
-                $colorEstado = $cliente['estado'] == 1 ? '' : 'opacity: 0.5; text-decoration: line-through;';
-                echo "<tr style='background: $colorBloqueo; $colorEstado'>";
-                echo "<td><strong>{$cliente['id']}</strong></td>";
-                echo "<td>{$cliente['nombre']}</td>";
-                echo "<td>{$cliente['email']}</td>";
-                echo "<td>" . ($cliente['estado_bloqueo'] == 1 ? '🔴 BLOQUEADO' : '✅ Desbloqueado') . "</td>";
-                echo "<td>" . ($cliente['estado'] == 1 ? '✅ Activo' : '❌ Desactivado') . "</td>";
+                // Color según estado_bloqueo si existe
+                $colorBloqueo = isset($cliente['estado_bloqueo']) && $cliente['estado_bloqueo'] == 1 ? '#ffcccc' : '#ccffcc';
+                echo "<tr style='background: $colorBloqueo;'>";
+                foreach ($columnas as $col) {
+                    $valor = $cliente[$col];
+                    // Formatear valores especiales
+                    if ($col == 'estado_bloqueo') {
+                        $valor = $valor == 1 ? '🔴 BLOQ' : '✅ OK';
+                    }
+                    echo "<td>$valor</td>";
+                }
                 echo "</tr>";
             }
             echo "</table>";
-            echo "<p><em>Nota: Filas tachadas = clientes desactivados</em></p>";
+            echo "<p><em>Nota: Fondo rojo = bloqueado, verde = desbloqueado</em></p>";
         } else {
             echo "⚠️ No hay clientes registrados";
         }
 
-        // 5. Verificar cliente específico
-        echo "<h2>5️⃣ Cliente configurado en .env (Tabla: <code>clientes</code>):</h2>";
+        // 6. Verificar cliente específico
+        echo "<h2>6️⃣ Cliente configurado en .env (Tabla: <code>clientes</code>):</h2>";
         $idCliente = intval(getenv('MOON_CLIENTE_ID') ?: 7);
         echo "<p><strong>ID del cliente:</strong> $idCliente</p>";
 
         $clienteMoon = ControladorSistemaCobro::ctrMostrarClientesCobro($idCliente);
         if ($clienteMoon) {
             echo "<pre>";
-            echo "ID: {$clienteMoon['id']}\n";
-            echo "Nombre: {$clienteMoon['nombre']}\n";
-            echo "Email: {$clienteMoon['email']}\n";
-            echo "Estado: " . ($clienteMoon['estado'] == 1 ? '✅ Activo' : '❌ Desactivado') . "\n";
-            echo "Estado Bloqueo: " . ($clienteMoon['estado_bloqueo'] == 1 ? '🔴 BLOQUEADO' : '✅ Desbloqueado') . "\n";
+            print_r($clienteMoon);
             echo "</pre>";
         } else {
             echo "❌ No se encontró el cliente con ID $idCliente";
         }
 
-        // 6. Verificar cuenta corriente
-        echo "<h2>6️⃣ Cuenta Corriente (Tabla: <code>clientes_cuenta_corriente</code>):</h2>";
+        // 7. Verificar cuenta corriente
+        echo "<h2>7️⃣ Cuenta Corriente (Tabla: <code>clientes_cuenta_corriente</code>):</h2>";
         $ctaCte = ControladorSistemaCobro::ctrMostrarSaldoCuentaCorriente($idCliente);
         if ($ctaCte) {
             echo "<pre>";
@@ -115,8 +137,8 @@ try {
             echo "⚠️ No se encontró cuenta corriente para este cliente";
         }
 
-        // 7. Verificar tablas MercadoPago
-        echo "<h2>7️⃣ Tablas de MercadoPago:</h2>";
+        // 8. Verificar tablas MercadoPago
+        echo "<h2>8️⃣ Tablas de MercadoPago:</h2>";
 
         // Intentos
         $stmt = $conexion->query("SELECT COUNT(*) as total FROM mercadopago_intentos");
