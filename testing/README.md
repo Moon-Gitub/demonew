@@ -6,17 +6,28 @@ Esta carpeta contiene herramientas para probar el sistema de cobro en diferentes
 
 ```
 testing/
-├── index.html                  # Menú principal de testing (COMIENZA AQUÍ)
-├── simulador-base.php          # Motor de simulación
-├── test-dia-3.php             # Test: Días 1-4 (Sin recargo)
-├── test-dia-7.php             # Test: Días 5-9 (Período de gracia)
-├── test-dia-12.php            # Test: Días 10-14 (10% recargo)
-├── test-dia-17.php            # Test: Días 15-19 (15% recargo)
-├── test-dia-23.php            # Test: Días 20-24 (20% recargo)
-├── test-dia-26.php            # Test: Días 25-26 (30% recargo)
-├── test-dia-28.php            # Test: Día 27+ (30% recargo + BLOQUEO)
-├── test-dia-custom.php        # Test personalizado (cualquier día)
-└── README.md                   # Este archivo
+├── index.html                       # Menú principal de testing (COMIENZA AQUÍ)
+├── simulador-base.php               # Motor de simulación
+│
+├── 🔧 Tests de Configuración:
+├── test-cliente-id.php              # Verificar cliente ID desde .env
+├── test-env.php                     # Verificar variables de entorno
+├── test-bd-cobros.php               # Verificar conexión BD Moon
+├── test-cobro-debug.php             # Debug completo sistema cobro
+├── test-movimientos-cta-cte.php     # Ver movimientos cuenta corriente
+├── test-url-respuesta.php           # Verificar URL respuesta MP
+│
+├── 📅 Tests de Simulación por Día:
+├── test-dia-3.php                   # Test: Días 1-4 (Sin recargo)
+├── test-dia-7.php                   # Test: Días 5-9 (Período de gracia)
+├── test-dia-12.php                  # Test: Días 10-14 (10% recargo)
+├── test-dia-17.php                  # Test: Días 15-19 (15% recargo)
+├── test-dia-23.php                  # Test: Días 20-24 (20% recargo)
+├── test-dia-26.php                  # Test: Días 25-26 (30% recargo)
+├── test-dia-28.php                  # Test: Día 27+ (30% recargo + BLOQUEO)
+├── test-dia-custom.php              # Test personalizado (cualquier día)
+│
+└── README.md                        # Este archivo
 ```
 
 ## 🚀 Cómo usar
@@ -28,9 +39,21 @@ testing/
    http://tudominio.com/testing/index.html
    ```
 
-2. Haz clic en cualquiera de los escenarios predefinidos
+2. Verás dos secciones principales:
+   - **🔧 Tests de Configuración y Verificación**: Para verificar que todo está configurado correctamente
+   - **📅 Escenarios de Simulación por Día**: Para probar el comportamiento según el día del mes
 
-3. También puedes usar el "Simulador Personalizado" para probar cualquier día específico
+3. Comienza por los **tests de configuración** para asegurarte de que todo funciona:
+   - **Verificación Cliente ID**: Confirma que el sistema usa el ID correcto del cliente
+   - **Variables de Entorno**: Verifica credenciales de BD y MercadoPago
+   - **Conexión BD Cobros**: Prueba la conexión a la base de datos Moon
+   - **Debug Sistema Cobro**: Información detallada para debugging
+   - **Movimientos Cuenta Corriente**: Ver historial de pagos y cargos
+   - **URL Respuesta MercadoPago**: Verifica URLs de redirección
+
+4. Luego prueba los **escenarios por día del mes** para ver cómo se comporta el sistema
+
+5. También puedes usar el "Simulador Personalizado" para probar cualquier día específico
 
 ### Opción 2: Acceso directo a los tests
 
@@ -57,7 +80,70 @@ Puedes acceder directamente a cada archivo PHP:
 | 25-26 | 30% | Puede cerrar | Mora Máxima |
 | 27+ | 30% | **NO puede cerrar** | **BLOQUEADO** |
 
-## 🎯 Qué prueba cada escenario
+## 🔧 Tests de Configuración y Verificación
+
+### test-cliente-id.php
+Verifica que el sistema esté tomando correctamente el valor de `MOON_CLIENTE_ID` desde el archivo `.env`
+
+**Qué verifica:**
+- ✅ Valor de MOON_CLIENTE_ID en .env
+- ✅ Valor que realmente usará el sistema
+- ✅ Existencia del archivo .env
+- ✅ Carga correcta de Dotenv
+
+**Cuándo usarlo:**
+- Cuando cambies el ID del cliente en el .env
+- Si el sistema muestra datos de otro cliente
+- Para confirmar la configuración inicial
+
+### test-env.php
+Muestra todas las variables de entorno configuradas (credenciales de BD, MercadoPago, etc.)
+
+**Qué muestra:**
+- 🔐 Credenciales de base de datos local
+- 🔐 Credenciales de base de datos Moon
+- 🔐 Credenciales de MercadoPago
+- 🔐 ID del cliente
+- 🔐 Variables de aplicación
+
+### test-bd-cobros.php
+Verifica la conexión a la base de datos Moon y muestra datos del cliente
+
+**Qué verifica:**
+- 💾 Conexión exitosa a BD Moon
+- 💾 Datos del cliente configurado
+- 💾 Saldo de cuenta corriente
+- 💾 Último movimiento registrado
+
+### test-cobro-debug.php
+Muestra información detallada de debugging del sistema de cobro completo
+
+**Qué muestra:**
+- 🐛 Configuración completa del sistema
+- 🐛 Cálculo de recargos según día actual
+- 🐛 Estado del cliente
+- 🐛 Información para troubleshooting
+
+### test-movimientos-cta-cte.php
+Muestra el historial completo de movimientos de la cuenta corriente del cliente
+
+**Qué muestra:**
+- 💰 Todos los cargos registrados
+- 💰 Todos los pagos registrados
+- 💰 Fechas y descripciones
+- 💰 Saldo actual
+
+### test-url-respuesta.php
+Prueba la construcción correcta de la URL de respuesta para MercadoPago
+
+**Qué verifica:**
+- 🔗 URL de respuesta correcta (HTTP/HTTPS)
+- 🔗 Dominio configurado
+- 🔗 Ruta de procesamiento
+
+---
+
+## 🎯 Qué prueba cada escenario de simulación
 
 ### Sin recargo (Días 1-4)
 - ✅ Cliente puede pagar sin recargos

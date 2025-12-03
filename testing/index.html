@@ -141,7 +141,66 @@
             <strong>⚠️ Instrucciones:</strong> Haz clic en cualquiera de los escenarios a continuación para simular ese día específico del mes y ver cómo se comporta el sistema de cobro, incluyendo recargos y bloqueos.
         </div>
 
-        <h2 style="color: #333; margin-top: 30px; margin-bottom: 20px;">📅 Escenarios Predefinidos</h2>
+        <!-- NUEVA SECCIÓN: Tests de Configuración y Verificación -->
+        <h2 style="color: #333; margin-top: 30px; margin-bottom: 20px;">🔧 Tests de Configuración y Verificación</h2>
+        
+        <div class="scenario-grid">
+            <!-- Test Cliente ID -->
+            <a href="test-cliente-id.php" class="scenario-card green" style="border-left: 5px solid #667eea;">
+                <div class="icon">🆔</div>
+                <div class="scenario-title">Verificación Cliente ID</div>
+                <div class="scenario-description">
+                    Verifica que el sistema esté tomando correctamente el valor de MOON_CLIENTE_ID desde el archivo .env
+                </div>
+            </a>
+
+            <!-- Test Env -->
+            <a href="test-env.php" class="scenario-card green" style="border-left: 5px solid #28a745;">
+                <div class="icon">🔐</div>
+                <div class="scenario-title">Variables de Entorno (.env)</div>
+                <div class="scenario-description">
+                    Muestra todas las variables de entorno configuradas (BD, MercadoPago, etc.)
+                </div>
+            </a>
+
+            <!-- Test BD Cobros -->
+            <a href="test-bd-cobros.php" class="scenario-card green" style="border-left: 5px solid #17a2b8;">
+                <div class="icon">💾</div>
+                <div class="scenario-title">Conexión BD Cobros</div>
+                <div class="scenario-description">
+                    Verifica la conexión a la base de datos Moon y muestra datos del cliente
+                </div>
+            </a>
+
+            <!-- Test Cobro Debug -->
+            <a href="test-cobro-debug.php" class="scenario-card green" style="border-left: 5px solid #ffc107;">
+                <div class="icon">🐛</div>
+                <div class="scenario-title">Debug Sistema Cobro</div>
+                <div class="scenario-description">
+                    Muestra información detallada de debugging del sistema de cobro completo
+                </div>
+            </a>
+
+            <!-- Test Movimientos Cta Cte -->
+            <a href="test-movimientos-cta-cte.php" class="scenario-card green" style="border-left: 5px solid #fd7e14;">
+                <div class="icon">💰</div>
+                <div class="scenario-title">Movimientos Cuenta Corriente</div>
+                <div class="scenario-description">
+                    Muestra el historial de movimientos de la cuenta corriente del cliente
+                </div>
+            </a>
+
+            <!-- Test URL Respuesta -->
+            <a href="test-url-respuesta.php" class="scenario-card green" style="border-left: 5px solid #dc3545;">
+                <div class="icon">🔗</div>
+                <div class="scenario-title">URL Respuesta MercadoPago</div>
+                <div class="scenario-description">
+                    Prueba la construcción correcta de la URL de respuesta para MercadoPago
+                </div>
+            </a>
+        </div>
+
+        <h2 style="color: #333; margin-top: 40px; margin-bottom: 20px;">📅 Escenarios de Simulación por Día del Mes</h2>
 
         <div class="scenario-grid">
             <!-- Escenario 1: Días 1-4 -->
