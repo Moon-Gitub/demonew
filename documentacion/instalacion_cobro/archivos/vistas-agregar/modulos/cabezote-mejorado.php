@@ -760,8 +760,45 @@ MODAL COBRO MEJORADO
                 </div>
 
                 <?php if($muestroModal && isset($preference)) { ?>
-                <!-- Botón de Pago Grande -->
-                <div class="checkout-btn" style="margin-bottom: 15px;"></div>
+                <!-- Botones de Pago -->
+                <div style="margin-bottom: 20px;">
+                    <!-- Botón Mercado Pago -->
+                    <div class="checkout-btn" style="margin-bottom: 15px;"></div>
+                    
+                    <!-- Divisor -->
+                    <div style="text-align: center; margin: 20px 0; color: #6c757d; font-size: 14px; position: relative;">
+                        <span style="background: #f5f7fa; padding: 0 15px; position: relative; z-index: 1;">O ESCANEA EL QR</span>
+                        <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #e0e0e0; z-index: 0;"></div>
+                    </div>
+                    
+                    <!-- Card QR -->
+                    <div style="background: white; border-radius: 10px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center;">
+                        <div style="font-size: 16px; font-weight: 600; color: #2c3e50; margin-bottom: 15px;">
+                            <i class="fa fa-qrcode" style="color: #667eea; margin-right: 8px;"></i>
+                            Pagar con código QR
+                        </div>
+                        <div style="font-size: 14px; color: #6c757d; margin-bottom: 20px;">
+                            Escanea con tu celular para pagar
+                        </div>
+                        
+                        <!-- QR Code generado con Google Charts API -->
+                        <div id="qr-container" style="display: inline-block; padding: 15px; background: white; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            <?php 
+                            $qrData = urlencode($preference->init_point);
+                            $qrSize = '250x250';
+                            $qrUrl = "https://chart.googleapis.com/chart?chs={$qrSize}&cht=qr&chl={$qrData}&choe=UTF-8";
+                            ?>
+                            <img src="<?php echo $qrUrl; ?>" 
+                                 alt="Código QR para pagar" 
+                                 style="width: 250px; height: 250px; display: block;"
+                                 onerror="this.parentElement.innerHTML='<div style=\'padding:50px;color:#dc3545;\'>Error generando QR</div>'">
+                        </div>
+                        
+                        <div style="margin-top: 15px; font-size: 13px; color: #6c757d;">
+                            <i class="fa fa-info-circle"></i> Abre la cámara de tu celular y apunta al código
+                        </div>
+                    </div>
+                </div>
 
                 <script src="https://sdk.mercadopago.com/js/v2"></script>
                 <script type="text/javascript">
