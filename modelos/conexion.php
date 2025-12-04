@@ -4,9 +4,9 @@ class Conexion{
 
 	// Valores por defecto (para compatibilidad si no existe .env)
 	static public $hostDB = 'localhost';
-	static public $nameDB = 'demo_db';
-	static public $userDB = 'demo_user';
-	static public $passDB = 'aK4UWccl2ceg';
+	static public $nameDB = 'newmoon_newmoon_db';
+	static public $userDB = 'newmoon_newmoon_user';
+	static public $passDB = '61t;t62h5P$}.sXT';
 	static public $charset = 'UTF8MB4';
 
 	static public function getDatosConexion(){
