@@ -53,20 +53,35 @@ class ModeloSistemaCobro{
 	=============================================*/
 	static public function mdlActualizarClientesCobro($idCliente, $estado){
 
-		if($idCliente != null) {
-			$stmt = Conexion::conectarMoon()->prepare("UPDATE clientes SET estado_bloqueo = :estado WHERE id = :id");
-			$stmt -> bindParam(":estado", $estado, PDO::PARAM_INT);
-			$stmt -> bindParam(":id", $idCliente, PDO::PARAM_INT);
+		if($idCliente == null) {
+			error_log("ERROR: idCliente es null en mdlActualizarClientesCobro");
+			return false;
 		}
 
-		if($stmt -> execute()) {
-			return $estado;
-		} else {
-			return errorInfo();
+		try {
+			$conexion = Conexion::conectarMoon();
+			
+			if (!$conexion) {
+				error_log("ERROR: No se pudo conectar a BD Moon en mdlActualizarClientesCobro");
+				return false;
+			}
+			
+			$stmt = $conexion->prepare("UPDATE clientes SET estado_bloqueo = :estado WHERE id = :id");
+			$stmt->bindParam(":estado", $estado, PDO::PARAM_INT);
+			$stmt->bindParam(":id", $idCliente, PDO::PARAM_INT);
+
+			if($stmt->execute()) {
+				return $estado;
+			} else {
+				return false;
+			}
+
+		} catch (PDOException $e) {
+			error_log("ERROR en mdlActualizarClientesCobro: " . $e->getMessage());
+			return false;
 		}
 
-		$stmt -> close();
-
+		$stmt->close();
 		$stmt = null;
 
 	}
