@@ -125,7 +125,14 @@ class ModeloMercadoPago {
 	static public function mdlRegistrarWebhook($datos) {
 
 		try {
-			$stmt = Conexion::conectarMoon()->prepare("INSERT INTO mercadopago_webhooks
+			$conexion = Conexion::conectarMoon();
+			
+			if (!$conexion) {
+				error_log("Error: No se pudo conectar a BD Moon en mdlRegistrarWebhook");
+				return false;
+			}
+			
+			$stmt = $conexion->prepare("INSERT INTO mercadopago_webhooks
 				(topic, resource_id, datos_json, fecha_recibido, procesado)
 				VALUES (:topic, :resource_id, :datos_json, :fecha_recibido, :procesado)");
 
@@ -136,7 +143,7 @@ class ModeloMercadoPago {
 			$stmt->bindParam(":procesado", $datos["procesado"], PDO::PARAM_INT);
 
 			if ($stmt->execute()) {
-				return $stmt->lastInsertId();
+				return $conexion->lastInsertId(); // ✅ CORRECTO: usar $conexion, no $stmt
 			} else {
 				return false;
 			}
