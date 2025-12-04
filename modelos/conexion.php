@@ -1,13 +1,5 @@
 <?php
 
-// CARGAR .ENV SI NO ESTÁ CARGADO
-if (!isset($_ENV['DB_HOST']) && !isset($_SERVER['DB_HOST'])) {
-	if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
-		$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
-		$dotenv->load();
-	}
-}
-
 class Conexion{
 
 	// Valores por defecto (solo si .env falla)
@@ -16,6 +8,9 @@ class Conexion{
 	static public $userDB = 'newmoon_newmoon_user';
 	static public $passDB = '61t;t62h5P$}.sXT';
 	static public $charset = 'UTF8MB4';
+	
+	// Variable para controlar si ya se intentó cargar el .env
+	static private $envCargado = false;
 
 	static public function getDatosConexion(){
 
@@ -32,6 +27,9 @@ class Conexion{
 	 * CONEXIÓN A BASE DE DATOS LOCAL DEL SISTEMA POS
 	 */
 	static public function conectar(){
+
+		// Intentar cargar .env si no está cargado
+		self::cargarEnvSiEsNecesario();
 
 		// Leer de .env (en $_ENV o $_SERVER), sino valores por defecto
 		$host = isset($_ENV['DB_HOST']) ? $_ENV['DB_HOST'] : (isset($_SERVER['DB_HOST']) ? $_SERVER['DB_HOST'] : self::$hostDB);
@@ -56,6 +54,9 @@ class Conexion{
 	 */
 	static public function conectarMoon(){
 
+		// Intentar cargar .env si no está cargado
+		self::cargarEnvSiEsNecesario();
+
 		// Leer de .env (en $_ENV o $_SERVER), sino valores fijos
 		$host = isset($_ENV['MOON_DB_HOST']) ? $_ENV['MOON_DB_HOST'] : (isset($_SERVER['MOON_DB_HOST']) ? $_SERVER['MOON_DB_HOST'] : '107.161.23.11');
 		$db = isset($_ENV['MOON_DB_NAME']) ? $_ENV['MOON_DB_NAME'] : (isset($_SERVER['MOON_DB_NAME']) ? $_SERVER['MOON_DB_NAME'] : 'cobrosposmooncom_db');
@@ -72,6 +73,36 @@ class Conexion{
 			return null;
 		}
 
+	}
+
+	/**
+	 * CARGAR .ENV SI ES NECESARIO
+	 * Se ejecuta solo una vez
+	 */
+	static private function cargarEnvSiEsNecesario(){
+
+		// Si ya se intentó cargar, no hacerlo de nuevo
+		if (self::$envCargado) {
+			return;
+		}
+
+		// Marcar como cargado
+		self::$envCargado = true;
+
+		// Si las variables ya están, no hacer nada
+		if (isset($_ENV['DB_HOST']) || isset($_SERVER['DB_HOST'])) {
+			return;
+		}
+
+		// Intentar cargar el .env
+		if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
+			try {
+				$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+				$dotenv->load();
+			} catch (Exception $e) {
+				error_log("Error cargando .env en conexion.php: " . $e->getMessage());
+			}
+		}
 	}
 
 }
