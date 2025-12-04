@@ -31,19 +31,30 @@ instalacion_cobro/
 
 ## 🚀 Métodos de Instalación
 
-### Opción 1: Instalación Automática (Recomendado)
+### Opción 1: Instalación en Hosting Reseller (Múltiples Cuentas)
+
+Si tienes un hosting reseller con múltiples clientes, usa esta guía:
+
+Ver [INSTALACION-RESELLER.md](INSTALACION-RESELLER.md) para instalación masiva.
+
+**Incluye:**
+- 📊 Script de instalación masiva
+- 🗺️ Generador de mapeo de clientes
+- 📝 Guía paso a paso para múltiples cuentas
+
+### Opción 2: Instalación Manual en Cuenta Individual
+
+Para instalar en una sola cuenta:
+
+Ver [INSTALACION_MANUAL.md](INSTALACION_MANUAL.md) para instrucciones detalladas paso a paso.
+
+### Opción 3: Instalación Automática (En desarrollo)
 
 1. Sube la carpeta `instalacion_cobro/` al servidor
 2. Accede a: `http://tudominio.com/instalacion_cobro/instalador/`
 3. Sigue el wizard de instalación
 
 Ver [INSTALACION_AUTOMATICA.md](INSTALACION_AUTOMATICA.md) para detalles.
-
-### Opción 2: Instalación Manual
-
-Si prefieres hacerlo manualmente o el instalador automático falla:
-
-Ver [INSTALACION_MANUAL.md](INSTALACION_MANUAL.md) para instrucciones detalladas paso a paso.
 
 ## ⚙️ Requisitos Previos
 
