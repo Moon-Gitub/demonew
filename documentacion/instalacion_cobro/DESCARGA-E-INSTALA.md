@@ -18,7 +18,20 @@ Los archivos en `documentacion/instalacion_cobro/archivos/` son:
 
 ## 📥 PASO 1: Descargar de GitHub (2 min)
 
-### **Opción A - Descargar ZIP (Más Fácil):**
+### **Opción A - Usar ZIPs Pre-comprimidos (MÁS RÁPIDO) ⭐**
+
+1. Ir a: https://github.com/Moon-Gitub/demonew
+2. Navegar a: `documentacion/instalacion_cobro/zips/`
+3. Descargar los ZIPs que necesites:
+   - **`1-archivos-raiz.zip`** (obligatorio)
+   - **`2-controladores.zip`** (obligatorio)
+   - **`3-modelos.zip`** (obligatorio)
+   - **`4-vistas.zip`** (obligatorio)
+   - O **`5-sistema-completo.zip`** (todo en uno)
+
+**Ventaja:** Subes 1 archivo y extraes en cPanel (muy rápido)
+
+### **Opción B - Descargar Todo el Repositorio:**
 
 1. Ir a: https://github.com/Moon-Gitub/demonew
 2. Clic en botón verde **"Code"**
@@ -27,7 +40,7 @@ Los archivos en `documentacion/instalacion_cobro/archivos/` son:
 5. Extraer el ZIP
 6. Ir a la carpeta: `demonew-main/documentacion/instalacion_cobro/`
 
-### **Opción B - Clonar con Git:**
+### **Opción C - Clonar con Git:**
 
 ```bash
 git clone https://github.com/Moon-Gitub/demonew.git
@@ -80,50 +93,75 @@ archivos/
 
 ## 🖱️ PASO 4: Copiar con cPanel (10 min)
 
-### 4.1 Acceder a cPanel
+### **Método A: Usar ZIPs (MÁS RÁPIDO) ⭐ RECOMENDADO**
 
+#### 4.1 Acceder a cPanel
 1. WHM → List Accounts → Buscar cuenta
 2. Clic en **cP** (ícono cPanel)
 3. Ir a **Files → File Manager**
 4. Navegar a **public_html**
 
-### 4.2 Subir Archivos en Raíz
-
+#### 4.2 Archivos Raíz (desde ZIP)
 1. Estar en `public_html/`
 2. Clic en **"Upload"**
-3. Subir desde tu PC:
+3. Subir **`1-archivos-raiz.zip`**
+4. Clic derecho en el ZIP → **"Extract"**
+5. Confirmar
+6. Eliminar el ZIP
+7. ✅ Verás: generar-qr.php, webhook-mercadopago.php, helpers.php
+
+#### 4.3 Controladores (desde ZIP)
+1. Navegar a `public_html/controladores/`
+2. Upload → **`2-controladores.zip`**
+3. Extract → Confirmar
+4. Eliminar ZIP
+5. ✅ Verás: 2 archivos .controlador.php
+
+#### 4.4 Modelos (desde ZIP)
+1. Navegar a `public_html/modelos/`
+2. Upload → **`3-modelos.zip`**
+3. Extract → Confirmar
+4. Eliminar ZIP
+5. ✅ Verás: 3 archivos .modelo.php y conexion.php
+
+#### 4.5 Vistas (desde ZIP)
+1. Navegar a `public_html/vistas/modulos/`
+2. Upload → **`4-vistas.zip`**
+3. Extract → Confirmar
+4. Eliminar ZIP
+5. ✅ Verás: cabezote-mejorado.php, procesar-pago.php
+
+---
+
+### **Método B: Copiar Archivos Individuales**
+
+Si prefieres subir archivo por archivo (sin ZIPs):
+
+#### 4.1 Archivos en Raíz
+1. Estar en `public_html/`
+2. Upload:
    - `archivos/generar-qr.php`
    - `archivos/webhook-mercadopago.php`
    - `archivos/helpers.php`
-4. Cerrar uploader
 
-### 4.3 Subir Controladores
-
-1. Navegar a `public_html/controladores/`
-2. Clic en **"Upload"**
-3. Subir desde tu PC:
+#### 4.2 Controladores
+1. En `public_html/controladores/`
+2. Upload:
    - `archivos/controladores-agregar/sistema_cobro.controlador.php`
    - `archivos/controladores-agregar/mercadopago.controlador.php`
-4. Cerrar uploader
 
-### 4.4 Subir Modelos
-
-1. Navegar a `public_html/modelos/`
-2. Clic en **"Upload"**
-3. Subir desde tu PC:
+#### 4.3 Modelos
+1. En `public_html/modelos/`
+2. Upload:
    - `archivos/modelos-agregar/sistema_cobro.modelo.php`
    - `archivos/modelos-agregar/mercadopago.modelo.php`
-   - `archivos/modelos-agregar/conexion.php` (sobrescribe si existe)
-4. Cerrar uploader
+   - `archivos/modelos-agregar/conexion.php`
 
-### 4.5 Subir Vistas
-
-1. Navegar a `public_html/vistas/modulos/`
-2. Clic en **"Upload"**
-3. Subir desde tu PC:
+#### 4.4 Vistas
+1. En `public_html/vistas/modulos/`
+2. Upload:
    - `archivos/vistas-agregar/modulos/cabezote-mejorado.php`
    - `archivos/vistas-agregar/modulos/procesar-pago.php`
-4. Cerrar uploader
 
 ---
 

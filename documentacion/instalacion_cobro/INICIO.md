@@ -30,9 +30,21 @@
 
 ## 📁 Archivos para Copiar
 
-Todos los archivos listos para instalar están en:
+### **Opción 1: ZIPs Pre-comprimidos (MÁS RÁPIDO) ⭐**
 
-**[archivos/](archivos/)**
+**[zips/](zips/)** - Archivos organizados en ZIPs
+
+- `1-archivos-raiz.zip` (5 KB)
+- `2-controladores.zip` (3 KB)
+- `3-modelos.zip` (4 KB)
+- `4-vistas.zip` (12 KB)
+- `5-sistema-completo.zip` (24 KB) - Todo en uno
+
+**Ventaja:** Subir 1 ZIP y extraer en cPanel (3x más rápido)
+
+### **Opción 2: Archivos Individuales**
+
+**[archivos/](archivos/)** - Archivos sueltos para copiar uno por uno
 
 ### Estructura:
 ```
