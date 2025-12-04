@@ -45,12 +45,19 @@
 	$clienteMoon = ControladorSistemaCobro::ctrMostrarClientesCobro($idCliente);
 	$ctaCteCliente = ControladorSistemaCobro::ctrMostrarSaldoCuentaCorriente($idCliente);
 	$ctaCteMov = ControladorSistemaCobro::ctrMostrarMovimientoCuentaCorriente($idCliente);
-	$abonoMensual = $clienteMoon["mensual"];
+	
+	// DEBUG: Verificar si las consultas funcionaron
+	if (!$clienteMoon || !$ctaCteCliente) {
+		error_log("COBRO DEBUG: Cliente ID $idCliente - clienteMoon: " . ($clienteMoon ? 'OK' : 'FALSE') . " - ctaCteCliente: " . ($ctaCteCliente ? 'OK' : 'FALSE'));
+	}
+	
+	$abonoMensual = $clienteMoon ? $clienteMoon["mensual"] : 0;
 	
 	$muestroModal = false;
 	$fijoModal = false;
 	
-	if(!isset($_GET["preference_id"])){
+	// Solo procesar sistema de cobro si las consultas funcionaron
+	if($clienteMoon && $ctaCteCliente && !isset($_GET["preference_id"])){
 	
 		require_once 'extensiones/vendor/autoload.php';
 	
@@ -68,11 +75,17 @@
 	
 		$diasCorte = 26 - $diaActual;
 	
-		if($ctaCteCliente["saldo"] <= 0) { //saldo 0, está al día, mayor a 0 tiene $ a favor
+		// Verificar saldo de cuenta corriente
+		$saldoActual = floatval($ctaCteCliente["saldo"]);
+		
+		// Log para debug
+		error_log("COBRO DEBUG: Cliente ID $idCliente - Saldo: $saldoActual");
+		
+		if($saldoActual <= 0) { //saldo 0 o negativo, está al día
 				
 				ControladorSistemaCobro::ctrActualizarClientesCobro($idCliente, 0); //POR SI ESTABA BLOQUEADO LO DESBLOQUEO
 	
-		} else {
+		} else { // saldo mayor a 0 = DEBE DINERO
 	
 			//DEL 1 AL 5 	-> OK - no muestro nada
 			//DEL 6 AL 9 	-> OK - solo aviso del cobro
