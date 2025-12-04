@@ -42,3 +42,4 @@ MP_ACCESS_TOKEN=APP_USR-6921807486493458-102300-5f1cec174eb674c42c9782860caf640c
 # - Permisos recomendados: 600 (solo lectura/escritura para owner)
 # ==============================================
 
+

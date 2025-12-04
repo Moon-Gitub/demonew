@@ -283,3 +283,4 @@ Si necesitas instalar en 10+ cuentas, considera:
 
 **Siguiente:** Ver `script-instalacion-masiva.sh` para instalación automática.
 
+

@@ -192,3 +192,4 @@ echo "3. Revisar los logs de error de cada cuenta"
 echo ""
 msg_success "Instalación masiva completada"
 
+
