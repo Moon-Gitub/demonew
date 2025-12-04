@@ -95,46 +95,31 @@ try {
     $ctaCteCliente = ControladorSistemaCobro::ctrMostrarSaldoCuentaCorriente($idCliente);
     $ctaCteMov = ControladorSistemaCobro::ctrMostrarMovimientoCuentaCorriente($idCliente);
 
-    // Debug detallado
-    error_log("=== DEBUG CLIENTE ID: $idCliente ===");
-    error_log("clienteMoon es array? " . (is_array($clienteMoon) ? 'SI' : 'NO'));
-    error_log("clienteMoon: " . print_r($clienteMoon, true));
-    error_log("Campo 'nombre' existe? " . (isset($clienteMoon['nombre']) ? 'SI - Valor: ' . $clienteMoon['nombre'] : 'NO'));
-    error_log("===================================");
-
     // Verificar que las consultas funcionaron (usar !== false porque ID puede ser 0)
     if ($clienteMoon === false || !is_array($clienteMoon) || $ctaCteCliente === false) {
-        error_log("ERROR COBRO: Cliente ID $idCliente - Consultas fallaron o retornaron datos inválidos");
-        error_log("clienteMoon: " . var_export($clienteMoon, true));
-        error_log("ctaCteCliente: " . var_export($ctaCteCliente, true));
+        error_log("ERROR COBRO: Cliente ID $idCliente - Consultas fallaron");
         throw new Exception("No se pudieron obtener datos del cliente ID $idCliente");
     }
 
-    // Obtener el nombre del cliente - verificar diferentes campos posibles
-    $nombreCliente = 'Cliente (por defecto)';
-    
-    if (isset($clienteMoon['nombre'])) {
-        if (!empty(trim($clienteMoon['nombre']))) {
-            $nombreCliente = trim($clienteMoon['nombre']);
-            error_log("Usando campo 'nombre': " . $nombreCliente);
-        } else {
-            error_log("Campo 'nombre' existe pero está vacío");
+    // Obtener el nombre del cliente directamente de la BD Moon
+    $nombreCliente = 'Cliente';
+    try {
+        $conexionMoon = Conexion::conectarMoon();
+        $stmtNombre = $conexionMoon->prepare("SELECT nombre, email, dominio FROM clientes WHERE id = :id");
+        $stmtNombre->bindParam(":id", $idCliente, PDO::PARAM_INT);
+        $stmtNombre->execute();
+        $datosCliente = $stmtNombre->fetch(PDO::FETCH_ASSOC);
+        
+        if ($datosCliente && isset($datosCliente['nombre']) && !empty(trim($datosCliente['nombre']))) {
+            $nombreCliente = trim($datosCliente['nombre']);
+        } elseif ($datosCliente && isset($datosCliente['email']) && !empty(trim($datosCliente['email']))) {
+            $nombreCliente = trim($datosCliente['email']);
+        } elseif ($datosCliente && isset($datosCliente['dominio']) && !empty(trim($datosCliente['dominio']))) {
+            $nombreCliente = trim($datosCliente['dominio']);
         }
-    } elseif (isset($clienteMoon['razon_social'])) {
-        if (!empty(trim($clienteMoon['razon_social']))) {
-            $nombreCliente = trim($clienteMoon['razon_social']);
-            error_log("Usando campo 'razon_social': " . $nombreCliente);
-        }
-    } elseif (isset($clienteMoon['dominio'])) {
-        if (!empty(trim($clienteMoon['dominio']))) {
-            $nombreCliente = trim($clienteMoon['dominio']);
-            error_log("Usando campo 'dominio': " . $nombreCliente);
-        }
-    } else {
-        error_log("ADVERTENCIA: Ningún campo de nombre encontrado, usando valor por defecto");
+    } catch (Exception $e) {
+        error_log("Error obteniendo nombre del cliente: " . $e->getMessage());
     }
-    
-    error_log("Nombre final del cliente: " . $nombreCliente);
 
     // Obtener el saldo pendiente actual
     $saldoPendiente = floatval($ctaCteCliente["saldo"]);
