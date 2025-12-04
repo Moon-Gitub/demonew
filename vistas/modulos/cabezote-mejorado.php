@@ -640,7 +640,12 @@ MODAL COBRO MEJORADO
                         <div>
                             <div style="font-size: 15px; font-weight: 700; color: #2c3e50; margin-bottom: 8px;">PAGA A TIEMPO</div>
                             <div style="font-size: 13px; color: #6c757d; line-height: 1.6;">
-                                Recuerda que los pagos realizados después del día 10 pueden generar recargos del 10% al 30%.
+                                <strong>Recargos por pagos fuera de término:</strong><br>
+                                • Del 1 al 10: Sin recargo<br>
+                                • Del 10 al 20: <strong>10% de recargo</strong><br>
+                                • Del 20 al 25: <strong>15% de recargo</strong><br>
+                                • Después del 25: <strong>30% de recargo</strong><br>
+                                • Después del 26: <strong>Suspensión del sistema</strong>
                             </div>
                         </div>
                     </div>
