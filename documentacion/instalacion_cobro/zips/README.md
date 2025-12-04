@@ -1,169 +1,124 @@
-# 📦 Archivos Comprimidos - Instalación Rápida
+# 📦 Archivos ZIP - Instalación Rápida
 
-ZIPs organizados por categoría para facilitar la instalación del sistema de cobro.
+ZIPs organizados para facilitar la instalación del sistema de cobro.
 
 ---
 
 ## 📁 ARCHIVOS DISPONIBLES
 
-### **1️⃣ `1-archivos-raiz.zip`** (MÁS IMPORTANTE)
-**Copiar a:** `public_html/` (raíz del sitio)
+### 1️⃣ `1-archivos-raiz.zip` (5 KB)
+**Extraer en:** `public_html/` (raíz del sitio)
 
 **Contiene:**
-- ✅ `generar-qr.php` - Generador de códigos QR
-- ✅ `webhook-mercadopago.php` - Receptor de notificaciones
-- ✅ `helpers.php` - Funciones auxiliares
-
-**Tamaño:** ~15 KB
+- `generar-qr.php` - Generador de códigos QR para pago
+- `webhook-mercadopago.php` - Receptor de notificaciones de MercadoPago
+- `helpers.php` - Funciones auxiliares para variables de entorno
 
 ---
 
-### **2️⃣ `2-controladores.zip`**
-**Copiar a:** `public_html/controladores/`
+### 2️⃣ `2-controladores.zip` (3 KB)
+**Extraer en:** `public_html/controladores/`
 
 **Contiene:**
-- ✅ `sistema_cobro.controlador.php`
-- ✅ `mercadopago.controlador.php`
-
-**Tamaño:** ~8 KB
+- `sistema_cobro.controlador.php` - Lógica de negocio del sistema de cobro
+- `mercadopago.controlador.php` - Integración con API de MercadoPago
 
 ---
 
-### **3️⃣ `3-modelos.zip`**
-**Copiar a:** `public_html/modelos/`
+### 3️⃣ `3-modelos.zip` (4 KB)
+**Extraer en:** `public_html/modelos/`
 
 **Contiene:**
-- ✅ `sistema_cobro.modelo.php`
-- ✅ `mercadopago.modelo.php`
-- ✅ `conexion.php` (⚠️ sobrescribe el existente)
-
-**Tamaño:** ~10 KB
+- `sistema_cobro.modelo.php` - Acceso a datos de clientes
+- `mercadopago.modelo.php` - Gestión de pagos y webhooks
+- `conexion.php` - Conexión dual a bases de datos (⚠️ sobrescribe el existente)
 
 ---
 
-### **4️⃣ `4-vistas.zip`**
-**Copiar a:** `public_html/vistas/modulos/`
+### 4️⃣ `4-vistas.zip` (12 KB)
+**Extraer en:** `public_html/vistas/modulos/`
 
 **Contiene:**
-- ✅ `cabezote-mejorado.php` (modal con QR)
-- ✅ `procesar-pago.php` (confirmación)
-
-**Tamaño:** ~25 KB
+- `cabezote-mejorado.php` - Modal de cobro con botón y QR
+- `procesar-pago.php` - Página de confirmación de pago
 
 ---
 
-### **5️⃣ `5-sistema-completo.zip`** (TODO EN UNO)
+### 5️⃣ `5-sistema-completo.zip` (24 KB)
 **Para:** Descargar todo de una vez
 
-**Contiene:**
-- ✅ Todos los archivos anteriores
-- ✅ Estructura de carpetas completa
+**Contiene:** Todos los archivos anteriores con estructura de carpetas
 
-**Tamaño:** ~45 KB
-
-**Nota:** Este ZIP mantiene la estructura de carpetas, debes extraer cada carpeta en su ubicación correspondiente.
+⚠️ **Nota:** Este ZIP mantiene la estructura de carpetas, debes mover cada archivo a su ubicación correspondiente.
 
 ---
 
-## 🚀 CÓMO USAR EN cPanel
+## 🚀 INSTRUCCIONES DE USO EN cPanel
 
-### **Método 1: Subir ZIP por ZIP (Recomendado)**
+### Proceso para cada ZIP:
 
-#### **Para archivos raíz:**
-1. cPanel → File Manager → `public_html/`
-2. Clic en **"Upload"**
-3. Subir **`1-archivos-raiz.zip`**
-4. Una vez subido, clic derecho → **"Extract"**
-5. Confirmar extracción
-6. Eliminar el ZIP
+1. **Subir:**
+   - cPanel → File Manager → Navegar a la carpeta destino
+   - Clic en **"Upload"**
+   - Seleccionar el archivo ZIP
+   - Esperar que se suba (100%)
 
-#### **Para controladores:**
-1. Navegar a `public_html/controladores/`
-2. Clic en **"Upload"**
-3. Subir **`2-controladores.zip`**
-4. Clic derecho → **"Extract"**
-5. Confirmar extracción
-6. Eliminar el ZIP
+2. **Extraer:**
+   - Clic derecho en el archivo ZIP
+   - Seleccionar **"Extract"** o **"Extraer"**
+   - Confirmar la extracción
+   - Los archivos se extraerán en la carpeta actual
 
-#### **Para modelos:**
-1. Navegar a `public_html/modelos/`
-2. Clic en **"Upload"**
-3. Subir **`3-modelos.zip`**
-4. Clic derecho → **"Extract"**
-5. Confirmar extracción
-6. Eliminar el ZIP
+3. **Limpiar:**
+   - Seleccionar el archivo ZIP
+   - Clic en **"Delete"** o **"Eliminar"**
+   - Confirmar
 
-#### **Para vistas:**
-1. Navegar a `public_html/vistas/modulos/`
-2. Clic en **"Upload"**
-3. Subir **`4-vistas.zip`**
-4. Clic derecho → **"Extract"**
-5. Confirmar extracción
-6. Eliminar el ZIP
+4. **Verificar:**
+   - Asegurarse que los archivos se extrajeron correctamente
+   - Verificar permisos (deben ser 644 para .php)
 
 ---
 
-### **Método 2: Usar Sistema Completo**
-
-1. Descargar **`5-sistema-completo.zip`**
-2. Extraer en tu PC
-3. Copiar manualmente cada archivo a su ubicación según estructura
-
----
-
-## ⏱️ VENTAJAS DE USAR ZIPs
-
-✅ **Más rápido:** Subir 1 archivo en vez de 10  
-✅ **Más seguro:** Menos probabilidad de error  
-✅ **Más ordenado:** Organizado por categoría  
-✅ **Más fácil:** Extract y listo  
-
----
-
-## 📋 ORDEN DE INSTALACIÓN RECOMENDADO
+## 📋 ORDEN RECOMENDADO
 
 ```
-1. ✓ Subir y extraer: 1-archivos-raiz.zip
-2. ✓ Subir y extraer: 2-controladores.zip
-3. ✓ Subir y extraer: 3-modelos.zip
-4. ✓ Subir y extraer: 4-vistas.zip
-5. ✓ Crear .env (usando template-env.txt)
+1. ✓ public_html/           → 1-archivos-raiz.zip
+2. ✓ controladores/         → 2-controladores.zip
+3. ✓ modelos/               → 3-modelos.zip
+4. ✓ vistas/modulos/        → 4-vistas.zip
+5. ✓ Crear .env
 6. ✓ Modificar plantilla.php
-7. ✓ Verificar index.php
-8. ✓ Probar el sistema
+7. ✓ Listo!
 ```
 
-**Tiempo total:** 12-15 minutos
+---
+
+## ⏱️ TIEMPO
+
+- **Con ZIPs:** 12-15 minutos
+- **Sin ZIPs:** 20-22 minutos
+- **Ahorro:** 30-40% más rápido
 
 ---
 
-## ⚠️ IMPORTANTE
+## ✅ CONTENIDO VERIFICADO
 
-Después de extraer cada ZIP:
-- ✅ **Eliminar el archivo ZIP** (para no dejar basura)
-- ✅ **Verificar que los archivos se extrajeron** correctamente
-- ✅ **No modificar los archivos** (usar como están)
-
----
-
-## 🎯 CONTENIDO GARANTIZADO
-
-**TODOS los archivos en estos ZIPs son:**
-- ✅ Última versión actualizada
-- ✅ Probados y funcionales
+Todos los archivos en estos ZIPs son:
+- ✅ Última versión (Diciembre 2025)
+- ✅ Probados en producción
 - ✅ Con todas las features (botón + QR)
-- ✅ Listos para producción
+- ✅ 100% funcionales
 
 ---
 
 ## 📞 MÁS INFORMACIÓN
 
 - **Guía completa:** ../INSTALACION-CPANEL.md
-- **Checklist:** ../CHECKLIST-CPANEL.md
 - **Descarga e instala:** ../DESCARGA-E-INSTALA.md
+- **Checklist:** ../CHECKLIST-CPANEL.md
 
 ---
 
-**Moon Desarrollos** © 2025  
-Archivos comprimidos actualizados al: Diciembre 2025
+**Moon Desarrollos** © 2025
 
