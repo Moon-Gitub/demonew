@@ -5,7 +5,7 @@
 //========================
 $conAfip = false;
 $msjError="";
-if($arrayEmpresa["entorno_facturacion"]){
+if(is_array($arrayEmpresa) && isset($arrayEmpresa["entorno_facturacion"]) && $arrayEmpresa["entorno_facturacion"]){
 
  try {
 
