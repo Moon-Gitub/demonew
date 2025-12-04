@@ -104,42 +104,66 @@ try {
     // Obtener el saldo pendiente actual
     $saldoPendiente = floatval($ctaCteCliente["saldo"]);
 
-    // IMPORTANTE: Usar directamente el saldo pendiente
-    // No intentar reconstruir cargos específicos porque puede haber pagos parciales
-    
-    // Si el saldo es pequeño, probablemente es un resto de pago parcial
-    // Mostrarlo como "Saldo pendiente" sin desglose detallado
+    // Obtener solo los cargos que generan la deuda actual
     $serviciosMensuales = [];
     $otrosCargos = [];
     $subtotalMensuales = 0;
     $subtotalOtros = 0;
     
     if ($saldoPendiente > 0) {
-        // Obtener último movimiento para descripción
-        if ($ctaCteMov && isset($ctaCteMov['descripcion'])) {
-            $descripcion = $ctaCteMov['descripcion'];
+        // Obtener cargos más recientes ordenados por fecha descendente
+        $conexionMoon = Conexion::conectarMoon();
+        $stmtCargos = $conexionMoon->prepare("
+            SELECT descripcion, importe, fecha 
+            FROM clientes_cuenta_corriente 
+            WHERE id_cliente = :id AND tipo = 0
+            ORDER BY fecha DESC
+        ");
+        $stmtCargos->bindParam(":id", $idCliente, PDO::PARAM_INT);
+        $stmtCargos->execute();
+        $todosLosCargos = $stmtCargos->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Tomar solo los cargos necesarios hasta alcanzar el saldo pendiente
+        $sumaAcumulada = 0;
+        foreach ($todosLosCargos as $cargo) {
+            $importe = floatval($cargo['importe']);
             
-            // Determinar si es servicio mensual o no
-            if (stripos($descripcion, 'Servicio POS') !== false) {
-                $serviciosMensuales[] = array(
-                    'descripcion' => 'Saldo pendiente (resto de: ' . $descripcion . ')',
-                    'importe' => $saldoPendiente
-                );
-                $subtotalMensuales = $saldoPendiente;
-            } else {
-                $otrosCargos[] = array(
-                    'descripcion' => 'Saldo pendiente (resto de: ' . $descripcion . ')',
-                    'importe' => $saldoPendiente
-                );
-                $subtotalOtros = $saldoPendiente;
+            // Si aún no llegamos al saldo pendiente, agregar este cargo
+            if ($sumaAcumulada < $saldoPendiente) {
+                $importePendiente = $importe;
+                
+                // Si este cargo excede el saldo pendiente, ajustar el importe
+                if ($sumaAcumulada + $importe > $saldoPendiente) {
+                    $importePendiente = $saldoPendiente - $sumaAcumulada;
+                    $descripcion = 'Saldo pendiente de: ' . $cargo['descripcion'];
+                } else {
+                    $descripcion = $cargo['descripcion'];
+                }
+                
+                // Determinar si es servicio mensual
+                if (stripos($cargo['descripcion'], 'Servicio POS') !== false) {
+                    $serviciosMensuales[] = array(
+                        'descripcion' => $descripcion,
+                        'importe' => $importePendiente,
+                        'fecha' => $cargo['fecha']
+                    );
+                    $subtotalMensuales += $importePendiente;
+                } else {
+                    $otrosCargos[] = array(
+                        'descripcion' => $descripcion,
+                        'importe' => $importePendiente,
+                        'fecha' => $cargo['fecha']
+                    );
+                    $subtotalOtros += $importePendiente;
+                }
+                
+                $sumaAcumulada += $importePendiente;
+                
+                // Si ya alcanzamos el saldo pendiente, detener
+                if ($sumaAcumulada >= $saldoPendiente) {
+                    break;
+                }
             }
-        } else {
-            // Si no hay último movimiento, mostrar como saldo general
-            $otrosCargos[] = array(
-                'descripcion' => 'Saldo pendiente de cuenta corriente',
-                'importe' => $saldoPendiente
-            );
-            $subtotalOtros = $saldoPendiente;
         }
     }
 
@@ -506,11 +530,45 @@ ESTILOS RESPONSIVE PARA MÓVIL
     .modal-body {
         padding: 15px !important;
     }
-    .modal-header h3 {
+    .modal-header h4 {
+        font-size: 18px !important;
+    }
+}
+
+/* Estilos globales del modal - FUENTES MÁS GRANDES */
+#modalCobro .modal-body {
+    font-size: 16px !important;
+}
+
+/* Tablet y desktop */
+@media (min-width: 769px) {
+    #modalCobro .card-title {
         font-size: 20px !important;
     }
-    .modal-header i {
+    #modalCobro .card-text {
+        font-size: 17px !important;
+    }
+    #modalCobro .total-amount {
+        font-size: 38px !important;
+    }
+}
+
+/* Móvil - FUENTES AÚN MÁS GRANDES */
+@media (max-width: 768px) {
+    #modalCobro .card-title {
+        font-size: 18px !important;
+    }
+    #modalCobro .card-text {
+        font-size: 16px !important;
+    }
+    #modalCobro .total-amount {
         font-size: 32px !important;
+    }
+    #modalCobro .label-text {
+        font-size: 16px !important;
+    }
+    #modalCobro .value-text {
+        font-size: 17px !important;
     }
 }
 </style>
