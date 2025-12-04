@@ -8,11 +8,22 @@ Carpeta completa para instalar el sistema de cobro en uno o múltiples sistemas.
 
 ### 🏁 Guías de Inicio
 - **[README.md](README.md)** - Visión general del paquete
-- **[INICIO-RAPIDO-RESELLER.md](INICIO-RAPIDO-RESELLER.md)** ⭐ **EMPIEZA AQUÍ si tienes múltiples cuentas**
+- **[INDICE.md](INDICE.md)** - Este archivo (índice completo)
 
-### 📖 Guías Detalladas
-- **[INSTALACION-RESELLER.md](INSTALACION-RESELLER.md)** - Instalación para hosting reseller
-- **[INSTALACION_MANUAL.md](INSTALACION_MANUAL.md)** - Instalación manual paso a paso
+### ⭐ Guía Recomendada para Reseller
+- **[INSTALACION-CPANEL.md](INSTALACION-CPANEL.md)** ⭐ **EMPIEZA AQUÍ**
+  - 100% vía cPanel (sin terminal)
+  - Paso a paso con imágenes descriptivas
+  - 10-15 min por cuenta
+  - Ya probado y funcionando
+
+- **[CHECKLIST-CPANEL.md](CHECKLIST-CPANEL.md)** - Checklist visual para seguimiento
+
+### 📖 Guías Complementarias
+- **[INICIO-RAPIDO-RESELLER.md](INICIO-RAPIDO-RESELLER.md)** - Resumen ejecutivo
+- **[INSTALACION-RESELLER.md](INSTALACION-RESELLER.md)** - Instalación masiva (con script bash)
+- **[INSTALACION_MANUAL.md](INSTALACION_MANUAL.md)** - Instalación técnica (con terminal)
+- **[CHECKLIST-INSTALACION.md](CHECKLIST-INSTALACION.md)** - Checklist general
 
 ---
 

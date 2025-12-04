@@ -31,24 +31,42 @@ instalacion_cobro/
 
 ## 🚀 Métodos de Instalación
 
-### Opción 1: Instalación en Hosting Reseller (Múltiples Cuentas)
+### Opción 1: Instalación vía cPanel (⭐ RECOMENDADO para Reseller)
 
-Si tienes un hosting reseller con múltiples clientes, usa esta guía:
+**Ideal para:** Instalación manual cuenta por cuenta usando solo cPanel (sin terminal)
+
+Ver [INSTALACION-CPANEL.md](INSTALACION-CPANEL.md) para guía completa paso a paso.
+
+**Características:**
+- 🖱️ **100% visual** - No necesitas terminal/SSH
+- ⏱️ **10-15 minutos** por cuenta
+- 📋 **Checklist incluido** - Seguimiento fácil
+- ✅ **Ya probado** - Funciona en producción
+
+**Incluye:**
+- Checklist paso a paso con checkboxes
+- Tutorial visual de cPanel File Manager
+- Tips para acelerar el proceso
+- Solución de problemas comunes
+
+### Opción 2: Instalación Masiva con Script (Para muchas cuentas)
+
+**Ideal para:** 10+ cuentas, tienes acceso SSH
 
 Ver [INSTALACION-RESELLER.md](INSTALACION-RESELLER.md) para instalación masiva.
 
 **Incluye:**
-- 📊 Script de instalación masiva
+- 📊 Script bash de instalación masiva
 - 🗺️ Generador de mapeo de clientes
-- 📝 Guía paso a paso para múltiples cuentas
+- 📝 Guía de instalación automática
 
-### Opción 2: Instalación Manual en Cuenta Individual
+### Opción 3: Instalación Manual Técnica
 
-Para instalar en una sola cuenta:
+**Ideal para:** Una sola cuenta, tienes acceso SSH
 
-Ver [INSTALACION_MANUAL.md](INSTALACION_MANUAL.md) para instrucciones detalladas paso a paso.
+Ver [INSTALACION_MANUAL.md](INSTALACION_MANUAL.md) para instrucciones técnicas detalladas.
 
-### Opción 3: Instalación Automática (En desarrollo)
+### Opción 4: Instalación Automática (En desarrollo)
 
 1. Sube la carpeta `instalacion_cobro/` al servidor
 2. Accede a: `http://tudominio.com/instalacion_cobro/instalador/`

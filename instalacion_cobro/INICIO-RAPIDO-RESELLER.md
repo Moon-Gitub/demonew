@@ -20,39 +20,53 @@ Guía ultra-rápida para instalar el sistema de cobro en múltiples cuentas de h
 
 ### PASO 2: Elegir Método de Instalación
 
-**Método A - Manual cuenta por cuenta** (Recomendado para 1-5 cuentas)
-- ⏱️ Tiempo: 10 minutos por cuenta
+**Método A - cPanel Manual** ⭐ (Recomendado para 1-20 cuentas)
+- ⏱️ Tiempo: 10-15 minutos por cuenta
+- 🖱️ 100% visual (sin terminal)
 - ✅ Más control
 - ✅ Verificación inmediata
+- ✅ **Guía:** [INSTALACION-CPANEL.md](INSTALACION-CPANEL.md)
+- ✅ **Checklist:** [CHECKLIST-CPANEL.md](CHECKLIST-CPANEL.md)
 
-**Método B - Script masivo** (Recomendado para 6+ cuentas)
+**Método B - Script masivo** (Recomendado para 20+ cuentas)
 - ⏱️ Tiempo: 2 minutos por cuenta
+- 🔧 Requiere SSH/terminal
 - ✅ Más rápido
 - ⚠️ Requiere revisión posterior
+- ✅ **Guía:** [INSTALACION-RESELLER.md](INSTALACION-RESELLER.md)
 
 ---
 
-### PASO 3A: Instalación Manual (Para pocas cuentas)
+### PASO 3A: Instalación vía cPanel (Para 1-20 cuentas)
 
-Por cada cuenta:
+**Sigue la guía detallada:** [INSTALACION-CPANEL.md](INSTALACION-CPANEL.md)
 
-```bash
-# 1. Acceder a la cuenta (WHM → Login to cPanel)
-# 2. File Manager → public_html
-# 3. Copiar archivos:
-   - controladores/sistema_cobro.controlador.php
-   - controladores/mercadopago.controlador.php
-   - modelos/sistema_cobro.modelo.php
-   - modelos/mercadopago.modelo.php
-   - vistas/modulos/cabezote-mejorado.php
-   - vistas/modulos/procesar-pago.php
+**Resumen por cada cuenta:**
 
-# 4. Editar cabezote-mejorado.php línea 15:
-   $idCliente = 14; // Cambiar por el ID real
+1. **Acceder:** WHM → List Accounts → Clic en cP (cPanel del cliente)
+2. **File Manager:** Files → File Manager → public_html
+3. **Subir 6 archivos:**
+   - 2 controladores (sistema_cobro, mercadopago)
+   - 3 modelos (sistema_cobro, mercadopago, conexion)
+   - 2 vistas (cabezote-mejorado, procesar-pago)
+4. **Editar cabezote-mejorado.php:**
+   - Clic derecho → Edit
+   - Línea 15: `$idCliente = 14;` (cambiar por ID real)
+   - Save Changes
+5. **Editar plantilla.php:**
+   - Buscar: `include "modulos/cabezote.php";`
+   - Cambiar a: `include "modulos/cabezote-mejorado.php";`
+   - Save Changes
+6. **Editar index.php:**
+   - Verificar requires de sistema_cobro y mercadopago
+   - Verificar ruta "procesar-pago"
+7. **Probar:**
+   - Acceder al sistema
+   - Verificar ícono 🌙 y modal de pago
 
-# 5. Verificar:
-   https://dominio.com
-```
+⏱️ **Tiempo:** 10-15 min/cuenta
+
+**Usa el checklist:** [CHECKLIST-CPANEL.md](CHECKLIST-CPANEL.md)
 
 ---
 
