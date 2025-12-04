@@ -39,8 +39,33 @@ error_log("GET params: " . json_encode($_GET));
 error_log("POST params: " . json_encode($_POST));
 error_log("Headers: " . json_encode(getallheaders()));
 
-// Responder siempre 200 OK para que MP no reintente
-http_response_code(200);
+// Responder OK inmediatamente
+header('HTTP/1.1 200 OK');
+header('Content-Type: application/json');
+
+// Si es una petición OPTIONS (preflight), responder y salir
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    http_response_code(200);
+    echo json_encode(['status' => 'ok']);
+    exit;
+}
+
+// Aceptar tanto GET como POST
+if ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['error' => 'Method not allowed. Use GET or POST']);
+    exit;
+}
+
+// Si es un test de MercadoPago (GET sin parámetros), responder OK
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($_GET['topic']) && empty($_GET['id'])) {
+    http_response_code(200);
+    echo json_encode(['status' => 'ok', 'message' => 'Webhook activo']);
+    exit;
+}
 
 try {
     // Obtener parámetros del webhook
