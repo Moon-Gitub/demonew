@@ -906,10 +906,11 @@ MODAL NUEVA COTIZACION
         </div>
 
         <?php
-
+        // Solo procesar si existe el controlador de cotización
+        if (class_exists('ControladorCotizacion')) {
           $nuevaCotizacion = new ControladorCotizacion();
           $nuevaCotizacion -> ctrNuevaCotizacion();
-
+        }
         ?>
 
       </form>
