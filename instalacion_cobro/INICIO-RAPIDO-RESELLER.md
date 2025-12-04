@@ -49,10 +49,10 @@ Guía ultra-rápida para instalar el sistema de cobro en múltiples cuentas de h
    - 2 controladores (sistema_cobro, mercadopago)
    - 3 modelos (sistema_cobro, mercadopago, conexion)
    - 2 vistas (cabezote-mejorado, procesar-pago)
-4. **Editar cabezote-mejorado.php:**
-   - Clic derecho → Edit
-   - Línea 15: `$idCliente = 14;` (cambiar por ID real)
-   - Save Changes
+4. **Crear archivo .env en la raíz:**
+   - Crear archivo .env
+   - Agregar: `MOON_CLIENTE_ID=14` (cambiar por ID real del cliente)
+   - Permisos: 600
 5. **Editar plantilla.php:**
    - Buscar: `include "modulos/cabezote.php";`
    - Cambiar a: `include "modulos/cabezote-mejorado.php";`

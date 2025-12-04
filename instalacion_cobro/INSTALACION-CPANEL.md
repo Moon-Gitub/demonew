@@ -122,33 +122,71 @@ Si no existen, créalas:
 
 ---
 
-## PASO 5: Configurar ID del Cliente
+## PASO 5: Crear y Configurar archivo .env
 
-### 5.1 Editar cabezote-mejorado.php
+### 5.1 Crear el archivo .env
 
-1. En File Manager, navega a **`public_html/vistas/modulos/`**
-2. **Clic derecho** en `cabezote-mejorado.php`
-3. Seleccionar **"Edit"** o **"Code Editor"**
-4. Se abrirá el editor de código
-5. Ir a la **línea 15** (aproximadamente)
-6. Buscar esta línea:
-   ```php
-   $idCliente = isset($_ENV['MOON_CLIENTE_ID']) ? intval($_ENV['MOON_CLIENTE_ID']) : (isset($_SERVER['MOON_CLIENTE_ID']) ? intval($_SERVER['MOON_CLIENTE_ID']) : 7);
-   ```
-7. **Reemplazarla completamente** por:
-   ```php
-   $idCliente = 14; // AMARELLO (Valentina Herrera)
-   ```
-   ⚠️ **Cambiar el 14 por el ID REAL de este cliente**
+1. En File Manager, navega a **`public_html/`** (raíz del sitio)
+2. Clic en **"+ File"** (arriba)
+3. Escribir nombre: `.env` (con el punto al inicio)
+4. Clic en **"Create New File"**
 
-8. Clic en **"Save Changes"** (arriba a la derecha)
-9. Cerrar el editor
+⚠️ **IMPORTANTE:** El nombre debe ser exactamente `.env` (con el punto)
 
-✅ **Verificar:** El archivo debe tener el ID correcto en la línea 15
+### 5.2 Editar el archivo .env
 
-### 5.2 ¿Cómo saber qué ID usar?
+1. **Clic derecho** en `.env`
+2. Seleccionar **"Edit"** o **"Code Editor"**
+3. Se abrirá el editor vacío
+4. **Copiar y pegar** este contenido:
 
-Usa la herramienta de mapeo:
+```env
+# ==============================================
+# SISTEMA DE COBRO MOON
+# ==============================================
+MOON_CLIENTE_ID=14
+
+# ==============================================
+# BASE DE DATOS MOON - SISTEMA DE COBRO
+# ==============================================
+MOON_DB_HOST=107.161.23.11
+MOON_DB_NAME=cobrosposmooncom_db
+MOON_DB_USER=cobrosposmooncom_dbuser
+MOON_DB_PASS=[Us{ynaJAA_o2A_!
+
+# ==============================================
+# MERCADOPAGO - CREDENCIALES DE PRODUCCIÓN
+# ==============================================
+MP_PUBLIC_KEY=APP_USR-33156d44-12df-4039-8c92-1635d8d3edde
+MP_ACCESS_TOKEN=APP_USR-6921807486493458-102300-5f1cec174eb674c42c9782860caf640c-2916747261
+```
+
+5. **Cambiar el 14** por el ID REAL de este cliente
+6. Clic en **"Save Changes"** (arriba a la derecha)
+7. Cerrar el editor
+
+**Ejemplo final:**
+```env
+MOON_CLIENTE_ID=14  # ← Cambiar por el ID real
+```
+
+✅ **Verificar:** El archivo `.env` existe en la raíz con el ID correcto
+
+### 5.3 Proteger el archivo .env
+
+1. En File Manager, **clic derecho** en `.env`
+2. Seleccionar **"Change Permissions"** o **"Permissions"**
+3. Configurar permisos: **600**
+   - Owner: Read ✓, Write ✓
+   - Group: Todo desmarcado
+   - World: Todo desmarcado
+4. Clic en **"Change Permissions"**
+
+✅ **Verificar:** `.env` tiene permisos 600
+
+### 5.4 ¿Cómo saber qué ID usar?
+
+**Opción A - Herramienta web:**
 
 1. Sube `instalacion_cobro/generar-mapeo-clientes.php` a cualquier cuenta
 2. Accede a: `https://dominio.com/generar-mapeo-clientes.php`
@@ -156,12 +194,24 @@ Usa la herramienta de mapeo:
 4. Busca el nombre o dominio del cliente
 5. Anota el ID
 
+**Opción B - Query directo en BD Moon:**
+
+Si tienes acceso a phpMyAdmin:
+
+```sql
+SELECT id, nombre, dominio 
+FROM clientes 
+WHERE dominio LIKE '%nombre-del-cliente%';
+```
+
 **Ejemplo:**
+```sql
+-- Para AMARELLO
+SELECT id, nombre FROM clientes WHERE dominio LIKE '%amarello%';
+-- Resultado: id=14, nombre=AMARELLO (Valentina Herrera)
 ```
-ID: 14
-Nombre: AMARELLO (Valentina Herrera)
-Dominio: amarello.posmoon.com.ar
-```
+
+✅ **Anotar el ID** para usarlo en el `.env`
 
 ---
 

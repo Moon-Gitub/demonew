@@ -66,21 +66,36 @@ Guía paso a paso con checkboxes para instalar cuenta por cuenta usando solo cPa
 
 ---
 
-### ☐ PASO 4: Configurar ID del Cliente (2 min)
+### ☐ PASO 4: Crear y Configurar archivo .env (3 min)
 
-- [ ] En File Manager, ir a `public_html/vistas/modulos/`
-- [ ] **Clic derecho** en `cabezote-mejorado.php` → **Edit**
-- [ ] Ir a **línea 15** (aprox)
-- [ ] Buscar línea con `$idCliente =`
-- [ ] Reemplazar TODO por: `$idCliente = 14;` (usar el ID real)
-- [ ] Agregar comentario: `// NOMBRE DEL CLIENTE`
+**Crear el archivo:**
+- [ ] En File Manager, ir a `public_html/` (raíz)
+- [ ] Clic en **"+ File"** (arriba)
+- [ ] Nombre: `.env` (con el punto al inicio)
+- [ ] Clic en "Create New File"
+
+**Editar el archivo:**
+- [ ] **Clic derecho** en `.env` → **Edit**
+- [ ] Copiar este contenido:
+```env
+MOON_CLIENTE_ID=14
+MOON_DB_HOST=107.161.23.11
+MOON_DB_NAME=cobrosposmooncom_db
+MOON_DB_USER=cobrosposmooncom_dbuser
+MOON_DB_PASS=[Us{ynaJAA_o2A_!
+MP_PUBLIC_KEY=APP_USR-33156d44-12df-4039-8c92-1635d8d3edde
+MP_ACCESS_TOKEN=APP_USR-6921807486493458-102300-5f1cec174eb674c42c9782860caf640c-2916747261
+```
+- [ ] **Cambiar el 14** por el ID REAL de este cliente
 - [ ] **Save Changes**
 - [ ] Cerrar editor
 
-**Ejemplo de cómo debe quedar:**
-```php
-$idCliente = 14; // AMARELLO (Valentina Herrera)
-```
+**Proteger el archivo:**
+- [ ] Clic derecho en `.env` → **"Permissions"**
+- [ ] Configurar: **600** (Owner: Read+Write, resto desmarcado)
+- [ ] Clic en "Change Permissions"
+
+✅ **ID del cliente configurado:** ______ (anotar aquí)
 
 ---
 
