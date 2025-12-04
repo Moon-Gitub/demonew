@@ -95,24 +95,46 @@ try {
     $ctaCteCliente = ControladorSistemaCobro::ctrMostrarSaldoCuentaCorriente($idCliente);
     $ctaCteMov = ControladorSistemaCobro::ctrMostrarMovimientoCuentaCorriente($idCliente);
 
-    // Debug: Ver qué campos tiene el cliente
-    error_log("DEBUG CLIENTE ID $idCliente: " . print_r($clienteMoon, true));
+    // Debug detallado
+    error_log("=== DEBUG CLIENTE ID: $idCliente ===");
+    error_log("clienteMoon es array? " . (is_array($clienteMoon) ? 'SI' : 'NO'));
+    error_log("clienteMoon: " . print_r($clienteMoon, true));
+    error_log("Campo 'nombre' existe? " . (isset($clienteMoon['nombre']) ? 'SI - Valor: ' . $clienteMoon['nombre'] : 'NO'));
+    error_log("===================================");
 
     // Verificar que las consultas funcionaron (usar !== false porque ID puede ser 0)
-    if ($clienteMoon === false || $ctaCteCliente === false) {
-        error_log("ERROR COBRO: Cliente ID $idCliente - Consultas fallaron");
+    if ($clienteMoon === false || !is_array($clienteMoon) || $ctaCteCliente === false) {
+        error_log("ERROR COBRO: Cliente ID $idCliente - Consultas fallaron o retornaron datos inválidos");
+        error_log("clienteMoon: " . var_export($clienteMoon, true));
+        error_log("ctaCteCliente: " . var_export($ctaCteCliente, true));
         throw new Exception("No se pudieron obtener datos del cliente ID $idCliente");
     }
 
     // Obtener el nombre del cliente - verificar diferentes campos posibles
-    $nombreCliente = 'Cliente';
-    if (isset($clienteMoon['nombre']) && !empty($clienteMoon['nombre'])) {
-        $nombreCliente = $clienteMoon['nombre'];
-    } elseif (isset($clienteMoon['razon_social']) && !empty($clienteMoon['razon_social'])) {
-        $nombreCliente = $clienteMoon['razon_social'];
-    } elseif (isset($clienteMoon['dominio']) && !empty($clienteMoon['dominio'])) {
-        $nombreCliente = $clienteMoon['dominio'];
+    $nombreCliente = 'Cliente (por defecto)';
+    
+    if (isset($clienteMoon['nombre'])) {
+        if (!empty(trim($clienteMoon['nombre']))) {
+            $nombreCliente = trim($clienteMoon['nombre']);
+            error_log("Usando campo 'nombre': " . $nombreCliente);
+        } else {
+            error_log("Campo 'nombre' existe pero está vacío");
+        }
+    } elseif (isset($clienteMoon['razon_social'])) {
+        if (!empty(trim($clienteMoon['razon_social']))) {
+            $nombreCliente = trim($clienteMoon['razon_social']);
+            error_log("Usando campo 'razon_social': " . $nombreCliente);
+        }
+    } elseif (isset($clienteMoon['dominio'])) {
+        if (!empty(trim($clienteMoon['dominio']))) {
+            $nombreCliente = trim($clienteMoon['dominio']);
+            error_log("Usando campo 'dominio': " . $nombreCliente);
+        }
+    } else {
+        error_log("ADVERTENCIA: Ningún campo de nombre encontrado, usando valor por defecto");
     }
+    
+    error_log("Nombre final del cliente: " . $nombreCliente);
 
     // Obtener el saldo pendiente actual
     $saldoPendiente = floatval($ctaCteCliente["saldo"]);
