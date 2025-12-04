@@ -238,6 +238,22 @@ Si prefieres subir archivo por archivo (sin ZIPs):
 ✅ Funcionales (probados en producción)  
 ✅ Completos (incluyen todas las features)  
 ✅ Listos (copiar y pegar sin modificar)  
+✅ **Compatibles (funcionan con o sin AFIP/Cotización)**
+
+---
+
+## 🔧 COMPATIBILIDAD TOTAL
+
+### ✅ **Funciona en CUALQUIER Sistema POS**
+
+El sistema de cobro es **100% compatible** con sistemas que:
+- ✅ Tienen AFIP → Muestra AFIP + Estado Cuenta
+- ✅ No tienen AFIP → Muestra solo Estado Cuenta
+- ✅ Tienen Cotización → Muestra Cotización + Estado Cuenta
+- ✅ No tienen Cotización → Muestra solo Estado Cuenta
+- ✅ Son básicos → Muestra solo Estado Cuenta
+
+**No necesitas modificar nada.** El código detecta automáticamente qué funcionalidades tiene tu sistema y se adapta. 🎯  
 
 ---
 

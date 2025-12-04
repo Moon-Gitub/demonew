@@ -28,6 +28,20 @@
 
 ---
 
+## 🔧 Compatibilidad
+
+### ✅ **Funciona en CUALQUIER Sistema POS**
+
+El sistema de cobro es **100% compatible** con:
+- ✅ Sistemas completos (AFIP + Cotización + Cobro)
+- ✅ Sistemas básicos (solo Cobro)
+- ✅ Sistemas con AFIP pero sin Cotización
+- ✅ Sistemas con Cotización pero sin AFIP
+
+**El código detecta automáticamente** qué funcionalidades tiene tu sistema y se adapta. No genera errores si faltan funcionalidades. 🎯
+
+---
+
 ## 📁 Archivos para Copiar
 
 ### **Opción 1: ZIPs Pre-comprimidos (MÁS RÁPIDO) ⭐**

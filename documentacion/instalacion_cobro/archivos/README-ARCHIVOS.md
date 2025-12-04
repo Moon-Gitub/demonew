@@ -109,11 +109,56 @@ archivos/
 - **Código QR para pagar con celular** 📱
 - Cálculo automático de recargos
 - 100% responsive
+- **✅ Compatible con sistemas sin AFIP/Cotización**
+  - Funciona en sistemas básicos (solo cobro)
+  - Funciona en sistemas con AFIP
+  - Funciona en sistemas con Cotización
+  - Adapta el navbar automáticamente
+  - No genera errores si faltan funcionalidades
 
 #### `procesar-pago.php`
 - Procesa respuesta de MercadoPago
 - Muestra confirmación al cliente
 - Maneja estados: aprobado, pendiente, rechazado
+
+---
+
+## 🔧 Compatibilidad con Sistemas Existentes
+
+### ✅ **Funciona en CUALQUIER Sistema POS**
+
+El `cabezote-mejorado.php` es **100% compatible** con:
+
+#### **Sistema Completo (AFIP + Cotización + Cobro)**
+```
+Navbar muestra: [AFIP] [Dólar] [💳 Estado Cuenta] [👤]
+```
+
+#### **Sistema Básico (Solo Cobro)**
+```
+Navbar muestra: [💳 Estado Cuenta] [👤]
+```
+
+#### **Sistema con AFIP pero sin Cotización**
+```
+Navbar muestra: [AFIP] [💳 Estado Cuenta] [👤]
+```
+
+#### **Sistema con Cotización pero sin AFIP**
+```
+Navbar muestra: [Dólar] [💳 Estado Cuenta] [👤]
+```
+
+### 🛡️ **Protección Automática**
+
+El sistema **detecta automáticamente** qué funcionalidades tiene tu sistema y:
+- ✅ Solo muestra lo que está disponible
+- ✅ No genera errores si falta AFIP
+- ✅ No genera errores si falta Cotización
+- ✅ No genera errores si falta archivo `cotizacion`
+- ✅ Siempre muestra el sistema de cobro (Estado Cuenta)
+
+**No necesitas modificar nada.** El código se adapta solo. 🎯
 
 ---
 
