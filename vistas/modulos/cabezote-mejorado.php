@@ -784,7 +784,12 @@ $(function(){
 <?php
 } catch (Exception $e) {
     // Si falla el sistema de cobro, cargar cabezote normal
-    error_log("Sistema de cobro no disponible: " . $e->getMessage());
+    error_log("=== SISTEMA DE COBRO NO DISPONIBLE ===");
+    error_log("Error: " . $e->getMessage());
+    error_log("Archivo: " . $e->getFile());
+    error_log("Línea: " . $e->getLine());
+    error_log("Trace: " . $e->getTraceAsString());
+    error_log("=== CARGANDO CABEZOTE NORMAL ===");
     include "cabezote.php";
 }
 ?>
