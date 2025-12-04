@@ -42,6 +42,12 @@
 	
 	$rutaRespuesta .= $_SERVER['HTTP_HOST'];  
 	$rutaRespuesta .= "/index.php?ruta=procesar-pago";
+	
+	// Verificar que las clases estén disponibles
+	if (!class_exists('ControladorSistemaCobro')) {
+		error_log("ERROR CRÍTICO: ControladorSistemaCobro no está disponible en cabezote.php");
+	}
+	
 	$clienteMoon = ControladorSistemaCobro::ctrMostrarClientesCobro($idCliente);
 	$ctaCteCliente = ControladorSistemaCobro::ctrMostrarSaldoCuentaCorriente($idCliente);
 	$ctaCteMov = ControladorSistemaCobro::ctrMostrarMovimientoCuentaCorriente($idCliente);
@@ -49,6 +55,13 @@
 	// DEBUG: Verificar si las consultas funcionaron
 	if (!$clienteMoon || !$ctaCteCliente) {
 		error_log("COBRO DEBUG: Cliente ID $idCliente - clienteMoon: " . ($clienteMoon ? 'OK' : 'FALSE') . " - ctaCteCliente: " . ($ctaCteCliente ? 'OK' : 'FALSE'));
+		error_log("COBRO DEBUG: Clase disponible: " . (class_exists('ControladorSistemaCobro') ? 'SI' : 'NO'));
+		
+		// Intentar reconectar
+		$clienteMoon = ControladorSistemaCobro::ctrMostrarClientesCobro($idCliente);
+		$ctaCteCliente = ControladorSistemaCobro::ctrMostrarSaldoCuentaCorriente($idCliente);
+		
+		error_log("COBRO DEBUG: Segundo intento - clienteMoon: " . ($clienteMoon ? 'OK' : 'FALSE') . " - ctaCteCliente: " . ($ctaCteCliente ? 'OK' : 'FALSE'));
 	}
 	
 	$abonoMensual = $clienteMoon ? $clienteMoon["mensual"] : 0;
