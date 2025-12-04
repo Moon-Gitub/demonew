@@ -95,6 +95,12 @@ try {
     $ctaCteCliente = ControladorSistemaCobro::ctrMostrarSaldoCuentaCorriente($idCliente);
     $ctaCteMov = ControladorSistemaCobro::ctrMostrarMovimientoCuentaCorriente($idCliente);
 
+    // Verificar que las consultas funcionaron (usar !== false porque ID puede ser 0)
+    if ($clienteMoon === false || $ctaCteCliente === false) {
+        error_log("ERROR COBRO: Cliente ID $idCliente - Consultas fallaron");
+        throw new Exception("No se pudieron obtener datos del cliente ID $idCliente");
+    }
+
     // Obtener el saldo pendiente actual
     $saldoPendiente = floatval($ctaCteCliente["saldo"]);
 
@@ -172,7 +178,10 @@ if($ctaCteCliente["saldo"] <= 0) {
     $diaActual = intval(date('d'));
     $diasCorte = 26 - $diaActual;
 
-    if ($clienteMoon["estado_bloqueo"] == "1") {
+    // Verificar estado_bloqueo (usar isset para evitar errores si el campo no existe)
+    $estadoBloqueo = isset($clienteMoon["estado_bloqueo"]) ? $clienteMoon["estado_bloqueo"] : 0;
+    
+    if ($estadoBloqueo == "1") {
         // Cliente bloqueado
         $estadoClienteBarra = 'style="background-color: #dc3545;"';
         $muestroModal = true;
@@ -498,7 +507,7 @@ MODAL COBRO MEJORADO
                             </h4>
                             <div style="margin: 15px 0;">
                                 <strong style="color: #6c757d; display: block; margin-bottom: 5px;">CLIENTE</strong>
-                                <p style="font-size: 16px; margin: 0;"><?php echo $clienteMoon["nombre"]; ?></p>
+                                <p style="font-size: 16px; margin: 0;"><?php echo isset($clienteMoon["nombre"]) ? $clienteMoon["nombre"] : 'Cliente'; ?></p>
                             </div>
                         </div>
 
