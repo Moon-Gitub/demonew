@@ -75,9 +75,52 @@ Si no existen, créalas:
 
 ---
 
-## PASO 4: Subir Archivos del Sistema de Cobro
+## PASO 4: Instalar Vendor (Librerías PHP)
 
-### 4.1 Subir Controladores
+**⚠️ IMPORTANTE:** Antes de subir los archivos del sistema, necesitas tener las librerías PHP (vendor).
+
+### 4.1 Verificar si vendor ya existe
+
+1. En File Manager, navega a **`public_html/extensiones/`**
+2. Buscar carpeta **`vendor/`**
+
+**Si existe y tiene subcarpetas dentro:** ✅ Saltar al PASO 5 (ya está instalado)  
+**Si NO existe:** Continuar ↓
+
+### 4.2 Preparar vendor.zip (Una sola vez)
+
+**En una cuenta que ya funcione (ej: newmoon):**
+
+1. File Manager → `public_html/extensiones/`
+2. **Clic derecho** en carpeta `vendor/`
+3. Seleccionar **"Compress"**
+4. Formato: **ZIP Archive**
+5. Clic en **"Compress File(s)"**
+6. Esperar (1-2 min)
+7. **Clic derecho** en `vendor.zip` → **"Download"**
+8. Guardar en tu PC
+
+✅ Ahora tienes `vendor.zip` (~20-30 MB) para usar en todas las cuentas
+
+### 4.3 Instalar vendor en la cuenta nueva
+
+1. En File Manager, navega a **`public_html/extensiones/`**
+2. Clic en **"Upload"**
+3. Subir `vendor.zip` desde tu PC
+4. Esperar (2-5 min según conexión)
+5. Cerrar uploader
+6. **Clic derecho** en `vendor.zip` → **"Extract"**
+7. Clic en **"Extract File(s)"**
+8. Esperar (1-2 min)
+9. **Eliminar** `vendor.zip` (ya no se necesita)
+
+✅ **Verificar:** Existe carpeta `vendor/` con subcarpetas: mercadopago, vlucas, phpoffice, etc.
+
+---
+
+## PASO 5: Subir Archivos del Sistema de Cobro
+
+### 5.1 Subir Controladores
 
 **Desde tu PC:**
 

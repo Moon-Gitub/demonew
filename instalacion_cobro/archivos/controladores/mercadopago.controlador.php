@@ -7,15 +7,9 @@ class ControladorMercadoPago {
 	=============================================*/
 	static public function ctrObtenerCredenciales() {
 
-		// Intentar obtener desde .env primero
-		$publicKey = getenv('MP_PUBLIC_KEY');
-		$accessToken = getenv('MP_ACCESS_TOKEN');
-
-		// Si no están en .env, usar valores por defecto (compatibilidad)
-		if (!$publicKey || !$accessToken) {
-			$publicKey = 'TEST-9e420918-959d-45dc-a85f-33bcda359e78';
-			$accessToken = 'TEST-3927436741225472-082909-b379465087e47bff35a8716eb049526a-1188183100';
-		}
+		// Leer de .env, sino credenciales fijas
+		$publicKey = isset($_ENV['MP_PUBLIC_KEY']) ? $_ENV['MP_PUBLIC_KEY'] : (isset($_SERVER['MP_PUBLIC_KEY']) ? $_SERVER['MP_PUBLIC_KEY'] : 'APP_USR-33156d44-12df-4039-8c92-1635d8d3edde');
+		$accessToken = isset($_ENV['MP_ACCESS_TOKEN']) ? $_ENV['MP_ACCESS_TOKEN'] : (isset($_SERVER['MP_ACCESS_TOKEN']) ? $_SERVER['MP_ACCESS_TOKEN'] : 'APP_USR-6921807486493458-102300-5f1cec174eb674c42c9782860caf640c-2916747261');
 
 		return array(
 			'public_key' => $publicKey,

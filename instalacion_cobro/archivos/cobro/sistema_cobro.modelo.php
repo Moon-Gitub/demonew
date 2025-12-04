@@ -41,17 +41,11 @@ class ModeloSistemaCobro{
 
 		//Solo traigo donde ventas - compras es mayor a 0
 		$stmt = Conexion::conectarMoon()->prepare("SELECT SUM(IF (cc.tipo = 0, cc.importe, 0)) AS ventas, SUM(IF (cc.tipo = 1, cc.importe, 0)) AS pagos, (SUM(IF (cc.tipo = 0, cc.importe, 0)) - SUM(IF (cc.tipo = 1, cc.importe, 0))) as saldo FROM clientes_cuenta_corriente cc WHERE cc.id_cliente = :id_cliente");
-
 		$stmt -> bindParam(":id_cliente", $idCliente, PDO::PARAM_INT);
-
 		$stmt -> execute();
-
 		return $stmt -> fetch();
-
 		$stmt -> close();
-
 		$stmt = null;
-
 	}
 
 	/*=============================================

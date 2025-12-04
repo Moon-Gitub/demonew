@@ -11,9 +11,8 @@ try {
         throw new Exception("BD Moon no disponible");
     }
 
-    // ID del cliente (leer de $_ENV o $_SERVER, sino 7 por defecto)
-    // ⚠️ CAMBIAR ESTE VALOR POR EL ID REAL DEL CLIENTE
-    $idCliente = isset($_ENV['MOON_CLIENTE_ID']) ? intval($_ENV['MOON_CLIENTE_ID']) : (isset($_SERVER['MOON_CLIENTE_ID']) ? intval($_SERVER['MOON_CLIENTE_ID']) : 7);
+    // ID del cliente (leer de $_ENV o $_SERVER)
+    $idCliente = isset($_ENV['MOON_CLIENTE_ID']) ? intval($_ENV['MOON_CLIENTE_ID']) : (isset($_SERVER['MOON_CLIENTE_ID']) ? intval($_SERVER['MOON_CLIENTE_ID']) : 14);
 
     // Obtener credenciales desde .env o usar por defecto
     $credencialesMP = ControladorMercadoPago::ctrObtenerCredenciales();
