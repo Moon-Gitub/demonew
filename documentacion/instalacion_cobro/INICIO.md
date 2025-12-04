@@ -2,19 +2,25 @@
 
 ## 🚀 INICIO RÁPIDO
 
-### 1️⃣ **Lee la Guía de Instalación**
-📖 **[INSTALACION-CPANEL.md](INSTALACION-CPANEL.md)**
-- Guía completa paso a paso
-- Screenshots y explicaciones detalladas
-- Tiempo estimado: 15-20 minutos
+### 1️⃣ **Descarga e Instala**
+📥 **[DESCARGA-E-INSTALA.md](DESCARGA-E-INSTALA.md)** ⭐ EMPIEZA AQUÍ
+- Cómo descargar de GitHub
+- Proceso completo paso a paso
+- 20 minutos desde cero
 
-### 2️⃣ **Usa el Checklist**
+### 2️⃣ **Lee la Guía Detallada**
+📖 **[INSTALACION-CPANEL.md](INSTALACION-CPANEL.md)**
+- Guía completa con explicaciones
+- Screenshots y detalles
+- Referencia durante la instalación
+
+### 3️⃣ **Usa el Checklist**
 ✅ **[CHECKLIST-CPANEL.md](CHECKLIST-CPANEL.md)**
 - Lista de verificación visual
 - Marca cada paso completado
 - Asegura que no olvidas nada
 
-### 3️⃣ **Usa el Template**
+### 4️⃣ **Usa el Template**
 📄 **[template-env.txt](template-env.txt)**
 - Template del archivo `.env`
 - Solo cambiar el ID del cliente
