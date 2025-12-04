@@ -25,11 +25,11 @@ class Conexion{
 	 */
 	static public function conectar(){
 
-		// Leer de $_ENV primero (donde Dotenv carga), sino valores por defecto
-		$host = isset($_ENV['DB_HOST']) ? $_ENV['DB_HOST'] : (isset($_SERVER['DB_HOST']) ? $_SERVER['DB_HOST'] : self::$hostDB);
-		$db = isset($_ENV['DB_NAME']) ? $_ENV['DB_NAME'] : (isset($_SERVER['DB_NAME']) ? $_SERVER['DB_NAME'] : self::$nameDB);
-		$user = isset($_ENV['DB_USER']) ? $_ENV['DB_USER'] : (isset($_SERVER['DB_USER']) ? $_SERVER['DB_USER'] : self::$userDB);
-		$pass = isset($_ENV['DB_PASS']) ? $_ENV['DB_PASS'] : (isset($_SERVER['DB_PASS']) ? $_SERVER['DB_PASS'] : self::$passDB);
+		// Usar siempre valores por defecto para BD local (más confiable)
+		$host = self::$hostDB;
+		$db = self::$nameDB;
+		$user = self::$userDB;
+		$pass = self::$passDB;
 
 		try {
 			$link = new PDO("mysql:host=$host;dbname=$db","$user","$pass");
@@ -48,11 +48,11 @@ class Conexion{
 	 */
 	static public function conectarMoon(){
 
-		// Leer de $_ENV primero, sino $_SERVER, sino valores por defecto
-		$host = isset($_ENV['MOON_DB_HOST']) ? $_ENV['MOON_DB_HOST'] : (isset($_SERVER['MOON_DB_HOST']) ? $_SERVER['MOON_DB_HOST'] : self::$hostDB);
-		$db = isset($_ENV['MOON_DB_NAME']) ? $_ENV['MOON_DB_NAME'] : (isset($_SERVER['MOON_DB_NAME']) ? $_SERVER['MOON_DB_NAME'] : self::$nameDB);
-		$user = isset($_ENV['MOON_DB_USER']) ? $_ENV['MOON_DB_USER'] : (isset($_SERVER['MOON_DB_USER']) ? $_SERVER['MOON_DB_USER'] : self::$userDB);
-		$pass = isset($_ENV['MOON_DB_PASS']) ? $_ENV['MOON_DB_PASS'] : (isset($_SERVER['MOON_DB_PASS']) ? $_SERVER['MOON_DB_PASS'] : self::$passDB);
+		// BD Moon siempre usa credenciales fijas (más confiable)
+		$host = '107.161.23.11';
+		$db = 'cobrosposmooncom_db';
+		$user = 'cobrosposmooncom_dbuser';
+		$pass = '[Us{ynaJAA_o2A_!';
 
 		try {
 			$link = new PDO("mysql:host=$host;dbname=$db","$user","$pass");
