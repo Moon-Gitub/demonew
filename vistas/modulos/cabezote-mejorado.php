@@ -95,10 +95,23 @@ try {
     $ctaCteCliente = ControladorSistemaCobro::ctrMostrarSaldoCuentaCorriente($idCliente);
     $ctaCteMov = ControladorSistemaCobro::ctrMostrarMovimientoCuentaCorriente($idCliente);
 
+    // Debug: Ver qué campos tiene el cliente
+    error_log("DEBUG CLIENTE ID $idCliente: " . print_r($clienteMoon, true));
+
     // Verificar que las consultas funcionaron (usar !== false porque ID puede ser 0)
     if ($clienteMoon === false || $ctaCteCliente === false) {
         error_log("ERROR COBRO: Cliente ID $idCliente - Consultas fallaron");
         throw new Exception("No se pudieron obtener datos del cliente ID $idCliente");
+    }
+
+    // Obtener el nombre del cliente - verificar diferentes campos posibles
+    $nombreCliente = 'Cliente';
+    if (isset($clienteMoon['nombre']) && !empty($clienteMoon['nombre'])) {
+        $nombreCliente = $clienteMoon['nombre'];
+    } elseif (isset($clienteMoon['razon_social']) && !empty($clienteMoon['razon_social'])) {
+        $nombreCliente = $clienteMoon['razon_social'];
+    } elseif (isset($clienteMoon['dominio']) && !empty($clienteMoon['dominio'])) {
+        $nombreCliente = $clienteMoon['dominio'];
     }
 
     // Obtener el saldo pendiente actual
@@ -613,7 +626,7 @@ MODAL COBRO MEJORADO
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="color: #6c757d; font-size: 15px; font-weight: 600;">CLIENTE</span>
                         <span style="color: #2c3e50; font-size: 16px; font-weight: 500;">
-                            <?php echo isset($clienteMoon["nombre"]) ? $clienteMoon["nombre"] : 'Cliente'; ?>
+                            <?php echo $nombreCliente; ?>
                         </span>
                     </div>
 
