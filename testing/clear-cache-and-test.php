@@ -9,10 +9,19 @@
 // Cargar vendor autoload
 require_once __DIR__ . '/../extensiones/vendor/autoload.php';
 
+// Cargar variables de entorno desde .env PRIMERO
+if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+    $dotenv->load();
+}
+
+// Cargar helpers (función env())
+require_once __DIR__ . '/../helpers.php';
+
 // Cargar configuración
 require_once __DIR__ . '/../config.php';
 
-// IMPORTANTE: Limpiar caché ANTES de cargar .env
+// IMPORTANTE: Limpiar caché DESPUÉS de cargar todo
 if (function_exists('opcache_reset')) {
     opcache_reset();
     $opcache_limpiado = true;
@@ -25,12 +34,6 @@ if (function_exists('apc_clear_cache')) {
     $apc_limpiado = true;
 } else {
     $apc_limpiado = false;
-}
-
-// Ahora cargar variables de entorno desde .env
-if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
-    $dotenv->load();
 }
 
 ?>
@@ -169,12 +172,12 @@ if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
                 
                 <div class="item">
                     <label>MOON_CLIENTE_ID desde .env:</label>
-                    <span class="value info"><?php echo getenv('MOON_CLIENTE_ID') ?: 'NO DEFINIDO'; ?></span>
+                    <span class="value info"><?php echo env('MOON_CLIENTE_ID', 'NO DEFINIDO'); ?></span>
                 </div>
                 
                 <div class="item">
                     <label>Cliente ID que usará el sistema:</label>
-                    <span class="value success"><?php echo intval(getenv('MOON_CLIENTE_ID') ?: 7); ?></span>
+                    <span class="value success"><?php echo intval(env('MOON_CLIENTE_ID', 7)); ?></span>
                 </div>
                 
                 <div class="item">
@@ -223,8 +226,8 @@ if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
             </div>
 
             <?php
-            $clienteIdEnv = getenv('MOON_CLIENTE_ID');
-            $clienteIdFinal = intval(getenv('MOON_CLIENTE_ID') ?: 7);
+            $clienteIdEnv = env('MOON_CLIENTE_ID');
+            $clienteIdFinal = intval(env('MOON_CLIENTE_ID', 7));
             
             if ($clienteIdEnv && $clienteIdFinal == 14) {
                 ?>
