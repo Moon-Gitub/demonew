@@ -541,36 +541,36 @@ MODAL COBRO MEJORADO
                 <!-- Card: Resumen de Pago -->
                 <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 2px solid #f0f0f0;">
-                        <span style="color: #6c757d; font-size: 13px; font-weight: 600;">TOTAL A PAGAR</span>
+                        <span style="color: #6c757d; font-size: 15px; font-weight: 600;">TOTAL A PAGAR</span>
                         <div style="text-align: right;">
-                            <div style="font-size: 24px; font-weight: 700; color: #667eea;">
+                            <div style="font-size: 32px; font-weight: 700; color: #667eea;">
                                 $<?php echo number_format($abonoMensual, 2, ',', '.'); ?>
                             </div>
-                            <div style="font-size: 11px; color: #6c757d;">
+                            <div style="font-size: 13px; color: #6c757d;">
                                 <i class="fa fa-calendar"></i> <?php echo date('F Y'); ?>
                             </div>
                         </div>
                     </div>
                     
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="color: #6c757d; font-size: 13px; font-weight: 600;">CLIENTE</span>
-                        <span style="color: #2c3e50; font-size: 14px; font-weight: 500;">
+                        <span style="color: #6c757d; font-size: 15px; font-weight: 600;">CLIENTE</span>
+                        <span style="color: #2c3e50; font-size: 16px; font-weight: 500;">
                             <?php echo isset($clienteMoon["nombre"]) ? $clienteMoon["nombre"] : 'Cliente'; ?>
                         </span>
                     </div>
 
                     <!-- Detalles colapsables -->
                     <div style="border-top: 1px solid #f0f0f0; padding-top: 12px;">
-                        <a href="#" onclick="document.getElementById('detallesCargos').style.display = document.getElementById('detallesCargos').style.display === 'none' ? 'block' : 'none'; return false;" style="color: #667eea; font-size: 13px; font-weight: 600; text-decoration: none;">
+                        <a href="#" onclick="document.getElementById('detallesCargos').style.display = document.getElementById('detallesCargos').style.display === 'none' ? 'block' : 'none'; return false;" style="color: #667eea; font-size: 15px; font-weight: 600; text-decoration: none;">
                             <i class="fa fa-list"></i> DETALLE DE CARGOS
-                            <i class="fa fa-chevron-down" style="font-size: 10px; margin-left: 5px;"></i>
+                            <i class="fa fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i>
                         </a>
                         <div id="detallesCargos" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e0e0e0;">
                             <?php
                             // Mostrar servicios mensuales
                             if (count($serviciosMensuales) > 0) {
                                 foreach ($serviciosMensuales as $mov) {
-                                    echo '<div style="display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px;">';
+                                    echo '<div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px;">';
                                     echo '<span style="color: #6c757d;">' . $mov['descripcion'] . '</span>';
                                     echo '<span style="font-weight: 600; color: #dc3545;">$' . number_format($mov['importe'], 2, ',', '.') . '</span>';
                                     echo '</div>';
@@ -580,7 +580,7 @@ MODAL COBRO MEJORADO
                             // Mostrar otros cargos
                             if (count($otrosCargos) > 0) {
                                 foreach ($otrosCargos as $mov) {
-                                    echo '<div style="display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px;">';
+                                    echo '<div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px;">';
                                     echo '<span style="color: #6c757d;">' . $mov['descripcion'] . '</span>';
                                     echo '<span style="font-weight: 600; color: #dc3545;">$' . number_format($mov['importe'], 2, ',', '.') . '</span>';
                                     echo '</div>';
@@ -590,7 +590,7 @@ MODAL COBRO MEJORADO
                             // Mostrar recargo si aplica
                             if($tieneRecargo && $subtotalMensuales > 0) {
                                 $montoRecargoReal = $subtotalMensuales * ($porcentajeRecargo / 100);
-                                echo '<div style="display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px; background: #fff3cd; margin: 6px -10px; padding-left: 10px; padding-right: 10px; border-radius: 4px;">';
+                                echo '<div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; background: #fff3cd; margin: 6px -10px; padding-left: 10px; padding-right: 10px; border-radius: 4px;">';
                                 echo '<span style="color: #856404;"><i class="fa fa-exclamation-triangle"></i> Recargo (' . $porcentajeRecargo . '%)</span>';
                                 echo '<span style="font-weight: 600; color: #856404;">$' . number_format($montoRecargoReal, 2, ',', '.') . '</span>';
                                 echo '</div>';
@@ -603,12 +603,12 @@ MODAL COBRO MEJORADO
                 <!-- Card: Cómo Pagar -->
                 <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
                     <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
-                        <div style="width: 40px; height: 40px; background: #e3f2fd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
-                            <i class="fa fa-question-circle" style="color: #2196f3; font-size: 20px;"></i>
+                        <div style="width: 45px; height: 45px; background: #e3f2fd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
+                            <i class="fa fa-question-circle" style="color: #2196f3; font-size: 22px;"></i>
                         </div>
                         <div>
-                            <div style="font-size: 15px; font-weight: 700; color: #2c3e50; margin-bottom: 8px;">CÓMO PAGAR</div>
-                            <div style="font-size: 13px; color: #6c757d; line-height: 1.6;">
+                            <div style="font-size: 17px; font-weight: 700; color: #2c3e50; margin-bottom: 8px;">CÓMO PAGAR</div>
+                            <div style="font-size: 15px; color: #6c757d; line-height: 1.6;">
                                 Haz clic en el botón de Mercado Pago que está abajo para completar tu pago de forma segura.
                             </div>
                         </div>
@@ -619,12 +619,12 @@ MODAL COBRO MEJORADO
                 <?php if($tieneRecargo) { ?>
                 <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 4px solid #ff9800;">
                     <div style="display: flex; align-items: flex-start;">
-                        <div style="width: 40px; height: 40px; background: #fff3e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
-                            <i class="fa fa-exclamation-triangle" style="color: #ff9800; font-size: 20px;"></i>
+                        <div style="width: 45px; height: 45px; background: #fff3e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
+                            <i class="fa fa-exclamation-triangle" style="color: #ff9800; font-size: 22px;"></i>
                         </div>
                         <div>
-                            <div style="font-size: 15px; font-weight: 700; color: #2c3e50; margin-bottom: 8px;">RECARGO APLICADO</div>
-                            <div style="font-size: 13px; color: #6c757d; line-height: 1.6;">
+                            <div style="font-size: 17px; font-weight: 700; color: #2c3e50; margin-bottom: 8px;">RECARGO APLICADO</div>
+                            <div style="font-size: 15px; color: #6c757d; line-height: 1.6;">
                                 Este mes incluye un recargo del <strong><?php echo $porcentajeRecargo; ?>%</strong>. 
                                 Paga antes del día 10 para evitar recargos futuros.
                             </div>
@@ -634,12 +634,12 @@ MODAL COBRO MEJORADO
                 <?php } else { ?>
                 <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 4px solid #ff9800;">
                     <div style="display: flex; align-items: flex-start;">
-                        <div style="width: 40px; height: 40px; background: #fff3e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
-                            <i class="fa fa-exclamation-triangle" style="color: #ff9800; font-size: 20px;"></i>
+                        <div style="width: 45px; height: 45px; background: #fff3e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
+                            <i class="fa fa-exclamation-triangle" style="color: #ff9800; font-size: 22px;"></i>
                         </div>
                         <div>
-                            <div style="font-size: 15px; font-weight: 700; color: #2c3e50; margin-bottom: 8px;">PAGA A TIEMPO</div>
-                            <div style="font-size: 13px; color: #6c757d; line-height: 1.6;">
+                            <div style="font-size: 17px; font-weight: 700; color: #2c3e50; margin-bottom: 8px;">PAGA A TIEMPO</div>
+                            <div style="font-size: 15px; color: #6c757d; line-height: 1.7;">
                                 <strong>Recargos por pagos fuera de término:</strong><br>
                                 • Del 1 al 10: Sin recargo<br>
                                 • Del 10 al 20: <strong>10% de recargo</strong><br>
@@ -654,31 +654,31 @@ MODAL COBRO MEJORADO
 
                 <!-- Card: Métodos Disponibles -->
                 <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                    <div style="font-size: 15px; font-weight: 700; color: #2c3e50; margin-bottom: 15px;">MÉTODOS DISPONIBLES</div>
+                    <div style="font-size: 17px; font-weight: 700; color: #2c3e50; margin-bottom: 15px;">MÉTODOS DISPONIBLES</div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div style="background: #f5f7fa; padding: 16px; border-radius: 8px; text-align: center;">
-                            <i class="fa fa-credit-card" style="font-size: 28px; color: #667eea; display: block; margin-bottom: 8px;"></i>
-                            <span style="font-size: 12px; color: #6c757d; font-weight: 500;">Tarjetas</span>
+                        <div style="background: #f5f7fa; padding: 18px; border-radius: 8px; text-align: center;">
+                            <i class="fa fa-credit-card" style="font-size: 32px; color: #667eea; display: block; margin-bottom: 8px;"></i>
+                            <span style="font-size: 14px; color: #6c757d; font-weight: 500;">Tarjetas</span>
                         </div>
-                        <div style="background: #f5f7fa; padding: 16px; border-radius: 8px; text-align: center;">
-                            <i class="fa fa-university" style="font-size: 28px; color: #17a2b8; display: block; margin-bottom: 8px;"></i>
-                            <span style="font-size: 12px; color: #6c757d; font-weight: 500;">Transferencia</span>
+                        <div style="background: #f5f7fa; padding: 18px; border-radius: 8px; text-align: center;">
+                            <i class="fa fa-university" style="font-size: 32px; color: #17a2b8; display: block; margin-bottom: 8px;"></i>
+                            <span style="font-size: 14px; color: #6c757d; font-weight: 500;">Transferencia</span>
                         </div>
-                        <div style="background: #f5f7fa; padding: 16px; border-radius: 8px; text-align: center;">
-                            <i class="fa fa-money" style="font-size: 28px; color: #28a745; display: block; margin-bottom: 8px;"></i>
-                            <span style="font-size: 12px; color: #6c757d; font-weight: 500;">Efectivo</span>
+                        <div style="background: #f5f7fa; padding: 18px; border-radius: 8px; text-align: center;">
+                            <i class="fa fa-money" style="font-size: 32px; color: #28a745; display: block; margin-bottom: 8px;"></i>
+                            <span style="font-size: 14px; color: #6c757d; font-weight: 500;">Efectivo</span>
                         </div>
-                        <div style="background: #f5f7fa; padding: 16px; border-radius: 8px; text-align: center;">
-                            <i class="fa fa-qrcode" style="font-size: 28px; color: #764ba2; display: block; margin-bottom: 8px;"></i>
-                            <span style="font-size: 12px; color: #6c757d; font-weight: 500;">QR/Débito</span>
+                        <div style="background: #f5f7fa; padding: 18px; border-radius: 8px; text-align: center;">
+                            <i class="fa fa-qrcode" style="font-size: 32px; color: #764ba2; display: block; margin-bottom: 8px;"></i>
+                            <span style="font-size: 14px; color: #6c757d; font-weight: 500;">QR/Débito</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Seguridad -->
                 <div style="text-align: center; margin-bottom: 20px; padding: 12px;">
-                    <i class="fa fa-lock" style="color: #28a745; font-size: 16px; margin-right: 6px;"></i>
-                    <span style="color: #6c757d; font-size: 13px; font-weight: 500;">Pago 100% seguro con encriptación SSL</span>
+                    <i class="fa fa-lock" style="color: #28a745; font-size: 18px; margin-right: 6px;"></i>
+                    <span style="color: #6c757d; font-size: 15px; font-weight: 500;">Pago 100% seguro con encriptación SSL</span>
                 </div>
 
                 <?php if($muestroModal && isset($preference)) { ?>
