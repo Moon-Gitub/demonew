@@ -152,7 +152,41 @@ cp instalacion_cobro/archivos/vistas/modulos/procesar-pago.php vistas/modulos/
 
 ✅ **Verificar:** Los archivos existen en `vistas/modulos/`
 
-### 4.4 Copiar Configuración
+### 4.4 Configurar Plantilla para usar Cabezote Mejorado
+
+**⚠️ IMPORTANTE:** Debes cambiar el cabezote que se incluye en plantilla.php
+
+Tienes **dos opciones**:
+
+**Opción A - Modificar plantilla.php (Recomendado):**
+
+1. Abre `vistas/plantilla.php`
+2. Busca la línea que dice (aproximadamente línea 160):
+   ```php
+   include "modulos/cabezote.php";
+   ```
+3. Reemplázala por:
+   ```php
+   //CABEZOTE CON SISTEMA DE COBRO MERCADOPAGO
+   include "modulos/cabezote-mejorado.php";
+   ```
+
+**Opción B - Reemplazar el archivo cabezote.php:**
+
+```bash
+# Hacer backup del cabezote original
+mv vistas/modulos/cabezote.php vistas/modulos/cabezote-old.php
+
+# Copiar el mejorado como el principal
+cp vistas/modulos/cabezote-mejorado.php vistas/modulos/cabezote.php
+```
+
+✅ **Verificar:** 
+- Guarda los cambios
+- Accede al sistema
+- Deberías ver el ícono 🌙 en la navbar (si no hay errores)
+
+### 4.5 Copiar Configuración
 
 ```bash
 cp instalacion_cobro/archivos/config.php .
@@ -170,37 +204,102 @@ cp instalacion_cobro/archivos/config.php .
 cp instalacion_cobro/archivos/.env.example .env
 ```
 
-### 5.2 Editar .env con tus credenciales
+### 5.2 Configurar ID del Cliente
 
-Abre el archivo `.env` y configura:
+**⚠️ MUY IMPORTANTE:** Cada cuenta necesita su propio ID de cliente.
+
+Tienes **dos opciones**:
+
+**Opción A - Editar cabezote-mejorado.php directamente (RECOMENDADO):**
+
+1. Abre `vistas/modulos/cabezote-mejorado.php`
+2. Ve a la **línea 15**
+3. Busca esta línea:
+   ```php
+   $idCliente = isset($_ENV['MOON_CLIENTE_ID']) ? intval($_ENV['MOON_CLIENTE_ID']) : (isset($_SERVER['MOON_CLIENTE_ID']) ? intval($_SERVER['MOON_CLIENTE_ID']) : 7);
+   ```
+4. Reemplázala por el ID directo de este cliente:
+   ```php
+   $idCliente = 14; // ⚠️ CAMBIAR POR EL ID REAL DE ESTE CLIENTE
+   ```
+
+**Ejemplo:** Si es el cliente "AMARELLO" con ID 14 en la BD Moon:
+```php
+$idCliente = 14; // AMARELLO (Valentina Herrera)
+```
+
+✅ **Ventajas de Opción A:**
+- Simple y directo
+- No depende de .env
+- Funciona siempre
+- Ya probado que funciona
+
+---
+
+**Opción B - Usar archivo .env (Alternativa):**
+
+Si prefieres usar .env:
+
+1. Crear archivo `.env` en la raíz:
+```bash
+cp instalacion_cobro/archivos/.env.example .env
+```
+
+2. Editar `.env` y configurar:
 
 ```env
 # BASE DE DATOS MOON
 MOON_DB_HOST=107.161.23.11
-MOON_DB_NAME=tu_base_de_datos
-MOON_DB_USER=tu_usuario
-MOON_DB_PASS=tu_contraseña
+MOON_DB_NAME=cobrosposmooncom_db
+MOON_DB_USER=cobrosposmooncom_dbuser
+MOON_DB_PASS=[Us{ynaJAA_o2A_!
 
 # MERCADOPAGO
 MP_PUBLIC_KEY=APP_USR-tu-public-key
 MP_ACCESS_TOKEN=APP_USR-tu-access-token
 
-# ID DEL CLIENTE
-MOON_CLIENTE_ID=7
+# ID DEL CLIENTE (⚠️ CAMBIAR POR EL ID REAL)
+MOON_CLIENTE_ID=14
 ```
 
-⚠️ **IMPORTANTE:**
-- Reemplaza TODOS los valores de ejemplo
-- NO uses comillas en los valores
-- NO dejes espacios antes/después del =
-
-### 5.3 Proteger el archivo .env
-
+3. Proteger el archivo:
 ```bash
 chmod 600 .env
 ```
 
-✅ **Verificar:** El archivo `.env` tiene permisos 600 y contiene tus credenciales.
+---
+
+### 5.3 Cómo obtener el ID del Cliente
+
+Para saber qué ID usar, consulta la BD Moon:
+
+```sql
+SELECT id, nombre, dominio 
+FROM clientes 
+WHERE dominio LIKE '%nombre-del-cliente%';
+```
+
+**Ejemplo:**
+```sql
+-- Para el cliente AMARELLO
+SELECT id, nombre, dominio 
+FROM clientes 
+WHERE dominio LIKE '%amarello%';
+
+-- Resultado: id=14, nombre=AMARELLO (Valentina Herrera)
+```
+
+**O usa la herramienta incluida:**
+```
+https://tudominio.com/instalacion_cobro/generar-mapeo-clientes.php
+```
+
+Esta herramienta te mostrará TODOS los clientes con sus IDs.
+
+⚠️ **IMPORTANTE:**
+- Cada cuenta debe tener SU PROPIO ID único
+- NO uses el mismo ID para dos cuentas diferentes
+- Verifica el ID en la BD Moon antes de configurar
 
 ---
 
