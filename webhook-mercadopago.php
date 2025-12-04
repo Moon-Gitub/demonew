@@ -9,25 +9,49 @@
  * https://tu-dominio.com/webhook-mercadopago.php
  */
 
-// Cargar vendor autoload y configuración
-if (file_exists(__DIR__ . '/extensiones/vendor/autoload.php')) {
-    require_once __DIR__ . '/extensiones/vendor/autoload.php';
+// Manejo de errores para que no se muestren al exterior
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
+
+try {
+    // Cargar vendor autoload y configuración
+    if (file_exists(__DIR__ . '/extensiones/vendor/autoload.php')) {
+        require_once __DIR__ . '/extensiones/vendor/autoload.php';
+    }
+
+    // Cargar configuración
+    if (file_exists(__DIR__ . '/config.php')) {
+        require_once __DIR__ . '/config.php';
+    }
+
+    // Cargar variables de entorno desde .env (si existe y si Dotenv está instalado)
+    if (file_exists(__DIR__ . '/.env') && class_exists('Dotenv\Dotenv')) {
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+        $dotenv->load();
+    }
+
+    // Cargar helpers si existe
+    if (file_exists(__DIR__ . '/helpers.php')) {
+        require_once __DIR__ . '/helpers.php';
+    }
+
+    // Cargar dependencias solo si existen
+    if (file_exists(__DIR__ . '/controladores/mercadopago.controlador.php')) {
+        require_once __DIR__ . '/controladores/mercadopago.controlador.php';
+    }
+    if (file_exists(__DIR__ . '/controladores/sistema_cobro.controlador.php')) {
+        require_once __DIR__ . '/controladores/sistema_cobro.controlador.php';
+    }
+    if (file_exists(__DIR__ . '/modelos/mercadopago.modelo.php')) {
+        require_once __DIR__ . '/modelos/mercadopago.modelo.php';
+    }
+    if (file_exists(__DIR__ . '/modelos/sistema_cobro.modelo.php')) {
+        require_once __DIR__ . '/modelos/sistema_cobro.modelo.php';
+    }
+} catch (Exception $e) {
+    error_log("ERROR CARGANDO DEPENDENCIAS WEBHOOK: " . $e->getMessage());
+    // Continuar de todos modos, responder OK
 }
-
-// Cargar configuración
-require_once __DIR__ . '/config.php';
-
-// Cargar variables de entorno desde .env (si existe y si Dotenv está instalado)
-if (file_exists(__DIR__ . '/.env') && class_exists('Dotenv\Dotenv')) {
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-    $dotenv->load();
-}
-
-// Cargar dependencias
-require_once "controladores/mercadopago.controlador.php";
-require_once "controladores/sistema_cobro.controlador.php";
-require_once "modelos/mercadopago.modelo.php";
-require_once "modelos/sistema_cobro.modelo.php";
 
 // Configurar zona horaria
 date_default_timezone_set('America/Argentina/Mendoza');
@@ -93,29 +117,35 @@ try {
         exit;
     }
 
-    // Registrar el webhook en la base de datos
-    $datosWebhook = array(
-        'topic' => $topic,
-        'resource_id' => $id,
-        'datos_json' => json_encode(array(
-            'get' => $_GET,
-            'post' => $_POST,
-            'input' => file_get_contents('php://input')
-        )),
-        'fecha_recibido' => date('Y-m-d H:i:s'),
-        'procesado' => 0
-    );
+    // Registrar el webhook en la base de datos (solo si las clases están disponibles)
+    $webhookId = null;
+    
+    if (class_exists('ControladorMercadoPago')) {
+        $datosWebhook = array(
+            'topic' => $topic,
+            'resource_id' => $id,
+            'datos_json' => json_encode(array(
+                'get' => $_GET,
+                'post' => $_POST,
+                'input' => file_get_contents('php://input')
+            )),
+            'fecha_recibido' => date('Y-m-d H:i:s'),
+            'procesado' => 0
+        );
 
-    $webhookId = ControladorMercadoPago::ctrRegistrarWebhook($datosWebhook);
-    error_log("Webhook registrado con ID: $webhookId");
+        $webhookId = ControladorMercadoPago::ctrRegistrarWebhook($datosWebhook);
+        error_log("Webhook registrado con ID: $webhookId");
+    } else {
+        error_log("ADVERTENCIA: ControladorMercadoPago no disponible, webhook no se registrará en BD");
+    }
 
     // Solo procesar si es un pago
     if ($topic === 'payment') {
 
         error_log("Procesando pago con ID: $id");
 
-        // Verificar si ya fue procesado
-        if (ControladorMercadoPago::ctrVerificarPagoProcesado($id)) {
+        // Verificar si ya fue procesado (solo si las clases están disponibles)
+        if (class_exists('ControladorMercadoPago') && ControladorMercadoPago::ctrVerificarPagoProcesado($id)) {
             error_log("Pago $id ya fue procesado anteriormente");
 
             // Marcar webhook como procesado
@@ -128,6 +158,12 @@ try {
         }
 
         // Obtener credenciales
+        if (!class_exists('ControladorMercadoPago')) {
+            error_log("ERROR: ControladorMercadoPago no disponible");
+            echo json_encode(['error' => true, 'message' => 'Controlador no disponible']);
+            exit;
+        }
+        
         $credenciales = ControladorMercadoPago::ctrObtenerCredenciales();
 
         // Consultar el pago en la API de MercadoPago
