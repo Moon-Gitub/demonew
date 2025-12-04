@@ -95,45 +95,51 @@ try {
     $ctaCteCliente = ControladorSistemaCobro::ctrMostrarSaldoCuentaCorriente($idCliente);
     $ctaCteMov = ControladorSistemaCobro::ctrMostrarMovimientoCuentaCorriente($idCliente);
 
+    // Verificar que las consultas funcionaron (usar !== false porque ID puede ser 0)
+    if ($clienteMoon === false || $ctaCteCliente === false) {
+        error_log("ERROR COBRO: Cliente ID $idCliente - Consultas fallaron");
+        throw new Exception("No se pudieron obtener datos del cliente ID $idCliente");
+    }
+
     // Obtener el saldo pendiente actual
     $saldoPendiente = floatval($ctaCteCliente["saldo"]);
 
-    // Obtener movimientos tipo 0 (cargos) ordenados por fecha descendente
-    $conexionMoon = Conexion::conectarMoon();
-    $stmtMovs = $conexionMoon->prepare("SELECT * FROM clientes_cuenta_corriente
-                                        WHERE id_cliente = :id AND tipo = 0
-                                        ORDER BY fecha DESC");
-    $stmtMovs->bindParam(":id", $idCliente, PDO::PARAM_INT);
-    $stmtMovs->execute();
-    $todosLosCargos = $stmtMovs->fetchAll();
-
-    // Filtrar solo los cargos que forman parte del saldo pendiente
-    // Tomamos los más recientes hasta alcanzar el saldo pendiente
-    $movimientosPendientes = [];
-    $sumaAcumulada = 0;
-
-    foreach ($todosLosCargos as $cargo) {
-        if ($sumaAcumulada < $saldoPendiente) {
-            $movimientosPendientes[] = $cargo;
-            $sumaAcumulada += floatval($cargo['importe']);
-        } else {
-            break; // Ya alcanzamos el saldo pendiente
-        }
-    }
-
-    // Separar servicios mensuales de otros cargos
+    // IMPORTANTE: Usar directamente el saldo pendiente
+    // No intentar reconstruir cargos específicos porque puede haber pagos parciales
+    
+    // Si el saldo es pequeño, probablemente es un resto de pago parcial
+    // Mostrarlo como "Saldo pendiente" sin desglose detallado
     $serviciosMensuales = [];
     $otrosCargos = [];
     $subtotalMensuales = 0;
     $subtotalOtros = 0;
-
-    foreach ($movimientosPendientes as $mov) {
-        if (stripos($mov['descripcion'], 'Servicio POS') !== false) {
-            $serviciosMensuales[] = $mov;
-            $subtotalMensuales += floatval($mov['importe']);
+    
+    if ($saldoPendiente > 0) {
+        // Obtener último movimiento para descripción
+        if ($ctaCteMov && isset($ctaCteMov['descripcion'])) {
+            $descripcion = $ctaCteMov['descripcion'];
+            
+            // Determinar si es servicio mensual o no
+            if (stripos($descripcion, 'Servicio POS') !== false) {
+                $serviciosMensuales[] = array(
+                    'descripcion' => 'Saldo pendiente (resto de: ' . $descripcion . ')',
+                    'importe' => $saldoPendiente
+                );
+                $subtotalMensuales = $saldoPendiente;
+            } else {
+                $otrosCargos[] = array(
+                    'descripcion' => 'Saldo pendiente (resto de: ' . $descripcion . ')',
+                    'importe' => $saldoPendiente
+                );
+                $subtotalOtros = $saldoPendiente;
+            }
         } else {
-            $otrosCargos[] = $mov;
-            $subtotalOtros += floatval($mov['importe']);
+            // Si no hay último movimiento, mostrar como saldo general
+            $otrosCargos[] = array(
+                'descripcion' => 'Saldo pendiente de cuenta corriente',
+                'importe' => $saldoPendiente
+            );
+            $subtotalOtros = $saldoPendiente;
         }
     }
 
@@ -172,7 +178,10 @@ if($ctaCteCliente["saldo"] <= 0) {
     $diaActual = intval(date('d'));
     $diasCorte = 26 - $diaActual;
 
-    if ($clienteMoon["estado_bloqueo"] == "1") {
+    // Verificar estado_bloqueo (usar isset para evitar errores si el campo no existe)
+    $estadoBloqueo = isset($clienteMoon["estado_bloqueo"]) ? $clienteMoon["estado_bloqueo"] : 0;
+    
+    if ($estadoBloqueo == "1") {
         // Cliente bloqueado
         $estadoClienteBarra = 'style="background-color: #dc3545;"';
         $muestroModal = true;
@@ -498,7 +507,7 @@ MODAL COBRO MEJORADO
                             </h4>
                             <div style="margin: 15px 0;">
                                 <strong style="color: #6c757d; display: block; margin-bottom: 5px;">CLIENTE</strong>
-                                <p style="font-size: 16px; margin: 0;"><?php echo $clienteMoon["nombre"]; ?></p>
+                                <p style="font-size: 16px; margin: 0;"><?php echo isset($clienteMoon["nombre"]) ? $clienteMoon["nombre"] : 'Cliente'; ?></p>
                             </div>
                         </div>
 
