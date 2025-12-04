@@ -2,6 +2,31 @@
 
 Guía completa para instalar el sistema de cobro usando **ÚNICAMENTE cPanel** (sin necesidad de terminal/SSH).
 
+## ✨ Características del Sistema
+
+✅ **Integración con MercadoPago:**
+- Botón de pago directo en el sistema
+- **Código QR** para pagar escaneando con el celular
+- Webhook automático para procesar pagos
+- Gestión de credenciales segura
+
+✅ **Gestión Automática de Cobros:**
+- Cálculo automático de recargos por mora (10%, 15%, 30%)
+- Manejo de pagos parciales
+- Suspensión automática después del día 26
+- Actualización automática del estado del cliente
+
+✅ **Interfaz Moderna:**
+- Diseño limpio tipo móvil
+- Fuentes grandes y legibles
+- 100% responsive (desktop, tablet, móvil)
+- Instrucciones claras paso a paso
+
+✅ **Base de Datos Dual:**
+- BD Local: Sistema POS (clientes, ventas, productos)
+- BD Moon: Sistema de cobro (cuenta corriente, pagos)
+- Sincronización automática
+
 ---
 
 ## 📋 ANTES DE EMPEZAR
@@ -120,44 +145,55 @@ Si no existen, créalas:
 
 ## PASO 5: Subir Archivos del Sistema de Cobro
 
-### 5.1 Subir Controladores
+### 5.1 Subir Archivos en Raíz (public_html/)
 
 **Desde tu PC:**
 
+1. En File Manager, navega a **`public_html/`** (raíz)
+2. Clic en **"Upload"**
+3. Subir estos archivos:
+   - `instalacion_cobro/archivos/generar-qr.php`
+   - `instalacion_cobro/archivos/webhook-mercadopago.php`
+   - `instalacion_cobro/archivos/helpers.php`
+
+✅ **Verificar:** En `public_html/` deben aparecer:
+- `generar-qr.php` ✓ (Generador de códigos QR)
+- `webhook-mercadopago.php` ✓ (Receptor de notificaciones)
+- `helpers.php` ✓ (Funciones auxiliares)
+
+### 5.2 Subir Controladores
+
 1. En File Manager, navega a **`public_html/controladores/`**
-2. Clic en **"Upload"** (arriba)
-3. Se abrirá el uploader
-4. Arrastra o selecciona estos archivos:
-   - `instalacion_cobro/archivos/cobro/sistema_cobro.controlador.php`
-   - `instalacion_cobro/archivos/controladores/mercadopago.controlador.php`
-5. Esperar que se suban (100%)
-6. Cerrar el uploader
+2. Clic en **"Upload"**
+3. Subir estos archivos de `instalacion_cobro/archivos/controladores-agregar/`:
+   - `sistema_cobro.controlador.php`
+   - `mercadopago.controlador.php`
 
 ✅ **Verificar:** En `public_html/controladores/` deben aparecer:
 - `sistema_cobro.controlador.php` ✓
 - `mercadopago.controlador.php` ✓
 
-### 4.2 Subir Modelos
+### 5.3 Subir Modelos
 
 1. En File Manager, navega a **`public_html/modelos/`**
 2. Clic en **"Upload"**
-3. Subir estos archivos:
-   - `instalacion_cobro/archivos/cobro/sistema_cobro.modelo.php`
-   - `instalacion_cobro/archivos/modelos/mercadopago.modelo.php`
-   - `instalacion_cobro/archivos/modelos/conexion.php` (¡sobrescribir si existe!)
+3. Subir estos archivos de `instalacion_cobro/archivos/modelos-agregar/`:
+   - `sistema_cobro.modelo.php`
+   - `mercadopago.modelo.php`
+   - `conexion.php` (¡sobrescribir si existe!)
 
 ✅ **Verificar:** En `public_html/modelos/` deben aparecer:
 - `sistema_cobro.modelo.php` ✓
 - `mercadopago.modelo.php` ✓
 - `conexion.php` (actualizado) ✓
 
-### 4.3 Subir Vistas
+### 5.4 Subir Vistas
 
 1. En File Manager, navega a **`public_html/vistas/modulos/`**
 2. Clic en **"Upload"**
-3. Subir estos archivos:
-   - `instalacion_cobro/archivos/vistas/modulos/cabezote-mejorado.php`
-   - `instalacion_cobro/archivos/vistas/modulos/procesar-pago.php`
+3. Subir estos archivos de `instalacion_cobro/archivos/vistas-agregar/modulos/`:
+   - `cabezote-mejorado.php`
+   - `procesar-pago.php`
 
 ✅ **Verificar:** En `public_html/vistas/modulos/` deben aparecer:
 - `cabezote-mejorado.php` ✓

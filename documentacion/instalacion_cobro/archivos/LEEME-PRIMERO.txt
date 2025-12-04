@@ -1,101 +1,123 @@
-═══════════════════════════════════════════════════════════════
-📁 ARCHIVOS PARA INSTALACIÓN - SISTEMA DE COBRO MOON POS
-═══════════════════════════════════════════════════════════════
+╔═══════════════════════════════════════════════════════════════╗
+║        📁 ARCHIVOS DEL SISTEMA DE COBRO MOON POS              ║
+╚═══════════════════════════════════════════════════════════════╝
 
-🎯 OBJETIVO:
-Esta carpeta contiene TODOS los archivos necesarios para instalar
-el sistema de cobro en una cuenta de cPanel.
+🎯 INSTRUCCIONES DE INSTALACIÓN
+══════════════════════════════════════════════════════════════════
 
-═══════════════════════════════════════════════════════════════
-📋 QUÉ ARCHIVOS COPIAR (7 archivos):
-═══════════════════════════════════════════════════════════════
+ANTES DE EMPEZAR:
+─────────────────
+1. Tener el ID del cliente en BD Moon
+2. Acceso a cPanel de la cuenta
+3. Estos archivos en tu PC
 
-1️⃣ CONTROLADORES → Copiar a public_html/controladores/
-   ───────────────────────────────────────────────────────────
-   ✅ cobro-original/sistema_cobro.controlador.php
-   ✅ controladores-agregar/mercadopago.controlador.php
+TIEMPO TOTAL: 15-20 minutos
 
-2️⃣ MODELOS → Copiar a public_html/modelos/
-   ───────────────────────────────────────────────────────────
-   ✅ cobro-original/sistema_cobro.modelo.php
-   ✅ modelos-agregar/mercadopago.modelo.php
-   ⚠️ modelos-agregar/conexion.php (REEMPLAZA el existente)
+══════════════════════════════════════════════════════════════════
+📂 DÓNDE COPIAR CADA ARCHIVO
+══════════════════════════════════════════════════════════════════
 
-3️⃣ VISTAS → Copiar a public_html/vistas/modulos/
-   ───────────────────────────────────────────────────────────
-   ✅ vistas-agregar/modulos/cabezote-mejorado.php
-   ✅ vistas-agregar/modulos/procesar-pago.php
+EN LA RAÍZ (public_html/):
+─────────────────────────────────────────────────────────────────
+✓ generar-qr.php              ← Genera códigos QR para pago
+✓ webhook-mercadopago.php     ← Recibe notificaciones de pagos
+✓ helpers.php                 ← Funciones auxiliares
 
-4️⃣ CONFIGURACIÓN → Crear en public_html/ (raíz)
-   ───────────────────────────────────────────────────────────
-   ✅ .env (crear nuevo basándote en .env.example)
-      ⚠️ CAMBIAR: MOON_CLIENTE_ID=14 por el ID real
+EN /controladores/:
+─────────────────────────────────────────────────────────────────
+✓ sistema_cobro.controlador.php
+✓ mercadopago.controlador.php
 
-═══════════════════════════════════════════════════════════════
-⚠️ MUY IMPORTANTE:
-═══════════════════════════════════════════════════════════════
+EN /modelos/:
+─────────────────────────────────────────────────────────────────
+✓ sistema_cobro.modelo.php
+✓ mercadopago.modelo.php
+✓ conexion.php                ← ⚠️ SOBRESCRIBE el existente
 
-🔴 ARCHIVO CRÍTICO: .env
-   - Crear .env en la raíz (public_html/)
-   - Copiar contenido de .env.example
-   - CAMBIAR el ID: MOON_CLIENTE_ID=XX
-   - Cada cuenta tiene su PROPIO ID único
+EN /vistas/modulos/:
+─────────────────────────────────────────────────────────────────
+✓ cabezote-mejorado.php       ← El modal de cobro
+✓ procesar-pago.php           ← Página de confirmación
 
-🔴 ARCHIVO A REEMPLAZAR: modelos/conexion.php
-   - El nuevo tiene método conectarMoon()
-   - Sobrescribir el existente
+══════════════════════════════════════════════════════════════════
+⚙️ CONFIGURACIÓN
+══════════════════════════════════════════════════════════════════
 
-🔴 ARCHIVO A EDITAR: vistas/plantilla.php
-   - Cambiar: include "modulos/cabezote.php";
-   - Por: include "modulos/cabezote-mejorado.php";
+CREAR .ENV EN LA RAÍZ:
+─────────────────────────────────────────────────────────────────
+1. cPanel → File Manager → public_html
+2. Crear archivo: .env (con el punto)
+3. Copiar contenido de: ../template-env.txt
+4. CAMBIAR el ID del cliente (línea MOON_CLIENTE_ID=14)
+5. Guardar
+6. Permisos: 600
 
-═══════════════════════════════════════════════════════════════
-📖 DOCUMENTACIÓN COMPLETA:
-═══════════════════════════════════════════════════════════════
+EDITAR PLANTILLA.PHP:
+─────────────────────────────────────────────────────────────────
+1. Abrir: vistas/plantilla.php
+2. Buscar: include "modulos/cabezote.php";
+3. Cambiar a: include "modulos/cabezote-mejorado.php";
+4. Guardar
 
-📘 INSTALACION-CPANEL.md
-   - Guía paso a paso con cPanel
-   - Sin necesidad de terminal
-   - 10-15 minutos por cuenta
+VERIFICAR INDEX.PHP:
+─────────────────────────────────────────────────────────────────
+Debe tener estos requires (agregar si faltan):
 
-📋 CHECKLIST-CPANEL.md
-   - Checklist con checkboxes
-   - Para seguimiento de cada cuenta
+require_once "helpers.php";
+require_once "controladores/sistema_cobro.controlador.php";
+require_once "modelos/sistema_cobro.modelo.php";
+require_once "controladores/mercadopago.controlador.php";
+require_once "modelos/mercadopago.modelo.php";
 
-📦 GUIA-VENDOR-COMPOSER.md
-   - Cómo manejar carpeta vendor/
-   - Comprimir, subir, extraer
+══════════════════════════════════════════════════════════════════
+✨ CARACTERÍSTICAS INCLUIDAS
+══════════════════════════════════════════════════════════════════
 
-═══════════════════════════════════════════════════════════════
-🎯 PROCESO RÁPIDO:
-═══════════════════════════════════════════════════════════════
+✅ Botón de pago directo con Mercado Pago
+✅ Código QR para pagar escaneando con el celular 📱
+✅ Webhook automático (procesa pagos sin intervención)
+✅ Cálculo automático de recargos por mora (10%, 15%, 30%)
+✅ Manejo inteligente de pagos parciales
+✅ Diseño responsive (móvil, tablet, desktop)
+✅ Fuentes grandes y legibles
+✅ Instrucciones claras en cada paso
 
-1. Subir vendor.zip → Extraer (si no existe vendor)
-2. Subir 7 archivos a sus carpetas
-3. Crear .env con el ID del cliente
-4. Editar plantilla.php
-5. Editar index.php (verificar requires)
-6. Probar
+══════════════════════════════════════════════════════════════════
+🧪 TESTING
+══════════════════════════════════════════════════════════════════
 
-⏱️ Tiempo: 12-15 minutos por cuenta
+Después de instalar, probar:
 
-═══════════════════════════════════════════════════════════════
-❓ ¿CÓMO OBTENER EL ID DEL CLIENTE?
-═══════════════════════════════════════════════════════════════
+1. Login en el sistema POS
+2. Buscar "💳 Estado Cuenta" en el navbar
+3. Hacer clic
+4. Verificar que aparezca:
+   ✓ Nombre del cliente correcto
+   ✓ Saldo pendiente correcto
+   ✓ Botón "Pagar con Mercado Pago"
+   ✓ Código QR visible
 
-Opción 1: Usar herramienta de mapeo
-   https://dominio.com/generar-mapeo-clientes.php
+══════════════════════════════════════════════════════════════════
+⚠️ IMPORTANTE
+══════════════════════════════════════════════════════════════════
 
-Opción 2: Query SQL en BD Moon
-   SELECT id, nombre, dominio FROM clientes 
-   WHERE dominio LIKE '%nombre%';
+• El ÚNICO valor que debes cambiar es MOON_CLIENTE_ID en .env
+• Los demás valores son iguales para TODAS las cuentas
+• El archivo .env NO debe subirse a Git
+• Permisos del .env deben ser 600
+• El generar-qr.php debe estar en la raíz (no en subcarpetas)
 
-═══════════════════════════════════════════════════════════════
-📞 SOPORTE:
-═══════════════════════════════════════════════════════════════
+══════════════════════════════════════════════════════════════════
+📖 DOCUMENTACIÓN COMPLETA
+══════════════════════════════════════════════════════════════════
 
-Consultar: README-ARCHIVOS.md (en esta carpeta)
-Guía completa: ../INSTALACION-CPANEL.md
+Lee la guía completa en:
+../INSTALACION-CPANEL.md
 
-═══════════════════════════════════════════════════════════════
+Usa el checklist:
+../CHECKLIST-CPANEL.md
 
+══════════════════════════════════════════════════════════════════
+
+Moon Desarrollos © 2025
+Sistema de Cobro POS v2.0 (con QR Code)

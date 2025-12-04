@@ -1,176 +1,198 @@
-# 📁 Archivos para Instalación del Sistema de Cobro
+# 📁 Archivos del Sistema de Cobro
 
-Esta carpeta contiene **TODOS** los archivos necesarios para instalar el sistema de cobro en una cuenta del reseller.
+Esta carpeta contiene todos los archivos necesarios para instalar el sistema de cobro en una cuenta.
 
 ---
 
-## 📦 ESTRUCTURA DE ARCHIVOS
+## 📂 Estructura de Archivos
 
 ```
 archivos/
+├── generar-qr.php                    ← COPIAR A: public_html/
+├── webhook-mercadopago.php           ← COPIAR A: public_html/
+├── helpers.php                       ← COPIAR A: public_html/
+├── config.php                        ← COPIAR A: public_html/ (opcional)
+├── index.php                         ← REFERENCIA (para verificar)
+├── .env.example                      ← REFERENCIA (ver template-env.txt)
+├── LEEME-PRIMERO.txt                 ← Instrucciones rápidas
+├── README-ARCHIVOS.md                ← Este archivo
 │
-├── 📄 ARCHIVOS DE CONFIGURACIÓN (Raíz del sitio)
-│   ├── .env.example            → TEMPLATE para crear .env
-│   ├── config.php              → Archivo de configuración (opcional)
-│   ├── helpers.php             → Funciones helper (opcional)
-│   └── index.php               → REFERENCIA de qué agregar
+├── controladores-agregar/            ← COPIAR A: public_html/controladores/
+│   ├── sistema_cobro.controlador.php
+│   └── mercadopago.controlador.php
 │
-├── 📂 cobro-original/          
-│   │   SISTEMA DE COBRO BASE - Copiar a controladores/modelos
-│   │
-│   ├── sistema_cobro.controlador.php  → public_html/controladores/
-│   ├── sistema_cobro.modelo.php       → public_html/modelos/
-│   └── cabezote.php                   → (backup, no copiar)
+├── modelos-agregar/                  ← COPIAR A: public_html/modelos/
+│   ├── sistema_cobro.modelo.php
+│   ├── mercadopago.modelo.php
+│   └── conexion.php
 │
-├── 📂 controladores-agregar/   
-│   │   CONTROLADOR MERCADOPAGO - Copiar a controladores/
-│   │
-│   └── mercadopago.controlador.php    → public_html/controladores/
-│
-├── 📂 modelos-agregar/         
-│   │   MODELOS NUEVOS - Copiar a modelos/
-│   │
-│   ├── mercadopago.modelo.php         → public_html/modelos/
-│   └── conexion.php                   → public_html/modelos/ ⚠️ REEMPLAZAR
-│
-└── 📂 vistas-agregar/          
-    │   VISTAS DEL SISTEMA DE COBRO - Copiar a vistas/modulos/
-    │
+└── vistas-agregar/                   ← COPIAR A: public_html/vistas/
     └── modulos/
-        ├── cabezote-mejorado.php      → public_html/vistas/modulos/
-        └── procesar-pago.php          → public_html/vistas/modulos/
+        ├── cabezote-mejorado.php
+        └── procesar-pago.php
 ```
 
 ---
 
-## ✅ CHECKLIST DE ARCHIVOS A COPIAR
+## 📋 Descripción de Archivos
 
-### 📂 En `public_html/controladores/`
-- [ ] `sistema_cobro.controlador.php` ← desde `cobro-original/`
-- [ ] `mercadopago.controlador.php` ← desde `controladores-agregar/`
+### **Archivos en Raíz (public_html/)**
 
-### 📂 En `public_html/modelos/`
-- [ ] `sistema_cobro.modelo.php` ← desde `cobro-original/`
-- [ ] `mercadopago.modelo.php` ← desde `modelos-agregar/`
-- [ ] `conexion.php` ⚠️ ← desde `modelos-agregar/` (REEMPLAZA existente)
+#### `generar-qr.php` ⭐ NUEVO
+- **Función:** Genera códigos QR para pago con celular
+- **Tecnología:** PHP + QuickChart.io API
+- **Sin dependencias:** No requiere librerías adicionales
+- **Seguridad:** Valida URLs de MercadoPago
+- **Cache:** 1 hora para mejor rendimiento
 
-### 📂 En `public_html/vistas/modulos/`
-- [ ] `cabezote-mejorado.php` ← desde `vistas-agregar/modulos/`
-- [ ] `procesar-pago.php` ← desde `vistas-agregar/modulos/`
+#### `webhook-mercadopago.php`
+- **Función:** Receptor de notificaciones de MercadoPago
+- **Procesa:** Pagos aprobados, rechazados, pendientes
+- **Actualiza:** Cuenta corriente automáticamente
+- **Seguridad:** Valida origen de notificaciones
 
-### 📄 En `public_html/` (raíz)
-- [ ] `.env` ⚠️ ← CREAR NUEVO (usar .env.example como base)
-- [ ] `helpers.php` ← OPCIONAL (recomendado)
+#### `helpers.php`
+- **Función:** Funciones auxiliares para variables de entorno
+- **Incluye:** Función `env()` para leer `.env`
+- **Compatible:** Funciona con diferentes configuraciones PHP
 
-**TOTAL: 7 archivos + 1 .env nuevo = 8 archivos**
+#### `config.php` (Opcional)
+- **Función:** Validaciones de entorno
+- **Uso:** Solo si no existe en la cuenta
+- **Nota:** La mayoría de cuentas ya lo tienen
 
-**Archivos NO copiar:**
-- ❌ `config.php` (opcional, solo si no existe)
-- ❌ `index.php` (solo como referencia)
-- ❌ `cobro-original/cabezote.php` (backup, no usar)
-
----
-
-## 🎯 PROCESO DE COPIADO (cPanel)
-
-### PASO 1: Controladores
-
-1. File Manager → `public_html/controladores/`
-2. Upload:
-   - `cobro-original/sistema_cobro.controlador.php`
-   - `controladores-agregar/mercadopago.controlador.php`
-
-### PASO 2: Modelos
-
-1. File Manager → `public_html/modelos/`
-2. Upload:
-   - `cobro-original/sistema_cobro.modelo.php`
-   - `modelos-agregar/mercadopago.modelo.php`
-   - `modelos-agregar/conexion.php` ⚠️ Si pregunta sobrescribir: **SÍ**
-
-### PASO 3: Vistas
-
-1. File Manager → `public_html/vistas/modulos/`
-2. Upload:
-   - `vistas-agregar/modulos/cabezote-mejorado.php`
-   - `vistas-agregar/modulos/procesar-pago.php`
-
-### PASO 4: Crear .env
-
-1. File Manager → `public_html/` (raíz)
-2. **+ File** → Nombre: `.env`
-3. Editar → Copiar contenido de `.env.example`
-4. **Cambiar** `MOON_CLIENTE_ID=14` por el ID real del cliente
-5. Save
-6. Permisos: 600
+#### `index.php` (Referencia)
+- **Función:** Solo para verificar requires
+- **NO copiar:** Solo consultar para agregar líneas necesarias
 
 ---
 
-## 📋 MAPEO DE ARCHIVOS
+### **Controladores (`controladores-agregar/`)**
 
-| Archivo Original | Copiar a | Acción |
-|------------------|----------|--------|
-| `cobro-original/sistema_cobro.controlador.php` | `controladores/` | Agregar |
-| `cobro-original/sistema_cobro.modelo.php` | `modelos/` | Agregar |
-| `controladores-agregar/mercadopago.controlador.php` | `controladores/` | Agregar |
-| `modelos-agregar/mercadopago.modelo.php` | `modelos/` | Agregar |
-| `modelos-agregar/conexion.php` | `modelos/` | **Reemplazar** ⚠️ |
-| `vistas-agregar/modulos/cabezote-mejorado.php` | `vistas/modulos/` | Agregar |
-| `vistas-agregar/modulos/procesar-pago.php` | `vistas/modulos/` | Agregar |
-| `.env.example` | `.env` en raíz | Crear nuevo |
+#### `sistema_cobro.controlador.php`
+- Maneja lógica de negocio del sistema de cobro
+- Consulta clientes, saldos y movimientos
+- Actualiza estados de clientes
+
+#### `mercadopago.controlador.php`
+- Integración con API de MercadoPago
+- Cálculo de montos con recargos
+- Registro de intentos de pago
 
 ---
 
-## ⚠️ ARCHIVOS IMPORTANTES
+### **Modelos (`modelos-agregar/`)**
 
-### ⚠️ conexion.php
-**DEBE REEMPLAZARSE** el existente porque la nueva versión:
-- ✅ Tiene método `conectarMoon()` (conexión a BD Moon)
-- ✅ Usa `$_ENV` correctamente
-- ✅ Valores por defecto actualizados
+#### `sistema_cobro.modelo.php`
+- Acceso a datos de clientes en BD Moon
+- Consultas de cuenta corriente
+- Registro de movimientos
 
-**Si NO lo reemplazas:** El sistema no se conectará a la BD Moon.
+#### `mercadopago.modelo.php`
+- Gestión de preferencias de pago
+- Registro de intentos y confirmaciones
+- Logs de webhooks
 
-### ⚠️ .env
-**DEBE CREARSE NUEVO** con el ID del cliente específico:
-```env
-MOON_CLIENTE_ID=14  ← Cambiar por el ID real
+#### `conexion.php` ⚠️ SOBRESCRIBE EXISTENTE
+- Conexión dual: BD Local + BD Moon
+- Carga automática de `.env`
+- Manejo de errores robusto
+
+---
+
+### **Vistas (`vistas-agregar/modulos/`)**
+
+#### `cabezote-mejorado.php` ⭐ ARCHIVO PRINCIPAL
+- Modal de cobro con diseño moderno
+- Muestra saldo y cargos pendientes
+- **Botón de pago Mercado Pago**
+- **Código QR para pagar con celular** 📱
+- Cálculo automático de recargos
+- 100% responsive
+
+#### `procesar-pago.php`
+- Procesa respuesta de MercadoPago
+- Muestra confirmación al cliente
+- Maneja estados: aprobado, pendiente, rechazado
+
+---
+
+## 🎯 Orden de Instalación
+
+### 1. Archivos en Raíz
+```
+public_html/
+├── generar-qr.php
+├── webhook-mercadopago.php
+└── helpers.php
 ```
 
-**Si NO lo creas:** El sistema usará ID 7 por defecto (incorrecto).
+### 2. Controladores
+```
+public_html/controladores/
+├── sistema_cobro.controlador.php
+└── mercadopago.controlador.php
+```
+
+### 3. Modelos
+```
+public_html/modelos/
+├── sistema_cobro.modelo.php
+├── mercadopago.modelo.php
+└── conexion.php (sobrescribir)
+```
+
+### 4. Vistas
+```
+public_html/vistas/modulos/
+├── cabezote-mejorado.php
+└── procesar-pago.php
+```
+
+### 5. Configuración
+```
+public_html/
+└── .env (crear con template-env.txt)
+```
 
 ---
 
-## 📝 NOTAS
+## ✅ Verificación Rápida
 
-### Archivos OPCIONALES:
-- `helpers.php` - Solo si quieres usar la función `env()`
-- `config.php` - Solo si no existe (para validaciones)
-- `index.php` - Solo como REFERENCIA de qué agregar
+Después de copiar todo, verifica:
 
-### Archivos OBLIGATORIOS:
-- ✅ Los 2 controladores
-- ✅ Los 3 modelos (incluyendo conexion.php)
-- ✅ Las 2 vistas
-- ✅ El .env con MOON_CLIENTE_ID
-
----
-
-## 🎯 DESPUÉS DE COPIAR
-
-Además de copiar archivos, recuerda:
-
-1. **Editar** `vistas/plantilla.php`:
-   - Cambiar `include "modulos/cabezote.php";`
-   - Por: `include "modulos/cabezote-mejorado.php";`
-
-2. **Editar** `index.php` (si es necesario):
-   - Agregar requires de sistema_cobro y mercadopago
-   - Agregar ruta "procesar-pago"
-
-3. **Probar** que funciona
+- [ ] `generar-qr.php` en raíz
+- [ ] `webhook-mercadopago.php` en raíz
+- [ ] `helpers.php` en raíz
+- [ ] 2 archivos en `/controladores/`
+- [ ] 3 archivos en `/modelos/`
+- [ ] 2 archivos en `/vistas/modulos/`
+- [ ] `.env` configurado con ID correcto
 
 ---
 
-**Para instrucciones detalladas, ver:** [INSTALACION-CPANEL.md](../INSTALACION-CPANEL.md)
+## 🧪 Testing
 
+Una vez instalado todo:
+
+1. Acceder al sistema POS
+2. Login como administrador
+3. Buscar **"💳 Estado Cuenta"** en el navbar
+4. Hacer clic y ver el modal
+5. Verificar que muestre:
+   - Nombre del cliente correcto
+   - Saldo pendiente correcto
+   - Botón "Pagar con Mercado Pago"
+   - **Código QR visible** ✅
+
+---
+
+## 📞 Soporte
+
+Consulta la guía completa:
+**[../INSTALACION-CPANEL.md](../INSTALACION-CPANEL.md)**
+
+---
+
+**Última actualización:** Diciembre 2025  
+**Versión:** 2.0 (con QR Code)

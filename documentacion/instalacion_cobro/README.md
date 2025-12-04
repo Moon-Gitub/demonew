@@ -1,222 +1,82 @@
-# 🌙 Sistema de Cobro Moon POS - Paquete de Instalación
+# 💳 Sistema de Cobro Moon POS - Instalación
 
-Este paquete contiene todo lo necesario para instalar el sistema de cobro automático con MercadoPago en cualquier instalación del POS Moon.
+Sistema completo de cobro integrado con MercadoPago para el sistema POS.
 
-## 📦 Contenido del paquete
+## 📋 Documentación Disponible
+
+- **[INSTALACION-CPANEL.md](INSTALACION-CPANEL.md)** - Guía completa de instalación paso a paso
+- **[CHECKLIST-CPANEL.md](CHECKLIST-CPANEL.md)** - Lista de verificación para instalación
+- **[template-env.txt](template-env.txt)** - Template del archivo .env
+
+## 🎯 Características
+
+✅ **Integración completa con MercadoPago**
+- Botón de pago directo
+- Código QR para pagar con celular
+- Webhook automático para procesar pagos
+
+✅ **Gestión de cobros automática**
+- Cálculo automático de recargos por mora (10%, 15%, 30%)
+- Manejo de pagos parciales
+- Suspensión automática después del día 26
+
+✅ **Interfaz moderna y responsive**
+- Diseño limpio tipo móvil
+- Fuentes grandes y legibles
+- Funciona en desktop, tablet y móvil
+
+✅ **Base de datos dual**
+- BD Local: Sistema POS (clientes, ventas, productos)
+- BD Moon: Sistema de cobro (cuenta corriente, pagos)
+
+## 📁 Estructura de Archivos
 
 ```
-instalacion_cobro/
-├── README.md                           # Este archivo
-├── INSTALACION_MANUAL.md              # Guía paso a paso manual
-├── INSTALACION_AUTOMATICA.md          # Guía para usar el instalador
-├── sql/
-│   ├── 01_crear_tablas_mercadopago.sql      # Crear tablas en BD Moon
-│   └── 02_verificar_instalacion.sql          # Verificar instalación
-├── archivos/
-│   ├── config.php                      # Configuración general
-│   ├── .env.example                    # Ejemplo de variables de entorno
-│   ├── controladores/
-│   │   └── mercadopago.controlador.php  # Controlador de MercadoPago
-│   ├── modelos/
-│   │   └── mercadopago.modelo.php       # Modelo de MercadoPago
-│   └── vistas/
-│       └── modulos/
-│           ├── cabezote-mejorado.php    # Cabezote con sistema de cobro
-│           └── procesar-pago.php         # Procesar respuesta de MP
-├── instalador/
-│   └── index.php                        # Instalador automático (wizard)
-├── verificador.php                      # Verificar que todo funciona
-└── composer.json                        # Dependencias PHP
+documentacion/
+├── ARQUITECTURA-BASES-DATOS.md  ← Arquitectura técnica
+└── instalacion_cobro/
+    ├── README.md                 ← Este archivo
+    ├── INSTALACION-CPANEL.md     ← Guía de instalación
+    ├── CHECKLIST-CPANEL.md       ← Checklist de instalación
+    ├── template-env.txt          ← Template del .env
+    ├── archivos/                 ← Archivos para copiar
+    │   ├── generar-qr.php
+    │   ├── helpers.php
+    │   ├── webhook-mercadopago.php
+    │   ├── controladores-agregar/
+    │   ├── modelos-agregar/
+    │   └── vistas-agregar/
+    └── sql/                      ← Scripts SQL
+        ├── 01_crear_tablas_mercadopago.sql
+        ├── 02_verificar_instalacion.sql
+        └── 03_agregar_control_recargos.sql
 ```
 
-## 🚀 Métodos de Instalación
+## 🚀 Instalación Rápida
 
-### Opción 1: Instalación vía cPanel (⭐ RECOMENDADO para Reseller)
+1. Lee la **[guía completa de instalación](INSTALACION-CPANEL.md)**
+2. Sigue el **[checklist](CHECKLIST-CPANEL.md)** paso a paso
+3. Usa el **[template .env](template-env.txt)** para configurar
 
-**Ideal para:** Instalación manual cuenta por cuenta usando solo cPanel (sin terminal)
+## 🧪 Testing
 
-Ver [INSTALACION-CPANEL.md](INSTALACION-CPANEL.md) para guía completa paso a paso.
+Después de instalar, prueba con:
 
-**Características:**
-- 🖱️ **100% visual** - No necesitas terminal/SSH
-- ⏱️ **10-15 minutos** por cuenta
-- 📋 **Checklist incluido** - Seguimiento fácil
-- ✅ **Ya probado** - Funciona en producción
-
-**Incluye:**
-- Checklist paso a paso con checkboxes
-- Tutorial visual de cPanel File Manager
-- Tips para acelerar el proceso
-- Solución de problemas comunes
-
-### Opción 2: Instalación Masiva con Script (Para muchas cuentas)
-
-**Ideal para:** 10+ cuentas, tienes acceso SSH
-
-Ver [INSTALACION-RESELLER.md](INSTALACION-RESELLER.md) para instalación masiva.
-
-**Incluye:**
-- 📊 Script bash de instalación masiva
-- 🗺️ Generador de mapeo de clientes
-- 📝 Guía de instalación automática
-
-### Opción 3: Instalación Manual Técnica
-
-**Ideal para:** Una sola cuenta, tienes acceso SSH
-
-Ver [INSTALACION_MANUAL.md](INSTALACION_MANUAL.md) para instrucciones técnicas detalladas.
-
-### Opción 4: Instalación Automática (En desarrollo)
-
-1. Sube la carpeta `instalacion_cobro/` al servidor
-2. Accede a: `http://tudominio.com/instalacion_cobro/instalador/`
-3. Sigue el wizard de instalación
-
-Ver [INSTALACION_AUTOMATICA.md](INSTALACION_AUTOMATICA.md) para detalles.
-
-## ⚙️ Requisitos Previos
-
-### 1. Servidor
-- ✅ PHP 7.4 o superior
-- ✅ MySQL 5.7 o superior / MariaDB 10.3 o superior
-- ✅ Apache/Nginx con mod_rewrite
-- ✅ Composer instalado (para dependencias)
-
-### 2. Base de Datos
-- ✅ Acceso a la base de datos Moon (remota)
-- ✅ Permisos para crear tablas
-- ✅ Tablas existentes:
-  - `clientes`
-  - `clientes_cuenta_corriente`
-
-### 3. Credenciales de MercadoPago
-- ✅ Cuenta de MercadoPago (Argentina)
-- ✅ Public Key y Access Token
-- 📍 Obtener en: https://www.mercadopago.com.ar/developers/panel/app
-
-### 4. Sistema POS Moon
-- ✅ Versión compatible del POS Moon
-- ✅ Estructura de archivos:
-  ```
-  /
-  ├── controladores/
-  ├── modelos/
-  ├── vistas/
-  │   └── modulos/
-  ├── extensiones/
-  │   └── vendor/
-  └── index.php
-  ```
-
-## 📋 Checklist Pre-Instalación
-
-Antes de comenzar, asegúrate de tener:
-
-- [ ] Acceso FTP/SSH al servidor
-- [ ] Credenciales de la base de datos Moon
-- [ ] Credenciales de MercadoPago (Public Key + Access Token)
-- [ ] ID del cliente en la tabla `clientes` de la BD Moon
-- [ ] Backup completo del sistema (por seguridad)
-
-## 🔍 Verificación Post-Instalación
-
-Después de instalar, verifica:
-
-1. **Base de Datos:**
-   ```bash
-   # Ejecuta en phpMyAdmin o consola MySQL:
-   source sql/02_verificar_instalacion.sql
-   ```
-
-2. **Archivos:**
-   ```bash
-   # Accede a:
-   http://tudominio.com/verificador.php
-   ```
-
-3. **Funcionalidad:**
-   - Inicia sesión en el POS
-   - Verifica que aparezca el ícono de la luna en la navbar
-   - Haz clic y verifica que se abra el modal de cobro
-   - Revisa que muestre el desglose correcto de cargos
-
-## 🎯 Características del Sistema
-
-### Sistema de Cobro Automático
-- ✅ Modal automático según día del mes
-- ✅ Desglose detallado de cargos pendientes
-- ✅ Separación: Servicios Mensuales vs Otros Cargos
-- ✅ Recargos selectivos (solo servicios mensuales)
-- ✅ **Control por cliente de aplicación de recargos**
-- ✅ Integración completa con MercadoPago
-- ✅ Bloqueo del sistema después del día 26
-
-### Recargos por Mora
-| Días | Recargo | Modal | Estado |
-|------|---------|-------|--------|
-| 1-4  | 0%      | Puede cerrar | Normal |
-| 5-9  | 0%      | Puede cerrar | Advertencia |
-| 10-14| 10%     | Puede cerrar | Mora 1 |
-| 15-19| 15%     | Puede cerrar | Mora 2 |
-| 20-24| 20%     | Puede cerrar | Mora 3 |
-| 25-26| 30%     | Puede cerrar | Mora Máxima |
-| 27+  | 30%     | **NO puede cerrar** | **BLOQUEADO** |
-
-**IMPORTANTE:**
-- Los recargos se aplican **SOLO sobre servicios mensuales POS**, no sobre otros cargos como trabajos extras o renovaciones.
-- Cada cliente puede ser configurado individualmente para aplicar o no recargos mediante el campo `aplicar_recargos` en la tabla `clientes`.
-- Por defecto, todos los clientes tienen recargos habilitados (valor = 1).
-
-### Control de Recargos por Cliente
-
-El sistema permite controlar si un cliente debe tener recargos por mora o no:
-
-```sql
--- Para EXIMIR a un cliente de recargos:
-UPDATE clientes SET aplicar_recargos = 0 WHERE id = [id_del_cliente];
-
--- Para APLICAR recargos nuevamente:
-UPDATE clientes SET aplicar_recargos = 1 WHERE id = [id_del_cliente];
-
--- Ver estado actual:
-SELECT id, nombre, aplicar_recargos FROM clientes WHERE id = [id_del_cliente];
+```bash
+# Tests disponibles en /testing/
+testing/test-cliente-id.php         # Verifica MOON_CLIENTE_ID
+testing/test-saldo-cliente.php      # Verifica saldo y movimientos
+testing/clear-cache-and-test.php    # Limpia cache y verifica variables
 ```
 
-**Casos de uso:**
-- Clientes VIP o con contrato especial: exentos de recargos
-- Clientes en período de prueba: sin recargos
-- Acuerdos comerciales especiales: sin recargos por X tiempo
+## 📞 Soporte
 
-## 📚 Documentación Adicional
-
-- [INSTALACION_MANUAL.md](INSTALACION_MANUAL.md) - Guía paso a paso manual
-- [INSTALACION_AUTOMATICA.md](INSTALACION_AUTOMATICA.md) - Usar el instalador automático
-- [FAQ.md](FAQ.md) - Preguntas frecuentes
-- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Solución de problemas comunes
-
-## 🆘 Soporte
-
-Si encuentras problemas durante la instalación:
-
-1. Revisa [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
-2. Verifica los logs de errores PHP
-3. Consulta la documentación de MercadoPago
-4. Contacta a soporte técnico
-
-## ⚠️ Advertencias de Seguridad
-
-1. **NUNCA** subas el archivo `.env` a Git
-2. **SIEMPRE** haz backup antes de instalar
-3. **USA** credenciales de TEST para pruebas
-4. **CAMBIA** a credenciales de PRODUCCIÓN solo cuando esté probado
-5. **PROTEGE** la carpeta `instalador/` después de instalar
-
-## 📄 Licencia
-
-Sistema propietario de Moon Desarrollos.
+Para dudas o problemas:
+- Revisa los logs: `tail -100 /home/usuario/logs/error_log`
+- Verifica el checklist completo
+- Consulta ARQUITECTURA-BASES-DATOS.md para entender el sistema
 
 ---
 
-**Versión:** 1.0
-**Fecha:** Diciembre 2025
-**Desarrollado para:** Sistemas POS Moon
+**Moon Desarrollos** - Sistema POS con Cobro Integrado
+

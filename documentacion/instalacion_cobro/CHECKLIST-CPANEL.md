@@ -40,7 +40,15 @@ Guía paso a paso con checkboxes para instalar cuenta por cuenta usando solo cPa
 
 ---
 
-### ☐ PASO 3: Subir Archivos (3 min)
+### ☐ PASO 3: Subir Archivos (4 min)
+
+**Archivos en Raíz (public_html/):**
+- [ ] Ir a `public_html/` (raíz)
+- [ ] Clic en **Upload**
+- [ ] Subir: `generar-qr.php` ⭐ NUEVO
+- [ ] Subir: `webhook-mercadopago.php`
+- [ ] Subir: `helpers.php`
+- [ ] Cerrar uploader
 
 **Controladores:**
 - [ ] Ir a `public_html/controladores/`
