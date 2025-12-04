@@ -1,0 +1,101 @@
+═══════════════════════════════════════════════════════════════
+📁 ARCHIVOS PARA INSTALACIÓN - SISTEMA DE COBRO MOON POS
+═══════════════════════════════════════════════════════════════
+
+🎯 OBJETIVO:
+Esta carpeta contiene TODOS los archivos necesarios para instalar
+el sistema de cobro en una cuenta de cPanel.
+
+═══════════════════════════════════════════════════════════════
+📋 QUÉ ARCHIVOS COPIAR (7 archivos):
+═══════════════════════════════════════════════════════════════
+
+1️⃣ CONTROLADORES → Copiar a public_html/controladores/
+   ───────────────────────────────────────────────────────────
+   ✅ cobro-original/sistema_cobro.controlador.php
+   ✅ controladores-agregar/mercadopago.controlador.php
+
+2️⃣ MODELOS → Copiar a public_html/modelos/
+   ───────────────────────────────────────────────────────────
+   ✅ cobro-original/sistema_cobro.modelo.php
+   ✅ modelos-agregar/mercadopago.modelo.php
+   ⚠️ modelos-agregar/conexion.php (REEMPLAZA el existente)
+
+3️⃣ VISTAS → Copiar a public_html/vistas/modulos/
+   ───────────────────────────────────────────────────────────
+   ✅ vistas-agregar/modulos/cabezote-mejorado.php
+   ✅ vistas-agregar/modulos/procesar-pago.php
+
+4️⃣ CONFIGURACIÓN → Crear en public_html/ (raíz)
+   ───────────────────────────────────────────────────────────
+   ✅ .env (crear nuevo basándote en .env.example)
+      ⚠️ CAMBIAR: MOON_CLIENTE_ID=14 por el ID real
+
+═══════════════════════════════════════════════════════════════
+⚠️ MUY IMPORTANTE:
+═══════════════════════════════════════════════════════════════
+
+🔴 ARCHIVO CRÍTICO: .env
+   - Crear .env en la raíz (public_html/)
+   - Copiar contenido de .env.example
+   - CAMBIAR el ID: MOON_CLIENTE_ID=XX
+   - Cada cuenta tiene su PROPIO ID único
+
+🔴 ARCHIVO A REEMPLAZAR: modelos/conexion.php
+   - El nuevo tiene método conectarMoon()
+   - Sobrescribir el existente
+
+🔴 ARCHIVO A EDITAR: vistas/plantilla.php
+   - Cambiar: include "modulos/cabezote.php";
+   - Por: include "modulos/cabezote-mejorado.php";
+
+═══════════════════════════════════════════════════════════════
+📖 DOCUMENTACIÓN COMPLETA:
+═══════════════════════════════════════════════════════════════
+
+📘 INSTALACION-CPANEL.md
+   - Guía paso a paso con cPanel
+   - Sin necesidad de terminal
+   - 10-15 minutos por cuenta
+
+📋 CHECKLIST-CPANEL.md
+   - Checklist con checkboxes
+   - Para seguimiento de cada cuenta
+
+📦 GUIA-VENDOR-COMPOSER.md
+   - Cómo manejar carpeta vendor/
+   - Comprimir, subir, extraer
+
+═══════════════════════════════════════════════════════════════
+🎯 PROCESO RÁPIDO:
+═══════════════════════════════════════════════════════════════
+
+1. Subir vendor.zip → Extraer (si no existe vendor)
+2. Subir 7 archivos a sus carpetas
+3. Crear .env con el ID del cliente
+4. Editar plantilla.php
+5. Editar index.php (verificar requires)
+6. Probar
+
+⏱️ Tiempo: 12-15 minutos por cuenta
+
+═══════════════════════════════════════════════════════════════
+❓ ¿CÓMO OBTENER EL ID DEL CLIENTE?
+═══════════════════════════════════════════════════════════════
+
+Opción 1: Usar herramienta de mapeo
+   https://dominio.com/generar-mapeo-clientes.php
+
+Opción 2: Query SQL en BD Moon
+   SELECT id, nombre, dominio FROM clientes 
+   WHERE dominio LIKE '%nombre%';
+
+═══════════════════════════════════════════════════════════════
+📞 SOPORTE:
+═══════════════════════════════════════════════════════════════
+
+Consultar: README-ARCHIVOS.md (en esta carpeta)
+Guía completa: ../INSTALACION-CPANEL.md
+
+═══════════════════════════════════════════════════════════════
+
