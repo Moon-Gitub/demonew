@@ -11,7 +11,7 @@ $paymentType = isset($_GET["payment_type"]) ? $_GET["payment_type"] : null;
 $merchantOrderId = isset($_GET["merchant_order_id"]) ? $_GET["merchant_order_id"] : null;
 
 // ID del cliente desde la referencia externa o desde config
-$idCliente = $externalReference ? intval($externalReference) : intval(getenv('MOON_CLIENTE_ID') ?: 7);
+$idCliente = $externalReference ? intval($externalReference) : (function_exists('env') ? intval(env('MOON_CLIENTE_ID', 7)) : (isset($_ENV['MOON_CLIENTE_ID']) ? intval($_ENV['MOON_CLIENTE_ID']) : 7));
 
 // Obtener datos del cliente y cuenta corriente
 $clienteMoon = ControladorSistemaCobro::ctrMostrarClientesCobro($idCliente);

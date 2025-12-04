@@ -67,11 +67,11 @@ if (isset($_GET['debug_env'])) {
         echo "\n─────────────────────────────────────\n\n";
     }
     
-    echo "Variables disponibles con getenv():\n";
+    echo "Variables disponibles con env():\n";
     echo "─────────────────────────────────────\n";
     $vars = ['DB_HOST', 'DB_NAME', 'MOON_CLIENTE_ID', 'MP_PUBLIC_KEY'];
     foreach ($vars as $var) {
-        $value = getenv($var);
+        $value = function_exists('env') ? env($var) : (isset($_ENV[$var]) ? $_ENV[$var] : getenv($var));
         echo "$var = " . ($value ? $value : 'NO DEFINIDO') . "\n";
     }
     echo "═══════════════════════════════════════\n";
@@ -85,7 +85,9 @@ if (!$envExists) {
     error_log('ADVERTENCIA: Archivo .env no encontrado en ' . $envPath);
     
     // Si estamos en producción y falta .env, sí mostrar error
-    if (getenv('APP_ENV') === 'production' && !getenv('MOON_CLIENTE_ID')) {
+    $appEnv = isset($_ENV['APP_ENV']) ? $_ENV['APP_ENV'] : (isset($_SERVER['APP_ENV']) ? $_SERVER['APP_ENV'] : null);
+    $moonClienteId = isset($_ENV['MOON_CLIENTE_ID']) ? $_ENV['MOON_CLIENTE_ID'] : (isset($_SERVER['MOON_CLIENTE_ID']) ? $_SERVER['MOON_CLIENTE_ID'] : null);
+    if ($appEnv === 'production' && !$moonClienteId) {
         die('
         <h1 style="color: red;">⚠️ ERROR: Archivo .env no encontrado</h1>
         <p>El sistema requiere un archivo <strong>.env</strong> en la raíz del proyecto.</p>
@@ -107,13 +109,16 @@ if ($envExists) {
     
     $variablesFaltantes = [];
     foreach ($variablesRequeridas as $variable => $descripcion) {
-        if (!getenv($variable)) {
+        // Intentar leer de $_ENV primero, luego $_SERVER
+        $valor = isset($_ENV[$variable]) ? $_ENV[$variable] : (isset($_SERVER[$variable]) ? $_SERVER[$variable] : null);
+        if (!$valor) {
             $variablesFaltantes[$variable] = $descripcion;
         }
     }
     
     // Solo mostrar error si faltan variables CRÍTICAS
-    if (!empty($variablesFaltantes) && !getenv('MOON_CLIENTE_ID')) {
+    $moonClienteId = isset($_ENV['MOON_CLIENTE_ID']) ? $_ENV['MOON_CLIENTE_ID'] : (isset($_SERVER['MOON_CLIENTE_ID']) ? $_SERVER['MOON_CLIENTE_ID'] : null);
+    if (!empty($variablesFaltantes) && !$moonClienteId) {
         echo '
         <div style="background: #fff3cd; border: 2px solid #ffc107; padding: 20px; margin: 20px; border-radius: 10px;">
             <h2 style="color: #856404;">⚠️ ADVERTENCIA: Variables faltantes en .env</h2>

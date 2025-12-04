@@ -10,7 +10,10 @@ if (file_exists(__DIR__ . '/.env') && class_exists('Dotenv\Dotenv')) {
     $dotenv->load();
 }
 
-// Cargar configuración (valores por defecto)
+// Cargar helpers (incluye función env() para leer variables)
+require_once "helpers.php";
+
+// Cargar configuración (validación)
 require_once "config.php";
 
 require_once "controladores/plantilla.controlador.php";

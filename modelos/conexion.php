@@ -25,11 +25,11 @@ class Conexion{
 	 */
 	static public function conectar(){
 
-		// Intentar obtener desde .env, sino usar valores por defecto
-		$host = getenv('DB_HOST') ?: self::$hostDB;
-		$db = getenv('DB_NAME') ?: self::$nameDB;
-		$user = getenv('DB_USER') ?: self::$userDB;
-		$pass = getenv('DB_PASS') ?: self::$passDB;
+		// Intentar obtener desde .env usando función env()
+		$host = function_exists('env') ? env('DB_HOST', self::$hostDB) : self::$hostDB;
+		$db = function_exists('env') ? env('DB_NAME', self::$nameDB) : self::$nameDB;
+		$user = function_exists('env') ? env('DB_USER', self::$userDB) : self::$userDB;
+		$pass = function_exists('env') ? env('DB_PASS', self::$passDB) : self::$passDB;
 
 		try {
 			$link = new PDO("mysql:host=$host;dbname=$db","$user","$pass");
@@ -48,13 +48,21 @@ class Conexion{
 	 */
 	static public function conectarMoon(){
 
-		// Intentar obtener desde .env
-		$host = getenv('MOON_DB_HOST');
-		$db = getenv('MOON_DB_NAME');
-		$user = getenv('MOON_DB_USER');
-		$pass = getenv('MOON_DB_PASS');
+		// Intentar obtener desde .env usando función env()
+		if (function_exists('env')) {
+			$host = env('MOON_DB_HOST');
+			$db = env('MOON_DB_NAME');
+			$user = env('MOON_DB_USER');
+			$pass = env('MOON_DB_PASS');
+		} else {
+			// Fallback a $_ENV o valores por defecto
+			$host = isset($_ENV['MOON_DB_HOST']) ? $_ENV['MOON_DB_HOST'] : self::$hostDB;
+			$db = isset($_ENV['MOON_DB_NAME']) ? $_ENV['MOON_DB_NAME'] : self::$nameDB;
+			$user = isset($_ENV['MOON_DB_USER']) ? $_ENV['MOON_DB_USER'] : self::$userDB;
+			$pass = isset($_ENV['MOON_DB_PASS']) ? $_ENV['MOON_DB_PASS'] : self::$passDB;
+		}
 
-		// Si no están en .env, usar valores por defecto (misma BD local - compatibilidad)
+		// Si no están definidas, usar valores por defecto (compatibilidad)
 		if (!$host || !$db || !$user || !$pass) {
 			$host = self::$hostDB;
 			$db = self::$nameDB;
