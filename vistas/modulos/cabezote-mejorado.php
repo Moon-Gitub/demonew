@@ -523,196 +523,162 @@ MODAL COBRO MEJORADO
         <div class="modal-content" style="border-radius: 8px; overflow: hidden;">
 
             <!--=====================================
-            CABEZA DEL MODAL - DISEÑO MODERNO
+            CABEZA DEL MODAL - SIMPLE Y LIMPIO
             ======================================-->
-            <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 25px; text-align: center; position: relative;">
-                <button type="button" class="close" data-dismiss="modal" style="position: absolute; right: 15px; top: 15px; color: white; opacity: 0.8; font-size: 28px;">&times;</button>
-                <i class="fa fa-credit-card" style="font-size: 40px; margin-bottom: 10px;"></i>
-                <h3 style="margin: 5px 0 0 0; font-weight: 400; font-size: 24px;">Estado de Cuenta</h3>
+            <div class="modal-header" style="background: white; border-bottom: 1px solid #e0e0e0; padding: 20px 25px;">
+                <button type="button" class="close" data-dismiss="modal" style="color: #6c757d; opacity: 0.8; font-size: 28px;">&times;</button>
+                <h4 style="margin: 0; color: #2c3e50; font-weight: 600; font-size: 20px;">
+                    <i class="fa fa-credit-card" style="color: #667eea; margin-right: 8px;"></i>
+                    Estado de Cuenta
+                </h4>
             </div>
 
             <!--=====================================
-            CUERPO DEL MODAL - DISEÑO LIMPIO
+            CUERPO DEL MODAL - DISEÑO TIPO MOBILE
             ======================================-->
-            <div class="modal-body" style="padding: 0; background: #f5f6fa;">
+            <div class="modal-body" style="padding: 20px; background: #f5f7fa;">
 
-                <!-- Banner de instrucciones -->
-                <div style="background: linear-gradient(to right, #009ee3, #0084c5); color: white; padding: 20px; text-align: center;">
-                    <div style="font-size: 18px; font-weight: 500; margin-bottom: 5px;">
-                        <i class="fa fa-hand-o-right"></i> Haz clic en el botón "Pagar con Mercado Pago"
-                    </div>
-                    <div style="font-size: 14px; opacity: 0.9;">
-                        Podrás pagar con tarjeta de crédito, débito, transferencia o efectivo
-                    </div>
-                </div>
-
-                <!-- Contenedor principal -->
-                <div style="padding: 25px;">
-
-                <!-- Total a pagar - DESTACADO -->
-                <div style="background: white; border-radius: 12px; padding: 30px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 20px;">
-                    <div style="color: #6c757d; font-size: 14px; font-weight: 500; margin-bottom: 8px;">TOTAL A PAGAR</div>
-                    <div style="font-size: 48px; font-weight: 700; color: #667eea; margin: 10px 0;">
-                        $<?php echo number_format($abonoMensual, 2, ',', '.'); ?>
-                    </div>
-                    <div style="color: #6c757d; font-size: 13px;">
-                        <i class="fa fa-calendar"></i> <?php echo strftime('%B %Y'); ?>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <!-- Columna izquierda: Detalles -->
-                    <div class="col-sm-6">
-                        <!-- Cliente -->
-                        <div style="background: white; padding: 18px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-                            <div style="font-size: 12px; color: #6c757d; font-weight: 600; margin-bottom: 8px;">
-                                <i class="fa fa-user"></i> CLIENTE
+                <!-- Card: Resumen de Pago -->
+                <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 2px solid #f0f0f0;">
+                        <span style="color: #6c757d; font-size: 13px; font-weight: 600;">TOTAL A PAGAR</span>
+                        <div style="text-align: right;">
+                            <div style="font-size: 24px; font-weight: 700; color: #667eea;">
+                                $<?php echo number_format($abonoMensual, 2, ',', '.'); ?>
                             </div>
-                            <div style="font-size: 16px; color: #2c3e50; font-weight: 500;">
-                                <?php echo isset($clienteMoon["nombre"]) ? $clienteMoon["nombre"] : 'Cliente'; ?>
+                            <div style="font-size: 11px; color: #6c757d;">
+                                <i class="fa fa-calendar"></i> <?php echo date('F Y'); ?>
                             </div>
                         </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span style="color: #6c757d; font-size: 13px; font-weight: 600;">CLIENTE</span>
+                        <span style="color: #2c3e50; font-size: 14px; font-weight: 500;">
+                            <?php echo isset($clienteMoon["nombre"]) ? $clienteMoon["nombre"] : 'Cliente'; ?>
+                        </span>
+                    </div>
 
-                        <!-- Desglose de Cargos -->
-                        <div style="background: white; padding: 18px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-                            <div style="font-size: 12px; color: #6c757d; font-weight: 600; margin-bottom: 12px;">
-                                <i class="fa fa-file-text-o"></i> DETALLE DE CARGOS
-                            </div>
-                            <div style="font-size: 14px;">
-                                <?php
-                                // Mostrar servicios mensuales
-                                if (count($serviciosMensuales) > 0) {
-                                    foreach ($serviciosMensuales as $mov) {
-                                        echo '<div style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; display: flex; justify-content: space-between;">';
-                                        echo '<span style="color: #495057;">' . $mov['descripcion'] . '</span>';
-                                        echo '<span style="font-weight: 600; color: #dc3545;">$' . number_format($mov['importe'], 2, ',', '.') . '</span>';
-                                        echo '</div>';
-                                    }
-                                }
-
-                                // Mostrar otros cargos
-                                if (count($otrosCargos) > 0) {
-                                    foreach ($otrosCargos as $mov) {
-                                        echo '<div style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; display: flex; justify-content: space-between;">';
-                                        echo '<span style="color: #495057;">' . $mov['descripcion'] . '</span>';
-                                        echo '<span style="font-weight: 600; color: #dc3545;">$' . number_format($mov['importe'], 2, ',', '.') . '</span>';
-                                        echo '</div>';
-                                    }
-                                }
-
-                                // Mostrar recargo si aplica
-                                if($tieneRecargo && $subtotalMensuales > 0) {
-                                    $montoRecargoReal = $subtotalMensuales * ($porcentajeRecargo / 100);
-                                    echo '<div style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; display: flex; justify-content: space-between; background: #fff3cd; margin: 8px -8px; padding-left: 8px; padding-right: 8px;">';
-                                    echo '<span style="color: #856404; font-size: 12px;"><i class="fa fa-exclamation-triangle"></i> Recargo (' . $porcentajeRecargo . '%)</span>';
-                                    echo '<span style="font-weight: 600; color: #856404;">$' . number_format($montoRecargoReal, 2, ',', '.') . '</span>';
+                    <!-- Detalles colapsables -->
+                    <div style="border-top: 1px solid #f0f0f0; padding-top: 12px;">
+                        <a href="#" onclick="document.getElementById('detallesCargos').style.display = document.getElementById('detallesCargos').style.display === 'none' ? 'block' : 'none'; return false;" style="color: #667eea; font-size: 13px; font-weight: 600; text-decoration: none;">
+                            <i class="fa fa-list"></i> DETALLE DE CARGOS
+                            <i class="fa fa-chevron-down" style="font-size: 10px; margin-left: 5px;"></i>
+                        </a>
+                        <div id="detallesCargos" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e0e0e0;">
+                            <?php
+                            // Mostrar servicios mensuales
+                            if (count($serviciosMensuales) > 0) {
+                                foreach ($serviciosMensuales as $mov) {
+                                    echo '<div style="display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px;">';
+                                    echo '<span style="color: #6c757d;">' . $mov['descripcion'] . '</span>';
+                                    echo '<span style="font-weight: 600; color: #dc3545;">$' . number_format($mov['importe'], 2, ',', '.') . '</span>';
                                     echo '</div>';
                                 }
-                                ?>
+                            }
+
+                            // Mostrar otros cargos
+                            if (count($otrosCargos) > 0) {
+                                foreach ($otrosCargos as $mov) {
+                                    echo '<div style="display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px;">';
+                                    echo '<span style="color: #6c757d;">' . $mov['descripcion'] . '</span>';
+                                    echo '<span style="font-weight: 600; color: #dc3545;">$' . number_format($mov['importe'], 2, ',', '.') . '</span>';
+                                    echo '</div>';
+                                }
+                            }
+
+                            // Mostrar recargo si aplica
+                            if($tieneRecargo && $subtotalMensuales > 0) {
+                                $montoRecargoReal = $subtotalMensuales * ($porcentajeRecargo / 100);
+                                echo '<div style="display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px; background: #fff3cd; margin: 6px -10px; padding-left: 10px; padding-right: 10px; border-radius: 4px;">';
+                                echo '<span style="color: #856404;"><i class="fa fa-exclamation-triangle"></i> Recargo (' . $porcentajeRecargo . '%)</span>';
+                                echo '<span style="font-weight: 600; color: #856404;">$' . number_format($montoRecargoReal, 2, ',', '.') . '</span>';
+                                echo '</div>';
+                            }
+                            ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card: Cómo Pagar -->
+                <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                    <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+                        <div style="width: 40px; height: 40px; background: #e3f2fd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
+                            <i class="fa fa-question-circle" style="color: #2196f3; font-size: 20px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 15px; font-weight: 700; color: #2c3e50; margin-bottom: 8px;">CÓMO PAGAR</div>
+                            <div style="font-size: 13px; color: #6c757d; line-height: 1.6;">
+                                Sigue las instrucciones en la página de Mercado Pago para completar tu transacción de forma segura.
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Columna derecha: Instrucciones y métodos -->
-                    <div class="col-sm-6">
-                        <!-- Instrucciones de pago -->
-                        <div style="background: white; padding: 18px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-                            <div style="font-size: 12px; color: #6c757d; font-weight: 600; margin-bottom: 12px;">
-                                <i class="fa fa-info-circle"></i> CÓMO PAGAR
-                            </div>
-                            <ol style="margin: 0; padding-left: 20px; color: #495057; font-size: 13px; line-height: 1.8;">
-                                <li>Haz clic en <strong>"Pagar con Mercado Pago"</strong></li>
-                                <li>Elige tu método de pago preferido</li>
-                                <li>Completa los datos y confirma</li>
-                                <li>¡Listo! Tu cuenta quedará al día</li>
-                            </ol>
+                <!-- Card: Paga a Tiempo -->
+                <?php if($tieneRecargo) { ?>
+                <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 4px solid #ff9800;">
+                    <div style="display: flex; align-items: flex-start;">
+                        <div style="width: 40px; height: 40px; background: #fff3e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
+                            <i class="fa fa-exclamation-triangle" style="color: #ff9800; font-size: 20px;"></i>
                         </div>
-
-                        <!-- Información de plazos -->
-                        <?php if($tieneRecargo) { ?>
-                        <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #ffc107;">
-                            <div style="font-size: 11px; color: #856404; font-weight: 600; margin-bottom: 8px;">
-                                <i class="fa fa-exclamation-triangle"></i> RECARGO POR MORA APLICADO
-                            </div>
-                            <div style="font-size: 12px; color: #856404; line-height: 1.5;">
+                        <div>
+                            <div style="font-size: 15px; font-weight: 700; color: #2c3e50; margin-bottom: 8px;">RECARGO APLICADO</div>
+                            <div style="font-size: 13px; color: #6c757d; line-height: 1.6;">
                                 Este mes incluye un recargo del <strong><?php echo $porcentajeRecargo; ?>%</strong>. 
-                                Paga antes del día 10 para evitar recargos.
+                                Paga antes del día 10 para evitar recargos futuros.
                             </div>
-                        </div>
-                        <?php } else { ?>
-                        <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #4caf50;">
-                            <div style="font-size: 11px; color: #2e7d32; font-weight: 600; margin-bottom: 8px;">
-                                <i class="fa fa-check-circle"></i> PAGA A TIEMPO
-                            </div>
-                            <div style="font-size: 12px; color: #2e7d32; line-height: 1.5;">
-                                Realiza tu pago <strong>antes del día 10</strong> para evitar recargos del 10% al 30%.
-                            </div>
-                        </div>
-                        <?php } ?>
-
-                        <!-- Métodos de Pago disponibles -->
-                        <div style="background: white; padding: 18px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-                            <div style="font-size: 12px; color: #6c757d; font-weight: 600; margin-bottom: 12px;">
-                                <i class="fa fa-credit-card"></i> MÉTODOS DISPONIBLES
-                            </div>
-                            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
-                                <div style="flex: 1; min-width: 45%; background: #f8f9fa; padding: 10px; border-radius: 6px; text-align: center; font-size: 11px; color: #495057;">
-                                    <i class="fa fa-credit-card" style="font-size: 20px; color: #667eea; display: block; margin-bottom: 5px;"></i>
-                                    Tarjetas
-                                </div>
-                                <div style="flex: 1; min-width: 45%; background: #f8f9fa; padding: 10px; border-radius: 6px; text-align: center; font-size: 11px; color: #495057;">
-                                    <i class="fa fa-university" style="font-size: 20px; color: #17a2b8; display: block; margin-bottom: 5px;"></i>
-                                    Transferencia
-                                </div>
-                                <div style="flex: 1; min-width: 45%; background: #f8f9fa; padding: 10px; border-radius: 6px; text-align: center; font-size: 11px; color: #495057;">
-                                    <i class="fa fa-money" style="font-size: 20px; color: #28a745; display: block; margin-bottom: 5px;"></i>
-                                    Efectivo
-                                </div>
-                                <div style="flex: 1; min-width: 45%; background: #f8f9fa; padding: 10px; border-radius: 6px; text-align: center; font-size: 11px; color: #495057;">
-                                    <i class="fa fa-qrcode" style="font-size: 20px; color: #764ba2; display: block; margin-bottom: 5px;"></i>
-                                    QR/Débito
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Seguridad -->
-                        <div style="background: #d4edda; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #c3e6cb;">
-                            <i class="fa fa-shield" style="color: #155724; font-size: 18px; margin-right: 5px;"></i>
-                            <span style="color: #155724; font-size: 12px; font-weight: 500;">Pago 100% seguro con encriptación SSL</span>
                         </div>
                     </div>
+                </div>
+                <?php } else { ?>
+                <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 4px solid #ff9800;">
+                    <div style="display: flex; align-items: flex-start;">
+                        <div style="width: 40px; height: 40px; background: #fff3e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
+                            <i class="fa fa-exclamation-triangle" style="color: #ff9800; font-size: 20px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 15px; font-weight: 700; color: #2c3e50; margin-bottom: 8px;">PAGA A TIEMPO</div>
+                            <div style="font-size: 13px; color: #6c757d; line-height: 1.6;">
+                                Recuerda que los pagos realizados después del día 10 pueden generar recargos del 10% al 30%.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php } ?>
+
+                <!-- Card: Métodos Disponibles -->
+                <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                    <div style="font-size: 15px; font-weight: 700; color: #2c3e50; margin-bottom: 15px;">MÉTODOS DISPONIBLES</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div style="background: #f5f7fa; padding: 16px; border-radius: 8px; text-align: center;">
+                            <i class="fa fa-credit-card" style="font-size: 28px; color: #667eea; display: block; margin-bottom: 8px;"></i>
+                            <span style="font-size: 12px; color: #6c757d; font-weight: 500;">Tarjetas</span>
+                        </div>
+                        <div style="background: #f5f7fa; padding: 16px; border-radius: 8px; text-align: center;">
+                            <i class="fa fa-university" style="font-size: 28px; color: #17a2b8; display: block; margin-bottom: 8px;"></i>
+                            <span style="font-size: 12px; color: #6c757d; font-weight: 500;">Transferencia</span>
+                        </div>
+                        <div style="background: #f5f7fa; padding: 16px; border-radius: 8px; text-align: center;">
+                            <i class="fa fa-money" style="font-size: 28px; color: #28a745; display: block; margin-bottom: 8px;"></i>
+                            <span style="font-size: 12px; color: #6c757d; font-weight: 500;">Efectivo</span>
+                        </div>
+                        <div style="background: #f5f7fa; padding: 16px; border-radius: 8px; text-align: center;">
+                            <i class="fa fa-qrcode" style="font-size: 28px; color: #764ba2; display: block; margin-bottom: 8px;"></i>
+                            <span style="font-size: 12px; color: #6c757d; font-weight: 500;">QR/Débito</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seguridad -->
+                <div style="text-align: center; margin-bottom: 20px; padding: 12px;">
+                    <i class="fa fa-lock" style="color: #28a745; font-size: 16px; margin-right: 6px;"></i>
+                    <span style="color: #6c757d; font-size: 13px; font-weight: 500;">Pago 100% seguro con encriptación SSL</span>
                 </div>
 
                 <?php if($muestroModal && isset($preference)) { ?>
-                <!-- Botón de Pago Destacado -->
-                <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); margin-top: 20px;">
-                    <!-- Instrucción destacada -->
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <div style="display: inline-block; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); padding: 12px 25px; border-radius: 30px; font-size: 14px; font-weight: 600; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);">
-                            <i class="fa fa-hand-pointer-o" style="color: #2e7d32; font-size: 16px; margin-right: 8px;"></i>
-                            <span style="color: #2e7d32;">HAZ CLIC AQUÍ ABAJO PARA PAGAR</span>
-                        </div>
-                    </div>
-
-                    <!-- Botón de Mercado Pago -->
-                    <div class="checkout-btn" style="text-align: center; margin: 0;"></div>
-
-                    <!-- Marcas aceptadas -->
-                    <div style="text-align: center; margin-top: 20px; padding-top: 18px; border-top: 2px dashed #e0e0e0;">
-                        <div style="color: #6c757d; font-size: 11px; font-weight: 600; margin-bottom: 12px; letter-spacing: 0.5px;">MEDIOS DE PAGO ACEPTADOS</div>
-                        <div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 10px;">
-                            <img src="https://http2.mlstatic.com/storage/logos-api-admin/51b446b0-571c-11e8-9a2d-4b2bd7b1bf77-m.svg" alt="VISA" style="height: 26px; opacity: 0.8;">
-                            <img src="https://http2.mlstatic.com/storage/logos-api-admin/aa2b8f70-5c85-11ec-ae75-df2bef173be2-m.svg" alt="Mastercard" style="height: 26px; opacity: 0.8;">
-                            <img src="https://http2.mlstatic.com/storage/logos-api-admin/fb0fde10-a7e1-11e9-8dc2-8f4c274d34c5-m.svg" alt="American Express" style="height: 26px; opacity: 0.8;">
-                            <img src="https://http2.mlstatic.com/storage/logos-api-admin/d11d7300-a8bf-11ed-92ca-b730e93b1da8-m.svg" alt="Diners Club" style="height: 26px; opacity: 0.8;">
-                        </div>
-                        <div style="margin-top: 12px; color: #28a745; font-size: 12px; font-weight: 500;">
-                            <i class="fa fa-shield"></i> Transacción 100% segura
-                        </div>
-                    </div>
-                </div>
-
-                </div> <!-- Cierre padding principal -->
+                <!-- Botón de Pago Grande -->
+                <div class="checkout-btn" style="margin-bottom: 15px;"></div>
 
                 <script src="https://sdk.mercadopago.com/js/v2"></script>
                 <script type="text/javascript">
@@ -731,59 +697,39 @@ MODAL COBRO MEJORADO
                 </script>
 
                 <style>
-                    /* Botón de Mercado Pago mejorado */
+                    /* Botón de Mercado Pago - Estilo simple y grande */
                     .checkout-btn button {
-                        background: linear-gradient(135deg, #009ee3, #0084c5) !important;
-                        border-radius: 12px !important;
-                        font-size: 19px !important;
-                        font-weight: 700 !important;
-                        padding: 20px 60px !important;
+                        background: #009ee3 !important;
+                        border-radius: 8px !important;
+                        font-size: 17px !important;
+                        font-weight: 600 !important;
+                        padding: 18px 30px !important;
                         border: none !important;
-                        box-shadow: 0 6px 20px rgba(0, 158, 227, 0.35) !important;
-                        transition: all 0.3s ease !important;
-                        text-transform: uppercase !important;
-                        letter-spacing: 1px !important;
+                        box-shadow: 0 3px 12px rgba(0, 158, 227, 0.25) !important;
+                        transition: all 0.2s ease !important;
                         width: 100% !important;
-                        max-width: 450px !important;
                         cursor: pointer !important;
+                        color: white !important;
+                        display: flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        gap: 10px !important;
                     }
 
                     .checkout-btn button:hover {
-                        background: linear-gradient(135deg, #0084c5, #006fa5) !important;
-                        transform: translateY(-3px) scale(1.03) !important;
-                        box-shadow: 0 8px 30px rgba(0, 158, 227, 0.5) !important;
-                    }
-
-                    /* Animación de pulso suave */
-                    @keyframes pulse-soft {
-                        0%, 100% { 
-                            box-shadow: 0 6px 20px rgba(0, 158, 227, 0.35);
-                            transform: scale(1);
-                        }
-                        50% { 
-                            box-shadow: 0 6px 30px rgba(0, 158, 227, 0.5);
-                            transform: scale(1.01);
-                        }
-                    }
-
-                    .checkout-btn button {
-                        animation: pulse-soft 2.5s ease-in-out infinite;
-                    }
-
-                    .checkout-btn button:hover {
-                        animation: none;
+                        background: #0084c5 !important;
+                        transform: translateY(-2px) !important;
+                        box-shadow: 0 5px 18px rgba(0, 158, 227, 0.35) !important;
                     }
 
                     /* Responsive */
                     @media (max-width: 768px) {
                         .checkout-btn button {
                             font-size: 16px !important;
-                            padding: 16px 40px !important;
+                            padding: 16px 25px !important;
                         }
                     }
                 </style>
-                <?php } else { ?>
-                </div> <!-- Cierre padding principal si no hay botón -->
                 <?php } ?>
 
             </div>
