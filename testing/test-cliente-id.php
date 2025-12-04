@@ -9,14 +9,17 @@
 // Cargar vendor autoload
 require_once __DIR__ . '/../extensiones/vendor/autoload.php';
 
-// Cargar configuración
-require_once __DIR__ . '/../config.php';
-
-// Cargar variables de entorno desde .env
+// Cargar variables de entorno desde .env PRIMERO
 if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
     $dotenv->load();
 }
+
+// Cargar helpers (función env())
+require_once __DIR__ . '/../helpers.php';
+
+// Cargar configuración
+require_once __DIR__ . '/../config.php';
 
 ?>
 <!DOCTYPE html>
@@ -205,12 +208,12 @@ if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
                 
                 <div class="test-item">
                     <label>MOON_CLIENTE_ID desde .env:</label>
-                    <span class="value"><?php echo getenv('MOON_CLIENTE_ID') ?: 'NO DEFINIDO'; ?></span>
+                    <span class="value"><?php echo env('MOON_CLIENTE_ID', 'NO DEFINIDO'); ?></span>
                 </div>
                 
                 <div class="test-item">
                     <label>Cliente ID que usará el sistema:</label>
-                    <span class="value"><?php echo intval(getenv('MOON_CLIENTE_ID') ?: 7); ?></span>
+                    <span class="value"><?php echo intval(env('MOON_CLIENTE_ID', 7)); ?></span>
                 </div>
                 
                 <div class="test-item">
@@ -225,8 +228,8 @@ if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
             </div>
             
             <?php
-            $clienteIdEnv = getenv('MOON_CLIENTE_ID');
-            $clienteIdFinal = intval(getenv('MOON_CLIENTE_ID') ?: 7);
+            $clienteIdEnv = env('MOON_CLIENTE_ID');
+            $clienteIdFinal = intval(env('MOON_CLIENTE_ID', 7));
             
             if ($clienteIdEnv && $clienteIdFinal == 2) {
                 // TODO CORRECTO - Cliente ID = 2
