@@ -1,4 +1,5 @@
 <?php
+
 // Test de debugging del sistema de cobro
 
 // Cargar configuración
