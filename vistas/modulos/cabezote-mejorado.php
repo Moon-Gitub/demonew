@@ -523,137 +523,196 @@ MODAL COBRO MEJORADO
         <div class="modal-content" style="border-radius: 8px; overflow: hidden;">
 
             <!--=====================================
-            CABEZA DEL MODAL - DISEÑO MEJORADO
+            CABEZA DEL MODAL - DISEÑO MODERNO
             ======================================-->
-            <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 30px; text-align: center;">
-                <h3 style="margin: 0; font-weight: 300;">
-                    <i class="fa fa-moon-o" style="font-size: 48px; display: block; margin-bottom: 10px;"></i>
-                    Sistema de Cobro Moon POS
-                </h3>
-                <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Servicio Mensual</p>
+            <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 25px; text-align: center; position: relative;">
+                <button type="button" class="close" data-dismiss="modal" style="position: absolute; right: 15px; top: 15px; color: white; opacity: 0.8; font-size: 28px;">&times;</button>
+                <i class="fa fa-credit-card" style="font-size: 40px; margin-bottom: 10px;"></i>
+                <h3 style="margin: 5px 0 0 0; font-weight: 400; font-size: 24px;">Estado de Cuenta</h3>
             </div>
 
             <!--=====================================
-            CUERPO DEL MODAL
+            CUERPO DEL MODAL - DISEÑO LIMPIO
             ======================================-->
-            <div class="modal-body" style="padding: 30px;">
+            <div class="modal-body" style="padding: 0; background: #f5f6fa;">
 
-                <!-- Alerta Informativa -->
-                <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 4px; margin-bottom: 25px;">
-                    <h4 style="margin-top: 0; color: #856404;">
-                        <i class="fa fa-exclamation-triangle"></i> Información Importante
-                    </h4>
-                    <p style="margin: 10px 0; color: #856404; line-height: 1.6;">
-                        Los pagos del servicio mensual deberán realizarse <strong>antes del día 10</strong> de cada mes:
-                    </p>
-                    <ul style="margin: 10px 0; color: #856404;">
-                        <li>Del 10 al 20: Se aplicará un <strong>10% de recargo</strong></li>
-                        <li>Del 20 al 25: Se aplicará un <strong>15% de recargo</strong></li>
-                        <li>Después del 25: Se aplicará un <strong>30% de recargo</strong></li>
-                        <li>Después del 26: <strong>El sistema será suspendido</strong> hasta regularizar la situación</li>
-                    </ul>
+                <!-- Banner de instrucciones -->
+                <div style="background: linear-gradient(to right, #009ee3, #0084c5); color: white; padding: 20px; text-align: center;">
+                    <div style="font-size: 18px; font-weight: 500; margin-bottom: 5px;">
+                        <i class="fa fa-hand-o-right"></i> Haz clic en el botón "Pagar con Mercado Pago"
+                    </div>
+                    <div style="font-size: 14px; opacity: 0.9;">
+                        Podrás pagar con tarjeta de crédito, débito, transferencia o efectivo
+                    </div>
+                </div>
+
+                <!-- Contenedor principal -->
+                <div style="padding: 25px;">
+
+                <!-- Total a pagar - DESTACADO -->
+                <div style="background: white; border-radius: 12px; padding: 30px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 20px;">
+                    <div style="color: #6c757d; font-size: 14px; font-weight: 500; margin-bottom: 8px;">TOTAL A PAGAR</div>
+                    <div style="font-size: 48px; font-weight: 700; color: #667eea; margin: 10px 0;">
+                        $<?php echo number_format($abonoMensual, 2, ',', '.'); ?>
+                    </div>
+                    <div style="color: #6c757d; font-size: 13px;">
+                        <i class="fa fa-calendar"></i> <?php echo strftime('%B %Y'); ?>
+                    </div>
                 </div>
 
                 <div class="row">
-                    <!-- Información del Cliente y Detalle de Cargos -->
+                    <!-- Columna izquierda: Detalles -->
                     <div class="col-sm-6">
-                        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                            <h4 style="margin-top: 0; color: #495057; border-bottom: 2px solid #dee2e6; padding-bottom: 10px;">
-                                <i class="fa fa-user"></i> Detalle del Cliente
-                            </h4>
-                            <div style="margin: 15px 0;">
-                                <strong style="color: #6c757d; display: block; margin-bottom: 5px;">CLIENTE</strong>
-                                <p style="font-size: 16px; margin: 0;"><?php echo isset($clienteMoon["nombre"]) ? $clienteMoon["nombre"] : 'Cliente'; ?></p>
+                        <!-- Cliente -->
+                        <div style="background: white; padding: 18px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+                            <div style="font-size: 12px; color: #6c757d; font-weight: 600; margin-bottom: 8px;">
+                                <i class="fa fa-user"></i> CLIENTE
+                            </div>
+                            <div style="font-size: 16px; color: #2c3e50; font-weight: 500;">
+                                <?php echo isset($clienteMoon["nombre"]) ? $clienteMoon["nombre"] : 'Cliente'; ?>
                             </div>
                         </div>
 
-                        <!-- Desglose de Cargos Pendientes -->
-                        <div style="background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; margin-bottom: 20px;">
-                            <h4 style="margin-top: 0; color: #495057; border-bottom: 2px solid #dee2e6; padding-bottom: 10px;">
-                                <i class="fa fa-list"></i> Detalle de Cargos Pendientes
-                            </h4>
-                            <table style="width: 100%; font-size: 14px;">
+                        <!-- Desglose de Cargos -->
+                        <div style="background: white; padding: 18px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+                            <div style="font-size: 12px; color: #6c757d; font-weight: 600; margin-bottom: 12px;">
+                                <i class="fa fa-file-text-o"></i> DETALLE DE CARGOS
+                            </div>
+                            <div style="font-size: 14px;">
                                 <?php
-                                // Mostrar servicios mensuales (con posible recargo)
+                                // Mostrar servicios mensuales
                                 if (count($serviciosMensuales) > 0) {
-                                    echo '<tr><td colspan="2" style="padding: 8px 0; font-weight: 600; color: #667eea; font-size: 13px;">SERVICIOS MENSUALES POS</td></tr>';
                                     foreach ($serviciosMensuales as $mov) {
-                                        echo '<tr style="border-bottom: 1px solid #eee;">';
-                                        echo '<td style="padding: 8px 0 8px 15px; color: #495057;">' . $mov['descripcion'] . '</td>';
-                                        echo '<td style="padding: 8px 0; text-align: right; font-weight: 600; color: #dc3545;">$' . number_format($mov['importe'], 2, ',', '.') . '</td>';
-                                        echo '</tr>';
+                                        echo '<div style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; display: flex; justify-content: space-between;">';
+                                        echo '<span style="color: #495057;">' . $mov['descripcion'] . '</span>';
+                                        echo '<span style="font-weight: 600; color: #dc3545;">$' . number_format($mov['importe'], 2, ',', '.') . '</span>';
+                                        echo '</div>';
                                     }
                                 }
 
-                                // Mostrar otros cargos (sin recargo)
+                                // Mostrar otros cargos
                                 if (count($otrosCargos) > 0) {
-                                    echo '<tr><td colspan="2" style="padding: 8px 0; font-weight: 600; color: #6c757d; font-size: 13px; padding-top: 15px;">OTROS CARGOS</td></tr>';
                                     foreach ($otrosCargos as $mov) {
-                                        echo '<tr style="border-bottom: 1px solid #eee;">';
-                                        echo '<td style="padding: 8px 0 8px 15px; color: #495057;">' . $mov['descripcion'] . '</td>';
-                                        echo '<td style="padding: 8px 0; text-align: right; font-weight: 600; color: #dc3545;">$' . number_format($mov['importe'], 2, ',', '.') . '</td>';
-                                        echo '</tr>';
+                                        echo '<div style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; display: flex; justify-content: space-between;">';
+                                        echo '<span style="color: #495057;">' . $mov['descripcion'] . '</span>';
+                                        echo '<span style="font-weight: 600; color: #dc3545;">$' . number_format($mov['importe'], 2, ',', '.') . '</span>';
+                                        echo '</div>';
                                     }
                                 }
 
-                                $subtotalGeneral = $subtotalMensuales + $subtotalOtros;
-                                ?>
-                                <tr style="border-top: 2px solid #dee2e6;">
-                                    <td style="padding: 10px 0; font-weight: 600; color: #495057;">SUBTOTAL</td>
-                                    <td style="padding: 10px 0; text-align: right; font-weight: 700; color: #495057; font-size: 16px;">$<?php echo number_format($subtotalGeneral, 2, ',', '.'); ?></td>
-                                </tr>
-                                <?php if($tieneRecargo && $subtotalMensuales > 0) {
+                                // Mostrar recargo si aplica
+                                if($tieneRecargo && $subtotalMensuales > 0) {
                                     $montoRecargoReal = $subtotalMensuales * ($porcentajeRecargo / 100);
+                                    echo '<div style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; display: flex; justify-content: space-between; background: #fff3cd; margin: 8px -8px; padding-left: 8px; padding-right: 8px;">';
+                                    echo '<span style="color: #856404; font-size: 12px;"><i class="fa fa-exclamation-triangle"></i> Recargo (' . $porcentajeRecargo . '%)</span>';
+                                    echo '<span style="font-weight: 600; color: #856404;">$' . number_format($montoRecargoReal, 2, ',', '.') . '</span>';
+                                    echo '</div>';
+                                }
                                 ?>
-                                <tr style="background: #fff3cd;">
-                                    <td style="padding: 8px 5px; color: #856404; font-size: 12px;">
-                                        <i class="fa fa-exclamation-triangle"></i> Recargo por mora sobre servicios mensuales (<?php echo $porcentajeRecargo; ?>%)
-                                    </td>
-                                    <td style="padding: 8px 5px; text-align: right; font-weight: 600; color: #856404;">$<?php echo number_format($montoRecargoReal, 2, ',', '.'); ?></td>
-                                </tr>
-                                <?php } elseif (!$aplicarRecargos && $subtotalMensuales > 0) { ?>
-                                <tr style="background: #d4edda;">
-                                    <td colspan="2" style="padding: 8px 5px; color: #155724; font-size: 12px; text-align: center;">
-                                        <i class="fa fa-check-circle"></i> Cliente exento de recargos por mora
-                                    </td>
-                                </tr>
-                                <?php } ?>
-                            </table>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Total a Pagar -->
+                    <!-- Columna derecha: Instrucciones y métodos -->
                     <div class="col-sm-6">
-                        <div class="total-cobro-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 8px; text-align: center; color: white; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); margin-bottom: 20px;">
-                            <div style="font-size: 16px; opacity: 0.9; margin-bottom: 10px;">TOTAL A PAGAR</div>
-                            <div class="monto-total" style="font-size: 42px; font-weight: 700; margin: 15px 0;">
-                                $<?php echo number_format($abonoMensual, 2, ',', '.'); ?>
+                        <!-- Instrucciones de pago -->
+                        <div style="background: white; padding: 18px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+                            <div style="font-size: 12px; color: #6c757d; font-weight: 600; margin-bottom: 12px;">
+                                <i class="fa fa-info-circle"></i> CÓMO PAGAR
                             </div>
-                            <div style="font-size: 14px; opacity: 0.8;">
-                                <i class="fa fa-calendar"></i>
-                                <?php echo date('F Y'); ?>
+                            <ol style="margin: 0; padding-left: 20px; color: #495057; font-size: 13px; line-height: 1.8;">
+                                <li>Haz clic en <strong>"Pagar con Mercado Pago"</strong></li>
+                                <li>Elige tu método de pago preferido</li>
+                                <li>Completa los datos y confirma</li>
+                                <li>¡Listo! Tu cuenta quedará al día</li>
+                            </ol>
+                        </div>
+
+                        <!-- Información de plazos -->
+                        <?php if($tieneRecargo) { ?>
+                        <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #ffc107;">
+                            <div style="font-size: 11px; color: #856404; font-weight: 600; margin-bottom: 8px;">
+                                <i class="fa fa-exclamation-triangle"></i> RECARGO POR MORA APLICADO
+                            </div>
+                            <div style="font-size: 12px; color: #856404; line-height: 1.5;">
+                                Este mes incluye un recargo del <strong><?php echo $porcentajeRecargo; ?>%</strong>. 
+                                Paga antes del día 10 para evitar recargos.
+                            </div>
+                        </div>
+                        <?php } else { ?>
+                        <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #4caf50;">
+                            <div style="font-size: 11px; color: #2e7d32; font-weight: 600; margin-bottom: 8px;">
+                                <i class="fa fa-check-circle"></i> PAGA A TIEMPO
+                            </div>
+                            <div style="font-size: 12px; color: #2e7d32; line-height: 1.5;">
+                                Realiza tu pago <strong>antes del día 10</strong> para evitar recargos del 10% al 30%.
+                            </div>
+                        </div>
+                        <?php } ?>
+
+                        <!-- Métodos de Pago disponibles -->
+                        <div style="background: white; padding: 18px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+                            <div style="font-size: 12px; color: #6c757d; font-weight: 600; margin-bottom: 12px;">
+                                <i class="fa fa-credit-card"></i> MÉTODOS DISPONIBLES
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                                <div style="flex: 1; min-width: 45%; background: #f8f9fa; padding: 10px; border-radius: 6px; text-align: center; font-size: 11px; color: #495057;">
+                                    <i class="fa fa-credit-card" style="font-size: 20px; color: #667eea; display: block; margin-bottom: 5px;"></i>
+                                    Tarjetas
+                                </div>
+                                <div style="flex: 1; min-width: 45%; background: #f8f9fa; padding: 10px; border-radius: 6px; text-align: center; font-size: 11px; color: #495057;">
+                                    <i class="fa fa-university" style="font-size: 20px; color: #17a2b8; display: block; margin-bottom: 5px;"></i>
+                                    Transferencia
+                                </div>
+                                <div style="flex: 1; min-width: 45%; background: #f8f9fa; padding: 10px; border-radius: 6px; text-align: center; font-size: 11px; color: #495057;">
+                                    <i class="fa fa-money" style="font-size: 20px; color: #28a745; display: block; margin-bottom: 5px;"></i>
+                                    Efectivo
+                                </div>
+                                <div style="flex: 1; min-width: 45%; background: #f8f9fa; padding: 10px; border-radius: 6px; text-align: center; font-size: 11px; color: #495057;">
+                                    <i class="fa fa-qrcode" style="font-size: 20px; color: #764ba2; display: block; margin-bottom: 5px;"></i>
+                                    QR/Débito
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Métodos de Pago -->
-                        <div style="text-align: center; margin: 20px 0;">
-                            <p style="color: #6c757d; font-size: 13px; margin-bottom: 10px;">Métodos de pago disponibles</p>
-                            <div style="font-size: 32px; margin: 10px 0;">
-                                <i class="fa fa-credit-card" style="color: #667eea; margin: 0 5px;"></i>
-                                <i class="fa fa-credit-card-alt" style="color: #764ba2; margin: 0 5px;"></i>
-                                <i class="fa fa-money" style="color: #28a745; margin: 0 5px;"></i>
-                                <i class="fa fa-university" style="color: #17a2b8; margin: 0 5px;"></i>
-                            </div>
-                            <p style="color: #28a745; font-size: 13px; margin-top: 10px;">
-                                <i class="fa fa-check-circle"></i> Pago 100% seguro
-                            </p>
+                        <!-- Seguridad -->
+                        <div style="background: #d4edda; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #c3e6cb;">
+                            <i class="fa fa-shield" style="color: #155724; font-size: 18px; margin-right: 5px;"></i>
+                            <span style="color: #155724; font-size: 12px; font-weight: 500;">Pago 100% seguro con encriptación SSL</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Botón de Pago -->
                 <?php if($muestroModal && isset($preference)) { ?>
-                <div class="checkout-btn" style="text-align: center; margin: 30px 0 20px 0;"></div>
+                <!-- Botón de Pago Destacado -->
+                <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); margin-top: 20px;">
+                    <!-- Instrucción destacada -->
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div style="display: inline-block; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); padding: 12px 25px; border-radius: 30px; font-size: 14px; font-weight: 600; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);">
+                            <i class="fa fa-hand-pointer-o" style="color: #2e7d32; font-size: 16px; margin-right: 8px;"></i>
+                            <span style="color: #2e7d32;">HAZ CLIC AQUÍ ABAJO PARA PAGAR</span>
+                        </div>
+                    </div>
+
+                    <!-- Botón de Mercado Pago -->
+                    <div class="checkout-btn" style="text-align: center; margin: 0;"></div>
+
+                    <!-- Marcas aceptadas -->
+                    <div style="text-align: center; margin-top: 20px; padding-top: 18px; border-top: 2px dashed #e0e0e0;">
+                        <div style="color: #6c757d; font-size: 11px; font-weight: 600; margin-bottom: 12px; letter-spacing: 0.5px;">MEDIOS DE PAGO ACEPTADOS</div>
+                        <div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <img src="https://http2.mlstatic.com/storage/logos-api-admin/51b446b0-571c-11e8-9a2d-4b2bd7b1bf77-m.svg" alt="VISA" style="height: 26px; opacity: 0.8;">
+                            <img src="https://http2.mlstatic.com/storage/logos-api-admin/aa2b8f70-5c85-11ec-ae75-df2bef173be2-m.svg" alt="Mastercard" style="height: 26px; opacity: 0.8;">
+                            <img src="https://http2.mlstatic.com/storage/logos-api-admin/fb0fde10-a7e1-11e9-8dc2-8f4c274d34c5-m.svg" alt="American Express" style="height: 26px; opacity: 0.8;">
+                            <img src="https://http2.mlstatic.com/storage/logos-api-admin/d11d7300-a8bf-11ed-92ca-b730e93b1da8-m.svg" alt="Diners Club" style="height: 26px; opacity: 0.8;">
+                        </div>
+                        <div style="margin-top: 12px; color: #28a745; font-size: 12px; font-weight: 500;">
+                            <i class="fa fa-shield"></i> Transacción 100% segura
+                        </div>
+                    </div>
+                </div>
+
+                </div> <!-- Cierre padding principal -->
 
                 <script src="https://sdk.mercadopago.com/js/v2"></script>
                 <script type="text/javascript">
@@ -666,39 +725,66 @@ MODAL COBRO MEJORADO
                         },
                         render: {
                             container: '.checkout-btn',
-                            label: 'Pagar con MercadoPago',
+                            label: 'Pagar con Mercado Pago',
                         },
                     });
                 </script>
 
                 <style>
+                    /* Botón de Mercado Pago mejorado */
                     .checkout-btn button {
-                        background: #009ee3 !important;
-                        padding: 15px 50px !important;
-                        font-size: 18px !important;
-                        border-radius: 50px !important;
+                        background: linear-gradient(135deg, #009ee3, #0084c5) !important;
+                        border-radius: 12px !important;
+                        font-size: 19px !important;
+                        font-weight: 700 !important;
+                        padding: 20px 60px !important;
                         border: none !important;
-                        box-shadow: 0 4px 15px rgba(0, 158, 227, 0.3) !important;
+                        box-shadow: 0 6px 20px rgba(0, 158, 227, 0.35) !important;
                         transition: all 0.3s ease !important;
+                        text-transform: uppercase !important;
+                        letter-spacing: 1px !important;
+                        width: 100% !important;
+                        max-width: 450px !important;
                         cursor: pointer !important;
                     }
+
                     .checkout-btn button:hover {
-                        transform: translateY(-2px) !important;
-                        box-shadow: 0 6px 20px rgba(0, 158, 227, 0.4) !important;
+                        background: linear-gradient(135deg, #0084c5, #006fa5) !important;
+                        transform: translateY(-3px) scale(1.03) !important;
+                        box-shadow: 0 8px 30px rgba(0, 158, 227, 0.5) !important;
+                    }
+
+                    /* Animación de pulso suave */
+                    @keyframes pulse-soft {
+                        0%, 100% { 
+                            box-shadow: 0 6px 20px rgba(0, 158, 227, 0.35);
+                            transform: scale(1);
+                        }
+                        50% { 
+                            box-shadow: 0 6px 30px rgba(0, 158, 227, 0.5);
+                            transform: scale(1.01);
+                        }
+                    }
+
+                    .checkout-btn button {
+                        animation: pulse-soft 2.5s ease-in-out infinite;
+                    }
+
+                    .checkout-btn button:hover {
+                        animation: none;
+                    }
+
+                    /* Responsive */
+                    @media (max-width: 768px) {
+                        .checkout-btn button {
+                            font-size: 16px !important;
+                            padding: 16px 40px !important;
+                        }
                     }
                 </style>
+                <?php } else { ?>
+                </div> <!-- Cierre padding principal si no hay botón -->
                 <?php } ?>
-
-                <!-- Footer de Seguridad -->
-                <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 6px; margin-top: 20px;">
-                    <img src="https://imgmp.mlstatic.com/org-img/banners/ar/medios/online/468X60.jpg"
-                         alt="MercadoPago"
-                         style="max-width: 100%; height: auto; margin-bottom: 10px;">
-                    <p style="margin: 10px 0 0 0; color: #6c757d; font-size: 13px;">
-                        <i class="fa fa-lock" style="color: #28a745;"></i>
-                        Tus datos están protegidos con encriptación SSL
-                    </p>
-                </div>
 
             </div>
 
