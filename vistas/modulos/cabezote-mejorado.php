@@ -104,42 +104,42 @@ try {
     // Obtener el saldo pendiente actual
     $saldoPendiente = floatval($ctaCteCliente["saldo"]);
 
-    // Obtener movimientos tipo 0 (cargos) ordenados por fecha descendente
-    $conexionMoon = Conexion::conectarMoon();
-    $stmtMovs = $conexionMoon->prepare("SELECT * FROM clientes_cuenta_corriente
-                                        WHERE id_cliente = :id AND tipo = 0
-                                        ORDER BY fecha DESC");
-    $stmtMovs->bindParam(":id", $idCliente, PDO::PARAM_INT);
-    $stmtMovs->execute();
-    $todosLosCargos = $stmtMovs->fetchAll();
-
-    // Filtrar solo los cargos que forman parte del saldo pendiente
-    // Tomamos los más recientes hasta alcanzar el saldo pendiente
-    $movimientosPendientes = [];
-    $sumaAcumulada = 0;
-
-    foreach ($todosLosCargos as $cargo) {
-        if ($sumaAcumulada < $saldoPendiente) {
-            $movimientosPendientes[] = $cargo;
-            $sumaAcumulada += floatval($cargo['importe']);
-        } else {
-            break; // Ya alcanzamos el saldo pendiente
-        }
-    }
-
-    // Separar servicios mensuales de otros cargos
+    // IMPORTANTE: Usar directamente el saldo pendiente
+    // No intentar reconstruir cargos específicos porque puede haber pagos parciales
+    
+    // Si el saldo es pequeño, probablemente es un resto de pago parcial
+    // Mostrarlo como "Saldo pendiente" sin desglose detallado
     $serviciosMensuales = [];
     $otrosCargos = [];
     $subtotalMensuales = 0;
     $subtotalOtros = 0;
-
-    foreach ($movimientosPendientes as $mov) {
-        if (stripos($mov['descripcion'], 'Servicio POS') !== false) {
-            $serviciosMensuales[] = $mov;
-            $subtotalMensuales += floatval($mov['importe']);
+    
+    if ($saldoPendiente > 0) {
+        // Obtener último movimiento para descripción
+        if ($ctaCteMov && isset($ctaCteMov['descripcion'])) {
+            $descripcion = $ctaCteMov['descripcion'];
+            
+            // Determinar si es servicio mensual o no
+            if (stripos($descripcion, 'Servicio POS') !== false) {
+                $serviciosMensuales[] = array(
+                    'descripcion' => 'Saldo pendiente (resto de: ' . $descripcion . ')',
+                    'importe' => $saldoPendiente
+                );
+                $subtotalMensuales = $saldoPendiente;
+            } else {
+                $otrosCargos[] = array(
+                    'descripcion' => 'Saldo pendiente (resto de: ' . $descripcion . ')',
+                    'importe' => $saldoPendiente
+                );
+                $subtotalOtros = $saldoPendiente;
+            }
         } else {
-            $otrosCargos[] = $mov;
-            $subtotalOtros += floatval($mov['importe']);
+            // Si no hay último movimiento, mostrar como saldo general
+            $otrosCargos[] = array(
+                'descripcion' => 'Saldo pendiente de cuenta corriente',
+                'importe' => $saldoPendiente
+            );
+            $subtotalOtros = $saldoPendiente;
         }
     }
 
