@@ -1,63 +1,57 @@
 <?php
 //========================
-// CONEXION AFIP
+// VALIDACIONES PREVIAS PARA COMPATIBILIDAD
+//========================
+// Validar si existe $arrayEmpresa (sistema con AFIP)
+$tieneAfip = isset($arrayEmpresa) && is_array($arrayEmpresa) && isset($arrayEmpresa["entorno_facturacion"]);
+
+// Validar si existe $objParametros (sistema con cotización dólar)
+$tieneCotizacion = isset($objParametros) && is_object($objParametros);
+
+//========================
+// CONEXION AFIP (OPCIONAL)
 //========================
 $conAfip = false;
 $msjError="";
 
-if($arrayEmpresa["entorno_facturacion"]){
-
+if($tieneAfip && $arrayEmpresa["entorno_facturacion"]){
  try {
-
    $wsaa = new WSAA($arrayEmpresa);
 
    if (date('Y-m-d H:i:s', strtotime($wsaa->get_expiration())) < date('Y-m-d H:i:s')) {
-
      $wsaa->generar_TA();
-
    }
 
    $wsfe = new WSFE($arrayEmpresa);
    $test = $wsfe->openTA();
 
-  // $test = $wsfe->PruebaConexion();
-
    if (isset($test)){
-     //if ($test->FEDummyResult->AppServer == 'OK' && $test->FEDummyResult->DbServer == 'OK' && $test->FEDummyResult->AuthServer == 'OK' ){
-
        $conAfip = true;
-
-     //}
    } else {
-
      $conAfip = false;
-
    }
-
  } catch (Exception $e) {
-
    $conAfip = false;
    $msjError = $e->getMessage();
  }
-
 }
 
 //========================
-// ARCHIVO COTIZACION
+// ARCHIVO COTIZACION (OPCIONAL)
 //========================
 $result=[];
-if ($file = fopen("cotizacion", "r")) {
-    $i = 0;
+$archivoCotizacionExiste = file_exists("cotizacion");
 
+if ($archivoCotizacionExiste && $file = fopen("cotizacion", "r")) {
+    $i = 0;
     while(!feof($file)) {
         $line = fgets($file);
         $result[$i] = $line;
         $i++;
-
     }
     fclose($file);
 } else {
-    $result[0]="No se pudo cargar la ultima cotización";
+    $result[0]="No disponible";
     $result[1]="0,00";
 }
 
@@ -393,6 +387,7 @@ if($ctaCteCliente["saldo"] <= 0) {
                     </a>
                 </li>
                 
+                <?php if($tieneAfip) { ?>
                 <!-- Dropdown AFIP -->
                 <li class="dropdown tasks-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -430,8 +425,9 @@ if($ctaCteCliente["saldo"] <= 0) {
                         </li>
                     </ul>
                 </li>
+                <?php } ?>
 
-                <?php if($objParametros->getPrecioDolar()) { ?>
+                <?php if($tieneCotizacion && $objParametros->getPrecioDolar()) { ?>
                 <!-- Dropdown Cotización Dólar -->
                 <li class="dropdown tasks-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
