@@ -687,7 +687,7 @@ MODAL COBRO MEJORADO
                         <div>
                             <div style="font-size: 17px; font-weight: 700; color: #2c3e50; margin-bottom: 8px;">CÓMO PAGAR</div>
                             <div style="font-size: 15px; color: #6c757d; line-height: 1.6;">
-                                Haz clic en el botón de Mercado Pago que está abajo para completar tu pago de forma segura.
+                                Haz clic en el botón de Mercado Pago o escanea el código QR para completar tu pago de forma segura.
                             </div>
                         </div>
                     </div>
