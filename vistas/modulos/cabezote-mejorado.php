@@ -404,18 +404,19 @@ if($ctaCteCliente["saldo"] <= 0) {
 
                 <!-- Sistema de Cobro Moon -->
                 <li class="dropdown tasks-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-moon-o" style="font-size: 20px;"></i>
-                        <?php echo $badgeNavbar; ?>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Estado de Cuenta - Sistema de Cobro">
+                        <i class="fa fa-credit-card" style="font-size: 18px;"></i>
+                        <span class="hidden-xs" style="margin-left: 5px;">Estado Cuenta</span>
+                        <?php echo isset($badgeNavbar) ? $badgeNavbar : ''; ?>
                     </a>
                     <ul class="dropdown-menu">
                         <li class="header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 10px;">
                             <i class="fa fa-moon-o"></i> Moon Desarrollos
                         </li>
                         <li>
-                            <input type="hidden" id="hiddenClavePublicaMP" value="<?php echo $clavePublicaMercadoPago; ?>">
+                            <input type="hidden" id="hiddenClavePublicaMP" value="<?php echo isset($clavePublicaMercadoPago) ? $clavePublicaMercadoPago : ''; ?>">
                             <ul class="menu">
-                                <?php echo $dropdownContent; ?>
+                                <?php echo isset($dropdownContent) ? $dropdownContent : '<p style="padding: 15px;">Sistema de cobro no disponible</p>'; ?>
                             </ul>
                         </li>
                     </ul>
@@ -458,6 +459,41 @@ if($ctaCteCliente["saldo"] <= 0) {
     </nav>
 
 </header>
+
+<!--=====================================
+ESTILOS RESPONSIVE PARA MÓVIL
+======================================-->
+<style>
+/* Responsive para el navbar */
+@media (max-width: 768px) {
+    .navbar-nav > li > a {
+        padding: 10px !important;
+    }
+    .navbar-nav > li > a > span {
+        display: none !important;
+    }
+    .navbar-nav > li > a > i {
+        font-size: 20px !important;
+    }
+}
+
+/* Responsive para el modal */
+@media (max-width: 768px) {
+    .modal-dialog.modal-lg {
+        margin: 10px !important;
+        width: calc(100% - 20px) !important;
+    }
+    .modal-body {
+        padding: 15px !important;
+    }
+    .modal-header h3 {
+        font-size: 20px !important;
+    }
+    .modal-header i {
+        font-size: 32px !important;
+    }
+}
+</style>
 
 <!--=====================================
 MODAL COBRO MEJORADO
