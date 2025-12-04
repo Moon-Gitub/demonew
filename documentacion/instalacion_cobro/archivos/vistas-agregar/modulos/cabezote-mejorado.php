@@ -781,12 +781,10 @@ MODAL COBRO MEJORADO
                             Escanea con tu celular para pagar
                         </div>
                         
-                        <!-- QR Code generado con Google Charts API -->
+                        <!-- QR Code generado localmente con PHP -->
                         <div id="qr-container" style="display: inline-block; padding: 15px; background: white; border: 2px solid #e0e0e0; border-radius: 8px;">
                             <?php 
-                            $qrData = urlencode($preference->init_point);
-                            $qrSize = '250x250';
-                            $qrUrl = "https://chart.googleapis.com/chart?chs={$qrSize}&cht=qr&chl={$qrData}&choe=UTF-8";
+                            $qrUrl = "generar-qr.php?url=" . urlencode($preference->init_point);
                             ?>
                             <img src="<?php echo $qrUrl; ?>" 
                                  alt="Código QR para pagar" 
