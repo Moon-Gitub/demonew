@@ -79,68 +79,10 @@ if (isset($_GET['debug_env'])) {
     exit;
 }
 
-// Verificar que el archivo .env existe
+// Solo registrar en log si .env no existe, pero NO mostrar errores
 if (!$envExists) {
-    // En lugar de morir, mostrar advertencia pero permitir continuar
-    error_log('ADVERTENCIA: Archivo .env no encontrado en ' . $envPath);
-    
-    // Si estamos en producción y falta .env, sí mostrar error
-    $appEnv = isset($_ENV['APP_ENV']) ? $_ENV['APP_ENV'] : (isset($_SERVER['APP_ENV']) ? $_SERVER['APP_ENV'] : null);
-    $moonClienteId = isset($_ENV['MOON_CLIENTE_ID']) ? $_ENV['MOON_CLIENTE_ID'] : (isset($_SERVER['MOON_CLIENTE_ID']) ? $_SERVER['MOON_CLIENTE_ID'] : null);
-    if ($appEnv === 'production' && !$moonClienteId) {
-        die('
-        <h1 style="color: red;">⚠️ ERROR: Archivo .env no encontrado</h1>
-        <p>El sistema requiere un archivo <strong>.env</strong> en la raíz del proyecto.</p>
-        <p>Ubicación esperada: ' . $envPath . '</p>
-        <p><a href="?debug_env=1">Ver información de debug</a></p>
-        ');
-    }
+    error_log('INFO: Archivo .env no encontrado. Sistema usará valores por defecto.');
 }
 
-// Verificar variables críticas (solo si .env existe)
-if ($envExists) {
-    $variablesRequeridas = [
-        'MOON_CLIENTE_ID' => 'ID del cliente en la BD Moon',
-        'DB_HOST' => 'Host de la base de datos local',
-        'DB_NAME' => 'Nombre de la base de datos local',
-        'MOON_DB_HOST' => 'Host de la base de datos Moon',
-        'MOON_DB_NAME' => 'Nombre de la base de datos Moon'
-    ];
-    
-    $variablesFaltantes = [];
-    foreach ($variablesRequeridas as $variable => $descripcion) {
-        // Intentar leer de $_ENV primero, luego $_SERVER
-        $valor = isset($_ENV[$variable]) ? $_ENV[$variable] : (isset($_SERVER[$variable]) ? $_SERVER[$variable] : null);
-        if (!$valor) {
-            $variablesFaltantes[$variable] = $descripcion;
-        }
-    }
-    
-    // Solo mostrar error si faltan variables CRÍTICAS
-    $moonClienteId = isset($_ENV['MOON_CLIENTE_ID']) ? $_ENV['MOON_CLIENTE_ID'] : (isset($_SERVER['MOON_CLIENTE_ID']) ? $_SERVER['MOON_CLIENTE_ID'] : null);
-    if (!empty($variablesFaltantes) && !$moonClienteId) {
-        echo '
-        <div style="background: #fff3cd; border: 2px solid #ffc107; padding: 20px; margin: 20px; border-radius: 10px;">
-            <h2 style="color: #856404;">⚠️ ADVERTENCIA: Variables faltantes en .env</h2>
-            <p>Las siguientes variables no están definidas:</p>
-            <ul style="color: #856404;">';
-        
-        foreach ($variablesFaltantes as $var => $desc) {
-            echo '<li><strong>' . $var . '</strong> - ' . $desc . '</li>';
-        }
-        
-        echo '
-            </ul>
-            <p><a href="?debug_env=1" style="color: #856404; font-weight: bold;">🔍 Ver información de debug completa</a></p>
-            <p style="margin-top: 15px; font-size: 0.9em;">
-                El sistema intentará funcionar con valores disponibles, pero puede tener comportamiento inesperado.
-            </p>
-        </div>
-        ';
-        
-        // No morir, solo advertir
-        error_log('ADVERTENCIA: Variables faltantes en .env: ' . implode(', ', array_keys($variablesFaltantes)));
-    }
-}
-
-// El sistema continuará funcionando
+// No hacer validaciones que puedan romper el sistema
+// conexion.php cargará el .env automáticamente cuando sea necesario
