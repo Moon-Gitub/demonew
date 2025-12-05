@@ -13,6 +13,8 @@ $tieneCotizacion = isset($objParametros) && is_object($objParametros);
 //========================
 $conAfip = false;
 $msjError="";
+$wsfe = null;
+$wsaa = null;
 
 if($tieneAfip && $arrayEmpresa["entorno_facturacion"]){
  try {
@@ -387,7 +389,6 @@ if($ctaCteCliente["saldo"] <= 0) {
                     </a>
                 </li>
                 
-                <?php if($tieneAfip) { ?>
                 <!-- Dropdown AFIP -->
                 <li class="dropdown tasks-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -400,7 +401,7 @@ if($ctaCteCliente["saldo"] <= 0) {
                                 <?php 
                                 echo '<p>Conexion con servidor de AFIP ';
 
-                                if ( $conAfip ){
+                                if ( $tieneAfip && $conAfip && isset($wsfe) && isset($arrayEmpresa) ){
 
                                   $fecform = date_create($wsfe->datosTA()["Exp"]);
                                   echo '<i class="fa fa-check-circle-o fa-2x" style="color: green"></i></p>';
@@ -414,7 +415,11 @@ if($ctaCteCliente["saldo"] <= 0) {
 
                                     echo '<i class="fa fa-times-circle-o fa-2x" style="color: red"></i></p>';
 
-                                    echo $msjError;
+                                    if($tieneAfip && !empty($msjError)) {
+                                        echo $msjError;
+                                    } else {
+                                        echo 'AFIP no configurado';
+                                    }
 
                                 }
                                 ?>
@@ -425,7 +430,6 @@ if($ctaCteCliente["saldo"] <= 0) {
                         </li>
                     </ul>
                 </li>
-                <?php } ?>
 
                 <?php if($tieneCotizacion && $objParametros->getPrecioDolar()) { ?>
                 <!-- Dropdown Cotización Dólar -->
