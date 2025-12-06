@@ -317,37 +317,42 @@ foreach ($ventasHoy as $key => $value) {
   </div>
 
   <script>
-    
-   var line = new Morris.Line({
-      element          : 'line-chart-ventas',
-      resize           : true,
-      data             : [
+    $(document).ready(function() {
+      // Esperar a que Morris.js y Raphael estén cargados
+      if (typeof Morris !== 'undefined' && typeof Raphael !== 'undefined') {
+        var line = new Morris.Line({
+          element          : 'line-chart-ventas',
+          resize           : true,
+          data             : [
 
-      <?php
+          <?php
 
-        foreach ($respuesta as $key => $value) {
-           echo "{ y: '".$value["fecha"]."', ventas: ".$value["total"]." },";
-        }
+            foreach ($respuesta as $key => $value) {
+               echo "{ y: '".$value["fecha"]."', ventas: ".$value["total"]." },";
+            }
 
-      ?>
+          ?>
 
-      ],
-      xkey             : 'y',
-      ykeys            : ['ventas'],
-      labels           : ['ventas'],
-      lineColors       : ['#fff'],
-      lineWidth        : 2,
-      hideHover        : 'auto',
-      gridTextColor    : '#fff',
-      gridStrokeWidth  : 0.4,
-      pointSize        : 4,
-      pointStrokeColors: ['#fff'],
-      gridLineColor    : '#fff',
-      gridTextFamily   : 'Open Sans',
-      preUnits         : '$',
-      gridTextSize     : 10
+          ],
+          xkey             : 'y',
+          ykeys            : ['ventas'],
+          labels           : ['ventas'],
+          lineColors       : ['#fff'],
+          lineWidth        : 2,
+          hideHover        : 'auto',
+          gridTextColor    : '#fff',
+          gridStrokeWidth  : 0.4,
+          pointSize        : 4,
+          pointStrokeColors: ['#fff'],
+          gridLineColor    : '#fff',
+          gridTextFamily   : 'Open Sans',
+          preUnits         : '$',
+          gridTextSize     : 10
+        });
+      } else {
+        console.error('Morris.js o Raphael no están cargados');
+      }
     });
-
   </script>
 
   </div>
