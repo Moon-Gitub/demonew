@@ -311,6 +311,23 @@
         }
         
         // ===== MODALES =====
+        // Inicializar todos los modales existentes
+        setTimeout(function() {
+            document.querySelectorAll('.modal').forEach(function(modalEl) {
+                try {
+                    if (!bootstrap.Modal.getInstance(modalEl)) {
+                        new bootstrap.Modal(modalEl, {
+                            backdrop: true,
+                            keyboard: true,
+                            focus: true
+                        });
+                    }
+                } catch (err) {
+                    // Ignorar errores silenciosamente
+                }
+            });
+        }, 100);
+        
         // Compatibilidad para data-toggle="modal" y data-target
         $(document).on('click', '[data-toggle="modal"], [data-bs-toggle="modal"]', function(e) {
             var $this = $(this);
@@ -320,7 +337,10 @@
                 e.preventDefault();
                 var modalElement = document.querySelector(target);
                 if (modalElement) {
-                    var modal = new bootstrap.Modal(modalElement);
+                    var modal = bootstrap.Modal.getInstance(modalElement);
+                    if (!modal) {
+                        modal = new bootstrap.Modal(modalElement);
+                    }
                     modal.show();
                 }
             }
@@ -343,22 +363,61 @@
         });
         
         // ===== DROPDOWNS =====
-        $(document).on('click', '[data-toggle="dropdown"], [data-bs-toggle="dropdown"]', function(e) {
+        // Inicializar todos los dropdowns existentes
+        setTimeout(function() {
+            document.querySelectorAll('.dropdown-toggle, [data-toggle="dropdown"], [data-bs-toggle="dropdown"]').forEach(function(toggle) {
+                try {
+                    if (!bootstrap.Dropdown.getInstance(toggle)) {
+                        new bootstrap.Dropdown(toggle);
+                    }
+                } catch (err) {
+                    // Ignorar errores silenciosamente
+                }
+            });
+        }, 100);
+        
+        // Manejar clicks en dropdowns
+        $(document).on('click', '[data-toggle="dropdown"], [data-bs-toggle="dropdown"], .dropdown-toggle', function(e) {
             var $this = $(this);
+            var $parent = $this.closest('.dropdown, .dropup');
+            
             // Solo prevenir default si no tiene href="#"
             if ($this.attr('href') === '#' || !$this.attr('href')) {
                 e.preventDefault();
             }
             
+            // Si es un dropdown de AdminLTE (navbar), permitir comportamiento normal
+            if ($parent.hasClass('tasks-menu') || $parent.hasClass('user-menu')) {
+                // AdminLTE maneja estos dropdowns de forma especial
+                return;
+            }
+            
             try {
-                var dropdown = new bootstrap.Dropdown(this);
-                dropdown.toggle();
-            } catch (err) {
-                // Si ya existe instancia, solo toggle
-                var existing = bootstrap.Dropdown.getInstance(this);
-                if (existing) {
-                    existing.toggle();
+                var dropdown = bootstrap.Dropdown.getInstance(this);
+                if (dropdown) {
+                    dropdown.toggle();
+                } else {
+                    dropdown = new bootstrap.Dropdown(this);
+                    dropdown.toggle();
                 }
+            } catch (err) {
+                // Si falla, intentar con jQuery (compatibilidad AdminLTE)
+                var $dropdown = $this.next('.dropdown-menu');
+                if ($dropdown.length) {
+                    $dropdown.toggle();
+                }
+            }
+        });
+        
+        // Cerrar dropdowns al hacer click fuera
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.dropdown').length) {
+                document.querySelectorAll('.dropdown-toggle').forEach(function(toggle) {
+                    var dropdown = bootstrap.Dropdown.getInstance(toggle);
+                    if (dropdown && dropdown._isShown()) {
+                        dropdown.hide();
+                    }
+                });
             }
         });
         
@@ -446,6 +505,56 @@
                 }
             });
         }, 500);
+        
+        // ===== ADMINLTE COMPATIBILITY =====
+        // Soporte para sidebar-toggle (push-menu)
+        $(document).on('click', '.sidebar-toggle, [data-toggle="push-menu"]', function(e) {
+            e.preventDefault();
+            var $body = $('body');
+            if ($body.hasClass('sidebar-collapse')) {
+                $body.removeClass('sidebar-collapse');
+            } else {
+                $body.addClass('sidebar-collapse');
+            }
+        });
+        
+        // Soporte para treeview (menú lateral)
+        $(document).on('click', '.treeview > a', function(e) {
+            var $parent = $(this).parent();
+            var $ul = $parent.find('> ul.treeview-menu');
+            
+            if ($ul.length) {
+                e.preventDefault();
+                $parent.toggleClass('active');
+                $ul.slideToggle(200);
+            }
+        });
+        
+        // Inicializar treeviews abiertos
+        $('.treeview.active > ul.treeview-menu').show();
+        
+        // Soporte para box-tools (collapse/remove)
+        $(document).on('click', '[data-widget="collapse"]', function(e) {
+            e.preventDefault();
+            var $box = $(this).closest('.box, .card');
+            $box.toggleClass('collapsed-box');
+            $box.find('.box-body, .card-body, .box-footer, .card-footer').slideToggle(300);
+            
+            var $icon = $(this).find('i');
+            if ($icon.hasClass('fa-minus')) {
+                $icon.removeClass('fa-minus').addClass('fa-plus');
+            } else {
+                $icon.removeClass('fa-plus').addClass('fa-minus');
+            }
+        });
+        
+        $(document).on('click', '[data-widget="remove"]', function(e) {
+            e.preventDefault();
+            var $box = $(this).closest('.box, .card');
+            $box.slideUp(300, function() {
+                $(this).remove();
+            });
+        });
         
         console.log('[Bootstrap Shim] Compatibilidad JavaScript configurada');
     }

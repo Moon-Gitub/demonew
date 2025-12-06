@@ -281,6 +281,529 @@
     }
 }
 
+/* ===== ADMINLTE COMPATIBILITY ===== */
+/* Box/Card styles para AdminLTE */
+.box, .card {
+    position: relative;
+    border-radius: 3px;
+    background: #ffffff;
+    border-top: 3px solid #d2d6de;
+    margin-bottom: 20px;
+    width: 100%;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.box.box-primary, .card.card-primary {
+    border-top-color: #3c8dbc;
+}
+
+.box.box-success, .card.card-success {
+    border-top-color: #00a65a;
+}
+
+.box.box-info, .card.card-info {
+    border-top-color: #00c0ef;
+}
+
+.box.box-warning, .card.card-warning {
+    border-top-color: #f39c12;
+}
+
+.box.box-danger, .card.card-danger {
+    border-top-color: #dd4b39;
+}
+
+.box-header, .card-header {
+    color: #444;
+    display: block;
+    padding: 10px;
+    position: relative;
+    border-bottom: 1px solid #f4f4f4;
+}
+
+.box-header.with-border, .card-header.with-border {
+    border-bottom: 1px solid #f4f4f4;
+}
+
+.box-title, .card-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.box-tools, .card-tools {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+}
+
+.box-tools .btn, .card-tools .btn {
+    margin-left: 5px;
+}
+
+.box-body, .card-body {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    padding: 10px;
+}
+
+.box-footer, .card-footer {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top: 1px solid #f4f4f4;
+    padding: 10px;
+    background-color: #fff;
+}
+
+/* Small boxes (dashboard cards) */
+.small-box {
+    border-radius: 2px;
+    position: relative;
+    display: block;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.small-box > .inner {
+    padding: 10px;
+}
+
+.small-box > .small-box-footer {
+    position: relative;
+    text-align: center;
+    padding: 3px 0;
+    color: #fff;
+    color: rgba(255,255,255,0.8);
+    display: block;
+    z-index: 10;
+    background: rgba(0,0,0,0.1);
+    text-decoration: none;
+}
+
+.small-box > .small-box-footer:hover {
+    color: #fff;
+    background: rgba(0,0,0,0.15);
+}
+
+.small-box h3 {
+    font-size: 38px;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+    white-space: nowrap;
+    padding: 0;
+}
+
+.small-box p {
+    font-size: 15px;
+}
+
+.small-box .icon {
+    -webkit-transition: all .3s linear;
+    -o-transition: all .3s linear;
+    transition: all .3s linear;
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    z-index: 0;
+    font-size: 90px;
+    color: rgba(0,0,0,0.15);
+}
+
+.small-box:hover {
+    text-decoration: none;
+    color: #f9f9f9;
+}
+
+.small-box:hover .icon {
+    font-size: 95px;
+}
+
+.bg-aqua {
+    background-color: #00c0ef !important;
+    color: #fff !important;
+}
+
+.bg-green {
+    background-color: #00a65a !important;
+    color: #fff !important;
+}
+
+.bg-yellow {
+    background-color: #f39c12 !important;
+    color: #fff !important;
+}
+
+.bg-red {
+    background-color: #dd4b39 !important;
+    color: #fff !important;
+}
+
+/* Navbar dropdowns */
+.navbar-nav > .dropdown > .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    list-style: none;
+    font-size: 14px;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+    background-clip: padding-box;
+}
+
+.navbar-nav > .dropdown.open > .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu > li > a {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: 1.42857143;
+    color: #333333;
+    white-space: nowrap;
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+    text-decoration: none;
+    color: #262626;
+    background-color: #f5f5f5;
+}
+
+.dropdown-menu > .header {
+    padding: 3px 20px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Treeview menu */
+.treeview-menu {
+    display: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    padding-left: 5px;
+}
+
+.treeview-menu > li {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.treeview-menu > li > a {
+    padding: 5px 5px 5px 15px;
+    display: block;
+    font-size: 14px;
+}
+
+.treeview.active > .treeview-menu {
+    display: block;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .box, .card {
+        margin-bottom: 15px;
+    }
+    
+    .small-box {
+        margin-bottom: 15px;
+    }
+    
+    .small-box h3 {
+        font-size: 28px;
+    }
+    
+    .small-box .icon {
+        font-size: 70px;
+    }
+    
+    .small-box:hover .icon {
+        font-size: 75px;
+    }
+}
+
+/* ===== DASHBOARD IMPROVEMENTS ===== */
+/* Mejoras visuales para el dashboard */
+.content-wrapper {
+    min-height: calc(100vh - 101px);
+    background-color: #ecf0f5;
+}
+
+.content-header {
+    position: relative;
+    padding: 15px 15px 0 15px;
+}
+
+.content-header > h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.content-header > h1 > small {
+    font-size: 15px;
+    display: inline-block;
+    padding-left: 4px;
+    font-weight: 300;
+}
+
+.content {
+    min-height: 250px;
+    padding: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Mejoras en las cajas del dashboard */
+.small-box {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.small-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+}
+
+/* Mejoras en gráficos */
+.chart {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+/* Mejoras en responsive grid para dashboard */
+@media (max-width: 1200px) {
+    .col-lg-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 768px) {
+    .col-lg-3,
+    .col-lg-6,
+    .col-lg-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .content-header > h1 {
+        font-size: 20px;
+    }
+    
+    .content {
+        padding: 10px;
+    }
+}
+
+/* ===== NAVBAR IMPROVEMENTS ===== */
+.navbar-static-top {
+    z-index: 1000;
+    border-width: 0 0 1px;
+    border-radius: 0;
+    margin-bottom: 0;
+}
+
+.navbar-nav > .dropdown > a {
+    padding: 10px 15px;
+}
+
+.navbar-nav > .dropdown > a > .label {
+    position: absolute;
+    top: 9px;
+    right: 7px;
+    text-align: center;
+    font-size: 9px;
+    padding: 2px 3px;
+    line-height: 0.9;
+}
+
+/* ===== MODAL IMPROVEMENTS ===== */
+.modal {
+    z-index: 1050;
+}
+
+.modal-dialog {
+    position: relative;
+    width: auto;
+    margin: 10px;
+}
+
+.modal-content {
+    position: relative;
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 6px;
+    box-shadow: 0 3px 9px rgba(0,0,0,0.5);
+    background-clip: padding-box;
+    outline: 0;
+}
+
+.modal-header {
+    padding: 15px;
+    border-bottom: 1px solid #e5e5e5;
+    min-height: 16.42857143px;
+}
+
+.modal-header .close {
+    margin-top: -2px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+}
+
+.modal-body {
+    position: relative;
+    padding: 15px;
+}
+
+.modal-footer {
+    padding: 15px;
+    text-align: right;
+    border-top: 1px solid #e5e5e5;
+}
+
+/* ===== BREADCRUMB IMPROVEMENTS ===== */
+.breadcrumb {
+    background-color: transparent;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.breadcrumb > li + li:before {
+    content: "/\00a0";
+    padding: 0 5px;
+    color: #ccc;
+}
+
+/* ===== FORM IMPROVEMENTS ===== */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-control:focus {
+    border-color: #66afe9;
+    outline: 0;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 8px rgba(102,175,233,0.6);
+}
+
+/* ===== BUTTON IMPROVEMENTS ===== */
+.btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover,
+.btn:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #3c8dbc;
+    border-color: #367fa9;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    color: #fff;
+    background-color: #357ca5;
+    border-color: #29608a;
+}
+
+/* ===== TABLE IMPROVEMENTS ===== */
+.table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+}
+
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+    padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
+}
+
+.table > thead > tr > th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #ddd;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+/* ===== UTILITY CLASSES ===== */
+.mt-0 { margin-top: 0 !important; }
+.mt-1 { margin-top: 0.25rem !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.mt-3 { margin-top: 1rem !important; }
+.mt-4 { margin-top: 1.5rem !important; }
+.mt-5 { margin-top: 3rem !important; }
+
+.mb-0 { margin-bottom: 0 !important; }
+.mb-1 { margin-bottom: 0.25rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
+.mb-5 { margin-bottom: 3rem !important; }
+
+.p-0 { padding: 0 !important; }
+.p-1 { padding: 0.25rem !important; }
+.p-2 { padding: 0.5rem !important; }
+.p-3 { padding: 1rem !important; }
+.p-4 { padding: 1.5rem !important; }
+.p-5 { padding: 3rem !important; }
+
 /* ===== FORM CONTROL COMPATIBILITY ===== */
 .form-control {
     display: block;

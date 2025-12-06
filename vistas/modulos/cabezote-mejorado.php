@@ -273,7 +273,7 @@ if($ctaCteCliente["saldo"] <= 0) {
     }
 
     $dropdownContent .= '
-            <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#modalCobro" style="background: #009ee3 !important; border: none;">
+            <button class="btn btn-primary btn-block" data-toggle="modal" data-bs-toggle="modal" data-target="#modalCobro" data-bs-target="#modalCobro" style="background: #009ee3 !important; border: none;">
                 <i class="fa fa-credit-card"></i> Pagar Ahora
             </button>
         </div>';
@@ -374,7 +374,7 @@ if($ctaCteCliente["saldo"] <= 0) {
     ======================================-->
     <nav class="navbar navbar-static-top" role="navigation">
 
-        <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <a href="#" class="sidebar-toggle" data-toggle="push-menu" data-bs-toggle="push-menu" role="button">
             <span class="sr-only">Toggle navigation</span>
         </a>
 
@@ -383,7 +383,7 @@ if($ctaCteCliente["saldo"] <= 0) {
             
                 <!-- Alerta de tiempo de sesión -->
                 <li class="dropdown tasks-menu" style="display: none" id="alertaTiempoSesionRestanteLi">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
                       <i class="fa fa-clock-o"></i>
                       <span title="Tiempo restante de sesión" class="label label-danger" id="alertaTiempoSesionRestante"></span>
                     </a>
@@ -391,7 +391,7 @@ if($ctaCteCliente["saldo"] <= 0) {
                 
                 <!-- Dropdown AFIP -->
                 <li class="dropdown tasks-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown">
                       <img src="vistas/img/plantilla/afipicon.ico" >
                     </a>
                     <ul class="dropdown-menu">
@@ -434,7 +434,7 @@ if($ctaCteCliente["saldo"] <= 0) {
                 <?php if($tieneCotizacion && $objParametros->getPrecioDolar()) { ?>
                 <!-- Dropdown Cotización Dólar -->
                 <li class="dropdown tasks-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown">
                       <i class="fa fa-money"></i>
                     </a>
                     <ul class="dropdown-menu">
@@ -453,7 +453,7 @@ if($ctaCteCliente["saldo"] <= 0) {
                               ?>
                                   <li class="footer">
                                     <center>
-                                        <button class="btn btn-primary" data-toggle="modal" data-target="#modalNuevaCotizacion">
+                                        <button class="btn btn-primary" data-toggle="modal" data-bs-toggle="modal" data-target="#modalNuevaCotizacion" data-bs-target="#modalNuevaCotizacion">
                                       Nueva Cotización
                                         </button>
                                     </center>
@@ -468,7 +468,7 @@ if($ctaCteCliente["saldo"] <= 0) {
 
                 <!-- Sistema de Cobro Moon -->
                 <li class="dropdown tasks-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Estado de Cuenta - Sistema de Cobro">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" title="Estado de Cuenta - Sistema de Cobro">
                         <i class="fa fa-credit-card" style="font-size: 18px;"></i>
                         <span class="hidden-xs" style="margin-left: 5px;">Estado Cuenta</span>
                         <?php echo isset($badgeNavbar) ? $badgeNavbar : ''; ?>
@@ -491,7 +491,7 @@ if($ctaCteCliente["saldo"] <= 0) {
                 <!-- Usuario -->
                 <!-- Usuario -->
                 <li class="dropdown user user-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown">
                         <?php
                         if($_SESSION["foto"] != ""){
                             echo '<img src="'.$_SESSION["foto"].'" class="user-image">';
@@ -604,7 +604,7 @@ MODAL COBRO MEJORADO
             CABEZA DEL MODAL - SIMPLE Y LIMPIO
             ======================================-->
             <div class="modal-header" style="background: white; border-bottom: 1px solid #e0e0e0; padding: 20px 25px;">
-                <button type="button" class="close" data-dismiss="modal" style="color: #6c757d; opacity: 0.8; font-size: 28px;">&times;</button>
+                <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" style="color: #6c757d; opacity: 0.8; font-size: 28px;">&times;</button>
                 <h4 style="margin: 0; color: #2c3e50; font-weight: 600; font-size: 20px;">
                     <i class="fa fa-credit-card" style="color: #667eea; margin-right: 8px;"></i>
                     Estado de Cuenta
