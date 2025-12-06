@@ -798,20 +798,54 @@ MODAL COBRO MEJORADO
                     </div>
                 </div>
 
-                <script src="https://sdk.mercadopago.com/js/v2"></script>
+                <script src="https://sdk.mercadopago.com/js/v2" crossorigin="anonymous" referrerpolicy="no-referrer-when-downgrade"></script>
                 <script type="text/javascript">
-                    var clavePublicaMP = document.getElementById('hiddenClavePublicaMP').value;
-                    const mp = new MercadoPago(clavePublicaMP, {locale: "es-AR"});
+                    // Esperar a que el SDK de MercadoPago esté completamente cargado
+                    if (typeof MercadoPago !== 'undefined') {
+                        try {
+                            var clavePublicaMP = document.getElementById('hiddenClavePublicaMP').value;
+                            if (clavePublicaMP) {
+                                const mp = new MercadoPago(clavePublicaMP, {locale: "es-AR"});
 
-                    mp.checkout({
-                        preference: {
-                            id: '<?php echo $preference->id; ?>',
-                        },
-                        render: {
-                            container: '.checkout-btn',
-                            label: 'Pagar con Mercado Pago',
-                        },
-                    });
+                                mp.checkout({
+                                    preference: {
+                                        id: '<?php echo $preference->id; ?>',
+                                    },
+                                    render: {
+                                        container: '.checkout-btn',
+                                        label: 'Pagar con Mercado Pago',
+                                    },
+                                });
+                            } else {
+                                console.warn('MercadoPago: Clave pública no encontrada');
+                            }
+                        } catch (error) {
+                            console.error('Error al inicializar MercadoPago:', error);
+                        }
+                    } else {
+                        // Reintentar si el SDK aún no está cargado
+                        window.addEventListener('load', function() {
+                            if (typeof MercadoPago !== 'undefined') {
+                                try {
+                                    var clavePublicaMP = document.getElementById('hiddenClavePublicaMP').value;
+                                    if (clavePublicaMP) {
+                                        const mp = new MercadoPago(clavePublicaMP, {locale: "es-AR"});
+                                        mp.checkout({
+                                            preference: {
+                                                id: '<?php echo $preference->id; ?>',
+                                            },
+                                            render: {
+                                                container: '.checkout-btn',
+                                                label: 'Pagar con Mercado Pago',
+                                            },
+                                        });
+                                    }
+                                } catch (error) {
+                                    console.error('Error al inicializar MercadoPago (reintento):', error);
+                                }
+                            }
+                        });
+                    }
                 </script>
 
                 <style>
