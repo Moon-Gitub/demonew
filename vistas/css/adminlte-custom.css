@@ -7,8 +7,7 @@
  * NO interferir con el layout base de AdminLTE 4
  */
 
-/* ===== FORZAR VISIBILIDAD DEL CONTENIDO ===== */
-/* AdminLTE 4 usa CSS Grid, pero necesitamos asegurar que el contenido sea visible */
+/* ===== ESTRUCTURA PRINCIPAL ===== */
 .app-main {
   display: block !important;
   visibility: visible !important;
@@ -17,21 +16,62 @@
   position: relative !important;
 }
 
+/* ===== APP CONTENT HEADER ===== */
 .app-content-header {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
   position: relative !important;
   z-index: 1 !important;
+  background-color: #fff !important;
+  border-bottom: 1px solid #dee2e6 !important;
+  padding: 1.5rem 0 !important;
+  margin-bottom: 0 !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
 }
 
+.app-content-header h3 {
+  font-weight: 600 !important;
+  color: #212529 !important;
+  margin: 0 !important;
+  font-size: 1.75rem !important;
+}
+
+.app-content-header .text-muted {
+  color: #6c757d !important;
+  font-size: 0.875rem !important;
+  margin-top: 0.25rem !important;
+}
+
+.app-content-header .breadcrumb {
+  margin-bottom: 0 !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+}
+
+.app-content-header .breadcrumb-item a {
+  color: #6c757d !important;
+  text-decoration: none !important;
+  transition: color 0.2s ease !important;
+}
+
+.app-content-header .breadcrumb-item a:hover {
+  color: #007bff !important;
+}
+
+.app-content-header .breadcrumb-item.active {
+  color: #212529 !important;
+  font-weight: 500 !important;
+}
+
+/* ===== APP CONTENT ===== */
 .app-content {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
   padding: 1.5rem !important;
   background-color: #f8f9fa !important;
-  min-height: 400px !important;
+  min-height: calc(100vh - 200px) !important;
   position: relative !important;
   z-index: 1 !important;
   overflow: visible !important;
@@ -41,87 +81,386 @@
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
+  padding-left: 1.5rem !important;
+  padding-right: 1.5rem !important;
+  max-width: 100% !important;
 }
 
+/* ===== CARDS ===== */
 .app-content .card {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
+  margin-bottom: 1.5rem !important;
+  background-color: #fff !important;
+  border: 1px solid rgba(0, 0, 0, 0.125) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+  transition: box-shadow 0.15s ease-in-out !important;
 }
 
+.app-content .card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.app-content .card-header {
+  background-color: #f8f9fa !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125) !important;
+  padding: 1rem 1.5rem !important;
+  font-weight: 600 !important;
+  color: #343a40 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  border-top-left-radius: 0.5rem !important;
+  border-top-right-radius: 0.5rem !important;
+}
+
+.app-content .card-title {
+  font-size: 1.25rem !important;
+  margin-bottom: 0 !important;
+  font-weight: 600 !important;
+  color: #212529 !important;
+}
+
+.app-content .card-body {
+  padding: 1.5rem !important;
+  display: block !important;
+  visibility: visible !important;
+}
+
+.app-content .card-footer {
+  background-color: #f8f9fa !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.125) !important;
+  padding: 1rem 1.5rem !important;
+  border-bottom-left-radius: 0.5rem !important;
+  border-bottom-right-radius: 0.5rem !important;
+}
+
+/* ===== TABLES ===== */
 .app-content .table {
   display: table !important;
   visibility: visible !important;
   width: 100% !important;
+  background-color: #fff !important;
+  margin-bottom: 1rem !important;
+  border-collapse: collapse !important;
 }
 
+.app-content .table thead th {
+  vertical-align: bottom !important;
+  border-bottom: 2px solid #dee2e6 !important;
+  background-color: #f8f9fa !important;
+  display: table-cell !important;
+  padding: 0.75rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  text-align: left !important;
+}
+
+.app-content .table tbody tr {
+  display: table-row !important;
+  transition: background-color 0.15s ease-in-out !important;
+}
+
+.app-content .table tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.05) !important;
+}
+
+.app-content .table td,
+.app-content .table th {
+  padding: 0.75rem !important;
+  vertical-align: top !important;
+  border-top: 1px solid #dee2e6 !important;
+  display: table-cell !important;
+}
+
+.app-content .table-bordered {
+  border: 1px solid #dee2e6 !important;
+}
+
+.app-content .table-bordered th,
+.app-content .table-bordered td {
+  border: 1px solid #dee2e6 !important;
+}
+
+.app-content .table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+/* ===== ROWS Y COLUMNS ===== */
 .app-content .row {
   display: flex !important;
   flex-wrap: wrap !important;
+  margin-right: -0.75rem !important;
+  margin-left: -0.75rem !important;
 }
 
 .app-content [class*="col-"] {
   display: block !important;
   visibility: visible !important;
+  position: relative !important;
+  width: 100% !important;
+  padding-right: 0.75rem !important;
+  padding-left: 0.75rem !important;
 }
 
 /* ===== SMALL BOX - AdminLTE 4 ===== */
 .small-box {
-  border-radius: 0.5rem;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  display: block;
-  position: relative;
-  margin-bottom: 1rem;
-  overflow: hidden;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+  display: block !important;
+  position: relative !important;
+  margin-bottom: 1.5rem !important;
+  overflow: hidden !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.small-box:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  text-decoration: none !important;
 }
 
 .small-box .inner {
-  padding: 10px;
-  color: #fff;
+  padding: 1rem !important;
+  color: #fff !important;
+  position: relative !important;
+  z-index: 2 !important;
 }
 
 .small-box .inner h3 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin: 0 0 0.5rem 0;
-  color: #fff;
+  font-size: 2.5rem !important;
+  font-weight: 700 !important;
+  margin: 0 0 0.5rem 0 !important;
+  white-space: nowrap !important;
+  padding: 0 !important;
+  color: #fff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+.small-box p {
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
+  color: rgba(255, 255, 255, 0.95) !important;
 }
 
 .small-box-icon {
-  position: absolute;
-  top: -15px;
-  right: 15px;
-  z-index: 1;
-  width: 90px;
-  height: 90px;
-  opacity: 0.15;
+  position: absolute !important;
+  top: -15px !important;
+  right: 15px !important;
+  z-index: 1 !important;
+  width: 90px !important;
+  height: 90px !important;
+  opacity: 0.15 !important;
+  transition: all 0.3s ease !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1)) !important;
+}
+
+.small-box:hover .small-box-icon {
+  opacity: 0.2 !important;
+  transform: scale(1.1) rotate(5deg) !important;
 }
 
 .small-box-footer {
-  position: relative;
-  text-align: center;
-  padding: 0.75rem 1rem;
-  display: block;
-  background: rgba(0, 0, 0, 0.1);
-  color: rgba(255, 255, 255, 0.9);
+  position: relative !important;
+  text-align: center !important;
+  padding: 0.75rem 1rem !important;
+  display: block !important;
+  z-index: 2 !important;
+  background: rgba(0, 0, 0, 0.1) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+  transition: all 0.3s ease !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 500 !important;
+}
+
+.small-box-footer:hover {
+  background: rgba(0, 0, 0, 0.2) !important;
+  color: #fff !important;
+  text-decoration: none !important;
+}
+
+.small-box-footer i {
+  margin-left: 0.5rem !important;
+  transition: transform 0.3s ease !important;
+}
+
+.small-box-footer:hover i {
+  transform: translateX(4px) !important;
+}
+
+/* ===== BUTTONS ===== */
+.app-content .btn {
+  display: inline-block !important;
+  font-weight: 400 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  user-select: none !important;
+  border: 1px solid transparent !important;
+  padding: 0.375rem 0.75rem !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  border-radius: 0.25rem !important;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+}
+
+.app-content .btn-primary {
+  color: #fff !important;
+  background-color: #007bff !important;
+  border-color: #007bff !important;
+}
+
+.app-content .btn-primary:hover {
+  color: #fff !important;
+  background-color: #0056b3 !important;
+  border-color: #0056b3 !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 123, 255, 0.25) !important;
+}
+
+.app-content .btn-success {
+  color: #fff !important;
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+}
+
+.app-content .btn-danger {
+  color: #fff !important;
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+}
+
+.app-content .btn-warning {
+  color: #212529 !important;
+  background-color: #ffc107 !important;
+  border-color: #ffc107 !important;
+}
+
+.app-content .btn-info {
+  color: #fff !important;
+  background-color: #17a2b8 !important;
+  border-color: #17a2b8 !important;
+}
+
+/* ===== FORMS ===== */
+.app-content .form-control {
+  display: block !important;
+  width: 100% !important;
+  padding: 0.375rem 0.75rem !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  color: #495057 !important;
+  background-color: #fff !important;
+  border: 1px solid #ced4da !important;
+  border-radius: 0.25rem !important;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+}
+
+.app-content .form-control:focus {
+  color: #495057 !important;
+  background-color: #fff !important;
+  border-color: #80bdff !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+}
+
+.app-content .input-group {
+  position: relative !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: stretch !important;
+  width: 100% !important;
+}
+
+.app-content .input-group-text {
+  display: flex !important;
+  align-items: center !important;
+  padding: 0.375rem 0.75rem !important;
+  margin-bottom: 0 !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  color: #495057 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  background-color: #e9ecef !important;
+  border: 1px solid #ced4da !important;
+  border-radius: 0.25rem !important;
 }
 
 /* ===== CHART STYLES ===== */
 .chart {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  min-height: 250px;
+  position: relative !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  min-height: 250px !important;
 }
 
 .nuevoGraficoVentas {
-  margin-top: 1rem;
-  border-radius: 0.25rem;
-  overflow: hidden;
-  background-color: #39cccc;
-  padding: 1rem;
+  margin-top: 1.5rem !important;
+  border-radius: 0.5rem !important;
+  overflow: hidden !important;
+  background-color: #39cccc !important;
+  padding: 1rem !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
 }
 
 .border-radius-none {
   border-radius: 0 !important;
+}
+
+/* ===== SPACING UTILITIES ===== */
+.app-content .mb-0 { margin-bottom: 0 !important; }
+.app-content .mb-1 { margin-bottom: 0.25rem !important; }
+.app-content .mb-2 { margin-bottom: 0.5rem !important; }
+.app-content .mb-3 { margin-bottom: 1rem !important; }
+.app-content .mb-4 { margin-bottom: 1.5rem !important; }
+.app-content .mb-5 { margin-bottom: 3rem !important; }
+
+.app-content .mt-0 { margin-top: 0 !important; }
+.app-content .mt-1 { margin-top: 0.25rem !important; }
+.app-content .mt-2 { margin-top: 0.5rem !important; }
+.app-content .mt-3 { margin-top: 1rem !important; }
+.app-content .mt-4 { margin-top: 1.5rem !important; }
+.app-content .mt-5 { margin-top: 3rem !important; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 991.98px) {
+  .app-content {
+    padding: 1rem !important;
+  }
+  
+  .app-content-header {
+    padding: 1rem 0 !important;
+  }
+  
+  .app-content-header h3 {
+    font-size: 1.5rem !important;
+  }
+  
+  .app-content .card-body {
+    padding: 1rem !important;
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .app-sidebar,
+  .app-header,
+  .app-content-header,
+  .btn,
+  .card-tools {
+    display: none !important;
+  }
+  
+  .app-content {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #dee2e6 !important;
+  }
 }
