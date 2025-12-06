@@ -23,9 +23,8 @@ if($_SESSION["perfil"] == "Especial"){
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-end mb-0">
-<li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
-      
-      <li class="active">Administrar compras</li>
+            <li class="breadcrumb-item"><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Administrar compras</li>
           </ol>
         </div>
       </div>
@@ -209,8 +208,44 @@ if($_SESSION["perfil"] == "Especial"){
       </div>
 
     </div>
-
-      </div>
+    </div>
     <!--end::Container-->
   </div>
   <!--end::App Content-->
+
+<script>
+$(document).ready(function() {
+  // Inicializar DataTable para compras
+  if ($.fn.DataTable) {
+    $('#tablaListarCompras').DataTable({
+      "language": {
+        "sProcessing": "Procesando...",
+        "sLengthMenu": "Mostrar _MENU_ registros",
+        "sZeroRecords": "No se encontraron resultados",
+        "sEmptyTable": "Ningún dato disponible en esta tabla",
+        "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_",
+        "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0",
+        "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+        "sInfoPostFix": "",
+        "sSearch": "Buscar:",
+        "sUrl": "",
+        "sInfoThousands": ",",
+        "sLoadingRecords": "Cargando...",
+        "oPaginate": {
+          "sFirst": "Primero",
+          "sLast": "Último",
+          "sNext": "Siguiente",
+          "sPrevious": "Anterior"
+        },
+        "oAria": {
+          "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+          "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+        }
+      },
+      "responsive": true,
+      "autoWidth": false,
+      "order": [[0, "desc"]]
+    });
+  }
+});
+</script>
