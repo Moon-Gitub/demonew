@@ -1,0 +1,11 @@
+=== INVENTARIO BOOTSTRAP ===
+Fecha: sáb 06 dic 2025 16:35:31 -03
+
+=== CLASES EN USO ===
+btn-*: 283
+col-xs-*: 247
+col-sm-*: 11
+col-md-*: 145
+col-lg-*: 64
+panel: 17
+data-toggle: 53
