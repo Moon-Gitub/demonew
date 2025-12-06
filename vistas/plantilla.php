@@ -152,7 +152,7 @@
 
   ?>
 
-  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
    
     <?php
 
