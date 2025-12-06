@@ -145,7 +145,7 @@
             
                     <div class="input-group">
                       
-                     <span class="input-group-addon" style="background-color: #ddd">Id. Venta</span>
+                     <span class="input-group-text" style="background-color: #ddd">Id. Venta</span>
 
                      <input type="text" class="form-control" id="nuevaVenta" name="editarVenta" value="<?php echo $venta["codigo"]; ?>" readonly>
                  
@@ -161,7 +161,7 @@
             
                     <div class="input-group">
                       
-                     <!-- <span class="input-group-addon" style="background-color: #ddd">Estado</span> -->
+                     <!-- <span class="input-group-text" style="background-color: #ddd">Estado</span> -->
 
                      <?php
 
@@ -199,7 +199,7 @@
 
                 <div class="input-group">
                  
-                    <span title="Tipo de comprobante" class="input-group-addon" style="background-color: #ddd"><i class="fa fa-bullseye"></i></span>
+                    <span title="Tipo de comprobante" class="input-group-text" style="background-color: #ddd"><i class="fa fa-bullseye"></i></span>
                     <?php
 
                     $arrCbtes = json_decode($arrayEmpresa['tipos_cbtes'], true);
@@ -239,7 +239,7 @@
 
               <div class="input-group">
 
-                  <span class="input-group-addon" style="background-color: #ddd"><i class="bi bi-calendar-o"></i></span>
+                  <span class="input-group-text" style="background-color: #ddd"><i class="bi bi-calendar-o"></i></span>
 
                   <input type="text" class="form-control input-sm" id="editarFecEmision" name="editarFecEmision" placeholder="Ingrese fecha" value="<?php echo date('d-m-Y', strtotime($venta['fecha']));?>">
 
@@ -254,7 +254,7 @@
 
                 <div class="input-group">
                    
-                    <span title="Puntos de venta" class="input-group-addon" style="background-color: #ddd"><i class="fa fa-terminal"></i></span>
+                    <span title="Puntos de venta" class="input-group-text" style="background-color: #ddd"><i class="fa fa-terminal"></i></span>
                     <?php
 
                       $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
@@ -288,7 +288,7 @@
 
                 <div class="input-group">
 
-                  <span title="Concepto" class="input-group-addon" style="background-color: #ddd"><i class="bi bi-circle"></i></span>
+                  <span title="Concepto" class="input-group-text" style="background-color: #ddd"><i class="bi bi-circle"></i></span>
 
                     <?php 
                     $arrConceptos = [ 
@@ -333,7 +333,7 @@
 
                   <div class="input-group">
 
-                    <span class="input-group-addon" style="background-color: #ddd">Desde</span>
+                    <span class="input-group-text" style="background-color: #ddd">Desde</span>
 
                      <input type="text" class="form-control input-sm editaFecServicios" id="editarFecDesde" name="editarFecDesde" placeholder="Ingrese fecha">
 
@@ -349,7 +349,7 @@
 
                   <div class="input-group">
 
-                    <span class="input-group-addon" style="background-color: #ddd">Hasta</span>
+                    <span class="input-group-text" style="background-color: #ddd">Hasta</span>
 
                       <input type="text" class="form-control input-sm editaFecServicios" id="editarFecHasta" name="editarFecHasta" placeholder="Ingrese fecha">
 
@@ -365,7 +365,7 @@
 
                   <div class="input-group">
 
-                    <span class="input-group-addon" style="background-color: #ddd">Vto.</span>
+                    <span class="input-group-text" style="background-color: #ddd">Vto.</span>
 
                       <input type="text" class="form-control input-sm editaFecServicios" id="editarFecVto" name="editarFecVto" placeholder="Ingrese fecha">
 
@@ -455,7 +455,7 @@
 
                             <div class="input-group">
 
-                              <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                              <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
                      
                               <input type="text" class="form-control nuevoPrecioProducto" precioReal="'.$value["precio"].'" name="nuevoPrecioProducto" value="'.$value["total"].'" readonly required>
      
@@ -491,7 +491,7 @@
 
                   //           <div class="input-group">
 
-                  //             <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                  //             <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
                      
                   //             <input type="number" class="form-control nuevoPrecioProducto nuevoProductoLibre" precioReal="'.$value["precio"].'" name="nuevoPrecioProducto" value="'.$value["total"].'" required>
      
@@ -622,7 +622,7 @@
 
                             <div class="input-group">
                        
-                              <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                              <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
 
                               <input type="number" step="0.01" class="form-control input-sm" name="nuevoPrecioNeto" id="nuevoPrecioNeto" placeholder="0.00" value="<?php echo $venta['neto']; ?>" readonly style="font-size: 18px;">
                     
@@ -644,7 +644,7 @@
                                   
                                   <div class="input-group">
                                
-                                    <span class="input-group-addon"><b>%</b></span>
+                                    <span class="input-group-text"><b>%</b></span>
 
                                     <input type="number" step="any" min="0" placeholder="0.00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoInteres" name="nuevoInteresPorcentaje" id="nuevoInteresPorcentaje" value="">
                             
@@ -656,7 +656,7 @@
                                   
                                   <div class="input-group">
                              
-                                    <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                                    <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
 
                                     <input type="number" step="any" min="0" placeholder="0.00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoInteres" name="nuevoInteresPrecio" id="nuevoInteresPrecio">
                           
@@ -683,7 +683,7 @@
                                 
                                 <div class="input-group">
                            
-                                  <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                                  <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
 
                                   <input type="text"  style="font-size: 18px;" class="form-control input-sm " value="<?php echo $des_o_int; ?> "placeholder="0.00">
                         
@@ -705,7 +705,7 @@
 
                           <div class="input-group">
 
-                            <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                            <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
 
                             <input type="number" step="0.01" min="0" style=" font-size: 18px; font-weight:bold;" class="form-control input-sm"  name="nuevoTotalVenta" total="<?php echo $venta['total']; ?>" value="<?php echo $venta['total']; ?>" placeholder="0.00" readonly required>
 
@@ -852,7 +852,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
 
                 <select class="form-control input-lg" name="nuevoTipoDocumento">
                   
@@ -880,7 +880,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-key"></i></span> 
+                <span class="input-group-text"><i class="fa fa-key"></i></span> 
 
                 <input type="number" min="0" step="1" class="form-control input-lg" name="nuevoDocumentoId" placeholder="Ingresar documento">
 
@@ -894,7 +894,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
+                <span class="input-group-text"><i class="bi bi-person"></i></span> 
 
                 <input type="text" class="form-control input-lg" name="nuevoCliente" placeholder="Ingresar nombre o razón social" required>
 
@@ -908,7 +908,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
 
                 <select class="form-control input-lg" name="nuevoCondicionIva">
 
@@ -935,7 +935,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-envelope"></i></span> 
+                <span class="input-group-text"><i class="fa fa-envelope"></i></span> 
 
                 <input type="email" class="form-control input-lg" name="nuevoEmail" placeholder="Ingresar email">
 
@@ -949,7 +949,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-phone"></i></span> 
+                <span class="input-group-text"><i class="fa fa-phone"></i></span> 
 
                 <input type="text" class="form-control input-lg" name="nuevoTelefono" placeholder="Ingresar teléfono" data-inputmask="'mask':'(999) 999-9999'" data-mask>
 
@@ -963,7 +963,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-map-marker"></i></span> 
+                <span class="input-group-text"><i class="fa fa-map-marker"></i></span> 
 
                 <input type="text" class="form-control input-lg" name="nuevaDireccion" placeholder="Ingresar dirección" >
 
@@ -977,7 +977,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="bi bi-calendar"></i></span> 
+                <span class="input-group-text"><i class="bi bi-calendar"></i></span> 
 
                 <input type="text" class="form-control input-lg" name="nuevaFechaNacimiento" placeholder="Ingresar fecha nacimiento" data-inputmask="'alias': 'yyyy/mm/dd'" data-mask>
 
@@ -1052,7 +1052,7 @@ MODAL DETALLE PRODUCTOS
               
                 <div class="input-group">
                 
-                  <span class="input-group-addon">Codigo Int.</i></span> 
+                  <span class="input-group-text">Codigo Int.</i></span> 
 
                   <input type="text" class="form-control" id="modDetProdCodigo" readonly>
 
@@ -1068,7 +1068,7 @@ MODAL DETALLE PRODUCTOS
               
                 <div class="input-group">
                 
-                  <span class="input-group-addon">Categoría</i></span> 
+                  <span class="input-group-text">Categoría</i></span> 
 
                   <input type="text" class="form-control" id="modDetProdCategoria" readonly>
 
@@ -1090,7 +1090,7 @@ MODAL DETALLE PRODUCTOS
             
               <div class="input-group">
               
-                <span class="input-group-addon">Marca</i></span> 
+                <span class="input-group-text">Marca</i></span> 
 
                 <input type="text" class="form-control " id="modDetProdMarca" readonly>
 
@@ -1106,7 +1106,7 @@ MODAL DETALLE PRODUCTOS
             
               <div class="input-group">
               
-                <span class="input-group-addon">Proveedor</i></span> 
+                <span class="input-group-text">Proveedor</i></span> 
 
                 <input type="text" class="form-control " id="modDetProdProveedor" readonly>
 
@@ -1122,7 +1122,7 @@ MODAL DETALLE PRODUCTOS
             
               <div class="input-group">
               
-                <span class="input-group-addon">Stk Total</i></span> 
+                <span class="input-group-text">Stk Total</i></span> 
 
                 <input type="text" class="form-control " id="modDetProdTotal" readonly>
 
@@ -1142,7 +1142,7 @@ MODAL DETALLE PRODUCTOS
             
               <div class="input-group">
               
-                <span class="input-group-addon">Info Adicional</i></span> 
+                <span class="input-group-text">Info Adicional</i></span> 
 
                 <textarea class="form-control" id="modDetProdInfoAdicional" rows="3" readonly></textarea>
                 <!-- <input type="text" class="form-control " id="modDetProdInfoAdicional" readonly> -->
@@ -1163,7 +1163,7 @@ MODAL DETALLE PRODUCTOS
               
                 <div class="input-group">
                 
-                  <span class="input-group-addon">Precio venta</i></span> 
+                  <span class="input-group-text">Precio venta</i></span> 
 
                   <input type="text" class="form-control " id="modDetProdPrecioVenta" readonly>
 

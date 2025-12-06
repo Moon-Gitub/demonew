@@ -1,14 +1,25 @@
-<div class="app-content">
-  <section class="content-header">
-    <h1>
-      Ingreso de compra
-    </h1>
-    <ol class="breadcrumb">
-      <li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Ingreso de compra</h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end mb-0">
+<li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       <li class="active">Ingreso compra</li>
-    </ol>
-  </section>
-  <section class="content">
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
     <div class="row">
       <!--EL FORMULARIO-->
       <div class="col-lg-8 col-xs-12">
@@ -35,7 +46,7 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-address-book-o"></i></span>
+                    <span class="input-group-text"><i class="fa fa-address-book-o"></i></span>
                     <input type="text" class="form-control" id="proveedorVer" value="<?php echo $proveedores["nombre"]; ?>" readonly>
                     <input type="hidden" name="editarProveedor" value="<?php echo $compra["id_proveedor"]; ?>" >
                   </div>
@@ -59,7 +70,7 @@
               <div class="col-xs-3">
                 <div class="form-group">
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="bi bi-calendar"></i></span>
+                    <span class="input-group-text"><i class="bi bi-calendar"></i></span>
                     <input autocomplete="off" type="text" class="form-control inputFechaCompra" id="fechaEmision"  placeholder="Fecha AAAA-MM-DD">
                     <input type="hidden" name="fechaEmision" id="fechaEmisionHidden">
                   </div>
@@ -70,7 +81,7 @@
               <div class="col-md-4" id="datosRemito" style="display:none;">
                 <div class="form-group">
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-file-o"></i></span>
+                    <span class="input-group-text"><i class="fa fa-file-o"></i></span>
                     <input type="text" class="form-control" id="remitoNumero" name="remitoNumero" placeholder="Numero Del Remito" >
                   </div>
                 </div>
@@ -81,7 +92,7 @@
                 <div class="col-xs-3">
                   <div class="form-group">
                     <div class="input-group">
-                      <span class="input-group-addon"><i class="fa fa-terminal"></i></span>
+                      <span class="input-group-text"><i class="fa fa-terminal"></i></span>
                       <input type="text" class="form-control" id="puntoVenta" name="puntoVenta" placeholder="Punto de venta" >
                     </div>
                   </div>
@@ -89,7 +100,7 @@
                 <div class="col-xs-3">
                   <div class="form-group">
                     <div class="input-group">
-                      <span class="input-group-addon"><i class="fa fa-file-o"></i></span>
+                      <span class="input-group-text"><i class="fa fa-file-o"></i></span>
                       <input type="text" class="form-control" id="numeroFactura" name="numeroFactura" placeholder="Numero De La Factura" >
                     </div>
                   </div>
@@ -188,7 +199,7 @@
               </div>
               <div class="col-lg-4">
                 <div class="input-group">
-                  <span class="input-group-addon">SubTotal</span>
+                  <span class="input-group-text">SubTotal</span>
                   <input type="number" step="0.01" min="0" class="form-control input-lg" id="totalCompraOrden" name="totalCompraOrden" placeholder="0,00" readonly style="font-size: 20px; text-align: center;  ">
                 </div>
               </div>
@@ -199,7 +210,7 @@
               </div>
               <div class="col-lg-4">
                 <div class="input-group">
-                  <span class="input-group-addon">Descuento $</span>
+                  <span class="input-group-text">Descuento $</span>
                   <input type="number" step="0.01" min="0" class="form-control input-lg" id="descuentoCompraOrden" name="descuentoCompraOrden" placeholder="0,00" style="font-size: 20px; text-align: center;  ">
                 </div>
               </div>
@@ -210,7 +221,7 @@
               </div>
               <div class="col-lg-4">
                 <div class="input-group">
-                  <span class="input-group-addon">Total</span>
+                  <span class="input-group-text">Total</span>
                   <input type="number" step="0.01" min="0" class="form-control input-lg" id="totalTotalCompraOrden" name="totalTotalCompraOrden" placeholder="0,00" readonly style="font-size: 20px; text-align: center;  ">
                 </div>
               </div>
@@ -223,7 +234,7 @@
                 <div class="form-group">
                   <br>
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-list"></i></span>
+                    <span class="input-group-text"><i class="fa fa-list"></i></span>
                     <textarea class="form-control" name="observacionFactura" id="observacionFactura" rows="3" placeholder="Observacion"></textarea>
                   </div>
                 </div>
@@ -257,44 +268,44 @@
                         <tr>
                           <th>
                             <div class="input-group">
-                              <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                              <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
                               <input type="text" class="form-control input-sm nuevoTotalCompra" style="text-align:center;" id="nuevoTotalCompra" name="nuevoTotalCompra" value="" readonly required>
                               <input type="hidden" name="totalCompra" id="totalCompra" value="">
                             </div>
                           </th>             
                           <th>
                             <div class="input-group">
-                              <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                              <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
                               <input type="text" class="form-control input-sm totalIVA" style="text-align:center;" id="totalIVA" name="totalIVA" value="0" required>
                             </div>
                           </th> 
                           <th>
                             <div class="input-group">
-                              <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                              <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
                               <input type="text" class="form-control input-sm precepcionesIngresosBrutos" style="text-align:center;" id="precepcionesIngresosBrutos" name="precepcionesIngresosBrutos" value="0" required>
                             </div>
                           </th>
                           <th>
                             <div class="input-group">
-                              <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                              <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
                               <input type="text" class="form-control input-sm precepcionesIva" style="text-align:center;" id="precepcionesIva" name="precepcionesIva" value="0" required>
                             </div>
                           </th>
                           <th>
                             <div class="input-group">
-                              <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                              <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
                               <input type="text" class="form-control input-sm precepcionesGanancias" style="text-align:center;" id="precepcionesGanancias" name="precepcionesGanancias" value="0" required>
                             </div>
                           </th>             
                           <th>
                             <div class="input-group">
-                              <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                              <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
                               <input type="text" class="form-control input-sm impuestoInterno" style="text-align:center;" id="impuestoInterno" name="impuestoInterno" value="0" required>
                             </div>
                           </th>
                           <th>
                             <div class="input-group">
-                              <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                              <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
                               <input type="text" class="form-control input-sm nuevoTotalFactura" style="text-align:center;" id="nuevoTotalFactura" name="nuevoTotalFactura" value="<?php echo $compra["total"];?>" readonly required>
                               <input type="hidden" name="totalCompraFactura" id="totalCompraFactura" value="">
                             </div>
@@ -343,5 +354,9 @@
       </div>
     </div>
   </div>
-</section>
-</div>
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->
+</main>
+<!--end::App Main-->

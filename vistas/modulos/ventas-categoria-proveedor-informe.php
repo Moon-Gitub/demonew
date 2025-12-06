@@ -118,32 +118,34 @@
 
 ?>
 
-<div class="app-content">
-
-  <section class="content-header">
-    
-    <h1>
-      
-      Administrar ventas <small>- <b> Informe de ventas por categorias | proveedor | productos </b> </small>
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Administrar ventas <small>- <b> Informe de ventas por categorias | proveedor | productos </b> </small>
       <?php 
 
         echo isset($desdeFecha) ? '<p><small>Desde: '.$desdeFecha.' Hasta: '.$hastaFecha.'</small></p>' : '';
 
-      ?> <p></p>
-    
-    </h1>
-
-    <ol class="breadcrumb">
-      
-      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+      ?> <p></p></h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end mb-0">
+<li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Administrar ventas</li>
-    
-    </ol>
-
-  </section>
-
-  <section class="content">
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
 
     <div class="card">
 
@@ -159,7 +161,7 @@
 				    
 					<div class="input-group">
 
-						<span class="input-group-addon"><i class="bi bi-calendar"></i> Desde</span> 
+						<span class="input-group-text"><i class="bi bi-calendar"></i> Desde</span> 
 						<input id="txtFechaDesdeVentasCategorias" name="txtFechaDesdeVentasCategorias" type="text" class="form-control inputVentasCategorias" placeholder="Fecha desde aaaa/mm/dd" autocomplete="off" required>
 
 					</div>
@@ -174,7 +176,7 @@
 
 					<div class="input-group">
 
-						<span class="input-group-addon"><i class="bi bi-calendar"></i> Hasta</span> 
+						<span class="input-group-text"><i class="bi bi-calendar"></i> Hasta</span> 
 						<input id="txtFechaHastaVentasCategorias" name="txtFechaHastaVentasCategorias" type="text" class="form-control inputVentasCategorias" placeholder="Fecha hasta aaaa/mm/dd" autocomplete="off" required>
 
 					</div>
@@ -424,6 +426,9 @@
 
     </div>
 
-  </section>
-
-</div>
+      </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->
+</main>
+<!--end::App Main-->

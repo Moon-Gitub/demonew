@@ -3,17 +3,28 @@
   $objClientes = new ControladorClientes();
 ?>
 
-<div class="app-content">
-  <section class="content-header">
-    <h1>
-      Administrar clientes
-    </h1>
-    <ol class="breadcrumb">
-      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Administrar clientes</h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end mb-0">
+<li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       <li class="active">Administrar clientes</li>
-    </ol>
-  </section>
-  <section class="content">
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
     <div class="card">
       <div class="card-header with-border">
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregarCliente">
@@ -98,7 +109,7 @@ MODAL AGREGAR CLIENTE
             <!-- ENTRADA PARA EL DOCUMENTO ID -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-key"></i></span> 
+                <span class="input-group-text"><i class="fa fa-key"></i></span> 
                 <input type="number" min="0" step="1" class="form-control " name="nuevoDocumentoId" id="nuevoDocumentoId" placeholder="Ingresar documento" required>
                 <span class="input-group-btn"><button type="button" title="Consultar en padrón de AFIP" id="btnNuevoDocumentoId" class="btn btn-default" <?php echo $btnPadronAfip; ?> ><i class="fa fa-search"></i></button></span>
               </div>
@@ -106,7 +117,7 @@ MODAL AGREGAR CLIENTE
             <!-- ENTRADA PARA TIPO DOCUMENTO -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
                 <select class="form-control " name="nuevoTipoDocumento" id="nuevoTipoDocumento" >
                   <option value="0">Seleccionar tipo documento</option>
                   <option value="96">DNI</option>
@@ -126,14 +137,14 @@ MODAL AGREGAR CLIENTE
             <!-- ENTRADA PARA EL NOMBRE -->            
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
+                <span class="input-group-text"><i class="bi bi-person"></i></span> 
                 <input type="text" class="form-control " name="nuevoCliente" id="nuevoCliente" placeholder="Ingresar nombre o razón social" required>
               </div>
             </div>
             <!-- ENTRADA PARA TIPO DOCUMENTO -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
                 <select class="form-control " name="nuevoCondicionIva" required>
                  <option value="">Seleccione condicion I.V.A.</option>
                  <option value="1">IVA Responsable Inscripto</option>
@@ -154,35 +165,35 @@ MODAL AGREGAR CLIENTE
             <!-- ENTRADA PARA EL EMAIL -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-envelope"></i></span> 
+                <span class="input-group-text"><i class="fa fa-envelope"></i></span> 
                 <input type="email" class="form-control " name="nuevoEmail" id="nuevoEmail" placeholder="Ingresar email">
               </div>
             </div>
             <!-- ENTRADA PARA EL TELÉFONO -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-phone"></i></span> 
+                <span class="input-group-text"><i class="fa fa-phone"></i></span> 
                 <input type="text" class="form-control " name="nuevoTelefono" id="nuevoTelefono" placeholder="Ingresar teléfono" data-inputmask="'mask':'(999) 999-9999'" data-mask>
               </div>
             </div>
             <!-- ENTRADA PARA LA DIRECCIÓN -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-map-marker"></i></span> 
+                <span class="input-group-text"><i class="fa fa-map-marker"></i></span> 
                 <input type="text" class="form-control " name="nuevaDireccion" id="nuevaDireccion"  placeholder="Ingresar dirección">
               </div>
             </div>
              <!-- ENTRADA PARA LA FECHA DE NACIMIENTO -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="bi bi-calendar"></i></span> 
+                <span class="input-group-text"><i class="bi bi-calendar"></i></span> 
                 <input type="text" class="form-control " name="nuevaFechaNacimiento" placeholder="Ingresar fecha nacimiento" data-inputmask="'alias': 'yyyy/mm/dd'" data-mask>
               </div>
             </div>
             <!-- ENTRADA PARA OBSERVACIONES -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-list"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list"></i></span> 
                 <textarea class="form-control" name="nuevaObservaciones" id="nuevaObservacionesCliente" placeholder="Ingresar observaciones" rows="3"></textarea>
               </div>
             </div>
@@ -225,14 +236,14 @@ MODAL EDITAR CLIENTE
             <!-- ENTRADA PARA EL DOCUMENTO ID -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-key"></i></span> 
+                <span class="input-group-text"><i class="fa fa-key"></i></span> 
                 <input autocomplete="off" type="number" min="0" class="form-control " name="editarDocumentoId" id="editarDocumentoId"  required >
               </div>
             </div>
             <!-- ENTRADA PARA TIPO DOCUMENTO -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
                 <select class="form-control " name="editarTipoDocumento" id="editarTipoDocumento" >
                   <option value="0">Seleccionar tipo documento</option>
                   <option value="96">DNI</option>
@@ -252,7 +263,7 @@ MODAL EDITAR CLIENTE
             <!-- ENTRADA PARA EL NOMBRE -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
+                <span class="input-group-text"><i class="bi bi-person"></i></span> 
                 <input type="text" autocomplete="off" class="form-control " name="editarCliente" id="editarCliente" required>
                 <input type="hidden" id="idCliente" name="idCliente">
               </div>
@@ -260,7 +271,7 @@ MODAL EDITAR CLIENTE
             <!-- ENTRADA PARA CONDICION IVA -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
                 <select class="form-control " name="editarCondicionIva" id="editarCondicionIva" required>
                  <option value="">Seleccione condicion I.V.A.</option>
                  <option value="1">IVA Responsable Inscripto</option>
@@ -281,35 +292,35 @@ MODAL EDITAR CLIENTE
             <!-- ENTRADA PARA EL EMAIL -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-envelope"></i></span> 
+                <span class="input-group-text"><i class="fa fa-envelope"></i></span> 
                 <input autocomplete="off" type="email" class="form-control " name="editarEmail" id="editarEmail">
               </div>
             </div>
             <!-- ENTRADA PARA EL TELÉFONO -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-phone"></i></span> 
+                <span class="input-group-text"><i class="fa fa-phone"></i></span> 
                 <input autocomplete="off" type="text" class="form-control " name="editarTelefono" id="editarTelefono" data-inputmask="'mask':'(999) 999-9999'" data-mask >
               </div>
             </div>
             <!-- ENTRADA PARA LA DIRECCIÓN -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-map-marker"></i></span> 
+                <span class="input-group-text"><i class="fa fa-map-marker"></i></span> 
                 <input autocomplete="off" type="text" class="form-control " name="editarDireccion" id="editarDireccion"  >
               </div>
             </div>
             <!-- ENTRADA PARA LA FECHA DE NACIMIENTO -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="bi bi-calendar"></i></span> 
+                <span class="input-group-text"><i class="bi bi-calendar"></i></span> 
                 <input autocomplete="off" type="text" class="form-control " name="editarFechaNacimiento" id="editarFechaNacimiento"  data-inputmask="'alias': 'yyyy/mm/dd'" data-mask>
               </div>
             </div>
             <!-- ENTRADA PARA OBSERVACIONES -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-list"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list"></i></span> 
                 <textarea class="form-control" name="editarObservaciones" id="editarObservacionesCliente" placeholder="Ingresar observaciones" rows="3"></textarea>
               </div>
             </div>

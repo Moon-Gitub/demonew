@@ -7,27 +7,29 @@
 
 ?>
 
-<div class="app-content">
-
-  <section class="content-header">
-    
-    <h1>
-      
-      Cuenta Corriente cliente - <span id="spanNombreClienteCtaCte"><?php echo $cliente["nombre"]; ?></span> - <?php echo $cliente["documento"]; ?>
-    
-    </h1>
-
-    <ol class="breadcrumb">
-      
-      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Cuenta Corriente cliente - <span id="spanNombreClienteCtaCte"><?php echo $cliente["nombre"]; ?></span> - <?php echo $cliente["documento"]; ?></h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end mb-0">
+<li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Cuenta Corriente cliente</li>
-    
-    </ol>
-
-  </section>
-
-  <section class="content">
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
 
     <div class="row">
 
@@ -241,7 +243,7 @@ MODAL AGREGAR MOVIMIENTO
 
               <div class="input-group">
 
-                <span title="Puntos de venta" class="input-group-addon"><i class="fa fa-terminal"></i></span>
+                <span title="Puntos de venta" class="input-group-text"><i class="fa fa-terminal"></i></span>
                 <?php
 
                 //$arrPuntos = explode(',', $arrayEmpresa['ptos_venta']);
@@ -274,7 +276,7 @@ MODAL AGREGAR MOVIMIENTO
               
               <div class="input-group">
 
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <select class="form-control" name="tipoMovimientoCtaCteCliente" id="tipoMovimientoCtaCteCliente">
 
@@ -290,7 +292,7 @@ MODAL AGREGAR MOVIMIENTO
 
               <div class="input-group">
 
-                <span class="input-group-addon"><i class="fa fa-credit-card"></i></span> 
+                <span class="input-group-text"><i class="fa fa-credit-card"></i></span> 
 
                 <select class="form-control" id="nuevoMetodoPagoCtaCteCliente" name="nuevoMetodoPagoCtaCteCliente">
                   <option value="">Medio de pago</option>
@@ -317,7 +319,7 @@ MODAL AGREGAR MOVIMIENTO
 
               <div class="input-group">
 
-                <span class="input-group-addon"><i class="fa fa-th"></i></span>  -->
+                <span class="input-group-text"><i class="bi bi-pencil-square"></i></span>  -->
 
                   <?php 
                   // if($_SESSION["perfil"] == "Administrador") {
@@ -343,7 +345,7 @@ MODAL AGREGAR MOVIMIENTO
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
 
                 <input type="text" autocomplete="off" class="form-control" name="detalleMovimientoCtaCteCliente" id="detalleMovimientoCtaCteCliente" placeholder="Ingrese descripcion"> 
 
@@ -356,7 +358,7 @@ MODAL AGREGAR MOVIMIENTO
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-usd"></i></span> 
+                <span class="input-group-text"><i class="fa fa-usd"></i></span> 
 
                 <input type="number" min="0" step="0.01" class="form-control input-lg" style="text-align: center; font-size: 20px; font-weight:bold" name="montoMovimientoCtaCteCliente" id="montoMovimientoCtaCteCliente" placeholder="Ingrese monto" >
 

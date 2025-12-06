@@ -1,24 +1,26 @@
-<div class="app-content">
-
-  <section class="content-header">
-    
-    <h1>
-      
-      Cargar pedido
-    
-    </h1>
-
-    <ol class="breadcrumb">
-      
-      <li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Cargar pedido</h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end mb-0">
+<li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Cargar pedido</li>
-    
-    </ol>
-
-  </section>
-
-  <section class="content">
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
 
     <div class="row">
 
@@ -46,7 +48,7 @@
                 
                   <div class="input-group">
                     
-                    <span class="input-group-addon"><i class="bi bi-person"></i></span> 
+                    <span class="input-group-text"><i class="bi bi-person"></i></span> 
 					<input type="hidden" name="urlActual" id="urlActual" value="0">
                     <input type="text" class="form-control" id="nuevoVendedor" value="<?php echo $_SESSION["nombre"]; ?>" readonly>
 
@@ -67,7 +69,7 @@
                   
                   <div class="input-group">
                     
-                    <span class="input-group-addon"><i class="fa fa-key"></i></span>
+                    <span class="input-group-text"><i class="fa fa-key"></i></span>
 
                     <?php
 
@@ -107,7 +109,7 @@
 					  
 					  <div class="input-group">
 						
-						<span class="input-group-addon"><i class="fa fa-exchange"></i></span>
+						<span class="input-group-text"><i class="fa fa-exchange"></i></span>
 						
 							<select class="form-control" id="nuevoOrigen" name="nuevoOrigen" required>
 
@@ -126,7 +128,7 @@
                   
                   <div class="input-group">
                     
-                    <span class="input-group-addon"><i class="fa fa-exchange"></i></span>
+                    <span class="input-group-text"><i class="fa fa-exchange"></i></span>
                     
                     <select class="form-control" id="nuevoDestino" name="nuevoDestino" required>
 
@@ -237,6 +239,9 @@
 
     </div>
    
-  </section>
-
-</div>
+      </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->
+</main>
+<!--end::App Main-->

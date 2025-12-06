@@ -5,27 +5,29 @@
 
 ?>
 
-<div class="app-content">
-
-  <section class="content-header">
-    
-    <h1>
-      
-      Administrar clientes <small><b>Saldo en cuenta corriente</b></small>
-    
-    </h1>
-
-    <ol class="breadcrumb">
-      
-      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Administrar clientes <small><b>Saldo en cuenta corriente</b></small></h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end mb-0">
+<li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Administrar clientes</li>
-    
-    </ol>
-
-  </section>
-
-  <section class="content">
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
 
     <div class="card">
 
@@ -169,7 +171,7 @@ MODAL ENVIAR MAIL
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-envelope"></i></span> 
+                <span class="input-group-text"><i class="fa fa-envelope"></i></span> 
 
                 <input autocomplete="off" type="email" class="form-control " id="emailConfiguradoCtaCteCliente" placeholder="Ingresar email">
 
@@ -182,7 +184,7 @@ MODAL ENVIAR MAIL
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-list"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list"></i></span> 
 
                 <textarea class="form-control" id="mensajeCtaCteCliente" placeholder="Mensaje..." rows="10"></textarea>
                 

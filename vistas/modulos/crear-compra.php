@@ -9,17 +9,28 @@ if($_SESSION["perfil"] == "Especial"){
 
 ?>
 
-<div class="app-content">
-    <section class="content-header">
-        <h1>
-          Crear orden compra
-        </h1>
-        <ol class="breadcrumb">
-          <li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Crear orden compra</h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end mb-0">
+<li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
           <li class="active">Crear orden compra</li>
-        </ol>
-    </section>
-    <section class="content">
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
         <div class="row">
             <!--=====================================
             EL FORMULARIO
@@ -53,7 +64,7 @@ if($_SESSION["perfil"] == "Especial"){
                                 <div class="col-md-4">
                                   <div class="form-group">
                                     <div class="input-group">
-                                      <span class="input-group-addon input-sm" style="background-color: #ddd">Fecha</span>
+                                      <span class="input-group-text input-sm" style="background-color: #ddd">Fecha</span>
                                       <input type="text" class="form-control input-sm inputFechaCompra" style="text-align:center;" value="<?php echo $fechaForm; ?>" >
                                     </div>
                                   </div>
@@ -61,7 +72,7 @@ if($_SESSION["perfil"] == "Especial"){
                                 <div class="col-md-4">
                                   <div class="form-group">
                                     <div class="input-group">
-                                      <span class="input-group-addon input-sm" style="background-color: #ddd">F. Entrega</span>
+                                      <span class="input-group-text input-sm" style="background-color: #ddd">F. Entrega</span>
                                       <input type="text" class="form-control input-sm inputFechaCompra" style="text-align:center;" id="fechaEntrega" value="<?php echo $fechaForm; ?>">
                                       <input type="hidden" id="fechaEntregaHidden" name="fechaEntrega" value="<?php echo $fecha; ?>">
                                     </div>
@@ -70,7 +81,7 @@ if($_SESSION["perfil"] == "Especial"){
                                 <div class="col-md-4">
                                   <div class="form-group">
                                     <div class="input-group">
-                                      <span class="input-group-addon input-sm" style="background-color: #ddd">F. Pago</span>
+                                      <span class="input-group-text input-sm" style="background-color: #ddd">F. Pago</span>
                                       <input type="text" class="form-control input-sm inputFechaCompra" style="text-align:center;" id="fechaPago" value="<?php echo $nuevafechaForm; ?>">
                                       <input type="hidden" id="fechaPagoHidden" name="fechaPago" value="<?php echo $nuevafecha; ?>">
                                     </div>   
@@ -122,7 +133,7 @@ if($_SESSION["perfil"] == "Especial"){
                                         <td style="vertical-align:middle; border: none;"><b>TOTAL:</b></td>
                                         <td style="border: none;">
                                           <div class="input-group">
-                                            <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                                            <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
                                             <input type="number" step="0.01" min="0" style="font-size: 18px; font-weight:bold; text-align:center; " class="form-control input-sm" id="nuevoTotalCompra" name="nuevoTotalCompra" total="" placeholder="0,00" readonly required>
                                             <input type="hidden" name="totalCompra" id="totalCompra">
                                           </div>
@@ -191,42 +202,42 @@ MODAL AGREGAR PROVEEDOR
                 <!-- ENTRADA PARA EL NOMBRE -->
                 <div class="form-group">
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="bi bi-person"></i></span> 
+                    <span class="input-group-text"><i class="bi bi-person"></i></span> 
                     <input type="text" class="form-control input-lg" name="nuevoProveedor" placeholder="Ingresar nombre proveedor" required>
                   </div>
                 </div>
                 <!-- ENTRADA PARA EL NOMBRE -->
                 <div class="form-group">
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-key"></i></span> 
+                    <span class="input-group-text"><i class="fa fa-key"></i></span> 
                     <input type="text" class="form-control input-lg" name="nuevoNombre" placeholder="Ingresar nombre" required>
                   </div>
                 </div>
                 <!-- ENTRADA PARA LA LOCALIDAD -->
                 <div class="form-group">
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-key"></i></span> 
+                    <span class="input-group-text"><i class="fa fa-key"></i></span> 
                     <input type="text" class="form-control input-lg" name="nuevaLocalidad" placeholder="Ingresar localidad" required>
                   </div>
                 </div>
                 <!-- ENTRADA PARA EL TELÉFONO -->
                 <div class="form-group">
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-phone"></i></span> 
+                    <span class="input-group-text"><i class="fa fa-phone"></i></span> 
                     <input type="text" class="form-control input-lg" name="nuevoTelefono" placeholder="Ingresar teléfono" data-inputmask="'mask':'(999) 999-9999'" data-mask required>
                   </div>
                 </div>
                 <!-- ENTRADA PARA LA DIRECCIÓN -->
                 <div class="form-group">
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-map-marker"></i></span> 
+                    <span class="input-group-text"><i class="fa fa-map-marker"></i></span> 
                     <input type="text" class="form-control input-lg" name="nuevaDireccion" placeholder="Ingresar dirección" required>
                   </div>
                 </div>
                 <!-- ENTRADA PARA EL EMAIL -->
                 <div class="form-group">
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-envelope"></i></span> 
+                    <span class="input-group-text"><i class="fa fa-envelope"></i></span> 
                     <input type="email" class="form-control input-lg" name="nuevoEmail" placeholder="Ingresar email" required>
                   </div>
                 </div>

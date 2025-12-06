@@ -438,7 +438,7 @@ MODAL INGRESAR MOVIMIENTO
             <input type="hidden" id="ingresoCajaDesde" name="ingresoCajaDesde" value="cajas">
             <div class="form-group">
                 <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-terminal"></i></span> 
+                <span class="input-group-text"><i class="fa fa-terminal"></i></span> 
                   <?php
 
                   $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
@@ -467,7 +467,7 @@ MODAL INGRESAR MOVIMIENTO
             <!-- ENTRADA PARA TIPO (INGRESO / EGRESO) --->
             <div class="form-group">
                 <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-dot-circle-o"></i></span> 
+                <span class="input-group-text"><i class="fa fa-dot-circle-o"></i></span> 
                 <select class="form-control" name="ingresoCajaTipo" id="ingresoCajaTipo" required>
                   <option>Seleccionar Tipo</option>
                   <option value="1">Ingreso</option>
@@ -480,7 +480,7 @@ MODAL INGRESAR MOVIMIENTO
 
               <div class="input-group">
 
-                <span class="input-group-addon"><i class="fa fa-usd"></i></span> 
+                <span class="input-group-text"><i class="fa fa-usd"></i></span> 
 
                 <input type="number" min="0" lang="es" step="0.01" class="form-control" name="ingresoMontoCajaCentral" id="ingresoMontoCajaCentral" placeholder="Ingrese monto" >
 
@@ -492,7 +492,7 @@ MODAL INGRESAR MOVIMIENTO
             <div class="form-group">
 
                 <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-credit-card"></i></span> 
+                <span class="input-group-text"><i class="fa fa-credit-card"></i></span> 
                 <select class="form-control" name="ingresoMedioPago" id="ingresoMedioPago" required>
                   <option value="Efectivo" selected>Efectivo</option>
                   <option value="MP" >Mercado Pago</option>
@@ -509,7 +509,7 @@ MODAL INGRESAR MOVIMIENTO
             <!-- ENTRADA PARA DESCRIPCION -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
                 <input type="text" class="form-control" name="ingresoDetalleCajaCentral" id="ingresoDetalleCajaCentral" placeholder="Ingrese detalle" >
               </div>
             </div>
@@ -565,7 +565,7 @@ MODAL CIERRE CAJA
             ?>
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon">Punto Vta/Cobro </span> 
+                <span class="input-group-text">Punto Vta/Cobro </span> 
                 <input type="text" class="form-control" value=" <?php echo $numeroCaja . '-' . $arrPuntos[$buscoPto]["det"]; ?> " readonly>
               </div>
             </div>
@@ -585,7 +585,7 @@ MODAL CIERRE CAJA
             <!--CAMBIO PROXIMO TURNO -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon">Efectivo <i class="fa fa-usd"></i></span> 
+                <span class="input-group-text">Efectivo <i class="fa fa-usd"></i></span> 
                 <input type="number" min="0" lang="es" step="0.01" class="form-control" name="aperturaSiguienteMonto" id="aperturaSiguienteMonto" placeholder="Cambio próximo turno" >
               </div>
             </div>
@@ -593,7 +593,7 @@ MODAL CIERRE CAJA
             <!-- ENTRADA PARA DESCRIPCION -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
                 <input type="text" autocomplete="off" class="form-control" name="cierreCajaDetalle" id="cierreCajaDetalle" placeholder="Ingrese detalle" >
               </div>
             </div>

@@ -4,17 +4,28 @@
 
 ?>
 
-<div class="app-content">
-  <section class="content-header">
-    <h1>
-      Administrar proveedores
-    </h1>
-    <ol class="breadcrumb">
-      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Administrar proveedores</h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end mb-0">
+<li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       <li class="active">Administrar proveedores</li>
-    </ol>
-  </section>
-  <section class="content">
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
     <div class="card">
       <div class="card-header with-border">
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregarProveedor">
@@ -97,7 +108,7 @@ MODAL AGREGAR PROVEEDOR
             <!-- ENTRADA PARA EL DOCUMENTO ID -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-key"></i></span> 
+                <span class="input-group-text"><i class="fa fa-key"></i></span> 
                 <input autocomplete="off" type="number" min="0" step="1" class="form-control " name="nuevoCuit" id="nuevoDocumentoId" placeholder="Ingresar número de identificacion (documento, CUIT, CUIL, etc.)" required>
                 <span class="input-group-btn"><button type="button" title="Consultar en padrón de AFIP" id="btnNuevoDocumentoId" class="btn btn-default" <?php echo $btnPadronAfip; ?> ><i class="fa fa-search"></i></button></span>
               </div>
@@ -105,7 +116,7 @@ MODAL AGREGAR PROVEEDOR
             <!-- ENTRADA PARA TIPO DOCUMENTO -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
                 <select class="form-control" name="nuevoTipoDocumento" id="nuevoTipoDocumento" required>
                   <option value="0">Seleccionar tipo documento</option>
                   <option value="80">CUIT</option>
@@ -118,56 +129,56 @@ MODAL AGREGAR PROVEEDOR
             <!-- ENTRADA PARA EL NOMBRE -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
+                <span class="input-group-text"><i class="bi bi-person"></i></span> 
                 <input type="text" class="form-control" name="nuevoProveedor" id="nuevoCliente" placeholder="Ingresar nombre proveedor" required>
               </div>
             </div>
             <!-- ENTRADA PARA LA DIRECCIÓN -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-map-marker"></i></span> 
+                <span class="input-group-text"><i class="fa fa-map-marker"></i></span> 
                 <input type="text" class="form-control" name="nuevaDireccion" id="nuevaDireccion" placeholder="Ingresar dirección">
               </div>
             </div>
             <!-- ENTRADA PARA LA LOCALIDAD -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-map-marker"></i></span> 
+                <span class="input-group-text"><i class="fa fa-map-marker"></i></span> 
                 <input type="text" class="form-control" name="nuevaLocalidad" placeholder="Ingresar localidad">
               </div>
             </div>
             <!-- ENTRADA PARA EL TELÉFONO -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-phone"></i></span> 
+                <span class="input-group-text"><i class="fa fa-phone"></i></span> 
                 <input type="text" class="form-control" name="nuevoTelefono" placeholder="Ingresar teléfono" data-inputmask="'mask':'(999) 999-9999'" data-mask>
               </div>
             </div>
             <!-- ENTRADA PARA EL EMAIL -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-envelope"></i></span> 
+                <span class="input-group-text"><i class="fa fa-envelope"></i></span> 
                 <input type="email" class="form-control" name="nuevoEmail" placeholder="Ingresar email">
               </div>
             </div>
             <!-- ENTRADA PARA EL INICIO DE ACTIVIDADES -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-key"></i></span> 
+                <span class="input-group-text"><i class="fa fa-key"></i></span> 
                 <input type="text" class="form-control" name="nuevoInicioActividades" placeholder="Ingresar inicio actividades">
               </div>
             </div>
             <!-- ENTRADA PARA INGRESOS BRUTOS -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-key"></i></span> 
+                <span class="input-group-text"><i class="fa fa-key"></i></span> 
                 <input type="text" class="form-control" name="nuevoIngresosBrutos" placeholder="Ingresar num. ingresos brutos">
               </div>
             </div>
             <!-- ENTRADA PARA OBSERVACIONES -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-list"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list"></i></span> 
                 <textarea class="form-control" name="nuevaObservaciones" id="nuevaObservacionesProveedor" rows="3" placeholder="Ingresar observaciones" ></textarea>
               </div>
             </div>
@@ -205,14 +216,14 @@ MODAL EDITAR PROVEEDOR
             <!-- ENTRADA PARA EL CUIT -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-key"></i></span> 
+                <span class="input-group-text"><i class="fa fa-key"></i></span> 
                 <input type="text" class="form-control" name="editarCuit" id="editarCuit" placeholder="Ingresar número de identificacion (documento, CUIT, CUIL, etc.)" required>
               </div>
             </div>
             <!-- ENTRADA PARA TIPO DOCUMENTO -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
                 <select class="form-control" name="editarTipoDocumento" id="editarTipoDocumento" required>
                   <option value="0">Seleccionar tipo documento</option>
                   <option value="80">CUIT</option>
@@ -225,7 +236,7 @@ MODAL EDITAR PROVEEDOR
             <!-- ENTRADA PARA EL NOMBRE -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
+                <span class="input-group-text"><i class="bi bi-person"></i></span> 
                 <input type="text" class="form-control" name="editarNombre" id="editarNombre" placeholder="Ingresar nombre proveedor" required>
                 <input type="hidden" id="idProveedor" name="idProveedor">
               </div>
@@ -233,49 +244,49 @@ MODAL EDITAR PROVEEDOR
             <!-- ENTRADA PARA LA DIRECCIÓN -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-map-marker"></i></span> 
+                <span class="input-group-text"><i class="fa fa-map-marker"></i></span> 
                 <input type="text" class="form-control" name="editarDireccion" id="editarDireccion" placeholder="Ingresar dirección">
               </div>
             </div>
             <!-- ENTRADA PARA EL LOCALIDAD -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-map-marker"></i></span> 
+                <span class="input-group-text"><i class="fa fa-map-marker"></i></span> 
                 <input type="text" class="form-control" name="editarLocalidad" id="editarLocalidad" placeholder="Ingresar localidad">
               </div>
             </div>
             <!-- ENTRADA PARA LA TELEFONO -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-phone"></i></span> 
+                <span class="input-group-text"><i class="fa fa-phone"></i></span> 
                 <input type="text" class="form-control" name="editarTelefono" id="editarTelefono" placeholder="Ingresar teléfono">
               </div>
             </div>
             <!-- ENTRADA PARA EL EMAIL -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-envelope"></i></span> 
+                <span class="input-group-text"><i class="fa fa-envelope"></i></span> 
                 <input type="email" class="form-control" name="editarEmail" id="editarEmail" placeholder="Ingresar email">
               </div>
             </div>
             <!-- ENTRADA PARA EL INICIO ACTIVIDADES -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-key"></i></span> 
+                <span class="input-group-text"><i class="fa fa-key"></i></span> 
                 <input type="text" class="form-control" name="editarInicioActividades" id="editarInicioActividades" placeholder="Ingresar inicio actividades">
               </div>
             </div>
             <!-- ENTRADA PARA INGRESOS BRUTOS -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-key"></i></span> 
+                <span class="input-group-text"><i class="fa fa-key"></i></span> 
                 <input type="text" class="form-control" name="editarIngresosBrutos" id="editarIngresosBrutos" placeholder="Ingresar num. ingresos brutos">
               </div>
             </div>
             <!-- ENTRADA PARA OBSERVACIONES -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-list"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list"></i></span> 
                 <!-- <input type="email" class="form-control" name="editarEmail" id="editarEmail"> -->
                 <textarea class="form-control" name="editarObservaciones" id="editarObservacionesProveedor" placeholder="Ingresar observaciones" rows="3"></textarea>
               </div>
@@ -316,7 +327,7 @@ MODAL MODIFICAR PRECIO
             <!-- ENTRADA PARA EL PORCENTAJE -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-percent"></i></span> 
+                <span class="input-group-text"><i class="fa fa-percent"></i></span> 
                 <input type="number" class="form-control" name="nuevoModificacionPrecio" placeholder="Ingresar porcentaje" required>
               </div>
             </div>

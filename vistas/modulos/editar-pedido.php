@@ -1,24 +1,26 @@
-<div class="app-content">
-
-  <section class="content-header">
-    
-    <h1>
-      
-      Validar pedido
-    
-    </h1>
-
-    <ol class="breadcrumb">
-      
-      <li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Validar pedido</h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end mb-0">
+<li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Validar pedido</li>
-    
-    </ol>
-
-  </section>
-
-  <section class="content">
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
 
     <div class="row">
 
@@ -59,7 +61,7 @@
                 
                   <div class="input-group">
                     
-                    <span class="input-group-addon"><i class="bi bi-person"></i></span> 
+                    <span class="input-group-text"><i class="bi bi-person"></i></span> 
 
                     <input type="text" class="form-control" id="idVendedorVisual" value="<?php echo $pedido["id_vendedor"]; ?>" readonly>
 
@@ -81,7 +83,7 @@
                 <div class="form-group">
                   
                   <div class="input-group">
-                    <span class="input-group-addon">Origen</span>
+                    <span class="input-group-text">Origen</span>
 					<input type="text" class="form-control" style="text-align:center;" id="editarOrigenVer" name="editarOrigenVer" value="<?php echo $pedido["origen"]; ?>" readonly>
                     <input type="hidden" class="form-control" style="text-align:center;" id="editarOrigen" name="editarOrigen" value="<?php echo $pedido["origen"]; ?>" readonly>
                                       
@@ -94,7 +96,7 @@
 				<div class="form-group">
                   
                     <div class="input-group">
-					<span class="input-group-addon">Destino</span>		
+					<span class="input-group-text">Destino</span>		
                     <input type="text" class="form-control" style="text-align:center;" id="editarDestinoVer" name="editarDestinoVer" value="<?php echo $pedido["destino"]; ?>" readonly>
                     <input type="hidden" class="form-control" style="text-align:center;" id="editarDestino" name="editarDestino" value="<?php echo $pedido["destino"]; ?>" readonly>
                                       

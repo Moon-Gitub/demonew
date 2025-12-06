@@ -53,7 +53,7 @@
                 </div>
                 <div class="col-md-4">
                   <div class="input-group">
-                    <span title="Listas de precio" class="input-group-addon" style="background-color: #ddd">Listas $</span>
+                    <span title="Listas de precio" class="input-group-text" style="background-color: #ddd">Listas $</span>
                       <?php 
                       $arrListasPrecio = [
                         'precio_venta' => 'Publico'
@@ -91,7 +91,7 @@
               <div class="col-md-4">
                 <div class="input-group">
                
-                  <span title="Tipos de comprobante" class="input-group-addon" style="background-color: #ddd"><i class="fa fa-bullseye"></i></span>
+                  <span title="Tipos de comprobante" class="input-group-text" style="background-color: #ddd"><i class="fa fa-bullseye"></i></span>
                   <?php
 
                   $arrCbtes = json_decode($respuesta['tipos_cbtes']);
@@ -114,7 +114,7 @@
               <div class="col-md-4">
                 <div class="input-group">
 
-                  <span title="Puntos de venta" class="input-group-addon" style="background-color: #ddd"><i class="fa fa-terminal"></i></span>
+                  <span title="Puntos de venta" class="input-group-text" style="background-color: #ddd"><i class="fa fa-terminal"></i></span>
                   <?php
 
                     $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
@@ -142,7 +142,7 @@
               <div class="col-md-4">
                 <div class="input-group">
 
-                <span title="Concepto" class="input-group-addon" style="background-color: #ddd"><i class="bi bi-circle"></i></span>
+                <span title="Concepto" class="input-group-text" style="background-color: #ddd"><i class="bi bi-circle"></i></span>
 
                   <?php 
                   $arrConceptos = [ 
@@ -181,7 +181,7 @@
 
               <div class="input-group">
 
-                <span class="input-group-addon" style="background-color: #ddd">Desde</span>
+                <span class="input-group-text" style="background-color: #ddd">Desde</span>
 
                  <input type="text" class="form-control input-sm nuevaFecServicios" id="nuevaFecDesde" name="nuevaFecDesde" placeholder="Ingrese fecha">
 
@@ -197,7 +197,7 @@
 
               <div class="input-group">
 
-                <span class="input-group-addon" style="background-color: #ddd">Hasta</span>
+                <span class="input-group-text" style="background-color: #ddd">Hasta</span>
 
                   <input type="text" class="form-control input-sm nuevaFecServicios" id="nuevaFecHasta" name="nuevaFecHasta" placeholder="Ingrese fecha">
 
@@ -213,7 +213,7 @@
 
               <div class="input-group">
 
-                <span class="input-group-addon" style="background-color: #ddd">Vto.</span>
+                <span class="input-group-text" style="background-color: #ddd">Vto.</span>
 
                   <input type="text" class="form-control input-sm nuevaFecServicios" id="nuevaFecVto" name="nuevaFecVto" placeholder="Ingrese fecha">
 
@@ -306,7 +306,7 @@
 
                             <div class="input-group">
 
-                              <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                              <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
                      
                               <input type="text" style="text-align:center;" class="form-control nuevoPrecioProductoUnitario" precioReal="'.$value["precio"].'" name="nuevoPrecioProductoUnitario" value="'.$value["precio"].'" readonly required>
      
@@ -318,7 +318,7 @@
 
                             <div class="input-group">
 
-                              <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                              <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
                      
                               <input type="text" style="text-align:center;" class="form-control nuevoPrecioProductoCaja" precioReal="'.$value["precio"].'" name="nuevoPrecioProductoCaja" value="'.$value["total"].'" readonly required>
      
@@ -356,7 +356,7 @@
 
                             <div class="input-group">
 
-                              <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                              <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
                      
                               <input type="text" style="text-align:center;" class="form-control nuevoPrecioProductoUnitario" precioReal="'.$value["precio"].'" name="nuevoPrecioProductoUnitario" value="'.$value["precio"].'" required>
      
@@ -368,7 +368,7 @@
 
                             <div class="input-group">
 
-                              <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                              <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
                      
                               <input type="number" class="form-control nuevoPrecioProductoCaja nuevoProductoLibre" precioReal="'.$value["precio"].'" name="nuevoPrecioProductoCaja" value="'.$value["total"].'" required>
      
@@ -423,7 +423,7 @@
 					</div>
 					<div class="col-lg-6 col-xs-6">
 					<div class="input-group">
-						 <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+						 <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
 						<input type="number" step="0.01" min="0" class="form-control input-lg" id="nuevoPrecioNetoCajaForm" value="<?php echo $venta["total"]?>"value="<?php echo $venta["total"]?>" name="nuevoPrecioNetoCaja" placeholder="0,00" readonly style="font-size: 60px; text-align: center; height:85px;">
 
 
@@ -470,7 +470,7 @@
                   
                     <div class="input-group">
                       
-                      <span class="input-group-addon"><i class="bi bi-person"></i></span> 
+                      <span class="input-group-text"><i class="bi bi-person"></i></span> 
 
                       <input type="text" class="form-control input-sm" id="nuevoVendedor" value="<?php echo $_SESSION["nombre"]; ?>" readonly>
 
@@ -661,7 +661,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
 
                 <select class="form-control input-lg" name="nuevoTipoDocumento">
                   
@@ -689,7 +689,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-key"></i></span> 
+                <span class="input-group-text"><i class="fa fa-key"></i></span> 
 
                 <input type="number" min="0" step="1" class="form-control input-lg" name="nuevoDocumentoId" placeholder="Ingresar documento">
 
@@ -703,7 +703,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
+                <span class="input-group-text"><i class="bi bi-person"></i></span> 
 
                 <input type="text" class="form-control input-lg" name="nuevoCliente" placeholder="Ingresar nombre o razón social" required>
 
@@ -717,7 +717,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
 
                 <select class="form-control input-lg" name="nuevoCondicionIva">
 
@@ -744,7 +744,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-envelope"></i></span> 
+                <span class="input-group-text"><i class="fa fa-envelope"></i></span> 
 
                 <input type="email" class="form-control input-lg" name="nuevoEmail" placeholder="Ingresar email">
 
@@ -758,7 +758,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-phone"></i></span> 
+                <span class="input-group-text"><i class="fa fa-phone"></i></span> 
 
                 <input type="text" class="form-control input-lg" name="nuevoTelefono" placeholder="Ingresar teléfono" data-inputmask="'mask':'(999) 999-9999'" data-mask>
 
@@ -772,7 +772,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-map-marker"></i></span> 
+                <span class="input-group-text"><i class="fa fa-map-marker"></i></span> 
 
                 <input type="text" class="form-control input-lg" name="nuevaDireccion" placeholder="Ingresar dirección" >
 
@@ -786,7 +786,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="bi bi-calendar"></i></span> 
+                <span class="input-group-text"><i class="bi bi-calendar"></i></span> 
 
                 <input type="text" class="form-control input-lg" name="nuevaFechaNacimiento" placeholder="Ingresar fecha nacimiento" data-inputmask="'alias': 'yyyy/mm/dd'" data-mask>
 
@@ -872,7 +872,7 @@ MODAL COBRAR VENTA
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
 
                 <input type="text" class="form-control" name="ingresoCajaDescripcion" id="ingresoCajaDescripcion" readonly value="INGRESOS POR VENTA"> 
 
@@ -915,7 +915,7 @@ MODAL COBRAR VENTA
               <div class="col-md-6">
               <div class="input-group">
               
-                <span class="input-group-addon">Entrega</span> 
+                <span class="input-group-text">Entrega</span> 
 
                 <input type="text" class="form-control" id="nuevoValorEfectivo" onkeyup="cambioCalculo(this.value);" name="nuevoValorEfectivo"> 
 
@@ -924,7 +924,7 @@ MODAL COBRAR VENTA
 			   <div class="col-md-6">
 			   <div class="input-group">
               
-                <span class="input-group-addon">Cambio</span> 
+                <span class="input-group-text">Cambio</span> 
 
                 <input type="text" class="form-control" id="cambio" name="cambio"> 
 
@@ -962,7 +962,7 @@ MODAL COBRAR VENTA
 
                       <div class="input-group">
                  
-                        <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                        <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
 
                         <input type="number" step="0.01" min="0" class="form-control input-sm" id="nuevoPrecioNetoCaja" value="<?php echo $venta["total"]?>" placeholder="0,00" readonly style="font-size: 18px;">
               
@@ -984,7 +984,7 @@ MODAL COBRAR VENTA
                             
                             <div class="input-group">
                          
-                              <span class="input-group-addon"><b>%</b></span>
+                              <span class="input-group-text"><b>%</b></span>
 
                               <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoInteresCaja" id="nuevoInteresPorcentajeCaja">
                       
@@ -996,7 +996,7 @@ MODAL COBRAR VENTA
                             
                             <div class="input-group">
                        
-                              <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                              <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
 
                               <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoInteresCaja" id="nuevoInteresPrecioCaja">
                     
@@ -1022,7 +1022,7 @@ MODAL COBRAR VENTA
                           
                           <div class="input-group">
                        
-                            <span class="input-group-addon"><b>%</b></span>
+                            <span class="input-group-text"><b>%</b></span>
 
                             <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoDescuentoCaja" id="nuevoDescuentoPorcentajeCaja" >
                     
@@ -1034,7 +1034,7 @@ MODAL COBRAR VENTA
                           
                           <div class="input-group">
                      
-                            <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                            <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
 
                             <input type="number" step="0.01" min="0" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoDescuentoCaja" id="nuevoDescuentoPrecioCaja" placeholder="0,00" >
                   
@@ -1056,7 +1056,7 @@ MODAL COBRAR VENTA
 
                     <div class="input-group">
 
-                      <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                      <span class="input-group-text"><i class="ion ion-social-usd"></i></span>
 
                       <input type="number" step="0.01" min="0" style="font-size: 18px; font-weight:bold; text-align:center; " class="form-control input-sm" id="nuevoTotalVentaCaja" value="<?php echo $venta["total"]?>" total="" placeholder="0,00" readonly required>
 
@@ -1315,7 +1315,7 @@ AGREGAR PRODUCTO
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control" id="nuevoCodigoCaja" name="nuevoCodigo" placeholder="Código producto" required>
 
@@ -1329,7 +1329,7 @@ AGREGAR PRODUCTO
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="bi bi-box-seam"></i></span> 
+                <span class="input-group-text"><i class="bi bi-box-seam"></i></span> 
 
                 <input type="text" class="form-control" id="nuevaDescripcionCaja" name="nuevaDescripcionCaja" placeholder="Ingresar descripción">
 
@@ -1349,7 +1349,7 @@ AGREGAR PRODUCTO
                 
                   <div class="input-group">
                   
-                    <span class="input-group-addon"><i class="fa fa-arrow-down"></i></span> 
+                    <span class="input-group-text"><i class="fa fa-arrow-down"></i></span> 
 
                     <input type="text" title="Neto" class="form-control" id="nuevoPrecioVentaCaja" name="nuevoPrecioVenta" step="any" min="0" placeholder="Precio de venta" readonly>
 
@@ -1365,7 +1365,7 @@ AGREGAR PRODUCTO
                 
                   <div class="input-group">
                   
-                  <span class="input-group-addon"><i class="fa fa-percent"></i></span> 
+                  <span class="input-group-text"><i class="fa fa-percent"></i></span> 
                     <select name="nuevoIvaVenta" id="nuevoIvaVentaCaja" class="form-control">
                       <option value="">I.V.A.</option>
                       <option value="0.00">0%</option>
@@ -1386,7 +1386,7 @@ AGREGAR PRODUCTO
                 
                   <div class="input-group">
                   
-                    <span class="input-group-addon"><i class="fa fa-usd"></i></span> 
+                    <span class="input-group-text"><i class="fa fa-usd"></i></span> 
 
                     <input type="number" title="Precio de venta (IVA incluido)" class="form-control" id="nuevoPrecioVentaIvaIncluidoCaja" name="nuevoPrecioVentaIvaIncluido" step="any" min="0" placeholder="Precio venta (IVA incluido)">
 

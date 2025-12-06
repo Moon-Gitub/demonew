@@ -8,17 +8,28 @@ if($_SESSION["perfil"] == "Vendedor"){
 }
 
 ?>
-<div class="app-content">
-  <section class="content-header">
-    <h1>
-      Administrar empresa
-    </h1>
-    <ol class="breadcrumb">
-      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
-      <li class="active">Administrar empresa</li>
-    </ol>
-  </section>
-  <section class="content">
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Administrar empresa</h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end mb-0">
+            <li class="breadcrumb-item"><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Administrar empresa</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
     <div class="card">
       <div class="card-body">
        <form role="form" method="post" enctype="multipart/form-data">
@@ -28,7 +39,7 @@ if($_SESSION["perfil"] == "Vendedor"){
           <div class="col-md-4">
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span> 
                 <?php 
                     echo '<input type="text" class="form-control " name="empRazonSocial" id="empRazonSocial" placeholder="Ingresar razon social" value= "'. $arrayEmpresa['razon_social'] . '" required>';
                 ?>
@@ -41,7 +52,7 @@ if($_SESSION["perfil"] == "Vendedor"){
           <div class="col-md-4">
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span> 
                 <?php 
                     echo '<input type="text" class="form-control " name="empTitular" id="empTitular" placeholder="Ingresar Titular" value= "'. $arrayEmpresa['titular'] . '" required>';
                 ?>
@@ -53,7 +64,7 @@ if($_SESSION["perfil"] == "Vendedor"){
           <div class="col-md-4">
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span> 
                 <?php 
                     echo '<input type="text" class="form-control " name="empCuit" id="empCuit" placeholder="Ingresar C.U.I.T." value= "'. $arrayEmpresa['cuit'] . '" required>';
                 ?>
@@ -68,7 +79,7 @@ if($_SESSION["perfil"] == "Vendedor"){
           <div class="col-md-4">
            <div class="form-group">
             <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
               <?php 
                 echo '<input type="text" class="form-control " name="empDomicilio" id="empDomicilio" placeholder="Ingresar domicilio" value= "'. $arrayEmpresa['domicilio'] . '">';
               ?>
@@ -80,7 +91,7 @@ if($_SESSION["perfil"] == "Vendedor"){
         <div class="col-md-4">
           <div class="form-group">
             <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
               <?php 
                 echo '<input type="text" class="form-control " name="empLocalidad" id="empLocalidad" placeholder="Ingresar localidad" value= "'. $arrayEmpresa['localidad'] . '">';
               ?>
@@ -92,7 +103,7 @@ if($_SESSION["perfil"] == "Vendedor"){
         <div class="col-md-4">
           <div class="form-group">
             <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
               <?php 
                   echo '<input type="text" class="form-control " name="empCodPostal" id="empCodPostal" placeholder="Ingresar codigo postal" value= "'. $arrayEmpresa['codigo_postal'] . '">';
               ?>
@@ -107,7 +118,7 @@ if($_SESSION["perfil"] == "Vendedor"){
         <div class="col-md-6">
           <div class="form-group">
             <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
               <?php 
                   echo '<input type="text" class="form-control " name="empMail" id="empMail" placeholder="Ingresar e-mail" value= "'. $arrayEmpresa['mail'] . '">';
               ?>
@@ -119,7 +130,7 @@ if($_SESSION["perfil"] == "Vendedor"){
         <div class="col-md-6">
           <div class="form-group">
             <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
               <?php 
                   echo '<input type="text" class="form-control " name="empTelefono" id="empTelefono" placeholder="Ingresar telefono" value= "'. $arrayEmpresa['telefono'] . '">';
               ?>
@@ -134,7 +145,7 @@ if($_SESSION["perfil"] == "Vendedor"){
           <!-- ENTRADA PARA EL PUNTO DE VENTA -->      
           <div class="form-group">
             <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
               <?php 
               echo '<input type="text" class="form-control " name="empPtosVta" id="empPtosVta" placeholder="Ingresar  todos los puntos de venta separados por coma. Ej. 2, 3, 4" value= "'. htmlspecialchars($arrayEmpresa['ptos_venta']) . '">';
               ?>
@@ -145,7 +156,7 @@ if($_SESSION["perfil"] == "Vendedor"){
           <!-- ENTRADA PARA STOCK -->      
           <div class="form-group">
             <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
               <?php 
               echo '<input type="text" class="form-control " name="empStock" id="empStock" placeholder="Ingresar almacenes (según tabla productos)" value= "'. htmlspecialchars($arrayEmpresa['almacenes']) . '">';
               ?>
@@ -156,7 +167,7 @@ if($_SESSION["perfil"] == "Vendedor"){
           <!-- ENTRADA PARA EL PUNTO DE VENTA DEFECTO-->
           <div class="form-group">
             <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
               <?php 
               echo '<input type="text" class="form-control " name="empPtoVtaDefecto" id="empPtoVtaDefecto" placeholder="Ingresar punto de venta por defecto" value= "'. $arrayEmpresa['pto_venta_defecto'] . '">';
               ?>
@@ -167,7 +178,7 @@ if($_SESSION["perfil"] == "Vendedor"){
           <!-- ENTRADA PARA CONDICION FRENTE A IVA-->
           <div class="form-group">
             <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
               <?php 
               $arrCondIva = [ 
                  "" => "Seleccione condición I.V.A ",
@@ -204,7 +215,7 @@ if($_SESSION["perfil"] == "Vendedor"){
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
 
 
               <?php 
@@ -244,7 +255,7 @@ if($_SESSION["perfil"] == "Vendedor"){
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
 
 
               <?php 
@@ -267,7 +278,7 @@ if($_SESSION["perfil"] == "Vendedor"){
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
 
 
               <?php 
@@ -288,7 +299,7 @@ if($_SESSION["perfil"] == "Vendedor"){
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
 
               <?php 
               $arrConceptos = [ 
@@ -327,7 +338,7 @@ if($_SESSION["perfil"] == "Vendedor"){
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
 
                 <?php 
 
@@ -347,7 +358,7 @@ if($_SESSION["perfil"] == "Vendedor"){
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
 
 
               <?php 
@@ -370,7 +381,7 @@ if($_SESSION["perfil"] == "Vendedor"){
 
             <div class="input-group">
 
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
 
 
               <?php 
@@ -549,7 +560,7 @@ if($_SESSION["perfil"] == "Vendedor"){
           <!-- ENTRADA PARA CONDICION FRENTE A IVA-->
           <div class="form-group">
             <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
 
               <?php 
               $arrPadron = [ 
@@ -641,6 +652,9 @@ if($_SESSION["perfil"] == "Vendedor"){
     $editarEmpresa -> ctrEditarEmpresa();
     ?> 
   </form>
-</div>
-</section>
-</div>
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->
+</main>
+<!--end::App Main-->

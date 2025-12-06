@@ -12,27 +12,29 @@ if($_SESSION["perfil"] == "Vendedor"){
 }
 ?>
 
-<div class="app-content">
-
-  <section class="content-header">
-    
-    <h1>
-      
-      Administrar pedidos internos
-    
-    </h1>
-
-    <ol class="breadcrumb">
-      
-      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Administrar pedidos internos</h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end mb-0">
+<li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Administrar pedidos internos</li>
-    
-    </ol>
-
-  </section>
-
-  <section class="content">
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
 
     <div class="card">
 
@@ -183,7 +185,7 @@ MODAL EDITAR PEDIDO
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-pencil-square"></i></span> 
 
                 <input type="text" class="form-control input-lg" name="editarCategoria" id="editarCategoria" required>
 				<input type="text" class="form-control input-lg" name="editarCategoria" id="editarCategoria" required>

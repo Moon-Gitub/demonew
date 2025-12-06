@@ -3,18 +3,28 @@
     $objUsuario = new ControladorUsuarios();
 ?>
 
-<div class="app-content">
-  <section class="content-header">
-    <h1>
-      Administrar usuarios
-    </h1>
-    <ol class="breadcrumb">
-      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Administrar usuarios</h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end mb-0">
+<li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       <li class="active">Administrar usuarios</li>
-    </ol>
-  </section>
-
-  <section class="content">
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
     <div class="card">
 
       <div class="card-header with-border">
@@ -112,7 +122,7 @@ MODAL AGREGAR USUARIO
             <!-- ENTRADA PARA EL NOMBRE -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
+                <span class="input-group-text"><i class="bi bi-person"></i></span> 
                 <input type="text" autocomplete="off" class="form-control" name="nuevoNombre" placeholder="Ingresar nombre" required>
               </div>
             </div>
@@ -120,7 +130,7 @@ MODAL AGREGAR USUARIO
             <!-- ENTRADA PARA EL USUARIO -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-key"></i></span> 
+                <span class="input-group-text"><i class="fa fa-key"></i></span> 
                 <input type="text" autocomplete="off" class="form-control" name="nuevoUsuario" placeholder="Ingresar usuario" id="nuevoUsuario" value="" required>
               </div>
             </div>
@@ -128,7 +138,7 @@ MODAL AGREGAR USUARIO
             <!-- ENTRADA PARA LA CONTRASEÑA -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-lock"></i></span> 
+                <span class="input-group-text"><i class="fa fa-lock"></i></span> 
                 <input type="password" class="form-control" name="nuevoPassword" placeholder="Ingresar contraseña" value="" required>
               </div>
             </div>
@@ -136,7 +146,7 @@ MODAL AGREGAR USUARIO
             <!-- ENTRADA PARA SELECCIONAR SU PERFIL -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="bi bi-persons"></i></span> 
+                <span class="input-group-text"><i class="bi bi-persons"></i></span> 
                 <select class="form-control" name="nuevoPerfil">
                   <option value="">Selecionar perfil</option>
                   <option value="Administrador">Administrador</option>
@@ -149,7 +159,7 @@ MODAL AGREGAR USUARIO
             <!-- ENTRADA PARA SUCURSAL -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-building"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span> 
                 <select class="form-control" name="nuevaSucursal" required>
                   <option value="">Selecionar Sucursal</option>
                   <option value="stock">Local</option>
@@ -160,7 +170,7 @@ MODAL AGREGAR USUARIO
             <!-- ENTRADA PARA PUNTOS DE VENTA -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-terminal"></i></span> 
+                <span class="input-group-text"><i class="fa fa-terminal"></i></span> 
                 <input type="text" autocomplete="off" class="form-control" name="nuevoPuntoVenta" placeholder="Ingresar puntos de venta separados por coma" id="nuevoPuntoVenta" required>
               </div>
             </div>
@@ -168,7 +178,7 @@ MODAL AGREGAR USUARIO
             <!-- ENTRADA PARA LISTAS DE PRECIOS 
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
                 <select class="form-control" name="nuevaListaPrecio" required>
                   <option value="">Selecionar Lista Precio</option>
                   <option value="precio_venta">Precio Público</option>
@@ -233,7 +243,7 @@ MODAL EDITAR USUARIO
             <!-- ENTRADA PARA EL NOMBRE -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
+                <span class="input-group-text"><i class="bi bi-person"></i></span> 
                 <input type="text" autocomplete="off" class="form-control" id="editarNombre" name="editarNombre" value="" required>
               </div>
             </div>
@@ -241,7 +251,7 @@ MODAL EDITAR USUARIO
             <!-- ENTRADA PARA EL USUARIO -->
              <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-key"></i></span> 
+                <span class="input-group-text"><i class="fa fa-key"></i></span> 
                 <input type="text" autocomplete="off" class="form-control" id="editarUsuario" name="editarUsuario" value="" readonly>
               </div>
             </div>
@@ -249,7 +259,7 @@ MODAL EDITAR USUARIO
             <!-- ENTRADA PARA LA CONTRASEÑA -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-lock"></i></span> 
+                <span class="input-group-text"><i class="fa fa-lock"></i></span> 
                 <input type="password" class="form-control" name="editarPassword" placeholder="Escriba la nueva contraseña">
                 <input type="hidden" id="passwordActual" name="passwordActual">
               </div>
@@ -258,7 +268,7 @@ MODAL EDITAR USUARIO
             <!-- ENTRADA PARA SELECCIONAR SU PERFIL -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="bi bi-persons"></i></span> 
+                <span class="input-group-text"><i class="bi bi-persons"></i></span> 
                 <select class="form-control" name="editarPerfil">
                   <option value="" id="editarPerfil"></option>
                   <option value="Administrador">Administrador</option>
@@ -271,7 +281,7 @@ MODAL EDITAR USUARIO
             <!-- ENTRADA PARA SUCURSAL -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-building"></i></span> 
+                <span class="input-group-text"><i class="bi bi-building"></i></span> 
                 <select title="Sucursal desde donde se va a descontar STOCK" class="form-control" name="editarSucursal" required>
                    <option value="" id="editarSucursal"></option>
                   <option value="stock">Local</option>
@@ -282,7 +292,7 @@ MODAL EDITAR USUARIO
             <!-- ENTRADA PARA PUNTOS DE VENTA -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-terminal"></i></span> 
+                <span class="input-group-text"><i class="fa fa-terminal"></i></span> 
                 <input type="text" autocomplete="off" class="form-control" name="editarPuntoVenta" placeholder="Ingresar puntos de venta separados por coma" id="editarPuntoVenta" required>
               </div>
             </div>
@@ -290,7 +300,7 @@ MODAL EDITAR USUARIO
             <!-- ENTRADA PARA LISTAS DE PRECIOS 
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
                 <select class="form-control" name="editarListaPrecio" required>
                   <option value="" id="editarListaPrecio"></option>
                   <option value="precio_venta">Precio Público</option>

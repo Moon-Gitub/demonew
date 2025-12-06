@@ -1,14 +1,25 @@
-<div class="app-content">
-  <section class="content-header">
-    <h1>
-      Administrar ventas
-    </h1>
-    <ol class="breadcrumb">
-      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Administrar ventas</h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end mb-0">
+<li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       <li class="active">Administrar ventas</li>
-    </ol>
-  </section>
-  <section class="content">
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
     <div class="card">
       <div class="card-header with-border">
         <a href="crear-venta-caja" class="btn btn-primary">Agregar venta</a>
@@ -367,7 +378,7 @@ MODAL COBRAR VENTA
               Punto de Venta.:
               <div class="input-group">
 
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control" name="puntoVentaMovimiento" id="ingresoCajaPuntoVenta" readonly>
 
@@ -381,7 +392,7 @@ MODAL COBRAR VENTA
               N° Cbte.:
               <div class="input-group">
 
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control" name="ingresoCajaCodVenta" id="ingresoCajaCodVenta" readonly>
 
@@ -395,7 +406,7 @@ MODAL COBRAR VENTA
               Medio pago:
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-credit-card"></i></span> 
+                <span class="input-group-text"><i class="fa fa-credit-card"></i></span> 
 
                 <input type="text" class="form-control" id="ingresoMedioPagoVisual" readonly>
 
@@ -408,7 +419,7 @@ MODAL COBRAR VENTA
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
 
                 <input type="text" class="form-control" name="ingresoDetalleCajaCentral" id="ingresoCajaDescripcion" readonly value="Ingresos por venta"> 
 
@@ -421,7 +432,7 @@ MODAL COBRAR VENTA
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-usd"></i></span> 
+                <span class="input-group-text"><i class="fa fa-usd"></i></span> 
 
                 <input type="number" min="0" step="0.01" class="form-control input-lg" style="text-align: center; font-size: 20px; font-weight:bold" name="ingresoMontoCajaCentral" id="ingresoCajaMonto" readonly >
 
@@ -434,7 +445,7 @@ MODAL COBRAR VENTA
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
 
                 <textarea class="form-control" name="ingresoObservacionesCajaCentral" id="ingresoObservacionesCajaCentral" rows="3"></textarea>
 
@@ -516,7 +527,7 @@ MODAL AUTOTIZAR COMPROBANTE
                   Punto Vta N°:
                   <div class="input-group">
 
-                    <span class="input-group-addon"><i class="fa fa-terminal"></i></span> 
+                    <span class="input-group-text"><i class="fa fa-terminal"></i></span> 
 
                     <input type="text" class="form-control" name="autorizarCbtePtoVta" id="autorizarCbtePtoVta" readonly>
 
@@ -532,7 +543,7 @@ MODAL AUTOTIZAR COMPROBANTE
                   Venta N°:
                   <div class="input-group">
 
-                    <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                    <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                     <input type="text" class="form-control" name="autorizarCbteCodVenta" id="autorizarCbteCodVenta" readonly>
 
@@ -547,7 +558,7 @@ MODAL AUTOTIZAR COMPROBANTE
               Fecha:
               <div class="input-group">
 
-                <span class="input-group-addon"><i class="bi bi-calendar"></i></span> 
+                <span class="input-group-text"><i class="bi bi-calendar"></i></span> 
 
                 <input type="text" class="form-control" name="autorizarCbteFecha" id="autorizarCbteFecha" readonly>
 
@@ -563,7 +574,7 @@ MODAL AUTOTIZAR COMPROBANTE
               Cliente:
               <div class="input-group">
 
-                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
+                <span class="input-group-text"><i class="bi bi-person"></i></span> 
 
                  <input type="text" class="form-control" id="autocompletarClienteCaja" placeholder="1-Consumidor Final" required>
                  <input type="hidden" id="seleccionarCliente" name="autorizarCbteCliente" value="1">
@@ -581,7 +592,7 @@ MODAL AUTOTIZAR COMPROBANTE
 
                   <div class="input-group">
 
-                    <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                    <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
 
                     <?php
 
@@ -612,7 +623,7 @@ MODAL AUTOTIZAR COMPROBANTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-usd"></i></span> 
+                <span class="input-group-text"><i class="fa fa-usd"></i></span> 
 
                 <input type="number" min="0" step="0.01" class="form-control input-lg" style="text-align: center; font-size: 20px; font-weight:bold" name="autorizarCbteMonto" id="autorizarCbteMonto" readonly >
 

@@ -400,7 +400,7 @@ MODAL INGRESAR MOVIMIENTO
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
+                <span class="input-group-text"><i class="bi bi-person"></i></span> 
 
                 <input type="text" class="form-control" name="ingresoCajaProveedor" value="<?php echo $proveedor["nombre"];?>" id="ingresoCajaProveedor" readonly> 
 
@@ -413,7 +413,7 @@ MODAL INGRESAR MOVIMIENTO
               
               <div class="input-group">
 
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <select class="form-control" name="tipoMovimientoCtaCteProveedor" id="tipoMovimientoCtaCteProveedor">
 
@@ -430,7 +430,7 @@ MODAL INGRESAR MOVIMIENTO
 
               <div class="input-group">
 
-                <span title="Puntos de venta" class="input-group-addon"><i class="fa fa-terminal"></i></span>
+                <span title="Puntos de venta" class="input-group-text"><i class="fa fa-terminal"></i></span>
                 <?php
 
                   $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
@@ -461,7 +461,7 @@ MODAL INGRESAR MOVIMIENTO
 
               <div class="input-group">
 
-                <span class="input-group-addon"><i class="fa fa-credit-card"></i></span> 
+                <span class="input-group-text"><i class="fa fa-credit-card"></i></span> 
 
                 <select class="form-control" id="nuevoMetodoPagoCtaCteProveedor" name="nuevoMetodoPagoCtaCteProveedor">
                   <option value="">Medio de pago</option>
@@ -488,7 +488,7 @@ MODAL INGRESAR MOVIMIENTO
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
 
                 <input type="text" class="form-control" name="detalleMovimientoCtaCteProveedor" id="detalleMovimientoCtaCteProveedor" placeholder="Ingrese descripcion"> 
 
@@ -501,7 +501,7 @@ MODAL INGRESAR MOVIMIENTO
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-usd"></i></span> 
+                <span class="input-group-text"><i class="fa fa-usd"></i></span> 
 
                 <input type="number" min="0" step="0.01" class="form-control input-lg" style="text-align: center; font-size: 20px; font-weight:bold" name="montoMovimientoCtaCteProveedor" id="montoMovimientoCtaCteProveedor" placeholder="Ingrese monto" >
 

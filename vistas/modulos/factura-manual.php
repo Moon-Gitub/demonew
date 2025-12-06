@@ -33,7 +33,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="CantReg" name="CantReg" placeholder="CantReg" required>
 
@@ -48,7 +48,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="PtoVta" name="PtoVta" placeholder="PtoVta" required>
 
@@ -62,7 +62,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="CbteTipo" name="CbteTipo" placeholder="CbteTipo" required>
 
@@ -77,7 +77,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="Concepto" name="Concepto" placeholder="Concepto" required>
 
@@ -92,7 +92,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="DocTipo" name="DocTipo" placeholder="DocTipo" required>
 
@@ -106,7 +106,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="DocTipo" name="DocNro" placeholder="DocNro" required>
 
@@ -122,7 +122,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="CbteDesde" name="CbteDesde" placeholder="CbteDesde" required>
 
@@ -137,7 +137,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="CbteHasta" name="CbteHasta" placeholder="CbteHasta" required>
 
@@ -152,7 +152,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="CbteFch" name="CbteFch" placeholder="CbteFch" required>
 
@@ -166,7 +166,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="ImpTotal" name="ImpTotal" placeholder="ImpTotal" required>
 
@@ -180,7 +180,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="ImpTotConc" name="ImpTotConc" placeholder="ImpTotConc" required>
 
@@ -194,7 +194,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="ImpNeto" name="ImpNeto" placeholder="ImpNeto" required>
 
@@ -208,7 +208,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="ImpOpEx" name="ImpOpEx" placeholder="ImpOpEx" required>
 
@@ -223,7 +223,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="ImpTrib" name="ImpTrib" placeholder="ImpTrib" required>
 
@@ -238,7 +238,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="ImpIVA" name="ImpIVA" placeholder="ImpIVA" required>
 
@@ -255,7 +255,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="MonId" name="MonId" placeholder="MonId" required>
 
@@ -270,7 +270,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="MonCotiz" name="MonCotiz" placeholder="MonCotiz" required>
 
@@ -285,7 +285,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="BaseImp" name="BaseImp" placeholder="BaseImp" required>
 
@@ -301,7 +301,7 @@
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
 
                 <input type="text" class="form-control input-lg" id="Importe" name="Importe" placeholder="Importe" required>
 

@@ -60,17 +60,28 @@ input:checked + .slider:before {
 }
 </style>
 
-<div class="app-content">
-  <section class="content-header">
-    <h1>
-      Importar productos - <small>Versión Básica</small>
-    </h1>
-    <ol class="breadcrumb">
-      <li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Importar productos - <small>Versión Básica</small></h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end mb-0">
+<li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       <li class="active">Importar productos</li>
-    </ol>
-  </section>
-  <section class="content">
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
     <div class="row">
       <!--=====================================
       EL FORMULARIO
@@ -96,7 +107,7 @@ input:checked + .slider:before {
                 ======================================--> 
                 <div class="form-group">
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="bi bi-persons"></i></span>
+                    <span class="input-group-text"><i class="bi bi-persons"></i></span>
                     <select class="form-control" id="seleccionarProveedor" name="seleccionarProveedor" required>
                     <option value="">Seleccionar proveedor</option>
                     <?php

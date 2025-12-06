@@ -4,17 +4,28 @@
     $precioDolar = ($objParametros->getPrecioDolar()) ? '' : 'display:none;';
 ?>
 
-<div class="app-content">
-  <section class="content-header">
-    <h1>
-      Administrar productos
-    </h1>
-    <ol class="breadcrumb">
-      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Administrar productos</h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end mb-0">
+<li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       <li class="active">Administrar productos</li>
-    </ol>
-  </section>
-  <section class="content">
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
     <div class="card">
       <div class="card-header with-border">
           <div class="row">
@@ -127,7 +138,7 @@ MODAL AGREGAR PRODUCTO
             <!-- ENTRADA PARA SELECCIONAR CATEGORÍA -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-pencil-square"></i></span> 
                 <!-- <select class="form-control " id="nuevaCategoria" name="nuevaCategoria" required onchange="llenarSubcategoria('nuevaCategoria', 'nuevaSubCategoria', 0)"> -->
                   <select class="form-control " id="nuevaCategoria" name="nuevaCategoria" required>
                   <option value="">Seleccionar categoría</option>
@@ -147,7 +158,7 @@ MODAL AGREGAR PRODUCTO
             <!-- ENTRADA PARA SELECCIONAR PROVEEDOR -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-pencil-square"></i></span> 
                 <select class="form-control " id="nuevoProveedor" name="nuevoProveedor" required>
                   <option value="">Seleccionar proveedor</option>
 
@@ -167,16 +178,16 @@ MODAL AGREGAR PRODUCTO
             <!-- ENTRADA PARA EL CÓDIGO -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
                 <input type="text" autocomplete="off" class="form-control " id="nuevoCodigo" name="nuevoCodigo" placeholder="Código producto" required>
-                 <!-- <span class="input-group-addon" style="background-color: #3c8dbc; color: white" id="nuevoGenerarCodigo"><i class="fa fa-retweet"></i></span> -->
+                 <!-- <span class="input-group-text" style="background-color: #3c8dbc; color: white" id="nuevoGenerarCodigo"><i class="fa fa-retweet"></i></span> -->
               </div>
             </div>
 
             <!-- ENTRADA PARA LA DESCRIPCIÓN -->
              <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="bi bi-box-seam"></i></span> 
+                <span class="input-group-text"><i class="bi bi-box-seam"></i></span> 
                 <input type="text" autocomplete="off" class="form-control " name="nuevaDescripcion" placeholder="Ingresar descripción" required>
               </div>
             </div>
@@ -190,21 +201,21 @@ MODAL AGREGAR PRODUCTO
               <div class="col-xs-4">
                 INDICADORES:
                 <!--
-                  <span class="input-group-addon"><i class="fa fa-check"></i></span> 
+                  <span class="input-group-text"><i class="fa fa-check"></i></span> 
                   <input type="number" step="any" class="form-control " name="nuevoStock" min="0" placeholder="Stock" required>
                 -->
               </div>
              <!-- ENTRADA PARA STOCK INTERMEDIO-->
               <div class="col-xs-4">
                 <div class="input-group ">
-                  <span class="input-group-addon" style="background: #f39c12"><i class="fa fa-check"></i></span> 
+                  <span class="input-group-text" style="background: #f39c12"><i class="fa fa-check"></i></span> 
                   <input type="number" step="any" class="form-control " name="nuevoStockMedio" min="0" placeholder="Stock medio" value="5">
                 </div>
               </div>
              <!-- ENTRADA PARA STOCK BAJO-->
               <div class="col-xs-4">
                 <div class="input-group">
-                  <span class="input-group-addon" style="background: #dd4b39"><i class="fa fa-check"></i></span> 
+                  <span class="input-group-text" style="background: #dd4b39"><i class="fa fa-check"></i></span> 
                   <input type="number" step="any" class="form-control " name="nuevoStockBajo" min="0" placeholder="Stock bajo" value="3">
                 </div>
               </div>
@@ -215,7 +226,7 @@ MODAL AGREGAR PRODUCTO
               <div class="col-xs-3">
                 STK DEPOSITO
                 <div class="input-group">
-                  <span class="input-group-addon"><i class="fa fa-check"></i></span> 
+                  <span class="input-group-text"><i class="fa fa-check"></i></span> 
                   <input type="number" step="any" class="form-control " name="nuevoStock" min="0" placeholder="Stock" required>
                 </div>
               </div>
@@ -229,9 +240,9 @@ MODAL AGREGAR PRODUCTO
              <div class="form-group row">
                 <div class="col-xs-6">
                   <div class="input-group">
-                    <span class="input-group-addon">$</span> 
+                    <span class="input-group-text">$</span> 
                     <input type="number" class="form-control " id="nuevoPrecioCompraNeto" name="nuevoPrecioCompraNeto" step="any" min="0" placeholder="Precio compra" required>
-                    <span class="input-group-addon">
+                    <span class="input-group-text">
                         <input type="radio" name="precioCompraMoneda" class="precioCompraPesoDolar" value="peso" checked>
                     </span>
                   </div>
@@ -253,7 +264,7 @@ MODAL AGREGAR PRODUCTO
                   <div class="col-xs-6" style="padding:0">
                     <div class="input-group">
                       <input type="number" title="Margen de ganancia (%)" class="form-control " id="nuevoPorcentajeText" name="nuevoPorcentajeText" min="0" value="40">
-                      <span class="input-group-addon"><i class="fa fa-percent"></i></span>
+                      <span class="input-group-text"><i class="fa fa-percent"></i></span>
                     </div>
                   </div>
                 </div>
@@ -261,9 +272,9 @@ MODAL AGREGAR PRODUCTO
             <div class="form-group row">
                 <div class="col-xs-6" style="<?php echo $precioDolar; ?>">
                   <div class="input-group">
-                    <span class="input-group-addon">U$S</span> 
+                    <span class="input-group-text">U$S</span> 
                     <input type="number" class="form-control " id="nuevoPrecioCompraNetoDolar" name="nuevoPrecioCompraNetoDolar" step="any" min="0" placeholder="Precio compra dólar" readonly>
-                    <span class="input-group-addon">
+                    <span class="input-group-text">
                       <input type="radio" name="precioCompraMoneda" class="precioCompraPesoDolar" value="dolar">
                     </span>
                   </div>
@@ -279,7 +290,7 @@ MODAL AGREGAR PRODUCTO
                 <!-- ENTRADA PARA PRECIO VENTA -->
                 <div class="col-xs-4" style="display:none">
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-arrow-down"></i></span> 
+                    <span class="input-group-text"><i class="fa fa-arrow-down"></i></span> 
                     <input type="number" title="Precio de venta (sin I.V.A)" class="form-control " id="nuevoPrecioVenta" name="nuevoPrecioVenta" step="any" min="0" placeholder="Precio de venta" >
                   </div>
                   <br>
@@ -291,7 +302,7 @@ MODAL AGREGAR PRODUCTO
                 <?php } else { ?>
                     <div class="col-xs-4">
                       <div class="input-group">
-                      <span class="input-group-addon"><i class="fa fa-percent"></i></span> 
+                      <span class="input-group-text"><i class="fa fa-percent"></i></span> 
                         <select name="nuevoIvaVenta" id="nuevoIvaVenta" class="form-control ">
                           <option value="">I.V.A.</option>
                           <!--<option value="0.00">0%</option>
@@ -312,7 +323,7 @@ MODAL AGREGAR PRODUCTO
                 <div class="col-xs-3">
                   $ Venta
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-usd"></i></span> 
+                    <span class="input-group-text"><i class="fa fa-usd"></i></span> 
                     <input type="number" title="$ venta publico IVA INCLUIDO" class="form-control " id="nuevoPrecioVentaIvaIncluido" name="nuevoPrecioVentaIvaIncluido" step="any" min="0" placeholder="$ publico" >
                   </div>
                 </div>
@@ -369,7 +380,7 @@ MODAL EDITAR PRODUCTO
             <!-- ENTRADA PARA SELECCIONAR CATEGORÍA -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-pencil-square"></i></span> 
                   <select class="form-control " id="editarCategoria" name="editarCategoria" required>
                   <option value="">Seleccionar categoría</option>
                   <?php
@@ -388,7 +399,7 @@ MODAL EDITAR PRODUCTO
             <!-- ENTRADA PARA SELECCIONAR PROVEEDOR -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-th"></i></span> 
+                <span class="input-group-text"><i class="bi bi-pencil-square"></i></span> 
                 <select class="form-control " id="editarProveedor" name="editarProveedor" required>
                   <option value="">Seleccionar proveedor</option>
                   <?php
@@ -406,7 +417,7 @@ MODAL EDITAR PRODUCTO
             <!-- ENTRADA PARA EL CÓDIGO -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+                <span class="input-group-text"><i class="fa fa-code"></i></span> 
                 <input type="text" autocomplete="off" class="form-control " id="editarCodigo" name="editarCodigo" readonly required>
               </div>
             </div>
@@ -414,7 +425,7 @@ MODAL EDITAR PRODUCTO
             <!-- ENTRADA PARA LA DESCRIPCIÓN -->
              <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="bi bi-box-seam"></i></span> 
+                <span class="input-group-text"><i class="bi bi-box-seam"></i></span> 
                 <input type="text" class="form-control " id="editarDescripcion" name="editarDescripcion" required>
               </div>
             </div>
@@ -426,14 +437,14 @@ MODAL EDITAR PRODUCTO
 
              <div class="form-group row" >
               <div class="col-xs-4">
-                  <!--<span class="input-group-addon"><i class="fa fa-check"></i></span>--> 
+                  <!--<span class="input-group-text"><i class="fa fa-check"></i></span>--> 
                   INDICADORES:
               </div>
 
              <!-- ENTRADA PARA STOCK INTERMEDIO-->
               <div class="col-xs-4">
                 <div class="input-group ">
-                  <span class="input-group-addon" style="background: #f39c12"><i class="fa fa-check"></i></span> 
+                  <span class="input-group-text" style="background: #f39c12"><i class="fa fa-check"></i></span> 
                   <input type="number" step="any" class="form-control " name="editarStockMedio" id="editarStockMedio" min="0" placeholder="Stock medio">
                 </div>
               </div>
@@ -441,7 +452,7 @@ MODAL EDITAR PRODUCTO
              <!-- ENTRADA PARA STOCK BAJO-->
               <div class="col-xs-4">
                 <div class="input-group">
-                  <span class="input-group-addon" style="background: #dd4b39"><i class="fa fa-check"></i></span> 
+                  <span class="input-group-text" style="background: #dd4b39"><i class="fa fa-check"></i></span> 
                   <input type="number" step="any" class="form-control " name="editarStockBajo" id="editarStockBajo" min="0" placeholder="Stock bajo">
                 </div>
               </div>
@@ -452,7 +463,7 @@ MODAL EDITAR PRODUCTO
               <div class="col-xs-3">
                 STK 
                 <div class="input-group">
-                  <span class="input-group-addon"><i class="fa fa-check"></i></span> 
+                  <span class="input-group-text"><i class="fa fa-check"></i></span> 
                   <input type="number" step="any" class="form-control " name="editarStock" id="editarStock" min="0" placeholder="Stock Deposito" required>
                 </div>
               </div>
@@ -467,9 +478,9 @@ MODAL EDITAR PRODUCTO
             <div class="form-group row">
                 <div class="col-xs-6">
                   <div class="input-group">
-                    <span class="input-group-addon">$</span> 
+                    <span class="input-group-text">$</span> 
                     <input type="number" class="form-control " id="editarPrecioCompraNeto" name="editarPrecioCompraNeto" step="any" min="0" placeholder="Precio compra" required>
-                    <span class="input-group-addon">
+                    <span class="input-group-text">
                         <input type="radio" id="radioPrecioCompraPeso" name="precioCompraMonedaEditar" class="precioCompraPesoDolarEditar" value="peso">
                     </span>
                   </div>
@@ -491,7 +502,7 @@ MODAL EDITAR PRODUCTO
                   <div class="col-xs-6" style="padding:0">
                     <div class="input-group">
                       <input type="number" title="Margen de ganancia (%)" class="form-control " id="editarPorcentajeText" name="editarPorcentajeText" min="0" value="40">
-                      <span class="input-group-addon"><i class="fa fa-percent"></i></span>
+                      <span class="input-group-text"><i class="fa fa-percent"></i></span>
                     </div>
                   </div>
                 </div>
@@ -504,11 +515,11 @@ MODAL EDITAR PRODUCTO
                 
                   <div class="input-group">
                   
-                    <span class="input-group-addon">U$S</span> 
+                    <span class="input-group-text">U$S</span> 
 
                     <input type="number" class="form-control" id="editarPrecioCompraNetoDolar" name="editarPrecioCompraNetoDolar" step="any" min="0" placeholder="Precio compra dolar" readonly>
 
-                    <span class="input-group-addon">
+                    <span class="input-group-text">
 
                           <input type="radio" id="radioPrecioCompraDolar" name="precioCompraMonedaEditar" class="precioCompraPesoDolarEditar" value="dolar">
 
@@ -532,7 +543,7 @@ MODAL EDITAR PRODUCTO
                 <?php } else { ?>
                     <div class="col-xs-4">
                       <div class="input-group">
-                      <span class="input-group-addon"><i class="fa fa-percent"></i></span> 
+                      <span class="input-group-text"><i class="fa fa-percent"></i></span> 
                         <select name="editarIvaVenta" id="editarIvaVenta" class="form-control ">
                           <option value="">I.V.A.</option>
                           <!--<option value="0.00">0%</option>
@@ -557,7 +568,7 @@ MODAL EDITAR PRODUCTO
                   $ Venta
                   <div class="input-group">
                   
-                    <span class="input-group-addon"><i class="fa fa-usd"></i></span> 
+                    <span class="input-group-text"><i class="fa fa-usd"></i></span> 
 
                     <input type="number" title="Precio de venta minorista (IVA incluido)" class="form-control " id="editarPrecioVentaIvaIncluido" name="editarPrecioVentaIvaIncluido" step="any" min="0" placeholder="$ minorista" >
 
@@ -691,7 +702,7 @@ MODAL EDITAR PRODUCTO - AJUSTE STOCK
               <div class="col-xs-4">
                 Ingresar Nuevo Stock:
                 <div class="input-group">
-                  <span class="input-group-addon"><i class="fa fa-check"></i></span> 
+                  <span class="input-group-text"><i class="fa fa-check"></i></span> 
                   <input type="number" step="any" class="form-control" id="editarStockAjuste" name="editarStockAjuste" min="0" placeholder="Cantidad" required>
                 </div>
               </div>
@@ -701,7 +712,7 @@ MODAL EDITAR PRODUCTO - AJUSTE STOCK
               <div class="col-xs-12">
                 Motivo:
                 <div class="input-group">
-                  <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
+                  <span class="input-group-text"><i class="fa fa-list-ul"></i></span> 
                   <textarea class="form-control" name="editarStockAjusteMotivo" id="editarStockAjusteMotivo" cols="3"></textarea>
                 </div>
               </div>
