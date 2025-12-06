@@ -203,13 +203,13 @@ class ModeloVentas{
 			$stmt->bindParam(":id", $id, PDO::PARAM_INT);
 
 			if($stmt->execute()){
-
-			return "ok";
-		
-		}else{
-
-			return $stmt -> errorInfo();	
-
+				return "ok";
+			}else{
+				return $stmt->errorInfo();	
+			}
+		} catch (Exception $e) {
+			error_log("Error en mdlActualizarVenta: " . $e->getMessage());
+			return "error";
 		}
 
 		$stmt -> close();
