@@ -216,3 +216,7 @@ input:checked + .slider:before {
         window.location = "productos-importar-excel2";
     })
 </script>
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->
