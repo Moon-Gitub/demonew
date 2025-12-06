@@ -21,7 +21,7 @@
     <!-- ✅ Token CSRF para protección -->
     <meta name="csrf-token" content="<?php echo isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : ''; ?>">
     
-    <title> <?php echo $arrayEmpresa['razon_social']; ?></title>
+    <title> <?php echo (isset($arrayEmpresa) && is_array($arrayEmpresa) && isset($arrayEmpresa['razon_social'])) ? $arrayEmpresa['razon_social'] : 'Sistema POS'; ?></title>
 
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">

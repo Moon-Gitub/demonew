@@ -92,9 +92,11 @@ class ModeloSistemaCobro{
 	static public function mdlMostrarMovimientoCuentaCorriente($idCliente){	
 
 		//Solo traigo donde ventas - compras es mayor a 0
-		$stmt = Conexion::conectarMoon()->prepare("SELECT * FROM clientes_cuenta_corriente WHERE id_cliente = :id_cliente AND id = (SELECT MAX(id) FROM clientes_cuenta_corriente WHERE id_cliente = :id_cliente AND tipo = 0)");
+		// ✅ FIX: Usar parámetros separados para el WHERE y el subquery
+		$stmt = Conexion::conectarMoon()->prepare("SELECT * FROM clientes_cuenta_corriente WHERE id_cliente = :id_cliente AND id = (SELECT MAX(id) FROM clientes_cuenta_corriente WHERE id_cliente = :id_cliente2 AND tipo = 0)");
 
 		$stmt -> bindParam(":id_cliente", $idCliente, PDO::PARAM_INT);
+		$stmt -> bindParam(":id_cliente2", $idCliente, PDO::PARAM_INT);
 
 		$stmt -> execute();
 
