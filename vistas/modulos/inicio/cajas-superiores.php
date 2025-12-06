@@ -78,8 +78,8 @@ foreach ($ventasHoy as $key => $value) {
   </div>
   
   <div class="card-body" id="ventasCard">
-
-    <div class="col-lg-3 col-6">
+    <div class="row">
+      <div class="col-lg-3 col-6">
 
       <div class="small-box text-bg-info">
         
@@ -102,8 +102,7 @@ foreach ($ventasHoy as $key => $value) {
         </a>
 
       </div>
-
-    </div>
+      <!-- ./col -->
 
      <!--=============================================
       CAJA VENTAS SEMANA PASADA
@@ -142,7 +141,7 @@ foreach ($ventasHoy as $key => $value) {
 
     ?>
 
-    <div class="col-lg-3 col-6">
+      <div class="col-lg-3 col-6">
 
       <div class="small-box text-bg-success">
         
@@ -165,9 +164,7 @@ foreach ($ventasHoy as $key => $value) {
         </a>
 
       </div>
-
-    </div>
-
+      <!-- ./col -->
 
      <!--=============================================
       CAJA VENTAS MES ACTUAL
@@ -204,7 +201,7 @@ foreach ($ventasHoy as $key => $value) {
 
     ?>
 
-    <div class="col-lg-3 col-6">
+      <div class="col-lg-3 col-6">
 
       <div class="small-box text-bg-warning">
         
@@ -227,8 +224,7 @@ foreach ($ventasHoy as $key => $value) {
         </a>
 
       </div>
-
-    </div>
+      <!-- ./col -->
 
      <!--=============================================
       CAJA VENTAS MES ANTERIOR
@@ -267,7 +263,7 @@ foreach ($ventasHoy as $key => $value) {
 
     ?>
 
-    <div class="col-lg-3 col-6">
+      <div class="col-lg-3 col-6">
 
       <div class="small-box text-bg-danger">
       
@@ -291,8 +287,9 @@ foreach ($ventasHoy as $key => $value) {
         </a>
 
       </div>
-
+      <!-- ./col -->
     </div>
+    <!-- /.row -->
 
   <?php
 
