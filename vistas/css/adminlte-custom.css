@@ -8,17 +8,21 @@
  */
 
 /* ===== FORZAR VISIBILIDAD DEL CONTENIDO ===== */
-/* Solo asegurar visibilidad, sin tocar el layout de AdminLTE 4 */
+/* AdminLTE 4 usa CSS Grid, pero necesitamos asegurar que el contenido sea visible */
 .app-main {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
+  overflow: visible !important;
+  position: relative !important;
 }
 
 .app-content-header {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
+  position: relative !important;
+  z-index: 1 !important;
 }
 
 .app-content {
@@ -28,6 +32,9 @@
   padding: 1.5rem !important;
   background-color: #f8f9fa !important;
   min-height: 400px !important;
+  position: relative !important;
+  z-index: 1 !important;
+  overflow: visible !important;
 }
 
 .app-content .container-fluid {
