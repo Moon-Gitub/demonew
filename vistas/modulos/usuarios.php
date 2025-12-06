@@ -12,8 +12,8 @@
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-end mb-0">
-<li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
-      <li class="active">Administrar usuarios</li>
+            <li class="breadcrumb-item"><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Administrar usuarios</li>
           </ol>
         </div>
       </div>
@@ -99,8 +99,7 @@
        </table>
       </div>
     </div>
-  </section>
-</div>
+  </div>
 
 <!--=====================================
 MODAL AGREGAR USUARIO
@@ -111,8 +110,8 @@ MODAL AGREGAR USUARIO
       <form role="form" method="post" enctype="multipart/form-data">
         <!--CABEZA DEL MODAL-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Agregar usuario</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+          <h5 class="modal-title">Agregar usuario</h5>
         </div>
         <!--CUERPO DEL MODAL-->
         <div class="modal-body">
@@ -228,8 +227,8 @@ MODAL EDITAR USUARIO
         CABEZA DEL MODAL
         ======================================-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Editar usuario</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+          <h5 class="modal-title">Editar usuario</h5>
         </div>
 
         <!--=====================================
