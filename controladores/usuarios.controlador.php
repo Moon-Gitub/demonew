@@ -1,5 +1,9 @@
 <?php
 
+require_once "modelos/seguridad.modelo.php";
+require_once "modelos/upload.modelo.php";
+require_once "modelos/login.modelo.php";
+
 class ControladorUsuarios{
 
 	/*=============================================
@@ -11,7 +15,16 @@ class ControladorUsuarios{
 
 			if(preg_match('/^[a-zA-Z0-9]+$/', $_POST["ingUsuario"])){
 
-			   	$encriptar = crypt($_POST["ingPassword"], '$2a$07$asxx54ahjppf45sd87a5a4dDDGsystemdev$');
+				// ✅ Verificar protección contra fuerza bruta
+				if(ModeloLogin::estaBloqueado($_POST["ingUsuario"])){
+					$tiempoRestante = ModeloLogin::tiempoRestanteBloqueo($_POST["ingUsuario"]);
+					echo '<br><div class="alert alert-danger">
+						<i class="fa fa-lock"></i> 
+						Cuenta bloqueada por múltiples intentos fallidos. 
+						Intenta nuevamente en ' . $tiempoRestante . ' minutos.
+					</div>';
+					return;
+				}
 
 				$tabla = "usuarios";
 
@@ -20,58 +33,116 @@ class ControladorUsuarios{
 
 				$respuesta = ModeloUsuarios::MdlMostrarUsuarios($tabla, $item, $valor);
 
-				if($respuesta["usuario"] == $_POST["ingUsuario"] && $respuesta["password"] == $encriptar){
+				// Verificar que el usuario existe
+				if($respuesta && $respuesta["usuario"] == $_POST["ingUsuario"]) {
 
-					if($respuesta["estado"] == 1){
+					// Verificar contraseña (compatible con formato antiguo y nuevo)
+					$passwordCorrecta = false;
+					
+					// Intentar verificación con password_verify (formato nuevo)
+					if(ModeloSeguridad::verifyPassword($_POST["ingPassword"], $respuesta["password"])) {
+						$passwordCorrecta = true;
+					} 
+					// Si falla, intentar con formato antiguo (compatibilidad)
+					else {
+						$encriptarAntiguo = crypt($_POST["ingPassword"], '$2a$07$asxx54ahjppf45sd87a5a4dDDGsystemdev$');
+						if($respuesta["password"] == $encriptarAntiguo) {
+							$passwordCorrecta = true;
+							// Migrar automáticamente al nuevo formato
+							$nuevoHash = ModeloSeguridad::hashPassword($_POST["ingPassword"]);
+							ModeloUsuarios::mdlActualizarUsuario($tabla, "password", $nuevoHash, "id", $respuesta["id"]);
+						}
+					}
 
-						$_SESSION["iniciarSesion"] = "ok";
-						$_SESSION["id"] = $respuesta["id"];
-						$_SESSION["nombre"] = $respuesta["nombre"];
-						$_SESSION["usuario"] = $respuesta["usuario"];
-						$_SESSION["foto"] = $respuesta["foto"];
-						$_SESSION["perfil"] = $respuesta["perfil"];
-						$_SESSION["sucursal"] = $respuesta["sucursal"];
-						$_SESSION["puntos_venta"] = $respuesta["puntos_venta"];
-						$_SESSION["listas_precio"] = $respuesta["listas_precio"];
-						$_SESSION['token'] = session_create_id();
+					if($passwordCorrecta){
 
-						/*=============================================
-						REGISTRAR FECHA PARA SABER EL ÚLTIMO LOGIN
-						=============================================*/
-						date_default_timezone_set('America/Argentina/Mendoza');
+						// ✅ Resetear intentos fallidos después de login exitoso
+						ModeloLogin::resetearIntentos($_POST["ingUsuario"]);
 
-						$fecha = date('Y-m-d');
-						$hora = date('H:i:s');
+						if($respuesta["estado"] == 1){
 
-						$fechaActual = $fecha.' '.$hora;
+							// Verificar si el hash necesita actualización
+							if(ModeloSeguridad::needsRehash($respuesta["password"])){
+								$nuevoHash = ModeloSeguridad::hashPassword($_POST["ingPassword"]);
+								ModeloUsuarios::mdlActualizarUsuario($tabla, "password", $nuevoHash, "id", $respuesta["id"]);
+							}
 
-						$item1 = "ultimo_login";
-						$valor1 = $fechaActual;
+							$_SESSION["iniciarSesion"] = "ok";
+							$_SESSION["id"] = $respuesta["id"];
+							$_SESSION["nombre"] = $respuesta["nombre"];
+							$_SESSION["usuario"] = $respuesta["usuario"];
+							$_SESSION["foto"] = $respuesta["foto"];
+							$_SESSION["perfil"] = $respuesta["perfil"];
+							$_SESSION["sucursal"] = $respuesta["sucursal"];
+							$_SESSION["puntos_venta"] = $respuesta["puntos_venta"];
+							$_SESSION["listas_precio"] = $respuesta["listas_precio"];
+							$_SESSION['token'] = session_create_id();
+							
+							// Token CSRF
+							$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
-						$item2 = "id";
-						$valor2 = $respuesta["id"];
+							/*=============================================
+							REGISTRAR FECHA PARA SABER EL ÚLTIMO LOGIN
+							=============================================*/
+							date_default_timezone_set('America/Argentina/Mendoza');
 
-						$ultimoLogin = ModeloUsuarios::mdlActualizarUsuario($tabla, $item1, $valor1, $item2, $valor2);
+							$fecha = date('Y-m-d');
+							$hora = date('H:i:s');
 
-						if($ultimoLogin == "ok"){
+							$fechaActual = $fecha.' '.$hora;
 
-							echo '<script>
+							$item1 = "ultimo_login";
+							$valor1 = $fechaActual;
 
-								window.location = "inicio";
+							$item2 = "id";
+							$valor2 = $respuesta["id"];
 
-							</script>';
+							$ultimoLogin = ModeloUsuarios::mdlActualizarUsuario($tabla, $item1, $valor1, $item2, $valor2);
 
-						}				
-						
+							if($ultimoLogin == "ok"){
+
+								echo '<script>
+
+									window.location = "inicio";
+
+								</script>';
+
+							}				
+							
+						}else{
+
+							echo '<br>
+								<div class="alert alert-danger">El usuario aún no está activado</div>';
+
+						}		
+
 					}else{
 
-						echo '<br>
-							<div class="alert alert-danger">El usuario aún no está activado</div>';
+						// ✅ Registrar intento fallido
+						ModeloLogin::registrarIntentoFallido($_POST["ingUsuario"]);
+						$intentosRestantes = ModeloLogin::intentosRestantes($_POST["ingUsuario"]);
+						
+						if($intentosRestantes > 0){
+							echo '<br><div class="alert alert-danger">
+								<i class="fa fa-exclamation-triangle"></i> 
+								Error al ingresar, vuelve a intentarlo. 
+								Intentos restantes: ' . $intentosRestantes . '
+							</div>';
+						} else {
+							$tiempoRestante = ModeloLogin::tiempoRestanteBloqueo($_POST["ingUsuario"]);
+							echo '<br><div class="alert alert-danger">
+								<i class="fa fa-lock"></i> 
+								Cuenta bloqueada por múltiples intentos fallidos. 
+								Intenta nuevamente en ' . $tiempoRestante . ' minutos.
+							</div>';
+						}
 
-					}		
+					}
 
 				}else{
 
+					// ✅ Registrar intento fallido (usuario no existe)
+					ModeloLogin::registrarIntentoFallido($_POST["ingUsuario"]);
 					echo '<br><div class="alert alert-danger">Error al ingresar, vuelve a intentarlo</div>';
 
 				}
@@ -91,46 +162,30 @@ class ControladorUsuarios{
 			   preg_match('/^[a-zA-Z0-9]+$/', $_POST["nuevoUsuario"]) &&
 			   preg_match('/^[a-zA-Z0-9]+$/', $_POST["nuevoPassword"])){
 			   	/*=============================================
-				VALIDAR IMAGEN
+				✅ VALIDAR Y PROCESAR IMAGEN DE FORMA SEGURA
 				=============================================*/
 				$ruta = "";
 				if(isset($_FILES["nuevaFoto"]["tmp_name"]) && $_FILES["nuevaFoto"]["tmp_name"] != ""){
-					list($ancho, $alto) = getimagesize($_FILES["nuevaFoto"]["tmp_name"]);
-					$nuevoAncho = 500;
-					$nuevoAlto = 500;
-					/*=============================================
-					CREAMOS EL DIRECTORIO DONDE VAMOS A GUARDAR LA FOTO DEL USUARIO
-    				=============================================*/
-					$directorio = "vistas/img/usuarios/".$_POST["nuevoUsuario"];
-					mkdir($directorio, 0755);
-					/*=============================================
-					DE ACUERDO AL TIPO DE IMAGEN APLICAMOS LAS FUNCIONES POR DEFECTO DE PHP
-    				=============================================*/
-					if($_FILES["nuevaFoto"]["type"] == "image/jpeg"){
-						/*=============================================
-						GUARDAMOS LA IMAGEN EN EL DIRECTORIO
-						=============================================*/
-						$aleatorio = mt_rand(100,999);
-						$ruta = "vistas/img/usuarios/".$_POST["nuevoUsuario"]."/".$aleatorio.".jpg";
-						$origen = imagecreatefromjpeg($_FILES["nuevaFoto"]["tmp_name"]);						
-						$destino = imagecreatetruecolor($nuevoAncho, $nuevoAlto);
-						imagecopyresized($destino, $origen, 0, 0, 0, 0, $nuevoAncho, $nuevoAlto, $ancho, $alto);
-						imagejpeg($destino, $ruta);
+					$resultado = ModeloUpload::procesarImagenUsuario($_FILES["nuevaFoto"], $_POST["nuevoUsuario"]);
+					
+					if($resultado['error']){
+						echo '<script>
+						swal({
+							type: "error",
+							title: "Error",
+							text: "'.$resultado['mensaje'].'",
+							showConfirmButton: true,
+							confirmButtonText: "Cerrar"
+						});
+						</script>';
+						return;
 					}
-					if($_FILES["nuevaFoto"]["type"] == "image/png"){
-						/*=============================================
-						GUARDAMOS LA IMAGEN EN EL DIRECTORIO
-						=============================================*/
-						$aleatorio = mt_rand(100,999);
-						$ruta = "vistas/img/usuarios/".$_POST["nuevoUsuario"]."/".$aleatorio.".png";
-						$origen = imagecreatefrompng($_FILES["nuevaFoto"]["tmp_name"]);						
-						$destino = imagecreatetruecolor($nuevoAncho, $nuevoAlto);
-						imagecopyresized($destino, $origen, 0, 0, 0, 0, $nuevoAncho, $nuevoAlto, $ancho, $alto);
-						imagepng($destino, $ruta);
-					}
+					
+					$ruta = $resultado['ruta'];
 				}
 				$tabla = "usuarios";
-				$encriptar = crypt($_POST["nuevoPassword"], '$2a$07$asxx54ahjppf45sd87a5a4dDDGsystemdev$');
+				// ✅ Hash seguro con password_hash
+				$encriptar = ModeloSeguridad::hashPassword($_POST["nuevoPassword"]);
 				$listasPrecio = '';
 				if(!empty($_POST['nuevoPreciosVentaUsuario'])) {    
                     foreach($_POST['nuevoPreciosVentaUsuario'] as $value){
@@ -204,55 +259,37 @@ class ControladorUsuarios{
 		if(isset($_POST["editarUsuario"])){
 			if(preg_match('/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ ]+$/', $_POST["editarNombre"])){
 				/*=============================================
-				VALIDAR IMAGEN
+				✅ VALIDAR Y PROCESAR IMAGEN DE FORMA SEGURA
 				=============================================*/
 				$ruta = $_POST["fotoActual"];
 				if(isset($_FILES["editarFoto"]["tmp_name"]) && !empty($_FILES["editarFoto"]["tmp_name"])){
-					list($ancho, $alto) = getimagesize($_FILES["editarFoto"]["tmp_name"]);
-					$nuevoAncho = 500;
-    				$nuevoAlto = 500;
-					/*=============================================
-					CREAMOS EL DIRECTORIO DONDE VAMOS A GUARDAR LA FOTO DEL USUARIO
-					=============================================*/
-					$directorio = "vistas/img/usuarios/".$_POST["editarUsuario"];
-					/*=============================================
-					PRIMERO PREGUNTAMOS SI EXISTE OTRA IMAGEN EN LA BD
-					=============================================*/
+					// Eliminar imagen anterior si existe
 					if(!empty($_POST["fotoActual"])){
-						unlink($_POST["fotoActual"]);
-					}else{
-						mkdir($directorio, 0755);
-					}	
-					/*=============================================
-					DE ACUERDO AL TIPO DE IMAGEN APLICAMOS LAS FUNCIONES POR DEFECTO DE PHP
-					=============================================*/
-					if($_FILES["editarFoto"]["type"] == "image/jpeg"){
-						/*=============================================
-						GUARDAMOS LA IMAGEN EN EL DIRECTORIO
-						=============================================*/
-						$aleatorio = mt_rand(100,999);
-						$ruta = "vistas/img/usuarios/".$_POST["editarUsuario"]."/".$aleatorio.".jpg";
-						$origen = imagecreatefromjpeg($_FILES["editarFoto"]["tmp_name"]);						
-						$destino = imagecreatetruecolor($nuevoAncho, $nuevoAlto);
-						imagecopyresized($destino, $origen, 0, 0, 0, 0, $nuevoAncho, $nuevoAlto, $ancho, $alto);
-						imagejpeg($destino, $ruta);
+						ModeloUpload::eliminarImagenUsuario($_POST["fotoActual"]);
 					}
-					if($_FILES["editarFoto"]["type"] == "image/png"){
-						/*=============================================
-						GUARDAMOS LA IMAGEN EN EL DIRECTORIO
-						=============================================*/
-    					$aleatorio = mt_rand(100,999);
-						$ruta = "vistas/img/usuarios/".$_POST["editarUsuario"]."/".$aleatorio.".png";
-						$origen = imagecreatefrompng($_FILES["editarFoto"]["tmp_name"]);						
-						$destino = imagecreatetruecolor($nuevoAncho, $nuevoAlto);
-						imagecopyresized($destino, $origen, 0, 0, 0, 0, $nuevoAncho, $nuevoAlto, $ancho, $alto);
-						imagepng($destino, $ruta);
+					
+					$resultado = ModeloUpload::procesarImagenUsuario($_FILES["editarFoto"], $_POST["editarUsuario"]);
+					
+					if($resultado['error']){
+						echo'<script>
+							swal({
+								type: "error",
+								title: "Error",
+								text: "'.$resultado['mensaje'].'",
+								showConfirmButton: true,
+								confirmButtonText: "Cerrar"
+							});
+						</script>';
+						return;
 					}
+					
+					$ruta = $resultado['ruta'];
 				}
 				$tabla = "usuarios";
 				if($_POST["editarPassword"] != ""){
 					if(preg_match('/^[a-zA-Z0-9]+$/', $_POST["editarPassword"])){
-						$encriptar = crypt($_POST["editarPassword"], '$2a$07$asxx54ahjppf45sd87a5a4dDDGsystemdev$');
+						// ✅ Hash seguro con password_hash
+						$encriptar = ModeloSeguridad::hashPassword($_POST["editarPassword"]);
 					}else{
 						echo'<script>
 								swal({

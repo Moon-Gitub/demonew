@@ -235,9 +235,40 @@ $(".tablasBotones").DataTable({
 });
 
 
+/*=============================================
+✅ SEGURIDAD: Token CSRF y Headers AJAX
+=============================================*/
+
+// Obtener token CSRF del meta tag o hidden input
+function getCSRFToken() {
+    return $('meta[name="csrf-token"]').attr('content') || 
+           $('input[name="csrf_token"]').val() || '';
+}
+
+// Configurar AJAX para incluir token CSRF y header X-Requested-With
 jQuery.ajaxSetup({
-  beforeSend: function() {
+  beforeSend: function(xhr, settings) {
+     // Mostrar loader
      $('#loader').show();
+     
+     // ✅ Agregar token CSRF a todas las peticiones POST/PUT/DELETE
+     if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+         var token = getCSRFToken();
+         if (token) {
+             xhr.setRequestHeader("X-CSRF-TOKEN", token);
+             // También agregar al FormData si existe
+             if (settings.data instanceof FormData) {
+                 settings.data.append('csrf_token', token);
+             } else if (typeof settings.data === 'string') {
+                 settings.data += (settings.data ? '&' : '') + 'csrf_token=' + encodeURIComponent(token);
+             } else if (typeof settings.data === 'object' && settings.data !== null) {
+                 settings.data.csrf_token = token;
+             }
+         }
+     }
+     
+     // ✅ Agregar header X-Requested-With para identificar peticiones AJAX
+     xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
   },
   complete: function(){
      $('#loader').hide();
@@ -245,8 +276,30 @@ jQuery.ajaxSetup({
   success: function() {
     $('#loader').hide();
   }, 
-  error: function(){
+  error: function(xhr, status, error){
      $('#loader').hide();
+     
+     // ✅ Manejar errores de seguridad
+     if (xhr.status === 401) {
+         swal({
+             type: "error",
+             title: "Sesión expirada",
+             text: "Por favor, inicia sesión nuevamente",
+             showConfirmButton: true,
+             confirmButtonText: "Ir al login"
+         }).then(function() {
+             window.location = "salir";
+         });
+     } else if (xhr.status === 403) {
+         var response = JSON.parse(xhr.responseText || '{}');
+         swal({
+             type: "error",
+             title: "Acceso denegado",
+             text: response.mensaje || "No tienes permisos para realizar esta acción",
+             showConfirmButton: true,
+             confirmButtonText: "Cerrar"
+         });
+     }
   }
 });
 

@@ -1,4 +1,8 @@
 <?php
+// ✅ Seguridad AJAX
+require_once "seguridad.ajax.php";
+SeguridadAjax::inicializar();
+
  
 /*
  * DataTables example server-side processing script.

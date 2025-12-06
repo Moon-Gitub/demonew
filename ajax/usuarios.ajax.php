@@ -1,4 +1,7 @@
 <?php
+// ✅ Seguridad AJAX
+require_once "seguridad.ajax.php";
+SeguridadAjax::inicializar();
 
 require_once "../controladores/usuarios.controlador.php";
 require_once "../modelos/usuarios.modelo.php";

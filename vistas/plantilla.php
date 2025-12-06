@@ -18,6 +18,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="robots" content="noindex, nofollow" />
+    <!-- ✅ Token CSRF para protección -->
+    <meta name="csrf-token" content="<?php echo isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : ''; ?>">
     
     <title> <?php echo $arrayEmpresa['razon_social']; ?></title>
 
