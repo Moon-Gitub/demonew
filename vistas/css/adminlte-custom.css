@@ -26,6 +26,8 @@
   visibility: visible !important;
   opacity: 1 !important;
   padding: 1.5rem !important;
+  background-color: #f8f9fa !important;
+  min-height: 400px !important;
 }
 
 .app-content .container-fluid {
