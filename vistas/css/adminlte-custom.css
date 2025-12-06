@@ -1,0 +1,279 @@
+/**
+ * AdminLTE 4 Custom Styles
+ * Mejoras sutiles siguiendo el template oficial de AdminLTE 4
+ * https://adminlte.io/themes/v4/index.html
+ */
+
+/* ===== SMALL BOX IMPROVEMENTS ===== */
+/* Solo mejoras sutiles, respetando estilos de AdminLTE 4 */
+.small-box {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.small-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+}
+
+/* Mantener estilos originales de AdminLTE 4, solo mejoras sutiles */
+.small-box-icon {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.small-box:hover .small-box-icon {
+  opacity: 0.25;
+}
+
+/* ===== CARD IMPROVEMENTS ===== */
+/* Respetar estilos de AdminLTE 4, solo transiciones sutiles */
+.card {
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+/* ===== NAVBAR IMPROVEMENTS ===== */
+/* Respetar estilos de AdminLTE 4 */
+.navbar-nav .nav-link {
+  transition: background-color 0.2s ease;
+}
+
+/* ===== SIDEBAR IMPROVEMENTS ===== */
+/* Respetar estilos de AdminLTE 4, solo transiciones */
+.sidebar-menu .nav-link {
+  transition: background-color 0.2s ease;
+}
+
+/* ===== CONTENT AREA IMPROVEMENTS ===== */
+/* Respetar estilos de AdminLTE 4 */
+
+/* ===== BUTTON IMPROVEMENTS ===== */
+.btn {
+  border-radius: 0.375rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #653d91 100%);
+}
+
+/* ===== BREADCRUMB IMPROVEMENTS ===== */
+.breadcrumb {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+.breadcrumb-item a {
+  color: #0d6efd;
+  text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-item.active {
+  color: #6c757d;
+}
+
+/* ===== DROPDOWN IMPROVEMENTS ===== */
+.dropdown-menu {
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  padding: 0.5rem 0;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1.25rem;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+/* ===== MODAL IMPROVEMENTS ===== */
+.modal-content {
+  border-radius: 0.5rem;
+  border: none;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+}
+
+.modal-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding: 1.25rem;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0 0 0.5rem 0.5rem;
+  padding: 1rem 1.25rem;
+}
+
+/* ===== TABLE IMPROVEMENTS ===== */
+.table {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.table thead {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* ===== RESPONSIVE IMPROVEMENTS ===== */
+@media (max-width: 768px) {
+  .small-box h3 {
+    font-size: 1.75rem;
+  }
+  
+  .small-box-icon {
+    width: 70px;
+    height: 70px;
+    top: -10px;
+    right: 5px;
+  }
+  
+  .app-content-header h3 {
+    font-size: 1.25rem;
+  }
+  
+  .card-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card, .small-box {
+  animation: fadeIn 0.3s ease;
+}
+
+/* ===== UTILITY CLASSES ===== */
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.gradient-info {
+  background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+}
+
+.gradient-warning {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.gradient-danger {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+/* ===== CHART CONTAINER ===== */
+.chart {
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* ===== LOADER IMPROVEMENTS ===== */
+#loader {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(5px);
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* ===== FOCUS STATES ===== */
+*:focus {
+  outline: 2px solid #0d6efd;
+  outline-offset: 2px;
+}
+
+.btn:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .app-sidebar,
+  .app-header,
+  .app-content-header,
+  .btn,
+  .card-tools {
+    display: none !important;
+  }
+  
+  .app-content {
+    margin: 0;
+    padding: 0;
+  }
+}
+
