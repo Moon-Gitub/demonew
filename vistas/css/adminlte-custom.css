@@ -3,127 +3,57 @@
  * Basado en la estructura oficial de AdminLTE 4.0.0-rc4
  * https://adminlte.io/themes/v4/index.html
  * 
- * NOTA: AdminLTE 4 usa CSS Grid para el layout automáticamente
- * NO sobrescribir estilos base de AdminLTE 4
+ * IMPORTANTE: AdminLTE 4 usa CSS Grid para el layout automáticamente
+ * NO sobrescribir estilos base de AdminLTE 4 que manejan el layout
  */
 
-/* ===== APP MAIN ===== */
-/* AdminLTE 4 maneja el layout con CSS Grid automáticamente */
-/* Solo asegurar que el contenido sea visible */
+/* ===== VISIBILIDAD DEL CONTENIDO ===== */
+/* Solo asegurar que el contenido sea visible, sin interferir con el layout de AdminLTE 4 */
 .app-main {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
 }
 
-/* ===== APP CONTENT ===== */
-/* Asegurar que el contenido sea visible */
-.app-content {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-/* ===== APP CONTENT HEADER ===== */
 .app-content-header {
-  background-color: #fff;
-  border-bottom: 1px solid #dee2e6;
-  padding: 1.5rem 0;
-  margin-bottom: 0;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   display: block !important;
   visibility: visible !important;
 }
 
-.app-content-header h3 {
-  font-weight: 600;
-  color: #212529;
-  margin: 0;
-}
-
-.app-content-header .text-muted {
-  color: #6c757d;
-  font-size: 0.875rem;
-}
-
-/* ===== APP CONTENT ===== */
 .app-content {
-  padding: 1.5rem !important;
   display: block !important;
-  min-height: 400px !important;
   visibility: visible !important;
   opacity: 1 !important;
-  width: 100% !important;
-  background-color: #f8f9fa !important;
 }
 
 .app-content .container-fluid {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  width: 100%;
   display: block !important;
   visibility: visible !important;
-  max-width: 100%;
 }
 
-/* ===== CARDS ===== */
 .app-content .card {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
-  margin-bottom: 1.5rem;
-  background-color: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.125);
-  border-radius: 0.5rem;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 
-/* ===== TABLES ===== */
 .app-content .table {
   display: table !important;
   visibility: visible !important;
   width: 100% !important;
-  background-color: #fff;
-  margin-bottom: 1rem;
 }
 
-.app-content .table thead th {
-  vertical-align: bottom;
-  border-bottom: 2px solid #dee2e6;
-  background-color: #f8f9fa;
-  display: table-cell !important;
-}
-
-.app-content .table tbody tr {
-  display: table-row !important;
-}
-
-.app-content .table td,
-.app-content .table th {
-  padding: 0.75rem;
-  vertical-align: top;
-  border-top: 1px solid #dee2e6;
-  display: table-cell !important;
-}
-
-/* ===== ROWS Y COLUMNS ===== */
 .app-content .row {
   display: flex !important;
   flex-wrap: wrap !important;
-  margin-right: -0.75rem;
-  margin-left: -0.75rem;
 }
 
 .app-content [class*="col-"] {
   display: block !important;
   visibility: visible !important;
-  position: relative;
-  width: 100%;
-  padding-right: 0.75rem;
-  padding-left: 0.75rem;
 }
 
-/* ===== SMALL BOX - Diseño AdminLTE 4 ===== */
+/* ===== SMALL BOX - Estilos AdminLTE 4 ===== */
 .small-box {
   border-radius: 0.5rem;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
@@ -229,16 +159,8 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 991.98px) {
-  .app-main {
-    margin-left: 0 !important;
-  }
-  
   .app-content {
     padding: 1rem !important;
-  }
-  
-  .app-content-header {
-    padding: 1rem 0;
   }
 }
 
