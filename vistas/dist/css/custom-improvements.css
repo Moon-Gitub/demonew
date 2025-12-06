@@ -30,6 +30,7 @@ body {
 
 /* ============================================
    LOGO MEJORADO CON TIPOGRAFÍA ELEGANTE
+   (Mismo estilo que content-header)
    ============================================ */
 .logo {
     display: flex;
@@ -38,11 +39,13 @@ body {
     padding: 15px 20px;
     text-decoration: none;
     transition: var(--transition);
+    background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+    border-bottom: 1px solid rgba(102, 126, 234, 0.1);
 }
 
 .logo:hover {
     opacity: 0.9;
-    transform: scale(1.02);
+    transform: scale(1.01);
 }
 
 .logo-mini {
@@ -54,69 +57,78 @@ body {
 }
 
 .logo-text-mini {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 800;
-    background: linear-gradient(135deg, #fff 0%, #e0e7ff 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    letter-spacing: 2px;
-    text-shadow: 0 2px 10px rgba(255,255,255,0.3);
+    letter-spacing: -0.5px;
 }
 
 .logo-lg {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     padding: 0 10px;
 }
 
 .logo-text {
-    font-size: 24px;
+    font-size: 32px;
     font-weight: 700;
-    color: #fff;
-    letter-spacing: 1px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
     text-transform: uppercase;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
     position: relative;
 }
 
 .logo-text::after {
     content: '';
     position: absolute;
-    right: -8px;
+    right: -10px;
     top: 50%;
     transform: translateY(-50%);
     width: 2px;
-    height: 20px;
-    background: rgba(255,255,255,0.5);
+    height: 25px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
 }
 
 .logo-text-moon {
-    font-size: 24px;
+    font-size: 32px;
     font-weight: 300;
-    background: linear-gradient(135deg, #fff 0%, #e0e7ff 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
     text-transform: uppercase;
     font-style: italic;
-    text-shadow: 0 2px 10px rgba(255,255,255,0.3);
 }
 
 @media (max-width: 767px) {
+    .logo {
+        padding: 12px 15px;
+    }
+    
     .logo-text {
-        font-size: 18px;
+        font-size: 20px;
     }
     
     .logo-text-moon {
-        font-size: 18px;
-        letter-spacing: 2px;
+        font-size: 20px;
+        letter-spacing: 1px;
     }
     
     .logo-text-mini {
-        font-size: 22px;
+        font-size: 24px;
+    }
+    
+    .treeview-menu {
+        max-height: 300px !important;
     }
 }
 
@@ -453,6 +465,29 @@ body {
     box-shadow: 4px 0 15px rgba(0,0,0,0.1);
     background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
     border-right: 1px solid rgba(255,255,255,0.1);
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: fixed;
+    height: 100%;
+}
+
+.sidebar {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: calc(100vh - 50px);
+}
+
+.sidebar-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+}
+
+.sidebar-menu > li {
+    position: relative;
+    margin: 0;
+    padding: 0;
 }
 
 .sidebar-menu > li > a {
@@ -463,6 +498,8 @@ body {
     font-weight: 500;
     position: relative;
     overflow: hidden;
+    display: block;
+    white-space: nowrap;
 }
 
 .sidebar-menu > li > a::before {
@@ -499,20 +536,81 @@ body {
     width: 4px;
 }
 
+/* Treeview menu - ARREGLADO PARA QUE NO SE SALGA */
+.treeview {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.treeview-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: rgba(0,0,0,0.15);
+    border-left: 2px solid rgba(102, 126, 234, 0.3);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.treeview.menu-open > .treeview-menu {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.treeview-menu > li {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .treeview-menu > li > a {
-    padding: 10px 15px 10px 35px;
-    transition: var(--transition);
+    padding: 10px 15px 10px 45px;
+    transition: all 0.2s ease;
+    color: #8aa4af;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
 }
 
 .treeview-menu > li > a:hover {
-    background: rgba(102, 126, 234, 0.1);
-    padding-left: 40px;
+    background: rgba(102, 126, 234, 0.2);
+    color: #fff;
+    padding-left: 50px;
 }
 
 .treeview-menu > li.active > a {
-    background: rgba(102, 126, 234, 0.15);
-    color: #667eea;
+    background: rgba(102, 126, 234, 0.25);
+    color: #fff;
     font-weight: 600;
+    border-left: 3px solid #667eea;
+    padding-left: 47px;
+}
+
+/* Asegurar que el sidebar contenga todo correctamente */
+.sidebar-menu > li.treeview {
+    overflow: visible;
+}
+
+.sidebar-menu > li.treeview > .treeview-menu {
+    position: relative;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 /* ============================================
@@ -1386,22 +1484,7 @@ body {
     transform: translateY(-2px);
 }
 
-/* Mejoras para el sidebar */
-.main-sidebar .sidebar-menu .treeview-menu {
-    background: rgba(0,0,0,0.1);
-    border-left: 2px solid rgba(102, 126, 234, 0.3);
-}
-
-.main-sidebar .sidebar-menu .treeview-menu > li > a {
-    padding-left: 45px;
-    font-size: 13px;
-}
-
-.main-sidebar .sidebar-menu .treeview-menu > li.active > a {
-    background: rgba(102, 126, 234, 0.2);
-    color: #fff;
-    border-left: 3px solid #667eea;
-}
+/* Estilos adicionales para treeview - ya están definidos arriba */
 
 /* Mejoras para el contenido principal */
 .content-wrapper {
