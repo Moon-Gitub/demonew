@@ -49,16 +49,22 @@ class Conexion{
 
 	/**
 	 * CONEXIÓN A BASE DE DATOS LOCAL DEL SISTEMA POS
-	 * Lee credenciales desde .env o usa valores por defecto
+	 * Lee credenciales desde .env (REQUERIDO)
 	 */
 	static public function conectar(){
 
-		// Leer desde .env o usar valores por defecto
-		$host = self::getEnv('DB_HOST', 'localhost');
-		$db = self::getEnv('DB_NAME', 'newmoon_newmoon_db');
-		$user = self::getEnv('DB_USER', 'newmoon_newmoon_user');
-		$pass = self::getEnv('DB_PASS', '61t;t62h5P$}.sXT');
+		// Leer desde .env (REQUERIDO - no usar valores por defecto inseguros)
+		$host = self::getEnv('DB_HOST');
+		$db = self::getEnv('DB_NAME');
+		$user = self::getEnv('DB_USER');
+		$pass = self::getEnv('DB_PASS');
 		$charset = self::getEnv('DB_CHARSET', 'UTF8MB4');
+		
+		// Validar que las credenciales críticas estén configuradas
+		if (empty($host) || empty($db) || empty($user) || empty($pass)) {
+			error_log("ERROR CRÍTICO: Variables de entorno no configuradas. Crear archivo .env con DB_HOST, DB_NAME, DB_USER, DB_PASS");
+			throw new Exception("Error de configuración: Archivo .env no encontrado o incompleto. Por favor, crea el archivo .env con las credenciales de la base de datos.");
+		}
 
 		try {
 			$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
@@ -81,16 +87,23 @@ class Conexion{
 	/**
 	 * CONEXIÓN A BASE DE DATOS MOON (SISTEMA DE COBRO)
 	 * Esta BD está en servidor remoto de Moon Desarrollos
-	 * Lee credenciales desde .env o usa valores por defecto
+	 * Lee credenciales desde .env (REQUERIDO)
 	 */
 	static public function conectarMoon(){
 
-		// Leer desde .env o usar valores por defecto
-		$host = self::getEnv('MOON_DB_HOST', '107.161.23.11');
-		$db = self::getEnv('MOON_DB_NAME', 'cobrosposmooncom_db');
-		$user = self::getEnv('MOON_DB_USER', 'cobrosposmooncom_dbuser');
-		$pass = self::getEnv('MOON_DB_PASS', '[Us{ynaJAA_o2A_!');
+		// Leer desde .env (REQUERIDO - no usar valores por defecto inseguros)
+		$host = self::getEnv('MOON_DB_HOST');
+		$db = self::getEnv('MOON_DB_NAME');
+		$user = self::getEnv('MOON_DB_USER');
+		$pass = self::getEnv('MOON_DB_PASS');
 		$charset = self::getEnv('MOON_DB_CHARSET', 'UTF8MB4');
+		
+		// Validar que las credenciales críticas estén configuradas
+		if (empty($host) || empty($db) || empty($user) || empty($pass)) {
+			error_log("ERROR: Variables de entorno MOON_DB_* no configuradas. Sistema de cobro no disponible.");
+			// Retornar null en lugar de lanzar excepción para hacer el sistema de cobro opcional
+			return null;
+		}
 
 		try {
 			$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
