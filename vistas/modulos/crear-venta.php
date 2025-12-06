@@ -5,16 +5,16 @@
   $btnPadronAfip = (isset($arrayEmpresa["ws_padron"])) ? '' : 'disabled';
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
   <section class="content">
     <div class="row">
       <!--=====================================
       EL FORMULARIO
       ======================================-->
       <div class="col-lg-5" >
-		<div class="box box-warning">
-          <div class="box-header with-border"></div>
-            <div class="box-body">
+		<div class="card card-warning">
+          <div class="card-header with-border"></div>
+            <div class="card-body">
 		          <table class="table table-bordered table-striped dt-responsive" style="border: 1px solid black;">
 					<tr>
 						<td>
@@ -125,7 +125,7 @@
 					<td>
 					<div class="input-group">
 
-					<span title="Concepto" class="input-group-addon" style="background-color: #ddd"><i class="fa fa-circle-o"></i></span>
+					<span title="Concepto" class="input-group-addon" style="background-color: #ddd"><i class="bi bi-circle"></i></span>
 
 					  <?php 
 					  $arrConceptos = [ 
@@ -270,7 +270,7 @@
 						  <input type="hidden" id="seleccionarCliente" name="seleccionarCliente" value="1">
 						  <input type="hidden" id="autocompletarClienteCajaMail">
 
-						  <span class="input-group-btn"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modalAgregarCliente" data-dismiss="modal">Agregar cliente</button></span>
+						  <span class="input-group-btn"><button type="button" class="btn btn-default btn-sm" data-bs-toggle="modal" data-bs-target="#modalAgregarCliente" data-bs-dismiss="modal">Agregar cliente</button></span>
 
 						</div>
 					</th>
@@ -345,7 +345,7 @@
 	</table>
           </div>
 
-          <div class="box-footer">
+          <div class="card-footer">
          
             <center><button type="submit" class="btn btn-primary" id="btnGuardarVentaCaja">Cobrar (F7)</button></center>
 
@@ -360,18 +360,18 @@
       ======================================-->
       <div class="col-lg-7 hidden-md hidden-sm hidden-xs">
 
-        <div class="box box-warning">
+        <div class="card card-warning">
 
-          <div class="box-header with-border"></div>
+          <div class="card-header with-border"></div>
       
-            <div class="box-body">
+            <div class="card-body">
       
             <table class="table table-bordered table-striped dt-responsive" style="border: 1px solid white; width:50%">
 				<tr>
 					<td>
                         <div class="form-group">
 							<div class="input-group">
-								<span class="input-group-addon"><i class="fa fa-user"></i></span> 
+								<span class="input-group-addon"><i class="bi bi-person"></i></span> 
 								<input type="text" class="form-control input-sm" id="nuevoVendedor" value="<?php echo $_SESSION["nombre"]; ?>" readonly>
 							</div>
 
@@ -454,14 +454,14 @@ MODAL AGREGAR CLIENTE
         CABEZA DEL MODAL
         ======================================-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Agregar cliente</h4>
         </div>
         <!--=====================================
         CUERPO DEL MODAL
         ======================================-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
             <!-- ENTRADA PARA EL DOCUMENTO ID -->
             <div class="form-group">
               <div class="input-group">
@@ -495,7 +495,7 @@ MODAL AGREGAR CLIENTE
             <!-- ENTRADA PARA EL NOMBRE -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-user"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
                 <input type="text" class="form-control " name="nuevoCliente" id="vtanuevoCliente" placeholder="Ingresar nombre o razón social" required>
               </div>
             </div>
@@ -550,7 +550,7 @@ MODAL AGREGAR CLIENTE
             <!-- ENTRADA PARA LA FECHA DE NACIMIENTO -->            
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-calendar"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-calendar"></i></span> 
                 <input type="text" class="form-control " name="nuevaFechaNacimiento" id="vtanuevaFechaNacimiento" placeholder="Ingresar fecha nacimiento" data-inputmask="'alias': 'yyyy/mm/dd'" data-mask>
               </div>
             </div>
@@ -569,7 +569,7 @@ MODAL AGREGAR CLIENTE
         PIE DEL MODAL
         ======================================-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
           <button id="btnGuardarClienteVenta"  class="btn btn-primary">Guardar cliente</button>
         </div>
     </div>
@@ -592,7 +592,7 @@ MODAL COBRAR VENTA
         CUERPO DEL MODAL
         ======================================-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
             <!-- ENTRADA PARA TIPO (INGRESO / EGRESO)-  -->
             <input type="hidden" name="ingresoCajaTipo" id="ingresoCajaTipo" value="1">
           </div>
@@ -610,7 +610,7 @@ MODAL COBRAR VENTA
           <div class="form-group row">
             <div class="col-md-3">
                <div class="input-group">
-                  <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPago" type="button" class="btn btn-success" ><i class="fa fa-plus"></i></button></span>
+                  <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPago" type="button" class="btn btn-success" ><i class="bi bi-plus-circle"></i></button></span>
 	                <select class="form-control" id="nuevoMetodoPagoCaja">
 	                  <option value="">Medio de pago</option>
 	                  <option value="Efectivo">Efectivo</option>
@@ -633,7 +633,7 @@ MODAL COBRAR VENTA
             			<thead>
             				<!--<tr style="background-color: #eee; text-align: center;"><td colspan="2">Medios Pago</td></tr>-->
             				<tr>
-		            			<th><i class="fa fa-minus-square"></i> </th>
+		            			<th><i class="bi bi-dash-square"></i> </th>
 		            			<th>Metodo</th>
 		            			<th>Importe</th>
 	            			</tr>
@@ -721,11 +721,11 @@ MODAL COBRAR VENTA
         PIE DEL MODAL
         ======================================-->
         <div class="modal-footer">
-          <button type="button" id="btnSalirMedioPagoCaja" class="btn btn-default pull-left" data-dismiss="modal">Salir (ESC)</button>
+          <button type="button" id="btnSalirMedioPagoCaja" class="btn btn-default float-start" data-bs-dismiss="modal">Salir (ESC)</button>
           <button type="button" id="btnCobrarMedioPagoCaja" onClick="this.disabled=true;" class="btn btn-primary">Guardar e imprimir (F8)</button>
         </div>
         <!-- Observaciones facturacion -->
-        <div class="box-body" style="display: none; background-color: #f5c5ca" id="divVisualizarObservacionesFactura">
+        <div class="card-body" style="display: none; background-color: #f5c5ca" id="divVisualizarObservacionesFactura">
           <p>No se pudo autorizar el comprobante</p>
           <span id="impTicketCobroCajaObservacionFact" style="font-size: 12px;">
           </span>
@@ -746,7 +746,7 @@ IMPRIMIR TICKET CAJA
       </div>
       <!--CUERPO DEL MODAL-->
       <div class="modal-body">
-        <div class="box-body">
+        <div class="card-body">
     		<div class="alert " id="divEventoObservacionAprobada" style="" role="alert"></div>
             <div id="impTicketCobroCaja" style="font-size: 15px;">
              <br>
@@ -833,9 +833,9 @@ IMPRIMIR TICKET CAJA
       </div>
       <!-- PIE DEL MODAL-->
       <div class="modal-footer">
-        <button type="button" id="btnSalirTicketControl" class="btn btn-default pull-left" data-dismiss="modal">Salir (ESC)</button>
+        <button type="button" id="btnSalirTicketControl" class="btn btn-default float-start" data-bs-dismiss="modal">Salir (ESC)</button>
         <button type="button" id="btnImprimirTicketControl" class="btn btn-primary"><i class="fa fa-ticket" aria-hidden="true"></i> Ticket (F9)</button>
-        <button type="button" id="btnImprimirA4Control" class="btn btn-primary"><i class="fa fa-print" aria-hidden="true"></i> A4</button>
+        <button type="button" id="btnImprimirA4Control" class="btn btn-primary"><i class="bi bi-printer" aria-hidden="true"></i> A4</button>
         <button type="button" id="btnEnviarMailA4" class="btn btn-primary"><i class="fa fa-envelope" aria-hidden="true"></i> Mail</button>
       </div>
     </div>
@@ -868,7 +868,7 @@ AGREGAR PRODUCTO
 
       <div class="modal-body">
 
-        <div class="box-body">
+        <div class="card-body">
 
            <div class="form-group">
               
@@ -888,7 +888,7 @@ AGREGAR PRODUCTO
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-product-hunt"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-box-seam"></i></span> 
 
                 <input type="text" class="form-control" id="nuevaDescripcionCaja" name="nuevaDescripcionCaja" placeholder="Ingresar descripción">
 
@@ -953,7 +953,7 @@ AGREGAR PRODUCTO
 
       <div class="modal-footer">
 
-        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+        <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
         <button type="button" id="btnGuardarNuevoProductoCaja" class="btn btn-primary">Crear</button>
 

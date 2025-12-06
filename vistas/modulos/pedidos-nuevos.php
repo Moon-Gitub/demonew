@@ -12,7 +12,7 @@ if($_SESSION["perfil"] == "Vendedor"){
 }
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -24,7 +24,7 @@ if($_SESSION["perfil"] == "Vendedor"){
 
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Administrar pedidos internos</li>
     
@@ -34,13 +34,13 @@ if($_SESSION["perfil"] == "Vendedor"){
 
   <section class="content">
 
-    <div class="box">
+    <div class="card">
 
-      <div class="box-header with-border">
+      <div class="card-header with-border">
   
       </div>
 
-      <div class="box-body">
+      <div class="card-body">
         
        <table class="table table-bordered table-striped dt-responsive tablasPedidosInternosNuevos" width="100%">
          
@@ -116,11 +116,11 @@ if($_SESSION["perfil"] == "Vendedor"){
                       <center>
 					  
 							<button class="btn btn-info btnImprimirPedidoParcial" codigoPedido="'.$value["id"].'">
-								<i class="fa fa-print"></i>
+								<i class="bi bi-printer"></i>
 							</button>   
 							<button class="btn btn-warning btnEditarPedido" idPedido="'.$value["id"].'"><i class="fa fa-pencil"></i></button>
 							
-							<button class="btn btn-danger btnEliminarPedido" idPedido="'.$value["id"].'"><i class="fa fa-times"></i></button>';
+							<button class="btn btn-danger btnEliminarPedido" idPedido="'.$value["id"].'"><i class="bi bi-x"></i></button>';
 
                    
                       echo '</center>
@@ -163,7 +163,7 @@ MODAL EDITAR PEDIDO
 
         <div class="modal-header" style="background:#3c8dbc; color:white">
 
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 
           <h4 class="modal-title">Validar Pedido</h4>
 
@@ -175,7 +175,7 @@ MODAL EDITAR PEDIDO
 
         <div class="modal-body">
 
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADA PARA EL NOMBRE -->
             
@@ -205,7 +205,7 @@ MODAL EDITAR PEDIDO
 
         <div class="modal-footer">
 
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
           <button type="submit" class="btn btn-primary">Guardar cambios</button>
 

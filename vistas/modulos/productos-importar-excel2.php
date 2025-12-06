@@ -59,13 +59,13 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 </style>
-<div class="content-wrapper">
+<div class="app-content">
   <section class="content-header">
     <h1>
       Importar productos - <small>Versión Avanzada</small>
     </h1>
     <ol class="breadcrumb">
-      <li><a href="#"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       <li class="active">Importar productos</li>
     </ol>
   </section>
@@ -75,9 +75,9 @@ input:checked + .slider:before {
       EL FORMULARIO
       ======================================-->
       <div class="col-lg-6 col-xs-12">
-        <div class="box box-success">
-          <div class="box-header with-border">
-            <div class="pull-right">
+        <div class="card card-success">
+          <div class="card-header with-border">
+            <div class="float-end">
                 <!-- Rounded switch -->
                 <b>Avanzado</b>
                 <label class="switch">
@@ -87,8 +87,8 @@ input:checked + .slider:before {
             </div>
           </div>
           <form role="form" method="post" enctype="multipart/form-data">
-            <div class="box-body">
-              <div class="box">
+            <div class="card-body">
+              <div class="card">
                 </div>
                 <!--=====================================
                   ENTRADA PARA SUBIR ARCHIVO 
@@ -99,7 +99,7 @@ input:checked + .slider:before {
                   <img src="vistas/img/plantilla/excelbn.png" class="img-thumbnail previsualizar" width="100px">
                 </div>
           </div>
-          <div class="box-footer">
+          <div class="card-footer">
             <center><button type="submit" class="btn btn-primary">Subir Archivo</button></center>
           </div>
         </form>
@@ -112,16 +112,16 @@ input:checked + .slider:before {
       </div>
       <div class="col-lg-6 col-xs-12">
 
-        <div class="box box-danger">
+        <div class="card card-danger">
 
-          <div class="box-header with-border">
+          <div class="card-header with-border">
 
             Datos del archivo importado
 
           </div>
-          <div class="box-body">
+          <div class="card-body">
             
-              <div class="box">
+              <div class="card">
                 <form role="form" method="post">
                 <?php
                     
@@ -181,7 +181,7 @@ input:checked + .slider:before {
                 ?>
                 
                 <input type="hidden" name="ubicacionArchivoExcel" value="<?php echo $valorResult1; ?>">
-                <div class="box-footer">
+                <div class="card-footer">
                   <center><button type="submit" class="btn btn-success">Importar datos</button></center>
                 </div>
 

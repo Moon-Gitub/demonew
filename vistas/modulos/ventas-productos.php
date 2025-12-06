@@ -1,20 +1,20 @@
-<div class="content-wrapper">
+<div class="app-content">
   <section class="content-header">
     <h1>
       Informe ventas por productos
     </h1>
     <ol class="breadcrumb">
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
         <li class="active">Ventas por producto</li>
     </ol>
   </section>
 
   <section class="content">
-    <div class="box">
-      <div class="box-header with-border">
-         <button type="button" class="btn btn-default pull-right" id="btnInformeVentaProductoRango">
+    <div class="card">
+      <div class="card-header with-border">
+         <button type="button" class="btn btn-default float-end" id="btnInformeVentaProductoRango">
             <span>
-              <i class="fa fa-calendar"></i> 
+              <i class="bi bi-calendar"></i> 
               <?php
                 if(isset($_GET["fechaInicial"])){
                   echo $_GET["fechaInicial"]." - ".$_GET["fechaFinal"];
@@ -27,7 +27,7 @@
             <i class="fa fa-caret-down"></i>
          </button>
       </div>
-      <div class="box-body">
+      <div class="card-body">
        <table class="table table-bordered table-striped " id="tablaListarProductosPorVenta" width="100%">
         <thead>
          <tr>

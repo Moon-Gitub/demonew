@@ -62,7 +62,7 @@ if ($file = fopen("cotizacion", "r")) {
 }
 
 ?>
- <header class="main-header">
+ <header class="app-header">
     
     <!--=====================================
     LOGOTIPO
@@ -94,13 +94,13 @@ if ($file = fopen("cotizacion", "r")) {
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
                 <li class="dropdown tasks-menu" style="display: none" id="alertaTiempoSesionRestanteLi">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                       <i class="fa fa-clock-o"></i>
                       <span title="Tiempo restante de sesión" class="label label-danger" id="alertaTiempoSesionRestante"></span>
                     </a>
                 </li>
                 <li class="dropdown tasks-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
                       <img src="vistas/img/plantilla/afipicon.ico" >
                     </a>
                     <ul class="dropdown-menu">
@@ -124,7 +124,7 @@ if ($file = fopen("cotizacion", "r")) {
 
                                 } else {
 
-                                    echo '<i class="fa fa-times-circle-o fa-2x" style="color: red"></i></p>';
+                                    echo '<i class="bi bi-x-circle-o fa-2x" style="color: red"></i></p>';
 
                                     echo $msjError;
 
@@ -143,7 +143,7 @@ if ($file = fopen("cotizacion", "r")) {
 
             <?php if($objParametros->getPrecioDolar()) { ?>
                 <li class="dropdown tasks-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
                       <i class="fa fa-money"></i>
                     </a>
                     <ul class="dropdown-menu">
@@ -167,7 +167,7 @@ if ($file = fopen("cotizacion", "r")) {
                                   <li class="footer">
 
                                     <center>
-                                        <button class="btn btn-primary" data-toggle="modal" data-target="#modalNuevaCotizacion">
+                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevaCotizacion">
                           
                                       Nueva Cotización
 
@@ -185,7 +185,7 @@ if ($file = fopen("cotizacion", "r")) {
             
                 <li class="dropdown user user-menu">
                     
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
     
                     <?php
                     
@@ -231,7 +231,7 @@ MODAL NUEVA COTIZACION
         CABEZA DEL MODAL
         ======================================-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Nueva Cotización</h4>
         </div>
 
@@ -239,12 +239,12 @@ MODAL NUEVA COTIZACION
         CUERPO DEL MODAL
         ======================================-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADA PARA LA FECHA -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-calendar"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-calendar"></i></span> 
                 <?php
                     date_default_timezone_set('America/Argentina/Buenos_Aires');
                     $fecha = date('d-m-Y');
@@ -268,7 +268,7 @@ MODAL NUEVA COTIZACION
         PIE DEL MODAL
         ======================================-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
           <button type="submit" class="btn btn-primary">Guardar cotización</button>
         </div>
 

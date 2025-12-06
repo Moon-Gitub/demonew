@@ -17,7 +17,7 @@
 
  ?>
 
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -29,7 +29,7 @@
 
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Administrar ventas</li>
     
@@ -39,9 +39,9 @@
 
   <section class="content">
 
-    <div class="box">
+    <div class="card">
 
-      <div class="box-header with-border">
+      <div class="card-header with-border">
   
         <a class="btn btn-primary" href="ventas">
           
@@ -51,7 +51,7 @@
 
         <div class="btn-group">
           <a class="btn btn-primary" > Libro IVA digital</a>
-          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+          <a class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#">
             <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
           </a>
           <ul class="dropdown-menu">
@@ -72,10 +72,10 @@
 
         </a>
 
-        <button type="button" class="btn btn-default pull-right claseRangoLibroIva" id="daterange-btnLibroIvaVentas">
+        <button type="button" class="btn btn-default float-end claseRangoLibroIva" id="daterange-btnLibroIvaVentas">
          
           <span>
-            <i class="fa fa-calendar"></i> 
+            <i class="bi bi-calendar"></i> 
 
             <?php
 
@@ -98,7 +98,7 @@
 
       </div>
 
-      <div class="box-body">
+      <div class="card-body">
         
        <table class="table table-bordered table-striped dt-responsive tablasBotones" width="100%">
          

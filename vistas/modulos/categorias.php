@@ -1,4 +1,4 @@
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -10,7 +10,7 @@
 
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Administrar categorías</li>
     
@@ -20,11 +20,11 @@
 
   <section class="content">
 
-    <div class="box">
+    <div class="card">
 
-      <div class="box-header with-border">
+      <div class="card-header with-border">
   
-        <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarCategoria">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregarCategoria">
           
           Agregar categoría
 
@@ -32,7 +32,7 @@
 
       </div>
 
-      <div class="box-body">
+      <div class="card-body">
         
        <table class="table table-bordered table-striped dt-responsive tablas" width="100%">
          
@@ -71,11 +71,11 @@
 
                       <div class="btn-group">
                           
-                        <button title="Editar" class="btn btn-primary btnEditarCategoria" idCategoria="'.$value["id"].'" data-toggle="modal" data-target="#modalEditarCategoria"><i class="fa fa-pencil"></i></button>';
+                        <button title="Editar" class="btn btn-primary btnEditarCategoria" idCategoria="'.$value["id"].'" data-bs-toggle="modal" data-bs-target="#modalEditarCategoria"><i class="fa fa-pencil"></i></button>';
 
-                        echo '<button title="Modificar precio" class="btn btn-primary btnModificarPrecioCategoria" data-toggle="modal" data-target="#modalModificarPrecioCategoria" idCategoria="'.$value["id"].'" nombreCategoria="'.$value["categoria"].'"><i class="fa fa-sort"></i></button>';
+                        echo '<button title="Modificar precio" class="btn btn-primary btnModificarPrecioCategoria" data-bs-toggle="modal" data-bs-target="#modalModificarPrecioCategoria" idCategoria="'.$value["id"].'" nombreCategoria="'.$value["categoria"].'"><i class="fa fa-sort"></i></button>';
 
-                        echo '<button class="btn btn-danger btnEliminarCategoria" idCategoria="'.$value["id"].'"><i class="fa fa-times"></i></button>';
+                        echo '<button class="btn btn-danger btnEliminarCategoria" idCategoria="'.$value["id"].'"><i class="bi bi-x"></i></button>';
 
                       echo '</div>  
 
@@ -115,7 +115,7 @@ MODAL AGREGAR CATEGORÍA
 
         <div class="modal-header" style="background:#3c8dbc; color:white">
 
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 
           <h4 class="modal-title">Agregar categoría</h4>
 
@@ -127,7 +127,7 @@ MODAL AGREGAR CATEGORÍA
 
         <div class="modal-body">
 
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADA PARA EL NOMBRE -->
             
@@ -153,7 +153,7 @@ MODAL AGREGAR CATEGORÍA
 
         <div class="modal-footer">
 
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
           <button type="submit" class="btn btn-primary">Guardar categoría</button>
 
@@ -191,7 +191,7 @@ MODAL EDITAR CATEGORÍA
 
         <div class="modal-header" style="background:#3c8dbc; color:white">
 
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 
           <h4 class="modal-title">Editar categoría</h4>
 
@@ -203,7 +203,7 @@ MODAL EDITAR CATEGORÍA
 
         <div class="modal-body">
 
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADA PARA EL NOMBRE -->
             
@@ -233,7 +233,7 @@ MODAL EDITAR CATEGORÍA
 
         <div class="modal-footer">
 
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
           <button type="submit" class="btn btn-primary">Guardar cambios</button>
 
@@ -271,7 +271,7 @@ MODAL MODIFICAR PRECIO
 
         <div class="modal-header" style="background:#3c8dbc; color:white">
 
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 
           <h4 class="modal-title">Modificar precios</h4>
 
@@ -283,7 +283,7 @@ MODAL MODIFICAR PRECIO
 
         <div class="modal-body">
 
-          <div class="box-body">
+          <div class="card-body">
 
             <input type="hidden" id="idCategoriaNuevoPrecio" name="idCategoriaNuevoPrecio">
 
@@ -313,7 +313,7 @@ MODAL MODIFICAR PRECIO
 
         <div class="modal-footer">
 
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
           <button type="submit" class="btn btn-primary">Actualizar precios</button>
 

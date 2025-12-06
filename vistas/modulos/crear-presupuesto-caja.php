@@ -4,7 +4,7 @@
 
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content">
 
@@ -15,20 +15,20 @@
       ======================================-->
       <div class="col-lg-7 col-xs-12" >
         
-        <div class="box box-success">
+        <div class="card card-success">
           
-        <div class="box-header with-border" style="background-color: #000; color: #fff;">
+        <div class="card-header with-border" style="background-color: #000; color: #fff;">
           <div class="col-md-3 " style=" font-size: 20px">
                   <div class="form-group">
                     <label for="gross_amount" class="col-sm-12 control-label">Presupuesto</label>
                   </div>  
                 </div>
         </div>
-        <div class="box-header with-border">
+        <div class="card-header with-border">
 
           <form role="form" method="post" class="formularioVentaCaja" id="ventaCajaFormulario">
 
-            <!-- <div class="pull-right">
+            <!-- <div class="float-end">
               
             </div> -->
 
@@ -79,7 +79,7 @@
 
             </div>
 
-            <div class="box-body">
+            <div class="card-body">
 
            <!--=====================================
             ENTRADA DEL CLIENTE
@@ -94,7 +94,7 @@
                   <input type="text" class="form-control ui-autocomplete-input input-sm" id="autocompletarClienteCaja" name="autocompletarCliente" placeholder="1-Consumidor Final" autocomplete="off">
                   <input type="hidden" id="seleccionarCliente" name="seleccionarCliente" value="1">
 
-                  <span class="input-group-btn"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modalAgregarCliente" data-dismiss="modal">Agregar cliente</button></span>
+                  <span class="input-group-btn"><button type="button" class="btn btn-default btn-sm" data-bs-toggle="modal" data-bs-target="#modalAgregarCliente" data-bs-dismiss="modal">Agregar cliente</button></span>
 
                 </div>
 
@@ -170,7 +170,7 @@
 
           </div>
 
-          <div class="box-footer">
+          <div class="card-footer">
          
             <center><button type="submit" class="btn btn-primary" id="btnGuardarVentaCaja">Guardar</button></center>
 
@@ -187,11 +187,11 @@
 
       <div class="col-lg-5 text-md text-sm text-xs">
 
-        <div class="box box-warning">
+        <div class="card card-warning">
 
-          <div class="box-header with-border"></div>
+          <div class="card-header with-border"></div>
       
-            <div class="box-body">
+            <div class="card-body">
       
               <div class="row">
                           
@@ -205,7 +205,7 @@
                   
                     <div class="input-group">
                       
-                      <span class="input-group-addon"><i class="fa fa-user"></i></span> 
+                      <span class="input-group-addon"><i class="bi bi-person"></i></span> 
 
                       <input type="text" class="form-control input-sm" id="nuevoVendedor" value="<?php echo $_SESSION["nombre"]; ?>" readonly>
 
@@ -230,7 +230,7 @@
 
               </div>
               
-              <div class="box-body">
+              <div class="card-body">
 
                 <div class="row">
                           
@@ -280,9 +280,9 @@
 <!--precioProducto-->
 <div class="col-lg-5 text-md text-sm text-xs" id="consultarPrecio"  style="display:none"  >
 
-   <div class="box box-success">
+   <div class="card card-success">
 
-    <div class="box-header with-border"></div>
+    <div class="card-header with-border"></div>
     <section class="content-header">
     	<center><h1>Ingresar Codigo Producto</h1></center>
     	<hr>
@@ -326,14 +326,14 @@ MODAL AGREGAR CLIENTE
         CABEZA DEL MODAL
         ======================================-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Agregar cliente</h4>
         </div>
         <!--=====================================
         CUERPO DEL MODAL
         ======================================-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
             <!-- ENTRADA PARA EL DOCUMENTO ID -->
             <div class="form-group">
               <div class="input-group">
@@ -367,7 +367,7 @@ MODAL AGREGAR CLIENTE
             <!-- ENTRADA PARA EL NOMBRE -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-user"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
                 <input type="text" class="form-control " name="nuevoCliente" id="vtanuevoCliente" placeholder="Ingresar nombre o razón social" required>
               </div>
             </div>
@@ -420,7 +420,7 @@ MODAL AGREGAR CLIENTE
             <!-- ENTRADA PARA LA FECHA DE NACIMIENTO -->            
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-calendar"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-calendar"></i></span> 
                 <input type="text" class="form-control " name="nuevaFechaNacimiento" id="vtanuevaFechaNacimiento" placeholder="Ingresar fecha nacimiento" data-inputmask="'alias': 'yyyy/mm/dd'" data-mask>
               </div>
             </div>
@@ -439,7 +439,7 @@ MODAL AGREGAR CLIENTE
         PIE DEL MODAL
         ======================================-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
           <button id="btnGuardarClienteVenta"  class="btn btn-primary">Guardar cliente</button>
         </div>
     </div>
@@ -465,7 +465,7 @@ MODAL COBRAR VENTA
 
         <div class="modal-header" style="background:#3c8dbc; color:white">
 
-          <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+          <!-- <button type="button" class="close" data-bs-dismiss="modal">&times;</button> -->
 
           <h4 class="modal-title">Cobro de venta</h4>
 
@@ -477,7 +477,7 @@ MODAL COBRAR VENTA
 
         <div class="modal-body">
 
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADA PARA ID VENTA  -->
             <!-- <input type="text" name="ingresoCajaidVenta" id="ingresoCajaidVenta" value="ventas"> -->
@@ -510,7 +510,7 @@ MODAL COBRAR VENTA
               
                <div class="input-group">
 
-                  <!-- <span class="input-group-btn"><button type="button" class="btn btn-success agergarMedioPago" ><i class="fa fa-plus"></i></button></span> -->
+                  <!-- <span class="input-group-btn"><button type="button" class="btn btn-success agergarMedioPago" ><i class="bi bi-plus-circle"></i></button></span> -->
 
                 <select class="form-control" id="nuevoMetodoPagoCaja">
                   <option value="">Medio de pago</option>
@@ -700,14 +700,14 @@ MODAL COBRAR VENTA
 
         <div class="modal-footer">
 
-          <button type="button" id="btnSalirMedioPagoCaja" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" id="btnSalirMedioPagoCaja" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
           <button type="button" id="btnGuardarPresupuestoCaja" onClick="this.disabled=true;" class="btn btn-primary">Guardar e imprimir</button>
 
         </div>
 
                         <!-- Observaciones facturacion -->
-        <div class="box-body" style="display: none; background-color: #f5c5ca" id="divVisualizarObservacionesFactura">
+        <div class="card-body" style="display: none; background-color: #f5c5ca" id="divVisualizarObservacionesFactura">
           
           <p>No se pudo autorizar el comprobante</p>
           <span id="impTicketCobroCajaObservacionFact" style="font-size: 12px;">
@@ -738,7 +738,7 @@ IMPRIMIR TICKET CAJA
 
       <div class="modal-header" style="background:#3c8dbc; color:white">
 
-        <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+        <!-- <button type="button" class="close" data-bs-dismiss="modal">&times;</button> -->
 
         <h4 class="modal-title">Ticket</h4>
 
@@ -750,7 +750,7 @@ IMPRIMIR TICKET CAJA
 
       <div class="modal-body">
 
-        <div class="box-body">
+        <div class="card-body">
 
             <div id="impTicketCobroCaja" style="font-size: 15px;">
 
@@ -890,7 +890,7 @@ IMPRIMIR TICKET CAJA
 
       <div class="modal-footer">
 
-        <button type="button" id="btnSalirTicketPresupuesto" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+        <button type="button" id="btnSalirTicketPresupuesto" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
         <button type="button" id="btnImprimirTicketControl" class="btn btn-primary">Imprimir</button>
 
@@ -929,7 +929,7 @@ AGREGAR PRODUCTO
 
       <div class="modal-body">
 
-        <div class="box-body">
+        <div class="card-body">
 
            <div class="form-group">
               
@@ -949,7 +949,7 @@ AGREGAR PRODUCTO
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-product-hunt"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-box-seam"></i></span> 
 
                 <input type="text" class="form-control" id="nuevaDescripcionCaja" name="nuevaDescripcionCaja" placeholder="Ingresar descripción">
 
@@ -1026,7 +1026,7 @@ AGREGAR PRODUCTO
 
       <div class="modal-footer">
 
-        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+        <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
         <button type="button" id="btnGuardarNuevoProductoCaja" class="btn btn-primary">Crear</button>
 

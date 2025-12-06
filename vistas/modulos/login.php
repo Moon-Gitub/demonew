@@ -9,7 +9,7 @@
 
   </div>
 
-  <div class="login-box-body" style="background-color:#3d4751 ">
+  <div class="login-card-body" style="background-color:#3d4751 ">
 
     <p class="login-box-msg" style="color:#ffffff" ><b>Ingresar al sistema</b></p>
 

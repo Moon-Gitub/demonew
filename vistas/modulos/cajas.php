@@ -97,7 +97,7 @@
 
 <input type="hidden" id="numCaja" value="<?php echo $numeroCaja; ?>"> <!-- Este hidden lo uso para el rango de fechas -->
 
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
       <h1>
@@ -142,7 +142,7 @@
     </div>
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Administrar caja </li>
       
@@ -265,25 +265,25 @@
 
   <section class="content" style="padding-top: 0px"> 
 
-      <div class="box">
+      <div class="card">
 
        <nav class="navbar">
           <div class="container-fluid">
-            <div class="pull-left" data-example-id="split-button-dropdown">
+            <div class="float-start" data-example-id="split-button-dropdown">
               
               <div class="btn-group">
-                <a href="#" data-toggle="modal" data-target="#modalAgregarMovimientoCaja" data-dismiss="modal" class="btn btn-primary btn-sm menuCajaCentral">Agregar Movimientos</a>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#modalAgregarMovimientoCaja" data-bs-dismiss="modal" class="btn btn-primary btn-sm menuCajaCentral">Agregar Movimientos</a>
               </div><!-- /btn-group -->
 
               <div class="btn-group">
-                <a href="#" data-toggle="modal" data-target="#modalAgregarCierreCaja" data-dismiss="modal" class="btn btn-primary btn-sm" style="<?php echo $habilitoCierre; ?> ">Cierre caja</a>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#modalAgregarCierreCaja" data-bs-dismiss="modal" class="btn btn-primary btn-sm" style="<?php echo $habilitoCierre; ?> ">Cierre caja</a>
               </div>
           
               <div class="btn-group">
                 <button type="button" class="btn btn-default btn-sm" id="daterangeCajaCentral">
            
                     <span>
-                    <i class="fa fa-calendar"></i> 
+                    <i class="bi bi-calendar"></i> 
 
                     <?php
 
@@ -309,7 +309,7 @@
           </div>
         </div>
 
-      <div class="box-body">
+      <div class="card-body">
 
        <table class="table table-bordered table-striped dt-responsive" id="tablaCajaCentral" width="100%">
 
@@ -425,7 +425,7 @@ MODAL INGRESAR MOVIMIENTO
         CABEZA DEL MODAL
         ======================================-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Movimiento</h4>
         </div>
 
@@ -433,7 +433,7 @@ MODAL INGRESAR MOVIMIENTO
         CUERPO DEL MODAL
         ======================================-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
             <input type="hidden" id="idUsuarioMovimiento" name="idUsuarioMovimiento" value="<?php echo $_SESSION["id"]; ?>">
             <input type="hidden" id="ingresoCajaDesde" name="ingresoCajaDesde" value="cajas">
             <div class="form-group">
@@ -519,7 +519,7 @@ MODAL INGRESAR MOVIMIENTO
 
         <!--PIE DEL MODAL-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
           <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
 
@@ -543,13 +543,13 @@ MODAL CIERRE CAJA
 
         <!--CABEZA DEL MODAL-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Cierre Caja</h4>
         </div>
 
         <!--CUERPO DEL MODAL-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
 
             <input type="hidden" id="idUsuarioCierre" name="idUsuarioCierre" value="<?php echo $_SESSION["id"]; ?>">
             <input type="hidden" id="ultimoIdCajaCierre" name="ultimoIdCajaCierre" value="<?php echo $idParaCierre; ?>">
@@ -603,7 +603,7 @@ MODAL CIERRE CAJA
 
         <!--PIE DEL MODAL-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
           <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
 

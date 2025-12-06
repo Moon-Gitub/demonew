@@ -11,23 +11,23 @@ $totProductos = (count($productos) < 10) ? count($productos) : 10;
  ?>
 
 
-<div class="box box-primary">
+<div class="card card-primary">
 
-  <div class="box-header with-border">
+  <div class="card-header with-border">
 
-    <h3 class="box-title">Productos añadidos recientemente</h3>
+    <h3 class="card-title">Productos añadidos recientemente</h3>
 
-    <div class="box-tools pull-right">
+    <div class="card-tools float-end">
 
-      <button type="button" class="btn btn-box-tool" data-widget="collapse">
+      <button type="button" class="btn btn-tool" data-bs-toggle="collapse">
 
-        <i class="fa fa-minus"></i>
+        <i class="bi bi-dash"></i>
 
       </button>
 
-      <button type="button" class="btn btn-box-tool" data-widget="remove">
+      <button type="button" class="btn btn-tool" data-bs-dismiss="card">
 
-        <i class="fa fa-times"></i>
+        <i class="bi bi-x"></i>
 
       </button>
 
@@ -35,7 +35,7 @@ $totProductos = (count($productos) < 10) ? count($productos) : 10;
 
   </div>
   
-  <div class="box-body">
+  <div class="card-body">
 
     <ul class="products-list product-list-in-box">
 
@@ -57,7 +57,7 @@ $totProductos = (count($productos) < 10) ? count($productos) : 10;
 
             '.$productos[$i]["descripcion"].'
 
-            <span class="label label-warning pull-right">$'.$productos[$i]["precio_venta"].'</span>
+            <span class="label label-warning float-end">$'.$productos[$i]["precio_venta"].'</span>
 
           </a>
     
@@ -73,7 +73,7 @@ $totProductos = (count($productos) < 10) ? count($productos) : 10;
 
   </div>
 
-  <div class="box-footer text-center">
+  <div class="card-footer text-center">
 
     <a href="productos" class="uppercase">Ver todos los productos</a>
   

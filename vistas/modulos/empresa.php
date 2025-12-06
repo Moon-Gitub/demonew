@@ -8,19 +8,19 @@ if($_SESSION["perfil"] == "Vendedor"){
 }
 
 ?>
-<div class="content-wrapper">
+<div class="app-content">
   <section class="content-header">
     <h1>
       Administrar empresa
     </h1>
     <ol class="breadcrumb">
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       <li class="active">Administrar empresa</li>
     </ol>
   </section>
   <section class="content">
-    <div class="box">
-      <div class="box-body">
+    <div class="card">
+      <div class="card-body">
        <form role="form" method="post" enctype="multipart/form-data">
         <div class="row">
 
@@ -631,8 +631,8 @@ if($_SESSION["perfil"] == "Vendedor"){
         </div>
       </div>
     </div>
-    <div class="box-footer with-border">
-      <button type="submit" class="btn btn-primary pull-right">
+    <div class="card-footer with-border">
+      <button type="submit" class="btn btn-primary float-end">
         Guardar Empresa
       </button>
     </div>

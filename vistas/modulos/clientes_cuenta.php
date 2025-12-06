@@ -7,7 +7,7 @@
 
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -19,7 +19,7 @@
 
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Cuenta Corriente cliente</li>
     
@@ -56,11 +56,11 @@
 
     </div>
 
-    <div class="box">
+    <div class="card">
 
-      <div class="box-header with-border">
+      <div class="card-header with-border">
 
-        <a href="#" data-toggle="modal" data-target="#modalAgregarMovimiento" data-dismiss="modal">
+        <a href="#" data-bs-toggle="modal" data-bs-target="#modalAgregarMovimiento" data-bs-dismiss="modal">
 
           <button class="btn btn-primary">Agregar movimiento</button>
 
@@ -68,7 +68,7 @@
 
       </div>
 
-      <div class="box-body">
+      <div class="card-body">
         
        <table class="table table-bordered table-striped dt-responsive tablasBotonesCtaCteCliente2" width="100%">
          
@@ -155,14 +155,14 @@
                   if($value["tipo"]==1)    {
 
                     if(isset($value["numero_recibo"])) {
-                      echo '<a class="btn btn-success" href="recibo/'.$value["id"].'"  target="_blank"> <i class="fa fa-print"></i></a>';
+                      echo '<a class="btn btn-success" href="recibo/'.$value["id"].'"  target="_blank"> <i class="bi bi-printer"></i></a>';
                     }
 
                   } else {
 
                     if(isset($value["id_venta"])) {
 
-                      echo '<a class="btn btn-primary" href="comprobante/'.$venta["codigo"].'"  target="_blank"> <i class="fa fa-print"></i></a>';
+                      echo '<a class="btn btn-primary" href="comprobante/'.$venta["codigo"].'"  target="_blank"> <i class="bi bi-printer"></i></a>';
 
                     }
 
@@ -213,7 +213,7 @@ MODAL AGREGAR MOVIMIENTO
 
         <div class="modal-header" style="background:#3c8dbc; color:white">
 
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 
           <h4 class="modal-title">Movimientos Cta. Cte</h4>
 
@@ -225,7 +225,7 @@ MODAL AGREGAR MOVIMIENTO
 
         <div class="modal-body">
 
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADA PARA MEDIO PAGO  -->
             <!-- <input type="hidden" name="ingresoMedioPago" id="ingresoMedioPago"> -->
@@ -374,7 +374,7 @@ MODAL AGREGAR MOVIMIENTO
 
         <div class="modal-footer">
 
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
           <button type="submit" class="btn btn-primary">Guardar</button>
 

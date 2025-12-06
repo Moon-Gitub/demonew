@@ -42,15 +42,15 @@ $noRepetirNombres = array_unique($arrayClientes);
 VENDEDORES
 ======================================-->
 
-<div class="box box-primary">
+<div class="card card-primary">
 	
-	<div class="box-header with-border">
+	<div class="card-header with-border">
     
-    	<h3 class="box-title">Compradores</h3>
+    	<h3 class="card-title">Compradores</h3>
   
   	</div>
 
-  	<div class="box-body">
+  	<div class="card-body">
   		
 		<div class="chart-responsive">
 			

@@ -60,13 +60,13 @@ input:checked + .slider:before {
 }
 </style>
 
-<div class="content-wrapper">
+<div class="app-content">
   <section class="content-header">
     <h1>
       Importar productos - <small>Versión Básica</small>
     </h1>
     <ol class="breadcrumb">
-      <li><a href="#"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       <li class="active">Importar productos</li>
     </ol>
   </section>
@@ -76,9 +76,9 @@ input:checked + .slider:before {
       EL FORMULARIO
       ======================================-->
       <div class="col-lg-6 col-xs-12">
-        <div class="box box-success">
-          <div class="box-header with-border">
-            <div class="pull-right">
+        <div class="card card-success">
+          <div class="card-header with-border">
+            <div class="float-end">
                 <!-- Rounded switch -->
                 <b>Avanzado</b>
                 <label class="switch">
@@ -88,15 +88,15 @@ input:checked + .slider:before {
             </div>
           </div>
           <form role="form" method="post" enctype="multipart/form-data">
-            <div class="box-body">
-              <div class="box">
+            <div class="card-body">
+              <div class="card">
 
                 <!--=====================================
                 ENTRADA DEL PROVEEDOR
                 ======================================--> 
                 <div class="form-group">
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-users"></i></span>
+                    <span class="input-group-addon"><i class="bi bi-persons"></i></span>
                     <select class="form-control" id="seleccionarProveedor" name="seleccionarProveedor" required>
                     <option value="">Seleccionar proveedor</option>
                     <?php
@@ -121,7 +121,7 @@ input:checked + .slider:before {
                   <img src="vistas/img/plantilla/excelbn.png" class="img-thumbnail previsualizar" width="100px">
                 </div>
           </div>
-          <div class="box-footer">
+          <div class="card-footer">
             <center><button type="submit" class="btn btn-primary">Importar archivo</button></center>
           </div>
         </form>
@@ -135,15 +135,15 @@ input:checked + .slider:before {
       </div>
       <div class="col-lg-6 col-xs-12">
 
-        <div class="box box-danger">
+        <div class="card card-danger">
 
-          <div class="box-header with-border">
+          <div class="card-header with-border">
 
             Datos del archivo importado
 
           </div>
-          <div class="box-body">
-              <div class="box">
+          <div class="card-body">
+              <div class="card">
                 <?php
                     if(file_exists("vistas/dist/xlsx/detalle_datos_importados")){
                         $detalleTmp = file_get_contents("vistas/dist/xlsx/detalle_datos_importados");
@@ -161,15 +161,15 @@ input:checked + .slider:before {
     <div class="row">
       <div class="col-xs-12">
 
-        <div class="box box-primary">
+        <div class="card card-primary">
 
-          <div class="box-header with-border">
+          <div class="card-header with-border">
 
             Datos importados
 
           </div>
-            <div class="box-body">
-              <div class="box">
+            <div class="card-body">
+              <div class="card">
                 <table width="100" style="font-size: 10px" class="table table-bordered table-striped">
 
                   <thead>

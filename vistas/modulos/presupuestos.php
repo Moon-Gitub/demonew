@@ -18,7 +18,7 @@
 
  ?>
 
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -30,7 +30,7 @@
 
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Administrar presupuestos</li>
     
@@ -40,9 +40,9 @@
 
   <section class="content">
 
-    <div class="box">
+    <div class="card">
 
-      <div class="box-header with-border">
+      <div class="card-header with-border">
   
         <a href="crear-presupuesto-caja" class="btn btn-primary">Agregar presupuesto</a>
 
@@ -51,32 +51,32 @@
 
 /*
             echo '<a href="index.php?ruta=ventas&tipoLista=0&fechaInicial='.$fechaInicial.'&fechaFinal='.$fechaFinal.'" class="btn btn-primary" ><i class="fa fa-book fa-fw"></i> Ventas</a>
-            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+            <a class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#">
               <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
             </a>
 
             <ul class="dropdown-menu">
               
               <li>
-                <a href="index.php?ruta=ventas&tipoLista=1&fechaInicial='.$fechaInicial.'&fechaFinal='.$fechaFinal.'" ><i class="fa fa-circle-o fa-fw"></i> Adeudadas</a>
+                <a href="index.php?ruta=ventas&tipoLista=1&fechaInicial='.$fechaInicial.'&fechaFinal='.$fechaFinal.'" ><i class="bi bi-circle fa-fw"></i> Adeudadas</a>
               </li>
 
               <li>
-                <a class="" href="index.php?ruta=ventas&tipoLista=2&fechaInicial='.$fechaInicial.'&fechaFinal='.$fechaFinal.'"><i class="fa fa-circle-o fa-fw"></i> Cta. Cte.</a>
+                <a class="" href="index.php?ruta=ventas&tipoLista=2&fechaInicial='.$fechaInicial.'&fechaFinal='.$fechaFinal.'"><i class="bi bi-circle fa-fw"></i> Cta. Cte.</a>
               </li>
 
               <li>
-                <a class="" href="index.php?ruta=ventas&tipoLista=3&fechaInicial='.$fechaInicial.'&fechaFinal='.$fechaFinal.'"><i class="fa fa-circle-o fa-fw"></i> Autorizadas</a>
+                <a class="" href="index.php?ruta=ventas&tipoLista=3&fechaInicial='.$fechaInicial.'&fechaFinal='.$fechaFinal.'"><i class="bi bi-circle fa-fw"></i> Autorizadas</a>
               </li>              
             </ul>';
 */
           ?>
         </div>
 
-         <button type="button" class="btn btn-default pull-right" id="PresupuestosDaterange-btn">
+         <button type="button" class="btn btn-default float-end" id="PresupuestosDaterange-btn">
            
             <span>
-              <i class="fa fa-calendar"></i> 
+              <i class="bi bi-calendar"></i> 
 
               <?php
 
@@ -99,7 +99,7 @@
 
       </div>
 
-      <div class="box-body">
+      <div class="card-body">
         
        <table class="table table-bordered table-striped dt-responsive" id="tablaListarPresupuestos" width="100%">
          
@@ -163,9 +163,9 @@
                       
                        <button title="Pasar a venta" class="btn btn-primary btnPresupuestoAVenta" idPresupuesto="'.$value["id"].'"><i class="fa fa-check"></i></button>';
 
-                        echo '<button class="btn btn-primary btnImprimirPresupuesto" idPresupuesto="'.$value["id"].'"><i class="fa fa-print"></i></button>';
+                        echo '<button class="btn btn-primary btnImprimirPresupuesto" idPresupuesto="'.$value["id"].'"><i class="bi bi-printer"></i></button>';
 
-                        echo '<button class="btn btn-danger btnEliminarPresupuesto" idPresupuesto="'.$value["id"].'"><i class="fa fa-times"></i></button>
+                        echo '<button class="btn btn-danger btnEliminarPresupuesto" idPresupuesto="'.$value["id"].'"><i class="bi bi-x"></i></button>
 
 
                     </div>

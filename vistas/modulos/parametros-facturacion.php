@@ -1,4 +1,4 @@
-<div class="content-wrapper">
+<div class="app-content">
 
 	<section class="content" style="padding-top: 0px"> 
 <?php

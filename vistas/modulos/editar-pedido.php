@@ -1,4 +1,4 @@
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -10,7 +10,7 @@
 
     <ol class="breadcrumb">
       
-      <li><a href="#"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Validar pedido</li>
     
@@ -28,9 +28,9 @@
       
       <div class="col-lg-5 col-xs-12">
         
-        <div class="box box-success">
+        <div class="card card-success">
           
-          <div class="box-header with-border"></div>
+          <div class="card-header with-border"></div>
 
           <!--<form role="form" action="../layunta/vistas/modulos/procesar.php" method="post" class="formularioPedidoValidar">-->
 		  
@@ -38,7 +38,7 @@
 		  
 		  <input type="hidden" name="token" value="<?php echo $_SESSION['token'] ?>" />
 
-			<div class="box-body">
+			<div class="card-body">
   
                <div class="row">
                   
@@ -59,7 +59,7 @@
                 
                   <div class="input-group">
                     
-                    <span class="input-group-addon"><i class="fa fa-user"></i></span> 
+                    <span class="input-group-addon"><i class="bi bi-person"></i></span> 
 
                     <input type="text" class="form-control" id="idVendedorVisual" value="<?php echo $pedido["id_vendedor"]; ?>" readonly>
 
@@ -138,7 +138,7 @@
 
                           <div class="input-group">
 
-                            <span class="input-group-btn"><button type="button" class="btn btn-danger btn-sm quitarProductoValidar" idProducto="'.$value["id"].'"><i class="fa fa-times"></i></button></span>
+                            <span class="input-group-btn"><button type="button" class="btn btn-danger btn-sm quitarProductoValidar" idProducto="'.$value["id"].'"><i class="bi bi-x"></i></button></span>
 
                             <input type="text" title="'.$value["descripcion"].'" class="form-control input-sm nuevaDescripcionProducto" idProducto="'.$value["id"].'" name="agregarProducto" value="'.$value["descripcion"].'" readonly required>
 
@@ -181,7 +181,7 @@
 
           </div>
 
-          <div class="box-footer">
+          <div class="card-footer">
 
             <!--<center><button type="submit" class="btn btn-primary" onClick="this.disabled=true;">Validar pedido</button></center>-->
 	    <center><button type="submit" class="btn btn-primary" >Validar pedido</button></center>
@@ -207,11 +207,11 @@
 
       <div class="col-lg-7 col-xs-12">
         
-        <div class="box box-warning">
+        <div class="card card-warning">
 
-          <div class="box-header with-border"></div>
+          <div class="card-header with-border"></div>
 
-          <div class="box-body">
+          <div class="card-body">
             
             <table class="table table-bordered table-striped dt-responsive" id="tablaPedidos" width="100%">
 

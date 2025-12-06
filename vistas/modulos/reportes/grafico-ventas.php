@@ -19,17 +19,17 @@ $respuesta = ControladorVentas::ctrRangoVentasPorMesAnio($fechaInicial, $fechaFi
 <!--=====================================
 GRÁFICO DE VENTAS
 ======================================-->
-<div class="box box-solid bg-teal-gradient">
+<div class="card box-solid bg-teal-gradient">
 	
-	<div class="box-header">
+	<div class="card-header">
 		
  		<i class="fa fa-th"></i>
 
-  		<h3 class="box-title">Gráfico de Ventas</h3>
+  		<h3 class="card-title">Gráfico de Ventas</h3>
 
 	</div>
 
-	<div class="box-body border-radius-none nuevoGraficoVentas">
+	<div class="card-body border-radius-none nuevoGraficoVentas">
 
 		<div class="chart" id="line-chart-ventas" style="height: 250px;"></div>
 

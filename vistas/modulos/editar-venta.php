@@ -29,7 +29,7 @@
           
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
 
     <input type="hidden" id="estoyEditando" value="1">
 
@@ -37,13 +37,13 @@
 
       <h1>
 
-        Ver-Editar venta N°: <b><?php echo $venta["codigo"] . '</b> | <a href="comprobante/'.$venta["codigo"].'"><i class="fa fa-print fa-fw"></i> </a> | <a href="extensiones/vendor/tecnickcom/tcpdf/pdf/comprobanteMail.php?codigo='.$venta["codigo"].'"><i class="fa fa-envelope fa-fw"></i> </a>'; ?>
+        Ver-Editar venta N°: <b><?php echo $venta["codigo"] . '</b> | <a href="comprobante/'.$venta["codigo"].'"><i class="bi bi-printer fa-fw"></i> </a> | <a href="extensiones/vendor/tecnickcom/tcpdf/pdf/comprobanteMail.php?codigo='.$venta["codigo"].'"><i class="fa fa-envelope fa-fw"></i> </a>'; ?>
 
       </h1>
 
     <ol class="breadcrumb">
       
-      <li><a href="#"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Ver-Editar venta</li>
     
@@ -61,7 +61,7 @@
       
       <div class="col-lg-7 col-xs-12">
         
-        <div class="box box-success" <?php echo $boxDisabled; ?>>
+        <div class="card card-success" <?php echo $boxDisabled; ?>>
 
           <?php 
 
@@ -135,7 +135,7 @@
 
             <input type="hidden" name="idVendedor" value="<?php echo $venta["id_vendedor"]; ?>">
 
-            <div class="box-body">
+            <div class="card-body">
 
               <div class="row" style="padding-top: 0px;">
   
@@ -239,7 +239,7 @@
 
               <div class="input-group">
 
-                  <span class="input-group-addon" style="background-color: #ddd"><i class="fa fa-calendar-o"></i></span>
+                  <span class="input-group-addon" style="background-color: #ddd"><i class="bi bi-calendar-o"></i></span>
 
                   <input type="text" class="form-control input-sm" id="editarFecEmision" name="editarFecEmision" placeholder="Ingrese fecha" value="<?php echo date('d-m-Y', strtotime($venta['fecha']));?>">
 
@@ -288,7 +288,7 @@
 
                 <div class="input-group">
 
-                  <span title="Concepto" class="input-group-addon" style="background-color: #ddd"><i class="fa fa-circle-o"></i></span>
+                  <span title="Concepto" class="input-group-addon" style="background-color: #ddd"><i class="bi bi-circle"></i></span>
 
                     <?php 
                     $arrConceptos = [ 
@@ -393,7 +393,7 @@
 
                     <input type="hidden" id="seleccionarCliente" name="seleccionarCliente" value="<?php echo $cliente["id"]; ?>">
 
-                    <span class="input-group-btn"><button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalAgregarCliente" data-dismiss="modal">Agregar cliente</button></span>
+                    <span class="input-group-btn"><button type="button" class="btn btn-default" data-bs-toggle="modal" data-bs-target="#modalAgregarCliente" data-bs-dismiss="modal">Agregar cliente</button></span>
                   
                   </div>
                 
@@ -437,7 +437,7 @@
               
                             <div class="input-group">
                   
-                              <span class="input-group-btn"><button type="button" class="btn btn-danger quitarProducto" idProducto="'.$value["id"].'"><i class="fa fa-times"></i></button></span>
+                              <span class="input-group-btn"><button type="button" class="btn btn-danger quitarProducto" idProducto="'.$value["id"].'"><i class="bi bi-x"></i></button></span>
 
                               <input type="text" class="form-control nuevaDescripcionProducto" idProducto="'.$value["id"].'" name="agregarProducto" value="'.$value["descripcion"].'" readonly required>
 
@@ -473,7 +473,7 @@
               
                   //           <div class="input-group">
                   
-                  //             <span class="input-group-btn"><button type="button" class="btn btn-danger quitarProducto" idProducto="'.$value["id"].'"><i class="fa fa-times"></i></button></span>
+                  //             <span class="input-group-btn"><button type="button" class="btn btn-danger quitarProducto" idProducto="'.$value["id"].'"><i class="bi bi-x"></i></button></span>
 
                   //             <input type="text" class="form-control nuevaDescripcionProducto nuevoProductoLibre" idProducto="'.$value["id"].'" name="agregarProducto" value="'.$value["descripcion"].'" required>
 
@@ -735,7 +735,7 @@
       
           </div>
 
-          <div class="box-footer">
+          <div class="card-footer">
 
             <?php 
 
@@ -755,7 +755,7 @@
 
             ?>
 
-            <button type="submit" <?php echo $btnEditarVenta; ?>  class="btn btn-primary pull-right">Guardar cambios</button>
+            <button type="submit" <?php echo $btnEditarVenta; ?>  class="btn btn-primary float-end">Guardar cambios</button>
 
           </div>
 
@@ -778,9 +778,9 @@
 
 <!--       <div class="col-lg-7 hidden-md hidden-sm hidden-xs">
         
-        <div class="box box-warning">
+        <div class="card card-warning">
 
-          <div class="box-body" <?php echo $divDisabled; ?>>
+          <div class="card-body" <?php echo $divDisabled; ?>>
             
             <table class="table table-bordered table-striped dt-responsive " id="tablaVentas">
               
@@ -832,7 +832,7 @@ MODAL AGREGAR CLIENTE
 
         <div class="modal-header" style="background:#3c8dbc; color:white">
 
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 
           <h4 class="modal-title">Agregar cliente</h4>
 
@@ -844,7 +844,7 @@ MODAL AGREGAR CLIENTE
 
         <div class="modal-body">
 
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADA PARA TIPO DOCUMENTO -->
             
@@ -894,7 +894,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-user"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
 
                 <input type="text" class="form-control input-lg" name="nuevoCliente" placeholder="Ingresar nombre o razón social" required>
 
@@ -977,7 +977,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-calendar"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-calendar"></i></span> 
 
                 <input type="text" class="form-control input-lg" name="nuevaFechaNacimiento" placeholder="Ingresar fecha nacimiento" data-inputmask="'alias': 'yyyy/mm/dd'" data-mask>
 
@@ -995,7 +995,7 @@ MODAL AGREGAR CLIENTE
 
         <div class="modal-footer">
 
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
           <button type="submit" class="btn btn-primary">Guardar cliente</button>
 
@@ -1028,7 +1028,7 @@ MODAL DETALLE PRODUCTOS
 
       <div class="modal-header">
 
-        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <button type="button" class="close" data-bs-dismiss="modal"><span>&times;</span></button>
 
         <h4 class="modal-title" id="myModalLabel">Detalles de articulo</h4>
 
@@ -1179,7 +1179,7 @@ MODAL DETALLE PRODUCTOS
 
       <div class="modal-footer">
 
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cerrar</button>
 
       </div>
 

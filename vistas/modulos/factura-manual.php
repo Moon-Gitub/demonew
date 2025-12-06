@@ -12,7 +12,7 @@
 
         <div class="modal-header" style="background:#3c8dbc; color:white">
 
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 
           <h4 class="modal-title">Factura Manual</h4>
 
@@ -24,7 +24,7 @@
 
         <div class="modal-body">
 
-          <div class="box-body">
+          <div class="card-body">
 
           
            <!-- ENTRADA PARA EL CantReg -->
@@ -319,7 +319,7 @@
 
         <div class="modal-footer">
 
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
           <button type="submit" class="btn btn-primary">Enviar Factura</button>
 

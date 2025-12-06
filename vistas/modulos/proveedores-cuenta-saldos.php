@@ -6,7 +6,7 @@
 
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -18,7 +18,7 @@
 
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Administrar proveedores</li>
     
@@ -28,9 +28,9 @@
 
   <section class="content">
 
-    <div class="box">
+    <div class="card">
 
-      <div class="box-header with-border">
+      <div class="card-header with-border">
   
       <div class="row">
 
@@ -42,7 +42,7 @@
           </a>
         </div>
       
-        <div class="pull-right col-lg-3 col-xs-6">
+        <div class="float-end col-lg-3 col-xs-6">
 
           <div class="small-box <?php echo $colorBox; ?>">
             
@@ -60,7 +60,7 @@
             
             </div>
             
-            <!--<a href="clientes-cuenta-saldo" class="small-box-footer">
+            <!--<a href="clientes-cuenta-saldo" class="small-card-footer">
               
               Más info <i class="fa fa-arrow-circle-right"></i>
             
@@ -74,7 +74,7 @@
 
       </div>
 
-      <div class="box-body">
+      <div class="card-body">
         
        <table class="table table-bordered table-striped dt-responsive tablasBotones" width="100%">
          

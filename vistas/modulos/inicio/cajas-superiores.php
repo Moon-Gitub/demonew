@@ -53,23 +53,23 @@ foreach ($ventasHoy as $key => $value) {
 
 ?>
 
-<div class="box" >
+<div class="card" >
 
-  <div class="box-header with-border">
+  <div class="card-header with-border d-flex justify-content-between align-items-center">
 
-    <h3 class="box-title">Ventas</h3>
+    <h3 class="card-title mb-0">Ventas</h3>
 
-    <div class="box-tools pull-right">
+    <div class="card-tools">
 
-      <button type="button" class="btn btn-box-tool" data-widget="collapse">
+      <button type="button" class="btn btn-tool" data-bs-toggle="collapse" data-bs-target="#ventasCard">
 
-        <i class="fa fa-minus"></i>
+        <i class="bi bi-dash"></i>
 
       </button>
 
-      <button type="button" class="btn btn-box-tool" data-widget="remove">
+      <button type="button" class="btn btn-tool" data-bs-dismiss="card">
 
-        <i class="fa fa-times"></i>
+        <i class="bi bi-x"></i>
 
       </button>
 
@@ -77,7 +77,7 @@ foreach ($ventasHoy as $key => $value) {
 
   </div>
   
-  <div class="box-body">
+  <div class="card-body" id="ventasCard">
 
     <div class="col-lg-3 col-xs-6">
 
@@ -97,7 +97,7 @@ foreach ($ventasHoy as $key => $value) {
         
         </div>
         
-        <a href="index.php?ruta=ventas&fechaInicial=<?php echo $fechaInicialHoy;?>&fechaFinal=<?php echo $fechaFinalHoy;?>" class="small-box-footer">
+        <a href="index.php?ruta=ventas&fechaInicial=<?php echo $fechaInicialHoy;?>&fechaFinal=<?php echo $fechaFinalHoy;?>" class="small-card-footer">
           
           Más info <i class="fa fa-arrow-circle-right"></i>
         
@@ -161,7 +161,7 @@ foreach ($ventasHoy as $key => $value) {
         
         </div>
         
-        <a href="index.php?ruta=ventas&fechaInicial=<?php echo $fechaInicialSemanaAnterior;?>&fechaFinal=<?php echo $fechaFinalSemanaAnterior;?>" class="small-box-footer">
+        <a href="index.php?ruta=ventas&fechaInicial=<?php echo $fechaInicialSemanaAnterior;?>&fechaFinal=<?php echo $fechaFinalSemanaAnterior;?>" class="small-card-footer">
           
           Más info <i class="fa fa-arrow-circle-right"></i>
         
@@ -225,7 +225,7 @@ foreach ($ventasHoy as $key => $value) {
         
         </div>
         
-        <a href="index.php?ruta=ventas&fechaInicial=<?php echo $fechaInicialMes;?>&fechaFinal=<?php echo $fechaFinalMes;?>" class="small-box-footer">
+        <a href="index.php?ruta=ventas&fechaInicial=<?php echo $fechaInicialMes;?>&fechaFinal=<?php echo $fechaFinalMes;?>" class="small-card-footer">
 
           Más info <i class="fa fa-arrow-circle-right"></i>
 
@@ -290,7 +290,7 @@ foreach ($ventasHoy as $key => $value) {
         
         </div>
         
-        <a href="index.php?ruta=ventas&fechaInicial=<?php echo $fechaInicialMesAnterior;?>&fechaFinal=<?php echo $fechaFinalMesAnterior;?>" class="small-box-footer">
+        <a href="index.php?ruta=ventas&fechaInicial=<?php echo $fechaInicialMesAnterior;?>&fechaFinal=<?php echo $fechaFinalMesAnterior;?>" class="small-card-footer">
           
           Más info <i class="fa fa-arrow-circle-right"></i>
         

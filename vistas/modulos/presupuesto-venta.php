@@ -16,7 +16,7 @@
 
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content">
 
@@ -27,13 +27,13 @@
       ======================================-->
       <div class="col-lg-7 col-xs-12" >
         
-        <div class="box box-success">
+        <div class="card card-success">
           
-        <div class="box-header with-border">
+        <div class="card-header with-border">
 
           <form role="form" method="post" class="formularioVentaCaja" id="ventaCajaFormulario">
 			<input type="hidden" id="idPresupuesto" name="idPresupuesto" value="<?php echo $_GET["idPresupuesto"]; ?>">
-            <!-- <div class="pull-right">
+            <!-- <div class="float-end">
               
             </div> -->
 
@@ -85,7 +85,7 @@
 
             </div>
 
-            <div class="box-body">
+            <div class="card-body">
 
             <div class="row">
               <div class="col-md-4">
@@ -142,7 +142,7 @@
               <div class="col-md-4">
                 <div class="input-group">
 
-                <span title="Concepto" class="input-group-addon" style="background-color: #ddd"><i class="fa fa-circle-o"></i></span>
+                <span title="Concepto" class="input-group-addon" style="background-color: #ddd"><i class="bi bi-circle"></i></span>
 
                   <?php 
                   $arrConceptos = [ 
@@ -240,7 +240,7 @@
 
                     <input type="hidden" id="seleccionarCliente" name="seleccionarCliente" value="<?php echo $cliente["id"]; ?>">
 
-                    <span class="input-group-btn"><button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalAgregarCliente" data-dismiss="modal">Agregar cliente</button></span>
+                    <span class="input-group-btn"><button type="button" class="btn btn-default" data-bs-toggle="modal" data-bs-target="#modalAgregarCliente" data-bs-dismiss="modal">Agregar cliente</button></span>
                   
                   </div>
                 
@@ -290,7 +290,7 @@
               
                             <div class="input-group">
                   
-                              <span class="input-group-btn"><button type="button" class="btn btn-danger quitarProductoCaja" idProducto="'.$value["id"].'"><i class="fa fa-times"></i></button></span>
+                              <span class="input-group-btn"><button type="button" class="btn btn-danger quitarProductoCaja" idProducto="'.$value["id"].'"><i class="bi bi-x"></i></button></span>
 
                               <input type="text" class="form-control nuevaDescripcionProductoCaja" idProducto="'.$value["id"].'" name="agregarProducto" value="'.$value["descripcion"].'" readonly required>
 							  
@@ -342,7 +342,7 @@
               
                             <div class="input-group">
                   
-                              <span class="input-group-btn"><button type="button" class="btn btn-danger quitarProductoCaja" idProducto="'.$value["id"].'"><i class="fa fa-times"></i></button></span>
+                              <span class="input-group-btn"><button type="button" class="btn btn-danger quitarProductoCaja" idProducto="'.$value["id"].'"><i class="bi bi-x"></i></button></span>
 
                               <input type="text" class="form-control nuevaDescripcionProductoCaja nuevoProductoLibre" idProducto="'.$value["id"].'" name="agregarProducto" value="'.$value["descripcion"].'" required>
 								
@@ -435,7 +435,7 @@
 
           </div>
 
-          <div class="box-footer">
+          <div class="card-footer">
          
             <center><button type="submit" class="btn btn-primary" id="btnGuardarVentaCaja">Guardar</button></center>
 
@@ -452,11 +452,11 @@
 
       <div class="col-lg-5 text-md text-sm text-xs">
 
-        <div class="box box-warning">
+        <div class="card card-warning">
 
-          <div class="box-header with-border"></div>
+          <div class="card-header with-border"></div>
       
-            <div class="box-body">
+            <div class="card-body">
       
               <div class="row">
                           
@@ -470,7 +470,7 @@
                   
                     <div class="input-group">
                       
-                      <span class="input-group-addon"><i class="fa fa-user"></i></span> 
+                      <span class="input-group-addon"><i class="bi bi-person"></i></span> 
 
                       <input type="text" class="form-control input-sm" id="nuevoVendedor" value="<?php echo $_SESSION["nombre"]; ?>" readonly>
 
@@ -495,7 +495,7 @@
 
               </div>
               
-              <div class="box-body">
+              <div class="card-body">
 
                 <div class="row">
                           
@@ -544,15 +544,15 @@
 
 <!--Slide-->
 <!-- <div class="col-lg-5 text-md text-sm text-xs" id="slide">
-	 <div class="box box-success">
+	 <div class="card card-success">
 
-          <div class="box-header with-border"></div>
+          <div class="card-header with-border"></div>
           <div id="myCarousel" class="carousel slide" data-ride="carousel">
 
     <ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
+        <li data-bs-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-bs-target="#myCarousel" data-slide-to="1"></li>
+        <li data-bs-target="#myCarousel" data-slide-to="2"></li>
     </ol>
 
 
@@ -586,9 +586,9 @@
 <!--precioProducto-->
 <div class="col-lg-5 text-md text-sm text-xs" id="consultarPrecio"  style="display:none"  >
 
-   <div class="box box-success">
+   <div class="card card-success">
 
-    <div class="box-header with-border"></div>
+    <div class="card-header with-border"></div>
     <section class="content-header">
     	<center><h1>Ingresar Codigo Producto</h1></center>
     	<hr>
@@ -641,7 +641,7 @@ MODAL AGREGAR CLIENTE
 
         <div class="modal-header" style="background:#3c8dbc; color:white">
 
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 
           <h4 class="modal-title">Agregar cliente</h4>
 
@@ -653,7 +653,7 @@ MODAL AGREGAR CLIENTE
 
         <div class="modal-body">
 
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADA PARA TIPO DOCUMENTO -->
             
@@ -703,7 +703,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-user"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
 
                 <input type="text" class="form-control input-lg" name="nuevoCliente" placeholder="Ingresar nombre o razón social" required>
 
@@ -786,7 +786,7 @@ MODAL AGREGAR CLIENTE
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-calendar"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-calendar"></i></span> 
 
                 <input type="text" class="form-control input-lg" name="nuevaFechaNacimiento" placeholder="Ingresar fecha nacimiento" data-inputmask="'alias': 'yyyy/mm/dd'" data-mask>
 
@@ -804,7 +804,7 @@ MODAL AGREGAR CLIENTE
 
         <div class="modal-footer">
 
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
           <button type="submit" class="btn btn-primary">Guardar cliente</button>
 
@@ -843,7 +843,7 @@ MODAL COBRAR VENTA
 
         <div class="modal-header" style="background:#3c8dbc; color:white">
 
-          <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+          <!-- <button type="button" class="close" data-bs-dismiss="modal">&times;</button> -->
 
           <h4 class="modal-title">Cobro de venta</h4>
 
@@ -855,7 +855,7 @@ MODAL COBRAR VENTA
 
         <div class="modal-body">
 
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADA PARA ID VENTA  -->
             <!-- <input type="text" name="ingresoCajaidVenta" id="ingresoCajaidVenta" value="ventas"> -->
@@ -888,7 +888,7 @@ MODAL COBRAR VENTA
               
                <div class="input-group">
 
-                  <!-- <span class="input-group-btn"><button type="button" class="btn btn-success agergarMedioPago" ><i class="fa fa-plus"></i></button></span> -->
+                  <!-- <span class="input-group-btn"><button type="button" class="btn btn-success agergarMedioPago" ><i class="bi bi-plus-circle"></i></button></span> -->
 
                 <select class="form-control" id="nuevoMetodoPagoCaja">
                   <option value="">Medio de pago</option>
@@ -1080,14 +1080,14 @@ MODAL COBRAR VENTA
 
         <div class="modal-footer">
 
-          <button type="button" id="btnSalirMedioPagoCaja" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" id="btnSalirMedioPagoCaja" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
           <button type="button" id="btnCobrarMedioPagoCaja" onClick="this.disabled=true;" class="btn btn-primary">Guardar e imprimir</button>
 
         </div>
 
                         <!-- Observaciones facturacion -->
-        <div class="box-body" style="display: none; background-color: #f5c5ca" id="divVisualizarObservacionesFactura">
+        <div class="card-body" style="display: none; background-color: #f5c5ca" id="divVisualizarObservacionesFactura">
           
           <p>No se pudo autorizar el comprobante</p>
           <span id="impTicketCobroCajaObservacionFact" style="font-size: 12px;">
@@ -1118,7 +1118,7 @@ IMPRIMIR TICKET CAJA
 
       <div class="modal-header" style="background:#3c8dbc; color:white">
 
-        <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+        <!-- <button type="button" class="close" data-bs-dismiss="modal">&times;</button> -->
 
         <h4 class="modal-title">Ticket</h4>
 
@@ -1130,7 +1130,7 @@ IMPRIMIR TICKET CAJA
 
       <div class="modal-body">
 
-        <div class="box-body">
+        <div class="card-body">
 
             <div id="impTicketCobroCaja" style="font-size: 15px;">
 
@@ -1270,7 +1270,7 @@ IMPRIMIR TICKET CAJA
 
       <div class="modal-footer">
 
-        <button type="button" id="btnSalirTicketControl" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+        <button type="button" id="btnSalirTicketControl" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
         <button type="button" id="btnImprimirTicketControl" class="btn btn-primary">Imprimir</button>
 
@@ -1309,7 +1309,7 @@ AGREGAR PRODUCTO
 
       <div class="modal-body">
 
-        <div class="box-body">
+        <div class="card-body">
 
            <div class="form-group">
               
@@ -1329,7 +1329,7 @@ AGREGAR PRODUCTO
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-product-hunt"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-box-seam"></i></span> 
 
                 <input type="text" class="form-control" id="nuevaDescripcionCaja" name="nuevaDescripcionCaja" placeholder="Ingresar descripción">
 
@@ -1406,7 +1406,7 @@ AGREGAR PRODUCTO
 
       <div class="modal-footer">
 
-        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+        <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
         <button type="button" id="btnGuardarNuevoProductoCaja" class="btn btn-primary">Crear</button>
 

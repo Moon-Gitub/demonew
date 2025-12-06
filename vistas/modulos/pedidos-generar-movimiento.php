@@ -1,4 +1,4 @@
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -10,7 +10,7 @@
 
     <ol class="breadcrumb">
       
-      <li><a href="#"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Cargar pedido</li>
     
@@ -28,12 +28,12 @@
 
       <div class="col-lg-5 col-xs-12">
         
-        <div class="box box-success">
+        <div class="card card-success">
           
-          <div class="box-header with-border"></div>
+          <div class="card-header with-border"></div>
 
           <form role="form" method="post" class="formularioPedido">
-			 <div class="box-body">
+			 <div class="card-body">
   
                <div class="row">
                   
@@ -46,7 +46,7 @@
                 
                   <div class="input-group">
                     
-                    <span class="input-group-addon"><i class="fa fa-user"></i></span> 
+                    <span class="input-group-addon"><i class="bi bi-person"></i></span> 
 					<input type="hidden" name="urlActual" id="urlActual" value="0">
                     <input type="text" class="form-control" id="nuevoVendedor" value="<?php echo $_SESSION["nombre"]; ?>" readonly>
 
@@ -180,7 +180,7 @@
 		</tr>
 		</table>
 </div>
-          <div class="box-footer">
+          <div class="card-footer">
 
             <center><button type="submit" class="btn btn-primary" >Cargar pedido</button></center>
 
@@ -205,11 +205,11 @@
 
       <div class="col-lg-7 col-xs-12">
         
-        <div class="box box-warning">
+        <div class="card card-warning">
 
-          <div class="box-header with-border"></div>
+          <div class="card-header with-border"></div>
 
-          <div class="box-body">
+          <div class="card-body">
             
            <table class="table table-bordered table-striped dt-responsive" id="tablaPedidos" width="100%">
 

@@ -15,7 +15,7 @@
   }
 
  ?>
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -27,7 +27,7 @@
 
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Administrar cierres caja</li>
     
@@ -37,13 +37,13 @@
 
   <section class="content">
 
-    <div class="box">
+    <div class="card">
 
-      <div class="box-header">
-        <button type="button" class="btn btn-default pull-right" id="daterangeCierresCajas">
+      <div class="card-header">
+        <button type="button" class="btn btn-default float-end" id="daterangeCierresCajas">
            
             <span>
-              <i class="fa fa-calendar"></i> 
+              <i class="bi bi-calendar"></i> 
 
               <?php
 
@@ -57,7 +57,7 @@
          </button>
       </div>
 
-      <div class="box-body">
+      <div class="card-body">
         
        <table class="table table-bordered table-striped dt-responsive tablas tablaCierresCaja" width="100%">
          
@@ -93,7 +93,7 @@
                     <td >'.$value["total_egresos"].'</td>
                     <td >'.$value["detalle"].'</td>
                     <td >
-                        <button class="btnCierreCaja" idCierreCaja="'.$value["id"].'" data-toggle="modal" data-target="#modalVerCierreCaja" data-dismiss="modal"><i class="fa fa-search"></i></button>
+                        <button class="btnCierreCaja" idCierreCaja="'.$value["id"].'" data-bs-toggle="modal" data-bs-target="#modalVerCierreCaja" data-bs-dismiss="modal"><i class="fa fa-search"></i></button>
                         <button class="btnListadoCierreCaja" idCierreCaja="'.$value["id"].'" ><i class="fa fa-list-ul"></i></button>
                     </td>
 
@@ -108,7 +108,7 @@
 
       </div>
 
-        <div class="box-body">
+        <div class="card-body">
            <div id="listadoMovCierreCajaContenedor" style="display: none">
                <hr>
                 <h3>Detalle de movimientos</h3>
@@ -154,7 +154,7 @@ MODAL INGRESAR MOVIMIENTO
         ======================================-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
 
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 
           <h4 class="modal-title">Cierre Caja</h4>
 
@@ -165,7 +165,7 @@ MODAL INGRESAR MOVIMIENTO
         ======================================-->
         <div class="modal-body">
 
-          <div class="box-body">
+          <div class="card-body">
 
             <div class="form-group row">
 
@@ -235,7 +235,7 @@ MODAL INGRESAR MOVIMIENTO
         ======================================-->
         <div class="modal-footer">
 
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
         </div>
 

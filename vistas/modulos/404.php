@@ -1,4 +1,4 @@
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -10,7 +10,7 @@
 
     <ol class="breadcrumb">
       
-      <li><a href="#"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Página no encontrada</li>
     

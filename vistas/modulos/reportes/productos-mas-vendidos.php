@@ -12,19 +12,19 @@ $idsProductos = ControladorProductos::ctrMostrarProductosMasVendidos($desde,$has
 <!--=====================================
 PRODUCTOS MÁS VENDIDOS
 ======================================-->
-<div class="box box-default">
-    <div class="box-header with-border">
-        <h3 class="box-title">Productos más vendidos</h3> - <small> ultimos 30 días</small>
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse">
-              <i class="fa fa-minus"></i>
+<div class="card box-default">
+    <div class="card-header with-border">
+        <h3 class="card-title">Productos más vendidos</h3> - <small> ultimos 30 días</small>
+        <div class="card-tools float-end">
+            <button type="button" class="btn btn-tool" data-bs-toggle="collapse">
+              <i class="bi bi-dash"></i>
             </button>
-            <button type="button" class="btn btn-box-tool" data-widget="remove">
-              <i class="fa fa-times"></i>
+            <button type="button" class="btn btn-tool" data-bs-dismiss="card">
+              <i class="bi bi-x"></i>
             </button>
         </div>
     </div>
-	<div class="box-body">
+	<div class="card-body">
         <div class="row">
             <div class="col-md-7">
                 <div class="chart-responsive">
@@ -37,7 +37,7 @@ PRODUCTOS MÁS VENDIDOS
                     $totalVentas = 0;
                     $i=0;
                     foreach ($idsProductos as $key => $value) {
-                        echo ' <li><i class="fa fa-circle-o text-'.$colores[$i].'"></i> '.$value["descripcion"].'</li>';
+                        echo ' <li><i class="bi bi-circle text-'.$colores[$i].'"></i> '.$value["descripcion"].'</li>';
                         $totalVentas += $value["cantidad"]; 
                         $i++;
                     }
@@ -47,14 +47,14 @@ PRODUCTOS MÁS VENDIDOS
         </div>
     </div>
 
-    <div class="box-footer no-padding">
+    <div class="card-footer no-padding">
     	<ul class="nav nav-pills nav-stacked">
         <?php
         $i=0;
         foreach ($idsProductos as $key => $value) {
             echo '<li>
                 <a>'.$value["descripcion"].'
-                    <span class="pull-right text-'.$colores[$i].'">   
+                    <span class="float-end text-'.$colores[$i].'">   
                     '.ceil($value["cantidad"]*100/$totalVentas).'%
                     </span>
                 </a>

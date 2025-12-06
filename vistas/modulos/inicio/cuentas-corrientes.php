@@ -8,23 +8,23 @@
 
 ?>
 
-<div class="box box-primary">
+<div class="card card-primary">
 
-  <div class="box-header with-border">
+  <div class="card-header with-border">
 
-    <h3 class="box-title">Saldos Cuenta Corriente</h3>
+    <h3 class="card-title">Saldos Cuenta Corriente</h3>
 
-    <div class="box-tools pull-right">
+    <div class="card-tools float-end">
 
-      <button type="button" class="btn btn-box-tool" data-widget="collapse">
+      <button type="button" class="btn btn-tool" data-bs-toggle="collapse">
 
-        <i class="fa fa-minus"></i>
+        <i class="bi bi-dash"></i>
 
       </button>
 
-      <button type="button" class="btn btn-box-tool" data-widget="remove">
+      <button type="button" class="btn btn-tool" data-bs-dismiss="card">
 
-        <i class="fa fa-times"></i>
+        <i class="bi bi-x"></i>
 
       </button>
 
@@ -32,9 +32,9 @@
 
   </div>
   
-  <div class="box-body">
+  <div class="card-body">
 
-    <div class="pull-right col-lg-6 col-xs-6">
+    <div class="float-end col-lg-6 col-xs-6">
 
           <div class="small-box <?php echo $colorBoxProv; ?>">
             
@@ -52,7 +52,7 @@
             
             </div>
             
-            <a href="proveedores-cuenta-saldos" class="small-box-footer">
+            <a href="proveedores-cuenta-saldos" class="small-card-footer">
               
               Más info <i class="fa fa-arrow-circle-right"></i>
             
@@ -80,7 +80,7 @@
             
             </div>
             
-            <a href="clientes-cuenta-saldos" class="small-box-footer">
+            <a href="clientes-cuenta-saldos" class="small-card-footer">
               
               Más info <i class="fa fa-arrow-circle-right"></i>
             

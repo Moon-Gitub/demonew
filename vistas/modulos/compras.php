@@ -14,7 +14,7 @@ if($_SESSION["perfil"] == "Especial"){
 
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -26,7 +26,7 @@ if($_SESSION["perfil"] == "Especial"){
 
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Administrar compras</li>
     
@@ -36,16 +36,16 @@ if($_SESSION["perfil"] == "Especial"){
 
   <section class="content">
 
-    <div class="box">
+    <div class="card">
 
-      <div class="box-header with-border">
+      <div class="card-header with-border">
   
         <a href="crear-compra" class="btn btn-primary">Agregar compra</a>
 
-         <button type="button" class="btn btn-default pull-right" id="daterange-btnCompras">
+         <button type="button" class="btn btn-default float-end" id="daterange-btnCompras">
            
             <span>
-              <i class="fa fa-calendar"></i> 
+              <i class="bi bi-calendar"></i> 
 
               <?php
 
@@ -68,7 +68,7 @@ if($_SESSION["perfil"] == "Especial"){
 
       </div>
 
-      <div class="box-body">
+      <div class="card-body">
         
        <table class="table table-bordered table-striped " id="tablaListarCompras">
          
@@ -177,12 +177,12 @@ if($_SESSION["perfil"] == "Especial"){
                 echo '<td>
                    <div class="btn-group">
                       <button class="btn btn-info btnImprimirIngresoMercaderia" codigoCompra="'.$value["id"].'">
-                       <i class="fa fa-print"></i>
+                       <i class="bi bi-printer"></i>
                       </button>';
 
                       if($_SESSION["perfil"] == "Administrador"){
 
-                          echo '<button class="btn btn-danger btnEliminarCompra" idCompra="'.$value["id"].'"><i class="fa fa-times"></i></button>';
+                          echo '<button class="btn btn-danger btnEliminarCompra" idCompra="'.$value["id"].'"><i class="bi bi-x"></i></button>';
                       }
 
                 echo '</div></center>

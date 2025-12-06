@@ -36,11 +36,11 @@
 <!-- Este hidden lo uso para el rango de fechas -->
 <input type="hidden" id="numCaja" value="<?php echo $numeroCaja; ?>"> 
 
-<div class="content-wrapper">
+<div class="app-content">
     <section class="content-header">
         <h1> <?php echo "Administrar caja <small> (Punto de Venta: " . $numeroCaja . ")</small>"; ?> </h1>
         <ol class="breadcrumb">
-          <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+          <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
           <li class="active">Administrar caja </li>
         </ol>
 
@@ -81,28 +81,28 @@
     </section>
 
     <section class="content" > 
-      <div class="box">
+      <div class="card">
             <nav class="navbar">
                 <div class="container-fluid">
-                    <div class="pull-left" data-example-id="split-button-dropdown">
+                    <div class="float-start" data-example-id="split-button-dropdown">
 
                         <div class="btn-group">
-                            <a href="#" data-toggle="modal" data-target="#modalAgregarMovimientoCaja" data-dismiss="modal" class="btn btn-primary btn-sm ">Agregar Movimientos</a>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#modalAgregarMovimientoCaja" data-bs-dismiss="modal" class="btn btn-primary btn-sm ">Agregar Movimientos</a>
                         </div>
                         
                         <div class="btn-group">
-                            <a href="#" data-toggle="modal" data-target="#modalContadorBilletes" data-dismiss="modal" class="btn btn-primary btn-sm ">Contador Billetes</a>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#modalContadorBilletes" data-bs-dismiss="modal" class="btn btn-primary btn-sm ">Contador Billetes</a>
                         </div>
                         
                         <div class="btn-group">
-                            <a href="#" data-toggle="modal" data-target="#modalAgregarDatosManual" data-dismiss="modal" class="btn btn-primary btn-sm ">Cierre caja</a>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#modalAgregarDatosManual" data-bs-dismiss="modal" class="btn btn-primary btn-sm ">Cierre caja</a>
                         </div>
                         
                     </div>
                 </div>
             </nav>
 
-      <div class="box-body">
+      <div class="card-body">
 
        <!--TABLA COMPLETA DE MOVIMIENTOS -->
        <div id="divTablaCierreUsuario">
@@ -232,13 +232,13 @@
 
         <!--CABEZA DEL MODAL-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">1-Contador Billetes</h4>
         </div>
 
         <!--CUERPO DEL MODAL-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADAS PARA BILLETES--->
             <table>
@@ -357,9 +357,9 @@
 
             <div class="form-group">
 		    	<div class="input-group">
-		      		<div class="input-group-addon"><i class="fa fa-dollar"></i></div>
+		      		<div class="input-group-addon"><i class="bi bi-cash-coin"></i></div>
 		      		<input type="text" class="form-control" id="totalContadorBillete" readonly>
-		      		<div class="input-group-addon"><button id="copiarTotalContadorBillete" type="button" data-dismiss="modal"><i class="fa fa-copy"></i></button></div>
+		      		<div class="input-group-addon"><button id="copiarTotalContadorBillete" type="button" data-bs-dismiss="modal"><i class="fa fa-copy"></i></button></div>
 		    	</div>
 		  	</div>
 
@@ -377,7 +377,7 @@
 
          <!--=CABEZA DEL MODAL-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">X</button>
+          <button type="button" class="close" data-bs-dismiss="modal">X</button>
           <h4 class="modal-title">Cierre Caja - Ingreso manual de datos</h4>
         </div>
         
@@ -385,7 +385,7 @@
 
             <!-- CUERPO DEL MODAL-->
             <div class="modal-body">
-              <div class="box-body">
+              <div class="card-body">
                   
                 <input type="hidden" id="idUsuarioCierre" name="idUsuarioCierre" value="<?php echo $_SESSION["id"]; ?>">
                 <input type="hidden" id="ultimoIdCajaCierre" name="ultimoIdCajaCierre" value="<?php echo $idParaCierre; ?>">
@@ -414,7 +414,7 @@
                         <!--FECHA-->
                         <div class="form-group">
                           <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span> 
+                            <span class="input-group-addon"><i class="bi bi-calendar"></i></span> 
                             <input type="date" class="form-control" name="ingresoFechaCierreSistema" id="ingresoFechaCierreSistema" value="<?php echo date("Y-m-d"); ?>" placeholder="Fecha" readonly>
                           </div>
                         </div>
@@ -558,7 +558,7 @@
     
             <!--PIE DEL MODAL-->
             <div class="modal-footer">
-              <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+              <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
               <button type="button" id="btnCierreCajaCajero" class="btn btn-primary" >Guardar</button>
             </div>
         
@@ -579,13 +579,13 @@
 
         <!--CABEZA DEL MODAL-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Movimiento</h4>
         </div>
 
         <!--CUERPO DEL MODAL-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
             <input type="hidden" id="idUsuarioMovimiento" name="idUsuarioMovimiento" value="<?php echo $_SESSION["id"]; ?>">
             <input type="hidden" id="ingresoCajaDesde" name="ingresoCajaDesde" value="cajas">
             <div class="form-group">
@@ -668,7 +668,7 @@
 
         <!--PIE DEL MODAL-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
           <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
 
@@ -689,7 +689,7 @@
 
         <!--CUERPO DEL MODAL-->
         <div class="modal-body">
-            <div class="box-body">
+            <div class="card-body">
                 <div id="impTicketCierreCaja" style="font-size: 15px;">
                     <br>
                     <div style="text-align: center">===========================================================================</div>
@@ -727,7 +727,7 @@
 
         <!--PIE DEL MODAL-->
         <div class="modal-footer">
-            <button type="button" id="btnSalirTicketUsuario" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+            <button type="button" id="btnSalirTicketUsuario" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
             <button type="button" id="btnImprimirTicketUsuario" class="btn btn-primary"><i class="fa fa-ticket" aria-hidden="true"></i> Ticket</button>
         </div>
     </div>

@@ -9,13 +9,13 @@ if($_SESSION["perfil"] == "Especial"){
 
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
     <section class="content-header">
         <h1>
           Crear orden compra
         </h1>
         <ol class="breadcrumb">
-          <li><a href="#"><i class="fa fa-dashboard"></i> Inicio</a></li>
+          <li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
           <li class="active">Crear orden compra</li>
         </ol>
     </section>
@@ -25,10 +25,10 @@ if($_SESSION["perfil"] == "Especial"){
             EL FORMULARIO
             =====================================-->
             <div class="col-lg-7 col-xs-12">
-                <div class="box box-success">
-                    <div class="box-header with-border"></div>
+                <div class="card card-success">
+                    <div class="card-header with-border"></div>
                     <form role="form" method="post" class="formularioCompra">
-                        <div class="box-body">
+                        <div class="card-body">
                             <div class="row">
                                 <center>  
                                     <div class="col-md-12">
@@ -86,7 +86,7 @@ if($_SESSION["perfil"] == "Especial"){
                               <div class="input-group">
                                 <input type="text" class="form-control input-sm" id="autocompletarProveedor" required>
                                 <input type="hidden" id="seleccionarProveedor" name="seleccionarProveedor" >
-                                <span class="input-group-btn"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modalAgregarProveedor" data-dismiss="modal">Agregar proveedor</button></span>
+                                <span class="input-group-btn"><button type="button" class="btn btn-default btn-sm" data-bs-toggle="modal" data-bs-target="#modalAgregarProveedor" data-bs-dismiss="modal">Agregar proveedor</button></span>
                               </div>
                             </div>
                             <!--=====================================
@@ -133,7 +133,7 @@ if($_SESSION["perfil"] == "Especial"){
         
                         </div>
           
-                        <div class="box-footer">
+                        <div class="card-footer">
                             <center><button type="submit" class="btn btn-primary">Guardar compra</button></center>
                         </div>
                     </div>
@@ -148,9 +148,9 @@ if($_SESSION["perfil"] == "Especial"){
             LA TABLA DE PRODUCTOS
             ======================================-->
             <div class="col-lg-5 col-xs-12">
-                <div class="box box-warning">
-                    <div class="box-header with-border"></div>
-                    <div class="box-body">
+                <div class="card card-warning">
+                    <div class="card-header with-border"></div>
+                    <div class="card-body">
                         <table id="tablaCompras" class="table table-bordered table-striped dt-responsive">
                            <thead>
                              <tr>
@@ -179,19 +179,19 @@ MODAL AGREGAR PROVEEDOR
         CABEZA DEL MODAL
         ======================================-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Agregar proveedor</h4>
         </div>
         <!--=====================================
         CUERPO DEL MODAL
         ======================================-->
         <div class="modal-body">
-            <div class="box-body">
+            <div class="card-body">
                 <input type="hidden" id="nuevoProveedorDesde" name="nuevoProveedorDesde" value="compras">
                 <!-- ENTRADA PARA EL NOMBRE -->
                 <div class="form-group">
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-user"></i></span> 
+                    <span class="input-group-addon"><i class="bi bi-person"></i></span> 
                     <input type="text" class="form-control input-lg" name="nuevoProveedor" placeholder="Ingresar nombre proveedor" required>
                   </div>
                 </div>
@@ -236,7 +236,7 @@ MODAL AGREGAR PROVEEDOR
         PIE DEL MODAL
         ======================================-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
           <button type="submit" class="btn btn-primary">Guardar proveedor</button>
         </div>
       </form>

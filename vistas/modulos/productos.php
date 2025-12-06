@@ -4,22 +4,22 @@
     $precioDolar = ($objParametros->getPrecioDolar()) ? '' : 'display:none;';
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
   <section class="content-header">
     <h1>
       Administrar productos
     </h1>
     <ol class="breadcrumb">
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       <li class="active">Administrar productos</li>
     </ol>
   </section>
   <section class="content">
-    <div class="box">
-      <div class="box-header with-border">
+    <div class="card">
+      <div class="card-header with-border">
           <div class="row">
           <div class="col-md-6">
-        <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarProducto">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregarProducto">
           Agregar producto
         </button>
         <a href="productos-stock-medio" class="btn btn-warning">
@@ -41,7 +41,7 @@
 		  <div class="panel panel-default" id="precioPlace" style="display:none;">
 		  <div class="panel-heading">
             <center><h4 id="contador"></h4>
-			<button class="btn btn-primary" onclick="verProductosBorrar()"  id="detallePlace" style="display:none;" data-toggle="modal" data-target="#modalVerSeleccion">
+			<button class="btn btn-primary" onclick="verProductosBorrar()"  id="detallePlace" style="display:none;" data-bs-toggle="modal" data-bs-target="#modalVerSeleccion">
               <i class="fa fa-file-pdf-o"> Ver Seleccion</i>
             </button>
 			
@@ -51,7 +51,7 @@
 		 
 		  </div>
       </div>
-      <div class="box-body">
+      <div class="card-body">
         Columnas: 
         <a class="toggle-vis" data-column="1">Categoría</a> | 
         <a class="toggle-vis" data-column="2">Proveedor</a> | 
@@ -118,12 +118,12 @@ MODAL AGREGAR PRODUCTO
       <form role="form" method="post" enctype="multipart/form-data" id="formNuevoProducto">
         <!--CABEZA DEL MODAL-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Agregar producto</h4>
         </div>
         <!--CUERPO DEL MODAL-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
             <!-- ENTRADA PARA SELECCIONAR CATEGORÍA -->
             <div class="form-group">
               <div class="input-group">
@@ -176,7 +176,7 @@ MODAL AGREGAR PRODUCTO
             <!-- ENTRADA PARA LA DESCRIPCIÓN -->
              <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-product-hunt"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-box-seam"></i></span> 
                 <input type="text" autocomplete="off" class="form-control " name="nuevaDescripcion" placeholder="Ingresar descripción" required>
               </div>
             </div>
@@ -330,7 +330,7 @@ MODAL AGREGAR PRODUCTO
 
         <!--  PIE DEL MODAL -->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
           <button type="submit" class="btn btn-primary">Guardar producto</button>
         </div>
       </form>
@@ -354,7 +354,7 @@ MODAL EDITAR PRODUCTO
         CABEZA DEL MODAL
         ======================================-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Editar producto</h4>
         </div>
 
@@ -364,7 +364,7 @@ MODAL EDITAR PRODUCTO
         CUERPO DEL MODAL
         ======================================-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
             
             <!-- ENTRADA PARA SELECCIONAR CATEGORÍA -->
             <div class="form-group">
@@ -414,7 +414,7 @@ MODAL EDITAR PRODUCTO
             <!-- ENTRADA PARA LA DESCRIPCIÓN -->
              <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-product-hunt"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-box-seam"></i></span> 
                 <input type="text" class="form-control " id="editarDescripcion" name="editarDescripcion" required>
               </div>
             </div>
@@ -585,7 +585,7 @@ MODAL EDITAR PRODUCTO
         PIE DEL MODAL
         ======================================-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
           <button type="submit" class="btn btn-primary">Guardar cambios</button>
         </div>
       </form>
@@ -607,14 +607,14 @@ MODAL AGREGAR MARCA
         CABEZA DEL MODAL
         ======================================-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Productos Seleccionados</h4>
         </div>
         <!--=====================================
         CUERPO DEL MODAL
         ======================================-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
 			<table class="table table-bordered table-striped dt-responsive" id="tablaProductosBorrarMultiple" width="100%">
           <thead>
 		<tr>
@@ -636,7 +636,7 @@ MODAL AGREGAR MARCA
 
         <div class="modal-footer">
 
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
 
         </div>
@@ -664,14 +664,14 @@ MODAL EDITAR PRODUCTO - AJUSTE STOCK
         CABEZA DEL MODAL
         ======================================-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Editar producto - Ajuste Stock</h4>
         </div>
         <!--=====================================
         CUERPO DEL MODAL
         ======================================-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADA PARA EL CÓDIGO -->
             <p id="editarCodigoAjusteStocksP"></p>
@@ -713,7 +713,7 @@ MODAL EDITAR PRODUCTO - AJUSTE STOCK
         PIE DEL MODAL
         ======================================-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
           <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
       </form>

@@ -273,7 +273,7 @@ if($ctaCteCliente["saldo"] <= 0) {
     }
 
     $dropdownContent .= '
-            <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#modalCobro" style="background: #009ee3 !important; border: none;">
+            <button class="btn btn-primary btn-block" data-bs-toggle="modal" data-bs-target="#modalCobro" style="background: #009ee3 !important; border: none;">
                 <i class="fa fa-credit-card"></i> Pagar Ahora
             </button>
         </div>';
@@ -354,36 +354,23 @@ if($ctaCteCliente["saldo"] <= 0) {
 }
 ?>
 
-<header class="main-header">
-
-    <!--=====================================
-    LOGOTIPO
-    ======================================-->
-    <a href="inicio" class="logo">
-        <span class="logo-mini">
-            <i class="fa fa-moon-o fa-2x"></i>
-        </span>
-        <span class="logo-lg">
-            <i class="fa fa-moon-o fa-2x"></i>
-            POS | Moon
-        </span>
-    </a>
-
-    <!--=====================================
-    BARRA DE NAVEGACIÓN
-    ======================================-->
-    <nav class="navbar navbar-static-top" role="navigation">
-
-        <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-            <span class="sr-only">Toggle navigation</span>
-        </a>
-
-        <div class="navbar-custom-menu">
-            <ul class="nav navbar-nav">
+<nav class="app-header navbar navbar-expand bg-body">
+    <div class="container-fluid">
+        <!--begin::Start Navbar Links-->
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
+                    <i class="bi bi-list"></i>
+                </a>
+            </li>
+        </ul>
+        <!--end::Start Navbar Links-->
+        <!--begin::End Navbar Links-->
+        <ul class="navbar-nav ms-auto">
             
                 <!-- Alerta de tiempo de sesión -->
                 <li class="dropdown tasks-menu" style="display: none" id="alertaTiempoSesionRestanteLi">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                       <i class="fa fa-clock-o"></i>
                       <span title="Tiempo restante de sesión" class="label label-danger" id="alertaTiempoSesionRestante"></span>
                     </a>
@@ -391,7 +378,7 @@ if($ctaCteCliente["saldo"] <= 0) {
                 
                 <!-- Dropdown AFIP -->
                 <li class="dropdown tasks-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
                       <img src="vistas/img/plantilla/afipicon.ico" >
                     </a>
                     <ul class="dropdown-menu">
@@ -413,7 +400,7 @@ if($ctaCteCliente["saldo"] <= 0) {
 
                                 } else {
 
-                                    echo '<i class="fa fa-times-circle-o fa-2x" style="color: red"></i></p>';
+                                    echo '<i class="bi bi-x-circle-o fa-2x" style="color: red"></i></p>';
 
                                     if($tieneAfip && !empty($msjError)) {
                                         echo $msjError;
@@ -434,7 +421,7 @@ if($ctaCteCliente["saldo"] <= 0) {
                 <?php if($tieneCotizacion && $objParametros->getPrecioDolar()) { ?>
                 <!-- Dropdown Cotización Dólar -->
                 <li class="dropdown tasks-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
                       <i class="fa fa-money"></i>
                     </a>
                     <ul class="dropdown-menu">
@@ -453,7 +440,7 @@ if($ctaCteCliente["saldo"] <= 0) {
                               ?>
                                   <li class="footer">
                                     <center>
-                                        <button class="btn btn-primary" data-toggle="modal" data-target="#modalNuevaCotizacion">
+                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevaCotizacion">
                                       Nueva Cotización
                                         </button>
                                     </center>
@@ -468,7 +455,7 @@ if($ctaCteCliente["saldo"] <= 0) {
 
                 <!-- Sistema de Cobro Moon -->
                 <li class="dropdown tasks-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Estado de Cuenta - Sistema de Cobro">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" title="Estado de Cuenta - Sistema de Cobro">
                         <i class="fa fa-credit-card" style="font-size: 18px;"></i>
                         <span class="hidden-xs" style="margin-left: 5px;">Estado Cuenta</span>
                         <?php echo isset($badgeNavbar) ? $badgeNavbar : ''; ?>
@@ -491,7 +478,7 @@ if($ctaCteCliente["saldo"] <= 0) {
                 <!-- Usuario -->
                 <!-- Usuario -->
                 <li class="dropdown user user-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
                         <?php
                         if($_SESSION["foto"] != ""){
                             echo '<img src="'.$_SESSION["foto"].'" class="user-image">';
@@ -604,7 +591,7 @@ MODAL COBRO MEJORADO
             CABEZA DEL MODAL - SIMPLE Y LIMPIO
             ======================================-->
             <div class="modal-header" style="background: white; border-bottom: 1px solid #e0e0e0; padding: 20px 25px;">
-                <button type="button" class="close" data-dismiss="modal" style="color: #6c757d; opacity: 0.8; font-size: 28px;">&times;</button>
+                <button type="button" class="close" data-bs-dismiss="modal" style="color: #6c757d; opacity: 0.8; font-size: 28px;">&times;</button>
                 <h4 style="margin: 0; color: #2c3e50; font-weight: 600; font-size: 20px;">
                     <i class="fa fa-credit-card" style="color: #667eea; margin-right: 8px;"></i>
                     Estado de Cuenta
@@ -625,7 +612,7 @@ MODAL COBRO MEJORADO
                                 $<?php echo number_format($abonoMensual, 2, ',', '.'); ?>
                             </div>
                             <div style="font-size: 13px; color: #6c757d;">
-                                <i class="fa fa-calendar"></i> <?php echo date('F Y'); ?>
+                                <i class="bi bi-calendar"></i> <?php echo date('F Y'); ?>
                             </div>
                         </div>
                     </div>
@@ -902,7 +889,7 @@ MODAL NUEVA COTIZACION
         CABEZA DEL MODAL
         ======================================-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Nueva Cotización</h4>
         </div>
 
@@ -910,12 +897,12 @@ MODAL NUEVA COTIZACION
         CUERPO DEL MODAL
         ======================================-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADA PARA LA FECHA -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-calendar"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-calendar"></i></span> 
                 <?php
                     date_default_timezone_set('America/Argentina/Buenos_Aires');
                     $fecha = date('d-m-Y');
@@ -939,7 +926,7 @@ MODAL NUEVA COTIZACION
         PIE DEL MODAL
         ======================================-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
           <button type="submit" class="btn btn-primary">Guardar cotización</button>
         </div>
 

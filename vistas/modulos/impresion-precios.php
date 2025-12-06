@@ -1,5 +1,5 @@
 
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -11,7 +11,7 @@
 
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Impresión precios productos</li>
     
@@ -21,9 +21,9 @@
 
   <section class="content">
 
-    <div class="box">
+    <div class="card">
 
-    <div class="box-header with-border">
+    <div class="card-header with-border">
 	   <input type="hidden" id="idSucursal" name="idSucursal" value="<?php echo $_SESSION["sucursal"]; ?>" required>
               
         <div class="row">
@@ -49,7 +49,7 @@
 		  <div class="panel panel-default" id="precioPlace" style="display:none;">
 		  <div class="panel-heading">
             <center><h4 id="contador"></h4>
-			<button class="btn btn-primary" onclick="verProductosImpresion()"  id="detallePlace" style="display:none;" data-toggle="modal" data-target="#modalAgregarMarca" id="verSeleccion">
+			<button class="btn btn-primary" onclick="verProductosImpresion()"  id="detallePlace" style="display:none;" data-bs-toggle="modal" data-bs-target="#modalAgregarMarca" id="verSeleccion">
               <i class="fa fa-file-pdf-o"> Ver Seleccion</i>
             </button>
 			
@@ -62,7 +62,7 @@
 		
 	   </div>
 
-      <div class="box-body">
+      <div class="card-body">
         
         <table class="table table-bordered" id="tablaImpresionProductosImpresion" name="tablaImpresionProductosImpresion"> 
         <thead>
@@ -108,14 +108,14 @@ MODAL AGREGAR MARCA
         CABEZA DEL MODAL
         ======================================-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Productos Seleccionados</h4>
         </div>
         <!--=====================================
         CUERPO DEL MODAL
         ======================================-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
 			<table class="table table-bordered table-striped dt-responsive" id="tablaProductosImprimir" width="100%">
           <thead>
 		<tr>
@@ -138,7 +138,7 @@ MODAL AGREGAR MARCA
 
         <div class="modal-footer">
 
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
 
         </div>

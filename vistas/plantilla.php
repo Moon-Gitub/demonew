@@ -34,22 +34,20 @@
     PLUGINS DE CSS
     ======================================-->
 
-    <!-- Bootstrap 3.4.1 (Compatible con AdminLTE 2.4.0 - Última versión segura de Bootstrap 3) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="vistas/bower_components/font-awesome/css/font-awesome.min.css">
-    <!-- Ionicons -->
-    <link rel="stylesheet" href="vistas/bower_components/Ionicons/css/ionicons.min.css">
-
-    <!-- Theme style -->
-    <link rel="stylesheet" href="vistas/dist/css/AdminLTE.css">
+    <!-- Bootstrap 5.3.2 (Compatible con AdminLTE 4.0.0-rc4) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     
-    <!-- AdminLTE Skins -->
-    <link rel="stylesheet" href="vistas/dist/css/skins/_all-skins.min.css">
-
-    <!-- Google Font -->
-    <link rel="stylesheet" href="vistas/dist/css/fonts_googleapis.css">
+    <!-- Font Awesome (mantener para compatibilidad) -->
+    <link rel="stylesheet" href="vistas/bower_components/font-awesome/css/font-awesome.min.css">
+    
+    <!-- Bootstrap Icons (AdminLTE 4 usa Bootstrap Icons) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous">
+    
+    <!-- OverlayScrollbars (requerido por AdminLTE 4) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous">
+    
+    <!-- AdminLTE 4 CSS -->
+    <link rel="stylesheet" href="vistas/dist/css/adminlte.min.css">
 
      <!-- DataTables -->
     <link rel="stylesheet" href="vistas/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
@@ -77,13 +75,13 @@
     <!-- jQuery 3 -->
     <script src="vistas/bower_components/jquery/dist/jquery.min.js"></script>
     
-    <!-- Bootstrap 3.4.1 JS (Compatible con AdminLTE 2.4.0) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
-
-    <!-- FastClick -->
-    <script src="vistas/bower_components/fastclick/lib/fastclick.js"></script>
+    <!-- Bootstrap 5.3.2 JS Bundle (Compatible con AdminLTE 4) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     
-    <!-- AdminLTE App -->
+    <!-- OverlayScrollbars JS (requerido por AdminLTE 4) -->
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
+    
+    <!-- AdminLTE 4 JS -->
     <script src="vistas/dist/js/adminlte.min.js"></script>
 
     <!-- DataTables -->
@@ -151,13 +149,13 @@
 
   ?>
 
-  <body class="hold-transition skin-blue sidebar-collapse sidebar-mini login-page">
+  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
    
     <?php
 
     if(isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"] == "ok"){
 
-     echo '<div class="wrapper">';
+     echo '<div class="app-wrapper">';
 
      echo '<input type="hidden" id="tiempoMaximoSesion" value="'.ini_get("session.gc_maxlifetime").'">';
 

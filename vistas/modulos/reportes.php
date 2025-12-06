@@ -1,4 +1,4 @@
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -10,7 +10,7 @@
 
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Reportes de ventas</li>
     
@@ -20,16 +20,16 @@
 
   <section class="content">
 
-    <div class="box">
+    <div class="card">
 
-      <div class="box-header with-border">
+      <div class="card-header with-border">
 
         <div class="input-group">
 
           <button type="button" class="btn btn-default" id="daterange-btn2">
            
             <span>
-              <i class="fa fa-calendar"></i> 
+              <i class="bi bi-calendar"></i> 
 
               <?php
 
@@ -52,7 +52,7 @@
 
         </div>
 
-        <div class="box-tools pull-right">
+        <div class="card-tools float-end">
 
         <?php
 
@@ -76,7 +76,7 @@
          
       </div>
 
-      <div class="box-body">
+      <div class="card-body">
         
         <div class="row">
 

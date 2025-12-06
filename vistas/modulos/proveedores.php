@@ -4,27 +4,27 @@
 
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
   <section class="content-header">
     <h1>
       Administrar proveedores
     </h1>
     <ol class="breadcrumb">
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       <li class="active">Administrar proveedores</li>
     </ol>
   </section>
   <section class="content">
-    <div class="box">
-      <div class="box-header with-border">
-        <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarProveedor">
+    <div class="card">
+      <div class="card-header with-border">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregarProveedor">
           Agregar proveedor
         </button>
         <a href="proveedores-cuenta-saldos" class="btn btn-primary" title="Lista los proveedores que se encuentran con saldo en cuenta corriente">
           Saldos Cta. Cte.
         </a>
       </div>
-      <div class="box-body">
+      <div class="card-body">
        <table class="table table-bordered table-striped dt-responsive tablas" width="100%">
         <thead>
          <tr>
@@ -56,14 +56,14 @@
                     <center>
                       <div class="btn-group">
                         <a href="index.php?ruta=proveedores_cuenta&id_proveedor='.$value["id"].'" title="Cuenta corriente" class="btn btn-primary" ><i class="fa fa-book fa-fw"></i> Cuenta Cte.</a>
-                        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+                        <a class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#">
                           <span class="fa fa-caret-down" title="Menu desplegable"></span>
                         </a>
                         <ul class="dropdown-menu">
-                          <li><a class="btnEditarProveedor" data-toggle="modal" data-target="#modalEditarProveedor" idProveedor="'.$value["id"].'"><i class="fa fa-pencil fa-fw"></i> Editar</a></li>
-                          <li><a class="btnModificarPrecioProveedor" data-toggle="modal" data-target="#modalModificarPrecioProveedor" idProveedor="'.$value["id"].'" nombreProveedor="'.$value["nombre"].'"><i class="fa fa-sort fa-fw"></i> +/- $ Productos</a></li>';
+                          <li><a class="btnEditarProveedor" data-bs-toggle="modal" data-bs-target="#modalEditarProveedor" idProveedor="'.$value["id"].'"><i class="fa fa-pencil fa-fw"></i> Editar</a></li>
+                          <li><a class="btnModificarPrecioProveedor" data-bs-toggle="modal" data-bs-target="#modalModificarPrecioProveedor" idProveedor="'.$value["id"].'" nombreProveedor="'.$value["nombre"].'"><i class="fa fa-sort fa-fw"></i> +/- $ Productos</a></li>';
                        if($_SESSION["perfil"] == "Administrador"){
-                          echo '<li><a class="btnEliminarProveedor" idProveedor="'.$value["id"].'" href="#"><i class="fa fa-times fa-fw"></i> Borrar</a></li>';
+                          echo '<li><a class="btnEliminarProveedor" idProveedor="'.$value["id"].'" href="#"><i class="bi bi-x fa-fw"></i> Borrar</a></li>';
                       }
                        echo '</ul>
                       </div>
@@ -88,12 +88,12 @@ MODAL AGREGAR PROVEEDOR
       <form role="form" method="post">
         <!--CABEZA DEL MODAL-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Agregar proveedor</h4>
         </div>
         <!--CUERPO DEL MODAL-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
             <!-- ENTRADA PARA EL DOCUMENTO ID -->
             <div class="form-group">
               <div class="input-group">
@@ -118,7 +118,7 @@ MODAL AGREGAR PROVEEDOR
             <!-- ENTRADA PARA EL NOMBRE -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-user"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
                 <input type="text" class="form-control" name="nuevoProveedor" id="nuevoCliente" placeholder="Ingresar nombre proveedor" required>
               </div>
             </div>
@@ -175,7 +175,7 @@ MODAL AGREGAR PROVEEDOR
        </div>
         <!--PIE DEL MODAL-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
           <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
       </form>
@@ -196,12 +196,12 @@ MODAL EDITAR PROVEEDOR
       <form role="form" method="post">
         <!--CABEZA DEL MODAL-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Editar proveedor</h4>
         </div>
         <!--CUERPO DEL MODAL-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
             <!-- ENTRADA PARA EL CUIT -->
             <div class="form-group">
               <div class="input-group">
@@ -225,7 +225,7 @@ MODAL EDITAR PROVEEDOR
             <!-- ENTRADA PARA EL NOMBRE -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-user"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
                 <input type="text" class="form-control" name="editarNombre" id="editarNombre" placeholder="Ingresar nombre proveedor" required>
                 <input type="hidden" id="idProveedor" name="idProveedor">
               </div>
@@ -284,7 +284,7 @@ MODAL EDITAR PROVEEDOR
         </div>
         <!--PIE DEL MODAL-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
           <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
       </form>
@@ -305,12 +305,12 @@ MODAL MODIFICAR PRECIO
       <form role="form" method="post">
         <!--CABEZA DEL MODAL-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Modificar precios</h4>
         </div>
         <!--CUERPO DEL MODAL-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
             <input type="hidden" id="idProveedorNuevoPrecio" name="idProveedorNuevoPrecio">
             <h4 id="nombreProveedor"></h4>
             <!-- ENTRADA PARA EL PORCENTAJE -->
@@ -324,7 +324,7 @@ MODAL MODIFICAR PRECIO
         </div>
         <!--PIE DEL MODAL-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
           <button type="submit" class="btn btn-primary">Actualizar precios</button>
         </div>
         <?php

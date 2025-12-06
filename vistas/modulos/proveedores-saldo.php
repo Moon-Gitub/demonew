@@ -14,7 +14,7 @@ if($_SESSION["perfil"] == "Especial"){
 
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -26,7 +26,7 @@ if($_SESSION["perfil"] == "Especial"){
 
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Saldo proveedores</li>
     
@@ -47,8 +47,8 @@ if(isset($_GET["fechaInicial"])){
        
         }
 ?>
-    <div class="box">
-<div class="box-header with-border">
+    <div class="card">
+<div class="card-header with-border">
   <div class="col-xs-2">
     <input type="text" class="form-control" style="text-align:center;" name="fechaInicial" id="fechaInicial" value="<?php echo $fechaInicial;?>" />
    </div>
@@ -57,7 +57,7 @@ if(isset($_GET["fechaInicial"])){
 </div>
       </div>
 
-      <div class="box-body">
+      <div class="card-body">
         
        <table class="table table-bordered table-striped dt-responsive tablaSaldoProveedor" width="100%">
          

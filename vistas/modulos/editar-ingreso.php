@@ -1,10 +1,10 @@
-<div class="content-wrapper">
+<div class="app-content">
   <section class="content-header">
     <h1>
       Ingreso de compra
     </h1>
     <ol class="breadcrumb">
-      <li><a href="#"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       <li class="active">Ingreso compra</li>
     </ol>
   </section>
@@ -12,10 +12,10 @@
     <div class="row">
       <!--EL FORMULARIO-->
       <div class="col-lg-8 col-xs-12">
-        <div class="box box-success">
-          <div class="box-header with-border"></div>
+        <div class="card card-success">
+          <div class="card-header with-border"></div>
           <form role="form" method="post" class="formularioCompraValidar">
-           <div class="box-body">
+           <div class="card-body">
             <div class="row">
               <?php
                 $item = "id";
@@ -59,7 +59,7 @@
               <div class="col-xs-3">
                 <div class="form-group">
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <span class="input-group-addon"><i class="bi bi-calendar"></i></span>
                     <input autocomplete="off" type="text" class="form-control inputFechaCompra" id="fechaEmision"  placeholder="Fecha AAAA-MM-DD">
                     <input type="hidden" name="fechaEmision" id="fechaEmisionHidden">
                   </div>
@@ -131,7 +131,7 @@
 
                       <div class="input-group">
 
-                      <span class="input-group-btn"><button type="button" class="btn btn-danger btn-sm quitarProductoCompra" idProducto="'.$value["id"].'"><i class="fa fa-times"></i></button></span>
+                      <span class="input-group-btn"><button type="button" class="btn btn-danger btn-sm quitarProductoCompra" idProducto="'.$value["id"].'"><i class="bi bi-x"></i></button></span>
 
                       <input type="text" title="'.$value["descripcion"].'" class="form-control input-sm nuevaDescripcionProductoCompraValidar" idProducto="'.$value["id"].'" value="'.$value["descripcion"].'" readonly>
 
@@ -218,7 +218,7 @@
 
             <br>
 
-            <div class="box-footer">
+            <div class="card-footer">
               <div class="col-xs-12">
                 <div class="form-group">
                   <br>
@@ -326,9 +326,9 @@
 
       <!--TABLA DE PRODUCTOS-->
       <div class="col-lg-4 col-xs-12">
-        <div class="box box-warning">
-          <div class="box-header with-border"></div>
-          <div class="box-body">
+        <div class="card card-warning">
+          <div class="card-header with-border"></div>
+          <div class="card-body">
             <table class="table table-bordered table-striped dt-responsive tablaComprasValidar" width="100%">
              <thead>
                <tr>

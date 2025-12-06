@@ -45,15 +45,15 @@ $noRepetirNombres = array_unique($arrayVendedores);
 VENDEDORES
 ======================================-->
 
-<div class="box box-success">
+<div class="card card-success">
 	
-	<div class="box-header with-border">
+	<div class="card-header with-border">
     
-    	<h3 class="box-title">Vendedores</h3>
+    	<h3 class="card-title">Vendedores</h3>
   
   	</div>
 
-  	<div class="box-body">
+  	<div class="card-body">
   		
 		<div class="chart-responsive">
 			

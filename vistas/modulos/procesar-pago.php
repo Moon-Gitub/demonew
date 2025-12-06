@@ -26,7 +26,7 @@ $porcentajeRecargo = $datosCobro['porcentaje_recargo'];
 
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
     <section class="content-header">
 
     <?php

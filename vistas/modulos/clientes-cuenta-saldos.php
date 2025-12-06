@@ -5,7 +5,7 @@
 
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -17,7 +17,7 @@
 
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Administrar clientes</li>
     
@@ -27,9 +27,9 @@
 
   <section class="content">
 
-    <div class="box">
+    <div class="card">
 
-      <div class="box-header with-border">
+      <div class="card-header with-border">
   <div class="row">
 
       <div class="col-lg-3 col-xs-6">
@@ -40,7 +40,7 @@
         </a>
       </div>
       
-        <div class="pull-right col-lg-3 col-xs-6">
+        <div class="float-end col-lg-3 col-xs-6">
 
           <div class="small-box <?php echo $colorBox; ?>">
             
@@ -58,7 +58,7 @@
             
             </div>
             
-            <!--<a href="clientes-cuenta-saldo" class="small-box-footer">
+            <!--<a href="clientes-cuenta-saldo" class="small-card-footer">
               
               Más info <i class="fa fa-arrow-circle-right"></i>
             
@@ -71,7 +71,7 @@
 
       </div>
 
-      <div class="box-body">
+      <div class="card-body">
         
        <table class="table table-bordered table-striped dt-responsive tablasBotones" width="100%">
          
@@ -102,7 +102,7 @@
 
           foreach ($clientes as $key => $value) {
 
-              $tieneMail = (isset($value["email"]) && $value["email"] != "") ? '<i title="El cliente tiene Email configurado" style="color: green" class="fa fa-check"></i>' : '<i title="El cliente no tiene Email configurado" style="color: red" class="fa fa-times"></i>';
+              $tieneMail = (isset($value["email"]) && $value["email"] != "") ? '<i title="El cliente tiene Email configurado" style="color: green" class="fa fa-check"></i>' : '<i title="El cliente no tiene Email configurado" style="color: red" class="bi bi-x"></i>';
 
               echo '<tr>
 
@@ -110,7 +110,7 @@
 
                     <td>'.$value["telefono"].'</td>
 
-                    <td><center><a class="btnSobreCtaCteCliente" data-toggle="modal" data-target="#modalEnviarMail" idCliente="'.$value["id_cliente"].'" mailCliente="'.$value["email"].'" saldoCliente="'.$value["diferencia"].'"> <i class="fa fa-envelope fa-2x"></i>  ' .$tieneMail. '</a></center></td>';
+                    <td><center><a class="btnSobreCtaCteCliente" data-bs-toggle="modal" data-bs-target="#modalEnviarMail" idCliente="'.$value["id_cliente"].'" mailCliente="'.$value["email"].'" saldoCliente="'.$value["diferencia"].'"> <i class="fa fa-envelope fa-2x"></i>  ' .$tieneMail. '</a></center></td>';
 
               echo '<td>'.$value["ventas"].'</td>
 
@@ -151,7 +151,7 @@ MODAL ENVIAR MAIL
 
         <div class="modal-header" style="background:#3c8dbc; color:white">
 
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 
           <h4 class="modal-title">Enviar mail</h4>
 
@@ -162,7 +162,7 @@ MODAL ENVIAR MAIL
         ======================================-->
         <div class="modal-body">
 
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADA PARA EL EMAIL -->
             <div class="form-group">
@@ -215,7 +215,7 @@ Email: <?php echo $arrayEmpresa["mail"]; ?>
 
         <div class="modal-footer">
 
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
           <button id="btnEnviarMailCtaCteCliente" class="btn btn-primary">Enviar!</button>
 

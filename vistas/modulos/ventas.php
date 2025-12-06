@@ -1,21 +1,21 @@
-<div class="content-wrapper">
+<div class="app-content">
   <section class="content-header">
     <h1>
       Administrar ventas
     </h1>
     <ol class="breadcrumb">
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       <li class="active">Administrar ventas</li>
     </ol>
   </section>
   <section class="content">
-    <div class="box">
-      <div class="box-header with-border">
+    <div class="card">
+      <div class="card-header with-border">
         <a href="crear-venta-caja" class="btn btn-primary">Agregar venta</a>
         <a href="libro-iva-ventas" class="btn btn-primary">IVA Ventas</a>
-         <button type="button" class="btn btn-default pull-right" id="daterange-btn">
+         <button type="button" class="btn btn-default float-end" id="daterange-btn">
             <span>
-              <i class="fa fa-calendar"></i> 
+              <i class="bi bi-calendar"></i> 
 
               <?php
 
@@ -38,7 +38,7 @@
 
       </div>
 
-      <div class="box-body">
+      <div class="card-body">
         
        <table class="table table-bordered table-striped dt-responsive" width="100%" id="tablaListarVentas">
 
@@ -154,10 +154,10 @@
                 if($value["cbte_tipo"] == 0 || $value["cbte_tipo"] == 999 ) {
                   $imgAut = '';
                 } else {
-                  $imgAut='<i class="fa fa-times" style="color: red;"></i>';
+                  $imgAut='<i class="bi bi-x" style="color: red;"></i>';
                 }
               }
-              // $imgAut='<i class="fa fa-times" style="color: red;"></i>';
+              // $imgAut='<i class="bi bi-x" style="color: red;"></i>';
               // $ptoVta = str_pad($value["pto_vta"], 5, "0", STR_PAD_LEFT);
               // $numCte = str_pad($value["codigo"], 8, "0", STR_PAD_LEFT);
               $numFact = "";
@@ -176,7 +176,7 @@
             
               if($value["estado"] == 0) { //Adeudada
 
-                $lblEstado = '<span style="cursor: pointer" class="label label-danger btnCobrarVenta" data-toggle="modal" data-target="#modalCobrarVenta" data-dismiss="modal" idVenta="'.$value["id"].'">Adeudado</span>' ;
+                $lblEstado = '<span style="cursor: pointer" class="label label-danger btnCobrarVenta" data-bs-toggle="modal" data-bs-target="#modalCobrarVenta" data-bs-dismiss="modal" idVenta="'.$value["id"].'">Adeudado</span>' ;
                 $botonCobro = 'cursor: pointer;';
                 $btnCobroLi = '';
 
@@ -243,12 +243,12 @@
               <center>
 
                 <div class="btn-group">
-                      <span style="'.$deshAutorizarSpan.'"><a class="btn btn-primary btnAutorizarCbte" style="' . $deshAutorizarA . '" title="Autorizar comprobante." data-toggle="modal" data-target="#modalAutorizarComprobante" data-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-exchange fa-fw"></i> </a><span>
-                      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+                      <span style="'.$deshAutorizarSpan.'"><a class="btn btn-primary btnAutorizarCbte" style="' . $deshAutorizarA . '" title="Autorizar comprobante." data-bs-toggle="modal" data-bs-target="#modalAutorizarComprobante" data-bs-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-exchange fa-fw"></i> </a><span>
+                      <a class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#">
                         <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
                       </a>
                       <ul class="dropdown-menu" style="background-color: #f4f4f4">
-                        <li style="'.$btnCobroLi.'"><a title="Cobrar venta" style="' .$botonCobro. '" class="btnCobrarVenta" data-toggle="modal" data-target="#modalCobrarVenta" data-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-usd fa-fw"></i> Cobrar</a></li>';
+                        <li style="'.$btnCobroLi.'"><a title="Cobrar venta" style="' .$botonCobro. '" class="btnCobrarVenta" data-bs-toggle="modal" data-bs-target="#modalCobrarVenta" data-bs-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-usd fa-fw"></i> Cobrar</a></li>';
                       echo '<li><a title="Ver" style="cursor: pointer;" class="btnEditarVenta" idVenta="'.$value["id"].'"><i class="fa fa-pencil fa-fw"></i> Ver</a></li>';
                       
                       echo '<li role="separator" class="divider"></li>';                        
@@ -257,9 +257,9 @@
                       
                       echo '<li role="separator" class="divider"></li>';                        
 
-                      echo '<li><a class="btnImprimirFactura" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-print fa-fw"></i> Imprimir</a></li>';
+                      echo '<li><a class="btnImprimirFactura" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="bi bi-printer fa-fw"></i> Imprimir</a></li>';
                       echo '<li><a class="btnImprimirRemito" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-cubes fa-fw"></i> Remito</a></li>';
-                      echo '<li><a class="btnImprimirTicket" style="cursor: pointer;" idVenta="'.$value["id"].'" data-toggle="modal" data-target="#modalImprimirTicketCajaVenta" data-dismiss="modal"><i class="fa fa-ticket fa-fw"></i> Ticket</a></li>';
+                      echo '<li><a class="btnImprimirTicket" style="cursor: pointer;" idVenta="'.$value["id"].'" data-bs-toggle="modal" data-bs-target="#modalImprimirTicketCajaVenta" data-bs-dismiss="modal"><i class="fa fa-ticket fa-fw"></i> Ticket</a></li>';
                      
                      echo '<li role="separator" class="divider"></li>';
                      //echo '<li style="'.$botonMailLi.'"><a class="btnMailComprobante" style="'.$botonMail.'" codigoVenta="'.$value["codigo"].'" mailCliente="'.$respuestaCliente["email"].'"><i class="fa fa-envelope fa-fw"></i> Email</a></li>';
@@ -272,11 +272,11 @@
                         //if($value["estado"] == 1 || $facturada) {
                         if($facturada) {
 
-                          echo '<li><a style="cursor: not-allowed;" ><i class="fa fa-times fa-fw"></i> Eliminar</a></li>';
+                          echo '<li><a style="cursor: not-allowed;" ><i class="bi bi-x fa-fw"></i> Eliminar</a></li>';
 
                         } else {
 
-                          echo '<li><a class="btnEliminarVenta" style="cursor: pointer;" idVenta="'.$value["id"].'"><i class="fa fa-times fa-fw"></i> Eliminar</a></li>';
+                          echo '<li><a class="btnEliminarVenta" style="cursor: pointer;" idVenta="'.$value["id"].'"><i class="bi bi-x fa-fw"></i> Eliminar</a></li>';
 
                         }
 
@@ -332,7 +332,7 @@ MODAL COBRAR VENTA
 
         <div class="modal-header" style="background:#3c8dbc; color:white">
 
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 
           <h4 class="modal-title">Cobro de venta</h4>
 
@@ -344,7 +344,7 @@ MODAL COBRAR VENTA
 
         <div class="modal-body">
 
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADA PARA ID VENTA  -->
             <input type="hidden" name="ingresoCajaDesde" value="ventas">
@@ -452,7 +452,7 @@ MODAL COBRAR VENTA
 
         <div class="modal-footer">
 
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
           <button type="submit" class="btn btn-primary">Guardar</button>
 
@@ -490,7 +490,7 @@ MODAL AUTOTIZAR COMPROBANTE
 
         <div class="modal-header" style="background:#3c8dbc; color:white">
 
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 
           <h4 class="modal-title">Autorizar Comprobante</h4>
 
@@ -502,7 +502,7 @@ MODAL AUTOTIZAR COMPROBANTE
 
         <div class="modal-body">
 
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADA PARA ID VENTA  -->
             <input type="hidden" name="autorizarCbteIdVenta" id="autorizarCbteIdVenta">
@@ -547,7 +547,7 @@ MODAL AUTOTIZAR COMPROBANTE
               Fecha:
               <div class="input-group">
 
-                <span class="input-group-addon"><i class="fa fa-calendar"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-calendar"></i></span> 
 
                 <input type="text" class="form-control" name="autorizarCbteFecha" id="autorizarCbteFecha" readonly>
 
@@ -563,7 +563,7 @@ MODAL AUTOTIZAR COMPROBANTE
               Cliente:
               <div class="input-group">
 
-                <span class="input-group-addon"><i class="fa fa-user"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
 
                  <input type="text" class="form-control" id="autocompletarClienteCaja" placeholder="1-Consumidor Final" required>
                  <input type="hidden" id="seleccionarCliente" name="autorizarCbteCliente" value="1">
@@ -630,7 +630,7 @@ MODAL AUTOTIZAR COMPROBANTE
 
         <div class="modal-footer">
 
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
           <button type="submit" class="btn btn-primary">Guardar</button>
 
@@ -663,7 +663,7 @@ IMPRIMIR TICKET CAJA
       </div>
       <!--CUERPO DEL MODAL-->
       <div class="modal-body">
-        <div class="box-body">
+        <div class="card-body">
     		<div class="alert " id="divEventoObservacionAprobada" style="" role="alert"></div>
             <div id="impTicketCobroCaja" style="font-size: 15px;">
              <br>
@@ -730,9 +730,9 @@ IMPRIMIR TICKET CAJA
       </div>
       <!--PIE DEL MODAL-->
       <div class="modal-footer">
-        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+        <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
         <button type="button" id="btnImprimirTicketControl" class="btn btn-primary"><i class="fa fa-ticket" aria-hidden="true"></i> Ticket</button>
-        <button type="button" id="btnImprimirA4Control" class="btn btn-primary"><i class="fa fa-print" aria-hidden="true"></i> A4</button>
+        <button type="button" id="btnImprimirA4Control" class="btn btn-primary"><i class="bi bi-printer" aria-hidden="true"></i> A4</button>
         <button type="button" id="btnEnviarMailA4" class="btn btn-primary"><i class="fa fa-envelope" aria-hidden="true"></i> Mail</button>
       </div>
     </div>

@@ -118,7 +118,7 @@
 
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -135,7 +135,7 @@
 
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Administrar ventas</li>
     
@@ -145,9 +145,9 @@
 
   <section class="content">
 
-    <div class="box">
+    <div class="card">
 
-      <div class="box-header with-border">
+      <div class="card-header with-border">
   
     <div class="row">		
 
@@ -159,7 +159,7 @@
 				    
 					<div class="input-group">
 
-						<span class="input-group-addon"><i class="fa fa-calendar"></i> Desde</span> 
+						<span class="input-group-addon"><i class="bi bi-calendar"></i> Desde</span> 
 						<input id="txtFechaDesdeVentasCategorias" name="txtFechaDesdeVentasCategorias" type="text" class="form-control inputVentasCategorias" placeholder="Fecha desde aaaa/mm/dd" autocomplete="off" required>
 
 					</div>
@@ -174,7 +174,7 @@
 
 					<div class="input-group">
 
-						<span class="input-group-addon"><i class="fa fa-calendar"></i> Hasta</span> 
+						<span class="input-group-addon"><i class="bi bi-calendar"></i> Hasta</span> 
 						<input id="txtFechaHastaVentasCategorias" name="txtFechaHastaVentasCategorias" type="text" class="form-control inputVentasCategorias" placeholder="Fecha hasta aaaa/mm/dd" autocomplete="off" required>
 
 					</div>
@@ -248,7 +248,7 @@
 
       </div>
 
-      <div class="box-body">
+      <div class="card-body">
 
         <center>
         

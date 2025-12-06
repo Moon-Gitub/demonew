@@ -3,27 +3,27 @@
     $objUsuario = new ControladorUsuarios();
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
   <section class="content-header">
     <h1>
       Administrar usuarios
     </h1>
     <ol class="breadcrumb">
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       <li class="active">Administrar usuarios</li>
     </ol>
   </section>
 
   <section class="content">
-    <div class="box">
+    <div class="card">
 
-      <div class="box-header with-border">
-        <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarUsuario">
+      <div class="card-header with-border">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregarUsuario">
           Agregar usuario
         </button>
       </div>
 
-      <div class="box-body">
+      <div class="card-body">
        <table class="table table-bordered table-striped dt-responsive tablas" width="100%">
         <thead>
          <tr>
@@ -72,12 +72,12 @@
                         <td>
                           <div class="btn-group">
                             <a class="btn btn-primary" ><i class="fa fa-cog fa-fw"></i> Acciones</a>
-                            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+                            <a class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#">
                               <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
                             </a>
-                            <ul class="dropdown-menu"><li><a class="btnEditarUsuario" idUsuario="'.$value["id"].'" data-toggle="modal" data-target="#modalEditarUsuario"><i class="fa fa-pencil fa-fw"></i> Editar</a></li>';
+                            <ul class="dropdown-menu"><li><a class="btnEditarUsuario" idUsuario="'.$value["id"].'" data-bs-toggle="modal" data-bs-target="#modalEditarUsuario"><i class="fa fa-pencil fa-fw"></i> Editar</a></li>';
                             if($_SESSION["perfil"] == "Administrador"){
-                              echo '<li><a class="btnEliminarUsuario" idProveedor="'.$value["id"].'" idUsuario="'.$value["id"].'" fotoUsuario="'.$value["foto"].'" usuario="'.$value["usuario"].'" href="#"><i class="fa fa-times fa-fw"></i> Borrar</a></li>';
+                              echo '<li><a class="btnEliminarUsuario" idProveedor="'.$value["id"].'" idUsuario="'.$value["id"].'" fotoUsuario="'.$value["foto"].'" usuario="'.$value["usuario"].'" href="#"><i class="bi bi-x fa-fw"></i> Borrar</a></li>';
                             }
                            echo '</ul>
                           </div>
@@ -103,16 +103,16 @@ MODAL AGREGAR USUARIO
       <form role="form" method="post" enctype="multipart/form-data">
         <!--CABEZA DEL MODAL-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Agregar usuario</h4>
         </div>
         <!--CUERPO DEL MODAL-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
             <!-- ENTRADA PARA EL NOMBRE -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-user"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
                 <input type="text" autocomplete="off" class="form-control" name="nuevoNombre" placeholder="Ingresar nombre" required>
               </div>
             </div>
@@ -136,7 +136,7 @@ MODAL AGREGAR USUARIO
             <!-- ENTRADA PARA SELECCIONAR SU PERFIL -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-users"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-persons"></i></span> 
                 <select class="form-control" name="nuevoPerfil">
                   <option value="">Selecionar perfil</option>
                   <option value="Administrador">Administrador</option>
@@ -197,7 +197,7 @@ MODAL AGREGAR USUARIO
         PIE DEL MODAL
         ======================================-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
           <button type="submit" class="btn btn-primary">Guardar usuario</button>
         </div>
         <?php
@@ -220,7 +220,7 @@ MODAL EDITAR USUARIO
         CABEZA DEL MODAL
         ======================================-->
         <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
           <h4 class="modal-title">Editar usuario</h4>
         </div>
 
@@ -228,12 +228,12 @@ MODAL EDITAR USUARIO
         CUERPO DEL MODAL
         ======================================-->
         <div class="modal-body">
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADA PARA EL NOMBRE -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-user"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
                 <input type="text" autocomplete="off" class="form-control" id="editarNombre" name="editarNombre" value="" required>
               </div>
             </div>
@@ -258,7 +258,7 @@ MODAL EDITAR USUARIO
             <!-- ENTRADA PARA SELECCIONAR SU PERFIL -->
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-users"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-persons"></i></span> 
                 <select class="form-control" name="editarPerfil">
                   <option value="" id="editarPerfil"></option>
                   <option value="Administrador">Administrador</option>
@@ -321,7 +321,7 @@ MODAL EDITAR USUARIO
         PIE DEL MODAL
         ======================================-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
           <button type="submit" class="btn btn-primary">Modificar usuario</button>
         </div>
 

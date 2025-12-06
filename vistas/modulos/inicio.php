@@ -1,11 +1,11 @@
-<div class="content-wrapper">
+<div class="app-content">
   <section class="content-header">
     <h1>
       Tablero
       <small>Panel de Control</small>
     </h1>
     <ol class="breadcrumb">
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-house"></i> Inicio</a></li>
       <li class="active">Tablero</li>
     </ol>
   </section>
@@ -57,18 +57,20 @@
           <?php
 
           if($_SESSION["perfil"] !="Administrador"){
-             echo '<div class="box box-success">
-             <div class="box-header">
+             echo '<div class="card card-success">
+             <div class="card-header">
              <h1>Bienvenid@ ' .$_SESSION["nombre"].'</h1>
              </div>
+              <div class="card-body">
               <div class="row">
               <div class="col-md-12">
-                <a href="productos" class="btn btn-primary"><i class="fa fa-product-hunt"></i> Productos</a>
-                <a href="impresion-precios" class="btn btn-primary"><i class="fa fa-print"></i> Imprimir Precios</a>
-                <a href="cajas-cajero" class="btn btn-primary"><i class="fa fa-dollar"></i> Caja</a>
-                <a href="crear-venta-caja" class="btn btn-primary"><i class="fa fa-plus"></i> Venta</a>
-                <a href="ventas" class="btn btn-primary"><i class="fa fa-line-chart"></i> Ventas</a>
-                <a href="clientes" class="btn btn-primary"><i class="fa fa-user"></i> Clientes</a>
+                <a href="productos" class="btn btn-primary"><i class="bi bi-box-seam"></i> Productos</a>
+                <a href="impresion-precios" class="btn btn-primary"><i class="bi bi-printer"></i> Imprimir Precios</a>
+                <a href="cajas-cajero" class="btn btn-primary"><i class="bi bi-cash-coin"></i> Caja</a>
+                <a href="crear-venta-caja" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Venta</a>
+                <a href="ventas" class="btn btn-primary"><i class="bi bi-graph-up"></i> Ventas</a>
+                <a href="clientes" class="btn btn-primary"><i class="bi bi-people"></i> Clientes</a>
+              </div>
               </div>
               </div>
              </div>';

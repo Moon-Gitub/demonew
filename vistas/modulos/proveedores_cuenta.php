@@ -8,7 +8,7 @@
 
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -21,7 +21,7 @@
   <input type="hidden" name="nombreProveedorInforme" id="nombreProveedorInforme" value="<?php echo $proveedor["nombre"];?>" />
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Cuenta Corriente proveedor</li>
     
@@ -194,10 +194,10 @@
 
     </div>
 
-  <div class="box">
-     <div class="box-header with-border">
+  <div class="card">
+     <div class="card-header with-border">
   
-        <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarMovimiento">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregarMovimiento">
           
           Agregar movimiento
 
@@ -209,10 +209,10 @@
 
         </a>-->
 
-        <button type="button" class="btn btn-default pull-right" id="daterangeCtaCte-btn">
+        <button type="button" class="btn btn-default float-end" id="daterangeCtaCte-btn">
            
             <span>
-              <i class="fa fa-calendar"></i> 
+              <i class="bi bi-calendar"></i> 
 
               <?php
 
@@ -234,7 +234,7 @@
         </button>
 
       </div>
-      <div class="box-body">
+      <div class="card-body">
         
       <table class="table table-bordered table-striped dt-responsive tablasBotonesCtaCteProveedor" width="100%">
         
@@ -337,8 +337,8 @@
 
               echo '<td style="text-align: center">
                      <!--<div class="btn-group">
-                      <button class="btn btn-info btnImprimirCompraCtaCte" idCompra="'.$value['id_compra'].'"><i class="fa fa-print"></i></button>
-                      <button class="btn btn-danger btnEliminarMovimiento" idMovimiento="'.$value["id"].'"><i class="fa fa-times"></i></button>
+                      <button class="btn btn-info btnImprimirCompraCtaCte" idCompra="'.$value['id_compra'].'"><i class="bi bi-printer"></i></button>
+                      <button class="btn btn-danger btnEliminarMovimiento" idMovimiento="'.$value["id"].'"><i class="bi bi-x"></i></button>
                      </div>-->
                     </td>';
             echo '</tr>';
@@ -375,7 +375,7 @@ MODAL INGRESAR MOVIMIENTO
 
         <div class="modal-header" style="background:#3c8dbc; color:white">
 
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 
           <h4 class="modal-title">Movimientos Cta. Cte</h4>
 
@@ -387,7 +387,7 @@ MODAL INGRESAR MOVIMIENTO
 
         <div class="modal-body">
 
-          <div class="box-body">
+          <div class="card-body">
 
             <!-- ENTRADA PARA USUARIO QUE REALIZA OPERACION  -->
             <input type="hidden" name="idUsuarioMovimientoCtaCteProveedor" value="<?php echo $_SESSION["id"]; ?>">
@@ -400,7 +400,7 @@ MODAL INGRESAR MOVIMIENTO
               
               <div class="input-group">
               
-                <span class="input-group-addon"><i class="fa fa-user"></i></span> 
+                <span class="input-group-addon"><i class="bi bi-person"></i></span> 
 
                 <input type="text" class="form-control" name="ingresoCajaProveedor" value="<?php echo $proveedor["nombre"];?>" id="ingresoCajaProveedor" readonly> 
 
@@ -518,7 +518,7 @@ MODAL INGRESAR MOVIMIENTO
         ======================================-->
         <div class="modal-footer">
 
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-default float-start" data-bs-dismiss="modal">Salir</button>
 
           <button type="submit" class="btn btn-primary">Guardar</button>
 

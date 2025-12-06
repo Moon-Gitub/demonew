@@ -14,7 +14,7 @@ if($_SESSION["perfil"] == "Vendedor"){
 
 ?>
 
-<div class="content-wrapper">
+<div class="app-content">
 
   <section class="content-header">
     
@@ -26,7 +26,7 @@ if($_SESSION["perfil"] == "Vendedor"){
 
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
+      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
       <li class="active">Administrar pedidos internos validados</li>
     
@@ -36,13 +36,13 @@ if($_SESSION["perfil"] == "Vendedor"){
 
   <section class="content">
 
-    <div class="box">
+    <div class="card">
 
-      <div class="box-header with-border">
+      <div class="card-header with-border">
   
       </div>
 
-      <div class="box-body">
+      <div class="card-body">
         
        <table class="table table-bordered table-striped dt-responsive tablasPedidosInternos" width="100%">
          
@@ -121,7 +121,7 @@ if($_SESSION["perfil"] == "Vendedor"){
 
                      		<button class="btn btn-info btnImprimirPedido" codigoPedido="'.$value["id"].'">
 	
-								<i class="fa fa-print"></i>
+								<i class="bi bi-printer"></i>
 	
 							</button>   
 		
