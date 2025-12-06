@@ -1,34 +1,62 @@
 <?php
 
 require_once "conexion.php";
+require_once "validador-sql.modelo.php";
 
 class ModeloProductos{
 
 	/*=============================================
-	MOSTRAR PRODUCTOS
+	MOSTRAR PRODUCTOS - VERSIÓN SEGURA
 	=============================================*/
 	static public function mdlMostrarProductos($tabla, $item, $valor, $orden){
-		if($item != null){
-			$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE $item = :$item ORDER BY id DESC");
-			$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
-			$stmt -> execute();
-			return $stmt -> fetch();
-		}else{
-	        $stmt = Conexion::conectar()->prepare("SELECT productos.*, proveedores.nombre FROM $tabla LEFT JOIN proveedores ON productos.id_proveedor = proveedores.id ORDER BY productos.$orden DESC");
-			$stmt -> execute();
-			return $stmt -> fetchAll();
+		try {
+			// ✅ Validar tabla
+			$tabla = ModeloValidadorSQL::validarTabla($tabla);
+			$pdo = Conexion::conectar();
+			
+			if($item != null){
+				// ✅ Validar columna
+				$item = ModeloValidadorSQL::validarColumna($tabla, $item);
+				
+				$stmt = $pdo->prepare("SELECT * FROM `$tabla` WHERE `$item` = :valor ORDER BY id DESC");
+				$stmt->bindParam(":valor", $valor, PDO::PARAM_STR);
+				$stmt->execute();
+				return $stmt->fetch();
+			}else{
+				// ✅ Validar orden
+				$orden = ModeloValidadorSQL::validarColumna($tabla, $orden);
+				
+				$stmt = $pdo->prepare("SELECT productos.*, proveedores.nombre FROM `$tabla` LEFT JOIN proveedores ON productos.id_proveedor = proveedores.id ORDER BY productos.`$orden` DESC");
+				$stmt->execute();
+				return $stmt->fetchAll();
+			}
+		} catch (Exception $e) {
+			error_log("Error en mdlMostrarProductos: " . $e->getMessage());
+			return false;
 		}
 		$stmt -> close();
 		$stmt = null;
 	}
 	
 	/*=============================================
-	MOSTRAR PRODUCTOS PAGINADOS
+	MOSTRAR PRODUCTOS PAGINADOS - VERSIÓN SEGURA
 	=============================================*/
 	static public function mdlMostrarProductosPaginados($desde, $limite){
-        $stmt = Conexion::conectar()->prepare("SELECT productos.*, proveedores.nombre FROM productos LEFT JOIN proveedores ON productos.id_proveedor = proveedores.id ORDER BY productos.id ASC LIMIT $desde, $limite");
-		$stmt -> execute();
-		return $stmt -> fetchAll();
+		try {
+			// ✅ Validar parámetros numéricos
+			$desde = intval($desde);
+			$limite = intval($limite);
+			
+			$pdo = Conexion::conectar();
+			$stmt = $pdo->prepare("SELECT productos.*, proveedores.nombre FROM productos LEFT JOIN proveedores ON productos.id_proveedor = proveedores.id ORDER BY productos.id ASC LIMIT :desde, :limite");
+			$stmt->bindParam(":desde", $desde, PDO::PARAM_INT);
+			$stmt->bindParam(":limite", $limite, PDO::PARAM_INT);
+			$stmt->execute();
+			return $stmt->fetchAll();
+		} catch (Exception $e) {
+			error_log("Error en mdlMostrarProductosPaginados: " . $e->getMessage());
+			return false;
+		}
 		$stmt -> close();
 		$stmt = null;
 	}
@@ -55,22 +83,27 @@ class ModeloProductos{
 		    $cambioDesde = "(sin especificar)";
 		}
 		
-		//$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET $item1 = :$item1 WHERE id = :id");
-		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET $item1 = :$item1, nombre_usuario = :nombre_usuario, cambio_desde = :cambio_desde WHERE id = :id");
-		
-		$stmt -> bindParam(":".$item1, $valor1, PDO::PARAM_STR);
-		$stmt -> bindParam(":id", $valor, PDO::PARAM_STR);
-		$stmt -> bindParam(":nombre_usuario", $nomUsuario, PDO::PARAM_STR);
-		$stmt -> bindParam(":cambio_desde", $cambioDesde, PDO::PARAM_STR);
+		try {
+			// ✅ Validar tabla y columna
+			$tabla = ModeloValidadorSQL::validarTabla($tabla);
+			$item1 = ModeloValidadorSQL::validarColumna($tabla, $item1);
+			
+			$pdo = Conexion::conectar();
+			$stmt = $pdo->prepare("UPDATE `$tabla` SET `$item1` = :valor1, nombre_usuario = :nombre_usuario, cambio_desde = :cambio_desde WHERE id = :id");
+			
+			$stmt->bindParam(":valor1", $valor1, PDO::PARAM_STR);
+			$stmt->bindParam(":id", $valor, PDO::PARAM_INT);
+			$stmt->bindParam(":nombre_usuario", $nomUsuario, PDO::PARAM_STR);
+			$stmt->bindParam(":cambio_desde", $cambioDesde, PDO::PARAM_STR);
 
-		if($stmt -> execute()){
-
-			return "ok";
-		
-		}else{
-
-			return "error";	
-
+			if($stmt->execute()){
+				return "ok";
+			}else{
+				return "error";	
+			}
+		} catch (Exception $e) {
+			error_log("Error en mdlActualizarProductoDos: " . $e->getMessage());
+			return "error";
 		}
 
 		$stmt -> close();
@@ -80,20 +113,36 @@ class ModeloProductos{
 	}
 	
 		/*=============================================
-	ACTUALIZAR PRODUCTO
+	ACTUALIZAR PRODUCTO - VERSIÓN SEGURA
 	=============================================*/
 	static public function actualizarProductoPos($tabla, $id, $idTienda, $tiendanube_variant_id,  $tiendanube_stock, $tiendanube_price){
 
-		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET tiendanube_id = '$idTienda',  tiendanube_variant_id  = '$tiendanube_variant_id', tiendanube_stock = '$tiendanube_stock', tiendanube_price = '$tiendanube_price'  WHERE id = '$id'");
+		try {
+			// ✅ Validar tabla y parámetros
+			$tabla = ModeloValidadorSQL::validarTabla($tabla);
+			$id = intval($id);
+			$idTienda = intval($idTienda);
+			$tiendanube_variant_id = intval($tiendanube_variant_id);
+			$tiendanube_stock = intval($tiendanube_stock);
+			$tiendanube_price = floatval($tiendanube_price);
+			
+			$pdo = Conexion::conectar();
+			$stmt = $pdo->prepare("UPDATE `$tabla` SET tiendanube_id = :idTienda, tiendanube_variant_id = :tiendanube_variant_id, tiendanube_stock = :tiendanube_stock, tiendanube_price = :tiendanube_price WHERE id = :id");
+			
+			$stmt->bindParam(":idTienda", $idTienda, PDO::PARAM_INT);
+			$stmt->bindParam(":tiendanube_variant_id", $tiendanube_variant_id, PDO::PARAM_INT);
+			$stmt->bindParam(":tiendanube_stock", $tiendanube_stock, PDO::PARAM_INT);
+			$stmt->bindParam(":tiendanube_price", $tiendanube_price, PDO::PARAM_STR);
+			$stmt->bindParam(":id", $id, PDO::PARAM_INT);
 
-		if($stmt -> execute()){
-
-			return "ok";
-		
-		}else{
-
-			return "error";	
-
+			if($stmt->execute()){
+				return "ok";
+			}else{
+				return "error";	
+			}
+		} catch (Exception $e) {
+			error_log("Error en actualizarProductoPos: " . $e->getMessage());
+			return "error";
 		}
 
 		$stmt -> close();
@@ -212,21 +261,27 @@ class ModeloProductos{
 		    $cambioDesde = "(sin especificar)";
 		}*/
 
-		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET $item1 = :$item1, nombre_usuario = :nombre_usuario, cambio_desde = :cambio_desde WHERE id = :id");
+		try {
+			// ✅ Validar tabla y columna
+			$tabla = ModeloValidadorSQL::validarTabla($tabla);
+			$item1 = ModeloValidadorSQL::validarColumna($tabla, $item1);
+			
+			$pdo = Conexion::conectar();
+			$stmt = $pdo->prepare("UPDATE `$tabla` SET `$item1` = :valor1, nombre_usuario = :nombre_usuario, cambio_desde = :cambio_desde WHERE id = :id");
 
-		$stmt -> bindParam(":".$item1, $valor1, PDO::PARAM_STR);
-		$stmt -> bindParam(":id", $valor, PDO::PARAM_INT);
-		$stmt -> bindParam(":nombre_usuario", $nomUsuario, PDO::PARAM_STR);
-		$stmt -> bindParam(":cambio_desde", $cambioDesde, PDO::PARAM_STR);
+			$stmt->bindParam(":valor1", $valor1, PDO::PARAM_STR);
+			$stmt->bindParam(":id", $valor, PDO::PARAM_INT);
+			$stmt->bindParam(":nombre_usuario", $nomUsuario, PDO::PARAM_STR);
+			$stmt->bindParam(":cambio_desde", $cambioDesde, PDO::PARAM_STR);
 
-		if($stmt -> execute()){
-
-			return "ok";
-		
-		}else{
-
-			return $stmt->errorInfo();
-
+			if($stmt->execute()){
+				return "ok";
+			}else{
+				return $stmt->errorInfo();
+			}
+		} catch (Exception $e) {
+			error_log("Error en mdlActualizarProducto: " . $e->getMessage());
+			return "error";
 		}
 
 		$stmt -> close();
@@ -260,21 +315,27 @@ class ModeloProductos{
 			$nomUsuario = '(sin especificar)';
 		}
 
-		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET $item1 = :$item1, cambio_desde = :cambio_desde, nombre_usuario = :nombre_usuario WHERE codigo = :codigo");
+		try {
+			// ✅ Validar tabla y columna
+			$tabla = ModeloValidadorSQL::validarTabla($tabla);
+			$item1 = ModeloValidadorSQL::validarColumna($tabla, $item1);
+			
+			$pdo = Conexion::conectar();
+			$stmt = $pdo->prepare("UPDATE `$tabla` SET `$item1` = :valor1, cambio_desde = :cambio_desde, nombre_usuario = :nombre_usuario WHERE codigo = :codigo");
 
-		$stmt -> bindParam(":".$item1, $valor1, PDO::PARAM_STR);
-		$stmt -> bindParam(":codigo", $valor, PDO::PARAM_STR);
-		$stmt -> bindParam(":cambio_desde", $cambioDesde, PDO::PARAM_STR);
-		$stmt -> bindParam(":nombre_usuario", $nomUsuario, PDO::PARAM_STR);
+			$stmt->bindParam(":valor1", $valor1, PDO::PARAM_STR);
+			$stmt->bindParam(":codigo", $valor, PDO::PARAM_STR);
+			$stmt->bindParam(":cambio_desde", $cambioDesde, PDO::PARAM_STR);
+			$stmt->bindParam(":nombre_usuario", $nomUsuario, PDO::PARAM_STR);
 
-		if($stmt -> execute()){
-
-			return "ok";
-		
-		}else{
-
-			return $stmt -> errorInfo();	
-
+			if($stmt->execute()){
+				return "ok";
+			}else{
+				return $stmt->errorInfo();	
+			}
+		} catch (Exception $e) {
+			error_log("Error en mdlActualizarProductoCodigo: " . $e->getMessage());
+			return "error";
 		}
 
 		$stmt -> close();
@@ -597,10 +658,24 @@ class ModeloProductos{
 	=============================================*/	
 	static public function mdlMostrarProductosFiltrados($tabla, $filtro){
 
-		$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE codigo LIKE '%$filtro%' OR descripcion LIKE '%$filtro%' ORDER BY descripcion LIMIT 0,20");
-		$stmt -> execute();
+		try {
+			// ✅ Validar tabla y sanitizar filtro
+			$tabla = ModeloValidadorSQL::validarTabla($tabla);
+			$filtro = ModeloValidadorSQL::sanitizarLike($filtro);
+			
+			$pdo = Conexion::conectar();
+			$stmt = $pdo->prepare("SELECT * FROM `$tabla` WHERE codigo LIKE :filtro1 OR descripcion LIKE :filtro2 ORDER BY descripcion LIMIT 0,20");
+			
+			$filtroLike = "%$filtro%";
+			$stmt->bindParam(":filtro1", $filtroLike, PDO::PARAM_STR);
+			$stmt->bindParam(":filtro2", $filtroLike, PDO::PARAM_STR);
+			$stmt->execute();
 
-		return $stmt -> fetchAll();
+			return $stmt->fetchAll();
+		} catch (Exception $e) {
+			error_log("Error en búsqueda de productos: " . $e->getMessage());
+			return [];
+		}
 
 		$stmt -> close();
 

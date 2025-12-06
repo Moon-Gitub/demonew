@@ -1,34 +1,43 @@
 <?php
 
 require_once "conexion.php";
+require_once "validador-sql.modelo.php";
 
 class ModeloUsuarios{
 
 	/*=============================================
-	MOSTRAR USUARIOS
+	MOSTRAR USUARIOS - VERSIÓN SEGURA
 	=============================================*/
 	static public function mdlMostrarUsuarios($tabla, $item, $valor){
 
-		if($item != null){
-
-			$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE $item = :$item");
-
-			$stmt->bindParam(":".$item, $valor, PDO::PARAM_STR);
-
-			$stmt->execute();
-
-			return $stmt->fetch();
-
-		}else{
-
-			$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla");
-
-			$stmt->execute();
-
-			return $stmt->fetchAll();
-
+		try {
+			// ✅ Validar tabla
+			$tabla = ModeloValidadorSQL::validarTabla($tabla);
+			
+			$pdo = Conexion::conectar();
+			
+			if($item != null){
+				// ✅ Validar columna
+				$item = ModeloValidadorSQL::validarColumna($tabla, $item);
+				
+				// ✅ Usar prepared statement correctamente con backticks
+				$stmt = $pdo->prepare("SELECT * FROM `$tabla` WHERE `$item` = :valor");
+				$stmt->bindParam(":valor", $valor, PDO::PARAM_STR);
+				$stmt->execute();
+				
+				return $stmt->fetch();
+				
+			}else{
+				$stmt = $pdo->prepare("SELECT * FROM `$tabla`");
+				$stmt->execute();
+				
+				return $stmt->fetchAll();
+			}
+			
+		} catch (Exception $e) {
+			error_log("Error en mdlMostrarUsuarios: " . $e->getMessage());
+			return false;
 		}
-		
 
 		$stmt->close();
 
@@ -37,29 +46,35 @@ class ModeloUsuarios{
 	}
 
 	/*=============================================
-	REGISTRO DE USUARIO
+	REGISTRO DE USUARIO - VERSIÓN SEGURA
 	=============================================*/
 	static public function mdlIngresarUsuario($tabla, $datos){
 
-		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(nombre, usuario, password, perfil, sucursal, puntos_venta, listas_precio, foto) VALUES (:nombre, :usuario, :password, :perfil, :sucursal, :puntos_venta, :listas_precio, :foto)");
+		try {
+			// ✅ Validar tabla
+			$tabla = ModeloValidadorSQL::validarTabla($tabla);
+			$pdo = Conexion::conectar();
+			
+			$stmt = $pdo->prepare("INSERT INTO `$tabla`(nombre, usuario, password, perfil, sucursal, puntos_venta, listas_precio, foto) VALUES (:nombre, :usuario, :password, :perfil, :sucursal, :puntos_venta, :listas_precio, :foto)");
 
-		$stmt->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
-		$stmt->bindParam(":usuario", $datos["usuario"], PDO::PARAM_STR);
-		$stmt->bindParam(":password", $datos["password"], PDO::PARAM_STR);
-		$stmt->bindParam(":perfil", $datos["perfil"], PDO::PARAM_STR);
-		$stmt->bindParam(":sucursal", $datos["sucursal"], PDO::PARAM_STR);
-		$stmt->bindParam(":puntos_venta", $datos["puntos_venta"], PDO::PARAM_STR);
-		$stmt->bindParam(":listas_precio", $datos["listas_precio"], PDO::PARAM_STR);
-		$stmt->bindParam(":foto", $datos["foto"], PDO::PARAM_STR);
+			$stmt->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
+			$stmt->bindParam(":usuario", $datos["usuario"], PDO::PARAM_STR);
+			$stmt->bindParam(":password", $datos["password"], PDO::PARAM_STR);
+			$stmt->bindParam(":perfil", $datos["perfil"], PDO::PARAM_STR);
+			$stmt->bindParam(":sucursal", $datos["sucursal"], PDO::PARAM_STR);
+			$stmt->bindParam(":puntos_venta", $datos["puntos_venta"], PDO::PARAM_STR);
+			$stmt->bindParam(":listas_precio", $datos["listas_precio"], PDO::PARAM_STR);
+			$stmt->bindParam(":foto", $datos["foto"], PDO::PARAM_STR);
 
-		if($stmt->execute()){
-
-			return "ok";	
-
-		}else{
-
-			return $stmt->errorInfo();
-		
+			if($stmt->execute()){
+				return "ok";	
+			}else{
+				return $stmt->errorInfo();
+			}
+			
+		} catch (Exception $e) {
+			error_log("Error en mdlIngresarUsuario: " . $e->getMessage());
+			return ["error" => $e->getMessage()];
 		}
 
 		$stmt->close();
@@ -69,29 +84,35 @@ class ModeloUsuarios{
 	}
 
 	/*=============================================
-	EDITAR USUARIO
+	EDITAR USUARIO - VERSIÓN SEGURA
 	=============================================*/
 	static public function mdlEditarUsuario($tabla, $datos){
 	
-		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET nombre = :nombre, password = :password, perfil = :perfil, sucursal = :sucursal, puntos_venta = :puntos_venta, listas_precio = :listas_precio, foto = :foto WHERE usuario = :usuario");
+		try {
+			// ✅ Validar tabla
+			$tabla = ModeloValidadorSQL::validarTabla($tabla);
+			$pdo = Conexion::conectar();
+			
+			$stmt = $pdo->prepare("UPDATE `$tabla` SET nombre = :nombre, password = :password, perfil = :perfil, sucursal = :sucursal, puntos_venta = :puntos_venta, listas_precio = :listas_precio, foto = :foto WHERE usuario = :usuario");
 
-		$stmt->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
-		$stmt->bindParam(":password", $datos["password"], PDO::PARAM_STR);
-		$stmt->bindParam(":perfil", $datos["perfil"], PDO::PARAM_STR);
-		$stmt->bindParam(":sucursal", $datos["sucursal"], PDO::PARAM_STR);
-		$stmt->bindParam(":puntos_venta", $datos["puntos_venta"], PDO::PARAM_STR);
-		$stmt->bindParam(":listas_precio", $datos["listas_precio"], PDO::PARAM_STR);
-		$stmt->bindParam(":foto", $datos["foto"], PDO::PARAM_STR);
-		$stmt->bindParam(":usuario", $datos["usuario"], PDO::PARAM_STR);
+			$stmt->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
+			$stmt->bindParam(":password", $datos["password"], PDO::PARAM_STR);
+			$stmt->bindParam(":perfil", $datos["perfil"], PDO::PARAM_STR);
+			$stmt->bindParam(":sucursal", $datos["sucursal"], PDO::PARAM_STR);
+			$stmt->bindParam(":puntos_venta", $datos["puntos_venta"], PDO::PARAM_STR);
+			$stmt->bindParam(":listas_precio", $datos["listas_precio"], PDO::PARAM_STR);
+			$stmt->bindParam(":foto", $datos["foto"], PDO::PARAM_STR);
+			$stmt->bindParam(":usuario", $datos["usuario"], PDO::PARAM_STR);
 
-		if($stmt->execute()){
-
-			return "ok";
-		
-		}else{
-
-			return $stmt->errorInfo();
-
+			if($stmt->execute()){
+				return "ok";
+			}else{
+				return $stmt->errorInfo();
+			}
+			
+		} catch (Exception $e) {
+			error_log("Error en mdlEditarUsuario: " . $e->getMessage());
+			return ["error" => $e->getMessage()];
 		}
 
 		$stmt->close();
@@ -101,23 +122,33 @@ class ModeloUsuarios{
 	}
 
 	/*=============================================
-	ACTUALIZAR USUARIO
+	ACTUALIZAR USUARIO - VERSIÓN SEGURA
 	=============================================*/
 	static public function mdlActualizarUsuario($tabla, $item1, $valor1, $item2, $valor2){
 
-		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET $item1 = :$item1 WHERE $item2 = :$item2");
+		try {
+			// ✅ Validar tabla y columnas
+			$tabla = ModeloValidadorSQL::validarTabla($tabla);
+			$item1 = ModeloValidadorSQL::validarColumna($tabla, $item1);
+			$item2 = ModeloValidadorSQL::validarColumna($tabla, $item2);
+			
+			$pdo = Conexion::conectar();
+			
+			// ✅ Usar placeholders con nombres únicos
+			$stmt = $pdo->prepare("UPDATE `$tabla` SET `$item1` = :valor1 WHERE `$item2` = :valor2");
+			
+			$stmt->bindParam(":valor1", $valor1, PDO::PARAM_STR);
+			$stmt->bindParam(":valor2", $valor2, PDO::PARAM_STR);
 
-		$stmt->bindParam(":".$item1, $valor1, PDO::PARAM_STR);
-		$stmt->bindParam(":".$item2, $valor2, PDO::PARAM_STR);
-
-		if($stmt->execute()){
-
-			return "ok";
-		
-		}else{
-
-			return "error";	
-
+			if($stmt->execute()){
+				return "ok";
+			}else{
+				return "error";	
+			}
+			
+		} catch (Exception $e) {
+			error_log("Error en mdlActualizarUsuario: " . $e->getMessage());
+			return "error";
 		}
 
 		$stmt->close();
@@ -127,22 +158,28 @@ class ModeloUsuarios{
 	}
 
 	/*=============================================
-	BORRAR USUARIO
+	BORRAR USUARIO - VERSIÓN SEGURA
 	=============================================*/
 	static public function mdlBorrarUsuario($tabla, $datos){
 
-		$stmt = Conexion::conectar()->prepare("DELETE FROM $tabla WHERE id = :id");
+		try {
+			// ✅ Validar tabla
+			$tabla = ModeloValidadorSQL::validarTabla($tabla);
+			$pdo = Conexion::conectar();
+			
+			$stmt = $pdo->prepare("DELETE FROM `$tabla` WHERE id = :id");
 
-		$stmt->bindParam(":id", $datos, PDO::PARAM_INT);
+			$stmt->bindParam(":id", $datos, PDO::PARAM_INT);
 
-		if($stmt->execute()){
-
-			return "ok";
-		
-		}else{
-
-			return "error";	
-
+			if($stmt->execute()){
+				return "ok";
+			}else{
+				return "error";	
+			}
+			
+		} catch (Exception $e) {
+			error_log("Error en mdlBorrarUsuario: " . $e->getMessage());
+			return "error";
 		}
 
 		$stmt->close();
