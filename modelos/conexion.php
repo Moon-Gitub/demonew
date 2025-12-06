@@ -36,14 +36,25 @@ class Conexion{
 
 	/**
 	 * Obtener datos de conexión (para compatibilidad)
+	 * Requiere .env configurado
 	 */
 	static public function getDatosConexion(){
+		$host = self::getEnv('DB_HOST');
+		$db = self::getEnv('DB_NAME');
+		$user = self::getEnv('DB_USER');
+		$pass = self::getEnv('DB_PASS');
+		$charset = self::getEnv('DB_CHARSET', 'UTF8MB4');
+		
+		if (empty($host) || empty($db) || empty($user) || empty($pass)) {
+			throw new Exception("Error: Archivo .env no configurado. Variables DB_HOST, DB_NAME, DB_USER, DB_PASS son requeridas.");
+		}
+		
 		return array(
-			'host' => self::getEnv('DB_HOST', 'localhost'),
-			'db' => self::getEnv('DB_NAME', 'newmoon_newmoon_db'),
-			'user' => self::getEnv('DB_USER', 'newmoon_newmoon_user'),
-			'pass' => self::getEnv('DB_PASS', '61t;t62h5P$}.sXT'),
-			'charset' => self::getEnv('DB_CHARSET', 'UTF8MB4')
+			'host' => $host,
+			'db' => $db,
+			'user' => $user,
+			'pass' => $pass,
+			'charset' => $charset
 		);
 	}
 
