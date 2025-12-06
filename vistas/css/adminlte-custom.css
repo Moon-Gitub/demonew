@@ -29,22 +29,53 @@ body {
   font-size: 0.875rem;
 }
 
-/* ===== APP MAIN ===== */
-.app-main {
-  flex: 1;
+/* ===== APP WRAPPER ===== */
+.app-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 100%;
+}
+
+/* ===== APP MAIN ===== */
+.app-main {
+  flex: 1;
+  display: block !important;
+  width: 100%;
+  min-height: calc(100vh - 60px);
+  margin-left: 250px;
+  padding: 0;
+  overflow: visible !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 991.98px) {
+  .app-main {
+    margin-left: 0;
+  }
+}
+
+/* ===== APP CONTENT HEADER ===== */
+.app-content-header {
+  background-color: #fff;
+  border-bottom: 1px solid #dee2e6;
+  padding: 1.5rem 0;
+  margin-bottom: 0;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  display: block !important;
+  visibility: visible !important;
 }
 
 /* ===== APP CONTENT ===== */
 .app-content {
-  padding: 1.5rem 0 2rem 0;
-  flex: 1;
+  padding: 1.5rem;
   display: block !important;
   min-height: 400px;
   visibility: visible !important;
   opacity: 1 !important;
+  width: 100%;
+  background-color: #f8f9fa;
 }
 
 .app-content .container-fluid {
@@ -53,16 +84,31 @@ body {
   width: 100%;
   display: block !important;
   visibility: visible !important;
+  max-width: 100%;
 }
 
 .app-content .card {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
+  margin-bottom: 1.5rem;
 }
 
 .app-content .table {
   display: table !important;
+  visibility: visible !important;
+  width: 100% !important;
+}
+
+.app-content .row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  margin-right: -0.75rem;
+  margin-left: -0.75rem;
+}
+
+.app-content [class*="col-"] {
+  display: block !important;
   visibility: visible !important;
 }
 
