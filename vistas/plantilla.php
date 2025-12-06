@@ -48,6 +48,9 @@
     
     <!-- AdminLTE 4 CSS -->
     <link rel="stylesheet" href="vistas/dist/css/adminlte.min.css">
+    
+    <!-- CSS Personalizado - Diseño Moderno -->
+    <link rel="stylesheet" href="vistas/css/adminlte-custom.css">
 
      <!-- DataTables -->
     <link rel="stylesheet" href="vistas/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">

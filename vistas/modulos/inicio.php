@@ -1,15 +1,26 @@
-<div class="app-content">
-  <section class="content-header">
-    <h1>
-      Tablero
-      <small>Panel de Control</small>
-    </h1>
-    <ol class="breadcrumb">
-      <li><a href="inicio"><i class="bi bi-house"></i> Inicio</a></li>
-      <li class="active">Tablero</li>
-    </ol>
-  </section>
-  <section class="content">
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Tablero</h3>
+          <small class="text-muted">Panel de Control</small>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end mb-0">
+            <li class="breadcrumb-item"><a href="inicio"><i class="bi bi-house"></i> Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Tablero</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <div class="container-fluid">
     <?php
 
       //VENTAS (INCLUYE CAJAS Y GRAFICO)
@@ -78,5 +89,9 @@
           ?>
          </div>
      </div>
-  </section>
-</div>
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->
+</main>
+<!--end::App Main-->

@@ -369,19 +369,19 @@ if($ctaCteCliente["saldo"] <= 0) {
         <ul class="navbar-nav ms-auto">
             
                 <!-- Alerta de tiempo de sesión -->
-                <li class="dropdown tasks-menu" style="display: none" id="alertaTiempoSesionRestanteLi">
-                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="fa fa-clock-o"></i>
-                      <span title="Tiempo restante de sesión" class="label label-danger" id="alertaTiempoSesionRestante"></span>
+                <li class="nav-item dropdown" style="display: none" id="alertaTiempoSesionRestanteLi">
+                    <a href="#" class="nav-link" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="bi bi-clock"></i>
+                      <span title="Tiempo restante de sesión" class="badge bg-danger" id="alertaTiempoSesionRestante"></span>
                     </a>
                 </li>
                 
                 <!-- Dropdown AFIP -->
-                <li class="dropdown tasks-menu">
-                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
-                      <img src="vistas/img/plantilla/afipicon.ico" >
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link" data-bs-toggle="dropdown">
+                      <img src="vistas/img/plantilla/afipicon.ico" class="rounded-circle" style="width: 30px; height: 30px;">
                     </a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu dropdown-menu-end">
                         <li class="header" style="background-color: #000"><img src="vistas/img/plantilla/AFIPlogoChico.png" width="30%"></li>
                         <li>
                             <ul class="menu" style="background-color: #eee;">
@@ -420,11 +420,11 @@ if($ctaCteCliente["saldo"] <= 0) {
 
                 <?php if($tieneCotizacion && $objParametros->getPrecioDolar()) { ?>
                 <!-- Dropdown Cotización Dólar -->
-                <li class="dropdown tasks-menu">
-                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
-                      <i class="fa fa-money"></i>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link" data-bs-toggle="dropdown">
+                      <i class="bi bi-currency-dollar"></i>
                     </a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu dropdown-menu-end">
                         <li class="header" style="background-color: #000; color: #fff">Ultima actualizacion dolar</li>
                         <li>
                             <ul class="menu" style="background-color: #eee;">
@@ -454,13 +454,13 @@ if($ctaCteCliente["saldo"] <= 0) {
                 <?php if($_SESSION["perfil"] == "Administrador") { ?>
 
                 <!-- Sistema de Cobro Moon -->
-                <li class="dropdown tasks-menu">
-                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" title="Estado de Cuenta - Sistema de Cobro">
-                        <i class="fa fa-credit-card" style="font-size: 18px;"></i>
-                        <span class="hidden-xs" style="margin-left: 5px;">Estado Cuenta</span>
-                        <?php echo isset($badgeNavbar) ? $badgeNavbar : ''; ?>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link" data-bs-toggle="dropdown" title="Estado de Cuenta - Sistema de Cobro">
+                        <i class="bi bi-credit-card" style="font-size: 18px;"></i>
+                        <span class="d-none d-md-inline" style="margin-left: 5px;">Estado Cuenta</span>
+                        <?php echo isset($badgeNavbar) ? str_replace('label', 'badge', str_replace('label-', 'bg-', $badgeNavbar)) : ''; ?>
                     </a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu dropdown-menu-end">
                         <li class="header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 10px;">
                             <i class="fa fa-moon-o"></i> Moon Desarrollos
                         </li>
@@ -476,20 +476,19 @@ if($ctaCteCliente["saldo"] <= 0) {
                 <?php } ?>
 
                 <!-- Usuario -->
-                <!-- Usuario -->
-                <li class="dropdown user user-menu">
-                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
+                <li class="nav-item dropdown user-menu">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                         <?php
                         if($_SESSION["foto"] != ""){
-                            echo '<img src="'.$_SESSION["foto"].'" class="user-image">';
+                            echo '<img src="'.$_SESSION["foto"].'" class="user-image rounded-circle shadow" style="width: 30px; height: 30px;">';
                         }else{
-                            echo '<img src="vistas/img/usuarios/default/anonymous.png" class="user-image">';
+                            echo '<img src="vistas/img/usuarios/default/anonymous.png" class="user-image rounded-circle shadow" style="width: 30px; height: 30px;">';
                         }
                         ?>
-                        <span class="hidden-xs"><?php echo $_SESSION["nombre"]; ?></span>
+                        <span class="d-none d-md-inline"><?php echo $_SESSION["nombre"]; ?></span>
                     </a>
                     
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu dropdown-menu-end">
                         <li class="header" style="background-color: #000; color: #fff; padding: 5px">Datos usuario</li>
                         <li>
                             <ul class="menu" style="background-color: #eee;">
@@ -506,10 +505,11 @@ if($ctaCteCliente["saldo"] <= 0) {
 
             </ul>
         </div>
-
-    </nav>
-
-</header>
+        <!--end::End Navbar Links-->
+    </div>
+    <!--end::Container-->
+</nav>
+<!--end::Header-->
 
 <!--=====================================
 ESTILOS RESPONSIVE PARA MÓVIL
