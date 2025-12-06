@@ -21,7 +21,7 @@
     <!-- ✅ Token CSRF para protección -->
     <meta name="csrf-token" content="<?php echo isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : ''; ?>">
     <!-- ✅ Content Security Policy: Permite MercadoPago y recursos necesarios -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://sdk.mercadopago.com https://cdn.jsdelivr.net https://www.mercadolibre.com https://www.mercadopago.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https: http:; frame-src 'self' https://www.mercadolibre.com https://www.mercadopago.com https://sdk.mercadopago.com; connect-src 'self' https://api.mercadopago.com https://api.mercadolibre.com https://www.mercadolibre.com https://www.mercadopago.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://sdk.mercadopago.com https://cdn.jsdelivr.net https://www.mercadolibre.com https://www.mercadopago.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https: http:; frame-src 'self' https://www.mercadolibre.com https://www.mercadopago.com https://sdk.mercadopago.com; connect-src 'self' https://api.mercadopago.com https://api.mercadolibre.com https://www.mercadolibre.com https://www.mercadopago.com;">
     
     <title> <?php echo (isset($arrayEmpresa) && is_array($arrayEmpresa) && isset($arrayEmpresa['razon_social'])) ? $arrayEmpresa['razon_social'] : 'Sistema POS'; ?></title>
 

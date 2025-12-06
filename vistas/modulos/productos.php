@@ -735,4 +735,7 @@ MODAL EDITAR PRODUCTO - AJUSTE STOCK
 <?php
   $objProducto -> ctrEliminarProducto();
 ?>
-
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->

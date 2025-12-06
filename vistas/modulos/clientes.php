@@ -337,7 +337,11 @@ MODAL EDITAR CLIENTE
       ?>
     </div>
   </div>
-</div>
+      </div>
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->
 <?php
   $objClientes -> ctrEliminarCliente();
 ?>

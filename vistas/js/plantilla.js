@@ -112,9 +112,10 @@ $(document).ready(function() {
 });
 
 /*=============================================
-SideBar Menu
+SideBar Menu - AdminLTE 4 usa treeview automático
 =============================================*/
-$('.sidebar-menu').tree()
+// AdminLTE 4 inicializa el treeview automáticamente con data-lte-toggle="treeview"
+// No necesitamos llamar .tree() manualmente
 
 /*=============================================
 Data Table
