@@ -201,3 +201,7 @@ $('#btnInformeVentaProductoRango').daterangepicker(
 
 
 </script>
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->

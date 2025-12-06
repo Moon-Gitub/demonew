@@ -271,3 +271,7 @@ window.addEventListener("load", function(event) {
 //}
 });
 </script>
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->

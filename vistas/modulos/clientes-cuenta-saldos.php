@@ -227,3 +227,7 @@ Email: <?php echo $arrayEmpresa["mail"]; ?>
   </div>
 
 </div>
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->

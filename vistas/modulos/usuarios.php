@@ -340,7 +340,10 @@ MODAL EDITAR USUARIO
     </div>
   </div>
 </div>
-
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->
 <?php
 
    $objUsuario -> ctrBorrarUsuario();

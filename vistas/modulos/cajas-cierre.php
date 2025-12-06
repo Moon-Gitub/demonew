@@ -244,3 +244,7 @@ MODAL INGRESAR MOVIMIENTO
   </div>
 
 </div>
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->

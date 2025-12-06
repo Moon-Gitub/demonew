@@ -256,3 +256,7 @@ MODAL AGREGAR PROVEEDOR
     </div>
   </div>
 </div>
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->

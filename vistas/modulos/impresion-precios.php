@@ -150,3 +150,7 @@ MODAL AGREGAR MARCA
   </div>
 
 </div>
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->

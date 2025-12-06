@@ -218,7 +218,10 @@ MODAL EDITAR PEDIDO
   </div>
 
 </div>
-
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->
 <?php
 
   $borrarPedido = new ControladorPedidos();

@@ -344,6 +344,10 @@ MODAL MODIFICAR PRECIO
     </div>
   </div>
 </div>
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->
 <?php
   $eliminarProveedor = new ControladorProveedores();
   $eliminarProveedor -> ctrEliminarProveedor();
