@@ -2,28 +2,26 @@
  * AdminLTE 4 Custom Styles
  * Basado en la estructura oficial de AdminLTE 4.0.0-rc4
  * https://adminlte.io/themes/v4/index.html
+ * 
+ * NOTA: AdminLTE 4 usa CSS Grid para el layout automáticamente
+ * NO sobrescribir estilos base de AdminLTE 4
  */
 
-/* ===== ESTRUCTURA BASE ADMINLTE 4 ===== */
-/* Respetar completamente la estructura de AdminLTE 4 */
-
-/* ===== APP WRAPPER ===== */
-.app-wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  width: 100%;
-}
-
 /* ===== APP MAIN ===== */
-/* AdminLTE 4 maneja esto automáticamente, solo asegurar visibilidad */
+/* AdminLTE 4 maneja el layout con CSS Grid automáticamente */
+/* Solo asegurar que el contenido sea visible */
 .app-main {
-  flex: 1 1 auto;
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
-  width: 100%;
-  min-height: calc(100vh - 60px);
+}
+
+/* ===== APP CONTENT ===== */
+/* Asegurar que el contenido sea visible */
+.app-content {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 /* ===== APP CONTENT HEADER ===== */
