@@ -34,11 +34,8 @@
     PLUGINS DE CSS
     ======================================-->
 
-    <!-- Bootstrap 5.3.2 (Actualizado por seguridad) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    
-    <!-- CSS de compatibilidad Bootstrap 3 → 5 -->
-    <link rel="stylesheet" href="vistas/css/bootstrap-compat.css">
+    <!-- Bootstrap 3.4.1 (Compatible con AdminLTE 2.4.0 - Última versión segura de Bootstrap 3) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="vistas/bower_components/font-awesome/css/font-awesome.min.css">
@@ -80,11 +77,8 @@
     <!-- jQuery 3 -->
     <script src="vistas/bower_components/jquery/dist/jquery.min.js"></script>
     
-    <!-- Bootstrap 5.3.2 JS Bundle (Actualizado por seguridad) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    
-    <!-- Shim de compatibilidad Bootstrap 3 → 5 (DEBE ir después de Bootstrap) -->
-    <script src="vistas/js/bootstrap3-to-5-shim.js"></script>
+    <!-- Bootstrap 3.4.1 JS (Compatible con AdminLTE 2.4.0) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
 
     <!-- FastClick -->
     <script src="vistas/bower_components/fastclick/lib/fastclick.js"></script>
