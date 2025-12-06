@@ -14,9 +14,7 @@ if($_SESSION["perfil"] == "Vendedor"){
 
 ?>
 
-<!--begin::App Main-->
-<main class="app-main">
-  <!--begin::App Content Header-->
+<!--begin::App Content Header-->
   <div class="app-content-header">
     <div class="container-fluid">
       <div class="row">
@@ -147,5 +145,3 @@ if($_SESSION["perfil"] == "Vendedor"){
     <!--end::Container-->
   </div>
   <!--end::App Content-->
-</main>
-<!--end::App Main-->

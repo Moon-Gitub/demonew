@@ -17,9 +17,7 @@
 
  ?>
 
-<!--begin::App Main-->
-<main class="app-main">
-  <!--begin::App Content Header-->
+<!--begin::App Content Header-->
   <div class="app-content-header">
     <div class="container-fluid">
       <div class="row">
@@ -190,5 +188,3 @@
     <!--end::Container-->
   </div>
   <!--end::App Content-->
-</main>
-<!--end::App Main-->

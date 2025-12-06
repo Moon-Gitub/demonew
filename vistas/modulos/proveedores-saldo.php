@@ -14,9 +14,7 @@ if($_SESSION["perfil"] == "Especial"){
 
 ?>
 
-<!--begin::App Main-->
-<main class="app-main">
-  <!--begin::App Content Header-->
+<!--begin::App Content Header-->
   <div class="app-content-header">
     <div class="container-fluid">
       <div class="row">
@@ -128,5 +126,3 @@ if(isset($_GET["fechaInicial"])){
     <!--end::Container-->
   </div>
   <!--end::App Content-->
-</main>
-<!--end::App Main-->

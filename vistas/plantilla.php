@@ -168,7 +168,10 @@
       //MENU
       include "modulos/menu.php";
       
-      //CONTENIDO
+      //CONTENIDO - Abrir app-main
+      echo '<!--begin::App Main-->';
+      echo '<main class="app-main">';
+      
       if(isset($_GET["ruta"])){
         
         if($_GET["ruta"] == "inicio" ||
@@ -238,12 +241,17 @@
 
       }
 
+      //Cerrar app-main
+      echo '</main>';
+      echo '<!--end::App Main-->';
+      
       /*=============================================
       FOOTER
       =============================================*/
       include "modulos/footer.php";
 
       echo '</div>';
+      echo '<!--end::App Wrapper-->';
 
     } else {
       include "modulos/login.php";
