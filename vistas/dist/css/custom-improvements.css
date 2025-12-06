@@ -29,33 +29,167 @@ body {
 }
 
 /* ============================================
+   LOGO MEJORADO CON TIPOGRAFÍA ELEGANTE
+   ============================================ */
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 20px;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.logo:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+}
+
+.logo-mini {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+}
+
+.logo-text-mini {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff 0%, #e0e7ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 10px rgba(255,255,255,0.3);
+}
+
+.logo-lg {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+}
+
+.logo-text {
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.logo-text::after {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 20px;
+    background: rgba(255,255,255,0.5);
+}
+
+.logo-text-moon {
+    font-size: 24px;
+    font-weight: 300;
+    background: linear-gradient(135deg, #fff 0%, #e0e7ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-style: italic;
+    text-shadow: 0 2px 10px rgba(255,255,255,0.3);
+}
+
+@media (max-width: 767px) {
+    .logo-text {
+        font-size: 18px;
+    }
+    
+    .logo-text-moon {
+        font-size: 18px;
+        letter-spacing: 2px;
+    }
+    
+    .logo-text-mini {
+        font-size: 22px;
+    }
+}
+
+/* ============================================
    BOXES MEJORADOS
    ============================================ */
 .box {
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    border: 1px solid #e0e0e0;
-    transition: var(--transition);
-    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.06);
+    border: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 25px;
     background: #fff;
+    overflow: hidden;
+    position: relative;
+}
+
+.box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+    background-size: 200% 100%;
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
 .box:hover {
-    box-shadow: var(--box-shadow-hover);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15), 0 4px 10px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
 }
 
 .box-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #fff;
-    padding: 15px 20px;
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    padding: 18px 25px;
+    border-radius: 0;
     border-bottom: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.box-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
 }
 
 .box-header h3 {
     margin: 0;
     font-weight: 600;
     font-size: 18px;
+    position: relative;
+    z-index: 1;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .box-header.with-border {
@@ -77,17 +211,43 @@ body {
    BOTONES MEJORADOS
    ============================================ */
 .btn {
-    border-radius: var(--border-radius);
-    padding: 8px 16px;
-    font-weight: 500;
-    transition: var(--transition);
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08);
+    letter-spacing: 0.3px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .btn-primary {
@@ -144,31 +304,51 @@ body {
    TABLAS MEJORADAS
    ============================================ */
 .table {
-    border-radius: var(--border-radius);
+    border-radius: 10px;
     overflow: hidden;
+    border: none;
 }
 
 .table thead {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #fff;
+    position: relative;
+}
+
+.table thead::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
 }
 
 .table thead th {
     border: none;
-    padding: 12px 15px;
+    padding: 15px 18px;
     font-weight: 600;
     text-transform: uppercase;
     font-size: 12px;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    position: relative;
 }
 
 .table tbody tr {
-    transition: var(--transition);
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.table tbody tr:last-child {
+    border-bottom: none;
 }
 
 .table tbody tr:hover {
-    background-color: #f5f7fa;
-    transform: scale(1.01);
+    background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+    transform: scale(1.005);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
 }
 
 .table tbody td {
@@ -270,25 +450,53 @@ body {
    MENÚ LATERAL MEJORADO
    ============================================ */
 .main-sidebar {
-    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+    border-right: 1px solid rgba(255,255,255,0.1);
 }
 
 .sidebar-menu > li > a {
-    padding: 12px 15px;
-    transition: var(--transition);
+    padding: 14px 18px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 0;
+    color: #bdc3c7;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar-menu > li > a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: width 0.3s ease;
 }
 
 .sidebar-menu > li > a:hover {
-    background: rgba(102, 126, 234, 0.1);
-    color: #667eea;
-    padding-left: 20px;
+    background: rgba(102, 126, 234, 0.15);
+    color: #fff;
+    padding-left: 25px;
+    transform: translateX(5px);
+}
+
+.sidebar-menu > li > a:hover::before {
+    width: 4px;
 }
 
 .sidebar-menu > li.active > a {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #fff;
     border-left: 4px solid #fff;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    font-weight: 600;
+}
+
+.sidebar-menu > li.active > a::before {
+    width: 4px;
 }
 
 .treeview-menu > li > a {
@@ -311,21 +519,47 @@ body {
    HEADER MEJORADO
    ============================================ */
 .main-header {
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.1);
+    border-bottom: 2px solid rgba(255,255,255,0.1);
 }
 
 .navbar {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
+    min-height: 60px;
+    position: relative;
+    overflow: hidden;
+}
+
+.navbar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    animation: slide 3s infinite;
+}
+
+@keyframes slide {
+    0% { left: -100%; }
+    100% { left: 100%; }
 }
 
 .navbar-nav > li > a {
     color: #fff;
-    transition: var(--transition);
+    transition: all 0.3s ease;
+    padding: 15px 18px;
+    font-weight: 500;
+    border-radius: 6px;
+    margin: 5px 3px;
 }
 
 .navbar-nav > li > a:hover {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .user-menu .user-image {
@@ -364,20 +598,34 @@ body {
    CONTENT HEADER MEJORADO
    ============================================ */
 .content-header {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    padding: 20px 0;
+    background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-left: 4px solid #667eea;
 }
 
 .content-header h1 {
-    font-size: 28px;
-    font-weight: 600;
-    color: #333;
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c3e50;
     margin: 0;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .content-header h1 small {
-    font-size: 16px;
-    color: #666;
+    font-size: 18px;
+    color: #6c757d;
     font-weight: 400;
+    display: block;
+    margin-top: 5px;
+    font-style: italic;
 }
 
 .breadcrumb {
@@ -1114,5 +1362,268 @@ body {
         flex: 1;
         min-width: 0;
     }
+}
+
+/* ============================================
+   MEJORAS ADICIONALES DE DISEÑO
+   ============================================ */
+
+/* Efectos de glassmorphism para modales */
+.modal-content {
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.98);
+}
+
+/* Mejoras para cards y paneles */
+.panel {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.panel:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+/* Mejoras para el sidebar */
+.main-sidebar .sidebar-menu .treeview-menu {
+    background: rgba(0,0,0,0.1);
+    border-left: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+.main-sidebar .sidebar-menu .treeview-menu > li > a {
+    padding-left: 45px;
+    font-size: 13px;
+}
+
+.main-sidebar .sidebar-menu .treeview-menu > li.active > a {
+    background: rgba(102, 126, 234, 0.2);
+    color: #fff;
+    border-left: 3px solid #667eea;
+}
+
+/* Mejoras para el contenido principal */
+.content-wrapper {
+    background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+    min-height: calc(100vh - 100px);
+}
+
+/* Mejoras para los gráficos */
+.chart {
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Mejoras para los breadcrumbs */
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 10px 0 0 0;
+    font-size: 14px;
+}
+
+.breadcrumb > li + li:before {
+    content: "›";
+    color: #999;
+    padding: 0 10px;
+    font-size: 18px;
+}
+
+.breadcrumb > li > a {
+    color: #667eea;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.breadcrumb > li > a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+.breadcrumb > .active {
+    color: #6c757d;
+    font-weight: 600;
+}
+
+/* Mejoras para los labels y badges */
+.label, .badge {
+    border-radius: 12px;
+    padding: 5px 12px;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Mejoras para las alertas */
+.alert {
+    border-radius: 10px;
+    border: none;
+    padding: 18px 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-left: 4px solid;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-left-color: #28a745;
+    color: #155724;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border-left-color: #dc3545;
+    color: #721c24;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border-left-color: #ffc107;
+    color: #856404;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    border-left-color: #17a2b8;
+    color: #0c5460;
+}
+
+/* Animaciones suaves adicionales */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.box,
+.panel,
+.modal-content {
+    animation: fadeInUp 0.4s ease-out;
+}
+
+/* Mejoras para el footer */
+.main-footer {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-top: 2px solid #e0e0e0;
+    padding: 20px;
+    text-align: center;
+    color: #6c757d;
+    font-weight: 500;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+}
+
+.main-footer a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.main-footer a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+/* Mejoras para los iconos */
+.fa, .ion {
+    transition: all 0.2s ease;
+}
+
+.btn:hover .fa,
+.btn:hover .ion {
+    transform: scale(1.1);
+}
+
+/* Mejoras para los tooltips */
+.tooltip {
+    font-size: 12px;
+}
+
+.tooltip-inner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-weight: 500;
+}
+
+/* Mejoras para los dropdowns */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    border-radius: 10px;
+    padding: 8px 0;
+    margin-top: 5px;
+}
+
+.dropdown-menu > li > a {
+    padding: 12px 20px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.dropdown-menu > li > a:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    color: #667eea;
+    padding-left: 25px;
+}
+
+.dropdown-menu > .divider {
+    background: #e0e0e0;
+    margin: 8px 0;
+}
+
+/* Mejoras para los inputs de búsqueda */
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+    outline: none;
+}
+
+/* Mejoras para los select */
+select.form-control {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 35px;
+    appearance: none;
+}
+
+/* Efectos de hover mejorados para elementos interactivos */
+a {
+    transition: all 0.2s ease;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+/* Mejoras para los paginadores */
+.pagination > li > a,
+.pagination > li > span {
+    border-radius: 8px;
+    margin: 0 3px;
+    border: 1px solid #e0e0e0;
+    color: #667eea;
+    transition: all 0.2s ease;
+}
+
+.pagination > li > a:hover,
+.pagination > .active > a {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
 }
 
