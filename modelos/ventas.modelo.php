@@ -1,6 +1,7 @@
 <?php
 
 require_once "conexion.php";
+require_once "validador-sql.modelo.php";
 
 class ModeloVentas{
 
@@ -189,9 +190,19 @@ class ModeloVentas{
 
 	static public function mdlActualizarVenta($tabla, $item1, $valor1, $id){
 
-		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET $item1 = $valor1 WHERE id = $id");
+		try {
+			// ✅ Validar tabla y columna
+			$tabla = ModeloValidadorSQL::validarTabla($tabla);
+			$item1 = ModeloValidadorSQL::validarColumna($tabla, $item1);
+			$id = intval($id);
+			
+			$pdo = Conexion::conectar();
+			$stmt = $pdo->prepare("UPDATE `$tabla` SET `$item1` = :valor1 WHERE id = :id");
+			
+			$stmt->bindParam(":valor1", $valor1, PDO::PARAM_STR);
+			$stmt->bindParam(":id", $id, PDO::PARAM_INT);
 
-		if($stmt -> execute()){
+			if($stmt->execute()){
 
 			return "ok";
 		
