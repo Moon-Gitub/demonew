@@ -47,9 +47,9 @@ body {
     border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Logo en el sidebar - fondo oscuro como el sidebar */
+/* Logo en el sidebar - EXACTAMENTE IGUAL que el header */
 .main-sidebar .logo {
-    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
@@ -76,11 +76,11 @@ body {
     letter-spacing: -0.5px;
 }
 
-/* Logo texto en sidebar - debe ser blanco para verse en fondo oscuro */
+/* Logo texto en sidebar - EXACTAMENTE IGUAL que el header (mismo gradiente) */
 .main-sidebar .logo-text-mini,
 .main-sidebar .logo-text,
 .main-sidebar .logo-text-moon {
-    background: linear-gradient(135deg, #fff 0%, #e0e7ff 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -117,9 +117,9 @@ body {
     border-radius: 2px;
 }
 
-/* Separador en sidebar debe ser blanco */
+/* Separador en sidebar - EXACTAMENTE IGUAL que el header */
 .main-sidebar .logo-text::after {
-    background: linear-gradient(135deg, #fff 0%, #e0e7ff 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .logo-text-moon {
