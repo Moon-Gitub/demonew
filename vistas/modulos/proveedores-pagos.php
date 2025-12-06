@@ -23,9 +23,9 @@ if($_SESSION["perfil"] == "Especial"){
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-end mb-0">
-<li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+<li class="breadcrumb-item"><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
-      <li class="active">Pagos a proveedores</li>
+      <li class="breadcrumb-item active" aria-current="page">Pagos a proveedores</li>
           </ol>
         </div>
       </div>

@@ -43,9 +43,9 @@
 
     <ol class="breadcrumb">
       
-      <li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+      <li class="breadcrumb-item"><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
-      <li class="active">Ver-Editar venta</li>
+      <li class="breadcrumb-item active" aria-current="page">Ver-Editar venta</li>
     
     </ol>
 

@@ -16,9 +16,9 @@
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-end mb-0">
-<li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+<li class="breadcrumb-item"><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
-      <li class="active">Cuenta Corriente cliente</li>
+      <li class="breadcrumb-item active" aria-current="page">Cuenta Corriente cliente</li>
           </ol>
         </div>
       </div>

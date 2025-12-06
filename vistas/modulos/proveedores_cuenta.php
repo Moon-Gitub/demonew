@@ -21,9 +21,9 @@
   <input type="hidden" name="nombreProveedorInforme" id="nombreProveedorInforme" value="<?php echo $proveedor["nombre"];?>" />
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+      <li class="breadcrumb-item"><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
-      <li class="active">Cuenta Corriente proveedor</li>
+      <li class="breadcrumb-item active" aria-current="page">Cuenta Corriente proveedor</li>
     
     </ol>
 

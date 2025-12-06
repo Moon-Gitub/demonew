@@ -142,9 +142,9 @@
     </div>
     <ol class="breadcrumb">
       
-      <li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+      <li class="breadcrumb-item"><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
-      <li class="active">Administrar caja </li>
+      <li class="breadcrumb-item active" aria-current="page">Administrar caja </li>
       
     </ol>
     <div class="row">

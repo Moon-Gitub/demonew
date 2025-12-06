@@ -23,9 +23,9 @@ if($_SESSION["perfil"] == "Vendedor"){
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-end mb-0">
-<li><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+<li class="breadcrumb-item"><a href="inicio"><i class="bi bi-speedometer2"></i> Inicio</a></li>
       
-      <li class="active">Administrar pedidos internos validados</li>
+      <li class="breadcrumb-item active" aria-current="page">Administrar pedidos internos validados</li>
           </ol>
         </div>
       </div>

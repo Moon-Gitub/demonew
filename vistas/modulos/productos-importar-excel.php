@@ -69,8 +69,8 @@ input:checked + .slider:before {
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-end mb-0">
-<li><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
-      <li class="active">Importar productos</li>
+<li class="breadcrumb-item"><a href="#"><i class="bi bi-speedometer2"></i> Inicio</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Importar productos</li>
           </ol>
         </div>
       </div>
