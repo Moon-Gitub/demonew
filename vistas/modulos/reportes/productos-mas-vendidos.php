@@ -16,7 +16,7 @@ PRODUCTOS MÁS VENDIDOS
     <div class="card-header with-border">
         <h3 class="card-title">Productos más vendidos</h3> - <small> ultimos 30 días</small>
         <div class="card-tools float-end">
-            <button type="button" class="btn btn-tool" data-bs-toggle="collapse">
+            <button type="button" class="btn btn-tool" data-bs-toggle="collapse" data-bs-target="#prodMasVendCard">
               <i class="bi bi-dash"></i>
             </button>
             <button type="button" class="btn btn-tool" data-bs-dismiss="card">
@@ -24,7 +24,7 @@ PRODUCTOS MÁS VENDIDOS
             </button>
         </div>
     </div>
-	<div class="card-body">
+	<div class="card-body collapse show" id="prodMasVendCard">
         <div class="row">
             <div class="col-md-7">
                 <div class="chart-responsive">

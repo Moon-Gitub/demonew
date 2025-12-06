@@ -76,8 +76,8 @@ foreach ($ventasHoy as $key => $value) {
     </div>
 
   </div>
-  
-  <div class="card-body" id="ventasCard">
+
+  <div class="card-body collapse show" id="ventasCard">
     <div class="row">
       <div class="col-lg-3 col-6">
 

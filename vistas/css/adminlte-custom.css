@@ -170,6 +170,39 @@
   min-height: 120px;
 }
 
+/* Small Box con colores Bootstrap 5 */
+.small-box.text-bg-warning,
+.small-box.text-bg-success {
+  color: #212529 !important;
+}
+
+.small-box.text-bg-warning .inner,
+.small-box.text-bg-success .inner {
+  color: #212529 !important;
+}
+
+.small-box.text-bg-warning .inner h3,
+.small-box.text-bg-success .inner h3,
+.small-box.text-bg-warning .inner p,
+.small-box.text-bg-success .inner p {
+  color: #212529 !important;
+  text-shadow: none;
+}
+
+.small-box.text-bg-warning {
+  background-color: #ffc107 !important;
+}
+
+.small-box.text-bg-success {
+  background-color: #28a745 !important;
+}
+
+.small-box.text-bg-warning .small-box-footer,
+.small-box.text-bg-success .small-box-footer {
+  color: #212529 !important;
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+
 .small-box:hover {
   transform: translateY(-2px);
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);

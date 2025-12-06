@@ -19,7 +19,7 @@ $totProductos = (count($productos) < 10) ? count($productos) : 10;
 
     <div class="card-tools float-end">
 
-      <button type="button" class="btn btn-tool" data-bs-toggle="collapse">
+      <button type="button" class="btn btn-tool" data-bs-toggle="collapse" data-bs-target="#prodRecCard">
 
         <i class="bi bi-dash"></i>
 
@@ -34,8 +34,8 @@ $totProductos = (count($productos) < 10) ? count($productos) : 10;
     </div>
 
   </div>
-  
-  <div class="card-body">
+
+  <div class="card-body collapse show" id="prodRecCard">
 
     <ul class="products-list product-list-in-box">
 
@@ -57,7 +57,7 @@ $totProductos = (count($productos) < 10) ? count($productos) : 10;
 
             '.$productos[$i]["descripcion"].'
 
-            <span class="label label-warning float-end">$'.$productos[$i]["precio_venta"].'</span>
+            <span class="badge bg-warning float-end">$'.$productos[$i]["precio_venta"].'</span>
 
           </a>
     
