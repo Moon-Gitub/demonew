@@ -574,3 +574,49 @@ body {
     border: 1px solid #dee2e6;
   }
 }
+
+/* ===== CHART STYLES ===== */
+.chart {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: 250px;
+}
+
+.nuevoGraficoVentas {
+  margin-top: 1rem;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  background-color: #39cccc;
+  padding: 1rem;
+}
+
+.border-radius-none {
+  border-radius: 0 !important;
+}
+
+/* Asegurar que las tablas se muestren */
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  color: #212529;
+  background-color: #fff;
+  display: table;
+}
+
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+  background-color: #f8f9fa;
+}
+
+.table tbody tr {
+  display: table-row;
+}
+
+.table td, .table th {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
+  display: table-cell;
+}
