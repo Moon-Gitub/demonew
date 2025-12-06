@@ -4,7 +4,7 @@
  * Basado en: https://adminlte.io/themes/v4/index.html
  * 
  * IMPORTANTE: NO interferir con el CSS Grid de AdminLTE 4
- * Solo agregar estilos que mejoren la presentación sin romper el layout
+ * Solo agregar estilos visuales que mejoren la presentación
  */
 
 /* ===== APP CONTENT HEADER - Estilo AdminLTE 4 Oficial ===== */
@@ -62,16 +62,11 @@
 .app-content {
   padding: 1.5rem;
   background-color: #f8f9fa;
-  min-height: calc(100vh - 200px);
-  display: block;
-  position: relative;
 }
 
 .app-content .container-fluid {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
-  max-width: 100%;
-  margin: 0 auto;
 }
 
 /* ===== CARDS - Estilo AdminLTE 4 Oficial ===== */
