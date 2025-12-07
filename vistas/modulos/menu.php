@@ -69,7 +69,13 @@
 
 			<li class="<?php echo (in_array($paginaActualMenu, ['proveedores', 'proveedores_cuenta'])) ? 'active' : ''; ?>"><a href="proveedores"><i class="fa fa-address-book-o" aria-hidden="true"></i><span>Proveedores</span></a></li>
 
-			<li class="<?php echo (in_array($paginaActualMenu, ['integraciones', 'chat'])) ? 'active' : ''; ?>"><a href="integraciones"><i class="fa fa-plug"></i><span>Integraciones</span></a></li>
+			<li class="treeview <?php echo (in_array($paginaActualMenu, ['integraciones', 'chat'])) ? 'active' : ''; ?>">
+				<a><i class="fa fa-plug"></i><span>Integraciones</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
+				<ul class="treeview-menu">
+					<li><a href="integraciones"><i class="fa fa-circle-o"></i><span>Gestionar Integraciones</span></a></li>
+					<li><a href="chat"><i class="fa fa-comments"></i><span>Asistente Virtual</span></a></li>
+				</ul>
+			</li>
 
 		<?php } 
 		
@@ -81,6 +87,7 @@
 			<li class="<?php echo ($paginaActualMenu == 'ventas') ? 'active' : ''; ?>"><a href="ventas"><i class="fa fa-line-chart"></i><span>Adm. ventas</span></a></li>
 			<li class="<?php echo ($paginaActualMenu == 'crear-venta-caja') ? 'active' : ''; ?>"><a href="crear-venta-caja"><i class="fa fa-plus"></i><span>Crear venta</span></a></li>
 			<li class="<?php echo ($paginaActualMenu == 'clientes') ? 'active' : ''; ?>"><a href="clientes"><i class="fa fa-users"></i><span>Clientes</span></a></li>
+			<li class="<?php echo ($paginaActualMenu == 'chat') ? 'active' : ''; ?>"><a href="chat"><i class="fa fa-comments"></i><span>Asistente Virtual</span></a></li>
 
 		<?php } ?>
 
