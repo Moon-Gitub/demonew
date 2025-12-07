@@ -1,7 +1,5 @@
 <?php
 
-require_once "modelos/integraciones.modelo.php";
-
 class ControladorIntegraciones{
 
 	/*=============================================
