@@ -69,6 +69,8 @@
 
 			<li class="<?php echo (in_array($paginaActualMenu, ['proveedores', 'proveedores_cuenta'])) ? 'active' : ''; ?>"><a href="proveedores"><i class="fa fa-address-book-o" aria-hidden="true"></i><span>Proveedores</span></a></li>
 
+			<li class="<?php echo (in_array($paginaActualMenu, ['integraciones', 'chat'])) ? 'active' : ''; ?>"><a href="integraciones"><i class="fa fa-plug"></i><span>Integraciones</span></a></li>
+
 		<?php } 
 		
 		if($_SESSION["perfil"] == "Vendedor"){ 	?>

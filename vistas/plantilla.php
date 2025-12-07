@@ -192,6 +192,8 @@
         $_GET["ruta"] == "proveedores_cuenta" ||
         $_GET["ruta"] == "proveedores-saldo" ||
         $_GET["ruta"] == "proveedores-pagos" ||
+        $_GET["ruta"] == "integraciones" ||
+        $_GET["ruta"] == "chat" ||
         $_GET["ruta"] == "clientes" ||
         $_GET["ruta"] == "editar-pedido" ||
         $_GET["ruta"] == "clientes-cuenta-saldos" ||
@@ -274,6 +276,8 @@
   <script src="vistas/js/reportes.js"></script>
   <script src="vistas/js/cajas.js"></script>
   <script src="vistas/js/pedidos.js"></script>
+  <script src="vistas/js/integraciones.js"></script>
+  <script src="vistas/js/chat.js"></script>
 
   </body>
 </html>
