@@ -14,7 +14,12 @@ class AjaxIntegraciones{
 		$item = "id";
 		$valor = $this->idIntegracion;
 		$respuesta = ControladorIntegraciones::ctrMostrarIntegraciones($item, $valor);
-		echo json_encode($respuesta[0]);
+		
+		if($respuesta && count($respuesta) > 0){
+			echo json_encode($respuesta[0]);
+		} else {
+			echo json_encode(['error' => 'No se encontró la integración']);
+		}
 	}
 
 }

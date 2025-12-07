@@ -1,6 +1,6 @@
 // vistas/js/integraciones.js
 
-$(document).on("click", ".btnEditarIntegracion", function(){
+$(".tablas").on("click", ".btnEditarIntegracion", function(){
 
 	var idIntegracion = $(this).attr("idIntegracion");
 	
@@ -17,6 +17,8 @@ $(document).on("click", ".btnEditarIntegracion", function(){
 		dataType: "json",
 		success: function(respuesta){
 			
+			console.log("Respuesta AJAX:", respuesta);
+			
 			$("#editarNombre").val(respuesta["nombre"]);
 			$("#editarTipo").val(respuesta["tipo"]);
 			$("#editarWebhookUrl").val(respuesta["webhook_url"]);
@@ -25,6 +27,10 @@ $(document).on("click", ".btnEditarIntegracion", function(){
 			$("#editarActivo").prop("checked", respuesta["activo"] == 1);
 			$("#idIntegracion").val(respuesta["id"]);
 
+		},
+		error: function(xhr, status, error){
+			console.error("Error AJAX:", error);
+			console.error("Respuesta:", xhr.responseText);
 		}
 
 	})
