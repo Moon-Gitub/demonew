@@ -484,29 +484,23 @@ body {
 }
 
 /* ============================================
-   MENÚ LATERAL MEJORADO
+   MENÚ LATERAL MEJORADO - MISMO COLOR QUE CABEZOTE
    ============================================ */
 .main-sidebar {
     box-shadow: 4px 0 15px rgba(0,0,0,0.1);
-    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-right: 1px solid rgba(255,255,255,0.1);
-    overflow-x: hidden;
-    overflow-y: auto;
-    position: fixed;
-    height: 100%;
 }
 
 .sidebar {
     overflow-x: hidden;
     overflow-y: auto;
-    height: calc(100vh - 50px);
 }
 
 .sidebar-menu {
     list-style: none;
     margin: 0;
     padding: 0;
-    overflow: visible;
 }
 
 .sidebar-menu > li {
@@ -516,126 +510,73 @@ body {
 }
 
 .sidebar-menu > li > a {
-    padding: 14px 18px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 12px 15px;
+    transition: all 0.2s ease;
     border-radius: 0;
-    color: #bdc3c7;
+    color: rgba(255,255,255,0.8);
     font-weight: 500;
     position: relative;
-    overflow: hidden;
     display: block;
     white-space: nowrap;
-}
-
-.sidebar-menu > li > a::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    transition: width 0.3s ease;
+    border-left: 3px solid transparent;
 }
 
 .sidebar-menu > li > a:hover {
-    background: rgba(102, 126, 234, 0.15);
+    background: rgba(255,255,255,0.1);
     color: #fff;
-    padding-left: 25px;
-    transform: translateX(5px);
+    border-left-color: rgba(255,255,255,0.5);
 }
 
-.sidebar-menu > li > a:hover::before {
-    width: 4px;
-}
-
-.sidebar-menu > li.active > a {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.sidebar-menu > li.active > a,
+.sidebar-menu > li.menu-open > a {
+    background: rgba(255,255,255,0.15);
     color: #fff;
-    border-left: 4px solid #fff;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    border-left: 3px solid #fff;
     font-weight: 600;
 }
 
-.sidebar-menu > li.active > a::before {
-    width: 4px;
-}
-
-/* Treeview menu - ARREGLADO PARA QUE NO SE SALGA */
+/* Treeview menu - FUNCIONAL Y RESPONSIVE */
 .treeview {
     position: relative;
-    overflow: hidden;
-    width: 100%;
 }
 
 .treeview-menu {
     list-style: none;
-    margin: 0;
+    margin: 0 1px;
     padding: 0;
-    background: rgba(0,0,0,0.15);
-    border-left: 2px solid rgba(102, 126, 234, 0.3);
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-    width: 100%;
-    box-sizing: border-box;
-    position: relative;
+    background: rgba(0,0,0,0.1);
+    display: none;
 }
 
 .treeview.menu-open > .treeview-menu {
-    max-height: 500px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    display: block;
 }
 
 .treeview-menu > li {
     position: relative;
     margin: 0;
     padding: 0;
-    width: 100%;
-    box-sizing: border-box;
 }
 
 .treeview-menu > li > a {
-    padding: 10px 15px 10px 45px;
+    padding: 10px 15px 10px 35px;
     transition: all 0.2s ease;
-    color: #8aa4af;
+    color: rgba(255,255,255,0.7);
     display: block;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 100%;
-    box-sizing: border-box;
-    position: relative;
+    border-left: 3px solid transparent;
 }
 
 .treeview-menu > li > a:hover {
-    background: rgba(102, 126, 234, 0.2);
+    background: rgba(255,255,255,0.1);
     color: #fff;
-    padding-left: 50px;
 }
 
 .treeview-menu > li.active > a {
-    background: rgba(102, 126, 234, 0.25);
+    background: rgba(255,255,255,0.15);
     color: #fff;
     font-weight: 600;
-    border-left: 3px solid #667eea;
-    padding-left: 47px;
-}
-
-/* Asegurar que el sidebar contenga todo correctamente */
-.sidebar-menu > li.treeview {
-    overflow: visible;
-}
-
-.sidebar-menu > li.treeview > .treeview-menu {
-    position: relative;
-    left: 0;
-    right: 0;
-    width: 100%;
-    z-index: 1;
-    margin-left: 0;
-    margin-right: 0;
+    border-left: 3px solid #fff;
 }
 
 /* ============================================
@@ -1432,24 +1373,35 @@ body {
 }
 
 /* ============================================
-   MEJORAS PARA SIDEBAR EN MÓVIL
+   MEJORAS PARA SIDEBAR EN MÓVIL - RESPONSIVE
    ============================================ */
 @media (max-width: 767px) {
     .main-sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
+        position: fixed;
+        left: -230px;
+        transition: left 0.3s ease;
+        z-index: 1000;
+        height: 100%;
     }
     
     .sidebar-open .main-sidebar {
-        transform: translateX(0);
+        left: 0;
     }
     
     .sidebar-menu > li > a {
         padding: 12px 15px;
+        font-size: 14px;
     }
     
-    .treeview-menu {
-        padding-left: 0;
+    .treeview-menu > li > a {
+        padding: 8px 15px 8px 30px;
+        font-size: 13px;
+    }
+    
+    .sidebar {
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 }
 
