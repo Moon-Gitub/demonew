@@ -371,21 +371,23 @@ body {
 
 /* Treeview menu - SOLO COLORES */
 .sidebar-menu > li > .treeview-menu {
-    background: rgba(0,0,0,0.1) !important;
+    background: rgba(0,0,0,0.25) !important;
 }
 
 .sidebar-menu .treeview-menu > li > a {
-    color: rgba(255,255,255,0.7) !important;
+    color: rgba(255,255,255,0.9) !important;
+    font-weight: 500;
 }
 
 .sidebar-menu .treeview-menu > li > a:hover {
-    background: rgba(255,255,255,0.1) !important;
+    background: rgba(255,255,255,0.3) !important;
     color: #fff !important;
 }
 
 .sidebar-menu .treeview-menu > li.active > a {
-    background: rgba(255,255,255,0.15) !important;
+    background: rgba(255,255,255,0.35) !important;
     color: #fff !important;
+    font-weight: 600;
 }
 
 /* ============================================
