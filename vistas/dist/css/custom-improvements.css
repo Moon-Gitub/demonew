@@ -455,44 +455,47 @@ body {
 
 /* ============================================
    MENÚ LATERAL MEJORADO - MISMO COLOR QUE CABEZOTE
-   SOLO COLORES, SIN TOCAR FUNCIONALIDAD
+   SOLO COLORES DE FONDO, SIN TOCAR FUNCIONALIDAD
    ============================================ */
-.main-sidebar {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.main-sidebar,
+.skin-blue .main-sidebar,
+.skin-blue .left-side {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
 }
 
 .sidebar-menu > li > a {
-    color: rgba(255,255,255,0.8);
+    color: rgba(255,255,255,0.8) !important;
 }
 
+.sidebar-menu > li:hover > a,
 .sidebar-menu > li > a:hover {
-    background: rgba(255,255,255,0.1);
-    color: #fff;
+    background: rgba(255,255,255,0.1) !important;
+    color: #fff !important;
 }
 
 .sidebar-menu > li.active > a,
 .sidebar-menu > li.menu-open > a {
-    background: rgba(255,255,255,0.15);
-    color: #fff;
+    background: rgba(255,255,255,0.15) !important;
+    color: #fff !important;
 }
 
-/* Treeview menu - SOLO COLORES, SIN TOCAR FUNCIONALIDAD */
-.main-sidebar .treeview-menu {
-    background: rgba(0,0,0,0.1);
+/* Treeview menu - SOLO COLORES */
+.sidebar-menu > li > .treeview-menu {
+    background: rgba(0,0,0,0.1) !important;
 }
 
-.main-sidebar .treeview-menu > li > a {
-    color: rgba(255,255,255,0.7);
+.sidebar-menu .treeview-menu > li > a {
+    color: rgba(255,255,255,0.7) !important;
 }
 
-.main-sidebar .treeview-menu > li > a:hover {
-    background: rgba(255,255,255,0.1);
-    color: #fff;
+.sidebar-menu .treeview-menu > li > a:hover {
+    background: rgba(255,255,255,0.1) !important;
+    color: #fff !important;
 }
 
-.main-sidebar .treeview-menu > li.active > a {
-    background: rgba(255,255,255,0.15);
-    color: #fff;
+.sidebar-menu .treeview-menu > li.active > a {
+    background: rgba(255,255,255,0.15) !important;
+    color: #fff !important;
 }
 
 /* ============================================
