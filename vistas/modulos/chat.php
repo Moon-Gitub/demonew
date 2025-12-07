@@ -1,9 +1,6 @@
 <?php
 // vistas/modulos/chat.php
 
-require_once "../controladores/integraciones.controlador.php";
-require_once "../modelos/integraciones.modelo.php";
-
 // Buscar integración N8N activa
 $item = "tipo";
 $valor = "n8n";

@@ -32,6 +32,7 @@ require_once "controladores/empresa.controlador.php";
 require_once "controladores/cotizacion.controlador.php";
 require_once "controladores/presupuestos.controlador.php";
 require_once "controladores/pedidos.controlador.php";
+require_once "controladores/integraciones.controlador.php";
 
 require_once "controladores/facturacion/wsaa.class.php";
 require_once "controladores/facturacion/wsaa_padron.class.php";
@@ -52,6 +53,7 @@ require_once "modelos/compras.modelo.php";
 require_once "modelos/empresa.modelo.php";
 require_once "modelos/presupuestos.modelo.php";
 require_once "modelos/pedidos.modelo.php";
+require_once "modelos/integraciones.modelo.php";
 
 require_once "parametros.php";
 

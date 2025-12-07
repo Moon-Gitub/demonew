@@ -7,9 +7,6 @@ if($_SESSION["perfil"] == "Vendedor"){
   return;
 }
 
-require_once "../controladores/integraciones.controlador.php";
-require_once "../modelos/integraciones.modelo.php";
-
 ?>
 
 <div class="content-wrapper">
