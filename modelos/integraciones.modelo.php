@@ -11,7 +11,13 @@ class ModeloIntegraciones{
 		
 		if($item != null){
 			$stmt = Conexion::conectar()->prepare("SELECT * FROM integraciones WHERE $item = :$item ORDER BY fecha_creacion DESC");
-			$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
+			
+			// Si el item es 'id', usar PARAM_INT, sino PARAM_STR
+			if($item == "id"){
+				$stmt -> bindParam(":".$item, $valor, PDO::PARAM_INT);
+			} else {
+				$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
+			}
 		} else {
 			$stmt = Conexion::conectar()->prepare("SELECT * FROM integraciones ORDER BY fecha_creacion DESC");
 		}
