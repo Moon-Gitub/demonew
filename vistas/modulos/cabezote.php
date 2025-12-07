@@ -70,13 +70,13 @@ if ($file = fopen("cotizacion", "r")) {
     <a href="inicio" class="logo">
         <!-- logo mini -->
         <span class="logo-mini">
-            <i class="fa fa-moon-o fa-2x"></i>
+            <span class="logo-text-mini">M</span>
         </span>
 
         <!-- logo normal -->
         <span class="logo-lg">
-            <i class="fa fa-moon-o fa-2x"></i>
-            POS | Moon
+            <span class="logo-text">POS</span>
+            <span class="logo-text-moon">Moon</span>
         </span>
     </a>
 
