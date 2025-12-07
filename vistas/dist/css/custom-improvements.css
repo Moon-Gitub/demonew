@@ -477,20 +477,20 @@ body {
 }
 
 /* Treeview menu - SOLO COLORES, SIN TOCAR FUNCIONALIDAD */
-.treeview-menu {
+.main-sidebar .treeview-menu {
     background: rgba(0,0,0,0.1);
 }
 
-.treeview-menu > li > a {
+.main-sidebar .treeview-menu > li > a {
     color: rgba(255,255,255,0.7);
 }
 
-.treeview-menu > li > a:hover {
+.main-sidebar .treeview-menu > li > a:hover {
     background: rgba(255,255,255,0.1);
     color: #fff;
 }
 
-.treeview-menu > li.active > a {
+.main-sidebar .treeview-menu > li.active > a {
     background: rgba(255,255,255,0.15);
     color: #fff;
 }
@@ -1246,19 +1246,14 @@ body {
         z-index: 1002;
     }
     
-    .navbar-custom-menu > .navbar-nav > li.dropdown.open > .dropdown-menu {
-        z-index: 1003;
-        display: block !important;
-    }
+    /* Dropdowns funcionan con estilos nativos de AdminLTE */
     
     .user-menu .user-image {
         width: 25px;
         height: 25px;
     }
     
-    .navbar-nav > li > a > span.hidden-xs {
-        display: none !important;
-    }
+    /* Responsive manejado por AdminLTE */
 }
 
 /* ============================================
