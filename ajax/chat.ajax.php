@@ -82,9 +82,19 @@ class AjaxChat {
             return;
         }
         
+        // Generar o obtener sessionId para N8N
+        // Usar el ID de sesión de PHP o crear uno basado en usuario
+        if (!isset($_SESSION['n8n_session_id'])) {
+            $_SESSION['n8n_session_id'] = 'session_' . (isset($_SESSION['id']) ? $_SESSION['id'] : session_id()) . '_' . time();
+        }
+        $sessionId = $_SESSION['n8n_session_id'];
+        
         // Preparar el payload JSON para N8N
+        // N8N Chat Trigger espera 'sessionId' como campo requerido
         $payload = [
+            'sessionId' => $sessionId, // Campo requerido por N8N Chat Trigger
             'mensaje' => $this->mensaje,
+            'message' => $this->mensaje, // Alias por si acaso
             'usuario_id' => isset($_SESSION['id']) ? $_SESSION['id'] : null,
             'usuario_nombre' => isset($_SESSION['nombre']) ? $_SESSION['nombre'] : null,
             'empresa_id' => isset($_SESSION['empresa']) ? $_SESSION['empresa'] : null,
