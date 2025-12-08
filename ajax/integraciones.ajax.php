@@ -22,8 +22,8 @@ class AjaxIntegraciones{
 			
 			$respuesta = ControladorIntegraciones::ctrMostrarIntegraciones($item, $valor);
 			
-			// El modelo devuelve fetch() cuando busca por ID, puede ser false si no encuentra
-			if($respuesta !== false && is_array($respuesta) && count($respuesta) > 0){
+			// El modelo devuelve un objeto único cuando busca por ID, o null si no encuentra
+			if($respuesta !== null && is_array($respuesta)){
 				echo json_encode($respuesta);
 			} else {
 				echo json_encode(['error' => 'No se encontró la integración con ID: ' . $valor]);

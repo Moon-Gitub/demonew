@@ -16,10 +16,13 @@ if(isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"] == "ok"){
     $integraciones = ControladorIntegraciones::ctrMostrarIntegraciones($item, $valor);
     
     $webhookUrl = null;
-    foreach($integraciones as $integracion){
-        if($integracion["activo"] == 1 && !empty($integracion["webhook_url"])){
-            $webhookUrl = $integracion["webhook_url"];
-            break;
+    // Verificar que $integraciones sea un array antes de iterar
+    if($integraciones && is_array($integraciones) && count($integraciones) > 0){
+        foreach($integraciones as $integracion){
+            if(isset($integracion["activo"]) && $integracion["activo"] == 1 && !empty($integracion["webhook_url"])){
+                $webhookUrl = $integracion["webhook_url"];
+                break;
+            }
         }
     }
     

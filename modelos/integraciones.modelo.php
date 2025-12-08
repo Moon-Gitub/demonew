@@ -21,18 +21,23 @@ class ModeloIntegraciones{
 			
 			$stmt -> execute();
 			
-			// Si se busca por un item específico (como ID), devolver un solo registro
-			$resultado = $stmt -> fetch(PDO::FETCH_ASSOC);
-			$stmt -> close();
-			$stmt = null;
-			return $resultado;
+			// Si se busca por ID, devolver un solo registro
+			if($item == "id"){
+				$resultado = $stmt -> fetch(PDO::FETCH_ASSOC);
+				$stmt = null;
+				return $resultado !== false ? $resultado : null;
+			} else {
+				// Para otros campos (como tipo), devolver todos los resultados
+				$resultado = $stmt -> fetchAll(PDO::FETCH_ASSOC);
+				$stmt = null;
+				return $resultado !== false ? $resultado : [];
+			}
 		} else {
 			$stmt = Conexion::conectar()->prepare("SELECT * FROM integraciones ORDER BY fecha_creacion DESC");
 			$stmt -> execute();
 			$resultado = $stmt -> fetchAll(PDO::FETCH_ASSOC);
-			$stmt -> close();
 			$stmt = null;
-			return $resultado;
+			return $resultado !== false ? $resultado : [];
 		}
 	}
 
@@ -52,16 +57,15 @@ class ModeloIntegraciones{
 
 		if($stmt->execute()){
 
+			$stmt = null;
 			return "ok";
 
 		}else{
 
+			$stmt = null;
 			return "error";
 		
 		}
-
-		$stmt->close();
-		$stmt = null;
 
 	}
 
@@ -82,16 +86,15 @@ class ModeloIntegraciones{
 
 		if($stmt->execute()){
 
+			$stmt = null;
 			return "ok";
 
 		}else{
 
+			$stmt = null;
 			return "error";
 		
 		}
-
-		$stmt->close();
-		$stmt = null;
 
 	}
 
@@ -106,16 +109,15 @@ class ModeloIntegraciones{
 
 		if($stmt->execute()){
 
+			$stmt = null;
 			return "ok";
 
 		}else{
 
+			$stmt = null;
 			return "error";
 		
 		}
-
-		$stmt->close();
-		$stmt = null;
 
 	}
 
