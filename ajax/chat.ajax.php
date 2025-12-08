@@ -1,5 +1,15 @@
 <?php
 // ajax/chat.ajax.php
+
+// Cargar variables de entorno desde .env PRIMERO (si existe y si Dotenv está instalado)
+if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+    $dotenv->load();
+}
+
+// Cargar helpers (incluye función env() para leer variables)
+require_once "../helpers.php";
+
 // ✅ Seguridad AJAX
 require_once "seguridad.ajax.php";
 SeguridadAjax::inicializar();
