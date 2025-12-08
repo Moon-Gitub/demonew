@@ -10,7 +10,11 @@ $webhookUrl = null;
 // Verificar que $integraciones sea un array antes de iterar
 if($integraciones && is_array($integraciones) && count($integraciones) > 0){
     foreach($integraciones as $integracion){
-        if(isset($integracion["activo"]) && $integracion["activo"] == 1 && !empty($integracion["webhook_url"])){
+        // Verificar activo (puede venir como int 1 o string "1")
+        $activo = isset($integracion["activo"]) ? (int)$integracion["activo"] : 0;
+        $tieneWebhook = !empty($integracion["webhook_url"]);
+        
+        if($activo == 1 && $tieneWebhook){
             $webhookUrl = $integracion["webhook_url"];
             break;
         }
