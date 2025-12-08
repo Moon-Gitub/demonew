@@ -1,0 +1,198 @@
+{
+  "name": "POS Moon - Asistente Virtual Completo",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "chat-trigger",
+      "name": "Chat Trigger",
+      "type": "n8n-nodes-base.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "webhookId": "chat-pos-moon"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4",
+        "options": {
+          "temperature": 0.7,
+          "maxTokens": 2000
+        },
+        "prompt": "={{ $json.chatInput }}",
+        "systemMessage": "Eres un asistente virtual experto en sistemas POS (Punto de Venta). Tu función es ayudar a los usuarios a consultar información sobre ventas, productos, stock, clientes, proveedores y estadísticas del sistema.\n\nINSTRUCCIONES:\n- Responde siempre en español\n- Sé claro y conciso\n- Usa las herramientas disponibles para obtener información real de la base de datos\n- Si no tienes información, dilo claramente\n- Para consultas de ventas, siempre especifica fechas cuando sea relevante\n- Para consultas de stock, identifica productos con stock bajo o medio\n- Para sugerencias de compras, identifica productos que necesitan reposición\n\nCONTEXTO DEL SISTEMA:\n- Base de datos MySQL\n- Tablas principales: ventas, productos, clientes, proveedores, cajas\n- El sistema maneja ventas diarias, productos con stock, clientes y proveedores\n\nUsa las herramientas disponibles para responder las preguntas del usuario."
+      },
+      "id": "ai-agent",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.0,
+      "position": [650, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Herramienta: Consultar Ventas\n// Permite consultar ventas diarias, por rango de fechas, o totales\n\nconst fecha = $input.item.json.fecha || null;\nconst fechaInicio = $input.item.json.fecha_inicio || null;\nconst fechaFin = $input.item.json.fecha_fin || null;\nconst tipo = $input.item.json.tipo || 'diarias';\n\nlet query = '';\nlet params = [];\n\nif (fecha) {\n  // Ventas de un día específico\n  query = `SELECT \n    COUNT(*) as cantidad_ventas,\n    SUM(total) as total_ventas,\n    SUM(neto) as total_neto,\n    SUM(impuesto) as total_impuestos,\n    AVG(total) as promedio_venta\n  FROM ventas \n  WHERE DATE(fecha) = ? \n    AND cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999)`;\n  params = [fecha];\n} else if (fechaInicio && fechaFin) {\n  // Ventas por rango de fechas\n  query = `SELECT \n    COUNT(*) as cantidad_ventas,\n    SUM(total) as total_ventas,\n    SUM(neto) as total_neto,\n    SUM(impuesto) as total_impuestos,\n    AVG(total) as promedio_venta,\n    MIN(fecha) as fecha_inicio,\n    MAX(fecha) as fecha_fin\n  FROM ventas \n  WHERE fecha BETWEEN ? AND ? \n    AND cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999)`;\n  params = [fechaInicio, fechaFin];\n} else if (tipo === 'diarias') {\n  // Ventas de hoy\n  query = `SELECT \n    COUNT(*) as cantidad_ventas,\n    SUM(total) as total_ventas,\n    SUM(neto) as total_neto,\n    SUM(impuesto) as total_impuestos,\n    AVG(total) as promedio_venta\n  FROM ventas \n  WHERE DATE(fecha) = CURDATE() \n    AND cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999)`;\n} else if (tipo === 'totales') {\n  // Total de todas las ventas\n  query = `SELECT \n    COUNT(*) as cantidad_ventas,\n    SUM(total) as total_ventas,\n    SUM(neto) as total_neto,\n    SUM(impuesto) as total_impuestos,\n    AVG(total) as promedio_venta\n  FROM ventas \n  WHERE cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999)`;\n} else if (tipo === 'por_cliente') {\n  // Ventas agrupadas por cliente\n  query = `SELECT \n    c.nombre as cliente,\n    COUNT(v.id) as cantidad_ventas,\n    SUM(v.total) as total_ventas\n  FROM ventas v\n  LEFT JOIN clientes c ON v.id_cliente = c.id\n  WHERE v.cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999)\n  GROUP BY v.id_cliente, c.nombre\n  ORDER BY total_ventas DESC\n  LIMIT 10`;\n}\n\nreturn {\n  json: {\n    query: query,\n    params: params,\n    tipo: 'consultar_ventas'\n  }\n};"
+      },
+      "id": "tool-consultar-ventas",
+      "name": "Tool: Consultar Ventas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Herramienta: Consultar Productos\n// Permite buscar productos por código, descripción o filtrar por stock\n\nconst codigo = $input.item.json.codigo || null;\nconst descripcion = $input.item.json.descripcion || null;\nconst stockMinimo = $input.item.json.stock_minimo || null;\n\nlet query = '';\nlet params = [];\n\nif (codigo) {\n  query = `SELECT \n    id, codigo, descripcion, stock, precio_compra, precio_venta,\n    stock_medio, stock_bajo, id_categoria, id_proveedor\n  FROM productos \n  WHERE codigo = ?`;\n  params = [codigo];\n} else if (descripcion) {\n  query = `SELECT \n    id, codigo, descripcion, stock, precio_compra, precio_venta,\n    stock_medio, stock_bajo, id_categoria, id_proveedor\n  FROM productos \n  WHERE descripcion LIKE ?\n  LIMIT 20`;\n  params = [`%${descripcion}%`];\n} else if (stockMinimo !== null) {\n  query = `SELECT \n    id, codigo, descripcion, stock, precio_compra, precio_venta,\n    stock_medio, stock_bajo\n  FROM productos \n  WHERE stock >= ?\n  ORDER BY stock ASC\n  LIMIT 50`;\n  params = [stockMinimo];\n} else {\n  query = `SELECT \n    id, codigo, descripcion, stock, precio_compra, precio_venta,\n    stock_medio, stock_bajo\n  FROM productos \n  ORDER BY descripcion\n  LIMIT 50`;\n}\n\nreturn {\n  json: {\n    query: query,\n    params: params,\n    tipo: 'consultar_productos'\n  }\n};"
+      },
+      "id": "tool-consultar-productos",
+      "name": "Tool: Consultar Productos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Herramienta: Consultar Stock\n// Permite consultar productos con stock bajo, medio o todos\n\nconst tipo = $input.item.json.tipo || 'todos';\nconst productoId = $input.item.json.producto_id || null;\n\nlet query = '';\nlet params = [];\n\nif (productoId) {\n  query = `SELECT \n    id, codigo, descripcion, stock, stock_medio, stock_bajo,\n    precio_compra, precio_venta,\n    CASE \n      WHEN (IF(stock<0,0,stock)) <= stock_bajo THEN 'BAJO'\n      WHEN (IF(stock<0,0,stock)) <= stock_medio THEN 'MEDIO'\n      ELSE 'NORMAL'\n    END as estado_stock\n  FROM productos \n  WHERE id = ?`;\n  params = [productoId];\n} else if (tipo === 'bajo') {\n  query = `SELECT \n    id, codigo, descripcion, stock, stock_medio, stock_bajo,\n    precio_compra, precio_venta,\n    ROUND((IF(stock<0,0,stock)) * precio_compra, 2) as valor_inventario\n  FROM productos \n  WHERE (IF(stock<0,0,stock)) <= stock_bajo\n  ORDER BY stock ASC`;\n} else if (tipo === 'medio') {\n  query = `SELECT \n    id, codigo, descripcion, stock, stock_medio, stock_bajo,\n    precio_compra, precio_venta\n  FROM productos \n  WHERE (IF(stock<0,0,stock)) <= stock_medio \n    AND (IF(stock<0,0,stock)) > stock_bajo\n  ORDER BY stock ASC`;\n} else {\n  query = `SELECT \n    id, codigo, descripcion, stock, stock_medio, stock_bajo,\n    precio_compra, precio_venta,\n    CASE \n      WHEN (IF(stock<0,0,stock)) <= stock_bajo THEN 'BAJO'\n      WHEN (IF(stock<0,0,stock)) <= stock_medio THEN 'MEDIO'\n      ELSE 'NORMAL'\n    END as estado_stock\n  FROM productos \n  WHERE (IF(stock<0,0,stock)) > 0\n  ORDER BY stock ASC\n  LIMIT 100`;\n}\n\nreturn {\n  json: {\n    query: query,\n    params: params,\n    tipo: 'consultar_stock'\n  }\n};"
+      },
+      "id": "tool-consultar-stock",
+      "name": "Tool: Consultar Stock",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Herramienta: Sugerencias de Compras\n// Identifica productos que necesitan reposición\n\nconst query = `SELECT \n  p.id,\n  p.codigo,\n  p.descripcion,\n  p.stock,\n  p.stock_medio,\n  p.stock_bajo,\n  p.precio_compra,\n  pr.nombre as proveedor,\n  CASE \n    WHEN (IF(p.stock<0,0,p.stock)) <= p.stock_bajo THEN 'URGENTE'\n    WHEN (IF(p.stock<0,0,p.stock)) <= p.stock_medio THEN 'RECOMENDADO'\n    ELSE 'NORMAL'\n  END as prioridad,\n  GREATEST(p.stock_medio - IF(p.stock<0,0,p.stock), 0) as cantidad_sugerida\nFROM productos p\nLEFT JOIN proveedores pr ON p.id_proveedor = pr.id\nWHERE (IF(p.stock<0,0,p.stock)) <= p.stock_medio\nORDER BY \n  CASE \n    WHEN (IF(p.stock<0,0,p.stock)) <= p.stock_bajo THEN 1\n    WHEN (IF(p.stock<0,0,p.stock)) <= p.stock_medio THEN 2\n    ELSE 3\n  END,\n  p.stock ASC\nLIMIT 50`;\n\nreturn {\n  json: {\n    query: query,\n    params: [],\n    tipo: 'sugerencias_compras'\n  }\n};"
+      },
+      "id": "tool-sugerencias-compras",
+      "name": "Tool: Sugerencias de Compras",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Herramienta: Consultar Clientes\n// Permite buscar clientes por nombre, documento o ID\n\nconst nombre = $input.item.json.nombre || null;\nconst documento = $input.item.json.documento || null;\nconst id = $input.item.json.id || null;\n\nlet query = '';\nlet params = [];\n\nif (id) {\n  query = `SELECT \n    id, nombre, documento, email, telefono, direccion,\n    compras, ultima_compra, estado_cuenta, estado_bloqueo\n  FROM clientes \n  WHERE id = ?`;\n  params = [id];\n} else if (documento) {\n  query = `SELECT \n    id, nombre, documento, email, telefono, direccion,\n    compras, ultima_compra, estado_cuenta\n  FROM clientes \n  WHERE documento = ?`;\n  params = [documento];\n} else if (nombre) {\n  query = `SELECT \n    id, nombre, documento, email, telefono, direccion,\n    compras, ultima_compra, estado_cuenta\n  FROM clientes \n  WHERE nombre LIKE ?\n  LIMIT 20`;\n  params = [`%${nombre}%`];\n} else {\n  query = `SELECT \n    id, nombre, documento, email, telefono,\n    compras, ultima_compra\n  FROM clientes \n  ORDER BY nombre\n  LIMIT 50`;\n}\n\nreturn {\n  json: {\n    query: query,\n    params: params,\n    tipo: 'consultar_clientes'\n  }\n};"
+      },
+      "id": "tool-consultar-clientes",
+      "name": "Tool: Consultar Clientes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 600]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Herramienta: Consultar Estadísticas\n// Proporciona estadísticas generales del sistema\n\nconst tipo = $input.item.json.tipo || 'ventas';\nconst periodo = $input.item.json.periodo || 'mes';\n\nlet query = '';\n\nif (tipo === 'ventas') {\n  if (periodo === 'dia') {\n    query = `SELECT \n      COUNT(*) as total_ventas,\n      SUM(total) as total_facturado,\n      AVG(total) as promedio_venta,\n      MIN(total) as venta_minima,\n      MAX(total) as venta_maxima,\n      COUNT(DISTINCT id_cliente) as clientes_unicos\n    FROM ventas \n    WHERE DATE(fecha) = CURDATE() \n      AND cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999)`;\n  } else if (periodo === 'semana') {\n    query = `SELECT \n      COUNT(*) as total_ventas,\n      SUM(total) as total_facturado,\n      AVG(total) as promedio_venta,\n      COUNT(DISTINCT id_cliente) as clientes_unicos\n    FROM ventas \n    WHERE fecha >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)\n      AND cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999)`;\n  } else if (periodo === 'mes') {\n    query = `SELECT \n      COUNT(*) as total_ventas,\n      SUM(total) as total_facturado,\n      AVG(total) as promedio_venta,\n      COUNT(DISTINCT id_cliente) as clientes_unicos\n    FROM ventas \n    WHERE MONTH(fecha) = MONTH(CURDATE()) \n      AND YEAR(fecha) = YEAR(CURDATE())\n      AND cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999)`;\n  } else {\n    query = `SELECT \n      COUNT(*) as total_ventas,\n      SUM(total) as total_facturado,\n      AVG(total) as promedio_venta,\n      COUNT(DISTINCT id_cliente) as clientes_unicos\n    FROM ventas \n    WHERE cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999)`;\n  }\n} else if (tipo === 'productos') {\n  query = `SELECT \n    COUNT(*) as total_productos,\n    COUNT(CASE WHEN (IF(stock<0,0,stock)) <= stock_bajo THEN 1 END) as productos_stock_bajo,\n    COUNT(CASE WHEN (IF(stock<0,0,stock)) <= stock_medio AND (IF(stock<0,0,stock)) > stock_bajo THEN 1 END) as productos_stock_medio,\n    SUM(CASE WHEN stock > 0 THEN stock * precio_compra ELSE 0 END) as valor_inventario,\n    SUM(CASE WHEN stock > 0 THEN stock * precio_venta ELSE 0 END) as valor_venta_potencial\n  FROM productos`;\n} else if (tipo === 'clientes') {\n  query = `SELECT \n    COUNT(*) as total_clientes,\n    COUNT(CASE WHEN compras > 0 THEN 1 END) as clientes_activos,\n    COUNT(CASE WHEN estado_cuenta != 0 THEN 1 END) as clientes_con_deuda\n  FROM clientes`;\n}\n\nreturn {\n  json: {\n    query: query,\n    params: [],\n    tipo: 'consultar_estadisticas',\n    subtipo: tipo,\n    periodo: periodo\n  }\n};"
+      },
+      "id": "tool-consultar-estadisticas",
+      "name": "Tool: Consultar Estadísticas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 700]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Herramienta: Consulta SQL Personalizada\n// Permite al agente generar consultas SQL en lenguaje natural\n// IMPORTANTE: Solo permite SELECT por seguridad\n\nconst queryNatural = $input.item.json.query || '';\n\n// Convertir lenguaje natural a SQL (versión simplificada)\n// En producción, esto debería usar un LLM para convertir lenguaje natural a SQL\nlet query = '';\n\n// Ejemplos de conversión básica (el AI Agent puede generar SQL directamente)\nif (queryNatural.toLowerCase().includes('cuántos productos')) {\n  query = 'SELECT COUNT(*) as total FROM productos';\n} else if (queryNatural.toLowerCase().includes('total productos')) {\n  query = 'SELECT COUNT(*) as total FROM productos';\n} else if (queryNatural.toLowerCase().includes('cuántos clientes')) {\n  query = 'SELECT COUNT(*) as total FROM clientes';\n} else if (queryNatural.toLowerCase().includes('total clientes')) {\n  query = 'SELECT COUNT(*) as total FROM clientes';\n} else if (queryNatural.toLowerCase().includes('total ventas')) {\n  query = 'SELECT COUNT(*) as total FROM ventas WHERE cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999)';\n} else {\n  // Si el query viene como SQL directo (generado por el AI Agent)\n  // Validar que solo sea SELECT\n  const queryUpper = queryNatural.toUpperCase().trim();\n  if (queryUpper.startsWith('SELECT') && \n      !queryUpper.includes('INSERT') && \n      !queryUpper.includes('UPDATE') && \n      !queryUpper.includes('DELETE') && \n      !queryUpper.includes('DROP') && \n      !queryUpper.includes('ALTER') && \n      !queryUpper.includes('CREATE')) {\n    query = queryNatural;\n  } else {\n    throw new Error('Solo se permiten consultas SELECT por seguridad');\n  }\n}\n\nreturn {\n  json: {\n    query: query,\n    params: [],\n    tipo: 'consulta_sql',\n    query_original: queryNatural\n  }\n};"
+      },
+      "id": "tool-consulta-sql",
+      "name": "Tool: Consulta SQL",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 800]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ $json.query }}",
+        "options": {
+          "queryParameters": "={{ $json.params }}"
+        }
+      },
+      "id": "mysql-execute",
+      "name": "MySQL Execute",
+      "type": "n8n-nodes-base.mysql",
+      "typeVersion": 2.4,
+      "position": [850, 400],
+      "credentials": {
+        "mySql": {
+          "id": "mysql-credentials",
+          "name": "MySQL POS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Procesar resultados de MySQL y formatear para el AI Agent\n\nconst resultados = $input.all();\nconst tipoConsulta = resultados[0]?.json?.tipo || 'general';\n\nlet respuesta = '';\n\nif (resultados.length === 0 || !resultados[0].json) {\n  return {\n    json: {\n      resultado: 'No se encontraron resultados para la consulta.',\n      tipo: tipoConsulta\n    }\n  };\n}\n\nconst datos = resultados.map(item => item.json);\n\n// Formatear según el tipo de consulta\nif (tipoConsulta === 'consultar_ventas') {\n  const venta = datos[0];\n  if (venta.cantidad_ventas === 0) {\n    respuesta = 'No se encontraron ventas para el período consultado.';\n  } else {\n    respuesta = `VENTAS ENCONTRADAS:\\n`;\n    respuesta += `- Cantidad de ventas: ${venta.cantidad_ventas || 0}\\n`;\n    respuesta += `- Total facturado: $${parseFloat(venta.total_ventas || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}\\n`;\n    respuesta += `- Total neto: $${parseFloat(venta.total_neto || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}\\n`;\n    respuesta += `- Total impuestos: $${parseFloat(venta.total_impuestos || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}\\n`;\n    respuesta += `- Promedio por venta: $${parseFloat(venta.promedio_venta || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}`;\n    if (venta.fecha_inicio) {\n      respuesta += `\\n- Período: ${venta.fecha_inicio} a ${venta.fecha_fin}`;\n    }\n  }\n} else if (tipoConsulta === 'consultar_productos') {\n  if (datos.length === 0) {\n    respuesta = 'No se encontraron productos con los criterios especificados.';\n  } else {\n    respuesta = `PRODUCTOS ENCONTRADOS (${datos.length}):\\n\\n`;\n    datos.forEach((prod, idx) => {\n      respuesta += `${idx + 1}. ${prod.descripcion || 'Sin descripción'}\\n`;\n      respuesta += `   Código: ${prod.codigo || 'N/A'}\\n`;\n      respuesta += `   Stock: ${parseFloat(prod.stock || 0).toFixed(2)}\\n`;\n      respuesta += `   Precio compra: $${parseFloat(prod.precio_compra || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}\\n`;\n      respuesta += `   Precio venta: $${parseFloat(prod.precio_venta || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}\\n\\n`;\n    });\n  }\n} else if (tipoConsulta === 'consultar_stock') {\n  if (datos.length === 0) {\n    respuesta = 'No se encontraron productos con stock.';\n  } else {\n    const bajos = datos.filter(p => parseFloat(p.stock || 0) <= parseFloat(p.stock_bajo || 0));\n    const medios = datos.filter(p => parseFloat(p.stock || 0) > parseFloat(p.stock_bajo || 0) && parseFloat(p.stock || 0) <= parseFloat(p.stock_medio || 0));\n    \n    respuesta = `INFORMACIÓN DE STOCK:\\n`;\n    respuesta += `- Total productos consultados: ${datos.length}\\n`;\n    if (bajos.length > 0) {\n      respuesta += `- Productos con STOCK BAJO: ${bajos.length}\\n`;\n    }\n    if (medios.length > 0) {\n      respuesta += `- Productos con STOCK MEDIO: ${medios.length}\\n`;\n    }\n    respuesta += `\\nDETALLE:\\n\\n`;\n    datos.slice(0, 10).forEach((prod, idx) => {\n      respuesta += `${idx + 1}. ${prod.descripcion || 'Sin descripción'}\\n`;\n      respuesta += `   Código: ${prod.codigo || 'N/A'}\\n`;\n      respuesta += `   Stock actual: ${parseFloat(prod.stock || 0).toFixed(2)}\\n`;\n      if (prod.estado_stock) {\n        respuesta += `   Estado: ${prod.estado_stock}\\n`;\n      }\n      respuesta += `\\n`;\n    });\n    if (datos.length > 10) {\n      respuesta += `... y ${datos.length - 10} productos más.`;\n    }\n  }\n} else if (tipoConsulta === 'sugerencias_compras') {\n  if (datos.length === 0) {\n    respuesta = 'Todos los productos tienen stock suficiente. No hay sugerencias de compra.';\n  } else {\n    const urgentes = datos.filter(p => p.prioridad === 'URGENTE');\n    const recomendados = datos.filter(p => p.prioridad === 'RECOMENDADO');\n    \n    respuesta = `SUGERENCIAS DE COMPRAS:\\n\\n`;\n    if (urgentes.length > 0) {\n      respuesta += `⚠️ URGENTE (${urgentes.length} productos):\\n`;\n      urgentes.slice(0, 5).forEach((prod, idx) => {\n        respuesta += `${idx + 1}. ${prod.descripcion || 'Sin descripción'}\\n`;\n        respuesta += `   Código: ${prod.codigo || 'N/A'}\\n`;\n        respuesta += `   Stock actual: ${parseFloat(prod.stock || 0).toFixed(2)}\\n`;\n        respuesta += `   Cantidad sugerida: ${parseFloat(prod.cantidad_sugerida || 0).toFixed(2)}\\n`;\n        if (prod.proveedor) {\n          respuesta += `   Proveedor: ${prod.proveedor}\\n`;\n        }\n        respuesta += `\\n`;\n      });\n    }\n    if (recomendados.length > 0) {\n      respuesta += `📋 RECOMENDADO (${recomendados.length} productos):\\n`;\n      recomendados.slice(0, 5).forEach((prod, idx) => {\n        respuesta += `${idx + 1}. ${prod.descripcion || 'Sin descripción'}\\n`;\n        respuesta += `   Código: ${prod.codigo || 'N/A'}\\n`;\n        respuesta += `   Stock actual: ${parseFloat(prod.stock || 0).toFixed(2)}\\n`;\n        respuesta += `   Cantidad sugerida: ${parseFloat(prod.cantidad_sugerida || 0).toFixed(2)}\\n\\n`;\n      });\n    }\n  }\n} else if (tipoConsulta === 'consultar_clientes') {\n  if (datos.length === 0) {\n    respuesta = 'No se encontraron clientes con los criterios especificados.';\n  } else {\n    respuesta = `CLIENTES ENCONTRADOS (${datos.length}):\\n\\n`;\n    datos.slice(0, 10).forEach((cli, idx) => {\n      respuesta += `${idx + 1}. ${cli.nombre || 'Sin nombre'}\\n`;\n      if (cli.documento && cli.documento !== '0') {\n        respuesta += `   Documento: ${cli.documento}\\n`;\n      }\n      if (cli.email) {\n        respuesta += `   Email: ${cli.email}\\n`;\n      }\n      if (cli.telefono) {\n        respuesta += `   Teléfono: ${cli.telefono}\\n`;\n      }\n      if (cli.compras !== null) {\n        respuesta += `   Compras realizadas: ${cli.compras || 0}\\n`;\n      }\n      respuesta += `\\n`;\n    });\n    if (datos.length > 10) {\n      respuesta += `... y ${datos.length - 10} clientes más.`;\n    }\n  }\n} else if (tipoConsulta === 'consultar_estadisticas') {\n  const stats = datos[0];\n  if (stats.total_ventas !== undefined) {\n    respuesta = `ESTADÍSTICAS DE VENTAS:\\n`;\n    respuesta += `- Total de ventas: ${stats.total_ventas || 0}\\n`;\n    respuesta += `- Total facturado: $${parseFloat(stats.total_facturado || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}\\n`;\n    respuesta += `- Promedio por venta: $${parseFloat(stats.promedio_venta || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}\\n`;\n    if (stats.venta_minima !== null) {\n      respuesta += `- Venta mínima: $${parseFloat(stats.venta_minima || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}\\n`;\n    }\n    if (stats.venta_maxima !== null) {\n      respuesta += `- Venta máxima: $${parseFloat(stats.venta_maxima || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}\\n`;\n    }\n    if (stats.clientes_unicos !== null) {\n      respuesta += `- Clientes únicos: ${stats.clientes_unicos || 0}`;\n    }\n  } else if (stats.total_productos !== undefined) {\n    respuesta = `ESTADÍSTICAS DE PRODUCTOS:\\n`;\n    respuesta += `- Total de productos: ${stats.total_productos || 0}\\n`;\n    respuesta += `- Productos con stock bajo: ${stats.productos_stock_bajo || 0}\\n`;\n    respuesta += `- Productos con stock medio: ${stats.productos_stock_medio || 0}\\n`;\n    respuesta += `- Valor del inventario: $${parseFloat(stats.valor_inventario || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}\\n`;\n    respuesta += `- Valor de venta potencial: $${parseFloat(stats.valor_venta_potencial || 0).toLocaleString('es-AR', {minimumFractionDigits: 2})}`;\n  } else if (stats.total_clientes !== undefined) {\n    respuesta = `ESTADÍSTICAS DE CLIENTES:\\n`;\n    respuesta += `- Total de clientes: ${stats.total_clientes || 0}\\n`;\n    respuesta += `- Clientes activos: ${stats.clientes_activos || 0}\\n`;\n    respuesta += `- Clientes con deuda: ${stats.clientes_con_deuda || 0}`;\n  }\n} else {\n  // Formato genérico para otras consultas\n  respuesta = `RESULTADOS (${datos.length} registros):\\n\\n`;\n  datos.slice(0, 10).forEach((item, idx) => {\n    respuesta += `${idx + 1}. ${JSON.stringify(item, null, 2)}\\n\\n`;\n  });\n  if (datos.length > 10) {\n    respuesta += `... y ${datos.length - 10} registros más.`;\n  }\n}\n\nreturn {\n  json: {\n    resultado: respuesta,\n    tipo: tipoConsulta,\n    cantidad_registros: datos.length\n  }\n};"
+      },
+      "id": "procesar-resultados",
+      "name": "Procesar Resultados",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"output\": $json.resultado || $json.respuesta || \"No se pudo procesar la consulta.\" } }}",
+        "options": {}
+      },
+      "id": "respond-to-chat",
+      "name": "Respond to Chat",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1250, 300]
+    }
+  ],
+  "connections": {
+    "Chat Trigger": {
+      "main": [[{"node": "AI Agent", "type": "main", "index": 0}]]
+    },
+    "AI Agent": {
+      "main": [[{"node": "Respond to Chat", "type": "main", "index": 0}]]
+    },
+    "Tool: Consultar Ventas": {
+      "main": [[{"node": "MySQL Execute", "type": "main", "index": 0}]]
+    },
+    "Tool: Consultar Productos": {
+      "main": [[{"node": "MySQL Execute", "type": "main", "index": 0}]]
+    },
+    "Tool: Consultar Stock": {
+      "main": [[{"node": "MySQL Execute", "type": "main", "index": 0}]]
+    },
+    "Tool: Sugerencias de Compras": {
+      "main": [[{"node": "MySQL Execute", "type": "main", "index": 0}]]
+    },
+    "Tool: Consultar Clientes": {
+      "main": [[{"node": "MySQL Execute", "type": "main", "index": 0}]]
+    },
+    "Tool: Consultar Estadísticas": {
+      "main": [[{"node": "MySQL Execute", "type": "main", "index": 0}]]
+    },
+    "Tool: Consulta SQL": {
+      "main": [[{"node": "MySQL Execute", "type": "main", "index": 0}]]
+    },
+    "MySQL Execute": {
+      "main": [[{"node": "Procesar Resultados", "type": "main", "index": 0}]]
+    },
+    "Procesar Resultados": {
+      "main": [[{"node": "AI Agent", "type": "main", "index": 0}]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-12-08T00:00:00.000Z",
+  "versionId": "1"
+}
+
