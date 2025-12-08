@@ -70,7 +70,10 @@ $(document).ready(function() {
     
     // Función para ocultar indicador de escritura
     function ocultarTyping() {
+        // Asegurar que se elimine el indicador de todas las formas posibles
         $('#typing-indicator').remove();
+        $('.typing-indicator').parent().remove();
+        $chatMessages.find('#typing-indicator').remove();
     }
     
     // Función para hacer scroll al final
@@ -100,11 +103,11 @@ $(document).ready(function() {
         // Deshabilitar botón
         $chatSendBtn.prop('disabled', true);
         
-        // Mostrar indicador de escritura
-        mostrarTyping();
-        
         // Preparar historial (sin incluir el mensaje que acabamos de agregar)
         const historialParaEnviar = historial.slice(0, -1).slice(-10); // Últimos 10 mensajes, sin el que acabamos de agregar
+        
+        // NO mostrar indicador de escritura (el usuario no lo quiere)
+        // mostrarTyping();
         
         // Enviar a N8N
         $.ajax({
@@ -116,6 +119,7 @@ $(document).ready(function() {
                 historial: JSON.stringify(historialParaEnviar)
             },
             success: function(response) {
+                // Asegurar que el indicador esté oculto
                 ocultarTyping();
                 $chatSendBtn.prop('disabled', false);
                 
@@ -175,8 +179,10 @@ $(document).ready(function() {
                 });
             },
             complete: function() {
-                // Asegurar que el botón esté habilitado y el typing oculto
-                ocultarTyping();
+                // Asegurar que el botón esté habilitado y el typing oculto siempre
+                setTimeout(function() {
+                    ocultarTyping();
+                }, 100);
                 $chatSendBtn.prop('disabled', false);
             }
         });
