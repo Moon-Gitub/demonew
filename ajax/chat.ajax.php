@@ -205,10 +205,37 @@ class AjaxChat {
             return;
         }
         
+        // Extraer la respuesta del formato que devuelve N8N
+        // N8N puede devolver en diferentes formatos:
+        // - {"output": "texto"}
+        // - {"respuesta": "texto"}
+        // - {"message": "texto"}
+        // - {"text": "texto"}
+        // - O directamente el texto en un array
+        $textoRespuesta = null;
+        
+        if (isset($respuesta_n8n['output'])) {
+            $textoRespuesta = $respuesta_n8n['output'];
+        } else if (isset($respuesta_n8n['respuesta'])) {
+            $textoRespuesta = $respuesta_n8n['respuesta'];
+        } else if (isset($respuesta_n8n['message'])) {
+            $textoRespuesta = $respuesta_n8n['message'];
+        } else if (isset($respuesta_n8n['text'])) {
+            $textoRespuesta = $respuesta_n8n['text'];
+        } else if (is_string($respuesta_n8n)) {
+            $textoRespuesta = $respuesta_n8n;
+        } else if (is_array($respuesta_n8n) && count($respuesta_n8n) == 1) {
+            // Si es un array con un solo elemento, usar ese valor
+            $textoRespuesta = reset($respuesta_n8n);
+        } else {
+            // Si no se puede extraer, devolver el JSON formateado
+            $textoRespuesta = json_encode($respuesta_n8n, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        }
+        
         // Retornar respuesta exitosa
         echo json_encode([
             'error' => false,
-            'respuesta' => $respuesta_n8n['respuesta'] ?? $respuesta_n8n['message'] ?? $respuesta_n8n['text'] ?? $response,
+            'respuesta' => $textoRespuesta,
             'datos_adicionales' => $respuesta_n8n['datos'] ?? null,
             'timestamp' => date('H:i:s')
         ]);
