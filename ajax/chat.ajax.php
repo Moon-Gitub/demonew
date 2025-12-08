@@ -18,9 +18,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// ✅ Seguridad AJAX (sin verificar CSRF para el chat, ya que se maneja automáticamente)
+// ✅ Seguridad AJAX
 require_once "seguridad.ajax.php";
-SeguridadAjax::inicializar(false); // No verificar CSRF ya que ajaxSetup lo maneja
+SeguridadAjax::inicializar();
 
 require_once "../controladores/integraciones.controlador.php";
 require_once "../modelos/integraciones.modelo.php";
