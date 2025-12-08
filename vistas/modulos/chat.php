@@ -1,32 +1,44 @@
 <?php
 // vistas/modulos/chat.php
 
-// Buscar integración N8N activa
+// Buscar integración activa con webhook (puede ser tipo "n8n" o "webhook")
+// Primero buscar por "n8n", luego por "webhook", o buscar todas y filtrar
+$webhookUrl = null;
+
+// Buscar primero por tipo "n8n"
 $item = "tipo";
 $valor = "n8n";
 $integraciones = ControladorIntegraciones::ctrMostrarIntegraciones($item, $valor);
 
-$webhookUrl = null;
+// Si no encuentra, buscar por tipo "webhook"
+if(!$integraciones || !is_array($integraciones) || count($integraciones) == 0){
+    $valor = "webhook";
+    $integraciones = ControladorIntegraciones::ctrMostrarIntegraciones($item, $valor);
+}
+
+// Si aún no encuentra, buscar todas las integraciones activas con webhook
+if(!$integraciones || !is_array($integraciones) || count($integraciones) == 0){
+    $todas = ControladorIntegraciones::ctrMostrarIntegraciones(null, null);
+    if($todas && is_array($todas)){
+        $integraciones = array_filter($todas, function($int) {
+            $activo = isset($int["activo"]) ? (int)$int["activo"] : 0;
+            return $activo == 1 && !empty($int["webhook_url"]);
+        });
+    }
+}
+
 // Verificar que $integraciones sea un array antes de iterar
 if($integraciones && is_array($integraciones) && count($integraciones) > 0){
     foreach($integraciones as $integracion){
-        // Debug: ver qué estamos recibiendo
-        error_log("DEBUG Chat - Integración encontrada: " . print_r($integracion, true));
-        
         // Verificar activo (puede venir como int 1 o string "1")
         $activo = isset($integracion["activo"]) ? (int)$integracion["activo"] : 0;
         $tieneWebhook = !empty($integracion["webhook_url"]);
         
-        error_log("DEBUG Chat - Activo: $activo, Tiene Webhook: " . ($tieneWebhook ? 'SÍ' : 'NO'));
-        
         if($activo == 1 && $tieneWebhook){
             $webhookUrl = $integracion["webhook_url"];
-            error_log("DEBUG Chat - Webhook URL encontrada: $webhookUrl");
             break;
         }
     }
-} else {
-    error_log("DEBUG Chat - No se encontraron integraciones o no es array. Tipo: " . gettype($integraciones) . ", Valor: " . ($integraciones ? 'existe' : 'null'));
 }
 ?>
 

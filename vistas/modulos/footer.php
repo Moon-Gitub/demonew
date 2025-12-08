@@ -11,11 +11,31 @@
 <?php
 // Verificar si hay integración N8N activa para mostrar la burbuja
 if(isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"] == "ok"){
+    // Buscar integración activa con webhook (puede ser tipo "n8n" o "webhook")
+    $webhookUrl = null;
+    
+    // Buscar primero por tipo "n8n"
     $item = "tipo";
     $valor = "n8n";
     $integraciones = ControladorIntegraciones::ctrMostrarIntegraciones($item, $valor);
     
-    $webhookUrl = null;
+    // Si no encuentra, buscar por tipo "webhook"
+    if(!$integraciones || !is_array($integraciones) || count($integraciones) == 0){
+        $valor = "webhook";
+        $integraciones = ControladorIntegraciones::ctrMostrarIntegraciones($item, $valor);
+    }
+    
+    // Si aún no encuentra, buscar todas las integraciones activas con webhook
+    if(!$integraciones || !is_array($integraciones) || count($integraciones) == 0){
+        $todas = ControladorIntegraciones::ctrMostrarIntegraciones(null, null);
+        if($todas && is_array($todas)){
+            $integraciones = array_filter($todas, function($int) {
+                $activo = isset($int["activo"]) ? (int)$int["activo"] : 0;
+                return $activo == 1 && !empty($int["webhook_url"]);
+            });
+        }
+    }
+    
     // Verificar que $integraciones sea un array antes de iterar
     if($integraciones && is_array($integraciones) && count($integraciones) > 0){
         foreach($integraciones as $integracion){
