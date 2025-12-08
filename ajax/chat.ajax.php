@@ -134,7 +134,11 @@ class AjaxChat {
         
         if ($http_code !== 200) {
             // Log del error para debugging
-            error_log("Error N8N - Código HTTP: $http_code, URL: $n8n_webhook_url, Respuesta: " . substr($response, 0, 500));
+            $responsePreview = substr($response, 0, 1000);
+            error_log("Error N8N - Código HTTP: $http_code");
+            error_log("Error N8N - URL: $n8n_webhook_url");
+            error_log("Error N8N - Payload enviado: " . $payloadJson);
+            error_log("Error N8N - Respuesta: " . $responsePreview);
             
             $mensajeError = 'Error del servidor N8N. Código: ' . $http_code;
             
@@ -145,14 +149,33 @@ class AjaxChat {
             } else if ($http_code == 401 || $http_code == 403) {
                 $errorInfo = ' (Error de autenticación. Verifica la API Key si es requerida)';
             } else if ($http_code == 500) {
-                $errorInfo = ' (Error interno del servidor N8N. Revisa el workflow)';
+                $errorInfo = ' (Error interno del servidor N8N. Revisa el workflow y los logs de N8N)';
+                
+                // Intentar parsear la respuesta como JSON para obtener más detalles
+                $errorResponse = json_decode($response, true);
+                if ($errorResponse && isset($errorResponse['message'])) {
+                    $errorInfo .= ' - ' . $errorResponse['message'];
+                } else if ($errorResponse && isset($errorResponse['error'])) {
+                    $errorInfo .= ' - ' . (is_string($errorResponse['error']) ? $errorResponse['error'] : json_encode($errorResponse['error']));
+                }
+            }
+            
+            // Para debugging, incluir más información en modo desarrollo
+            $debugInfo = [];
+            if (defined('APP_DEBUG') && APP_DEBUG) {
+                $debugInfo = [
+                    'url' => $n8n_webhook_url,
+                    'payload' => $payload,
+                    'response_preview' => $responsePreview
+                ];
             }
             
             echo json_encode([
                 'error' => true,
                 'mensaje' => $mensajeError . $errorInfo,
                 'codigo' => $http_code,
-                'respuesta' => substr($response, 0, 200) // Primeros 200 caracteres para no saturar
+                'respuesta' => $responsePreview,
+                'debug' => $debugInfo
             ]);
             return;
         }

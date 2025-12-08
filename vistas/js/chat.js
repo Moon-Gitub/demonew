@@ -119,7 +119,15 @@ $(document).ready(function() {
                 ocultarTyping();
                 
                 if (response.error) {
-                    agregarMensaje('❌ ' + response.mensaje, false);
+                    let mensajeError = '❌ ' + response.mensaje;
+                    // Si hay información de debug, mostrarla en consola
+                    if (response.debug) {
+                        console.error('Error detallado:', response.debug);
+                    }
+                    if (response.respuesta) {
+                        console.error('Respuesta de N8N:', response.respuesta);
+                    }
+                    agregarMensaje(mensajeError, false);
                 } else {
                     agregarMensaje(response.respuesta || 'No se recibió respuesta', false);
                 }
