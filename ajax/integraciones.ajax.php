@@ -3,6 +3,9 @@
 require_once "seguridad.ajax.php";
 SeguridadAjax::inicializar();
 
+require_once "../controladores/integraciones.controlador.php";
+require_once "../modelos/integraciones.modelo.php";
+
 class AjaxIntegraciones{
 
 	public $idIntegracion;
