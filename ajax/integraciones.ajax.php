@@ -15,9 +15,9 @@ class AjaxIntegraciones{
 		$valor = $this->idIntegracion;
 		$respuesta = ControladorIntegraciones::ctrMostrarIntegraciones($item, $valor);
 		
-		// Si es un array con elementos, devolver el primero
-		if(is_array($respuesta) && count($respuesta) > 0){
-			echo json_encode($respuesta[0]);
+		// El modelo ahora devuelve fetch() cuando busca por ID, así que es un solo registro
+		if($respuesta){
+			echo json_encode($respuesta);
 		} else {
 			echo json_encode(['error' => 'No se encontró la integración']);
 		}

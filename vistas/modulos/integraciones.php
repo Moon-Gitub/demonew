@@ -46,7 +46,7 @@ if($_SESSION["perfil"] == "Vendedor"){
           $valor = null;
           $integraciones = ControladorIntegraciones::ctrMostrarIntegraciones($item, $valor);
           
-          if($integraciones){
+          if($integraciones && is_array($integraciones) && count($integraciones) > 0){
             foreach ($integraciones as $key => $value) {
               $estado = $value["activo"] == 1 ? '<span class="label label-success">Activo</span>' : '<span class="label label-danger">Inactivo</span>';
               $fecha = date('d/m/Y H:i', strtotime($value["fecha_creacion"]));

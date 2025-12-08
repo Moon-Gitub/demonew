@@ -18,12 +18,18 @@ class ModeloIntegraciones{
 			} else {
 				$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
 			}
+			
+			$stmt -> execute();
+			
+			// Si se busca por un item específico (como ID), devolver un solo registro
+			// Si no, devolver todos los registros
+			return $stmt -> fetch();
 		} else {
 			$stmt = Conexion::conectar()->prepare("SELECT * FROM integraciones ORDER BY fecha_creacion DESC");
+			$stmt -> execute();
+			return $stmt -> fetchAll();
 		}
 		
-		$stmt -> execute();
-		return $stmt -> fetchAll();
 		$stmt -> close();
 		$stmt = null;
 	}
