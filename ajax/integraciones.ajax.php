@@ -22,15 +22,20 @@ class AjaxIntegraciones{
 			
 			$respuesta = ControladorIntegraciones::ctrMostrarIntegraciones($item, $valor);
 			
-			// El modelo ahora devuelve fetch() cuando busca por ID, así que es un solo registro
-			if($respuesta && is_array($respuesta)){
+			// El modelo devuelve fetch() cuando busca por ID, puede ser false si no encuentra
+			if($respuesta !== false && is_array($respuesta) && count($respuesta) > 0){
 				echo json_encode($respuesta);
 			} else {
-				echo json_encode(['error' => 'No se encontró la integración']);
+				echo json_encode(['error' => 'No se encontró la integración con ID: ' . $valor]);
 			}
 		} catch (Exception $e) {
 			error_log("Error en ajaxEditarIntegracion: " . $e->getMessage());
+			error_log("Stack trace: " . $e->getTraceAsString());
 			echo json_encode(['error' => 'Error al obtener los datos: ' . $e->getMessage()]);
+		} catch (Error $e) {
+			error_log("Error fatal en ajaxEditarIntegracion: " . $e->getMessage());
+			error_log("Stack trace: " . $e->getTraceAsString());
+			echo json_encode(['error' => 'Error fatal: ' . $e->getMessage()]);
 		}
 	}
 

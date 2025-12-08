@@ -22,15 +22,14 @@ class ModeloIntegraciones{
 			$stmt -> execute();
 			
 			// Si se busca por un item específico (como ID), devolver un solo registro
-			// Si no, devolver todos los registros
-			$resultado = $stmt -> fetch();
+			$resultado = $stmt -> fetch(PDO::FETCH_ASSOC);
 			$stmt -> close();
 			$stmt = null;
 			return $resultado;
 		} else {
 			$stmt = Conexion::conectar()->prepare("SELECT * FROM integraciones ORDER BY fecha_creacion DESC");
 			$stmt -> execute();
-			$resultado = $stmt -> fetchAll();
+			$resultado = $stmt -> fetchAll(PDO::FETCH_ASSOC);
 			$stmt -> close();
 			$stmt = null;
 			return $resultado;
