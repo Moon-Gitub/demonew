@@ -117,9 +117,21 @@ $(document).ready(function() {
             },
             success: function(response) {
                 ocultarTyping();
+                $chatSendBtn.prop('disabled', false);
+                
+                // Verificar si la respuesta es un string (puede pasar si hay error en el servidor)
+                if (typeof response === 'string') {
+                    try {
+                        response = JSON.parse(response);
+                    } catch (e) {
+                        console.error('Error parseando respuesta:', e, response);
+                        agregarMensaje('❌ Error procesando la respuesta del servidor', false);
+                        return;
+                    }
+                }
                 
                 if (response.error) {
-                    let mensajeError = '❌ ' + response.mensaje;
+                    let mensajeError = '❌ ' + (response.mensaje || 'Error desconocido');
                     // Si hay información de debug, mostrarla en consola
                     if (response.debug) {
                         console.error('Error detallado:', response.debug);
@@ -129,21 +141,29 @@ $(document).ready(function() {
                     }
                     agregarMensaje(mensajeError, false);
                 } else {
-                    agregarMensaje(response.respuesta || 'No se recibió respuesta', false);
+                    const textoRespuesta = response.respuesta || response.message || response.text || 'No se recibió respuesta';
+                    agregarMensaje(textoRespuesta, false);
                 }
             },
             error: function(xhr, status, error) {
                 ocultarTyping();
+                $chatSendBtn.prop('disabled', false);
+                
                 let mensajeError = '❌ Error de conexión. Por favor, intenta nuevamente.';
                 
                 // Intentar parsear el error si viene en JSON
                 try {
-                    const errorResponse = JSON.parse(xhr.responseText);
-                    if (errorResponse.mensaje) {
-                        mensajeError = '❌ ' + errorResponse.mensaje;
+                    if (xhr.responseText) {
+                        const errorResponse = JSON.parse(xhr.responseText);
+                        if (errorResponse.mensaje) {
+                            mensajeError = '❌ ' + errorResponse.mensaje;
+                        } else if (errorResponse.error) {
+                            mensajeError = '❌ ' + errorResponse.error;
+                        }
                     }
                 } catch (e) {
                     // Si no es JSON, usar el mensaje por defecto
+                    console.error('Error parseando respuesta de error:', e);
                 }
                 
                 agregarMensaje(mensajeError, false);
@@ -155,6 +175,8 @@ $(document).ready(function() {
                 });
             },
             complete: function() {
+                // Asegurar que el botón esté habilitado y el typing oculto
+                ocultarTyping();
                 $chatSendBtn.prop('disabled', false);
             }
         });
