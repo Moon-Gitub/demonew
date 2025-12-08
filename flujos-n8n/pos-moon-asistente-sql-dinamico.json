@@ -1,0 +1,120 @@
+{
+  "name": "POS Moon - Asistente Virtual SQL Dinámico",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "chat-trigger",
+      "name": "Chat Trigger",
+      "type": "n8n-nodes-base.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 300],
+      "webhookId": "chat-pos-moon-sql-dinamico"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4",
+        "options": {
+          "temperature": 0.7,
+          "maxTokens": 2000
+        },
+        "prompt": "={{ $json.chatInput }}",
+        "systemMessage": "Eres un asistente virtual experto en sistemas POS (Punto de Venta) Moon. Tu función es ayudar a los usuarios a consultar información sobre ventas, productos, stock, clientes, proveedores y estadísticas del sistema.\n\nINSTRUCCIONES:\n- Responde siempre en español de forma clara y profesional\n- Si el usuario pregunta algo que requiere consultar la base de datos, usa la herramienta 'generar_consulta_sql' para generar la consulta SQL apropiada\n- Si falta información necesaria para la consulta (como fechas, nombres, códigos), pregunta al usuario antes de generar la consulta\n- Formatea los números con separadores de miles y decimales (ej: $1.234,56)\n- Sé conciso pero completo en tus respuestas\n\nESQUEMA DE LA BASE DE DATOS:\n\nTABLA: ventas\n- Campos principales: id, uuid, codigo, fecha, id_cliente, id_vendedor, productos (JSON), neto, total, impuesto, metodo_pago, estado\n- IMPORTANTE: Excluir siempre ventas con cbte_tipo IN (3, 8, 13, 203, 208, 213, 999) que son anulaciones\n- Relación: id_cliente → clientes.id, id_vendedor → usuarios.id\n\nTABLA: productos\n- Campos principales: id, codigo, descripcion, stock, stock_medio, stock_bajo, precio_compra, precio_venta, precio_venta_mayorista, id_categoria, id_proveedor, ventas\n- Stock puede ser negativo, usar IF(stock<0,0,stock) para calcular stock real\n- Relación: id_categoria → categorias.id, id_proveedor → proveedores.id\n\nTABLA: clientes\n- Campos principales: id, nombre, documento, email, telefono, direccion, compras, ultima_compra, estado_cuenta, estado_bloqueo\n\nTABLA: proveedores\n- Campos principales: id, nombre, cuit, telefono, email, direccion\n\nTABLA: categorias\n- Campos principales: id, categoria\n\nTABLA: cajas\n- Campos principales: id, fecha, monto, medio_pago, tipo, id_venta, id_cliente_proveedor\n\nEJEMPLOS DE CONSULTAS:\n- Ventas de hoy: SELECT COUNT(*) as cantidad, SUM(total) as total FROM ventas WHERE DATE(fecha) = CURDATE() AND cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999)\n- Productos con stock bajo: SELECT * FROM productos WHERE (IF(stock<0,0,stock)) <= stock_bajo\n- Cliente por nombre: SELECT * FROM clientes WHERE nombre LIKE '%nombre%'\n\nIMPORTANTE:\n- Solo generar consultas SELECT (nunca INSERT, UPDATE, DELETE, DROP, ALTER, CREATE)\n- Usar parámetros preparados (?) cuando sea necesario para evitar SQL injection\n- Si la pregunta es ambigua, pregunta al usuario antes de generar la consulta\n- Para fechas, usar formato YYYY-MM-DD o funciones como CURDATE(), DATE_SUB()\n\nUsa la herramienta 'generar_consulta_sql' cuando necesites consultar la base de datos."
+      },
+      "id": "ai-agent",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.0,
+      "position": [640, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Herramienta: Generar Consulta SQL\n// El AI Agent genera SQL basándose en la pregunta del usuario\n\nconst pregunta = $input.item.json.pregunta || $input.item.json.query || '';\nconst contexto = $input.item.json.contexto || '';\n\n// El AI Agent debe generar SQL válido\n// Esta función solo valida y prepara la consulta\nconst sqlGenerado = $input.item.json.sql || '';\n\nif (!sqlGenerado || sqlGenerado.trim() === '') {\n  return {\n    json: {\n      error: 'No se generó ninguna consulta SQL. Por favor, genera una consulta SQL válida basándote en la pregunta del usuario.',\n      necesita_info: true\n    }\n  };\n}\n\n// Validar que solo sea SELECT (seguridad crítica)\nconst sqlUpper = sqlGenerado.toUpperCase().trim();\n\n// Lista de palabras peligrosas\nconst palabrasPeligrosas = ['INSERT', 'UPDATE', 'DELETE', 'DROP', 'ALTER', 'CREATE', 'TRUNCATE', 'REPLACE', 'GRANT', 'REVOKE'];\n\nfor (const palabra of palabrasPeligrosas) {\n  if (sqlUpper.includes(palabra)) {\n    return {\n      json: {\n        error: `Consulta SQL rechazada por seguridad. No se permiten operaciones ${palabra}. Solo se permiten consultas SELECT.`,\n        sql_rechazado: sqlGenerado\n      }\n    };\n  }\n}\n\n// Validar que comience con SELECT\nif (!sqlUpper.startsWith('SELECT')) {\n  return {\n    json: {\n      error: 'Solo se permiten consultas SELECT. La consulta debe comenzar con SELECT.',\n      sql_rechazado: sqlGenerado\n    }\n  };\n}\n\n// Validar que no tenga punto y coma múltiple o comandos múltiples\nif ((sqlGenerado.match(/;/g) || []).length > 1) {\n  return {\n    json: {\n      error: 'No se permiten múltiples comandos SQL en una sola consulta.',\n      sql_rechazado: sqlGenerado\n    }\n  };\n}\n\n// Extraer parámetros si los hay (para consultas preparadas)\nconst params = $input.item.json.params || [];\n\nreturn {\n  json: {\n    query: sqlGenerado.trim().replace(/;+$/, ''),\n    params: Array.isArray(params) ? params : [],\n    pregunta_original: pregunta,\n    tipo: 'consulta_dinamica'\n  }\n};"
+      },
+      "id": "tool-generar-sql",
+      "name": "Tool: Generar Consulta SQL",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ $json.query }}",
+        "options": {
+          "queryParameters": "={{ $json.params }}"
+        }
+      },
+      "id": "mysql-execute",
+      "name": "MySQL Execute",
+      "type": "n8n-nodes-base.mysql",
+      "typeVersion": 2.4,
+      "position": [840, 300],
+      "credentials": {
+        "mySql": {
+          "id": "mysql-credentials",
+          "name": "MySQL POS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Procesar resultados de MySQL y formatear para el AI Agent\n\nconst resultados = $input.all();\nconst preguntaOriginal = resultados[0]?.json?.pregunta_original || '';\n\n// Filtrar resultados válidos\nconst datos = resultados\n  .map(item => item.json)\n  .filter(item => item && Object.keys(item).length > 0 && !item.error);\n\nif (datos.length === 0) {\n  // Verificar si hay error\n  const error = resultados.find(item => item.json?.error);\n  if (error) {\n    return {\n      json: {\n        resultado: `Error: ${error.json.error}`,\n        error: true,\n        necesita_info: error.json.necesita_info || false\n      }\n    };\n  }\n  \n  return {\n    json: {\n      resultado: 'No se encontraron resultados para la consulta realizada.',\n      cantidad_registros: 0\n    }\n  };\n}\n\n// Formatear resultados de manera inteligente\nlet respuesta = '';\n\n// Si es un solo registro con agregaciones (COUNT, SUM, AVG, etc.)\nif (datos.length === 1) {\n  const registro = datos[0];\n  const campos = Object.keys(registro);\n  \n  // Detectar si es un resultado agregado\n  const esAgregado = campos.some(campo => \n    campo.includes('cantidad') || \n    campo.includes('total') || \n    campo.includes('promedio') || \n    campo.includes('suma') || \n    campo.includes('min') || \n    campo.includes('max')\n  );\n  \n  if (esAgregado) {\n    respuesta = 'RESULTADO:\\n\\n';\n    campos.forEach(campo => {\n      const valor = registro[campo];\n      if (valor !== null && valor !== undefined) {\n        const nombreCampo = campo.replace(/_/g, ' ').replace(/\\b\\w/g, l => l.toUpperCase());\n        \n        // Formatear números\n        if (typeof valor === 'number') {\n          if (campo.includes('total') || campo.includes('precio') || campo.includes('monto') || campo.includes('neto') || campo.includes('impuesto')) {\n            respuesta += `- ${nombreCampo}: $${parseFloat(valor).toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}\\n`;\n          } else if (campo.includes('promedio') || campo.includes('avg')) {\n            respuesta += `- ${nombreCampo}: $${parseFloat(valor).toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}\\n`;\n          } else {\n            respuesta += `- ${nombreCampo}: ${parseFloat(valor).toLocaleString('es-AR')}\\n`;\n          }\n        } else {\n          respuesta += `- ${nombreCampo}: ${valor}\\n`;\n        }\n      }\n    });\n  } else {\n    // Resultado simple\n    respuesta = 'INFORMACIÓN ENCONTRADA:\\n\\n';\n    campos.forEach(campo => {\n      const valor = registro[campo];\n      if (valor !== null && valor !== undefined) {\n        const nombreCampo = campo.replace(/_/g, ' ').replace(/\\b\\w/g, l => l.toUpperCase());\n        \n        if (typeof valor === 'number') {\n          if (campo.includes('precio') || campo.includes('total') || campo.includes('monto') || campo.includes('neto') || campo.includes('impuesto')) {\n            respuesta += `${nombreCampo}: $${parseFloat(valor).toLocaleString('es-AR', {minimumFractionDigits: 2})}\\n`;\n          } else if (campo.includes('stock')) {\n            respuesta += `${nombreCampo}: ${parseFloat(valor).toFixed(2)}\\n`;\n          } else {\n            respuesta += `${nombreCampo}: ${valor}\\n`;\n          }\n        } else {\n          respuesta += `${nombreCampo}: ${valor}\\n`;\n        }\n      }\n    });\n  }\n} else {\n  // Múltiples registros\n  respuesta = `RESULTADOS ENCONTRADOS (${datos.length} registros):\\n\\n`;\n  \n  // Limitar a 20 registros para no saturar\n  const registrosMostrar = datos.slice(0, 20);\n  \n  registrosMostrar.forEach((registro, idx) => {\n    respuesta += `${idx + 1}. `;\n    \n    // Priorizar campos comunes\n    if (registro.descripcion) respuesta += `${registro.descripcion}`;\n    else if (registro.nombre) respuesta += `${registro.nombre}`;\n    else if (registro.codigo) respuesta += `Código: ${registro.codigo}`;\n    \n    respuesta += '\\n';\n    \n    // Mostrar campos relevantes\n    Object.keys(registro).forEach(campo => {\n      if (campo !== 'descripcion' && campo !== 'nombre' && campo !== 'codigo' && campo !== 'id') {\n        const valor = registro[campo];\n        if (valor !== null && valor !== undefined && valor !== '') {\n          const nombreCampo = campo.replace(/_/g, ' ').replace(/\\b\\w/g, l => l.toUpperCase());\n          \n          if (typeof valor === 'number') {\n            if (campo.includes('precio') || campo.includes('total') || campo.includes('monto') || campo.includes('neto') || campo.includes('impuesto')) {\n              respuesta += `   ${nombreCampo}: $${parseFloat(valor).toLocaleString('es-AR', {minimumFractionDigits: 2})}\\n`;\n            } else if (campo.includes('stock')) {\n              respuesta += `   ${nombreCampo}: ${parseFloat(valor).toFixed(2)}\\n`;\n            } else {\n              respuesta += `   ${nombreCampo}: ${valor}\\n`;\n            }\n          } else {\n            respuesta += `   ${nombreCampo}: ${valor}\\n`;\n          }\n        }\n      }\n    });\n    \n    respuesta += '\\n';\n  });\n  \n  if (datos.length > 20) {\n    respuesta += `\\n... y ${datos.length - 20} registros más.`;\n  }\n}\n\nreturn {\n  json: {\n    resultado: respuesta,\n    cantidad_registros: datos.length,\n    pregunta_original: preguntaOriginal\n  }\n};"
+      },
+      "id": "procesar-resultados",
+      "name": "Procesar Resultados",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1040, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"output\": $json.resultado || $json.respuesta || \"No se pudo procesar la consulta.\" } }}",
+        "options": {}
+      },
+      "id": "respond-to-chat",
+      "name": "Respond to Chat",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1240, 300]
+    }
+  ],
+  "connections": {
+    "Chat Trigger": {
+      "main": [[{"node": "AI Agent", "type": "main", "index": 0}]]
+    },
+    "AI Agent": {
+      "main": [[{"node": "Respond to Chat", "type": "main", "index": 0}]]
+    },
+    "Tool: Generar Consulta SQL": {
+      "main": [[{"node": "MySQL Execute", "type": "main", "index": 0}]]
+    },
+    "MySQL Execute": {
+      "main": [[{"node": "Procesar Resultados", "type": "main", "index": 0}]]
+    },
+    "Procesar Resultados": {
+      "main": [[{"node": "AI Agent", "type": "main", "index": 0}]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-12-08T00:00:00.000Z",
+  "versionId": "1"
+}
+
