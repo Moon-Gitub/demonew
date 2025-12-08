@@ -1,6 +1,9 @@
 <?php
 // ajax/chat.ajax.php
 
+// Cargar vendor autoload primero (necesario para Dotenv)
+require_once "../extensiones/vendor/autoload.php";
+
 // Cargar variables de entorno desde .env PRIMERO (si existe y si Dotenv está instalado)
 if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
