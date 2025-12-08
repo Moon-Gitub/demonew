@@ -91,10 +91,12 @@ class AjaxChat {
         
         // Preparar el payload JSON para N8N
         // N8N Chat Trigger espera 'sessionId' como campo requerido
+        // N8N AI Agent espera 'chatInput' como campo requerido
         $payload = [
             'sessionId' => $sessionId, // Campo requerido por N8N Chat Trigger
+            'chatInput' => $this->mensaje, // Campo requerido por N8N AI Agent
             'mensaje' => $this->mensaje,
-            'message' => $this->mensaje, // Alias por si acaso
+            'message' => $this->mensaje, // Alias por compatibilidad
             'usuario_id' => isset($_SESSION['id']) ? $_SESSION['id'] : null,
             'usuario_nombre' => isset($_SESSION['nombre']) ? $_SESSION['nombre'] : null,
             'empresa_id' => isset($_SESSION['empresa']) ? $_SESSION['empresa'] : null,
