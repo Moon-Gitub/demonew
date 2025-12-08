@@ -110,17 +110,20 @@ $(document).ready(function() {
         // mostrarTyping();
         
         // Enviar a N8N
+        // Deshabilitar el loader global para el chat
         $.ajax({
             url: 'ajax/chat.ajax.php',
             type: 'POST',
             dataType: 'json',
+            global: false, // Deshabilitar eventos globales (incluyendo el loader)
             data: {
                 mensaje: mensaje,
                 historial: JSON.stringify(historialParaEnviar)
             },
             success: function(response) {
-                // Asegurar que el indicador esté oculto
+                // Asegurar que el indicador esté oculto y el loader global también
                 ocultarTyping();
+                $('#loader').hide();
                 $chatSendBtn.prop('disabled', false);
                 
                 // Verificar si la respuesta es un string (puede pasar si hay error en el servidor)
@@ -151,6 +154,7 @@ $(document).ready(function() {
             },
             error: function(xhr, status, error) {
                 ocultarTyping();
+                $('#loader').hide();
                 $chatSendBtn.prop('disabled', false);
                 
                 let mensajeError = '❌ Error de conexión. Por favor, intenta nuevamente.';
@@ -182,6 +186,8 @@ $(document).ready(function() {
                 // Asegurar que el botón esté habilitado y el typing oculto siempre
                 setTimeout(function() {
                     ocultarTyping();
+                    // Asegurar que el loader global esté oculto
+                    $('#loader').hide();
                 }, 100);
                 $chatSendBtn.prop('disabled', false);
             }
