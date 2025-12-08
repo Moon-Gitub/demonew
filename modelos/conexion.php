@@ -60,11 +60,11 @@ class Conexion{
 
 	/**
 	 * CONEXIÓN A BASE DE DATOS LOCAL DEL SISTEMA POS
-	 * Lee credenciales desde .env (REQUERIDO)
+	 * Lee credenciales desde .env o variables de entorno del sistema
 	 */
 	static public function conectar(){
 
-		// Leer desde .env (REQUERIDO - no usar valores por defecto inseguros)
+		// Leer desde variables de entorno (pueden venir de .env, $_ENV, $_SERVER, o getenv())
 		$host = self::getEnv('DB_HOST');
 		$db = self::getEnv('DB_NAME');
 		$user = self::getEnv('DB_USER');
@@ -73,8 +73,24 @@ class Conexion{
 		
 		// Validar que las credenciales críticas estén configuradas
 		if (empty($host) || empty($db) || empty($user) || empty($pass)) {
-			error_log("ERROR CRÍTICO: Variables de entorno no configuradas. Crear archivo .env con DB_HOST, DB_NAME, DB_USER, DB_PASS");
-			throw new Exception("Error de configuración: Archivo .env no encontrado o incompleto. Por favor, crea el archivo .env con las credenciales de la base de datos.");
+			$envPath = __DIR__ . '/../.env';
+			$envExists = file_exists($envPath);
+			
+			$mensaje = "Error de configuración: ";
+			if (!$envExists) {
+				$mensaje .= "Archivo .env no encontrado. ";
+			} else {
+				$mensaje .= "Archivo .env incompleto. ";
+			}
+			$mensaje .= "Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:\n";
+			$mensaje .= "DB_HOST=tu_host\n";
+			$mensaje .= "DB_NAME=tu_base_de_datos\n";
+			$mensaje .= "DB_USER=tu_usuario\n";
+			$mensaje .= "DB_PASS=tu_contraseña\n";
+			$mensaje .= "DB_CHARSET=UTF8MB4 (opcional)";
+			
+			error_log("ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=" . ($host ?: 'NO DEFINIDO') . ", DB_NAME=" . ($db ?: 'NO DEFINIDO') . ", DB_USER=" . ($user ?: 'NO DEFINIDO'));
+			throw new Exception($mensaje);
 		}
 
 		try {
@@ -90,7 +106,7 @@ class Conexion{
 			return $link;
 		} catch (PDOException $e) {
 			error_log("Error conectando a BD local: Host=$host, DB=$db, User=$user - " . $e->getMessage());
-			throw new Exception("Error de conexión a base de datos local");
+			throw new Exception("Error de conexión a base de datos local: " . $e->getMessage());
 		}
 
 	}
