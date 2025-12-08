@@ -13,11 +13,10 @@ class AjaxIntegraciones{
 	public function ajaxEditarIntegracion(){
 		$item = "id";
 		$valor = $this->idIntegracion;
-		
 		$respuesta = ControladorIntegraciones::ctrMostrarIntegraciones($item, $valor);
 		
-		// Devolver el primer elemento directamente, igual que proveedores
-		if($respuesta && is_array($respuesta) && count($respuesta) > 0){
+		// Si es un array con elementos, devolver el primero
+		if(is_array($respuesta) && count($respuesta) > 0){
 			echo json_encode($respuesta[0]);
 		} else {
 			echo json_encode(['error' => 'No se encontró la integración']);
