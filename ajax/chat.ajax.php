@@ -92,20 +92,27 @@ class AjaxChat {
             'historial' => $this->historial ? json_decode($this->historial, true) : []
         ];
         
+        $payloadJson = json_encode($payload);
+        
+        // Log del payload (sin datos sensibles)
+        error_log("Enviando a N8N - URL: $n8n_webhook_url, Payload: " . substr($payloadJson, 0, 500));
+        
         // Inicializar cURL
         $ch = curl_init();
         
         curl_setopt_array($ch, [
             CURLOPT_URL => $n8n_webhook_url,
             CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => json_encode($payload),
+            CURLOPT_POSTFIELDS => $payloadJson,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => [
                 'Content-Type: application/json',
                 'Accept: application/json'
             ],
             CURLOPT_TIMEOUT => 30,
-            CURLOPT_CONNECTTIMEOUT => 10
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_SSL_VERIFYPEER => false, // En caso de problemas con SSL
+            CURLOPT_SSL_VERIFYHOST => false
         ]);
         
         // Ejecutar petición
@@ -117,18 +124,35 @@ class AjaxChat {
         
         // Manejar respuesta
         if ($curl_error) {
+            error_log("Error cURL en chat: " . $curl_error);
             echo json_encode([
                 'error' => true,
-                'mensaje' => 'Error de conexión: ' . $curl_error
+                'mensaje' => 'Error de conexión con N8N: ' . $curl_error
             ]);
             return;
         }
         
         if ($http_code !== 200) {
+            // Log del error para debugging
+            error_log("Error N8N - Código HTTP: $http_code, URL: $n8n_webhook_url, Respuesta: " . substr($response, 0, 500));
+            
+            $mensajeError = 'Error del servidor N8N. Código: ' . $http_code;
+            
+            // Intentar obtener más información del error
+            $errorInfo = '';
+            if ($http_code == 404) {
+                $errorInfo = ' (Webhook no encontrado. Verifica la URL)';
+            } else if ($http_code == 401 || $http_code == 403) {
+                $errorInfo = ' (Error de autenticación. Verifica la API Key si es requerida)';
+            } else if ($http_code == 500) {
+                $errorInfo = ' (Error interno del servidor N8N. Revisa el workflow)';
+            }
+            
             echo json_encode([
                 'error' => true,
-                'mensaje' => 'Error del servidor N8N. Código: ' . $http_code,
-                'respuesta' => $response
+                'mensaje' => $mensajeError . $errorInfo,
+                'codigo' => $http_code,
+                'respuesta' => substr($response, 0, 200) // Primeros 200 caracteres para no saturar
             ]);
             return;
         }
