@@ -10,15 +10,23 @@ $webhookUrl = null;
 // Verificar que $integraciones sea un array antes de iterar
 if($integraciones && is_array($integraciones) && count($integraciones) > 0){
     foreach($integraciones as $integracion){
+        // Debug: ver qué estamos recibiendo
+        error_log("DEBUG Chat - Integración encontrada: " . print_r($integracion, true));
+        
         // Verificar activo (puede venir como int 1 o string "1")
         $activo = isset($integracion["activo"]) ? (int)$integracion["activo"] : 0;
         $tieneWebhook = !empty($integracion["webhook_url"]);
         
+        error_log("DEBUG Chat - Activo: $activo, Tiene Webhook: " . ($tieneWebhook ? 'SÍ' : 'NO'));
+        
         if($activo == 1 && $tieneWebhook){
             $webhookUrl = $integracion["webhook_url"];
+            error_log("DEBUG Chat - Webhook URL encontrada: $webhookUrl");
             break;
         }
     }
+} else {
+    error_log("DEBUG Chat - No se encontraron integraciones o no es array. Tipo: " . gettype($integraciones) . ", Valor: " . ($integraciones ? 'existe' : 'null'));
 }
 ?>
 

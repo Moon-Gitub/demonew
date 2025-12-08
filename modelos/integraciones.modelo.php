@@ -10,7 +10,12 @@ class ModeloIntegraciones{
 	static public function mdlMostrarIntegraciones($item, $valor){
 		
 		if($item != null){
-			$stmt = Conexion::conectar()->prepare("SELECT * FROM integraciones WHERE $item = :$item ORDER BY fecha_creacion DESC");
+			// Para campos de texto como 'tipo', usar LOWER() para comparación case-insensitive
+			if($item == "id"){
+				$stmt = Conexion::conectar()->prepare("SELECT * FROM integraciones WHERE $item = :$item ORDER BY fecha_creacion DESC");
+			} else {
+				$stmt = Conexion::conectar()->prepare("SELECT * FROM integraciones WHERE LOWER($item) = LOWER(:$item) ORDER BY fecha_creacion DESC");
+			}
 			
 			// Si el item es 'id', usar PARAM_INT, sino PARAM_STR
 			if($item == "id"){

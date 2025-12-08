@@ -40,20 +40,31 @@ class AjaxChat {
         $valor = "n8n";
         $integraciones = ControladorIntegraciones::ctrMostrarIntegraciones($item, $valor);
         
+        // Debug
+        error_log("DEBUG Chat AJAX - Integraciones encontradas: " . print_r($integraciones, true));
+        
         // Buscar la primera integración activa de tipo n8n
         $n8n_webhook_url = null;
         // Verificar que $integraciones sea un array antes de iterar
         if($integraciones && is_array($integraciones) && count($integraciones) > 0){
             foreach($integraciones as $integracion){
+                // Debug
+                error_log("DEBUG Chat AJAX - Revisando integración: " . print_r($integracion, true));
+                
                 // Verificar activo (puede venir como int 1 o string "1")
                 $activo = isset($integracion["activo"]) ? (int)$integracion["activo"] : 0;
                 $tieneWebhook = !empty($integracion["webhook_url"]);
                 
+                error_log("DEBUG Chat AJAX - Activo: $activo, Tiene Webhook: " . ($tieneWebhook ? 'SÍ' : 'NO') . ", Webhook: " . ($integracion["webhook_url"] ?? 'NULL'));
+                
                 if($activo == 1 && $tieneWebhook){
                     $n8n_webhook_url = $integracion["webhook_url"];
+                    error_log("DEBUG Chat AJAX - Webhook URL encontrada: $n8n_webhook_url");
                     break;
                 }
             }
+        } else {
+            error_log("DEBUG Chat AJAX - No se encontraron integraciones o no es array. Tipo: " . gettype($integraciones));
         }
         
         if (!$n8n_webhook_url) {
