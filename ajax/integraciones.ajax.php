@@ -14,19 +14,12 @@ class AjaxIntegraciones{
 		$item = "id";
 		$valor = $this->idIntegracion;
 		
-		// Log para debugging
-		error_log("AJAX Editar Integración - ID recibido: " . $valor);
-		
 		$respuesta = ControladorIntegraciones::ctrMostrarIntegraciones($item, $valor);
 		
-		error_log("AJAX Editar Integración - Respuesta: " . print_r($respuesta, true));
-		
-		if($respuesta && count($respuesta) > 0){
-			$resultado = $respuesta[0];
-			error_log("AJAX Editar Integración - Datos a enviar: " . json_encode($resultado));
-			echo json_encode($resultado);
+		// Devolver el primer elemento directamente, igual que proveedores
+		if($respuesta && is_array($respuesta) && count($respuesta) > 0){
+			echo json_encode($respuesta[0]);
 		} else {
-			error_log("AJAX Editar Integración - No se encontró la integración");
 			echo json_encode(['error' => 'No se encontró la integración']);
 		}
 	}
