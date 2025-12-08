@@ -4,14 +4,26 @@
  * Acceder desde: testing/test-integraciones-chat.php
  */
 
-// Cargar configuración
+// Cargar configuración (igual que index.php)
 require_once "../extensiones/vendor/autoload.php";
+
+// Cargar variables de entorno desde .env PRIMERO (si existe y si Dotenv está instalado)
 if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
     $dotenv->load();
 }
+
+// Cargar helpers (incluye función env() para leer variables)
 require_once "../helpers.php";
+
+// Cargar configuración (validación)
 require_once "../config.php";
+
+// Iniciar sesión si no está iniciada (necesario para algunos controladores)
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once "../modelos/conexion.php";
 require_once "../modelos/integraciones.modelo.php";
 require_once "../controladores/integraciones.controlador.php";
