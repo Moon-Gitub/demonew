@@ -13,9 +13,14 @@ if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
 // Cargar helpers (incluye función env() para leer variables)
 require_once "../helpers.php";
 
-// ✅ Seguridad AJAX
+// Iniciar sesión antes de la seguridad
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// ✅ Seguridad AJAX (sin verificar CSRF para el chat, ya que se maneja automáticamente)
 require_once "seguridad.ajax.php";
-SeguridadAjax::inicializar();
+SeguridadAjax::inicializar(false); // No verificar CSRF ya que ajaxSetup lo maneja
 
 require_once "../controladores/integraciones.controlador.php";
 require_once "../modelos/integraciones.modelo.php";

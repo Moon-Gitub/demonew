@@ -103,6 +103,9 @@ $(document).ready(function() {
         // Mostrar indicador de escritura
         mostrarTyping();
         
+        // Preparar historial (sin incluir el mensaje que acabamos de agregar)
+        const historialParaEnviar = historial.slice(0, -1).slice(-10); // Últimos 10 mensajes, sin el que acabamos de agregar
+        
         // Enviar a N8N
         $.ajax({
             url: 'ajax/chat.ajax.php',
@@ -110,7 +113,7 @@ $(document).ready(function() {
             dataType: 'json',
             data: {
                 mensaje: mensaje,
-                historial: JSON.stringify(historial.slice(-10)) // Últimos 10 mensajes
+                historial: JSON.stringify(historialParaEnviar)
             },
             success: function(response) {
                 ocultarTyping();
@@ -123,8 +126,25 @@ $(document).ready(function() {
             },
             error: function(xhr, status, error) {
                 ocultarTyping();
-                agregarMensaje('❌ Error de conexión. Por favor, intenta nuevamente.', false);
-                console.error('Error:', error, xhr.responseText);
+                let mensajeError = '❌ Error de conexión. Por favor, intenta nuevamente.';
+                
+                // Intentar parsear el error si viene en JSON
+                try {
+                    const errorResponse = JSON.parse(xhr.responseText);
+                    if (errorResponse.mensaje) {
+                        mensajeError = '❌ ' + errorResponse.mensaje;
+                    }
+                } catch (e) {
+                    // Si no es JSON, usar el mensaje por defecto
+                }
+                
+                agregarMensaje(mensajeError, false);
+                console.error('Error en chat:', {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    error: error,
+                    responseText: xhr.responseText
+                });
             },
             complete: function() {
                 $chatSendBtn.prop('disabled', false);
