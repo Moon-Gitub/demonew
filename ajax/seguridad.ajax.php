@@ -1,12 +1,30 @@
 <?php
 /**
- * MIDDLEWARE DE SEGURIDAD PARA ARCHIVOS AJAX
- * 
- * Proporciona validación de sesión, CSRF y verificación AJAX
- * para todos los endpoints AJAX del sistema
+ * Middleware de seguridad para archivos AJAX
  */
 
+require_once dirname(__DIR__) . "/extensiones/vendor/autoload.php";
+
 class SeguridadAjax {
+
+    private static $envInicializado = false;
+
+    /**
+     * Cargar variables de entorno sin duplicar trabajo
+     */
+    private static function inicializarEntorno() {
+        if (self::$envInicializado) {
+            return;
+        }
+
+        $raiz = dirname(__DIR__);
+        if (file_exists($raiz . "/.env")) {
+            $dotenv = Dotenv\Dotenv::createImmutable($raiz);
+            $dotenv->safeLoad();
+        }
+
+        self::$envInicializado = true;
+    }
     
     /**
      * Verificar que la sesión está activa
@@ -20,7 +38,7 @@ class SeguridadAjax {
             http_response_code(401);
             echo json_encode([
                 'error' => true,
-                'mensaje' => 'No autorizado. Por favor, inicia sesión.'
+                'mensaje' => 'No autorizado'
             ]);
             exit;
         }
@@ -36,7 +54,7 @@ class SeguridadAjax {
             http_response_code(403);
             echo json_encode([
                 'error' => true,
-                'mensaje' => 'Token CSRF inválido. Por favor, recarga la página.'
+                'mensaje' => 'Token CSRF inválido'
             ]);
             exit;
         }
@@ -51,18 +69,17 @@ class SeguridadAjax {
             http_response_code(403);
             echo json_encode([
                 'error' => true,
-                'mensaje' => 'Solo se permiten peticiones AJAX'
+                'mensaje' => 'Petición inválida'
             ]);
             exit;
         }
     }
     
     /**
-     * Inicialización completa de seguridad
-     * 
-     * @param bool $verificarCSRF Si debe verificar CSRF (default: true)
+     * Inicialización completa
      */
     static public function inicializar($verificarCSRF = true) {
+        self::inicializarEntorno();
         self::verificarSesion();
         self::verificarAjax();
         
@@ -71,4 +88,3 @@ class SeguridadAjax {
         }
     }
 }
-

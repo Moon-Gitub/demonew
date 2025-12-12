@@ -17,7 +17,22 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Easy set variables
  */
+ // ✅ Seguridad AJAX
+require_once "seguridad.ajax.php";
+SeguridadAjax::inicializar(false);
 
+ // Cargar vendor autoload primero (necesario para Dotenv)
+require_once "../extensiones/vendor/autoload.php";
+
+// Cargar variables de entorno desde .env PRIMERO (si existe y si Dotenv está instalado)
+if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+    $dotenv->load();
+}
+
+// Cargar helpers (incluye función env() para leer variables)
+require_once "../helpers.php";
+ 
 require_once "../modelos/conexion.php";
 $db = new Conexion;
 $con = $db->getDatosConexion();
@@ -30,7 +45,6 @@ $sql_details = array(
     'host' => $con["host"],
     'charset' => $con["charset"]
 );
-
 // DB table to use
 //$table = 'productos';
 $table = <<<EOT

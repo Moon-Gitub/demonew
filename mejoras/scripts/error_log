@@ -1,0 +1,21 @@
+[06-Dec-2025 18:35:31 UTC] PHP Warning:  require_once(modelos/seguridad.modelo.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/controladores/usuarios.controlador.php on line 3
+[06-Dec-2025 18:35:31 UTC] PHP Fatal error:  Uncaught Error: Failed opening required 'modelos/seguridad.modelo.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/controladores/usuarios.controlador.php:3
+Stack trace:
+#0 /home/newmoon/public_html/index.php(20): require_once()
+#1 /home/newmoon/public_html/mejoras/scripts/migrar-passwords.php(17): require_once('/home/newmoon/p...')
+#2 {main}
+  thrown in /home/newmoon/public_html/controladores/usuarios.controlador.php on line 3
+[06-Dec-2025 18:36:04 UTC] PHP Warning:  require_once(modelos/seguridad.modelo.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/controladores/usuarios.controlador.php on line 3
+[06-Dec-2025 18:36:04 UTC] PHP Fatal error:  Uncaught Error: Failed opening required 'modelos/seguridad.modelo.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/controladores/usuarios.controlador.php:3
+Stack trace:
+#0 /home/newmoon/public_html/index.php(20): require_once()
+#1 /home/newmoon/public_html/mejoras/scripts/migrar-passwords.php(17): require_once('/home/newmoon/p...')
+#2 {main}
+  thrown in /home/newmoon/public_html/controladores/usuarios.controlador.php on line 3
+[06-Dec-2025 18:36:16 UTC] PHP Warning:  require_once(modelos/seguridad.modelo.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/controladores/usuarios.controlador.php on line 3
+[06-Dec-2025 18:36:16 UTC] PHP Fatal error:  Uncaught Error: Failed opening required 'modelos/seguridad.modelo.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/controladores/usuarios.controlador.php:3
+Stack trace:
+#0 /home/newmoon/public_html/index.php(20): require_once()
+#1 /home/newmoon/public_html/mejoras/scripts/migrar-passwords.php(17): require_once('/home/newmoon/p...')
+#2 {main}
+  thrown in /home/newmoon/public_html/controladores/usuarios.controlador.php on line 3
