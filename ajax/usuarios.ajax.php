@@ -121,10 +121,20 @@ EDITAR USUARIO
 =============================================*/
 if(isset($_POST["idUsuario"])){
 
+	$logFile = __DIR__ . "/error_log";
+	error_log("[" . date('Y-m-d H:i:s') . "] ===== PETICIÓN RECIBIDA =====\n", 3, $logFile);
+	error_log("[" . date('Y-m-d H:i:s') . "] POST idUsuario: " . ($_POST["idUsuario"] ?? "NO DEFINIDO") . "\n", 3, $logFile);
+	error_log("[" . date('Y-m-d H:i:s') . "] SESSION iniciarSesion: " . (isset($_SESSION["iniciarSesion"]) ? $_SESSION["iniciarSesion"] : "NO DEFINIDO") . "\n", 3, $logFile);
+
 	$editar = new AjaxUsuarios();
 	$editar -> idUsuario = $_POST["idUsuario"];
 	$editar -> ajaxEditarUsuario();
 
+} else {
+	$logFile = __DIR__ . "/error_log";
+	error_log("[" . date('Y-m-d H:i:s') . "] ERROR: No se recibió idUsuario en POST\n", 3, $logFile);
+	error_log("[" . date('Y-m-d H:i:s') . "] POST completo: " . print_r($_POST, true) . "\n", 3, $logFile);
+	echo json_encode(array("error" => "No se recibió el ID del usuario"));
 }
 
 /*=============================================

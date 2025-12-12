@@ -50,12 +50,39 @@ $(".nuevaFoto").change(function(){
 /*=============================================
 EDITAR USUARIO
 =============================================*/
-$(".tablas").on("click", ".btnEditarUsuario", function(){
+// Verificar que el documento esté listo
+$(document).ready(function(){
+	console.log("usuarios.js cargado correctamente");
+	console.log("Registrando evento para .btnEditarUsuario");
+});
 
+$(".tablas").on("click", ".btnEditarUsuario", function(e){
+	
+	// Prevenir comportamiento por defecto
+	e.preventDefault();
+	
 	var idUsuario = $(this).attr("idUsuario");
+	
+	console.log("=== EDITAR USUARIO ===");
+	console.log("ID Usuario:", idUsuario);
+	
+	// Validar que el ID existe
+	if(!idUsuario || idUsuario === "" || idUsuario === undefined){
+		console.error("Error: No se encontró el ID del usuario");
+		swal({
+			type: "error",
+			title: "Error",
+			text: "No se pudo obtener el ID del usuario",
+			showConfirmButton: true,
+			confirmButtonText: "Cerrar"
+		});
+		return false;
+	}
 	
 	var datos = new FormData();
 	datos.append("idUsuario", idUsuario);
+	
+	console.log("Enviando petición AJAX...");
 
 	$.ajax({
 
@@ -69,7 +96,12 @@ $(".tablas").on("click", ".btnEditarUsuario", function(){
 		headers: {
 			'X-Requested-With': 'XMLHttpRequest'
 		},
+		beforeSend: function(){
+			console.log("Petición enviada, esperando respuesta...");
+		},
 		success: function(respuesta){
+			
+			console.log("Respuesta recibida:", respuesta);
 		    
 		    // Validar que la respuesta no sea null o undefined
 		    if(!respuesta || respuesta === null || respuesta.error){
@@ -84,6 +116,8 @@ $(".tablas").on("click", ".btnEditarUsuario", function(){
 		        return;
 		    }
 		    
+			console.log("Llenando formulario con datos...");
+			
 			$("#editarNombre").val(respuesta["nombre"] || "");
 			$("#editarUsuario").val(respuesta["usuario"] || "");
 			$("#editarPerfil").html(respuesta["perfil"] || "");
@@ -91,6 +125,13 @@ $(".tablas").on("click", ".btnEditarUsuario", function(){
 		
 			$("#editarSucursal").html(respuesta["sucursal"] || "");
 			$("#editarSucursal").val(respuesta["sucursal"] || "");
+			
+			console.log("Datos cargados:", {
+				nombre: respuesta["nombre"],
+				usuario: respuesta["usuario"],
+				perfil: respuesta["perfil"],
+				sucursal: respuesta["sucursal"]
+			});
 			
 			//$("#editarListaPrecio").html(respuesta["listas_precio"]);
 			//$("#editarListaPrecio").val(respuesta["listas_precio"]);
@@ -119,6 +160,13 @@ $(".tablas").on("click", ".btnEditarUsuario", function(){
 			}else{
 				$(".previsualizarEditar").attr("src", "vistas/img/usuarios/default/anonymous.png");
 			}
+			
+			console.log("Formulario completado exitosamente");
+			
+			// Abrir el modal después de cargar los datos
+			setTimeout(function(){
+				$("#modalEditarUsuario").modal("show");
+			}, 100);
 		},
 		error: function(xhr, status, error){
 		    console.error("Error AJAX:", error);
