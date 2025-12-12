@@ -1,8 +1,10 @@
 <?php
 
-require_once "modelos/seguridad.modelo.php";
-require_once "modelos/upload.modelo.php";
-require_once "modelos/login.modelo.php";
+// Usar rutas absolutas para que funcionen desde cualquier contexto
+$raiz = dirname(__DIR__);
+require_once $raiz . "/modelos/seguridad.modelo.php";
+require_once $raiz . "/modelos/upload.modelo.php";
+require_once $raiz . "/modelos/login.modelo.php";
 
 class ControladorUsuarios{
 
