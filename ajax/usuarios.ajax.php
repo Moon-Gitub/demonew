@@ -21,6 +21,11 @@ class AjaxUsuarios{
 
 		$respuesta = ControladorUsuarios::ctrMostrarUsuarios($item, $valor);
 
+		if($respuesta === false || $respuesta === null){
+			echo json_encode(array("error" => "Usuario no encontrado"));
+			return;
+		}
+
 		echo json_encode($respuesta);
 
 	}

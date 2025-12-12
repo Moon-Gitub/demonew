@@ -1,0 +1,447 @@
+{
+  "name": "POS Moon - Ventas",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agenteventas",
+        "options": {}
+      },
+      "id": "1c07969e-e92f-5b1b-aafd-2a807881cef4",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        288,
+        -16
+      ],
+      "webhookId": "b7214682-ea5b-45e8-9058-bdb445cc9a30"
+    },
+    {
+      "parameters": {},
+      "id": "1147ba91-a7ed-5b58-b166-8adb3cc885dc",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        288,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "multiplex",
+        "options": {}
+      },
+      "id": "bd3c1b42-1104-5962-b199-6074f55a1a90",
+      "name": "Merge Triggers",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        512,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extraer pregunta del input\nconst input = $input.first().json;\n\n// Buscar la pregunta en diferentes campos posibles\nlet question = '';\nif (input.originalQuestion) {\n  question = input.originalQuestion;\n} else if (input.chatInput) {\n  question = input.chatInput;\n} else if (input.body && input.body.chatInput) {\n  question = input.body.chatInput;\n} else if (input.body && input.body.text) {\n  question = input.body.text;\n} else if (input.text) {\n  question = input.text;\n} else if (input.question) {\n  question = input.question;\n} else if (typeof input === 'string') {\n  question = input;\n} else {\n  // Último recurso: buscar cualquier campo de texto\n  question = JSON.stringify(input);\n}\n\nreturn [{\n  json: {\n    chatInput: question\n  }\n}];"
+      },
+      "id": "f16d9c70-81e8-5044-9369-24d5a4540e52",
+      "name": "Prepare Question",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        736,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=Eres un asistente virtual experto en SQL para el dominio de VENTAS del Sistema POS Moon. Tu tarea es ayudar a los usuarios a consultar información sobre ventas y facturas usando lenguaje natural en español.\n\n**FORMATO DE RESPUESTA OBLIGATORIO:**\n\nSi necesitas más información del usuario, responde EXACTAMENTE así (SOLO JSON, sin texto adicional):\n{\"needsMoreInfo\": true, \"clarificationMessage\": \"tu mensaje aquí\"}\n\nSi tienes toda la información y generas SQL, responde EXACTAMENTE así (SOLO JSON, sin texto adicional):\n{\"needsMoreInfo\": false, \"sqlQuery\": \"SELECT ...\", \"explanation\": \"explicación\"}\n\n**IMPORTANTE:**\n- Responde SOLO con JSON válido\n- NO uses markdown, NO uses texto fuera del JSON\n- El JSON debe estar en el nivel raíz\n\n**ESQUEMA DE BASE DE DATOS (TABLAS DE VENTAS):**\n\n{\n  \"tables\": [\n    {\n      \"name\": \"ventas\",\n      \"description\": \"Sales transactions\",\n      \"columns\": [\n        {\"name\": \"id\", \"type\": \"int\", \"description\": \"Primary key\"},\n        {\"name\": \"uuid\", \"type\": \"varchar(34)\", \"description\": \"Unique identifier (unique)\"},\n        {\"name\": \"codigo\", \"type\": \"int\", \"description\": \"Sale code\"},\n        {\"name\": \"cbte_tipo\", \"type\": \"int\", \"description\": \"AFIP document type code\"},\n        {\"name\": \"id_cliente\", \"type\": \"int\", \"description\": \"Foreign key to clientes\"},\n        {\"name\": \"id_vendedor\", \"type\": \"int\", \"description\": \"Foreign key to usuarios\"},\n        {\"name\": \"productos\", \"type\": \"text\", \"description\": \"Products stored as JSON array. Format: [{\\\"id\\\":\\\"1\\\",\\\"descripcion\\\":\\\"ALMACEN\\\",\\\"cantidad\\\":\\\"1\\\",\\\"categoria\\\":\\\"1\\\",\\\"stock\\\":\\\"0\\\",\\\"precio_compra\\\":\\\"0.00\\\",\\\"precio\\\":\\\"100\\\",\\\"total\\\":\\\"100\\\"}]\"},\n        {\"name\": \"neto\", \"type\": \"decimal(10,2)\", \"description\": \"Net amount\"},\n        {\"name\": \"neto_gravado\", \"type\": \"decimal(11,2)\", \"description\": \"Taxable net amount\"},\n        {\"name\": \"base_imponible_0\", \"type\": \"decimal(10,2)\", \"description\": \"Tax base 0%\"},\n        {\"name\": \"base_imponible_2\", \"type\": \"decimal(10,2)\", \"description\": \"Tax base 2.5%\"},\n        {\"name\": \"base_imponible_5\", \"type\": \"decimal(10,2)\", \"description\": \"Tax base 5%\"},\n        {\"name\": \"base_imponible_10\", \"type\": \"decimal(10,2)\", \"description\": \"Tax base 10.5%\"},\n        {\"name\": \"base_imponible_21\", \"type\": \"decimal(10,2)\", \"description\": \"Tax base 21%\"},\n        {\"name\": \"base_imponible_27\", \"type\": \"decimal(10,2)\", \"description\": \"Tax base 27%\"},\n        {\"name\": \"iva_2\", \"type\": \"decimal(10,2)\", \"description\": \"IVA 2.5% amount\"},\n        {\"name\": \"iva_5\", \"type\": \"decimal(10,2)\", \"description\": \"IVA 5% amount\"},\n        {\"name\": \"iva_10\", \"type\": \"decimal(10,2)\", \"description\": \"IVA 10.5% amount\"},\n        {\"name\": \"iva_21\", \"type\": \"decimal(10,2)\", \"description\": \"IVA 21% amount\"},\n        {\"name\": \"iva_27\", \"type\": \"decimal(10,2)\", \"description\": \"IVA 27% amount\"},\n        {\"name\": \"impuesto\", \"type\": \"decimal(10,2)\", \"description\": \"Total tax amount\"},\n        {\"name\": \"impuesto_detalle\", \"type\": \"text\", \"description\": \"Tax details stored as JSON\"},\n        {\"name\": \"total\", \"type\": \"decimal(10,2)\", \"description\": \"Total amount\"},\n        {\"name\": \"metodo_pago\", \"type\": \"text\", \"description\": \"Payment method stored as JSON array. Format: [{\\\"tipo\\\":\\\"Efectivo\\\",\\\"entrega\\\":\\\"17569.20\\\"}], [{\\\"tipo\\\":\\\"TD-\\\",\\\"entrega\\\":\\\"5106.08\\\"}], [{\\\"tipo\\\":\\\"TC-\\\",\\\"entrega\\\":\\\"76865.25\\\"}], [{\\\"tipo\\\":\\\"TR--\\\",\\\"entrega\\\":\\\"2373.72\\\"}]\"},\n        {\"name\": \"estado\", \"type\": \"int\", \"description\": \"Sale status\"},\n        {\"name\": \"observaciones_vta\", \"type\": \"text\", \"description\": \"Sale observations\"},\n        {\"name\": \"observaciones\", \"type\": \"text\", \"description\": \"General observations\"},\n        {\"name\": \"fecha\", \"type\": \"timestamp\", \"description\": \"Sale date\"},\n        {\"name\": \"concepto\", \"type\": \"int\", \"description\": \"Invoice concept (AFIP)\"},\n        {\"name\": \"pto_vta\", \"type\": \"int\", \"description\": \"Point of sale number\"},\n        {\"name\": \"fec_desde\", \"type\": \"varchar(20)\", \"description\": \"Service period from\"},\n        {\"name\": \"fec_hasta\", \"type\": \"varchar(20)\", \"description\": \"Service period to\"},\n        {\"name\": \"fec_vencimiento\", \"type\": \"varchar(20)\", \"description\": \"Due date\"},\n        {\"name\": \"asociado_tipo_cbte\", \"type\": \"int\", \"description\": \"Associated document type\"},\n        {\"name\": \"asociado_pto_vta\", \"type\": \"int\", \"description\": \"Associated POS number\"},\n        {\"name\": \"asociado_nro_cbte\", \"type\": \"int\", \"description\": \"Associated document number\"},\n        {\"name\": \"pedido_afip\", \"type\": \"text\", \"description\": \"AFIP request data stored as JSON\"},\n        {\"name\": \"respuesta_afip\", \"type\": \"text\", \"description\": \"AFIP response data stored as JSON\"}\n      ]\n    },\n    {\n      \"name\": \"ventas_factura\",\n      \"description\": \"Invoice details for sales (CAE from AFIP)\",\n      \"columns\": [\n        {\"name\": \"id\", \"type\": \"int\", \"description\": \"Primary key\"},\n        {\"name\": \"id_venta\", \"type\": \"int\", \"description\": \"Foreign key to ventas\"},\n        {\"name\": \"fec_factura\", \"type\": \"varchar(15)\", \"description\": \"Invoice date\"},\n        {\"name\": \"nro_cbte\", \"type\": \"bigint\", \"description\": \"Document number\"},\n        {\"name\": \"cae\", \"type\": \"varchar(100)\", \"description\": \"CAE (Electronic Authorization Code)\"},\n        {\"name\": \"fec_vto_cae\", \"type\": \"varchar(10)\", \"description\": \"CAE expiration date\"}\n      ]\n    }\n  ],\n  \"relationships\": [\n    {\"from\": \"ventas_factura.id_venta\", \"to\": \"ventas.id\"}\n  ]\n}\n\n**🚨🚨🚨 CHECKLIST OBLIGATORIO ANTES DE GENERAR CUALQUIER SQL 🚨🚨🚨**\n\n□ PASO 1: Lee el esquema completo arriba\n□ PASO 2: Identifica la pregunta del usuario\n□ PASO 3: Identifica qué tabla usar (ventas o ventas_factura o ambas con JOIN)\n□ PASO 4: Verifica las columnas que usarás en el esquema\n□ PASO 5: Verifica el tipo de dato de cada campo (INT = números, VARCHAR/TEXT = strings)\n□ PASO 6: Si usas campos JSON, lee la sección de JSON abajo\n□ PASO 7: Genera el SQL usando SOLO lo que verificaste\n\n**📍 MANEJO DE CAMPOS JSON (CRÍTICO):**\n\nLos campos JSON en ventas:\n- `ventas.productos` - Array JSON con estructura: [{\"id\":\"1\",\"descripcion\":\"ALMACEN\",\"cantidad\":\"1\",\"categoria\":\"1\",\"stock\":\"0\",\"precio_compra\":\"0.00\",\"precio\":\"100\",\"total\":\"100\"}]\n- `ventas.metodo_pago` - Array JSON: [{\"tipo\":\"Efectivo\",\"entrega\":\"17569.20\"}], [{\"tipo\":\"TD-\",\"entrega\":\"5106.08\"}], [{\"tipo\":\"TC-\",\"entrega\":\"76865.25\"}], [{\"tipo\":\"TR--\",\"entrega\":\"2373.72\"}]\n- `ventas.impuesto_detalle` - Objeto JSON con detalles de impuestos\n- `ventas.pedido_afip` - JSON con datos de pedido AFIP\n- `ventas.respuesta_afip` - JSON con respuesta AFIP\n\n**🚨🚨🚨 CRÍTICO: JSON_EXTRACT PARA FILTRAR, JSON_TABLE PARA AGREGACIONES 🚨🚨🚨**\n\n**REGLA OBLIGATORIA:**\n- **Para filtrar (WHERE):** Usa `JSON_EXTRACT(campo, '$[*].campo') LIKE '%valor%'`\n- **Para agregaciones (SUM, COUNT, GROUP BY):** Usa `JSON_TABLE`\n\n**FORMATOS REALES DE metodo_pago:**\n- Efectivo: [{\"tipo\":\"Efectivo\",\"entrega\":\"17569.20\"}]\n- Tarjeta Débito: [{\"tipo\":\"TD-\",\"entrega\":\"5106.08\"}]\n- Tarjeta Crédito: [{\"tipo\":\"TC-\",\"entrega\":\"76865.25\"}]\n- Transferencia: [{\"tipo\":\"TR--\",\"entrega\":\"2373.72\"}]\n\n**MAPEO DE CONCEPTOS A VALORES JSON (metodo_pago):**\n\nCuando el usuario pregunta por un método de pago, busca TODOS los formatos posibles:\n\n1. **\"efectivo\" o \"en efectivo\":** Busca: \"Efectivo\" (con mayúscula)\n2. **\"tarjeta débito\" o \"débito\":** Busca: \"TD-\", \"Tarjeta Débito\", \"Débito\", \"TD\"\n3. **\"tarjeta crédito\" o \"crédito\":** Busca: \"TC-\", \"Tarjeta Crédito\", \"Crédito\", \"TC\"\n4. **\"tarjeta\" (sin especificar):** Busca: \"TD-\", \"TC-\", \"Tarjeta Débito\", \"Tarjeta Crédito\", \"TD\", \"TC\"\n5. **\"transferencia\":** Busca: \"TR--\", \"Transferencia\", \"TR\", \"TR-\"\n\n**EJEMPLOS CORRECTOS:**\n\nUsuario: \"ventas en efectivo\"\n✅ CORRECTO: SELECT COUNT(*) FROM ventas WHERE JSON_EXTRACT(metodo_pago, '$[*].tipo') LIKE '%Efectivo%'\n\nUsuario: \"cuánta plata en efectivo vendí este mes\"\n✅ CORRECTO: SELECT SUM(total) AS total_efectivo FROM ventas WHERE JSON_EXTRACT(metodo_pago, '$[*].tipo') LIKE '%Efectivo%' AND YEAR(fecha) = YEAR(CURDATE()) AND MONTH(fecha) = MONTH(CURDATE())\n\nUsuario: \"producto más vendido en 2025\" (AGREGACIÓN - usa JSON_TABLE)\n✅ CORRECTO: SELECT p.descripcion AS producto, SUM(p.cantidad) AS total_vendido FROM ventas, JSON_TABLE(productos, '$[*]' COLUMNS (descripcion VARCHAR(255) PATH '$.descripcion', cantidad DECIMAL(10,3) PATH '$.cantidad')) AS p WHERE YEAR(fecha) = 2025 GROUP BY p.descripcion ORDER BY total_vendido DESC LIMIT 1\n\nUsuario: \"facturas emitidas este mes\"\n✅ CORRECTO: SELECT vf.*, v.fecha, v.total FROM ventas_factura vf JOIN ventas v ON vf.id_venta = v.id WHERE YEAR(v.fecha) = YEAR(CURDATE()) AND MONTH(v.fecha) = MONTH(CURDATE())\n\n**SINTAXIS JSON_TABLE (para agregaciones):**\n```sql\nSELECT p.campo AS alias, SUM(p.otro_campo) AS total\nFROM ventas,\nJSON_TABLE(productos, '$[*]' COLUMNS (\n    campo VARCHAR(255) PATH '$.campo',\n    otro_campo DECIMAL(10,3) PATH '$.otro_campo'\n)) AS p\nWHERE condiciones\nGROUP BY p.campo\n```\n\n**SEGURIDAD:**\n- SOLO SELECT (nunca INSERT, UPDATE, DELETE, DROP, ALTER)\n- NUNCA incluyas campos sensibles: password, pass, pwd, contraseña, token, api_key, secret\n\n**FORMATO:**\n- Fechas en formato MySQL: YYYY-MM-DD\n- Usa nombres de tablas y columnas EXACTOS del esquema (case-sensitive)"
+        }
+      },
+      "id": "2d5d8f46-9115-590f-b959-4a900235936d",
+      "name": "Agente de Ventas",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        960,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "9bd7f582-dcfd-5464-9192-d11e21a2d995",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        976,
+        320
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "6213a686-0128-5878-97e0-d01466a88c69",
+      "name": "Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "85c862bd-a453-5c63-af38-4e06bb66c613",
+      "name": "MySQL Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolSql",
+      "typeVersion": 1,
+      "position": [
+        464,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"needsMoreInfo\": {\n      \"type\": \"boolean\",\n      \"description\": \"Indicates whether more information is needed from the user\"\n    },\n    \"clarificationMessage\": {\n      \"type\": \"string\",\n      \"description\": \"Message to ask the user for clarification when needsMoreInfo is true\"\n    },\n    \"sqlQuery\": {\n      \"type\": \"string\",\n      \"description\": \"The generated SQL query when needsMoreInfo is false\"\n    },\n    \"explanation\": {\n      \"type\": \"string\",\n      \"description\": \"Explanation of what the SQL query does when needsMoreInfo is false\"\n    }\n  },\n  \"required\": [\"needsMoreInfo\"],\n  \"oneOf\": [\n    {\n      \"properties\": {\n        \"needsMoreInfo\": { \"const\": true },\n        \"clarificationMessage\": { \"type\": \"string\" }\n      },\n      \"required\": [\"clarificationMessage\"]\n    },\n    {\n      \"properties\": {\n        \"needsMoreInfo\": { \"const\": false },\n        \"sqlQuery\": { \"type\": \"string\" },\n        \"explanation\": { \"type\": \"string\" }\n      },\n      \"required\": [\"sqlQuery\", \"explanation\"]\n    }\n  ]\n}"
+      },
+      "id": "ef205e97-a6ee-48d6-bdda-a5098bb813ec",
+      "name": "Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1152,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extraer y parsear el JSON del output del modelo\nconst input = $input.first().json;\n\nlet rawOutput = '';\nif (input.output) {\n  rawOutput = typeof input.output === 'string' ? input.output : JSON.stringify(input.output);\n} else if (input.text) {\n  rawOutput = input.text;\n} else if (input.response) {\n  rawOutput = input.response;\n} else {\n  rawOutput = JSON.stringify(input);\n}\n\nrawOutput = rawOutput.replace(/```json\\s*/g, '').replace(/```\\s*/g, '').trim();\n\nlet parsedData = null;\nconst jsonMatch = rawOutput.match(/\\{[^}]*\\}/s);\nif (jsonMatch) {\n  try {\n    parsedData = JSON.parse(jsonMatch[0]);\n  } catch (e) {\n    try {\n      parsedData = JSON.parse(rawOutput);\n    } catch (e2) {\n      parsedData = input.output || input;\n    }\n  }\n} else {\n  parsedData = input.output || input;\n}\n\nlet needsMoreInfo = false;\nlet clarificationMessage = '';\nlet sqlQuery = '';\nlet explanation = '';\n\nif (parsedData) {\n  if (parsedData.output && typeof parsedData.output === 'object') {\n    parsedData = parsedData.output;\n  }\n  \n  needsMoreInfo = parsedData.needsMoreInfo === true;\n  clarificationMessage = parsedData.clarificationMessage || '';\n  sqlQuery = parsedData.sqlQuery || '';\n  explanation = parsedData.explanation || '';\n}\n\nreturn [{\n  json: {\n    needsMoreInfo: needsMoreInfo,\n    clarificationMessage: clarificationMessage,\n    sqlQuery: sqlQuery,\n    explanation: explanation,\n    rawOutput: rawOutput\n  }\n}];"
+      },
+      "id": "d3cec08c-24ab-4f0a-9d80-7b509df124b9",
+      "name": "Extract JSON Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1376,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.needsMoreInfo }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e6433ff0-c9a0-46d4-b95f-a60531a3d530",
+      "name": "Check If Needs Clarification",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1600,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.sqlQuery }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d3cec08c-24ab-4f0a-9d80-7b509df124b9-validate",
+      "name": "Validate SQL Query Exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1824,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ $json.sqlQuery }}",
+        "options": {}
+      },
+      "id": "a5098bb8-13ec-48d6-bdda-ef205e97a6ee",
+      "name": "Execute SQL Query",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        2048,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener datos del agente\nconst agentOutput = $('Extract JSON Response').first().json;\nconst needsMoreInfo = agentOutput.needsMoreInfo || false;\nconst clarificationMessage = agentOutput.clarificationMessage || '';\nconst explanation = agentOutput.explanation || '';\nconst sqlQuery = agentOutput.sqlQuery || '';\n\nif (needsMoreInfo) {\n  return [{\n    json: {\n      text: clarificationMessage\n    }\n  }];\n}\n\nlet sqlResults = [];\ntry {\n  const sqlNode = $('Execute SQL Query');\n  if (sqlNode && sqlNode.all().length > 0) {\n    sqlResults = sqlNode.all().map(item => item.json);\n  }\n} catch (e) {}\n\nconst camposSensibles = [\n  'password', 'pass', 'pwd', 'contraseña', 'passwd',\n  'token', 'api_key', 'secret', 'private_key', 'access_token',\n  'refresh_token', 'auth_token', 'session_id', 'session_key'\n];\n\nfunction esCampoSensible(nombreCampo) {\n  const nombreLower = nombreCampo.toLowerCase();\n  return camposSensibles.some(campo => nombreLower.includes(campo.toLowerCase()));\n}\n\nsqlResults = sqlResults.map(row => {\n  const rowFiltrado = {};\n  Object.keys(row).forEach(key => {\n    if (!esCampoSensible(key)) {\n      rowFiltrado[key] = row[key];\n    }\n  });\n  return rowFiltrado;\n});\n\nfunction formatearValor(value) {\n  if (value === null || value === undefined) {\n    return 'N/A';\n  }\n  if (value instanceof Date) {\n    return value.toLocaleString('es-ES', { \n      year: 'numeric', \n      month: '2-digit', \n      day: '2-digit',\n      hour: '2-digit',\n      minute: '2-digit'\n    });\n  }\n  if (typeof value === 'number') {\n    return value.toLocaleString('es-ES');\n  }\n  return String(value);\n}\n\nlet formattedResponse = '';\n\nif (explanation) {\n  formattedResponse += explanation + '\\n\\n';\n}\n\nif (sqlResults.length > 0 && Object.keys(sqlResults[0]).length > 0) {\n  formattedResponse += '📊 **Resultados:**\\n\\n';\n  \n  const columns = Object.keys(sqlResults[0]);\n  \n  if (sqlResults.length <= 20) {\n    const header = '| ' + columns.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(' | ') + ' |';\n    const separator = '|' + columns.map(() => '---').join('|') + '|';\n    \n    formattedResponse += header + '\\n';\n    formattedResponse += separator + '\\n';\n    \n    sqlResults.forEach(row => {\n      const rowData = columns.map(col => {\n        const value = formatearValor(row[col]);\n        const cleanValue = value.replace(/\\|/g, '│').replace(/\\n/g, ' ').substring(0, 80);\n        return cleanValue || 'N/A';\n      });\n      formattedResponse += '| ' + rowData.join(' | ') + ' |\\n';\n    });\n  } else {\n    formattedResponse += `*Mostrando los primeros 20 de ${sqlResults.length} registros*\\n\\n`;\n    \n    sqlResults.slice(0, 20).forEach((row, index) => {\n      formattedResponse += `**Registro ${index + 1}:**\\n`;\n      columns.forEach(col => {\n        const value = formatearValor(row[col]);\n        const cleanValue = value.replace(/\\n/g, ' ').substring(0, 150);\n        formattedResponse += `  • ${col}: ${cleanValue}\\n`;\n      });\n      formattedResponse += '\\n';\n    });\n    \n    if (sqlResults.length > 20) {\n      formattedResponse += `*... y ${sqlResults.length - 20} registros más*\\n\\n`;\n    }\n  }\n} else if (sqlQuery) {\n  formattedResponse += '✅ Consulta ejecutada correctamente. No se encontraron resultados.';\n} else {\n  formattedResponse += 'No se pudo generar la consulta SQL.';\n}\n\nreturn [{\n  json: {\n    text: formattedResponse\n  }\n}];"
+      },
+      "id": "a5098bb8-13ec-48d6-bdda-ef205e97a6ee-format",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2272,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "3a1b21ee-5856-520b-a6b0-beac901a48dc",
+      "name": "Success",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        2496,
+        -16
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "a23d4e70-18e7-57e8-9887-5bdec97dfb8d",
+      "name": "Error",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        208
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Merge Triggers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Merge Triggers",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Triggers": {
+      "main": [
+        [
+          {
+            "node": "Prepare Question",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Question": {
+      "main": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de Ventas": {
+      "main": [
+        [
+          {
+            "node": "Extract JSON Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract JSON Response": {
+      "main": [
+        [
+          {
+            "node": "Check If Needs Clarification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Needs Clarification": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Validate SQL Query Exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate SQL Query Exists": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute SQL Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute SQL Query": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MySQL Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-01-12T00:00:00.000Z",
+  "versionId": "027ec144-849a-4f19-8cdf-9348286072aa"
+}

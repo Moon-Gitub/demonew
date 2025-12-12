@@ -1,0 +1,248 @@
+{
+  "name": "POS Moon - Cajas",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agentecajas",
+        "options": {}
+      },
+      "id": "176029d3-cca3-557c-89f5-c2b78294a52e",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        288,
+        -16
+      ],
+      "webhookId": "f780c666-c107-41df-be1b-01360a4db3b9"
+    },
+    {
+      "parameters": {},
+      "id": "4ca566b6-45b7-5bbe-aa48-c8463489338e",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        288,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "multiplex",
+        "options": {}
+      },
+      "id": "2b89c3df-9d97-5f29-9406-4d239ac4ba32",
+      "name": "Merge Triggers",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        512,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extraer pregunta del input\nconst input = $input.first().json;\n\n// Buscar la pregunta en diferentes campos posibles\nlet question = '';\nif (input.originalQuestion) {\n  question = input.originalQuestion;\n} else if (input.chatInput) {\n  question = input.chatInput;\n} else if (input.body && input.body.chatInput) {\n  question = input.body.chatInput;\n} else if (input.body && input.body.text) {\n  question = input.body.text;\n} else if (input.text) {\n  question = input.text;\n} else if (input.question) {\n  question = input.question;\n} else if (typeof input === 'string') {\n  question = input;\n} else {\n  // Último recurso: buscar cualquier campo de texto\n  question = JSON.stringify(input);\n}\n\nreturn [{\n  json: {\n    chatInput: question\n  }\n}];"
+      },
+      "id": "131d4a6f-3eed-5627-b977-4606b2fc389f",
+      "name": "Prepare Question",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        736,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Prompt para cajas"
+        }
+      },
+      "id": "802ed40d-2afb-5ba8-906a-507bacda2c90",
+      "name": "Agente de Cajas",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        960,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "5b98a91e-abcc-5b98-b269-4f067a93504f",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        976,
+        320
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "3d76b5b7-c654-5717-af9d-e7c3e9b4d469",
+      "name": "Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "40fbe4f8-50b9-5c9c-95df-ae38b2d7c9a8",
+      "name": "MySQL Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolSql",
+      "typeVersion": 1,
+      "position": [
+        464,
+        544
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "25435f9f-4d69-5246-8562-fdf2e0ec7b85",
+      "name": "Success",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        -16
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "56f948d6-82c7-5576-bf19-0cbf6a6555d1",
+      "name": "Error",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        208
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Merge Triggers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Merge Triggers",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Triggers": {
+      "main": [
+        [
+          {
+            "node": "Prepare Question",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Question": {
+      "main": [
+        [
+          {
+            "node": "Agente de Cajas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de Cajas": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de Cajas",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente de Cajas",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MySQL Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Cajas",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-01-12T00:00:00.000Z",
+  "versionId": "8c986de2-676d-423f-bdda-f6ccc2bd9b5d"
+}

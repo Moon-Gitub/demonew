@@ -1,0 +1,224 @@
+{
+  "name": "POS Moon - Soporte",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agentesoporte",
+        "options": {}
+      },
+      "id": "11d4f057-38f2-522e-8700-0314d020958e",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        288,
+        -16
+      ],
+      "webhookId": "7631db45-828a-4c54-8724-1d4b4d9eb543"
+    },
+    {
+      "parameters": {},
+      "id": "bbc9ab4c-c27a-5f92-af09-769ef7f02c26",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        288,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "multiplex",
+        "options": {}
+      },
+      "id": "47db56ff-6289-506b-86de-d6d4a7bff49e",
+      "name": "Merge Triggers",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        512,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extraer pregunta del input\nconst input = $input.first().json;\n\n// Buscar la pregunta en diferentes campos posibles\nlet question = '';\nif (input.originalQuestion) {\n  question = input.originalQuestion;\n} else if (input.chatInput) {\n  question = input.chatInput;\n} else if (input.body && input.body.chatInput) {\n  question = input.body.chatInput;\n} else if (input.body && input.body.text) {\n  question = input.body.text;\n} else if (input.text) {\n  question = input.text;\n} else if (input.question) {\n  question = input.question;\n} else if (typeof input === 'string') {\n  question = input;\n} else {\n  // Último recurso: buscar cualquier campo de texto\n  question = JSON.stringify(input);\n}\n\nreturn [{\n  json: {\n    chatInput: question\n  }\n}];"
+      },
+      "id": "2d7ef7fe-9626-560e-9bee-51ba04ebfc98",
+      "name": "Prepare Question",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        736,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Prompt para soporte"
+        }
+      },
+      "id": "c0d40f11-8fd8-57b8-9bb4-d8bf1392a961",
+      "name": "Agente de Soporte",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        960,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "47b917bc-c882-518f-8f52-3f89838fdb4e",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        976,
+        320
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "3cc7382c-f6e5-555c-8473-c58cb4d04678",
+      "name": "Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        320
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "7eae17ad-d687-5752-b845-2ec1afa0b0af",
+      "name": "Success",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        -16
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "45379bfd-7ca7-59c0-b270-411c395890e8",
+      "name": "Error",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        208
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Merge Triggers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Merge Triggers",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Triggers": {
+      "main": [
+        [
+          {
+            "node": "Prepare Question",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Question": {
+      "main": [
+        [
+          {
+            "node": "Agente de Soporte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de Soporte": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de Soporte",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente de Soporte",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-01-12T00:00:00.000Z",
+  "versionId": "e1f67460-3f1d-44d4-a397-089fdbbd485c"
+}

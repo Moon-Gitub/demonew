@@ -1,0 +1,248 @@
+{
+  "name": "POS Moon - Proveedores",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agenteproveedores",
+        "options": {}
+      },
+      "id": "671cad1a-01dc-5855-81bd-1d5859f56c62",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        288,
+        -16
+      ],
+      "webhookId": "0cf0880a-ceb6-40a2-ad9e-f5d07ce61908"
+    },
+    {
+      "parameters": {},
+      "id": "69ba5123-4268-513c-822a-e4e188c7246a",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        288,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "multiplex",
+        "options": {}
+      },
+      "id": "6a19f88d-0ad1-5662-82b3-15a61aaa814f",
+      "name": "Merge Triggers",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        512,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extraer pregunta del input\nconst input = $input.first().json;\n\n// Buscar la pregunta en diferentes campos posibles\nlet question = '';\nif (input.originalQuestion) {\n  question = input.originalQuestion;\n} else if (input.chatInput) {\n  question = input.chatInput;\n} else if (input.body && input.body.chatInput) {\n  question = input.body.chatInput;\n} else if (input.body && input.body.text) {\n  question = input.body.text;\n} else if (input.text) {\n  question = input.text;\n} else if (input.question) {\n  question = input.question;\n} else if (typeof input === 'string') {\n  question = input;\n} else {\n  // Último recurso: buscar cualquier campo de texto\n  question = JSON.stringify(input);\n}\n\nreturn [{\n  json: {\n    chatInput: question\n  }\n}];"
+      },
+      "id": "f3f0824b-135c-5593-a19d-aff5bfcfa115",
+      "name": "Prepare Question",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        736,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Prompt para proveedores"
+        }
+      },
+      "id": "dd9ba2d1-0140-529c-b7f0-b35af163fbd4",
+      "name": "Agente de Proveedores",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        960,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "af89a7c6-4a3d-5824-bbe3-694533c271fe",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        976,
+        320
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "32aebd94-7bc8-559b-a5f2-c77487a5f22c",
+      "name": "Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "8c104297-b061-5dc7-9abb-e76c01530feb",
+      "name": "MySQL Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolSql",
+      "typeVersion": 1,
+      "position": [
+        464,
+        544
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "6ff7b8b5-cbfa-59ad-88a3-c398f02406e9",
+      "name": "Success",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        -16
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "8b0f7f3a-7368-5a77-b21f-b361cca8215f",
+      "name": "Error",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        208
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Merge Triggers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Merge Triggers",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Triggers": {
+      "main": [
+        [
+          {
+            "node": "Prepare Question",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Question": {
+      "main": [
+        [
+          {
+            "node": "Agente de Proveedores",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de Proveedores": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de Proveedores",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente de Proveedores",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MySQL Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Proveedores",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-01-12T00:00:00.000Z",
+  "versionId": "b1da47ca-08f0-4fc9-81b1-f5b2ce090052"
+}

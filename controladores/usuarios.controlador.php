@@ -31,7 +31,7 @@ class ControladorUsuarios{
 				$item = "usuario";
 				$valor = $_POST["ingUsuario"];
 
-				$respuesta = ModeloUsuarios::MdlMostrarUsuarios($tabla, $item, $valor);
+				$respuesta = ModeloUsuarios::mdlMostrarUsuarios($tabla, $item, $valor);
 
 				// Verificar que el usuario existe
 				if($respuesta && $respuesta["usuario"] == $_POST["ingUsuario"]) {
@@ -250,7 +250,7 @@ class ControladorUsuarios{
 	=============================================*/
 	static public function ctrMostrarUsuarios($item, $valor){
 		$tabla = "usuarios";
-		$respuesta = ModeloUsuarios::MdlMostrarUsuarios($tabla, $item, $valor);
+		$respuesta = ModeloUsuarios::mdlMostrarUsuarios($tabla, $item, $valor);
 		return $respuesta;
 	}
 

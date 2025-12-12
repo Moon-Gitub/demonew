@@ -1,0 +1,261 @@
+{
+  "name": "POS Moon - Orquestador Principal",
+  "nodes": [
+    {
+      "id": "9f0ffd09-3ecc-5840-ade5-b15d958cc955",
+      "name": "Chat Trigger",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -1296,
+        112
+      ],
+      "parameters": {
+        "public": true,
+        "initialMessages": "¡Hola! 👋 Soy el asistente virtual del Sistema POS Moon. Puedo ayudarte con ventas, clientes, productos, cajas y más. ¿Qué necesitas saber?",
+        "options": {
+          "loadPreviousSession": "memory"
+        }
+      },
+      "webhookId": "8ad51af7-3787-4fc7-a9c3-bed49788630e"
+    },
+    {
+      "id": "1e25db89-9881-5f2a-a4b1-664e7b240631",
+      "name": "Agente Principal",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -448,
+        144
+      ],
+      "parameters": {
+        "options": {
+          "systemMessage": "=Eres un orquestador inteligente que analiza las preguntas de los usuarios y decide qué agente especializado debe responder usando las herramientas disponibles.\n\n**TU TAREA:** Analizar la pregunta del usuario y usar la herramienta (Tool) del agente especializado correspondiente.\n\n**HERRAMIENTAS DISPONIBLES:**\n\n1. **Execute Ventas** - Usa esta herramienta para preguntas sobre ventas y facturas electrónicas\n2. **Execute Clientes** - Usa esta herramienta para preguntas sobre clientes y cuenta corriente de clientes\n3. **Execute Proveedores** - Usa esta herramienta para preguntas sobre proveedores y cuenta corriente de proveedores\n4. **Execute Cajas** - Usa esta herramienta para preguntas sobre movimientos de caja y cierres\n5. **Execute Productos** - Usa esta herramienta para preguntas sobre catálogo de productos\n6. **Execute Soporte** - Usa esta herramienta para ayuda general del sistema\n\n**REGLAS DE DECISIÓN:**\n\n1. Si contiene palabras de soporte (\"cómo\", \"ayuda\", \"explicar\", \"qué es\", \"funciona\", \"tutorial\") → Usa **Execute Soporte**\n2. Si pregunta sobre facturas, CAE, comprobantes, nro_cbte → Usa **Execute Ventas**\n3. Si pregunta sobre productos del catálogo, stock, precios, categorías → Usa **Execute Productos**\n   - EXCEPCIÓN: Si pregunta \"productos vendidos\" o \"productos en ventas\" → Usa **Execute Ventas**\n4. Si pregunta sobre ventas, totales vendidos, métodos de pago → Usa **Execute Ventas**\n5. Si pregunta sobre datos de clientes, búsqueda de clientes → Usa **Execute Clientes**\n6. Si pregunta sobre cuenta corriente, deudas, pagos, saldos de CLIENTES → Usa **Execute Clientes**\n7. Si pregunta sobre movimientos de caja (ingresos/egresos) → Usa **Execute Cajas**\n8. Si pregunta sobre cierres de caja, totales de cierre → Usa **Execute Cajas**\n9. Si pregunta sobre datos de proveedores → Usa **Execute Proveedores**\n10. Si pregunta sobre cuenta corriente de PROVEEDORES, compras, pagos a proveedores → Usa **Execute Proveedores**\n\n**EJEMPLOS:**\n\nUsuario: \"cuánta plata en efectivo vendí este mes\"\n→ Usa la herramienta Execute Ventas con la pregunta completa\n\nUsuario: \"facturas emitidas este mes\"\n→ Usa la herramienta Execute Ventas con la pregunta completa\n\nUsuario: \"producto más vendido en 2025\"\n→ Usa la herramienta Execute Productos con la pregunta completa\n\nUsuario: \"deudas de clientes\"\n→ Usa la herramienta Execute Clientes con la pregunta completa\n\nUsuario: \"ingresos de caja hoy\"\n→ Usa la herramienta Execute Cajas con la pregunta completa\n\nUsuario: \"compras a proveedores pendientes\"\n→ Usa la herramienta Execute Proveedores con la pregunta completa\n\nUsuario: \"cómo funciona el sistema\"\n→ Usa la herramienta Execute Soporte con la pregunta completa\n\nCuando uses una herramienta, pasa la pregunta completa del usuario como parámetro."
+        }
+      }
+    },
+    {
+      "id": "9153f8cd-528c-5a0e-ba0f-42daea266cf8",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -992,
+        384
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      }
+    },
+    {
+      "id": "24cc99b9-8ade-5fe8-9403-ef7b9e133800",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -1216,
+        368
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "c9b57a77-d9a9-5059-aa92-1568d17fafe4",
+      "name": "Execute Ventas",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -720,
+        560
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "88deb4ee-103a-5761-bec0-8bd37b84167d",
+      "name": "Execute Clientes",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -512,
+        560
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "25a3c44c-1643-5ff7-8097-241ad7ce775a",
+      "name": "Execute Proveedores",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -336,
+        560
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "be8fed50-eb71-52ac-bcac-22079f48cffc",
+      "name": "Execute Cajas",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -160,
+        560
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "f71569ef-3e5c-5b57-8e68-2822fb3dd141",
+      "name": "Execute Productos",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        16,
+        560
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "eb73f4cc-69b3-5a02-b614-0f7766157873",
+      "name": "Execute Soporte",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        176,
+        560
+      ],
+      "parameters": {}
+    }
+  ],
+  "connections": {
+    "Chat Trigger": {
+      "main": [
+        [
+          {
+            "node": "Agente Principal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente Principal": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente Principal",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente Principal",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Chat Trigger",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Ventas": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Principal",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Clientes": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Principal",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Proveedores": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Principal",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Cajas": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Principal",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Productos": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Principal",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Soporte": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Principal",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-01-12T00:00:00.000Z",
+  "versionId": "106fc114-5fa2-45af-8575-92cb4e3d2408",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": ""
+  }
+}

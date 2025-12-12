@@ -68,13 +68,26 @@ $(".tablas").on("click", ".btnEditarUsuario", function(){
 		dataType: "json",
 		success: function(respuesta){
 		    
-			$("#editarNombre").val(respuesta["nombre"]);
-			$("#editarUsuario").val(respuesta["usuario"]);
-			$("#editarPerfil").html(respuesta["perfil"]);
-			$("#editarPerfil").val(respuesta["perfil"]);
+		    // Validar que la respuesta no sea null o undefined
+		    if(!respuesta || respuesta === null){
+		        console.error("Error: No se recibieron datos del usuario");
+		        swal({
+		            type: "error",
+		            title: "Error",
+		            text: "No se pudieron cargar los datos del usuario",
+		            showConfirmButton: true,
+		            confirmButtonText: "Cerrar"
+		        });
+		        return;
+		    }
+		    
+			$("#editarNombre").val(respuesta["nombre"] || "");
+			$("#editarUsuario").val(respuesta["usuario"] || "");
+			$("#editarPerfil").html(respuesta["perfil"] || "");
+			$("#editarPerfil").val(respuesta["perfil"] || "");
 		
-			$("#editarSucursal").html(respuesta["sucursal"]);
-			$("#editarSucursal").val(respuesta["sucursal"]);
+			$("#editarSucursal").html(respuesta["sucursal"] || "");
+			$("#editarSucursal").val(respuesta["sucursal"] || "");
 			
 			//$("#editarListaPrecio").html(respuesta["listas_precio"]);
 			//$("#editarListaPrecio").val(respuesta["listas_precio"]);
@@ -83,24 +96,38 @@ $(".tablas").on("click", ".btnEditarUsuario", function(){
                 $(listasSistema[x]).prop('checked', false);
             }
             
-            let listasUsuario = respuesta["listas_precio"];
-            listasUsuario = listasUsuario.split(",");
-            for(let i=0; i < listasUsuario.length; i++){
-                for(let x=0; x < $(listasSistema).length; x++){
-                    if(($(listasSistema[x]).val()) == listasUsuario[i]){
-                        $(listasSistema[x]).prop('checked', true);
+            let listasUsuario = respuesta["listas_precio"] || "";
+            if(listasUsuario && listasUsuario !== ""){
+                listasUsuario = listasUsuario.split(",");
+                for(let i=0; i < listasUsuario.length; i++){
+                    for(let x=0; x < $(listasSistema).length; x++){
+                        if(($(listasSistema[x]).val()) == listasUsuario[i]){
+                            $(listasSistema[x]).prop('checked', true);
+                        }
                     }
                 }
             }
             
-			$("#editarPuntoVenta").val(respuesta["puntos_venta"]);
-			$("#fotoActual").val(respuesta["foto"]);
-			$("#passwordActual").val(respuesta["password"]);
-			if(respuesta["foto"] != ""){
+			$("#editarPuntoVenta").val(respuesta["puntos_venta"] || "");
+			$("#fotoActual").val(respuesta["foto"] || "");
+			$("#passwordActual").val(respuesta["password"] || "");
+			if(respuesta["foto"] && respuesta["foto"] !== ""){
 				$(".previsualizarEditar").attr("src", respuesta["foto"]);
 			}else{
 				$(".previsualizarEditar").attr("src", "vistas/img/usuarios/default/anonymous.png");
 			}
+		},
+		error: function(xhr, status, error){
+		    console.error("Error AJAX:", error);
+		    console.error("Status:", status);
+		    console.error("Response:", xhr.responseText);
+		    swal({
+		        type: "error",
+		        title: "Error",
+		        text: "Error al cargar los datos del usuario: " + error,
+		        showConfirmButton: true,
+		        confirmButtonText: "Cerrar"
+		    });
 		}
 	});
 })
