@@ -211,8 +211,9 @@ class ControladorUsuarios{
 					  	text: "¡El usuario ha sido guardado correctamente!",
 						showConfirmButton: true,
 						confirmButtonText: "Cerrar"
-					});
-					window.location.href = "usuarios";
+					}).then(function() {
+                        window.location.href = "usuarios";
+                    });
 					</script>';
 
 				} else {
@@ -224,8 +225,9 @@ class ControladorUsuarios{
 					  	text: "'.$msjResp.'",
 						showConfirmButton: true,
 						confirmButtonText: "Cerrar"
-					})
-					window.location.href = "usuarios";
+					}).then(function() {
+                        window.location.href = "usuarios";
+                    });
 					</script>';
 				}
 				
@@ -334,8 +336,9 @@ class ControladorUsuarios{
 					  	  text: "El usuario ha sido editado correctamente",
 						  showConfirmButton: true,
 						  confirmButtonText: "Cerrar"
-						  })
-					window.location.href = "usuarios";
+						  }).then(function() {
+                        window.location.href = "usuarios";
+                    });
 					</script>';
 				} else {
 				    $msjResp = (isset($respuesta[2])) ? $respuesta[2] : "Error desconocido";
@@ -346,8 +349,9 @@ class ControladorUsuarios{
 					  	text: "'.$msjResp.'",
 						showConfirmButton: true,
 						confirmButtonText: "Cerrar"
-					})
-					window.location.href = "usuarios";
+					}).then(function() {
+                        window.location.href = "usuarios";
+                    });
 					</script>';
 				}
 			}else{
@@ -358,8 +362,9 @@ class ControladorUsuarios{
 					  	  text: "¡El nombre no puede ir vacío o llevar caracteres especiales!",
 						  showConfirmButton: true,
 						  confirmButtonText: "Cerrar"
-						  })
-				    window.location.href = "usuarios";
+						  }).then(function() {
+                        window.location.href = "usuarios";
+                    });
 			  	</script>';
 			}
 		}
@@ -390,8 +395,8 @@ class ControladorUsuarios{
 							if (result.value) {
 								window.location = "usuarios";
 							}
-						})
-				window.location.href = "usuarios";
+					})
+			
 				</script>';
 			}		
 		}
