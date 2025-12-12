@@ -1,7 +1,7 @@
 <?php
-// ✅ Seguridad AJAX
+// ✅ Seguridad AJAX (sin CSRF para editar usuario, solo verificación de sesión)
 require_once "seguridad.ajax.php";
-SeguridadAjax::inicializar();
+SeguridadAjax::inicializar(false); // false = no verificar CSRF para esta petición
 
 require_once "../controladores/usuarios.controlador.php";
 require_once "../modelos/usuarios.modelo.php";
@@ -16,17 +16,28 @@ class AjaxUsuarios{
 
 	public function ajaxEditarUsuario(){
 
-		$item = "id";
-		$valor = $this->idUsuario;
+		try {
+			$item = "id";
+			$valor = $this->idUsuario;
 
-		$respuesta = ControladorUsuarios::ctrMostrarUsuarios($item, $valor);
+			// Validar que el ID sea numérico
+			if(!is_numeric($valor) || $valor <= 0){
+				echo json_encode(array("error" => "ID de usuario inválido"));
+				return;
+			}
 
-		if($respuesta === false || $respuesta === null){
-			echo json_encode(array("error" => "Usuario no encontrado"));
-			return;
+			$respuesta = ControladorUsuarios::ctrMostrarUsuarios($item, $valor);
+
+			if($respuesta === false || $respuesta === null || empty($respuesta)){
+				echo json_encode(array("error" => "Usuario no encontrado"));
+				return;
+			}
+
+			echo json_encode($respuesta);
+
+		} catch (Exception $e) {
+			echo json_encode(array("error" => "Error al obtener datos del usuario: " . $e->getMessage()));
 		}
-
-		echo json_encode($respuesta);
 
 	}
 

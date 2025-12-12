@@ -66,15 +66,18 @@ $(".tablas").on("click", ".btnEditarUsuario", function(){
 		contentType: false,
 		processData: false,
 		dataType: "json",
+		headers: {
+			'X-Requested-With': 'XMLHttpRequest'
+		},
 		success: function(respuesta){
 		    
 		    // Validar que la respuesta no sea null o undefined
-		    if(!respuesta || respuesta === null){
-		        console.error("Error: No se recibieron datos del usuario");
+		    if(!respuesta || respuesta === null || respuesta.error){
+		        console.error("Error: No se recibieron datos del usuario", respuesta);
 		        swal({
 		            type: "error",
 		            title: "Error",
-		            text: "No se pudieron cargar los datos del usuario",
+		            text: respuesta && respuesta.error ? respuesta.error : "No se pudieron cargar los datos del usuario",
 		            showConfirmButton: true,
 		            confirmButtonText: "Cerrar"
 		        });
@@ -121,10 +124,35 @@ $(".tablas").on("click", ".btnEditarUsuario", function(){
 		    console.error("Error AJAX:", error);
 		    console.error("Status:", status);
 		    console.error("Response:", xhr.responseText);
+		    
+		    // Intentar parsear la respuesta como JSON
+		    let mensajeError = "Error al cargar los datos del usuario";
+		    try {
+		        if(xhr.responseText){
+		            const respuestaError = JSON.parse(xhr.responseText);
+		            if(respuestaError.error){
+		                mensajeError = respuestaError.error;
+		            } else if(respuestaError.mensaje){
+		                mensajeError = respuestaError.mensaje;
+		            }
+		        }
+		    } catch(e){
+		        // Si no es JSON, usar el mensaje por defecto
+		        if(xhr.status === 401){
+		            mensajeError = "No autorizado. Por favor, inicia sesión nuevamente.";
+		        } else if(xhr.status === 403){
+		            mensajeError = "Acceso denegado. Verifica tus permisos.";
+		        } else if(xhr.status === 404){
+		            mensajeError = "No se encontró el recurso solicitado.";
+		        } else if(xhr.status === 500){
+		            mensajeError = "Error del servidor. Contacta al administrador.";
+		        }
+		    }
+		    
 		    swal({
 		        type: "error",
 		        title: "Error",
-		        text: "Error al cargar los datos del usuario: " + error,
+		        text: mensajeError,
 		        showConfirmButton: true,
 		        confirmButtonText: "Cerrar"
 		    });

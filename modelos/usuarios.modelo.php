@@ -13,7 +13,12 @@ class ModeloUsuarios{
 
 			$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE $item = :$item");
 
-			$stmt->bindParam(":".$item, $valor, PDO::PARAM_STR);
+			// Determinar el tipo de parámetro según el item
+			if($item == "id"){
+				$stmt->bindParam(":".$item, $valor, PDO::PARAM_INT);
+			}else{
+				$stmt->bindParam(":".$item, $valor, PDO::PARAM_STR);
+			}
 
 			$stmt->execute();
 
