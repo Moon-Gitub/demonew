@@ -153,15 +153,19 @@
 
 /* Estilos para mobile - Responsive */
 @media (max-width: 768px) {
+    /* Botones de acción en mobile */
     .productos-header-buttons {
         flex-direction: column;
         gap: 10px;
+        width: 100%;
     }
     
     .productos-header-buttons .btn {
         width: 100%;
+        margin: 0;
     }
     
+    /* Selector de columnas en mobile */
     .productos-columnas-selector {
         padding: 15px !important;
         margin: 20px 0 15px 0 !important;
@@ -170,57 +174,86 @@
     .productos-columnas-selector > div {
         flex-direction: column;
         align-items: flex-start !important;
-        gap: 10px !important;
+        gap: 12px !important;
     }
     
     .productos-columnas-selector strong {
-        margin-bottom: 8px;
+        margin-bottom: 10px;
         display: block;
         width: 100%;
+        font-size: 14px;
     }
     
     .productos-columnas-selector a {
-        margin: 4px 0 !important;
+        margin: 5px 0 !important;
         display: inline-block;
+        width: auto;
+        min-width: 120px;
+        text-align: center;
     }
     
     .productos-columnas-selector .separator {
         display: none;
     }
     
-    /* Buscador en mobile */
+    /* Buscador en mobile - Corregir lupita superpuesta */
     #tablaProductos_filter {
         margin: 20px 0 15px 0 !important;
+        width: 100%;
     }
     
     #tablaProductos_filter label {
         flex-direction: column;
         align-items: flex-start !important;
-        gap: 10px !important;
+        gap: 12px !important;
+        width: 100%;
     }
     
+    /* Label "Buscar:" separado arriba */
     #tablaProductos_filter label::before {
-        margin-bottom: 8px;
+        content: "Buscar:";
         display: block;
+        margin-bottom: 0;
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 15px;
     }
     
+    /* Icono de lupa dentro del input en mobile */
     #tablaProductos_filter label::after {
-        left: 15px !important; /* En mobile, el icono va al inicio del input */
+        content: "\f002";
+        font-family: "FontAwesome";
+        color: #667eea;
+        font-size: 16px;
+        position: absolute;
+        left: 15px;
+        top: calc(50% + 12px); /* Ajustar por el label arriba */
+        transform: translateY(-50%);
+        z-index: 2;
+        pointer-events: none;
     }
     
     #tablaProductos_filter input {
         width: 100% !important;
         padding: 12px 15px 12px 45px !important;
+        margin: 0 !important;
     }
     
     /* Contenedor de tabla en mobile */
     .productos-table-container {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        margin-top: 15px;
+        width: 100%;
     }
     
     .productos-table-container table {
         min-width: 800px;
+    }
+    
+    /* Box body en mobile */
+    .box-body {
+        padding: 15px !important;
     }
 }
 </style>
