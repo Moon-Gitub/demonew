@@ -4,6 +4,58 @@
     $precioDolar = ($objParametros->getPrecioDolar()) ? '' : 'display:none;';
 ?>
 
+<style>
+/* Estilos específicos para página de productos - Mejor separación y diseño */
+.productos-header-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.productos-header-buttons .btn {
+    margin: 0;
+    flex: 0 0 auto;
+}
+
+.productos-columnas-selector {
+    background: #f8f9fa;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 25px 0 20px 0;
+    border-left: 4px solid #667eea;
+}
+
+.productos-columnas-selector a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    margin: 0 3px;
+}
+
+.productos-columnas-selector a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+.productos-table-container {
+    margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+    .productos-header-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .productos-header-buttons .btn {
+        width: 100%;
+    }
+}
+</style>
+
 <div class="content-wrapper">
   <section class="content-header">
     <h1>
@@ -19,18 +71,20 @@
       <div class="box-header with-border">
           <div class="row">
           <div class="col-md-6">
-        <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarProducto">
-          Agregar producto
-        </button>
-        <a href="productos-stock-medio" class="btn btn-warning">
-          Stock Medio
-        </a>
-        <a href="productos-stock-bajo" class="btn btn-danger">
-          Stock Bajo
-        </a>
-        <a href="productos-stock-valorizado" class="btn btn-primary">
-          Stock Valorizado
-        </a>
+            <div class="productos-header-buttons">
+              <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarProducto">
+                <i class="fa fa-plus"></i> Agregar producto
+              </button>
+              <a href="productos-stock-medio" class="btn btn-warning">
+                <i class="fa fa-exclamation-triangle"></i> Stock Medio
+              </a>
+              <a href="productos-stock-bajo" class="btn btn-danger">
+                <i class="fa fa-warning"></i> Stock Bajo
+              </a>
+              <a href="productos-stock-valorizado" class="btn btn-primary">
+                <i class="fa fa-dollar"></i> Stock Valorizado
+              </a>
+            </div>
          </div>
 		  <div class="col-md-3">
 		      <button class="btn btn-danger" onclick="borradoMultiple()"  id="boronBorrado" style="display:none;"  id="verSeleccion">
@@ -52,19 +106,22 @@
 		  </div>
       </div>
       <div class="box-body">
-        Columnas: 
-        <a class="toggle-vis" data-column="1">Categoría</a> | 
-        <a class="toggle-vis" data-column="2">Proveedor</a> | 
-        <a class="toggle-vis" data-column="3">Descripcion</a> | 
-        <a class="toggle-vis" data-column="4">STK</a> | 
-        <a class="toggle-vis" data-column="5">STK TOTAL</a>| 
-        <a class="toggle-vis" data-column="6">$ Compra</a> | 
-        <a class="toggle-vis" data-column="7">US$ Compra</a> | 
-        <a class="toggle-vis" data-column="8">IVA</a> | 
-        <a class="toggle-vis" data-column="9">$ Venta</a>
+        <div class="productos-columnas-selector">
+          <strong style="color: #2c3e50; margin-right: 10px;">Columnas:</strong>
+          <a class="toggle-vis" data-column="1">Categoría</a> | 
+          <a class="toggle-vis" data-column="2">Proveedor</a> | 
+          <a class="toggle-vis" data-column="3">Descripcion</a> | 
+          <a class="toggle-vis" data-column="4">STK</a> | 
+          <a class="toggle-vis" data-column="5">STK TOTAL</a> | 
+          <a class="toggle-vis" data-column="6">$ Compra</a> | 
+          <a class="toggle-vis" data-column="7">US$ Compra</a> | 
+          <a class="toggle-vis" data-column="8">IVA</a> | 
+          <a class="toggle-vis" data-column="9">$ Venta</a>
+        </div>
         
         <input type="hidden" id="arrayProductosBorrarMultiple" name="arrayProductosBorrarMultiple"/>
         
+        <div class="productos-table-container">
        <table class="table table-bordered table-striped dt-responsive" id="tablaProductos" width="100%">
         <thead>
          <tr>
@@ -103,6 +160,7 @@
          </tr>
         </tfoot>
        </table>
+        </div>
        <input type="hidden" value="<?php echo $_SESSION['perfil']; ?>" id="perfilOculto">
       </div>
     </div>
