@@ -297,6 +297,275 @@
     border-radius: 0 0 16px 16px !important;
 }
 
+/* Estilos específicos para Modal Cobro de Venta */
+#modalCobrarVenta .modal-content {
+    border-radius: 16px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+    border: none !important;
+    overflow: hidden;
+}
+
+#modalCobrarVenta .modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: #ffffff !important;
+    border-bottom: none !important;
+    padding: 20px 25px !important;
+    border-radius: 16px 16px 0 0 !important;
+}
+
+#modalCobrarVenta .modal-header .modal-title {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+}
+
+#modalCobrarVenta .modal-body {
+    padding: 25px !important;
+    background: #ffffff !important;
+}
+
+#modalCobrarVenta .modal-footer {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
+    border-top: 2px solid #e0e0e0 !important;
+    padding: 20px 25px !important;
+    border-radius: 0 0 16px 16px !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Mejorar input PAGO */
+#modalCobrarVenta #nuevoValorEntrega {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    border: 2px solid #667eea !important;
+    border-radius: 8px !important;
+    padding: 12px 15px !important;
+    min-height: 48px !important;
+}
+
+#modalCobrarVenta .input-group-addon[style*="background-color: #eee"] {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border: 2px solid #e0e0e0 !important;
+    border-right: none !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    padding: 12px 15px !important;
+    color: #2c3e50 !important;
+    border-radius: 8px 0 0 8px !important;
+}
+
+/* Mejorar botón agregar medio de pago */
+#modalCobrarVenta #agregarMedioPago {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+    border: none !important;
+    border-radius: 8px 0 0 8px !important;
+    padding: 12px 18px !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+#modalCobrarVenta #agregarMedioPago:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4) !important;
+}
+
+/* Mejorar select medio de pago */
+#modalCobrarVenta #nuevoMetodoPagoCaja {
+    border-radius: 0 8px 8px 0 !important;
+    border-left: none !important;
+    padding: 12px 15px !important;
+    min-height: 48px !important;
+    font-size: 14px !important;
+}
+
+/* Mejorar tabla de resumen */
+#modalCobrarVenta .table {
+    border: none !important;
+    margin-bottom: 0 !important;
+}
+
+#modalCobrarVenta .table td {
+    border: none !important;
+    padding: 12px 8px !important;
+    vertical-align: middle !important;
+}
+
+#modalCobrarVenta .table td:first-child {
+    font-weight: 600 !important;
+    color: #2c3e50 !important;
+    width: 40% !important;
+}
+
+/* Mejorar inputs de total, descuento, interés */
+#modalCobrarVenta #nuevoPrecioNetoCaja,
+#modalCobrarVenta #nuevoTotalVentaCaja {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
+    border: 2px solid #667eea !important;
+    border-radius: 8px !important;
+    padding: 12px 15px !important;
+    min-height: 48px !important;
+}
+
+#modalCobrarVenta #nuevoTotalVentaCaja {
+    border: 3px solid #667eea !important;
+    background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%) !important;
+    font-size: 20px !important;
+    color: #667eea !important;
+}
+
+/* Mejorar inputs de descuento e interés */
+#modalCobrarVenta .nuevoDescuentoCaja,
+#modalCobrarVenta .nuevoInteresCaja {
+    border-radius: 8px !important;
+    border: 2px solid #e0e0e0 !important;
+    padding: 10px 12px !important;
+    min-height: 42px !important;
+}
+
+#modalCobrarVenta .nuevoDescuentoCaja:focus,
+#modalCobrarVenta .nuevoInteresCaja:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+}
+
+/* Mejorar tabla de métodos de pago mixto */
+#modalCobrarVenta #listadoMetodosPagoMixto {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+#modalCobrarVenta #listadoMetodosPagoMixto thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: #ffffff !important;
+}
+
+#modalCobrarVenta #listadoMetodosPagoMixto thead th {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    padding: 12px 15px !important;
+    border: none !important;
+}
+
+#modalCobrarVenta #listadoMetodosPagoMixto tbody td {
+    padding: 10px 15px !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+}
+
+#modalCobrarVenta #listadoMetodosPagoMixto tfoot {
+    background: #f8f9fa !important;
+    font-weight: 700 !important;
+}
+
+#modalCobrarVenta #nuevoValorSaldo {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: #f5576c !important;
+}
+
+/* Mejorar botones del footer */
+#modalCobrarVenta .modal-footer .btn {
+    padding: 12px 30px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    min-width: 180px !important;
+    transition: all 0.3s ease !important;
+}
+
+#modalCobrarVenta .modal-footer .btn-default {
+    background: #ffffff !important;
+    border: 2px solid #e0e0e0 !important;
+    color: #2c3e50 !important;
+}
+
+#modalCobrarVenta .modal-footer .btn-default:hover {
+    background: #f8f9fa !important;
+    border-color: #667eea !important;
+    color: #667eea !important;
+    transform: translateY(-2px) !important;
+}
+
+#modalCobrarVenta .modal-footer .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+}
+
+#modalCobrarVenta .modal-footer .btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4) !important;
+}
+
+/* Mejorar datos cuenta corriente */
+#modalCobrarVenta #datosCuentaCorrienteCliente {
+    color: #2c3e50 !important;
+    font-weight: 600 !important;
+    padding: 10px 15px !important;
+    background: #f8f9fa !important;
+    border-radius: 8px !important;
+    display: inline-block !important;
+}
+
+/* Responsive para modal cobro de venta */
+@media (max-width: 991px) {
+    #modalCobrarVenta .modal-dialog {
+        margin: 10px !important;
+        width: calc(100% - 20px) !important;
+    }
+    
+    #modalCobrarVenta .col-md-3,
+    #modalCobrarVenta .col-md-6 {
+        width: 100% !important;
+        margin-bottom: 15px !important;
+    }
+    
+    #modalCobrarVenta .col-xs-6 {
+        width: 100% !important;
+        margin-bottom: 10px !important;
+    }
+    
+    #modalCobrarVenta .modal-footer {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    
+    #modalCobrarVenta .modal-footer .btn {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+    
+    #modalCobrarVenta .input-group {
+        flex-direction: column !important;
+    }
+    
+    #modalCobrarVenta .input-group-addon,
+    #modalCobrarVenta .input-group .form-control {
+        border-radius: 8px !important;
+        border: 2px solid #e0e0e0 !important;
+        width: 100% !important;
+    }
+    
+    #modalCobrarVenta #agregarMedioPago {
+        border-radius: 8px 8px 0 0 !important;
+        width: 100% !important;
+    }
+    
+    #modalCobrarVenta #nuevoMetodoPagoCaja {
+        border-radius: 0 0 8px 8px !important;
+        border-left: 2px solid #e0e0e0 !important;
+        width: 100% !important;
+    }
+}
+
 /* Mejorar inputs readonly */
 .crear-venta-caja input[readonly] {
     background-color: #f8f9fa !important;
