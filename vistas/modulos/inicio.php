@@ -1,3 +1,6 @@
+<!-- Estilos modernos para dashboard -->
+<link rel="stylesheet" href="vistas/dist/css/dashboard-moderno.css">
+
 <div class="content-wrapper">
   <section class="content-header">
     <h1>

@@ -1,0 +1,389 @@
+/* ============================================
+   ESTILOS MODERNOS PARA DASHBOARD
+   Solo cambios visuales - Sin tocar funcionalidad
+   Mantiene Bootstrap y AdminLTE originales
+   ============================================ */
+
+/* ============================================
+   CAJAS DE VENTAS (SMALL-BOX)
+   ============================================ */
+
+/* Caja Ventas de Hoy - Azul moderno */
+.small-box.bg-aqua {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: none !important;
+    overflow: hidden;
+    position: relative;
+}
+
+.small-box.bg-aqua::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.small-box.bg-aqua:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4) !important;
+}
+
+/* Caja Semana Pasada - Verde moderno */
+.small-box.bg-green {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: none !important;
+    overflow: hidden;
+    position: relative;
+}
+
+.small-box.bg-green::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.small-box.bg-green:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4) !important;
+}
+
+/* Caja Este Mes - Naranja moderno */
+.small-box.bg-yellow {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: none !important;
+    overflow: hidden;
+    position: relative;
+}
+
+.small-box.bg-yellow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.small-box.bg-yellow:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4) !important;
+}
+
+/* Caja Mes Anterior - Rojo moderno */
+.small-box.bg-red {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 15px rgba(250, 112, 154, 0.3) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: none !important;
+    overflow: hidden;
+    position: relative;
+}
+
+.small-box.bg-red::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.small-box.bg-red:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 25px rgba(250, 112, 154, 0.4) !important;
+}
+
+/* Iconos dentro de las cajas */
+.small-box .icon {
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+}
+
+.small-box:hover .icon {
+    opacity: 0.4;
+}
+
+.small-box .icon > i {
+    font-size: 70px;
+    top: 20px;
+    right: 15px;
+}
+
+/* Texto dentro de las cajas */
+.small-box .inner h3 {
+    font-weight: 700;
+    font-size: 38px;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.small-box .inner p {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+/* Footer de las cajas */
+.small-box .small-box-footer {
+    background: rgba(0, 0, 0, 0.1) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+    padding: 10px 0;
+    transition: background 0.3s ease;
+}
+
+.small-box:hover .small-box-footer {
+    background: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ============================================
+   CAJAS DE CUENTAS CORRIENTES
+   ============================================ */
+
+/* Caja de saldos - Verde suave */
+.small-box.bg-success {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 15px rgba(168, 237, 234, 0.3) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: none !important;
+    overflow: hidden;
+    position: relative;
+}
+
+.small-box.bg-success:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 25px rgba(168, 237, 234, 0.4) !important;
+}
+
+.small-box.bg-success .inner {
+    color: #2c3e50 !important;
+}
+
+.small-box.bg-success .icon {
+    color: #2c3e50 !important;
+    opacity: 0.2;
+}
+
+.small-box.bg-success .small-box-footer {
+    background: rgba(44, 62, 80, 0.1) !important;
+    border-top: 1px solid rgba(44, 62, 80, 0.1) !important;
+    color: #2c3e50 !important;
+}
+
+/* Caja de saldos - Amarillo suave */
+.small-box.bg-warning {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: none !important;
+    overflow: hidden;
+    position: relative;
+}
+
+.small-box.bg-warning:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 25px rgba(252, 182, 159, 0.4) !important;
+}
+
+.small-box.bg-warning .inner {
+    color: #2c3e50 !important;
+}
+
+.small-box.bg-warning .icon {
+    color: #2c3e50 !important;
+    opacity: 0.2;
+}
+
+.small-box.bg-warning .small-box-footer {
+    background: rgba(44, 62, 80, 0.1) !important;
+    border-top: 1px solid rgba(44, 62, 80, 0.1) !important;
+    color: #2c3e50 !important;
+}
+
+/* ============================================
+   CONTENEDORES BOX
+   ============================================ */
+
+.box {
+    border-radius: 16px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+    border: none !important;
+    background: #ffffff !important;
+    transition: all 0.3s ease !important;
+    overflow: hidden;
+}
+
+.box:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12) !important;
+}
+
+.box-primary {
+    border-top: 4px solid #667eea !important;
+}
+
+.box-success {
+    border-top: 4px solid #11998e !important;
+}
+
+.box-header {
+    background: transparent !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+    padding: 15px 20px !important;
+}
+
+.box-header .box-title {
+    font-weight: 600;
+    font-size: 18px;
+    color: #2c3e50;
+}
+
+.box-body {
+    padding: 20px !important;
+}
+
+/* ============================================
+   GRÁFICO DE VENTAS
+   ============================================ */
+
+.nuevoGraficoVentas {
+    border-radius: 16px !important;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    margin-top: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.nuevoGraficoVentas .chart {
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+/* ============================================
+   BOTONES
+   ============================================ */
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 10px 20px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+}
+
+.btn-primary:active {
+    transform: translateY(0) !important;
+}
+
+/* ============================================
+   BREADCRUMB
+   ============================================ */
+
+.breadcrumb {
+    background: transparent !important;
+    padding: 0 !important;
+    margin-bottom: 20px !important;
+}
+
+.breadcrumb > li > a {
+    color: #667eea !important;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb > li > a:hover {
+    color: #764ba2 !important;
+}
+
+.breadcrumb > .active {
+    color: #7f8c8d !important;
+}
+
+/* ============================================
+   CONTENT HEADER
+   ============================================ */
+
+.content-header h1 {
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.content-header h1 small {
+    font-weight: 400;
+    color: #7f8c8d;
+    font-size: 18px;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .small-box {
+        margin-bottom: 15px;
+    }
+    
+    .small-box .icon > i {
+        font-size: 50px;
+    }
+    
+    .small-box .inner h3 {
+        font-size: 28px;
+    }
+}
+
+/* ============================================
+   ANIMACIONES SUAVES
+   ============================================ */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.small-box {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.small-box:nth-child(1) { animation-delay: 0.1s; }
+.small-box:nth-child(2) { animation-delay: 0.2s; }
+.small-box:nth-child(3) { animation-delay: 0.3s; }
+.small-box:nth-child(4) { animation-delay: 0.4s; }
