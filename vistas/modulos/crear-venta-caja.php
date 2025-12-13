@@ -45,36 +45,50 @@
 }
 
 /* Asegurar que el autocomplete de jQuery UI funcione correctamente */
-.crear-venta-caja .ui-autocomplete {
-    z-index: 9999 !important;
-    max-height: 300px;
-    overflow-y: auto;
-    overflow-x: hidden;
+.ui-autocomplete {
+    z-index: 99999 !important;
+    position: absolute !important;
+    max-height: 300px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
     background: #ffffff !important;
     border: 2px solid #667eea !important;
     border-radius: 8px !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
     padding: 5px 0 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
-.crear-venta-caja .ui-autocomplete .ui-menu-item {
+.ui-autocomplete .ui-menu-item {
     padding: 0 !important;
     margin: 0 !important;
+    list-style: none !important;
 }
 
-.crear-venta-caja .ui-autocomplete .ui-menu-item-wrapper {
+.ui-autocomplete .ui-menu-item-wrapper {
     padding: 12px 15px !important;
     border: none !important;
     border-bottom: 1px solid #e0e0e0 !important;
     color: #2c3e50 !important;
     transition: all 0.2s ease !important;
+    cursor: pointer !important;
+    display: block !important;
 }
 
-.crear-venta-caja .ui-autocomplete .ui-menu-item-wrapper:hover,
-.crear-venta-caja .ui-autocomplete .ui-menu-item-wrapper.ui-state-active {
+.ui-autocomplete .ui-menu-item-wrapper:hover,
+.ui-autocomplete .ui-menu-item-wrapper.ui-state-active {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     color: #ffffff !important;
     border-bottom-color: #667eea !important;
+}
+
+/* Asegurar que los contenedores no corten el autocomplete */
+.crear-venta-caja .box,
+.crear-venta-caja .box-body,
+.crear-venta-caja .input-group {
+    overflow: visible !important;
 }
 
 /* Mejorar la sección superior con inputs y selects */
