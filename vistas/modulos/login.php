@@ -64,13 +64,14 @@ body.login-page .login-box-body {
     background: transparent !important;
     padding: 0;
     position: relative;
-    transition: transform 0.3s ease;
+    transition: none;
     border: none;
-    box-shadow: none;
+    box-shadow: none !important;
+    filter: none;
 }
 
 .login-logo .logo-container:hover {
-    transform: translateY(-5px);
+    transform: none;
 }
 
 .login-logo .logo-img {
@@ -80,12 +81,14 @@ body.login-page .login-box-body {
     width: 100%;
     max-width: 400px;
     margin: 0 auto;
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
-    transition: filter 0.3s ease;
+    filter: none;
+    box-shadow: none;
+    transition: none;
 }
 
 .login-logo .logo-container:hover .logo-img {
-    filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.3));
+    filter: none;
+    box-shadow: none;
 }
 
 .login-box-body {
