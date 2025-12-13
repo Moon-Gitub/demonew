@@ -79,7 +79,7 @@
     gap: 15px;
 }
 
-/* Ocultar solo el texto "Buscar:" del label de DataTables, mantener el input visible */
+/* Ocultar completamente el texto "Buscar:" del label de DataTables, mantener solo el input visible */
 #tablaProductos_filter label {
     display: flex !important;
     align-items: center !important;
@@ -88,11 +88,31 @@
     padding: 0 !important;
     position: relative;
     flex: 0 0 auto;
+    font-size: 0 !important; /* Ocultar todo el texto del label */
+    line-height: 0 !important;
+    color: transparent !important;
 }
 
-/* Ocultar el texto "Buscar:" que viene por defecto de DataTables */
-#tablaProductos_filter label > span {
+/* Ocultar cualquier span o texto dentro del label */
+#tablaProductos_filter label > span,
+#tablaProductos_filter label:not(:has(input)) {
     display: none !important;
+    font-size: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Ocultar el texto "Buscar:" que DataTables inserta directamente en el label */
+#tablaProductos_filter label {
+    text-indent: -9999px;
+    overflow: hidden;
+}
+
+/* Restaurar el input a tamaño normal */
+#tablaProductos_filter label input {
+    font-size: 14px !important;
+    line-height: normal !important;
+    color: #333 !important;
+    text-indent: 0 !important;
 }
 
 /* Crear nuestro propio label "Buscar:" limpio y separado ANTES del contenedor */
