@@ -20,24 +20,106 @@
 }
 
 .productos-columnas-selector {
-    background: #f8f9fa;
-    padding: 15px 20px;
-    border-radius: 8px;
-    margin: 25px 0 20px 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    padding: 20px 25px;
+    border-radius: 12px;
+    margin: 30px 0 25px 0;
     border-left: 4px solid #667eea;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.productos-columnas-selector strong {
+    color: #2c3e50;
+    font-size: 15px;
+    font-weight: 600;
+    margin-right: 15px;
+    display: inline-block;
 }
 
 .productos-columnas-selector a {
     color: #667eea;
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.3s ease;
-    margin: 0 3px;
+    transition: all 0.3s ease;
+    margin: 0 5px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    display: inline-block;
+    position: relative;
 }
 
 .productos-columnas-selector a:hover {
-    color: #764ba2;
-    text-decoration: underline;
+    color: #ffffff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+    text-decoration: none;
+}
+
+.productos-columnas-selector a.active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+}
+
+.productos-columnas-selector .separator {
+    color: #d0d0d0;
+    margin: 0 3px;
+    font-weight: 300;
+}
+
+/* Estilos para el buscador de DataTables */
+#tablaProductos_filter {
+    margin: 30px 0 25px 0 !important;
+    text-align: left !important;
+    padding: 0 !important;
+}
+
+#tablaProductos_filter label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 15px;
+    margin: 0 !important;
+    position: relative;
+}
+
+#tablaProductos_filter label::before {
+    content: "\f002";
+    font-family: "FontAwesome";
+    color: #667eea;
+    font-size: 16px;
+    position: absolute;
+    left: 15px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+#tablaProductos_filter input {
+    border: 2px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+    padding: 12px 15px 12px 45px !important;
+    font-size: 14px !important;
+    transition: all 0.3s ease !important;
+    background: #ffffff !important;
+    width: 350px !important;
+    max-width: 100% !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+    position: relative;
+}
+
+#tablaProductos_filter input:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 4px 12px rgba(102, 126, 234, 0.15) !important;
+    outline: none !important;
+    transform: translateY(-1px);
+}
+
+#tablaProductos_filter input::placeholder {
+    color: #aaa !important;
+    font-style: italic;
 }
 
 .productos-table-container {
@@ -107,16 +189,26 @@
       </div>
       <div class="box-body">
         <div class="productos-columnas-selector">
-          <strong style="color: #2c3e50; margin-right: 10px;">Columnas:</strong>
-          <a class="toggle-vis" data-column="1">Categoría</a> | 
-          <a class="toggle-vis" data-column="2">Proveedor</a> | 
-          <a class="toggle-vis" data-column="3">Descripcion</a> | 
-          <a class="toggle-vis" data-column="4">STK</a> | 
-          <a class="toggle-vis" data-column="5">STK TOTAL</a> | 
-          <a class="toggle-vis" data-column="6">$ Compra</a> | 
-          <a class="toggle-vis" data-column="7">US$ Compra</a> | 
-          <a class="toggle-vis" data-column="8">IVA</a> | 
-          <a class="toggle-vis" data-column="9">$ Venta</a>
+          <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <strong>Columnas:</strong>
+            <a class="toggle-vis active" data-column="1">Categoría</a>
+            <span class="separator">|</span>
+            <a class="toggle-vis active" data-column="2">Proveedor</a>
+            <span class="separator">|</span>
+            <a class="toggle-vis active" data-column="3">Descripcion</a>
+            <span class="separator">|</span>
+            <a class="toggle-vis active" data-column="4">STK</a>
+            <span class="separator">|</span>
+            <a class="toggle-vis active" data-column="5">STK TOTAL</a>
+            <span class="separator">|</span>
+            <a class="toggle-vis active" data-column="6">$ Compra</a>
+            <span class="separator">|</span>
+            <a class="toggle-vis active" data-column="7">US$ Compra</a>
+            <span class="separator">|</span>
+            <a class="toggle-vis active" data-column="8">IVA</a>
+            <span class="separator">|</span>
+            <a class="toggle-vis active" data-column="9">$ Venta</a>
+          </div>
         </div>
         
         <input type="hidden" id="arrayProductosBorrarMultiple" name="arrayProductosBorrarMultiple"/>

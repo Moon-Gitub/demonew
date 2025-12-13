@@ -153,9 +153,18 @@ $('a.toggle-vis').on( 'click', function (e) {
 
       // Get the column API object
       var column = tablaProd.column( $(this).attr('data-column') );
+      var $link = $(this);
 
       // Toggle the visibility
-      column.visible( ! column.visible() );
+      var isVisible = column.visible();
+      column.visible( !isVisible );
+      
+      // Actualizar estado visual del link
+      if (!isVisible) {
+          $link.addClass('active');
+      } else {
+          $link.removeClass('active');
+      }
 });
 
 /*=============================================
