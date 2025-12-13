@@ -68,36 +68,30 @@
     font-weight: 300;
 }
 
-/* Estilos para el buscador de DataTables - Corregir lupita superpuesta */
+/* Estilos para el buscador de DataTables - Input visible, alineado y bonito */
 #tablaProductos_filter {
     margin: 30px 0 25px 0 !important;
     text-align: left !important;
     padding: 0 !important;
     position: relative;
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
-/* Ocultar COMPLETAMENTE el label por defecto de DataTables (evita duplicación) */
+/* Ocultar solo el texto "Buscar:" del label de DataTables, mantener el input */
 #tablaProductos_filter label {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    height: 0 !important;
-    width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
     margin: 0 !important;
     padding: 0 !important;
-    overflow: hidden !important;
-    position: absolute !important;
-    left: -9999px !important;
+    position: relative;
 }
 
-/* Ocultar también el span dentro del label */
+/* Ocultar el texto "Buscar:" que viene por defecto de DataTables */
 #tablaProductos_filter label > span {
     display: none !important;
-}
-
-/* Mantener el input visible pero sin el label */
-#tablaProductos_filter input {
-    display: inline-block !important;
 }
 
 /* Crear nuestro propio label "Buscar:" limpio y separado */
@@ -108,13 +102,13 @@
     font-weight: 600;
     font-size: 15px;
     display: inline-block;
-    margin-right: 15px;
+    margin-right: 0;
     white-space: nowrap;
     line-height: 1;
     vertical-align: middle;
 }
 
-/* Input con icono de lupa dentro */
+/* Input visible, alineado y bonito */
 #tablaProductos_filter input {
     border: 2px solid #e0e0e0 !important;
     border-radius: 8px !important;
@@ -128,16 +122,21 @@
     position: relative;
     margin-left: 0 !important;
     display: inline-block !important;
+    flex-shrink: 0;
 }
 
 /* Icono de lupa DENTRO del input, posicionado correctamente */
-#tablaProductos_filter::after {
+#tablaProductos_filter label {
+    position: relative;
+}
+
+#tablaProductos_filter label::after {
     content: "\f002";
     font-family: "FontAwesome";
     color: #667eea;
     font-size: 16px;
     position: absolute;
-    left: calc(70px + 15px); /* Posición después del "Buscar:" (70px) + gap (15px) */
+    left: 15px; /* Dentro del input, al inicio */
     top: 50%;
     transform: translateY(-50%);
     z-index: 2;
