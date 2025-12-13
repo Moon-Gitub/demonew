@@ -76,7 +76,7 @@
     position: relative;
 }
 
-/* Ocultar el label por defecto de DataTables y crear uno nuevo */
+/* Ocultar el label por defecto de DataTables */
 #tablaProductos_filter label {
     display: flex !important;
     align-items: center !important;
@@ -94,22 +94,16 @@
     display: none !important;
 }
 
-/* Crear nuestro propio label "Buscar:" separado */
-#tablaProductos_filter::before {
+/* Crear nuestro propio label "Buscar:" ANTES del input, separado */
+#tablaProductos_filter label::before {
     content: "Buscar:";
     font-family: inherit;
     color: #2c3e50;
     font-weight: 600;
     font-size: 15px;
     display: inline-block;
-    margin-right: 15px;
-    vertical-align: middle;
-}
-
-/* Contenedor para el input con posición relativa */
-#tablaProductos_filter label {
-    position: relative;
-    display: inline-flex !important;
+    margin-right: 0;
+    white-space: nowrap;
 }
 
 /* Input con icono de lupa dentro */
@@ -127,19 +121,18 @@
     margin-left: 0 !important;
 }
 
-/* Icono de lupa DENTRO del input, no superpuesto */
+/* Icono de lupa DENTRO del input, posicionado correctamente */
 #tablaProductos_filter label::after {
     content: "\f002";
     font-family: "FontAwesome";
     color: #667eea;
     font-size: 16px;
     position: absolute;
-    left: 15px;
+    left: calc(15px + 70px); /* 70px para el texto "Buscar:" + gap */
     top: 50%;
     transform: translateY(-50%);
     z-index: 2;
     pointer-events: none;
-    display: block;
 }
 
 #tablaProductos_filter input:focus {
@@ -207,7 +200,12 @@
     }
     
     #tablaProductos_filter label::before {
-        margin-bottom: 5px;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    #tablaProductos_filter label::after {
+        left: 15px !important; /* En mobile, el icono va al inicio del input */
     }
     
     #tablaProductos_filter input {
