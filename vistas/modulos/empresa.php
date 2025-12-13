@@ -8,6 +8,190 @@ if($_SESSION["perfil"] == "Vendedor"){
 }
 
 ?>
+<style>
+/* ============================================
+   ESTILOS MODERNOS PARA PÁGINA EMPRESA
+   Solo cambios visuales - Sin tocar funcionalidad
+   ============================================ */
+
+/* Mejorar estilos de checkboxes - Sin romper funcionalidad */
+.chkTiposCbtes {
+    width: 18px !important;
+    height: 18px !important;
+    margin-right: 8px !important;
+    cursor: pointer !important;
+    accent-color: #667eea !important;
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+}
+
+.chkTiposCbtes:hover {
+    transform: scale(1.15);
+    filter: brightness(1.1);
+}
+
+.chkTiposCbtes:checked {
+    filter: brightness(1.2);
+}
+
+/* Mejorar estilos de radio buttons - Sin romper funcionalidad */
+input[type="radio"] {
+    width: 18px !important;
+    height: 18px !important;
+    cursor: pointer !important;
+    accent-color: #667eea !important;
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+}
+
+input[type="radio"]:hover {
+    transform: scale(1.15);
+    filter: brightness(1.1);
+}
+
+input[type="radio"]:checked {
+    filter: brightness(1.2);
+}
+
+/* Mejorar estilos de labels de control */
+.control-label {
+    color: #2c3e50 !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    margin-bottom: 10px !important;
+    display: block;
+}
+
+/* Mejorar estilos de paneles para subida de archivos */
+.panel {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: #ffffff !important;
+    padding: 12px 15px !important;
+    border-radius: 8px !important;
+    margin-bottom: 15px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.2) !important;
+    border: none !important;
+}
+
+/* Mejorar estilos de help-block */
+.help-block {
+    color: #7f8c8d !important;
+    font-size: 12px !important;
+    margin-top: 8px !important;
+    font-style: italic;
+}
+
+/* Mejorar estilos de imágenes thumbnail */
+.img-thumbnail {
+    border-radius: 8px !important;
+    border: 2px solid #e0e0e0 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.img-thumbnail:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    transform: translateY(-2px);
+}
+
+/* Mejorar estilos de separadores HR */
+hr {
+    border: none !important;
+    height: 2px !important;
+    background: linear-gradient(90deg, transparent, #667eea, transparent) !important;
+    margin: 25px 0 !important;
+}
+
+/* Mejorar estilos de títulos de sección */
+p > b {
+    color: #2c3e50 !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    margin-bottom: 15px !important;
+    display: block;
+}
+
+/* Mejorar estilos de inputs readonly */
+input[readonly] {
+    background-color: #f8f9fa !important;
+    cursor: not-allowed !important;
+    opacity: 0.8;
+}
+
+/* Mejorar estilos de inputs file */
+input[type="file"] {
+    padding: 10px !important;
+    border: 2px dashed #e0e0e0 !important;
+    border-radius: 8px !important;
+    background: #f8f9fa !important;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    width: 100%;
+}
+
+input[type="file"]:hover:not(:disabled) {
+    border-color: #667eea !important;
+    background: #f0f4ff !important;
+}
+
+input[type="file"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Mejorar espaciado de form-groups */
+.form-group {
+    margin-bottom: 20px !important;
+}
+
+/* Mejorar estilos de box-footer */
+.box-footer {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
+    border-top: 2px solid #e0e0e0 !important;
+    padding: 20px !important;
+    border-radius: 0 0 16px 16px !important;
+}
+
+/* Mejorar estilos de botón Guardar */
+.box-footer .btn-primary {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+.box-footer .btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4) !important;
+}
+
+/* Mejorar estilos de input-group cuando tiene radio dentro */
+.input-group-addon input[type="radio"] {
+    margin: 0 !important;
+}
+
+/* Mejorar estilos de inputs dentro de input-group con radio */
+.input-group .form-control[readonly] {
+    border-left: none !important;
+}
+
+/* Responsive para mobile */
+@media (max-width: 768px) {
+    .panel {
+        font-size: 12px !important;
+        padding: 10px 12px !important;
+    }
+    
+    .control-label {
+        font-size: 13px !important;
+    }
+    
+    p > b {
+        font-size: 14px !important;
+    }
+}
+</style>
 <div class="content-wrapper">
   <section class="content-header">
     <h1>
