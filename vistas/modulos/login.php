@@ -1,7 +1,7 @@
 <style>
 /* ============================================
    DISEÑO MODERNO Y VISUAL DE LOGIN - POS MOON
-   Fondo igual al logo: #5F738E
+   Fondo y botón: #52658d
    ============================================ */
 
 * {
@@ -9,7 +9,7 @@
 }
 
 body.login-page {
-    background: #5F738E !important;
+    background: #52658d !important;
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -109,7 +109,7 @@ body.login-page .login-box-body {
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #5F738E 0%, #52658d 50%, #5F738E 100%);
+    background: linear-gradient(90deg, #52658d 0%, #52658d 50%, #52658d 100%);
     background-size: 200% 100%;
     animation: shimmer 3s linear infinite;
 }
@@ -137,7 +137,7 @@ body.login-page .login-box-body {
     transform: translateX(-50%);
     width: 60px;
     height: 3px;
-    background: linear-gradient(90deg, #5F738E, #52658d);
+    background: #52658d;
     border-radius: 2px;
 }
 
@@ -160,11 +160,11 @@ body.login-page .login-box-body {
 }
 
 .form-control:focus {
-    border-color: #5F738E;
+    border-color: #52658d;
     background-color: #ffffff;
     box-shadow: 
-        0 0 0 4px rgba(95, 115, 142, 0.1),
-        0 4px 12px rgba(95, 115, 142, 0.15);
+        0 0 0 4px rgba(82, 101, 141, 0.1),
+        0 4px 12px rgba(82, 101, 141, 0.15);
     outline: none;
     transform: translateY(-2px);
 }
@@ -181,7 +181,7 @@ body.login-page .login-box-body {
 
 .form-control-feedback {
     left: 18px;
-    color: #5F738E;
+    color: #52658d;
     font-size: 20px;
     line-height: 55px;
     transition: all 0.3s ease;
@@ -189,7 +189,7 @@ body.login-page .login-box-body {
 }
 
 .form-group:focus-within .form-control-feedback {
-    color: #5F738E;
+    color: #52658d;
     transform: scale(1.15);
 }
 
@@ -202,8 +202,8 @@ body.login-page .login-box-body {
 }
 
 .btn-login {
-    background: #5F738E !important;
-    border: 2px solid #5F738E !important;
+    background: #52658d !important;
+    border: 2px solid #52658d !important;
     border-radius: 15px;
     height: 55px;
     font-size: 17px;
@@ -213,7 +213,7 @@ body.login-page .login-box-body {
     letter-spacing: 1.5px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 
-        0 6px 20px rgba(95, 115, 142, 0.4),
+        0 6px 20px rgba(82, 101, 141, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
     position: relative;
     overflow: hidden;
@@ -238,10 +238,10 @@ body.login-page .login-box-body {
 .btn-login:hover {
     transform: translateY(-3px);
     box-shadow: 
-        0 10px 30px rgba(95, 115, 142, 0.6),
+        0 10px 30px rgba(82, 101, 141, 0.6),
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    background: #5F738E !important;
-    border-color: #5F738E !important;
+    background: #52658d !important;
+    border-color: #52658d !important;
     opacity: 0.9;
 }
 
