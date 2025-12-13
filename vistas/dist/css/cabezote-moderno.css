@@ -1,0 +1,523 @@
+/* ============================================
+   ESTILOS MODERNOS PARA EL CABEZOTE
+   Solo cambios visuales - Sin tocar funcionalidad
+   Mantiene Bootstrap y AdminLTE originales
+   ============================================ */
+
+/* ============================================
+   MAIN HEADER (Cabezote Principal)
+   ============================================ */
+
+.main-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3) !important;
+    border-bottom: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.main-header .logo {
+    background: rgba(0, 0, 0, 0.1) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.3s ease !important;
+    padding: 0 15px !important;
+}
+
+.main-header .logo:hover {
+    background: rgba(0, 0, 0, 0.15) !important;
+}
+
+.main-header .logo .logo-mini,
+.main-header .logo .logo-lg {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+}
+
+.main-header .logo:hover .logo-mini,
+.main-header .logo:hover .logo-lg {
+    transform: scale(1.05);
+}
+
+/* ============================================
+   NAVBAR (Barra de Navegación)
+   ============================================ */
+
+.navbar {
+    background: transparent !important;
+    border: none !important;
+    margin-bottom: 0 !important;
+}
+
+.navbar-nav > li > a {
+    color: rgba(255, 255, 255, 0.9) !important;
+    transition: all 0.3s ease !important;
+    padding: 15px 12px !important;
+    border-radius: 8px !important;
+    margin: 0 3px !important;
+}
+
+.navbar-nav > li > a:hover,
+.navbar-nav > li > a:focus {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+}
+
+.navbar-nav > .open > a,
+.navbar-nav > .open > a:hover,
+.navbar-nav > .open > a:focus {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+}
+
+/* ============================================
+   DROPDOWN MENUS
+   ============================================ */
+
+.navbar-nav > .dropdown > .dropdown-menu {
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+    border: none !important;
+    margin-top: 5px !important;
+    padding: 10px 0 !important;
+    background: #ffffff !important;
+}
+
+.navbar-nav > .dropdown > .dropdown-menu > li > a {
+    color: #2c3e50 !important;
+    padding: 10px 20px !important;
+    transition: all 0.2s ease !important;
+}
+
+.navbar-nav > .dropdown > .dropdown-menu > li > a:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: #ffffff !important;
+    padding-left: 25px !important;
+}
+
+.navbar-nav > .dropdown > .dropdown-menu > li.divider {
+    background-color: #f0f0f0 !important;
+    margin: 5px 0 !important;
+}
+
+/* ============================================
+   USER MENU (Menú de Usuario)
+   ============================================ */
+
+.navbar-nav > .user-menu > .dropdown-toggle {
+    border-radius: 8px !important;
+    padding: 8px 12px !important;
+}
+
+.navbar-nav > .user-menu > .dropdown-toggle > img {
+    border-radius: 50% !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+.navbar-nav > .user-menu > .dropdown-toggle:hover > img {
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    transform: scale(1.05);
+}
+
+.navbar-nav > .user-menu > .dropdown-toggle > .hidden-xs {
+    margin-left: 8px !important;
+    font-weight: 500 !important;
+}
+
+/* ============================================
+   NOTIFICACIONES Y TAREAS
+   ============================================ */
+
+.navbar-nav > .notifications-menu > .dropdown-toggle,
+.navbar-nav > .tasks-menu > .dropdown-toggle,
+.navbar-nav > .messages-menu > .dropdown-toggle {
+    border-radius: 8px !important;
+    padding: 10px 12px !important;
+    position: relative !important;
+}
+
+.navbar-nav > .notifications-menu > .dropdown-toggle .label,
+.navbar-nav > .tasks-menu > .dropdown-toggle .label,
+.navbar-nav > .messages-menu > .dropdown-toggle .label {
+    border-radius: 50% !important;
+    padding: 4px 6px !important;
+    font-size: 10px !important;
+    min-width: 18px !important;
+    height: 18px !important;
+    line-height: 10px !important;
+    position: absolute !important;
+    top: 5px !important;
+    right: 5px !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+}
+
+.navbar-nav > .notifications-menu > .dropdown-toggle:hover,
+.navbar-nav > .tasks-menu > .dropdown-toggle:hover,
+.navbar-nav > .messages-menu > .dropdown-toggle:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* ============================================
+   SIDEBAR TOGGLE
+   ============================================ */
+
+.sidebar-toggle {
+    border-radius: 8px !important;
+    margin: 8px 10px !important;
+    padding: 10px 12px !important;
+    transition: all 0.3s ease !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: none !important;
+}
+
+.sidebar-toggle:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    transform: scale(1.05);
+}
+
+.sidebar-toggle .icon-bar {
+    background-color: #ffffff !important;
+    transition: all 0.3s ease !important;
+}
+
+.sidebar-toggle:hover .icon-bar {
+    background-color: #ffffff !important;
+}
+
+/* ============================================
+   SIDEBAR (Menú Lateral)
+   ============================================ */
+
+.main-sidebar {
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%) !important;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+.sidebar-menu > li > a {
+    border-radius: 8px !important;
+    margin: 3px 10px !important;
+    padding: 12px 15px !important;
+    transition: all 0.3s ease !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.sidebar-menu > li > a:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    padding-left: 20px !important;
+}
+
+.sidebar-menu > li.active > a {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
+}
+
+.sidebar-menu > li.active > a:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+}
+
+.sidebar-menu li > a > .fa,
+.sidebar-menu li > a > .glyphicon,
+.sidebar-menu li > a > .ion {
+    width: 20px !important;
+    margin-right: 10px !important;
+    transition: all 0.3s ease !important;
+}
+
+.sidebar-menu > li.active > a > .fa,
+.sidebar-menu > li.active > a > .glyphicon,
+.sidebar-menu > li.active > a > .ion {
+    transform: scale(1.1);
+}
+
+/* Treeview (Submenús) */
+.sidebar-menu .treeview-menu {
+    background: rgba(0, 0, 0, 0.1) !important;
+    border-radius: 8px !important;
+    margin: 5px 10px !important;
+    padding: 5px 0 !important;
+}
+
+.sidebar-menu .treeview-menu > li > a {
+    padding: 8px 15px 8px 45px !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    border-radius: 6px !important;
+    margin: 2px 5px !important;
+}
+
+.sidebar-menu .treeview-menu > li > a:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    padding-left: 50px !important;
+}
+
+.sidebar-menu .treeview-menu > li.active > a {
+    background: rgba(102, 126, 234, 0.3) !important;
+    color: #ffffff !important;
+}
+
+/* ============================================
+   USER PANEL (Panel de Usuario en Sidebar)
+   ============================================ */
+
+.user-panel {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 15px !important;
+}
+
+.user-panel > .image > img {
+    border-radius: 50% !important;
+    border: 3px solid rgba(255, 255, 255, 0.2) !important;
+    transition: all 0.3s ease !important;
+}
+
+.user-panel > .image > img:hover {
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    transform: scale(1.05);
+}
+
+.user-panel > .info {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.user-panel > .info > a {
+    color: #ffffff !important;
+    font-weight: 500 !important;
+    transition: color 0.3s ease !important;
+}
+
+.user-panel > .info > a:hover {
+    color: #667eea !important;
+}
+
+/* ============================================
+   SIDEBAR FORM (Búsqueda en Sidebar)
+   ============================================ */
+
+.sidebar-form {
+    border-radius: 8px !important;
+    margin: 10px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: rgba(0, 0, 0, 0.1) !important;
+}
+
+.sidebar-form input[type="text"],
+.sidebar-form .btn {
+    border-radius: 8px !important;
+    border: none !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.sidebar-form input[type="text"]:focus {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+}
+
+.sidebar-form .btn:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+}
+
+/* ============================================
+   CONTENT WRAPPER
+   ============================================ */
+
+.content-wrapper {
+    background: #f4f6f9 !important;
+    min-height: 100vh !important;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .main-header .logo {
+        width: 100% !important;
+        text-align: center !important;
+    }
+    
+    .navbar-nav > li > a {
+        padding: 12px 10px !important;
+    }
+    
+    .sidebar-menu > li > a {
+        margin: 2px 5px !important;
+        padding: 10px 12px !important;
+    }
+}
+
+/* ============================================
+   ANIMACIONES SUAVES
+   ============================================ */
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.navbar-nav > .dropdown > .dropdown-menu {
+    animation: slideInDown 0.3s ease-out;
+}
+
+/* ============================================
+   BADGES Y LABELS EN SIDEBAR
+   ============================================ */
+
+.sidebar-menu .label,
+.sidebar-menu .badge {
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    padding: 4px 8px !important;
+}
+
+.sidebar-menu > li.active > a > .pull-right-container > .label,
+.sidebar-menu > li.active > a > .pull-right-container > .badge {
+    background: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+}
+
+/* ============================================
+   HEADER DROPDOWN ITEMS
+   ============================================ */
+
+.dropdown-menu > li > a {
+    transition: all 0.2s ease !important;
+}
+
+.dropdown-menu > li > a > .glyphicon,
+.dropdown-menu > li > a > .fa,
+.dropdown-menu > li > a > .ion {
+    margin-right: 10px !important;
+    width: 20px !important;
+}
+
+/* ============================================
+   MESSAGES MENU
+   ============================================ */
+
+.messages-menu .dropdown-menu > li.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: #ffffff !important;
+    border-radius: 12px 12px 0 0 !important;
+    padding: 15px !important;
+    font-weight: 600 !important;
+}
+
+.messages-menu .dropdown-menu > li.footer > a {
+    background: #f8f9fa !important;
+    color: #667eea !important;
+    border-radius: 0 0 12px 12px !important;
+    padding: 12px !important;
+    text-align: center !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.messages-menu .dropdown-menu > li.footer > a:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: #ffffff !important;
+}
+
+/* ============================================
+   NOTIFICATIONS MENU
+   ============================================ */
+
+.notifications-menu .dropdown-menu > li.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: #ffffff !important;
+    border-radius: 12px 12px 0 0 !important;
+    padding: 15px !important;
+    font-weight: 600 !important;
+}
+
+.notifications-menu .dropdown-menu > li.footer > a {
+    background: #f8f9fa !important;
+    color: #667eea !important;
+    border-radius: 0 0 12px 12px !important;
+    padding: 12px !important;
+    text-align: center !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.notifications-menu .dropdown-menu > li.footer > a:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: #ffffff !important;
+}
+
+/* ============================================
+   TASKS MENU
+   ============================================ */
+
+.tasks-menu .dropdown-menu > li.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: #ffffff !important;
+    border-radius: 12px 12px 0 0 !important;
+    padding: 15px !important;
+    font-weight: 600 !important;
+}
+
+.tasks-menu .dropdown-menu > li.footer > a {
+    background: #f8f9fa !important;
+    color: #667eea !important;
+    border-radius: 0 0 12px 12px !important;
+    padding: 12px !important;
+    text-align: center !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.tasks-menu .dropdown-menu > li.footer > a:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: #ffffff !important;
+}
+
+/* ============================================
+   USER MENU DROPDOWN
+   ============================================ */
+
+.user-menu .dropdown-menu {
+    border-radius: 12px !important;
+    padding: 10px 0 !important;
+    min-width: 200px !important;
+}
+
+.user-menu .dropdown-menu > li.user-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    padding: 20px !important;
+    text-align: center !important;
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.user-menu .dropdown-menu > li.user-header > img {
+    border: 3px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 50% !important;
+    width: 80px !important;
+    height: 80px !important;
+}
+
+.user-menu .dropdown-menu > li.user-header > p {
+    color: #ffffff !important;
+    margin-top: 10px !important;
+    font-weight: 500 !important;
+}
+
+.user-menu .dropdown-menu > li.user-footer {
+    background: #f8f9fa !important;
+    padding: 10px !important;
+    border-radius: 0 0 12px 12px !important;
+}
+
+.user-menu .dropdown-menu > li.user-footer > .btn {
+    border-radius: 8px !important;
+    margin: 0 5px !important;
+}

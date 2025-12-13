@@ -51,6 +51,9 @@
 
     <!-- Estilos modernos globales para todo el sistema -->
     <link rel="stylesheet" href="vistas/dist/css/sistema-moderno.css">
+    
+    <!-- Estilos modernos para el cabezote -->
+    <link rel="stylesheet" href="vistas/dist/css/cabezote-moderno.css">
 
      <!-- DataTables -->
     <link rel="stylesheet" href="vistas/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
