@@ -205,6 +205,25 @@
     font-size: 14px !important;
 }
 
+/* SELECTS MÁS ALTOS - Mejor visibilidad */
+select.form-control,
+.form-control select,
+select {
+    min-height: 42px !important;
+    height: 42px !important;
+    padding: 12px 15px !important;
+    line-height: 1.5 !important;
+    font-size: 14px !important;
+}
+
+/* Selects dentro de input-group también más altos */
+.input-group select.form-control,
+.input-group .form-control select {
+    min-height: 42px !important;
+    height: 42px !important;
+    padding: 12px 15px !important;
+}
+
 .form-control:focus {
     border-color: #667eea !important;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
