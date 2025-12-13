@@ -68,35 +68,51 @@
     font-weight: 300;
 }
 
-/* Estilos para el buscador de DataTables */
+/* Estilos para el buscador de DataTables - Corregir lupita superpuesta */
 #tablaProductos_filter {
     margin: 30px 0 25px 0 !important;
     text-align: left !important;
     padding: 0 !important;
+    position: relative;
 }
 
+/* Ocultar el label por defecto de DataTables y crear uno nuevo */
 #tablaProductos_filter label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
     font-weight: 600;
     color: #2c3e50;
     font-size: 15px;
     margin: 0 !important;
+    flex-wrap: wrap;
     position: relative;
 }
 
-#tablaProductos_filter label::before {
-    content: "\f002";
-    font-family: "FontAwesome";
-    color: #667eea;
-    font-size: 16px;
-    position: absolute;
-    left: 15px;
-    z-index: 2;
-    pointer-events: none;
+/* Ocultar el texto "Buscar:" que viene por defecto de DataTables */
+#tablaProductos_filter label > span {
+    display: none !important;
 }
 
+/* Crear nuestro propio label "Buscar:" separado */
+#tablaProductos_filter::before {
+    content: "Buscar:";
+    font-family: inherit;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 15px;
+    display: inline-block;
+    margin-right: 15px;
+    vertical-align: middle;
+}
+
+/* Contenedor para el input con posición relativa */
+#tablaProductos_filter label {
+    position: relative;
+    display: inline-flex !important;
+}
+
+/* Input con icono de lupa dentro */
 #tablaProductos_filter input {
     border: 2px solid #e0e0e0 !important;
     border-radius: 8px !important;
@@ -108,6 +124,22 @@
     max-width: 100% !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
     position: relative;
+    margin-left: 0 !important;
+}
+
+/* Icono de lupa DENTRO del input, no superpuesto */
+#tablaProductos_filter label::after {
+    content: "\f002";
+    font-family: "FontAwesome";
+    color: #667eea;
+    font-size: 16px;
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    pointer-events: none;
+    display: block;
 }
 
 #tablaProductos_filter input:focus {
@@ -126,6 +158,7 @@
     margin-top: 20px;
 }
 
+/* Estilos para mobile - Responsive */
 @media (max-width: 768px) {
     .productos-header-buttons {
         flex-direction: column;
@@ -134,6 +167,62 @@
     
     .productos-header-buttons .btn {
         width: 100%;
+    }
+    
+    .productos-columnas-selector {
+        padding: 15px !important;
+        margin: 20px 0 15px 0 !important;
+    }
+    
+    .productos-columnas-selector > div {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 10px !important;
+    }
+    
+    .productos-columnas-selector strong {
+        margin-bottom: 8px;
+        display: block;
+        width: 100%;
+    }
+    
+    .productos-columnas-selector a {
+        margin: 4px 0 !important;
+        display: inline-block;
+    }
+    
+    .productos-columnas-selector .separator {
+        display: none;
+    }
+    
+    /* Buscador en mobile */
+    #tablaProductos_filter {
+        margin: 20px 0 15px 0 !important;
+    }
+    
+    #tablaProductos_filter label {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 10px !important;
+    }
+    
+    #tablaProductos_filter label::before {
+        margin-bottom: 5px;
+    }
+    
+    #tablaProductos_filter input {
+        width: 100% !important;
+        padding: 12px 15px 12px 45px !important;
+    }
+    
+    /* Contenedor de tabla en mobile */
+    .productos-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .productos-table-container table {
+        min-width: 800px;
     }
 }
 </style>
