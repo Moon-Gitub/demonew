@@ -4,8 +4,239 @@
   $arrListasPrecio = $objParametros->getListasPrecio();
   $btnPadronAfip = (isset($arrayEmpresa["ws_padron"])) ? '' : 'disabled';
 ?>
+<style>
+/* ============================================
+   ESTILOS MODERNOS PARA CREAR VENTA CAJA
+   Solo cambios visuales - Sin tocar funcionalidad
+   Responsive y mejorado
+   ============================================ */
 
-<div class="content-wrapper">
+/* Mejorar tablas del formulario */
+.crear-venta-caja .table {
+    border: none !important;
+    margin-bottom: 15px;
+}
+
+.crear-venta-caja .table td,
+.crear-venta-caja .table th {
+    border: none !important;
+    padding: 12px 8px !important;
+    vertical-align: middle;
+}
+
+/* Mejorar input-group-addon */
+.crear-venta-caja .input-group-addon {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border: 2px solid #e0e0e0 !important;
+    border-right: none !important;
+    color: #2c3e50 !important;
+    font-weight: 600 !important;
+    padding: 12px 15px !important;
+    border-radius: 8px 0 0 8px !important;
+}
+
+.crear-venta-caja .input-group .form-control {
+    border-left: none !important;
+    border-radius: 0 8px 8px 0 !important;
+}
+
+.crear-venta-caja .input-group .form-control:focus {
+    border-left: none !important;
+}
+
+/* Mejorar inputs y selects */
+.crear-venta-caja .form-control.input-sm {
+    padding: 12px 15px !important;
+    font-size: 14px !important;
+    height: auto !important;
+    min-height: 42px !important;
+}
+
+.crear-venta-caja select.form-control.input-sm {
+    min-height: 42px !important;
+    height: 42px !important;
+    padding: 12px 15px !important;
+}
+
+/* Mejorar botones */
+.crear-venta-caja .btn {
+    border-radius: 8px !important;
+    padding: 10px 20px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+}
+
+.crear-venta-caja .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+}
+
+.crear-venta-caja .btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4) !important;
+}
+
+.crear-venta-caja .btn-default {
+    background: #ffffff !important;
+    border: 2px solid #e0e0e0 !important;
+    color: #2c3e50 !important;
+}
+
+.crear-venta-caja .btn-default:hover {
+    background: #f8f9fa !important;
+    border-color: #667eea !important;
+    color: #667eea !important;
+}
+
+/* Mejorar labels y headers */
+.crear-venta-caja .control-label {
+    color: #2c3e50 !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    margin-bottom: 8px !important;
+}
+
+.crear-venta-caja center {
+    color: #2c3e50 !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+}
+
+/* Mejorar separadores HR */
+.crear-venta-caja hr {
+    border: none !important;
+    height: 2px !important;
+    background: linear-gradient(90deg, transparent, #667eea, transparent) !important;
+    margin: 20px 0 !important;
+}
+
+/* Mejorar el input de total grande */
+.crear-venta-caja #nuevoPrecioNetoCajaForm {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
+    border: 3px solid #667eea !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15) !important;
+    font-weight: 700 !important;
+    color: #2c3e50 !important;
+}
+
+/* Mejorar box-footer */
+.crear-venta-caja .box-footer {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
+    border-top: 2px solid #e0e0e0 !important;
+    padding: 20px !important;
+    border-radius: 0 0 16px 16px !important;
+}
+
+/* Mejorar área de productos */
+.crear-venta-caja #nuevoProductoCaja {
+    min-height: 200px;
+    max-height: 400px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #e0e0e0;
+}
+
+.crear-venta-caja #nuevoProductoCaja:empty::before {
+    content: "Los productos agregados aparecerán aquí";
+    color: #95a5a6;
+    font-style: italic;
+    display: block;
+    text-align: center;
+    padding: 50px 20px;
+}
+
+/* Responsive - Mobile */
+@media (max-width: 991px) {
+    .crear-venta-caja .col-lg-7,
+    .crear-venta-caja .col-lg-5 {
+        width: 100% !important;
+        margin-bottom: 20px;
+    }
+    
+    .crear-venta-caja .table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .crear-venta-caja .table td,
+    .crear-venta-caja .table th {
+        white-space: nowrap;
+        min-width: 120px;
+    }
+    
+    .crear-venta-caja .input-group {
+        margin-bottom: 10px;
+    }
+    
+    .crear-venta-caja .col-md-3,
+    .crear-venta-caja .col-md-9 {
+        width: 100% !important;
+        margin-bottom: 10px;
+    }
+    
+    .crear-venta-caja #nuevoPrecioNetoCajaForm {
+        font-size: 36px !important;
+    }
+}
+
+/* Responsive - Tablet */
+@media (min-width: 768px) and (max-width: 991px) {
+    .crear-venta-caja .col-lg-7 {
+        width: 100% !important;
+    }
+    
+    .crear-venta-caja .col-lg-5 {
+        width: 100% !important;
+    }
+}
+
+/* Mejorar modales */
+.crear-venta-caja .modal-content {
+    border-radius: 16px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+    border: none !important;
+}
+
+.crear-venta-caja .modal-header {
+    border-radius: 16px 16px 0 0 !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border-bottom: none !important;
+    padding: 20px !important;
+}
+
+.crear-venta-caja .modal-footer {
+    border-top: 2px solid #e0e0e0 !important;
+    padding: 20px !important;
+    border-radius: 0 0 16px 16px !important;
+}
+
+/* Mejorar inputs readonly */
+.crear-venta-caja input[readonly] {
+    background-color: #f8f9fa !important;
+    cursor: default !important;
+}
+
+/* Mejorar espaciado general */
+.crear-venta-caja .box-body {
+    padding: 20px !important;
+}
+
+.crear-venta-caja .form-group {
+    margin-bottom: 15px !important;
+}
+
+/* Mejorar el botón de cobrar */
+.crear-venta-caja #btnGuardarVentaCaja {
+    font-size: 18px !important;
+    padding: 15px 40px !important;
+    min-width: 200px;
+}
+</style>
+<div class="content-wrapper crear-venta-caja">
   <section class="content">
     <div class="row">
 
