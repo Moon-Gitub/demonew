@@ -8,10 +8,11 @@ Este documento describe el proceso paso a paso para clonar y actualizar el repos
 
 1. [Requisitos Previos](#requisitos-previos)
 2. [Primera Vez: Clonar el Repositorio](#primera-vez-clonar-el-repositorio)
-3. [Actualizar Cambios Existentes](#actualizar-cambios-existentes)
-4. [Configuración de SSH (Opcional pero Recomendado)](#configuración-de-ssh-opcional-pero-recomendado)
-5. [Comandos Rápidos de Referencia](#comandos-rápidos-de-referencia)
-6. [Solución de Problemas Comunes](#solución-de-problemas-comunes)
+3. [🔄 Clonar y Reemplazar Todo el Contenido](#clonar-y-reemplazar-todo-el-contenido) ⭐ **RECOMENDADO**
+4. [Actualizar Cambios Existentes](#actualizar-cambios-existentes)
+5. [Configuración de SSH (Opcional pero Recomendado)](#configuración-de-ssh-opcional-pero-recomendado)
+6. [Comandos Rápidos de Referencia](#comandos-rápidos-de-referencia)
+7. [Solución de Problemas Comunes](#solución-de-problemas-comunes)
 
 ---
 
@@ -38,14 +39,24 @@ Si no está instalado, instálalo según tu sistema:
 
 ## 🚀 Primera Vez: Clonar el Repositorio
 
-### Paso 1: Conectarse al Servidor
+### ⚠️ IMPORTANTE: Antes de Continuar
+
+**Si ya tienes archivos en `public_html` y quieres reemplazarlos completamente con el contenido de GitHub**, sigue la sección **[Clonar y Reemplazar Todo el Contenido](#clonar-y-reemplazar-todo-el-contenido)** más abajo.
+
+Si es la primera vez o quieres mantener los archivos existentes, continúa con los pasos siguientes.
+
+---
+
+### Opción 1: Clonar en Directorio Vacío o Nuevo
+
+#### Paso 1: Conectarse al Servidor
 
 ```bash
 ssh usuario@servidor.com
 # Ejemplo: ssh usuario@hostinger.com
 ```
 
-### Paso 2: Navegar al Directorio de la Aplicación
+#### Paso 2: Navegar al Directorio de la Aplicación
 
 ```bash
 # Ir al directorio donde está la aplicación (o donde quieres clonarla)
@@ -55,9 +66,9 @@ cd /home/usuario/public_html
 # cd /var/www/html
 ```
 
-### Paso 3: Clonar el Repositorio
+#### Paso 3: Clonar el Repositorio
 
-#### Opción A: Usando HTTPS (Requiere credenciales)
+**Opción A: Usando HTTPS (Requiere credenciales)**
 
 ```bash
 git clone https://github.com/Moon-Gitub/demonew.git .
@@ -71,10 +82,262 @@ git clone https://github.com/Moon-Gitub/demonew.git demonew
 cd demonew
 ```
 
-#### Opción B: Usando SSH (Recomendado - más seguro)
+**Opción B: Usando SSH (Recomendado - más seguro)**
 
 ```bash
 git clone git@github.com:Moon-Gitub/demonew.git .
+```
+
+---
+
+## 🔄 Clonar y Reemplazar Todo el Contenido
+
+### ⚠️ ADVERTENCIA CRÍTICA
+
+**Este proceso eliminará TODOS los archivos existentes en `public_html` y los reemplazará con el contenido de GitHub.**
+
+**Antes de continuar:**
+- ✅ Haz backup de tu base de datos
+- ✅ Haz backup de archivos importantes (`.env`, configuraciones personalizadas, imágenes subidas, etc.)
+- ✅ Guarda cualquier archivo que hayas modificado manualmente
+- ✅ Verifica que tienes acceso a GitHub
+
+### Paso 1: Conectarse al Servidor
+
+```bash
+ssh usuario@servidor.com
+# Ejemplo: ssh usuario@hostinger.com
+```
+
+### Paso 2: Navegar a public_html
+
+```bash
+cd /home/usuario/public_html
+# O según tu hosting:
+# cd /home/usuario/domains/tudominio.com/public_html
+```
+
+### Paso 3: Hacer Backup de Archivos Importantes (Opcional pero Recomendado)
+
+```bash
+# Crear carpeta de backup
+mkdir -p ~/backup_public_html_$(date +%Y%m%d_%H%M%S)
+
+# Copiar archivos importantes antes de reemplazar
+# Ejemplo: copiar .env si existe
+if [ -f .env ]; then
+    cp .env ~/backup_public_html_$(date +%Y%m%d_%H%M%S)/
+    echo "✓ Backup de .env creado"
+fi
+
+# Copiar carpeta de uploads si existe
+if [ -d "vistas/img/usuarios" ]; then
+    cp -r vistas/img/usuarios ~/backup_public_html_$(date +%Y%m%d_%H%M%S)/
+    echo "✓ Backup de imágenes creado"
+fi
+
+# Ver qué archivos/carpetas importantes tienes
+ls -la
+```
+
+### Paso 4: Eliminar Todo el Contenido Actual
+
+```bash
+# Ver qué hay actualmente (para referencia)
+ls -la
+
+# Eliminar TODO excepto archivos ocultos importantes
+# Opción 1: Eliminar todo excepto .htaccess y .env (si existen)
+find . -maxdepth 1 ! -name '.' ! -name '..' ! -name '.htaccess' ! -name '.env' ! -name '.git' -exec rm -rf {} +
+
+# Opción 2: Eliminar ABSOLUTAMENTE TODO (más agresivo)
+# ⚠️ CUIDADO: Esto elimina incluso .htaccess y .env
+# rm -rf * .[^.]*
+```
+
+**Recomendación**: Usa la Opción 1 para preservar `.htaccess` y `.env` si existen.
+
+### Paso 5: Clonar el Repositorio desde GitHub
+
+**Opción A: Usando HTTPS**
+
+```bash
+git clone https://github.com/Moon-Gitub/demonew.git .
+```
+
+**Opción B: Usando SSH**
+
+```bash
+git clone git@github.com:Moon-Gitub/demonew.git .
+```
+
+### Paso 6: Verificar que se Clonó Correctamente
+
+```bash
+# Verificar que los archivos están ahí
+ls -la
+
+# Verificar que es un repositorio Git
+git status
+
+# Ver la rama actual
+git branch
+```
+
+### Paso 7: Restaurar Archivos de Configuración (Si hiciste backup)
+
+```bash
+# Si guardaste .env, restaurarlo
+if [ -f ~/backup_public_html_*/.env ]; then
+    cp ~/backup_public_html_*/.env .env
+    echo "✓ .env restaurado"
+fi
+
+# Si guardaste imágenes, restaurarlas
+if [ -d ~/backup_public_html_*/usuarios ]; then
+    cp -r ~/backup_public_html_*/usuarios vistas/img/
+    echo "✓ Imágenes restauradas"
+fi
+```
+
+### Paso 8: Configurar Permisos (Si es necesario)
+
+```bash
+# Dar permisos adecuados
+chmod -R 755 .
+chmod -R 777 vistas/img/usuarios  # Si existe
+chmod 644 .env  # Si existe
+```
+
+### Paso 9: Verificar que Todo Funciona
+
+```bash
+# Ver el último commit
+git log -1
+
+# Verificar estado
+git status
+```
+
+---
+
+### Script Completo: Clonar y Reemplazar Todo (Todo en Uno)
+
+Puedes crear un script para automatizar todo el proceso:
+
+```bash
+nano ~/clonar-y-reemplazar.sh
+```
+
+**Contenido del script:**
+
+```bash
+#!/bin/bash
+
+# Colores
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+# Ruta del proyecto
+PROJECT_PATH="/home/usuario/public_html"
+REPO_URL="https://github.com/Moon-Gitub/demonew.git"
+# O usar SSH: REPO_URL="git@github.com:Moon-Gitub/demonew.git"
+
+echo -e "${YELLOW}════════════════════════════════════════${NC}"
+echo -e "${YELLOW}  CLONAR Y REEMPLAZAR CONTENIDO${NC}"
+echo -e "${YELLOW}════════════════════════════════════════${NC}"
+echo ""
+
+# Confirmación
+echo -e "${RED}⚠️  ADVERTENCIA: Esto eliminará TODO en $PROJECT_PATH${NC}"
+read -p "¿Estás seguro? Escribe 'SI' para continuar: " confirmacion
+
+if [ "$confirmacion" != "SI" ]; then
+    echo -e "${RED}Operación cancelada${NC}"
+    exit 1
+fi
+
+# Ir al directorio
+cd $PROJECT_PATH || exit 1
+
+# Crear backup de archivos importantes
+echo -e "${YELLOW}Creando backup de archivos importantes...${NC}"
+BACKUP_DIR=~/backup_public_html_$(date +%Y%m%d_%H%M%S)
+mkdir -p $BACKUP_DIR
+
+if [ -f .env ]; then
+    cp .env $BACKUP_DIR/
+    echo -e "${GREEN}✓ Backup de .env creado${NC}"
+fi
+
+if [ -d "vistas/img/usuarios" ]; then
+    cp -r vistas/img/usuarios $BACKUP_DIR/ 2>/dev/null
+    echo -e "${GREEN}✓ Backup de imágenes creado${NC}"
+fi
+
+# Eliminar contenido existente (excepto .htaccess, .env, .git)
+echo -e "${YELLOW}Eliminando contenido existente...${NC}"
+find . -maxdepth 1 ! -name '.' ! -name '..' ! -name '.htaccess' ! -name '.env' ! -name '.git' -exec rm -rf {} + 2>/dev/null
+echo -e "${GREEN}✓ Contenido eliminado${NC}"
+
+# Clonar repositorio
+echo -e "${YELLOW}Clonando repositorio desde GitHub...${NC}"
+if git clone $REPO_URL .; then
+    echo -e "${GREEN}✓ Repositorio clonado exitosamente${NC}"
+else
+    echo -e "${RED}✗ Error al clonar el repositorio${NC}"
+    exit 1
+fi
+
+# Restaurar archivos importantes
+echo -e "${YELLOW}Restaurando archivos de configuración...${NC}"
+if [ -f $BACKUP_DIR/.env ]; then
+    cp $BACKUP_DIR/.env .env
+    echo -e "${GREEN}✓ .env restaurado${NC}"
+fi
+
+if [ -d "$BACKUP_DIR/usuarios" ]; then
+    mkdir -p vistas/img/
+    cp -r $BACKUP_DIR/usuarios vistas/img/
+    echo -e "${GREEN}✓ Imágenes restauradas${NC}"
+fi
+
+# Configurar permisos
+echo -e "${YELLOW}Configurando permisos...${NC}"
+chmod -R 755 . 2>/dev/null
+if [ -d "vistas/img/usuarios" ]; then
+    chmod -R 777 vistas/img/usuarios
+fi
+if [ -f .env ]; then
+    chmod 644 .env
+fi
+echo -e "${GREEN}✓ Permisos configurados${NC}"
+
+# Verificar
+echo ""
+echo -e "${GREEN}════════════════════════════════════════${NC}"
+echo -e "${GREEN}  ✓ PROCESO COMPLETADO${NC}"
+echo -e "${GREEN}════════════════════════════════════════${NC}"
+echo ""
+echo "Último commit:"
+git log -1 --oneline
+echo ""
+echo "Backup guardado en: $BACKUP_DIR"
+echo ""
+```
+
+**Hacer ejecutable:**
+
+```bash
+chmod +x ~/clonar-y-reemplazar.sh
+```
+
+**Usar el script:**
+
+```bash
+~/clonar-y-reemplazar.sh
 ```
 
 ### Paso 4: Configurar Git (Solo primera vez)
@@ -524,7 +787,30 @@ git commit -m "Remover archivo sensible"
 
 ## ✅ Resumen Rápido
 
-**Primera vez:**
+### Opción 1: Clonar y Reemplazar Todo (Pisando contenido existente) ⭐
+
+```bash
+# 1. Conectarse al servidor
+ssh usuario@servidor.com
+
+# 2. Ir a public_html
+cd /home/usuario/public_html
+
+# 3. Hacer backup de archivos importantes (opcional)
+mkdir -p ~/backup && cp .env vistas/img/usuarios ~/backup/ 2>/dev/null
+
+# 4. Eliminar todo excepto .htaccess y .env
+find . -maxdepth 1 ! -name '.' ! -name '..' ! -name '.htaccess' ! -name '.env' ! -name '.git' -exec rm -rf {} +
+
+# 5. Clonar desde GitHub
+git clone https://github.com/Moon-Gitub/demonew.git .
+
+# 6. Restaurar archivos importantes si hiciste backup
+cp ~/backup/.env .env 2>/dev/null
+```
+
+### Opción 2: Primera vez (directorio vacío)
+
 ```bash
 cd /ruta/del/proyecto
 git clone https://github.com/Moon-Gitub/demonew.git .
@@ -532,14 +818,16 @@ git config user.name "Tu Nombre"
 git config user.email "tu-email@ejemplo.com"
 ```
 
-**Actualizar cambios:**
+### Opción 3: Actualizar cambios existentes
+
 ```bash
 cd /ruta/del/proyecto
 git fetch origin
 git pull origin main
 ```
 
-**Verificar estado:**
+### Verificar estado:
+
 ```bash
 git status
 git log -1
@@ -547,5 +835,5 @@ git log -1
 
 ---
 
-**Última actualización**: $(date)
+**Última actualización**: 2024
 **Repositorio**: https://github.com/Moon-Gitub/demonew
