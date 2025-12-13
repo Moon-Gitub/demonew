@@ -117,6 +117,122 @@ SideBar Menu
 $('.sidebar-menu').tree()
 
 /*=============================================
+MEJORAR INTERACCIÓN DEL MENÚ COLAPSADO
+Agregar delay antes de ocultar submenús y mejorar la experiencia
+=============================================*/
+$(document).ready(function() {
+    var hoverTimeout = {};
+    var hideTimeout = {};
+    var hoverDelay = 50; // Delay antes de mostrar (ms) - reducido para respuesta más rápida
+    var hideDelay = 500; // Delay antes de ocultar (ms) - aumentado para dar más tiempo
+    
+    // Función para limpiar timeouts de un elemento específico
+    function clearTimeouts(liId) {
+        if (hoverTimeout[liId]) {
+            clearTimeout(hoverTimeout[liId]);
+            delete hoverTimeout[liId];
+        }
+        if (hideTimeout[liId]) {
+            clearTimeout(hideTimeout[liId]);
+            delete hideTimeout[liId];
+        }
+    }
+    
+    // Solo aplicar si el menú está colapsado
+    if ($('body').hasClass('sidebar-mini') && $('body').hasClass('sidebar-collapse')) {
+        
+        // Manejar hover en items del menú con submenús
+        $(document).on('mouseenter', '.sidebar-mini.sidebar-collapse .sidebar-menu > li.treeview', function() {
+            var $this = $(this);
+            var $submenu = $this.find('.treeview-menu');
+            var liId = $this.index();
+            
+            // Limpiar cualquier timeout de ocultar
+            clearTimeouts(liId);
+            
+            // Mostrar el submenú después de un pequeño delay
+            hoverTimeout[liId] = setTimeout(function() {
+                $this.addClass('menu-open');
+                $submenu.css({
+                    'display': 'block',
+                    'visibility': 'visible',
+                    'opacity': '1'
+                }).stop(true, true).slideDown(200);
+            }, hoverDelay);
+            
+        }).on('mouseleave', '.sidebar-mini.sidebar-collapse .sidebar-menu > li.treeview', function() {
+            var $this = $(this);
+            var $submenu = $this.find('.treeview-menu');
+            var liId = $this.index();
+            
+            // Limpiar timeout de mostrar
+            if (hoverTimeout[liId]) {
+                clearTimeout(hoverTimeout[liId]);
+                delete hoverTimeout[liId];
+            }
+            
+            // Ocultar el submenú después de un delay más largo
+            hideTimeout[liId] = setTimeout(function() {
+                // Verificar si el mouse aún no está sobre el submenú o el item
+                var mouseOverSubmenu = $submenu.is(':hover') || $submenu.find(':hover').length > 0;
+                var mouseOverItem = $this.is(':hover');
+                
+                if (!mouseOverSubmenu && !mouseOverItem) {
+                    $this.removeClass('menu-open');
+                    $submenu.stop(true, true).slideUp(200, function() {
+                        $(this).css({
+                            'display': 'none',
+                            'visibility': 'hidden',
+                            'opacity': '0'
+                        });
+                    });
+                }
+            }, hideDelay);
+        });
+        
+        // Mantener el submenú visible cuando el mouse está sobre él
+        $(document).on('mouseenter', '.sidebar-mini.sidebar-collapse .sidebar-menu > li.treeview .treeview-menu', function() {
+            var $this = $(this);
+            var $parent = $this.closest('li.treeview');
+            var liId = $parent.index();
+            
+            // Limpiar timeout de ocultar
+            clearTimeouts(liId);
+            
+            // Asegurar que el submenú esté visible
+            $parent.addClass('menu-open');
+            $this.css({
+                'display': 'block',
+                'visibility': 'visible',
+                'opacity': '1'
+            }).stop(true, true).slideDown(200);
+            
+        }).on('mouseleave', '.sidebar-mini.sidebar-collapse .sidebar-menu > li.treeview .treeview-menu', function() {
+            var $this = $(this);
+            var $parent = $this.closest('li.treeview');
+            var liId = $parent.index();
+            
+            // Ocultar después de un delay
+            hideTimeout[liId] = setTimeout(function() {
+                var mouseOverSubmenu = $this.is(':hover') || $this.find(':hover').length > 0;
+                var mouseOverItem = $parent.is(':hover');
+                
+                if (!mouseOverSubmenu && !mouseOverItem) {
+                    $parent.removeClass('menu-open');
+                    $this.stop(true, true).slideUp(200, function() {
+                        $(this).css({
+                            'display': 'none',
+                            'visibility': 'hidden',
+                            'opacity': '0'
+                        });
+                    });
+                }
+            }, hideDelay);
+        });
+    }
+});
+
+/*=============================================
 Data Table
 =============================================*/
 $(".tablas").DataTable({

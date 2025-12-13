@@ -862,6 +862,85 @@ select {
 }
 
 /* ============================================
+   DELAY Y ÁREA DE HOVER PARA MENÚ COLAPSADO
+   ============================================ */
+
+/* ============================================
+   DELAY Y ÁREA DE HOVER PARA MENÚ COLAPSADO
+   ============================================ */
+
+/* Aumentar el área de hover para facilitar el movimiento del mouse */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li {
+    position: relative;
+}
+
+/* Crear un área de transición más grande entre el icono y el tooltip */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right),
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu {
+    margin-left: 5px !important;
+    transition: opacity 0.2s ease, visibility 0.2s ease !important;
+}
+
+/* Asegurar que el submenú tenga padding adicional y sea más grande para facilitar el hover */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu,
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li.menu-open > .treeview-menu {
+    padding: 8px 0 !important;
+    min-width: 220px !important;
+    margin-top: 2px !important;
+    display: block !important;
+}
+
+/* Aumentar el área clickeable de los items del submenú */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu > li > a,
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li.menu-open > .treeview-menu > li > a {
+    padding: 12px 20px !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    line-height: 1.5 !important;
+}
+
+/* Asegurar que el submenú permanezca visible cuando tiene la clase menu-open */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li.menu-open > .treeview-menu {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 1060 !important;
+}
+
+/* También mantener visible cuando el mouse está sobre el submenú directamente */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li.treeview .treeview-menu:hover {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 1060 !important;
+}
+
+/* Mantener el item del menú activo cuando el submenú está visible */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li.menu-open,
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li.treeview:hover {
+    z-index: 1055 !important;
+}
+
+/* Crear un puente invisible entre el icono y el submenú para facilitar el movimiento del mouse */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li.treeview:hover::after {
+    content: '';
+    position: absolute;
+    left: 50px;
+    top: 0;
+    width: 10px;
+    height: 100%;
+    z-index: 1059;
+    background: transparent;
+}
+
+/* Asegurar que el submenú tenga un área de hover más grande */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li.treeview .treeview-menu {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+}
+
+/* ============================================
    SOBRESCRIBIR COLORES DEL SKIN EN TOOLTIPS
    ============================================ */
 
