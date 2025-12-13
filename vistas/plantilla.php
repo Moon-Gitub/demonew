@@ -49,6 +49,9 @@
     <!-- Google Font -->
     <link rel="stylesheet" href="vistas/dist/css/fonts_googleapis.css">
 
+    <!-- Estilos modernos globales para todo el sistema -->
+    <link rel="stylesheet" href="vistas/dist/css/sistema-moderno.css">
+
      <!-- DataTables -->
     <link rel="stylesheet" href="vistas/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="vistas/bower_components/datatables.net-bs/css/responsive.bootstrap.min.css">
