@@ -9,7 +9,7 @@
 }
 
 body.login-page {
-    background: #5F738E;
+    background: #5F738E !important;
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -18,6 +18,15 @@ body.login-page {
     overflow: hidden;
     padding: 20px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Asegurar que no haya otros fondos */
+body.login-page * {
+    background-color: transparent;
+}
+
+body.login-page .login-box-body {
+    background: rgba(255, 255, 255, 0.98) !important;
 }
 
 #back {
@@ -52,10 +61,12 @@ body.login-page {
 
 .login-logo .logo-container {
     display: inline-block;
-    background: transparent;
+    background: transparent !important;
     padding: 0;
     position: relative;
     transition: transform 0.3s ease;
+    border: none;
+    box-shadow: none;
 }
 
 .login-logo .logo-container:hover {
