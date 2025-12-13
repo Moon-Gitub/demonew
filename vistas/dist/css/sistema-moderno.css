@@ -205,36 +205,23 @@
     font-size: 14px !important;
 }
 
-/* SELECTS MÁS ALTOS - Mejor visibilidad y apariencia */
+/* SELECTS MÁS ALTOS - Mejor visibilidad */
 select.form-control,
 .form-control select,
 select {
-    min-height: 50px !important;
-    height: 50px !important;
-    padding: 15px 15px !important;
-    line-height: 1.6 !important;
+    min-height: 48px !important;
+    height: 48px !important;
+    padding: 14px 15px !important;
+    line-height: 1.5 !important;
     font-size: 14px !important;
-    vertical-align: middle !important;
-    display: inline-block !important;
 }
 
 /* Selects dentro de input-group también más altos */
 .input-group select.form-control,
 .input-group .form-control select {
-    min-height: 50px !important;
-    height: 50px !important;
-    padding: 15px 15px !important;
-    line-height: 1.6 !important;
-}
-
-/* Asegurar que el input-group-addon tenga la misma altura */
-.input-group .input-group-addon {
-    height: 50px !important;
-    line-height: 1.6 !important;
-    padding: 15px 12px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    min-height: 48px !important;
+    height: 48px !important;
+    padding: 14px 15px !important;
 }
 
 .form-control:focus {
