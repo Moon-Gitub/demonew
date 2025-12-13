@@ -202,8 +202,8 @@ body.login-page .login-box-body {
 }
 
 .btn-login {
-    background: linear-gradient(135deg, #5F738E 0%, #52658d 100%);
-    border: none;
+    background: #5F738E !important;
+    border: 2px solid #5F738E !important;
     border-radius: 15px;
     height: 55px;
     font-size: 17px;
@@ -240,7 +240,9 @@ body.login-page .login-box-body {
     box-shadow: 
         0 10px 30px rgba(95, 115, 142, 0.6),
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    background: linear-gradient(135deg, #6B819F 0%, #5a6fa0 100%);
+    background: #5F738E !important;
+    border-color: #5F738E !important;
+    opacity: 0.9;
 }
 
 .btn-login:active {
