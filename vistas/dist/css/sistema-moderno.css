@@ -747,14 +747,17 @@ select {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
     background-color: #ffffff !important;
     border-radius: 8px !important;
+    pointer-events: auto !important;
 }
 
-/* Asegurar que los tooltips tengan fondo sólido y no se vean transparentes */
+/* Asegurar que los tooltips tengan fondo sólido y texto oscuro visible */
 .sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a > span {
     background-color: #ffffff !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
     border-radius: 8px !important;
     z-index: 1060 !important;
+    color: #2c3e50 !important;
+    pointer-events: auto !important;
 }
 
 /* Submenús treeview cuando el menú está colapsado */
@@ -765,17 +768,29 @@ select {
     border-radius: 8px !important;
     border: 1px solid #e0e0e0 !important;
     overflow: hidden;
+    pointer-events: auto !important;
 }
 
-/* Items del submenú */
+/* Items del submenú - texto oscuro y clickeable */
 .sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu > li > a {
     padding: 10px 15px !important;
     border-radius: 0 !important;
     transition: background-color 0.2s ease !important;
+    color: #2c3e50 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    display: block !important;
 }
 
 .sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu > li > a:hover {
     background-color: #f8f9fa !important;
+    color: #667eea !important;
+}
+
+/* Iconos dentro de los items del submenú */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu > li > a > i {
+    color: #667eea !important;
+    margin-right: 8px !important;
 }
 
 /* Asegurar que el contenedor pull-right también tenga z-index alto */
@@ -783,13 +798,51 @@ select {
     z-index: 1070 !important;
 }
 
-/* Mejorar la apariencia visual de los tooltips */
+/* Mejorar la apariencia visual de los tooltips - texto oscuro y clickeable */
 .sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right) {
     white-space: nowrap;
     min-width: 150px;
     text-align: left;
     padding: 12px 15px !important;
     font-weight: 500;
+    color: #2c3e50 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    display: block !important;
+}
+
+/* Asegurar que los enlaces dentro de los tooltips sean clickeables */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+
+/* Forzar color oscuro en todos los textos de tooltips y submenús */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a > span,
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a > span * {
+    color: #2c3e50 !important;
+}
+
+/* Asegurar que los elementos sean interactivos */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover {
+    pointer-events: auto !important;
+}
+
+/* Forzar color oscuro en el enlace completo cuando muestra tooltip */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a {
+    color: #2c3e50 !important;
+}
+
+/* Forzar color oscuro en todos los elementos de texto dentro del tooltip */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a,
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a span,
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a span * {
+    color: #2c3e50 !important;
+}
+
+/* Asegurar que los enlaces en submenús tengan color oscuro */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu > li > a,
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu > li > a span {
     color: #2c3e50 !important;
 }
 
@@ -806,4 +859,44 @@ select {
 /* Asegurar que el section sidebar también tenga overflow visible */
 .sidebar-mini.sidebar-collapse .sidebar {
     overflow: visible !important;
+}
+
+/* ============================================
+   SOBRESCRIBIR COLORES DEL SKIN EN TOOLTIPS
+   ============================================ */
+
+/* Forzar color oscuro en tooltips independientemente del skin activo */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right),
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a,
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a * {
+    color: #2c3e50 !important;
+}
+
+/* Forzar color oscuro en submenús independientemente del skin */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu,
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu a,
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu a span,
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu a i {
+    color: #2c3e50 !important;
+}
+
+/* Asegurar que los enlaces sean completamente clickeables */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a,
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu > li > a {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+}
+
+/* Evitar que elementos superpuestos bloqueen los clics */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right) {
+    pointer-events: none !important;
+}
+
+/* Pero permitir clics en el enlace padre */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a {
+    pointer-events: auto !important;
 }
