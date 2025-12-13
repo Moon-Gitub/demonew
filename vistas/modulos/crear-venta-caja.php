@@ -44,6 +44,75 @@
     border-left: none !important;
 }
 
+/* Asegurar que el autocomplete de jQuery UI funcione correctamente */
+.crear-venta-caja .ui-autocomplete {
+    z-index: 9999 !important;
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #ffffff !important;
+    border: 2px solid #667eea !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    padding: 5px 0 !important;
+}
+
+.crear-venta-caja .ui-autocomplete .ui-menu-item {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.crear-venta-caja .ui-autocomplete .ui-menu-item-wrapper {
+    padding: 12px 15px !important;
+    border: none !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+    color: #2c3e50 !important;
+    transition: all 0.2s ease !important;
+}
+
+.crear-venta-caja .ui-autocomplete .ui-menu-item-wrapper:hover,
+.crear-venta-caja .ui-autocomplete .ui-menu-item-wrapper.ui-state-active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: #ffffff !important;
+    border-bottom-color: #667eea !important;
+}
+
+/* Mejorar la sección superior con inputs y selects */
+.crear-venta-caja .table:first-of-type {
+    background: #ffffff !important;
+    border-radius: 8px !important;
+    padding: 10px !important;
+    margin-bottom: 15px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+.crear-venta-caja .table:first-of-type td {
+    padding: 10px 8px !important;
+    vertical-align: middle !important;
+}
+
+/* Mejorar el input de búsqueda de cliente */
+.crear-venta-caja #autocompletarClienteCaja {
+    border-radius: 8px !important;
+    padding: 12px 15px !important;
+    font-size: 14px !important;
+    min-height: 42px !important;
+}
+
+/* Mejorar el input de búsqueda de productos */
+.crear-venta-caja #ventaCajaDetalle {
+    border-radius: 8px !important;
+    padding: 12px 15px !important;
+    font-size: 14px !important;
+    min-height: 42px !important;
+    width: 100% !important;
+}
+
+.crear-venta-caja #ventaCajaDetalle:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+}
+
 /* Mejorar inputs y selects */
 .crear-venta-caja .form-control.input-sm {
     padding: 12px 15px !important;
