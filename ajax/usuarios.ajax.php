@@ -1,27 +1,7 @@
 <?php
-// ✅ Seguridad AJAX - Solo verificación de sesión (sin CSRF ni verificación de header AJAX)
-require_once dirname(__DIR__) . "/extensiones/vendor/autoload.php";
-
-// Cargar variables de entorno
-$raiz = dirname(__DIR__);
-if (file_exists($raiz . "/.env")) {
-    $dotenv = Dotenv\Dotenv::createImmutable($raiz);
-    $dotenv->safeLoad();
-}
-
-// Verificar solo sesión (sin CSRF ni header AJAX)
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-if (!isset($_SESSION["iniciarSesion"]) || $_SESSION["iniciarSesion"] != "ok") {
-    http_response_code(401);
-    echo json_encode([
-        'error' => true,
-        'mensaje' => 'No autorizado'
-    ]);
-    exit;
-}
+// ✅ Seguridad AJAX
+require_once "seguridad.ajax.php";
+SeguridadAjax::inicializar();
 
 require_once "../controladores/usuarios.controlador.php";
 require_once "../modelos/usuarios.modelo.php";

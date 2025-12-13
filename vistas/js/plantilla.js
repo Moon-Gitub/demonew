@@ -255,15 +255,33 @@ jQuery.ajaxSetup({
      if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
          var token = getCSRFToken();
          if (token) {
+             // Agregar como header
              xhr.setRequestHeader("X-CSRF-TOKEN", token);
-             // También agregar al FormData si existe
+             
+             // También agregar al FormData si existe (verificar que no esté ya agregado)
              if (settings.data instanceof FormData) {
-                 settings.data.append('csrf_token', token);
+                 // Verificar si ya tiene el token para no duplicarlo
+                 var tieneToken = false;
+                 try {
+                     // FormData no permite iterar fácilmente, así que simplemente agregamos
+                     // Si ya existe, se sobrescribirá
+                     settings.data.append('csrf_token', token);
+                 } catch(e) {
+                     console.warn("Error agregando CSRF a FormData:", e);
+                 }
              } else if (typeof settings.data === 'string') {
-                 settings.data += (settings.data ? '&' : '') + 'csrf_token=' + encodeURIComponent(token);
-             } else if (typeof settings.data === 'object' && settings.data !== null) {
-                 settings.data.csrf_token = token;
+                 // Verificar que no tenga ya el token
+                 if (settings.data.indexOf('csrf_token=') === -1) {
+                     settings.data += (settings.data ? '&' : '') + 'csrf_token=' + encodeURIComponent(token);
+                 }
+             } else if (typeof settings.data === 'object' && settings.data !== null && !(settings.data instanceof FormData)) {
+                 // Solo agregar si no existe
+                 if (!settings.data.hasOwnProperty('csrf_token')) {
+                     settings.data.csrf_token = token;
+                 }
              }
+         } else {
+             console.warn("Token CSRF no encontrado. Verifica que el meta tag csrf-token esté presente.");
          }
      }
      
