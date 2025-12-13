@@ -76,34 +76,42 @@
     position: relative;
 }
 
-/* Ocultar el label por defecto de DataTables */
+/* Ocultar COMPLETAMENTE el label por defecto de DataTables (evita duplicación) */
 #tablaProductos_filter label {
-    display: flex !important;
-    align-items: center !important;
-    gap: 15px !important;
-    font-weight: 600;
-    color: #2c3e50;
-    font-size: 15px;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
     margin: 0 !important;
-    flex-wrap: wrap;
-    position: relative;
+    padding: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
 }
 
-/* Ocultar el texto "Buscar:" que viene por defecto de DataTables */
+/* Ocultar también el span dentro del label */
 #tablaProductos_filter label > span {
     display: none !important;
 }
 
-/* Crear nuestro propio label "Buscar:" ANTES del input, separado */
-#tablaProductos_filter label::before {
+/* Mantener el input visible pero sin el label */
+#tablaProductos_filter input {
+    display: inline-block !important;
+}
+
+/* Crear nuestro propio label "Buscar:" limpio y separado */
+#tablaProductos_filter::before {
     content: "Buscar:";
     font-family: inherit;
     color: #2c3e50;
     font-weight: 600;
     font-size: 15px;
     display: inline-block;
-    margin-right: 0;
+    margin-right: 15px;
     white-space: nowrap;
+    line-height: 1;
+    vertical-align: middle;
 }
 
 /* Input con icono de lupa dentro */
@@ -119,16 +127,17 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
     position: relative;
     margin-left: 0 !important;
+    display: inline-block !important;
 }
 
 /* Icono de lupa DENTRO del input, posicionado correctamente */
-#tablaProductos_filter label::after {
+#tablaProductos_filter::after {
     content: "\f002";
     font-family: "FontAwesome";
     color: #667eea;
     font-size: 16px;
     position: absolute;
-    left: calc(15px + 70px); /* 70px para el texto "Buscar:" + gap */
+    left: calc(70px + 15px); /* Posición después del "Buscar:" (70px) + gap (15px) */
     top: 50%;
     transform: translateY(-50%);
     z-index: 2;
