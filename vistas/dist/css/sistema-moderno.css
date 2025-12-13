@@ -723,3 +723,87 @@ select {
 .bg-danger {
     background-color: #fa709a !important;
 }
+
+/* ============================================
+   CORRECCIÓN MENÚ COLAPSADO
+   ============================================ */
+
+/* Aumentar z-index del sidebar cuando está colapsado para que esté por encima del contenido */
+/* Nota: El main-header tiene z-index 1030, así que el sidebar debe estar por debajo */
+.sidebar-mini.sidebar-collapse .main-sidebar {
+    z-index: 1020 !important;
+}
+
+/* Asegurar que el contenido principal tenga un z-index menor que el sidebar */
+.sidebar-mini.sidebar-collapse .content-wrapper {
+    z-index: 800 !important;
+    position: relative;
+}
+
+/* Tooltips y submenús del menú colapsado - z-index alto para que aparezcan por encima del contenido */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right),
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu {
+    z-index: 1060 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    background-color: #ffffff !important;
+    border-radius: 8px !important;
+}
+
+/* Asegurar que los tooltips tengan fondo sólido y no se vean transparentes */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a > span {
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 8px !important;
+    z-index: 1060 !important;
+}
+
+/* Submenús treeview cuando el menú está colapsado */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu {
+    z-index: 1060 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    background-color: #ffffff !important;
+    border-radius: 8px !important;
+    border: 1px solid #e0e0e0 !important;
+    overflow: hidden;
+}
+
+/* Items del submenú */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu > li > a {
+    padding: 10px 15px !important;
+    border-radius: 0 !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > .treeview-menu > li > a:hover {
+    background-color: #f8f9fa !important;
+}
+
+/* Asegurar que el contenedor pull-right también tenga z-index alto */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a > .pull-right-container {
+    z-index: 1070 !important;
+}
+
+/* Mejorar la apariencia visual de los tooltips */
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right) {
+    white-space: nowrap;
+    min-width: 150px;
+    text-align: left;
+    padding: 12px 15px !important;
+    font-weight: 500;
+    color: #2c3e50 !important;
+}
+
+/* Asegurar que el menú colapsado tenga overflow visible para mostrar los tooltips */
+.sidebar-mini.sidebar-collapse .sidebar-menu {
+    overflow: visible !important;
+}
+
+/* Asegurar que el sidebar completo tenga overflow visible */
+.sidebar-mini.sidebar-collapse .main-sidebar {
+    overflow: visible !important;
+}
+
+/* Asegurar que el section sidebar también tenga overflow visible */
+.sidebar-mini.sidebar-collapse .sidebar {
+    overflow: visible !important;
+}
