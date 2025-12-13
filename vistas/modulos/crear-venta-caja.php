@@ -515,6 +515,235 @@
     display: inline-block !important;
 }
 
+/* Estilos específicos para Modal Ticket */
+#modalImprimirTicketCaja .modal-content {
+    border-radius: 16px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+    border: none !important;
+    overflow: hidden;
+}
+
+#modalImprimirTicketCaja .modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: #ffffff !important;
+    border-bottom: none !important;
+    padding: 20px 25px !important;
+    border-radius: 16px 16px 0 0 !important;
+}
+
+#modalImprimirTicketCaja .modal-header .modal-title {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+}
+
+#modalImprimirTicketCaja .modal-body {
+    padding: 25px !important;
+    background: #ffffff !important;
+}
+
+#modalImprimirTicketCaja .modal-footer {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
+    border-top: 2px solid #e0e0e0 !important;
+    padding: 20px 25px !important;
+    border-radius: 0 0 16px 16px !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Mejorar contenido del ticket */
+#modalImprimirTicketCaja #impTicketCobroCaja {
+    font-family: 'Courier New', monospace !important;
+    background: #ffffff !important;
+    padding: 20px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+    line-height: 1.8 !important;
+    color: #2c3e50 !important;
+}
+
+#modalImprimirTicketCaja #impTicketCobroCaja b {
+    color: #667eea !important;
+    font-weight: 700 !important;
+}
+
+#modalImprimirTicketCaja #impTicketCobroCaja hr {
+    border: none !important;
+    height: 2px !important;
+    background: linear-gradient(90deg, transparent, #667eea, transparent) !important;
+    margin: 15px 0 !important;
+}
+
+/* Mejorar tabla de detalle */
+#modalImprimirTicketCaja #tckDetalleVentaCaja {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 15px 0 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+#modalImprimirTicketCaja #tckDetalleVentaCaja th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: #ffffff !important;
+    padding: 12px 8px !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    border: none !important;
+}
+
+#modalImprimirTicketCaja #tckDetalleVentaCaja td {
+    padding: 10px 8px !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+    text-align: center !important;
+}
+
+#modalImprimirTicketCaja #tckDetalleVentaCaja tr:last-child td {
+    border-bottom: none !important;
+}
+
+/* Mejorar resumen financiero */
+#modalImprimirTicketCaja #tckSubtotalVentaCaja,
+#modalImprimirTicketCaja #tckDescuentoVentaCaja,
+#modalImprimirTicketCaja #tckTotalVentaCaja {
+    font-weight: 600 !important;
+    color: #2c3e50 !important;
+}
+
+#modalImprimirTicketCaja #tckTotalVentaCaja {
+    font-size: 20px !important;
+    color: #667eea !important;
+    font-weight: 700 !important;
+}
+
+#modalImprimirTicketCaja #tckMedioPagoVentaCaja {
+    font-weight: 600 !important;
+    color: #11998e !important;
+}
+
+/* Mejorar datos CAE */
+#modalImprimirTicketCaja #tckDatosFacturaCAE {
+    background: #f8f9fa !important;
+    padding: 15px !important;
+    border-radius: 8px !important;
+    margin: 15px 0 !important;
+    border-left: 4px solid #667eea !important;
+}
+
+/* Mejorar disclaimer */
+#modalImprimirTicketCaja #impTicketCobroCaja > div:last-child {
+    text-align: center !important;
+    font-size: 12px !important;
+    color: #95a5a6 !important;
+    font-style: italic !important;
+    margin-top: 20px !important;
+    padding: 10px !important;
+    background: #f8f9fa !important;
+    border-radius: 8px !important;
+}
+
+/* Mejorar alert */
+#modalImprimirTicketCaja #divEventoObservacionAprobada {
+    border-radius: 8px !important;
+    margin-bottom: 15px !important;
+    padding: 15px !important;
+    border-left: 4px solid #f5576c !important;
+}
+
+/* Mejorar botones del footer */
+#modalImprimirTicketCaja .modal-footer .btn {
+    padding: 10px 20px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+    min-width: 120px !important;
+}
+
+#modalImprimirTicketCaja .modal-footer .btn-default {
+    background: #ffffff !important;
+    border: 2px solid #e0e0e0 !important;
+    color: #2c3e50 !important;
+}
+
+#modalImprimirTicketCaja .modal-footer .btn-default:hover {
+    background: #f8f9fa !important;
+    border-color: #667eea !important;
+    color: #667eea !important;
+    transform: translateY(-2px) !important;
+}
+
+#modalImprimirTicketCaja .modal-footer .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
+}
+
+#modalImprimirTicketCaja .modal-footer .btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
+}
+
+/* Responsive para modal ticket */
+@media (max-width: 991px) {
+    #modalImprimirTicketCaja .modal-dialog {
+        margin: 10px !important;
+        width: calc(100% - 20px) !important;
+        max-width: 100% !important;
+    }
+    
+    #modalImprimirTicketCaja #impTicketCobroCaja {
+        font-size: 13px !important;
+        padding: 15px !important;
+    }
+    
+    #modalImprimirTicketCaja #tckDetalleVentaCaja {
+        font-size: 12px !important;
+    }
+    
+    #modalImprimirTicketCaja #tckDetalleVentaCaja th,
+    #modalImprimirTicketCaja #tckDetalleVentaCaja td {
+        padding: 8px 5px !important;
+    }
+    
+    #modalImprimirTicketCaja .modal-footer {
+        flex-direction: column !important;
+    }
+    
+    #modalImprimirTicketCaja .modal-footer .btn {
+        width: 100% !important;
+        margin: 5px 0 !important;
+    }
+    
+    #modalImprimirTicketCaja #tckTotalVentaCaja {
+        font-size: 18px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #modalImprimirTicketCaja #impTicketCobroCaja {
+        font-size: 11px !important;
+        padding: 10px !important;
+    }
+    
+    #modalImprimirTicketCaja #tckDetalleVentaCaja {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    #modalImprimirTicketCaja #tckDetalleVentaCaja th,
+    #modalImprimirTicketCaja #tckDetalleVentaCaja td {
+        white-space: nowrap;
+        min-width: 80px;
+    }
+}
+
 /* Responsive para modal cobro de venta */
 @media (max-width: 991px) {
     #modalCobrarVenta .modal-dialog {
