@@ -322,7 +322,7 @@ foreach ($ventasHoy as $key => $value) {
   GRÁFICO DE VENTAS
   ======================================-->
   <div class="border-radius-none nuevoGraficoVentas">
-    <div class="chart" id="line-chart-ventas" style="height: 250px; background-color: #39cccc;"></div>
+    <div class="chart" id="line-chart-ventas" style="height: 250px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
   </div>
 
   <script>
