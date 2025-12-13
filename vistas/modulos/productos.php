@@ -79,14 +79,15 @@
     gap: 15px;
 }
 
-/* Ocultar solo el texto "Buscar:" del label de DataTables, mantener el input */
+/* Ocultar solo el texto "Buscar:" del label de DataTables, mantener el input visible */
 #tablaProductos_filter label {
     display: flex !important;
     align-items: center !important;
-    gap: 15px !important;
+    gap: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
     position: relative;
+    flex: 0 0 auto;
 }
 
 /* Ocultar el texto "Buscar:" que viene por defecto de DataTables */
@@ -94,7 +95,7 @@
     display: none !important;
 }
 
-/* Crear nuestro propio label "Buscar:" limpio y separado */
+/* Crear nuestro propio label "Buscar:" limpio y separado ANTES del contenedor */
 #tablaProductos_filter::before {
     content: "Buscar:";
     font-family: inherit;
@@ -102,10 +103,10 @@
     font-weight: 600;
     font-size: 15px;
     display: inline-block;
-    margin-right: 0;
     white-space: nowrap;
     line-height: 1;
     vertical-align: middle;
+    flex-shrink: 0;
 }
 
 /* Input visible, alineado y bonito */
@@ -119,17 +120,15 @@
     width: 350px !important;
     max-width: 100% !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
-    position: relative;
+    position: relative !important;
     margin-left: 0 !important;
     display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     flex-shrink: 0;
 }
 
 /* Icono de lupa DENTRO del input, posicionado correctamente */
-#tablaProductos_filter label {
-    position: relative;
-}
-
 #tablaProductos_filter label::after {
     content: "\f002";
     font-family: "FontAwesome";
