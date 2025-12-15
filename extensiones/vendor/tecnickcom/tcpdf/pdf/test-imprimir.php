@@ -65,7 +65,10 @@ if (isset($_GET['ids'])) {
 }
 
 // 6. Verificar controladores
-$controladorPath = __DIR__ . "/../../../controladores/productos.controlador.php";
+// Desde: extensiones/vendor/tecnickcom/tcpdf/pdf/
+// Hacia: controladores/ (en la raíz del proyecto)
+// Necesitamos subir 5 niveles: ../../../../../controladores/
+$controladorPath = __DIR__ . "/../../../../../controladores/productos.controlador.php";
 echo "<p>6. Controlador path: " . $controladorPath . "</p>";
 echo "<p>   Existe: " . (file_exists($controladorPath) ? "SÍ" : "NO") . "</p>";
 

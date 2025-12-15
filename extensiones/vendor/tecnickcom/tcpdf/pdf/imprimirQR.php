@@ -10,11 +10,11 @@ if (class_exists('Dotenv\\Dotenv')) {
     }
 }
 
-require_once "../../../controladores/productos.controlador.php";
-require_once "../../../modelos/productos.modelo.php";
+require_once "../../../../../controladores/productos.controlador.php";
+require_once "../../../../../modelos/productos.modelo.php";
 
-require_once "../../../controladores/empresa.controlador.php";
-require_once "../../../modelos/empresa.modelo.php";
+require_once "../../../../../controladores/empresa.controlador.php";
+require_once "../../../../../modelos/empresa.modelo.php";
 
 class imprimirPreciosProductos {
 

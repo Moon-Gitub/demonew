@@ -33,8 +33,11 @@ if (class_exists('Dotenv\\Dotenv')) {
 }
 
 // Cargar modelos y controladores
-$controladorPath = __DIR__ . "/../../../controladores/productos.controlador.php";
-$modeloPath = __DIR__ . "/../../../modelos/productos.modelo.php";
+// Desde: extensiones/vendor/tecnickcom/tcpdf/pdf/
+// Hacia: controladores/ (en la raíz del proyecto)
+// Necesitamos subir 5 niveles: ../../../../../controladores/
+$controladorPath = __DIR__ . "/../../../../../controladores/productos.controlador.php";
+$modeloPath = __DIR__ . "/../../../../../modelos/productos.modelo.php";
 
 if (!file_exists($controladorPath)) {
     error_log("Error: No se encuentra productos.controlador.php en: " . $controladorPath);
