@@ -188,17 +188,22 @@ class ControladorProductos{
 			$_POST["editarDescripcion"] = str_replace(array("\r\n", "\r", "\n", "\t"), " ", $_POST["editarDescripcion"]);
 			$_POST["editarDescripcion"] = str_replace(array('"'), "''", $_POST["editarDescripcion"]);
 			
-			//si son productos VARIOS no actualizo todos los valores, solo algunos (tipo iva, descripcion)
-			$_POST["editarCategoria"] = ($_POST["editarId"] > 9) ? $_POST["editarCategoria"] : 1;
-			$_POST["editarProveedor"] = ($_POST["editarId"] > 9) ? $_POST["editarProveedor"] : 1;
-			$_POST["editarStock"] = ($_POST["editarId"] > 9) ? $_POST["editarStock"] : 0;
-			$_POST["editarStockMedio"] = ($_POST["editarId"] > 9) ? $_POST["editarStockMedio"] : 0;
-			$_POST["editarStockBajo"] = ($_POST["editarId"] > 9) ? $_POST["editarStockBajo"] : 0;
-			$_POST["editarPrecioCompraNeto"] = ($_POST["editarId"] > 9) ? $_POST["editarPrecioCompraNeto"] : 0;
-			$_POST["editarPrecioCompraNetoDolar"] = ($_POST["editarId"] > 9) ? $_POST["editarPrecioCompraNetoDolar"] : 0;
-			$_POST["editarPorcentajeText"] = ($_POST["editarId"] > 9) ? $_POST["editarPorcentajeText"] : 0;
-			$_POST["editarPrecioVenta"] = ($_POST["editarId"] > 9) ? $_POST["editarPrecioVenta"] : 0;
-			$_POST["editarPrecioVentaIvaIncluido"] = ($_POST["editarId"] > 9) ? $_POST["editarPrecioVentaIvaIncluido"] : 0;
+			// Normalizar ID y evitar notices cuando faltan campos (por ejemplo, en impresión de precios)
+			$editarId = isset($_POST["editarId"]) ? (int)$_POST["editarId"] : 0;
+			$esProductoNormal = ($editarId > 9);
+
+			// Si son productos VARIOS (id <= 9) no actualizo todos los valores, solo algunos.
+			// Además, uso isset/?? para evitar warnings de \"Undefined array key\" cuando algún campo no viene en el POST.
+			$_POST["editarCategoria"]             = $esProductoNormal ? ($_POST["editarCategoria"]            ?? 1) : 1;
+			$_POST["editarProveedor"]             = $esProductoNormal ? ($_POST["editarProveedor"]            ?? 1) : 1;
+			$_POST["editarStock"]                 = $esProductoNormal ? ($_POST["editarStock"]                ?? 0) : 0;
+			$_POST["editarStockMedio"]            = $esProductoNormal ? ($_POST["editarStockMedio"]           ?? 0) : 0;
+			$_POST["editarStockBajo"]             = $esProductoNormal ? ($_POST["editarStockBajo"]            ?? 0) : 0;
+			$_POST["editarPrecioCompraNeto"]      = $esProductoNormal ? ($_POST["editarPrecioCompraNeto"]     ?? 0) : 0;
+			$_POST["editarPrecioCompraNetoDolar"] = $esProductoNormal ? ($_POST["editarPrecioCompraNetoDolar"]?? 0) : 0;
+			$_POST["editarPorcentajeText"]        = $esProductoNormal ? ($_POST["editarPorcentajeText"]       ?? 0) : 0;
+			$_POST["editarPrecioVenta"]           = $esProductoNormal ? ($_POST["editarPrecioVenta"]          ?? 0) : 0;
+			$_POST["editarPrecioVentaIvaIncluido"]= $esProductoNormal ? ($_POST["editarPrecioVentaIvaIncluido"]?? 0): 0;
 
 			$datos = array(
 			            "id" => $_POST["editarId"],
