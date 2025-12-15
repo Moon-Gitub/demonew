@@ -174,8 +174,14 @@
     font-style: italic;
 }
 
+/* Contenedor principal de la tabla de productos */
 .productos-table-container {
     margin-top: 20px;
+}
+
+/* Quitar borde superior visual de la tabla para que se integre mejor con el recuadro */
+#tablaProductos {
+    border-top: none !important;
 }
 
 /* Estilos para mobile - Responsive */
@@ -276,6 +282,47 @@
     .box-body {
         padding: 15px !important;
     }
+}
+
+/* ===============================
+   FOOTER DE LA TABLA (FILTROS)
+   =============================== */
+
+/* Estilo general del footer: sin borde superior fuerte y fondo suave */
+#tablaProductos tfoot {
+    background: #f8f9fb;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* Celdas del footer alineadas y sin borde superior grueso */
+#tablaProductos tfoot th {
+    border-top: none !important;
+    padding: 8px 6px !important;
+    text-align: center;
+}
+
+/* Inputs de filtro del footer */
+#tablaProductos tfoot th input {
+    width: 100%;
+    max-width: 120px;
+    border: 1px solid #d0d4e4;
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 12px;
+    color: #34495e;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+}
+
+#tablaProductos tfoot th input::placeholder {
+    color: #a0a4b8;
+}
+
+#tablaProductos tfoot th input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102,126,234,0.15);
+    outline: none;
 }
 </style>
 
