@@ -54,8 +54,16 @@ $Xinicio = $Xactual = 5;
 $Yinicio = $Yactual = 5;
 
 foreach ($productos as $key => $value) {
-
-$producto = ControladorProductos::ctrMostrarProductos('id', $value["id"], 'id');
+    if (!isset($value["id"])) {
+        continue; // Saltar si no tiene ID
+    }
+    
+    $producto = ControladorProductos::ctrMostrarProductos('id', $value["id"], 'id');
+    
+    if (!$producto || empty($producto)) {
+        error_log("Producto no encontrado con ID: " . $value["id"]);
+        continue; // Saltar si no se encuentra el producto
+    }
 	
 if($nuevaPagina){
 $pdf->AddPage();
@@ -92,11 +100,9 @@ $pdf->Output('Productos-Codigo-Barra.pdf');
 
 }
 
-$precios = new imprimirPreciosProductos();
-
 // Inicializar sesión para leer productos seleccionados
-// Si se pasa PHPSESSID como parámetro, usarlo para mantener la misma sesión
-if (isset($_GET['PHPSESSID'])) {
+// IMPORTANTE: session_id() debe llamarse ANTES de session_start()
+if (isset($_GET['PHPSESSID']) && !empty($_GET['PHPSESSID'])) {
     session_id($_GET['PHPSESSID']);
 }
 
@@ -106,16 +112,32 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Verificar que hay productos en sesión
 if (!isset($_SESSION['productos_impresion']) || empty($_SESSION['productos_impresion'])) {
+    header('Content-Type: text/html; charset=utf-8');
     die('Error: No hay productos seleccionados para imprimir. Por favor, seleccioná productos desde la página de impresión.');
 }
 
 // Convertir productos de sesión al formato JSON esperado
 $productosParaImprimir = [];
 foreach ($_SESSION['productos_impresion'] as $item) {
-    $productosParaImprimir[] = ['id' => $item['id']];
+    if (isset($item['id'])) {
+        $productosParaImprimir[] = ['id' => intval($item['id'])];
+    }
 }
 
+if (empty($productosParaImprimir)) {
+    header('Content-Type: text/html; charset=utf-8');
+    die('Error: No se encontraron productos válidos en la selección.');
+}
+
+$precios = new imprimirPreciosProductos();
 $precios->lista = json_encode($productosParaImprimir);
-$precios->traerImpresionPrecios();
+
+try {
+    $precios->traerImpresionPrecios();
+} catch (Exception $e) {
+    header('Content-Type: text/html; charset=utf-8');
+    error_log("Error en imprimirCodigoBarra: " . $e->getMessage());
+    die('Error al generar el PDF: ' . $e->getMessage());
+}
 
 ?>

@@ -582,8 +582,8 @@ $pdf->Output('precios-gondola.pdf');
 
 $precios = new imprimirPreciosProductos();
 // Inicializar sesión para leer productos seleccionados
-// Si se pasa PHPSESSID como parámetro, usarlo para mantener la misma sesión
-if (isset($_GET['PHPSESSID'])) {
+// IMPORTANTE: session_id() debe llamarse ANTES de session_start()
+if (isset($_GET['PHPSESSID']) && !empty($_GET['PHPSESSID'])) {
     session_id($_GET['PHPSESSID']);
 }
 
