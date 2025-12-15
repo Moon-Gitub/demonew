@@ -650,35 +650,38 @@ IMPresión PRECIOS - NUEVO SISTEMA CON SESIÓN
 
 // Inicializar DataTable de productos disponibles SOLO si existe el elemento
 var tblProdImpresion = null;
-if ($("#tablaImpresionProductosImpresion").length > 0) {
-	try {
-		tblProdImpresion = $('#tablaImpresionProductosImpresion').DataTable({
-			"bProcessing": true,
-			"bServerSide": true,
-			"sAjaxSource": "ajax/productos-precios.php",
-			"responsive": true,
-			"pageLength": 10,
-			"order": [[0, 'desc']],
-			"columnDefs": [
-				{ "targets": [0], "visible": false, "searchable": true }
-			],
-			"aoColumns": [
-				{ mData: 'id' },
-				{ mData: 'codigo', className: "uniqueClassName" },
-				{ mData: 'descripcion', className: "uniqueClassName" },
-				{ 
-					mData: 'precio_venta', 
-					className: "uniqueClassName",
-					"mRender": function(data) {
-						return "$ " + parseFloat(data).toFixed(2);
+
+// Función para inicializar DataTable cuando el DOM esté listo
+function inicializarDataTableImpresion() {
+	if ($("#tablaImpresionProductosImpresion").length > 0 && !$.fn.DataTable.isDataTable('#tablaImpresionProductosImpresion')) {
+		try {
+			tblProdImpresion = $('#tablaImpresionProductosImpresion').DataTable({
+				"bProcessing": true,
+				"bServerSide": true,
+				"sAjaxSource": "ajax/productos-precios.php",
+				"responsive": false,
+				"pageLength": 10,
+				"order": [[0, 'desc']],
+				"columnDefs": [
+					{ "targets": [0], "visible": false, "searchable": true }
+				],
+				"aoColumns": [
+					{ mData: 'id' },
+					{ mData: 'codigo', className: "uniqueClassName" },
+					{ mData: 'descripcion', className: "uniqueClassName" },
+					{ 
+						mData: 'precio_venta', 
+						className: "uniqueClassName",
+						"mRender": function(data) {
+							return "$ " + parseFloat(data || 0).toFixed(2);
+						}
+					},
+					{
+						"mRender": function (data, type, row) {
+							return '<center><button class="btn btn-success btn-sm btn-agregar-producto" onclick="agregarProductoImpresion(' + (row["id"] || 0) + ')" title="Agregar a selección"><i class="fa fa-plus"></i> Agregar</button></center>';
+						}
 					}
-				},
-				{
-					"mRender": function (data, type, row) {
-						return '<center><button class="btn btn-success btn-sm btn-agregar-producto" onclick="agregarProductoImpresion(' + row["id"] + ')" title="Agregar a selección"><i class="fa fa-plus"></i> Agregar</button></center>';
-					}
-				}
-			],
+				],
 			"language": {
 				"sProcessing": "Procesando...",
 				"sLengthMenu": "Mostrar _MENU_ registros",
@@ -914,9 +917,13 @@ function cargarSeleccionImpresion() {
 	});
 }
 
-// Cargar selección al iniciar la página
+// Cargar selección al iniciar la página e inicializar DataTable
 if ($("#tablaImpresionProductosImpresion").length > 0) {
-	cargarSeleccionImpresion();
+	// Esperar a que el DOM esté completamente listo
+	$(document).ready(function() {
+		inicializarDataTableImpresion();
+		cargarSeleccionImpresion();
+	});
 }
 
 // Botones de impresión (ahora usan sesión, no URL)
