@@ -973,82 +973,115 @@ $("#btnImprimirCodigosBarra").click(function() {
 
 // Función genérica para imprimir (usa sesión)
 function imprimirPrecios(tipo) {
-	// Verificar que hay productos seleccionados
-	$.ajax({
-		url: "ajax/impresion-precios.ajax.php?accion=obtener_ids",
-		method: "GET",
-		dataType: "json",
-		success: function(respuesta) {
-			// Validar respuesta - solo mostrar mensaje si realmente no hay productos
-			if (!respuesta || respuesta.error) {
-				swal({
-					type: "warning",
-					title: "Sin productos seleccionados",
-					text: "Primero seleccioná al menos un producto para imprimir.",
-					showConfirmButton: true,
-					confirmButtonText: "Cerrar"
-				});
-				return;
-			}
+	// Verificar que hay productos seleccionados ANTES de hacer la petición
+	// Primero verificar localmente si hay productos en la lista visible
+	var contador = parseInt($("#contadorSeleccion").text()) || 0;
+	
+	if (contador === 0) {
+		// Si no hay productos visibles, verificar en el servidor
+		$.ajax({
+			url: "ajax/impresion-precios.ajax.php?accion=obtener_ids",
+			method: "GET",
+			dataType: "json",
+			success: function(respuesta) {
+				console.log("Respuesta del servidor:", respuesta);
+				
+				// Validar respuesta - solo mostrar mensaje si realmente no hay productos
+				if (!respuesta || respuesta.error) {
+					swal({
+						type: "warning",
+						title: "Sin productos seleccionados",
+						text: "Primero seleccioná al menos un producto para imprimir.",
+						showConfirmButton: true,
+						confirmButtonText: "Cerrar"
+					});
+					return;
+				}
 
-			// Verificar que hay IDs
-			var ids = respuesta.ids || [];
-			var total = respuesta.total || 0;
-			
-			if (total === 0 || ids.length === 0) {
-				swal({
-					type: "warning",
-					title: "Sin productos seleccionados",
-					text: "Primero seleccioná al menos un producto para imprimir.",
-					showConfirmButton: true,
-					confirmButtonText: "Cerrar"
-				});
-				return;
-			}
+				// Verificar que hay IDs
+				var ids = respuesta.ids || [];
+				var total = respuesta.total || 0;
+				
+				if (total === 0 || ids.length === 0) {
+					swal({
+						type: "warning",
+						title: "Sin productos seleccionados",
+						text: "Primero seleccioná al menos un producto para imprimir.",
+						showConfirmButton: true,
+						confirmButtonText: "Cerrar"
+					});
+					return;
+				}
 
-			// Obtener session_id de la cookie para pasarlo al script PDF
-			var sessionId = getCookie('PHPSESSID');
-			if (!sessionId) {
-				// Intentar obtener de otra forma
-				var match = document.cookie.match(/PHPSESSID=([^;]+)/);
-				sessionId = match ? match[1] : '';
+				// Si hay productos, proceder con la impresión
+				abrirPDF(tipo, ids);
+			},
+			error: function(xhr, status, error) {
+				console.error("Error AJAX:", status, error, xhr.responseText);
+				// No mostrar error si es un problema menor
+				if (xhr.status !== 0 && xhr.status !== 200 && xhr.status !== 404) {
+					swal({
+						type: "error",
+						title: "Error",
+						text: "No se pudo verificar la selección. Intenta nuevamente.",
+						showConfirmButton: true
+					});
+				}
 			}
+		});
+	} else {
+		// Si hay productos visibles, obtener IDs y abrir directamente
+		$.ajax({
+			url: "ajax/impresion-precios.ajax.php?accion=obtener_ids",
+			method: "GET",
+			dataType: "json",
+			success: function(respuesta) {
+				console.log("Respuesta del servidor:", respuesta);
+				var ids = respuesta.ids || [];
+				abrirPDF(tipo, ids);
+			},
+			error: function(xhr, status, error) {
+				console.error("Error AJAX:", status, error);
+				// Si hay productos visibles pero falla la petición, intentar abrir igual
+				// usando los productos de la sesión
+				abrirPDF(tipo, []);
+			}
+		});
+	}
+}
 
-			// Construir URL con session_id y también pasar IDs como backup
-			var idsParam = JSON.stringify(ids.map(function(id) { return {id: id}; }));
-			
-			var url = "extensiones/vendor/tecnickcom/tcpdf/pdf/" + tipo + ".php";
-			var params = [];
-			
-			if (sessionId) {
-				params.push("PHPSESSID=" + encodeURIComponent(sessionId));
-			}
-			
-			// Si hay pocos productos, también pasar IDs como backup (máximo 20 para no hacer URL muy larga)
-			if (ids.length > 0 && ids.length <= 20) {
-				params.push("ids=" + encodeURIComponent(idsParam));
-			}
-			
-			if (params.length > 0) {
-				url += "?" + params.join("&");
-			}
-			
-			// Abrir en nueva ventana - sin mostrar mensajes después
-			window.open(url, "_blank");
-		},
-		error: function(xhr, status, error) {
-			console.error("Error AJAX:", status, error);
-			// Solo mostrar error si realmente falló la petición (no por bloqueador de ventanas)
-			if (xhr.status !== 0 && xhr.status !== 200) {
-				swal({
-					type: "error",
-					title: "Error",
-					text: "No se pudo verificar la selección. Intenta nuevamente.",
-					showConfirmButton: true
-				});
-			}
-		}
-	});
+// Función auxiliar para abrir el PDF
+function abrirPDF(tipo, ids) {
+	// Obtener session_id de la cookie para pasarlo al script PDF
+	var sessionId = getCookie('PHPSESSID');
+	if (!sessionId) {
+		// Intentar obtener de otra forma
+		var match = document.cookie.match(/PHPSESSID=([^;]+)/);
+		sessionId = match ? match[1] : '';
+	}
+
+	// Construir URL con session_id y también pasar IDs como backup
+	var idsParam = JSON.stringify(ids.map(function(id) { return {id: id}; }));
+	
+	var url = "extensiones/vendor/tecnickcom/tcpdf/pdf/" + tipo + ".php";
+	var params = [];
+	
+	if (sessionId) {
+		params.push("PHPSESSID=" + encodeURIComponent(sessionId));
+	}
+	
+	// Si hay pocos productos, también pasar IDs como backup (máximo 20 para no hacer URL muy larga)
+	if (ids.length > 0 && ids.length <= 20) {
+		params.push("ids=" + encodeURIComponent(idsParam));
+	}
+	
+	if (params.length > 0) {
+		url += "?" + params.join("&");
+	}
+	
+	console.log("Abriendo PDF:", url);
+	// Abrir en nueva ventana - sin mostrar mensajes después
+	window.open(url, "_blank");
 }
 
 // Función helper para obtener cookies
