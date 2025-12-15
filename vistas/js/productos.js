@@ -638,8 +638,15 @@ var arrayProductosImpresion = [];
 var contador=0;
 function cargarArrarPrecio(valor){
 
-	document.getElementById("precioPlace").style.display = "block";
-	document.getElementById("detallePlace").style.display = "block";
+	// Mostrar panel de selección si existe en la vista actual
+	var panelPrecios = document.getElementById("precioPlace");
+	var detallePlace = document.getElementById("detallePlace");
+	if(panelPrecios){
+		panelPrecios.style.display = "block";
+	}
+	if(detallePlace){
+		detallePlace.style.display = "block";
+	}
 			
 	var datos = new FormData();
     datos.append("idPro", valor);
@@ -678,12 +685,19 @@ for (var i = 0; i < array.length; i++) {
 
 document.getElementById("arrayProductosImpresion").value = JSON.stringify(array);
 contador--;
-document.getElementById("contador").innerHTML="Precios Para Imprimir:"+contador;
+var lblContador = document.getElementById("contador");
+if(lblContador){
+	lblContador.innerHTML="Precios Para Imprimir:"+contador;
+}
 var cambioEstado = "botonAgregar"+idProducto;
 document.getElementById(cambioEstado).removeAttribute('disabled');
 if(contador==0){
-		document.getElementById("precioPlace").style.display = "none";
-		document.getElementById("detallePlace").style.display = "none";
+		if(document.getElementById("precioPlace")){
+			document.getElementById("precioPlace").style.display = "none";
+		}
+		if(document.getElementById("detallePlace")){
+			document.getElementById("detallePlace").style.display = "none";
+		}
 	}else{
 	}
 }
@@ -711,9 +725,15 @@ var arrayProductosBorrarMultiple = [];
 var contador=0;
 function cargarArrarBorrarMultiple(valor){
 
-	document.getElementById("precioPlace").style.display = "block";
-	document.getElementById("detallePlace").style.display = "block";
-	document.getElementById("boronBorrado").style.display = "block";
+	if(document.getElementById("precioPlace")){
+		document.getElementById("precioPlace").style.display = "block";
+	}
+	if(document.getElementById("detallePlace")){
+		document.getElementById("detallePlace").style.display = "block";
+	}
+	if(document.getElementById("boronBorrado")){
+		document.getElementById("boronBorrado").style.display = "block";
+	}
 		
 	var datos = new FormData();
     datos.append("idProducto", valor);
