@@ -1049,14 +1049,21 @@ function imprimirPrecios(tipo) {
 					showConfirmButton: true
 				});
 			}
+			// No mostrar mensaje de error si la ventana se abrió correctamente
+			// El mensaje solo debe aparecer si realmente no hay productos
 		},
-		error: function() {
-			swal({
-				type: "error",
-				title: "Error",
-				text: "No se pudo verificar la selección. Intenta nuevamente.",
-				showConfirmButton: true
-			});
+		error: function(xhr, status, error) {
+			console.error("Error AJAX:", status, error);
+			// Solo mostrar error si realmente falló la petición
+			// No mostrar si es un problema de red menor
+			if (xhr.status !== 0) {
+				swal({
+					type: "error",
+					title: "Error",
+					text: "No se pudo verificar la selección. Intenta nuevamente.",
+					showConfirmButton: true
+				});
+			}
 		}
 	});
 }

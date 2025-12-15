@@ -114,6 +114,10 @@ $yPrecio = 107;
 $yCodigo = 133;
 
 foreach ($productos as $key => $value) {
+    // Validar que el item tenga ID
+    if (!isset($value["id"])) {
+        continue; // Saltar si no tiene ID
+    }
 
 if($enHoja == 1) {
 $pdf->AddPage();
@@ -129,6 +133,31 @@ $yCodigo = 212;
 }
 
 $producto = ControladorProductos::ctrMostrarProductos('id', $value["id"], 'id');
+
+// Validar que el producto existe
+if (!$producto || empty($producto)) {
+    error_log("Producto no encontrado con ID: " . $value["id"]);
+    continue; // Saltar si no se encuentra el producto
+}
+
+// Validar y convertir precios a float
+$precioVenta = 0;
+if (isset($producto['precio_venta'])) {
+    if (is_numeric($producto['precio_venta'])) {
+        $precioVenta = floatval($producto['precio_venta']);
+    } elseif (is_string($producto['precio_venta']) && $producto['precio_venta'] !== '') {
+        $precioVenta = floatval(str_replace(',', '.', $producto['precio_venta']));
+    }
+}
+
+$precioPromo = 0;
+if (isset($producto['precioPromo'])) {
+    if (is_numeric($producto['precioPromo'])) {
+        $precioPromo = floatval($producto['precioPromo']);
+    } elseif (is_string($producto['precioPromo']) && $producto['precioPromo'] !== '') {
+        $precioPromo = floatval(str_replace(',', '.', $producto['precioPromo']));
+    }
+}
 	
 //
 // IMAGEN FONDO
@@ -169,18 +198,18 @@ $pdf->SetFont('', 'B', 120);
 $pdf->SetXY(60, $yPrecio);
 
 if(isset($producto["estadoPromocion"]) && $producto["estadoPromocion"]) {
-$fecha_actual = strtotime(date("Y-m-d H:i:00",time()));
-$fecha_promo = strtotime($producto["fechaPromo"]);
+    $fecha_actual = strtotime(date("Y-m-d H:i:00",time()));
+    $fecha_promo = isset($producto["fechaPromo"]) ? strtotime($producto["fechaPromo"]) : 0;
 	
-if($fecha_actual > $fecha_promo)
-	{
-	$precioRedondo = number_format($producto["precio_venta"], 2, ',','.');
-	}else
-	{
-	$precioRedondo = number_format($producto["precioPromo"], 2, ',','.');
-	}
-}else{
-$precioRedondo = number_format($producto["precio_venta"], 2, ',','.');
+    if($fecha_actual > $fecha_promo && $fecha_promo > 0)
+    {
+        $precioRedondo = number_format($precioVenta, 2, ',','.');
+    } else
+    {
+        $precioRedondo = number_format($precioPromo, 2, ',','.');
+    }
+} else {
+    $precioRedondo = number_format($precioVenta, 2, ',','.');
 }
 $bloquePrecio = <<<EOF
 
