@@ -255,8 +255,8 @@ if (empty($productosParaImprimir) && isset($_GET['ids']) && !empty($_GET['ids'])
         foreach ($idsJson as $item) {
             if (isset($item['id'])) {
                 $productosParaImprimir[] = ['id' => intval($item['id'])];
+            }
         }
-    }
     }
 }
 
