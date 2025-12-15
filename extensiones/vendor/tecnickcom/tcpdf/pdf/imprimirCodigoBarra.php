@@ -24,11 +24,39 @@ if (file_exists($autoloadPath)) {
     die('Error de configuración: No se encuentra autoload.php. Revisa los logs del servidor.');
 }
 
+// Cargar .env desde la raíz del proyecto
+// Desde: extensiones/vendor/tecnickcom/tcpdf/pdf/
+// Hacia: raíz del proyecto (donde está .env)
+// Necesitamos subir 5 niveles: ../../../../../
 if (class_exists('Dotenv\\Dotenv')) {
-    $raiz = dirname(__DIR__, 3);
-    if (file_exists($raiz . "/.env")) {
-        $dotenv = Dotenv\Dotenv::createImmutable($raiz);
-        $dotenv->safeLoad();
+    // Intentar múltiples paths posibles
+    $raiz1 = dirname(__DIR__, 5); // Desde pdf/ subir 5 niveles a la raíz
+    $raiz2 = __DIR__ . "/../../../../../"; // Path relativo alternativo
+    $raiz3 = dirname(__DIR__, 3); // Fallback: extensiones/vendor/
+    
+    $raiz = null;
+    $envPath = null;
+    
+    // Buscar .env en diferentes ubicaciones
+    foreach ([$raiz1, $raiz2, $raiz3] as $ruta) {
+        $rutaReal = realpath($ruta);
+        if ($rutaReal && file_exists($rutaReal . "/.env")) {
+            $raiz = $rutaReal;
+            $envPath = $rutaReal . "/.env";
+            break;
+        }
+    }
+    
+    if ($raiz && $envPath) {
+        try {
+            $dotenv = Dotenv\Dotenv::createImmutable($raiz);
+            $dotenv->safeLoad();
+            error_log("✅ .env cargado desde: " . $envPath);
+        } catch (Exception $e) {
+            error_log("⚠️ Error al cargar .env: " . $e->getMessage());
+        }
+    } else {
+        error_log("⚠️ No se encontró .env. Buscado en: " . $raiz1 . ", " . $raiz2 . ", " . $raiz3);
     }
 }
 

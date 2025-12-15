@@ -21,13 +21,45 @@ if (file_exists($autoloadPath)) {
 }
 
 // 2. Verificar .env
-$raiz = dirname(__DIR__, 3);
-if (class_exists('Dotenv\\Dotenv') && file_exists($raiz . "/.env")) {
-    $dotenv = Dotenv\Dotenv::createImmutable($raiz);
-    $dotenv->safeLoad();
-    echo "<p>2. ✅ .env cargado</p>";
+$raiz1 = dirname(__DIR__, 5); // Desde pdf/ subir 5 niveles a la raíz
+$raiz2 = __DIR__ . "/../../../../../"; // Path relativo alternativo
+$raiz3 = dirname(__DIR__, 3); // Fallback: extensiones/vendor/
+
+$raiz = null;
+$envPath = null;
+
+foreach ([$raiz1, $raiz2, $raiz3] as $ruta) {
+    $rutaReal = realpath($ruta);
+    if ($rutaReal && file_exists($rutaReal . "/.env")) {
+        $raiz = $rutaReal;
+        $envPath = $rutaReal . "/.env";
+        break;
+    }
+}
+
+if ($raiz && $envPath && class_exists('Dotenv\\Dotenv')) {
+    try {
+        $dotenv = Dotenv\Dotenv::createImmutable($raiz);
+        $dotenv->safeLoad();
+        echo "<p>2. ✅ .env cargado desde: " . htmlspecialchars($envPath) . "</p>";
+        echo "<p>   Variables encontradas:</p>";
+        echo "<ul>";
+        echo "<li>DB_HOST: " . (isset($_ENV['DB_HOST']) ? "✅ " . htmlspecialchars($_ENV['DB_HOST']) : "❌ No encontrado") . "</li>";
+        echo "<li>DB_NAME: " . (isset($_ENV['DB_NAME']) ? "✅ " . htmlspecialchars($_ENV['DB_NAME']) : "❌ No encontrado") . "</li>";
+        echo "<li>DB_USER: " . (isset($_ENV['DB_USER']) ? "✅ " . htmlspecialchars($_ENV['DB_USER']) : "❌ No encontrado") . "</li>";
+        echo "<li>DB_PASS: " . (isset($_ENV['DB_PASS']) ? "✅ (configurado)" : "❌ No encontrado") . "</li>";
+        echo "</ul>";
+    } catch (Exception $e) {
+        echo "<p>2. ❌ Error al cargar .env: " . htmlspecialchars($e->getMessage()) . "</p>";
+    }
 } else {
     echo "<p>2. ⚠️ .env no encontrado o Dotenv no disponible</p>";
+    echo "<p>   Buscado en:</p>";
+    echo "<ul>";
+    echo "<li>" . htmlspecialchars($raiz1) . "</li>";
+    echo "<li>" . htmlspecialchars($raiz2) . "</li>";
+    echo "<li>" . htmlspecialchars($raiz3) . "</li>";
+    echo "</ul>";
 }
 
 // 3. Verificar sesión
