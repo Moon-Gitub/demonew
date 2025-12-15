@@ -22,6 +22,15 @@ class ControladorPedidos{
 	}
 
 	/*=============================================
+	MOSTRAR ULTIMO CODIGO PEDIDO
+	=============================================*/
+	static public function ctrMostrarUltimoCodigo(){
+		$tabla = "pedidos";
+		$respuesta = ModeloPedidos::mdlMostrarUltimoCodigo($tabla);
+		return $respuesta;
+	}
+
+	/*=============================================
 	CREAR PEDIDO
 	=============================================*/
 	static public function ctrCrearPedido(){

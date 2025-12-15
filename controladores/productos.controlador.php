@@ -676,13 +676,17 @@ class ControladorProductos{
 	static public function ctrObtenerColumnasExcel() {
 		if(isset($_FILES["nuevaExcel"])) {
 		 	$origen = $_FILES["nuevaExcel"]["tmp_name"];
-			$directorio = "vistas/dist/xlsx/";
-			date_default_timezone_set('America/Argentina/Mendoza');
-			$fecha = date('Y-m-d');
-			$hora = date('H-i-s');
-	        $nombreArchivo = time();
-			$destino = $directorio.$fecha."_".$hora."_".$nombreArchivo.".xlsx";
-			if (!copy($origen, $destino)) {
+		$directorio = "vistas/dist/xlsx/";
+		// Crear directorio si no existe
+		if (!file_exists($directorio)) {
+			mkdir($directorio, 0755, true);
+		}
+		date_default_timezone_set('America/Argentina/Mendoza');
+		$fecha = date('Y-m-d');
+		$hora = date('H-i-s');
+        $nombreArchivo = time();
+		$destino = $directorio.$fecha."_".$hora."_".$nombreArchivo.".xlsx";
+		if (!copy($origen, $destino)) {
 				echo'<script>
 					swal({
 						  type: "error",

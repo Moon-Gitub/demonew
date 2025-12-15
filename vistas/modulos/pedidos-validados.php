@@ -88,9 +88,11 @@ if($_SESSION["perfil"] == "Vendedor"){
                   $orden = "id";
 					
                   $respuesta = ControladorProductos::ctrMostrarProductos($item, $valor, $orden);
-				  $precioCompraActual = $precioCompraActual + ($respuesta["precio_venta"] * $value2["cantidad"]);
-				  $cantidadProductos = $cantidadProductos + $value2["cantidad"];		
-				  $resultado = $resultado.'<b> Cod: </b>' . $value2["id"]. '<b> Desc: </b>' .$value2["descripcion"]. '<b> Precio Actual: $</b>' .$value2["precio_venta"]. '<b> Cantidad: </b>' .$value2["cantidad"]. '</br>'; 
+				  $precioVenta = isset($respuesta["precio_venta"]) ? $respuesta["precio_venta"] : 0;
+				  $precioCompraActual = $precioCompraActual + ($precioVenta * $value2["cantidad"]);
+				  $cantidadProductos = $cantidadProductos + $value2["cantidad"];
+				  $precioVentaItem = isset($value2["precio_venta"]) ? $value2["precio_venta"] : $precioVenta;
+				  $resultado = $resultado.'<b> Cod: </b>' . $value2["id"]. '<b> Desc: </b>' .$value2["descripcion"]. '<b> Precio Actual: $</b>' .$precioVentaItem. '<b> Cantidad: </b>' .$value2["cantidad"]. '</br>'; 
 				  
 				   $detallePedido = "<b>Cant. Items: </b>" . count($listaProducto);
 
