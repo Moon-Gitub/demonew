@@ -3,7 +3,7 @@
 
 <aside class="main-sidebar">
 	<section class="sidebar">
-		<ul class="sidebar-menu">
+		<ul class="sidebar-menu" data-widget="tree">
 		<?php
 		if($_SESSION["perfil"] == "Administrador"){
 		?>
