@@ -648,42 +648,61 @@ $("#nuevoCodigo").change(function(){
 IMPresión PRECIOS - NUEVO SISTEMA CON SESIÓN
 =============================================*/
 
-// Inicializar DataTable de productos disponibles
-var tblProdImpresion = $('#tablaImpresionProductosImpresion').DataTable({
-	"bProcessing": true,
-	"bServerSide": true,
-	"sAjaxSource": "ajax/productos-precios.php",
-	"responsive": true,
-	"pageLength": 10,
-	"order": [[0, 'desc']],
-	"columnDefs": [
-		{ "targets": [0], "visible": false, "searchable": true }
-	],
-	"aoColumns": [
-		{ mData: 'id' },
-		{ mData: 'codigo', className: "uniqueClassName" },
-		{ mData: 'descripcion', className: "uniqueClassName" },
-		{ 
-			mData: 'precio_venta', 
-			className: "uniqueClassName",
-			"mRender": function(data) {
-				return "$ " + parseFloat(data).toFixed(2);
+// Inicializar DataTable de productos disponibles SOLO si existe el elemento
+var tblProdImpresion = null;
+if ($("#tablaImpresionProductosImpresion").length > 0) {
+	try {
+		tblProdImpresion = $('#tablaImpresionProductosImpresion').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "ajax/productos-precios.php",
+			"responsive": true,
+			"pageLength": 10,
+			"order": [[0, 'desc']],
+			"columnDefs": [
+				{ "targets": [0], "visible": false, "searchable": true }
+			],
+			"aoColumns": [
+				{ mData: 'id' },
+				{ mData: 'codigo', className: "uniqueClassName" },
+				{ mData: 'descripcion', className: "uniqueClassName" },
+				{ 
+					mData: 'precio_venta', 
+					className: "uniqueClassName",
+					"mRender": function(data) {
+						return "$ " + parseFloat(data).toFixed(2);
+					}
+				},
+				{
+					"mRender": function (data, type, row) {
+						return '<center><button class="btn btn-success btn-sm btn-agregar-producto" onclick="agregarProductoImpresion(' + row["id"] + ')" title="Agregar a selección"><i class="fa fa-plus"></i> Agregar</button></center>';
+					}
+				}
+			],
+			"language": {
+				"url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+			},
+			"error": function(xhr, error, thrown) {
+				console.error("Error en DataTable:", error, thrown);
+				console.error("Respuesta del servidor:", xhr.responseText);
+				swal({
+					type: "error",
+					title: "Error al cargar productos",
+					text: "No se pudieron cargar los productos. Revisa la consola para más detalles.",
+					showConfirmButton: true
+				});
 			}
-		},
-		{
-			"mRender": function (data, type, row) {
-				return '<center><button class="btn btn-success btn-sm btn-agregar-producto" onclick="agregarProductoImpresion(' + row["id"] + ')" title="Agregar a selección"><i class="fa fa-plus"></i> Agregar</button></center>';
-			}
-		}
-	],
-	"language": {
-		"url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+		});
+	} catch (e) {
+		console.error("Error al inicializar DataTable:", e);
 	}
-});
+}
 
 // Búsqueda rápida de productos
 $("#buscarProductoImpresion").on('keyup', function() {
-	tblProdImpresion.search(this.value).draw();
+	if (tblProdImpresion) {
+		tblProdImpresion.search(this.value).draw();
+	}
 });
 
 // Agregar producto a la selección (vía AJAX con sesión)

@@ -56,10 +56,11 @@ if ( isset( $_GET['iSortCol_0'] ) ) {
  * Filtering
  */
 $whereCondition = "";
-if ( $_GET['sSearch'] != "" ) {
+$sSearch = isset($_GET['sSearch']) ? $_GET['sSearch'] : "";
+if ( $sSearch != "" ) {
   $whereCondition = "WHERE (";
   for ( $i=0 ; $i<count($tableColumns) ; $i++ ) {
-    $whereCondition .= $tableColumns[$i]." LIKE '%".mysqli_real_escape_string($mysqli,$_GET['sSearch'] )."%' OR ";
+    $whereCondition .= $tableColumns[$i]." LIKE '%".mysqli_real_escape_string($mysqli, $sSearch)."%' OR ";
   }
   $whereCondition = substr_replace( $whereCondition, "", -3 );
   $whereCondition .= ')';
@@ -67,13 +68,15 @@ if ( $_GET['sSearch'] != "" ) {
 
 /* Individual column filtering */
 for ( $i=0 ; $i<count($tableColumns) ; $i++ ) {
-  if ( $_GET['bSearchable_'.$i] == "true" && $_GET['sSearch_'.$i] != '' ) {
+  $bSearchable = isset($_GET['bSearchable_'.$i]) ? $_GET['bSearchable_'.$i] : "false";
+  $sSearchCol = isset($_GET['sSearch_'.$i]) ? $_GET['sSearch_'.$i] : "";
+  if ( $bSearchable == "true" && $sSearchCol != '' ) {
     if ( $whereCondition == "" ) {
       $whereCondition = "WHERE ";
     } else {
       $whereCondition .= " AND ";
     }
-    $whereCondition .= $tableColumns[$i]." LIKE '%".mysqli_real_escape_string($mysqli,$_GET['sSearch_'.$i])."%' ";
+    $whereCondition .= $tableColumns[$i]." LIKE '%".mysqli_real_escape_string($mysqli, $sSearchCol)."%' ";
   }
 }
 
@@ -83,23 +86,53 @@ $whereCondition
 $orderBy 
 $limit";
 
-// echo $sql;die;
+// Ejecutar consulta con manejo de errores
 $result = $mysqli->query($sql);
-
-$sql1 = "SELECT count(".$primaryKey.") from productos";
-$result1 = $mysqli->query($sql1);
-$totalRecord=$result1->fetch_array();
-
-$data=array();
-while($row = $result->fetch_array(MYSQLI_ASSOC)){
-  $data[] =  mb_convert_encoding($row, 'UTF-8', 'ISO-8859-1'); //array_map("utf8_encode",$row);
+if (!$result) {
+    http_response_code(500);
+    echo json_encode([
+        "sEcho" => intval($_GET['sEcho'] ?? 1),
+        "iTotalRecords" => 0,
+        "iTotalDisplayRecords" => 0,
+        "aaData" => [],
+        "error" => "Error en consulta: " . $mysqli->error
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
 }
 
-$output = ["sEcho" => intval($_GET['sEcho']),
-          "iTotalRecords" => $totalRecord[0],
-          "iTotalDisplayRecords" => $totalRecord[0],
-          "aaData" => $data ];
+// Contar total de registros
+$sql1 = "SELECT count(".$primaryKey.") as total from productos" . ($whereCondition ? " " . $whereCondition : "");
+$result1 = $mysqli->query($sql1);
+if (!$result1) {
+    http_response_code(500);
+    echo json_encode([
+        "sEcho" => intval($_GET['sEcho'] ?? 1),
+        "iTotalRecords" => 0,
+        "iTotalDisplayRecords" => 0,
+        "aaData" => [],
+        "error" => "Error al contar registros: " . $mysqli->error
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
 
+$totalRecord = $result1->fetch_array();
+$totalRecords = isset($totalRecord[0]) ? intval($totalRecord[0]) : 0;
+
+$data = array();
+while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    $data[] = mb_convert_encoding($row, 'UTF-8', 'ISO-8859-1');
+}
+
+$sEcho = isset($_GET['sEcho']) ? intval($_GET['sEcho']) : 1;
+
+$output = [
+    "sEcho" => $sEcho,
+    "iTotalRecords" => $totalRecords,
+    "iTotalDisplayRecords" => $totalRecords,
+    "aaData" => $data
+];
+
+header('Content-Type: application/json; charset=utf-8');
 echo json_encode($output, JSON_UNESCAPED_UNICODE);
 
 ?>
