@@ -751,10 +751,17 @@ function agregarProductoListaCompra() {
         
         var cargarProductoSegunVista;
 
- 		$.ajax({
+ 		// Agregar token CSRF a FormData
+		var token = $('meta[name="csrf-token"]').attr('content') || '';
+		datos.append('csrf_token', token);
+
+		$.ajax({
 
 	     	url:"ajax/productos.ajax.php",
 	      	method: "POST",
+	      	headers: {
+	      		'X-CSRF-TOKEN': token
+	      	},
 	      	data: datos,
 	      	cache: false,
 	      	contentType: false,
@@ -810,10 +817,17 @@ function agregarProductoListaCompra() {
 									    datosActualizarPrecio.append("codigoProducto", idProducto);
 									    datosActualizarPrecio.append(tipoPrecio, values);
 
+								 		// Agregar token CSRF a FormData
+								 		var token = $('meta[name="csrf-token"]').attr('content') || '';
+								 		datosActualizarPrecio.append('csrf_token', token);
+
 								 		$.ajax({
 
 									     	url:"ajax/productos.ajax.php",
 									      	method: "POST",
+									      	headers: {
+									      		'X-CSRF-TOKEN': token
+									      	},
 									      	data: datosActualizarPrecio,
 									      	cache: false,
 									      	contentType: false,
@@ -1138,10 +1152,17 @@ $("#btnGuardarNuevoProductoCaja").click(function(){
 	datos.append("tipo_iva", $("#nuevoIvaVentaCaja").val());
 	datos.append("precio_venta", $("#nuevoPrecioVentaIvaIncluidoCaja").val());
 
+	// Agregar token CSRF a FormData
+	var token = $('meta[name="csrf-token"]').attr('content') || '';
+	datos.append('csrf_token', token);
+
 	$.ajax({
 
 		url:"ajax/productos.ajax.php",
 		method: "POST",
+		headers: {
+			'X-CSRF-TOKEN': token
+		},
 		data: datos,
 		cache: false,
 		contentType: false,
@@ -1226,11 +1247,18 @@ function datosCliente(valor){
 	
 	var datos = new FormData();
     datos.append("idCliente", valor);
+    
+    // Agregar token CSRF a FormData
+    var token = $('meta[name="csrf-token"]').attr('content') || '';
+    datos.append('csrf_token', token);
 
 	  $.ajax({
 
      	url:"ajax/productos.ajax.php",
       	method: "POST",
+      	headers: {
+      		'X-CSRF-TOKEN': token
+      	},
       	data: datos,
       	cache: false,
       	contentType: false,
@@ -2002,17 +2030,25 @@ AUTOCOMPLETAR PRODUCTOS
 =============================================*/
 $( "#ventaCajaDetalle" ).autocomplete({
     source: function( request, response ) {
+        // Obtener token CSRF
+        var token = $('meta[name="csrf-token"]').attr('content') || '';
+        
         $.ajax({
             url:"ajax/productos.ajax.php",
             dataType: "json",
+            method: "POST",
+            headers: {
+                'X-CSRF-TOKEN': token
+            },
             data: {
-                listadoProd: request.term
+                listadoProd: request.term,
+                csrf_token: token
             },
             success: function( data ) {
                 response( data );
             }, 
             error: function(e){
-                console.log(e.responseText)
+                console.log("Error en autocomplete:", e.responseText);
             }
         });        
     },
@@ -2059,10 +2095,18 @@ function agregarPrecioProducto() {
 		document.getElementById("precioProducto").style.display="none";
 		var datos = new FormData();
 	    datos.append("codigo", idProductoDos);
+	    
+	    // Agregar token CSRF a FormData
+	    var token = $('meta[name="csrf-token"]').attr('content') || '';
+	    datos.append('csrf_token', token);
+	    
 		var fechaActual = document.getElementById("fechaActual").value;
  		$.ajax({
 	     	url:"ajax/productos.ajax.php",
 	      	method: "POST",
+	      	headers: {
+	      		'X-CSRF-TOKEN': token
+	      	},
 	      	data: datos,
 	      	cache: false,
 	      	contentType: false,
@@ -2134,11 +2178,18 @@ function cargarProductosConsulta() {
 
  	var datos = new FormData();
     datos.append("listarProductos", true);
+    
+    // Agregar token CSRF a FormData
+    var token = $('meta[name="csrf-token"]').attr('content') || '';
+    datos.append('csrf_token', token);
 
     $.ajax({
 
       url:"ajax/productos.ajax.php",
       method: "POST",
+      headers: {
+      	'X-CSRF-TOKEN': token
+      },
       data: datos,
       cache: false,
       contentType: false,
