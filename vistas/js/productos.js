@@ -751,12 +751,7 @@ function inicializarDataTableImpresion() {
 	}
 }
 
-// Búsqueda rápida de productos
-$("#buscarProductoImpresion").on('keyup', function() {
-	if (tblProdImpresion) {
-		tblProdImpresion.search(this.value).draw();
-	}
-});
+// Búsqueda rápida eliminada - usar búsqueda nativa de DataTable
 
 // Agregar producto a la selección (vía AJAX con sesión)
 function agregarProductoImpresion(idProducto) {
