@@ -2030,25 +2030,21 @@ AUTOCOMPLETAR PRODUCTOS
 =============================================*/
 $( "#ventaCajaDetalle" ).autocomplete({
     source: function( request, response ) {
-        // Obtener token CSRF
-        var token = $('meta[name="csrf-token"]').attr('content') || '';
-        
         $.ajax({
             url:"ajax/productos.ajax.php",
             dataType: "json",
-            method: "POST",
-            headers: {
-                'X-CSRF-TOKEN': token
-            },
+            method: "GET",
             data: {
-                listadoProd: request.term,
-                csrf_token: token
+                listadoProd: request.term
             },
             success: function( data ) {
                 response( data );
             }, 
-            error: function(e){
-                console.log("Error en autocomplete:", e.responseText);
+            error: function(xhr, status, error){
+                console.error("Error en autocomplete:", status, error);
+                console.error("Respuesta del servidor:", xhr.responseText);
+                // En caso de error, devolver array vacío para que no se bloquee el autocomplete
+                response([]);
             }
         });        
     },

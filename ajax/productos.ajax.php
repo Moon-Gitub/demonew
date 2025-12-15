@@ -1,7 +1,13 @@
 <?php
 // ✅ Seguridad AJAX
 require_once "seguridad.ajax.php";
-SeguridadAjax::inicializar();
+
+// Para autocomplete (GET) no requerir CSRF, solo sesión y AJAX
+if (isset($_GET["listadoProd"])) {
+    SeguridadAjax::inicializar(false); // false = no verificar CSRF para GET
+} else {
+    SeguridadAjax::inicializar(); // Verificar CSRF para POST
+}
 
 
 require_once "../controladores/productos.controlador.php";
@@ -311,10 +317,10 @@ if(isset($_POST["actualizarPrecio"])){
 
 }
 
-if(isset($_GET["listadoProd"])){
+if(isset($_GET["listadoProd"]) || isset($_POST["listadoProd"])){
 
   $traerProducto = new AjaxProductos();
-  $traerProducto -> txtBuscado = $_GET["listadoProd"];
+  $traerProducto -> txtBuscado = $_GET["listadoProd"] ?? $_POST["listadoProd"] ?? '';
   $traerProducto -> ajaxListadoProductosAutocompletar();
 
 }
