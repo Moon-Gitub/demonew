@@ -155,7 +155,7 @@
 
   ?>
 
-  <body class="hold-transition skin-blue sidebar-collapse sidebar-mini login-page">
+  <body class="hold-transition skin-blue sidebar-mini sidebar-collapse">
    
     <?php
 
