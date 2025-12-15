@@ -22,14 +22,16 @@ body.login-page {
 }
 
 /* Restaurar elemento #back con imagen de fondo */
-#back {
+body.login-page #back {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100vh;
-    background: url(../../img/plantilla/back2.png);
-    background-size: cover;
+    background: url(../../img/plantilla/back2.png) !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
     overflow: hidden;
     z-index: -1;
     display: block !important;
