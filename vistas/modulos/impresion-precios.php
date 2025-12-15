@@ -78,6 +78,7 @@
               <table class="table table-bordered table-striped" id="tablaImpresionProductosImpresion">
                 <thead>
                   <tr>
+                    <th style="display: none;"><center>Id</center></th>
                     <th style="width: 15%;"><center>Código</center></th>
                     <th style="width: 50%;"><center>Descripción</center></th>
                     <th style="width: 20%;"><center>Precio</center></th>

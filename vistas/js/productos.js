@@ -653,10 +653,20 @@ var tblProdImpresion = null;
 
 // Función para inicializar DataTable cuando el DOM esté listo
 function inicializarDataTableImpresion() {
-	if ($("#tablaImpresionProductosImpresion").length > 0 && !$.fn.DataTable.isDataTable('#tablaImpresionProductosImpresion')) {
+	var $tabla = $("#tablaImpresionProductosImpresion");
+	if ($tabla.length > 0 && !$.fn.DataTable.isDataTable('#tablaImpresionProductosImpresion')) {
 		try {
 			console.log("Inicializando DataTable de impresión...");
-			tblProdImpresion = $('#tablaImpresionProductosImpresion').dataTable({
+			console.log("Elemento tabla encontrado:", $tabla.length);
+			console.log("Número de columnas en thead:", $tabla.find('thead th').length);
+			
+			// Verificar que la tabla tenga la estructura correcta
+			if ($tabla.find('thead').length === 0 || $tabla.find('tbody').length === 0) {
+				console.error("La tabla no tiene la estructura correcta (thead/tbody)");
+				return;
+			}
+			
+			tblProdImpresion = $tabla.dataTable({
 				"bProcessing": true,
 				"bServerSide": true,
 				"sAjaxSource": "ajax/productos-precios.php",
@@ -667,7 +677,7 @@ function inicializarDataTableImpresion() {
 					{ "targets": [0], "visible": false, "searchable": true }
 				],
 				"aoColumns": [
-					{ mData: 'id' },
+					{ mData: 'id', sClass: "text-center" },
 					{ mData: 'codigo', className: "uniqueClassName" },
 					{ mData: 'descripcion', className: "uniqueClassName" },
 					{ 
