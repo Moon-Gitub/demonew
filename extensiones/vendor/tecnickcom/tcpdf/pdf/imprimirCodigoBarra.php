@@ -1,7 +1,9 @@
 <?php
 
 // Inicializar entorno (.env) para que la conexión a BD funcione
-require_once dirname(__DIR__, 3) . "/vendor/autoload.php";
+// Desde esta ruta (__DIR__ = extensiones/vendor/tecnickcom/tcpdf/pdf)
+// dirname(__DIR__, 3) => extensiones/vendor  (donde está autoload.php)
+require_once dirname(__DIR__, 3) . "/autoload.php";
 if (class_exists('Dotenv\\Dotenv')) {
     $raiz = dirname(__DIR__, 3);
     if (file_exists($raiz . "/.env")) {
