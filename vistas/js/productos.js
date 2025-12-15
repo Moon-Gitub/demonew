@@ -655,7 +655,8 @@ var tblProdImpresion = null;
 function inicializarDataTableImpresion() {
 	if ($("#tablaImpresionProductosImpresion").length > 0 && !$.fn.DataTable.isDataTable('#tablaImpresionProductosImpresion')) {
 		try {
-			tblProdImpresion = $('#tablaImpresionProductosImpresion').DataTable({
+			console.log("Inicializando DataTable de impresión...");
+			tblProdImpresion = $('#tablaImpresionProductosImpresion').dataTable({
 				"bProcessing": true,
 				"bServerSide": true,
 				"sAjaxSource": "ajax/productos-precios.php",
@@ -682,43 +683,61 @@ function inicializarDataTableImpresion() {
 						}
 					}
 				],
-			"language": {
-				"sProcessing": "Procesando...",
-				"sLengthMenu": "Mostrar _MENU_ registros",
-				"sZeroRecords": "No se encontraron resultados",
-				"sEmptyTable": "Ningún dato disponible en esta tabla",
-				"sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-				"sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-				"sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-				"sInfoPostFix": "",
-				"sSearch": "Buscar:",
-				"sUrl": "",
-				"sInfoThousands": ",",
-				"sLoadingRecords": "Cargando...",
-				"oPaginate": {
-					"sFirst": "Primero",
-					"sLast": "Último",
-					"sNext": "Siguiente",
-					"sPrevious": "Anterior"
+				"language": {
+					"sProcessing": "Procesando...",
+					"sLengthMenu": "Mostrar _MENU_ registros",
+					"sZeroRecords": "No se encontraron resultados",
+					"sEmptyTable": "Ningún dato disponible en esta tabla",
+					"sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+					"sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+					"sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+					"sInfoPostFix": "",
+					"sSearch": "Buscar:",
+					"sUrl": "",
+					"sInfoThousands": ",",
+					"sLoadingRecords": "Cargando...",
+					"oPaginate": {
+						"sFirst": "Primero",
+						"sLast": "Último",
+						"sNext": "Siguiente",
+						"sPrevious": "Anterior"
+					},
+					"oAria": {
+						"sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+						"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+					}
 				},
-				"oAria": {
-					"sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-					"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+				"fnServerData": function(sSource, aoData, fnCallback) {
+					console.log("Solicitando datos al servidor...", sSource);
+					$.ajax({
+						"dataType": 'json',
+						"type": "GET",
+						"url": sSource,
+						"data": aoData,
+						"success": function(json) {
+							console.log("Respuesta del servidor:", json);
+							fnCallback(json);
+						},
+						"error": function(xhr, error, thrown) {
+							console.error("Error en DataTable:", error, thrown);
+							console.error("Respuesta del servidor:", xhr.responseText);
+							swal({
+								type: "error",
+								title: "Error al cargar productos",
+								text: "No se pudieron cargar los productos. Revisa la consola para más detalles.",
+								showConfirmButton: true
+							});
+						}
+					});
 				}
-			},
-			"error": function(xhr, error, thrown) {
-				console.error("Error en DataTable:", error, thrown);
-				console.error("Respuesta del servidor:", xhr.responseText);
-				swal({
-					type: "error",
-					title: "Error al cargar productos",
-					text: "No se pudieron cargar los productos. Revisa la consola para más detalles.",
-					showConfirmButton: true
-				});
-			}
-		});
-	} catch (e) {
-		console.error("Error al inicializar DataTable:", e);
+			});
+			console.log("DataTable inicializado correctamente");
+		} catch (e) {
+			console.error("Error al inicializar DataTable:", e);
+			console.error("Stack trace:", e.stack);
+		}
+	} else {
+		console.log("DataTable ya inicializado o elemento no encontrado");
 	}
 }
 
@@ -918,13 +937,17 @@ function cargarSeleccionImpresion() {
 }
 
 // Cargar selección al iniciar la página e inicializar DataTable
-if ($("#tablaImpresionProductosImpresion").length > 0) {
-	// Esperar a que el DOM esté completamente listo
-	$(document).ready(function() {
-		inicializarDataTableImpresion();
-		cargarSeleccionImpresion();
-	});
-}
+$(document).ready(function() {
+	if ($("#tablaImpresionProductosImpresion").length > 0) {
+		console.log("Elemento tablaImpresionProductosImpresion encontrado, inicializando...");
+		setTimeout(function() {
+			inicializarDataTableImpresion();
+			cargarSeleccionImpresion();
+		}, 100);
+	} else {
+		console.log("Elemento tablaImpresionProductosImpresion NO encontrado");
+	}
+});
 
 // Botones de impresión (ahora usan sesión, no URL)
 $("#btnImprimirPreciosComunProductos").click(function() {
