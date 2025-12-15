@@ -2,8 +2,6 @@
 
 Este documento describe el proceso paso a paso para clonar y actualizar el repositorio desde GitHub en diferentes cuentas de hosting usando la terminal.
 
----
-
 ## 📋 Índice
 
 1. [Requisitos Previos](#requisitos-previos)
@@ -13,8 +11,6 @@ Este documento describe el proceso paso a paso para clonar y actualizar el repos
 5. [Configuración de SSH (Opcional pero Recomendado)](#configuración-de-ssh-opcional-pero-recomendado)
 6. [Comandos Rápidos de Referencia](#comandos-rápidos-de-referencia)
 7. [Solución de Problemas Comunes](#solución-de-problemas-comunes)
-
----
 
 ## 🔧 Requisitos Previos
 
@@ -35,8 +31,6 @@ Si no está instalado, instálalo según tu sistema:
 - **Ubuntu/Debian**: `sudo apt-get install git`
 - **CentOS/RHEL**: `sudo yum install git`
 
----
-
 ## 🚀 Primera Vez: Clonar el Repositorio
 
 ### ⚠️ IMPORTANTE: Antes de Continuar
@@ -44,8 +38,6 @@ Si no está instalado, instálalo según tu sistema:
 **Si ya tienes archivos en `public_html` y quieres reemplazarlos completamente con el contenido de GitHub**, sigue la sección **[Clonar y Reemplazar Todo el Contenido](#clonar-y-reemplazar-todo-el-contenido)** más abajo.
 
 Si es la primera vez o quieres mantener los archivos existentes, continúa con los pasos siguientes.
-
----
 
 ### Opción 1: Clonar en Directorio Vacío o Nuevo
 
