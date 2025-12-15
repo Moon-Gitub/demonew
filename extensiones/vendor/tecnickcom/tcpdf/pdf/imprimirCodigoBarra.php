@@ -1,9 +1,21 @@
 <?php
+// Habilitar reporte de errores para debugging (solo en desarrollo)
+error_reporting(E_ALL);
+ini_set('display_errors', 0); // No mostrar en pantalla, solo en logs
+ini_set('log_errors', 1);
 
 // Inicializar entorno (.env) para que la conexión a BD funcione
 // Desde esta ruta (__DIR__ = extensiones/vendor/tecnickcom/tcpdf/pdf)
 // dirname(__DIR__, 3) => extensiones/vendor  (donde está autoload.php)
-require_once dirname(__DIR__, 3) . "/autoload.php";
+$autoloadPath = dirname(__DIR__, 3) . "/autoload.php";
+if (!file_exists($autoloadPath)) {
+    error_log("Error: No se encuentra autoload.php en: " . $autoloadPath);
+    header('Content-Type: text/html; charset=utf-8');
+    die('Error de configuración: No se encuentra autoload.php');
+}
+
+require_once $autoloadPath;
+
 if (class_exists('Dotenv\\Dotenv')) {
     $raiz = dirname(__DIR__, 3);
     if (file_exists($raiz . "/.env")) {
@@ -12,8 +24,24 @@ if (class_exists('Dotenv\\Dotenv')) {
     }
 }
 
-require_once "../../../controladores/productos.controlador.php";
-require_once "../../../modelos/productos.modelo.php";
+// Cargar modelos y controladores
+$controladorPath = __DIR__ . "/../../../controladores/productos.controlador.php";
+$modeloPath = __DIR__ . "/../../../modelos/productos.modelo.php";
+
+if (!file_exists($controladorPath)) {
+    error_log("Error: No se encuentra productos.controlador.php en: " . $controladorPath);
+    header('Content-Type: text/html; charset=utf-8');
+    die('Error: No se encuentra productos.controlador.php');
+}
+
+if (!file_exists($modeloPath)) {
+    error_log("Error: No se encuentra productos.modelo.php en: " . $modeloPath);
+    header('Content-Type: text/html; charset=utf-8');
+    die('Error: No se encuentra productos.modelo.php');
+}
+
+require_once $controladorPath;
+require_once $modeloPath;
 
 class imprimirPreciosProductos {
 
@@ -124,8 +152,14 @@ if (isset($_SESSION['productos_impresion']) && !empty($_SESSION['productos_impre
 
 // Si no hay en sesión, intentar desde parámetro GET (backup para cuando sesión no funciona)
 if (empty($productosParaImprimir) && isset($_GET['ids']) && !empty($_GET['ids'])) {
-    $idsJson = json_decode($_GET['ids'], true);
-    if (is_array($idsJson)) {
+    $idsJson = json_decode(urldecode($_GET['ids']), true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        error_log("Error al decodificar JSON de ids: " . json_last_error_msg());
+        // Intentar sin urldecode por si ya viene decodificado
+        $idsJson = json_decode($_GET['ids'], true);
+    }
+    
+    if (is_array($idsJson) && !empty($idsJson)) {
         foreach ($idsJson as $item) {
             if (isset($item['id'])) {
                 $productosParaImprimir[] = ['id' => intval($item['id'])];
@@ -140,6 +174,15 @@ if (empty($productosParaImprimir)) {
     die('Error: No hay productos seleccionados para imprimir. Por favor, seleccioná productos desde la página de impresión.');
 }
 
+// Validar que tenemos productos antes de continuar
+if (empty($productosParaImprimir)) {
+    header('Content-Type: text/html; charset=utf-8');
+    error_log("Error: No se pudieron obtener productos de sesión ni de parámetro GET");
+    die('Error: No hay productos seleccionados para imprimir. Por favor, seleccioná productos desde la página de impresión.');
+}
+
+error_log("Productos para imprimir: " . count($productosParaImprimir) . " productos");
+
 $precios = new imprimirPreciosProductos();
 $precios->lista = json_encode($productosParaImprimir);
 
@@ -148,7 +191,13 @@ try {
 } catch (Exception $e) {
     header('Content-Type: text/html; charset=utf-8');
     error_log("Error en imprimirCodigoBarra: " . $e->getMessage());
-    die('Error al generar el PDF: ' . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    die('Error al generar el PDF: ' . htmlspecialchars($e->getMessage()));
+} catch (Error $e) {
+    header('Content-Type: text/html; charset=utf-8');
+    error_log("Error fatal en imprimirCodigoBarra: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    die('Error fatal al generar el PDF: ' . htmlspecialchars($e->getMessage()));
 }
 
 ?>
