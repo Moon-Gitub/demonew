@@ -716,24 +716,24 @@ actualizarResumenSeleccion();
 }
 
 function actualizarResumenSeleccion () {
-\tvar cont = arrayProductosImpresion.length;
-\t$("#contadorSeleccion").text(cont);
-\tvar $lista = $("#listaSeleccionImpresion");
-\t$lista.empty();
-\t
-\tif (cont === 0) {
-\t\t$lista.append('<p class=\"text-muted texto-sin-seleccion\">No hay productos seleccionados. Usa el botón <strong>Agregar</strong> de la tabla para armar tu lista.</p>');
-\t\treturn;
-\t}
-\t
-\tarrayProductosImpresion.forEach(function(item){
-\t\tvar html = '<div class=\"item-seleccion-impresion\">' +
-\t\t\t'<div class=\"descripcion\" title=\"' + item.descripcion + '\">' + item.descripcion + '</div>' +
-\t\t\t'<div class=\"precio\">$ ' + item.precio_venta + '</div>' +
-\t\t\t'<button type=\"button\" class=\"btn btn-xs btn-danger\" onclick=\"borrarArrarPrecio(' + item.id + ')\"><i class=\"fa fa-times\"></i></button>' +
-\t\t'</div>';
-\t\t$lista.append(html);
-\t});
+	var cont = arrayProductosImpresion.length;
+	$("#contadorSeleccion").text(cont);
+	var $lista = $("#listaSeleccionImpresion");
+	$lista.empty();
+
+	if (cont === 0) {
+		$lista.append('<p class="text-muted texto-sin-seleccion">No hay productos seleccionados. Usa el botón <strong>Agregar</strong> de la tabla para armar tu lista.</p>');
+		return;
+	}
+
+	arrayProductosImpresion.forEach(function(item){
+		var html = '<div class="item-seleccion-impresion">' +
+			'<div class="descripcion" title="' + item.descripcion + '">' + item.descripcion + '</div>' +
+			'<div class="precio">$ ' + item.precio_venta + '</div>' +
+			'<button type="button" class="btn btn-xs btn-danger" onclick="borrarArrarPrecio(' + item.id + ')"><i class="fa fa-times"></i></button>' +
+		'</div>';
+		$lista.append(html);
+	});
 }	
 
 var arrayProductosBorrarMultiple = [];
