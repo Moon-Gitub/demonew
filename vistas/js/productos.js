@@ -644,95 +644,288 @@ $("#nuevoCodigo").change(function(){
 	})
 })
 
-var tblProdImpresion = $('#tablaImpresionProductosImpresion').DataTable().clear().destroy();
-var tblProdImpresion = $('#tablaImpresionProductosImpresion').dataTable({
-	
-        "bProcessing": true,
-        "bServerSide": true,
-        "sAjaxSource": "ajax/productos-precios.php",
-		"responsive": true,
-		"pageLength": 10,
-		"text-align": "center",
-		"order": [[0, 'desc']],
-		"columnDefs": [
-    { "targets": [0], "visible": false, "searchable": true }
-    ],
-	
-        "aoColumns": [
-		       { mData: 'id', className: "uniqueClassName"},
-               { mData: 'codigo', className: "uniqueClassName"},
-               { mData: 'descripcion', className: "uniqueClassName"},
-			   { mData: 'precio_venta', className: "uniqueClassName"},
-			   {"mRender": function ( data, type, row ) {
-						return '<center><button class="btn btn-danger" title="Agregar" onclick="borrarArrarPrecio('+row["id"]+')");"><i class="fa fa-times"></i></button></center>';}
-              },
-			  {"mRender": function ( data, type, row ) {
-						return '<center><button class="btn btn-info" id="botonAgregar'+row["id"]+'" name="botonAgregar'+row["id"]+'" title="Agregar" onclick="cargarArrarPrecio('+row["id"]+')");"><i class="fa fa-print"></i></button></center>';}
-              }
-			  
-	     ]
+/*=============================================
+IMPresión PRECIOS - NUEVO SISTEMA CON SESIÓN
+=============================================*/
 
-	   });
-	   
-var arrayProductosImpresion = [];
-var contador=0;
+// Inicializar DataTable de productos disponibles
+var tblProdImpresion = $('#tablaImpresionProductosImpresion').DataTable({
+	"bProcessing": true,
+	"bServerSide": true,
+	"sAjaxSource": "ajax/productos-precios.php",
+	"responsive": true,
+	"pageLength": 10,
+	"order": [[0, 'desc']],
+	"columnDefs": [
+		{ "targets": [0], "visible": false, "searchable": true }
+	],
+	"aoColumns": [
+		{ mData: 'id' },
+		{ mData: 'codigo', className: "uniqueClassName" },
+		{ mData: 'descripcion', className: "uniqueClassName" },
+		{ 
+			mData: 'precio_venta', 
+			className: "uniqueClassName",
+			"mRender": function(data) {
+				return "$ " + parseFloat(data).toFixed(2);
+			}
+		},
+		{
+			"mRender": function (data, type, row) {
+				return '<center><button class="btn btn-success btn-sm btn-agregar-producto" onclick="agregarProductoImpresion(' + row["id"] + ')" title="Agregar a selección"><i class="fa fa-plus"></i> Agregar</button></center>';
+			}
+		}
+	],
+	"language": {
+		"url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+	}
+});
 
-function cargarArrarPrecio(valor){
+// Búsqueda rápida de productos
+$("#buscarProductoImpresion").on('keyup', function() {
+	tblProdImpresion.search(this.value).draw();
+});
 
+// Agregar producto a la selección (vía AJAX con sesión)
+function agregarProductoImpresion(idProducto) {
 	var datos = new FormData();
-    datos.append("idPro", valor);
+	datos.append("accion", "agregar");
+	datos.append("idProducto", idProducto);
 
-    $.ajax({
+	$.ajax({
+		url: "ajax/impresion-precios.ajax.php",
+		method: "POST",
+		data: datos,
+		cache: false,
+		contentType: false,
+		processData: false,
+		dataType: "json",
+		success: function(respuesta) {
+			if (respuesta.error) {
+				swal({
+					type: "error",
+					title: "Error",
+					text: respuesta.mensaje,
+					showConfirmButton: true
+				});
+				return;
+			}
 
-      url:"ajax/productos.ajax.php",
-      method: "POST",
-      data: datos,
-      cache: false,
-      contentType: false,
-      processData: false,
-      dataType:"json",
-      success:function(respuesta){
-		arrayProductosImpresion.push({ "id" : valor, "descripcion" : respuesta[4], "precio_venta" : respuesta[9]}); 
-		contador = arrayProductosImpresion.length;
-		$("#arrayProductosImpresion").val(JSON.stringify(arrayProductosImpresion)); 
-		actualizarResumenSeleccion();
-	}
+			if (respuesta.ya_seleccionado) {
+				swal({
+					type: "info",
+					title: "Producto ya seleccionado",
+					text: respuesta.mensaje,
+					showConfirmButton: false,
+					timer: 2000,
+					toast: true,
+					position: 'top'
+				});
+				return;
+			}
 
-  })  
+			// Actualizar la lista de seleccionados
+			cargarSeleccionImpresion();
+			
+			// Feedback visual
+			swal({
+				type: "success",
+				title: "Producto agregado",
+				text: respuesta.mensaje,
+				showConfirmButton: false,
+				timer: 1500,
+				toast: true,
+				position: 'top'
+			});
+		},
+		error: function() {
+			swal({
+				type: "error",
+				title: "Error",
+				text: "No se pudo agregar el producto. Intenta nuevamente.",
+				showConfirmButton: true
+			});
+		}
+	});
 }
 
-function borrarArrarPrecio(idProducto) {
+// Quitar producto de la selección
+function quitarProductoImpresion(idProducto) {
+	var datos = new FormData();
+	datos.append("accion", "quitar");
+	datos.append("idProducto", idProducto);
 
-for (var i = 0; i < arrayProductosImpresion.length; i++) {
-  if (arrayProductosImpresion[i].id == idProducto) {
-    arrayProductosImpresion.splice(i, 1);
-    break;
-  }
+	$.ajax({
+		url: "ajax/impresion-precios.ajax.php",
+		method: "POST",
+		data: datos,
+		cache: false,
+		contentType: false,
+		processData: false,
+		dataType: "json",
+		success: function(respuesta) {
+			if (respuesta.error) {
+				swal({
+					type: "error",
+					title: "Error",
+					text: respuesta.mensaje,
+					showConfirmButton: true
+				});
+				return;
+			}
+
+			// Actualizar la lista
+			cargarSeleccionImpresion();
+		},
+		error: function() {
+			swal({
+				type: "error",
+				title: "Error",
+				text: "No se pudo quitar el producto. Intenta nuevamente.",
+				showConfirmButton: true
+			});
+		}
+	});
 }
 
-contador = arrayProductosImpresion.length;
-$("#arrayProductosImpresion").val(JSON.stringify(arrayProductosImpresion)); 
-actualizarResumenSeleccion();
+// Limpiar toda la selección
+$("#btnLimpiarSeleccion").click(function() {
+	swal({
+		title: "¿Limpiar selección?",
+		text: "Se eliminarán todos los productos seleccionados",
+		type: "warning",
+		showCancelButton: true,
+		confirmButtonColor: "#d33",
+		cancelButtonColor: "#3085d6",
+		confirmButtonText: "Sí, limpiar",
+		cancelButtonText: "Cancelar"
+	}).then(function(result) {
+		if (result.value) {
+			var datos = new FormData();
+			datos.append("accion", "limpiar");
+
+			$.ajax({
+				url: "ajax/impresion-precios.ajax.php",
+				method: "POST",
+				data: datos,
+				cache: false,
+				contentType: false,
+				processData: false,
+				dataType: "json",
+				success: function(respuesta) {
+					cargarSeleccionImpresion();
+					swal({
+						type: "success",
+						title: "Selección limpiada",
+						text: respuesta.mensaje,
+						showConfirmButton: false,
+						timer: 1500,
+						toast: true,
+						position: 'top'
+					});
+				}
+			});
+		}
+	});
+});
+
+// Cargar y mostrar la selección actual
+function cargarSeleccionImpresion() {
+	$.ajax({
+		url: "ajax/impresion-precios.ajax.php?accion=obtener",
+		method: "GET",
+		dataType: "json",
+		success: function(respuesta) {
+			if (respuesta.error) {
+				console.error("Error al cargar selección:", respuesta.mensaje);
+				return;
+			}
+
+			var productos = respuesta.productos || [];
+			var total = respuesta.total || 0;
+
+			// Actualizar contador
+			$("#contadorSeleccion").text(total);
+
+			// Actualizar lista
+			var $lista = $("#listaSeleccionImpresion");
+			$lista.empty();
+
+			if (total === 0) {
+				$lista.html('<div class="empty-state"><i class="fa fa-inbox fa-3x text-muted"></i><p class="text-muted">No hay productos seleccionados</p><p class="text-muted small">Usa el panel derecho para buscar y agregar productos</p></div>');
+				return;
+			}
+
+			productos.forEach(function(item) {
+				var html = '<div class="item-producto-seleccionado">' +
+					'<div class="info-producto">' +
+						'<div class="codigo-producto">' + item.codigo + '</div>' +
+						'<div class="descripcion-producto">' + item.descripcion + '</div>' +
+						'<div class="precio-producto">$ ' + parseFloat(item.precio_venta).toFixed(2) + '</div>' +
+					'</div>' +
+					'<button type="button" class="btn btn-danger btn-quitar" onclick="quitarProductoImpresion(' + item.id + ')" title="Quitar"><i class="fa fa-times"></i></button>' +
+				'</div>';
+				$lista.append(html);
+			});
+		},
+		error: function() {
+			console.error("Error al cargar la selección");
+		}
+	});
 }
 
-function actualizarResumenSeleccion () {
-	var cont = arrayProductosImpresion.length;
-	$("#contadorSeleccion").text(cont);
-	var $lista = $("#listaSeleccionImpresion");
-	$lista.empty();
+// Cargar selección al iniciar la página
+if ($("#tablaImpresionProductosImpresion").length > 0) {
+	cargarSeleccionImpresion();
+}
 
-	if (cont === 0) {
-		$lista.append('<p class="text-muted texto-sin-seleccion">No hay productos seleccionados. Usa el botón <strong>Agregar</strong> de la tabla para armar tu lista.</p>');
-		return;
-	}
+// Botones de impresión (ahora usan sesión, no URL)
+$("#btnImprimirPreciosComunProductos").click(function() {
+	imprimirPrecios("impresion-precios");
+});
 
-	arrayProductosImpresion.forEach(function(item){
-		var html = '<div class="item-seleccion-impresion">' +
-			'<div class="descripcion" title="' + item.descripcion + '">' + item.descripcion + '</div>' +
-			'<div class="precio">$ ' + item.precio_venta + '</div>' +
-			'<button type="button" class="btn btn-xs btn-danger" onclick="borrarArrarPrecio(' + item.id + ')"><i class="fa fa-times"></i></button>' +
-		'</div>';
-		$lista.append(html);
+$("#btnImprimirPreciosSuperProductos").click(function() {
+	imprimirPrecios("impresionPreciosOfertas");
+});
+
+$("#btnImprimirCodigosQr").click(function() {
+	imprimirPrecios("imprimirQR");
+});
+
+$("#btnImprimirCodigosBarra").click(function() {
+	imprimirPrecios("imprimirCodigoBarra");
+});
+
+// Función genérica para imprimir (usa sesión)
+function imprimirPrecios(tipo) {
+	// Verificar que hay productos seleccionados
+	$.ajax({
+		url: "ajax/impresion-precios.ajax.php?accion=obtener_ids",
+		method: "GET",
+		dataType: "json",
+		success: function(respuesta) {
+			if (respuesta.error || respuesta.total === 0) {
+				swal({
+					type: "warning",
+					title: "Sin productos seleccionados",
+					text: "Primero seleccioná al menos un producto para imprimir.",
+					showConfirmButton: true,
+					confirmButtonText: "Cerrar"
+				});
+				return;
+			}
+
+			// Abrir PDF (el script leerá desde sesión)
+			window.open("extensiones/vendor/tecnickcom/tcpdf/pdf/" + tipo + ".php", "_blank");
+		},
+		error: function() {
+			swal({
+				type: "error",
+				title: "Error",
+				text: "No se pudo verificar la selección. Intenta nuevamente.",
+				showConfirmButton: true
+			});
+		}
 	});
 }	
 

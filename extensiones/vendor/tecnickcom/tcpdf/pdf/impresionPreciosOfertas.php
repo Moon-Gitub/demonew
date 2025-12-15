@@ -176,7 +176,23 @@ $pdf->Output('precios-gondola.pdf');
 }
 
 $precios = new imprimirPreciosProductos();
-$precios -> lista = $_GET["lista"];
+// Inicializar sesión para leer productos seleccionados
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Verificar que hay productos en sesión
+if (!isset($_SESSION['productos_impresion']) || empty($_SESSION['productos_impresion'])) {
+    die('Error: No hay productos seleccionados para imprimir.');
+}
+
+// Convertir productos de sesión al formato JSON esperado
+$productosParaImprimir = [];
+foreach ($_SESSION['productos_impresion'] as $item) {
+    $productosParaImprimir[] = ['id' => $item['id']];
+}
+
+$precios->lista = json_encode($productosParaImprimir);
 $precios -> traerImpresionPrecios();
 
 ?>
