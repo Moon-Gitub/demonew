@@ -999,15 +999,31 @@ function imprimirPrecios(tipo) {
 			var sessionId = getCookie('PHPSESSID');
 			if (!sessionId) {
 				// Intentar obtener de otra forma
-				sessionId = document.cookie.match(/PHPSESSID=([^;]+)/);
-				sessionId = sessionId ? sessionId[1] : '';
+				var match = document.cookie.match(/PHPSESSID=([^;]+)/);
+				sessionId = match ? match[1] : '';
 			}
 
-			// Abrir PDF pasando el session_id para que use la misma sesión
+			// Construir URL con session_id y también pasar IDs como backup
+			var ids = respuesta.ids || [];
+			var idsParam = JSON.stringify(ids.map(function(id) { return {id: id}; }));
+			
 			var url = "extensiones/vendor/tecnickcom/tcpdf/pdf/" + tipo + ".php";
+			var params = [];
+			
 			if (sessionId) {
-				url += "?PHPSESSID=" + encodeURIComponent(sessionId);
+				params.push("PHPSESSID=" + encodeURIComponent(sessionId));
 			}
+			
+			// Si hay pocos productos, también pasar IDs como backup (máximo 20 para no hacer URL muy larga)
+			if (ids.length > 0 && ids.length <= 20) {
+				params.push("ids=" + encodeURIComponent(idsParam));
+			}
+			
+			if (params.length > 0) {
+				url += "?" + params.join("&");
+			}
+			
+			console.log("Abriendo PDF:", url);
 			window.open(url, "_blank");
 		},
 		error: function() {

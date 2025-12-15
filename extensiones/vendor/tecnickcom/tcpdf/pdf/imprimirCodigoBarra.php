@@ -110,23 +110,34 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Verificar que hay productos en sesión
-if (!isset($_SESSION['productos_impresion']) || empty($_SESSION['productos_impresion'])) {
-    header('Content-Type: text/html; charset=utf-8');
-    die('Error: No hay productos seleccionados para imprimir. Por favor, seleccioná productos desde la página de impresión.');
-}
-
-// Convertir productos de sesión al formato JSON esperado
+// Intentar obtener productos de sesión o de parámetro GET (backup)
 $productosParaImprimir = [];
-foreach ($_SESSION['productos_impresion'] as $item) {
-    if (isset($item['id'])) {
-        $productosParaImprimir[] = ['id' => intval($item['id'])];
+
+// Primero intentar desde sesión
+if (isset($_SESSION['productos_impresion']) && !empty($_SESSION['productos_impresion'])) {
+    foreach ($_SESSION['productos_impresion'] as $item) {
+        if (isset($item['id'])) {
+            $productosParaImprimir[] = ['id' => intval($item['id'])];
+        }
     }
 }
 
+// Si no hay en sesión, intentar desde parámetro GET (backup para cuando sesión no funciona)
+if (empty($productosParaImprimir) && isset($_GET['ids']) && !empty($_GET['ids'])) {
+    $idsJson = json_decode($_GET['ids'], true);
+    if (is_array($idsJson)) {
+        foreach ($idsJson as $item) {
+            if (isset($item['id'])) {
+                $productosParaImprimir[] = ['id' => intval($item['id'])];
+            }
+        }
+    }
+}
+
+// Verificar que hay productos
 if (empty($productosParaImprimir)) {
     header('Content-Type: text/html; charset=utf-8');
-    die('Error: No se encontraron productos válidos en la selección.');
+    die('Error: No hay productos seleccionados para imprimir. Por favor, seleccioná productos desde la página de impresión.');
 }
 
 $precios = new imprimirPreciosProductos();
