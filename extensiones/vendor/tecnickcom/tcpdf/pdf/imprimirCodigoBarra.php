@@ -5,16 +5,24 @@ ini_set('display_errors', 0); // No mostrar en pantalla, solo en logs
 ini_set('log_errors', 1);
 
 // Inicializar entorno (.env) para que la conexión a BD funcione
-// Desde esta ruta (__DIR__ = extensiones/vendor/tecnickcom/tcpdf/pdf)
-// dirname(__DIR__, 3) => extensiones/vendor  (donde está autoload.php)
+// Desde esta ruta: extensiones/vendor/tecnickcom/tcpdf/pdf
+// Necesitamos llegar a: extensiones/vendor/autoload.php
+// __DIR__ = extensiones/vendor/tecnickcom/tcpdf/pdf
+// dirname(__DIR__) = extensiones/vendor/tecnickcom/tcpdf
+// dirname(__DIR__, 2) = extensiones/vendor/tecnickcom
+// dirname(__DIR__, 3) = extensiones/vendor
 $autoloadPath = dirname(__DIR__, 3) . "/autoload.php";
-if (!file_exists($autoloadPath)) {
-    error_log("Error: No se encuentra autoload.php en: " . $autoloadPath);
-    header('Content-Type: text/html; charset=utf-8');
-    die('Error de configuración: No se encuentra autoload.php');
-}
+$autoloadPathAlt = __DIR__ . "/../../../autoload.php"; // Ruta alternativa
 
-require_once $autoloadPath;
+if (file_exists($autoloadPath)) {
+    require_once $autoloadPath;
+} elseif (file_exists($autoloadPathAlt)) {
+    require_once $autoloadPathAlt;
+} else {
+    error_log("Error: No se encuentra autoload.php. Intentado: " . $autoloadPath . " y " . $autoloadPathAlt);
+    header('Content-Type: text/html; charset=utf-8');
+    die('Error de configuración: No se encuentra autoload.php. Revisa los logs del servidor.');
+}
 
 if (class_exists('Dotenv\\Dotenv')) {
     $raiz = dirname(__DIR__, 3);
