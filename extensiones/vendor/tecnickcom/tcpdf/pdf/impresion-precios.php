@@ -111,6 +111,10 @@ $x1= 10;
 $x2= 20;
 $x3= 30;
 foreach ($productos as $key => $value) {
+    // Validar que el item tenga ID
+    if (!isset($value["id"])) {
+        continue; // Saltar si no tiene ID
+    }
 
 if($enHoja == 8) {
 $pdf->AddPage();
@@ -363,6 +367,22 @@ if ($enHoja == 7) {
 	}
 }
 $producto = ControladorProductos::ctrMostrarProductos('id', $value["id"], 'id');
+
+// Validar que el producto existe
+if (!$producto || empty($producto)) {
+    error_log("Producto no encontrado con ID: " . $value["id"]);
+    continue; // Saltar si no se encuentra el producto
+}
+
+// Validar y convertir precio_venta a float
+$precioVenta = 0;
+if (isset($producto['precio_venta'])) {
+    if (is_numeric($producto['precio_venta'])) {
+        $precioVenta = floatval($producto['precio_venta']);
+    } elseif (is_string($producto['precio_venta']) && $producto['precio_venta'] !== '') {
+        $precioVenta = floatval(str_replace(',', '.', $producto['precio_venta']));
+    }
+}
 	
 $bloque1 = <<<EOF
 
@@ -395,7 +415,7 @@ $pdf->MultiCell(60, 7, $producto["descripcion"], 1, 'C', 0, 1, '', '', true);
 $pdf->SetTextColor(0,0,0);
 $pdf->SetFont('', 'B', 25);
 $pdf->SetXY($x1, $yPrecio);
-$pdf->Cell(60,-4.5,  "$ ".number_format($producto['precio_venta'],2,".",",") ,1,0,"C");
+$pdf->Cell(60,-4.5,  "$ ".number_format($precioVenta, 2, ".", ",") ,1,0,"C");
 $pdf->SetFont('', 'B', 10);
 $pdf->SetXY($x1, $yCodigo);
 $pdf->Cell(60,-4.5, "codigo:".$producto["codigo"] ,1,0,"C");

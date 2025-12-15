@@ -984,7 +984,23 @@ function imprimirPrecios(tipo) {
 		method: "GET",
 		dataType: "json",
 		success: function(respuesta) {
-			if (respuesta.error || respuesta.total === 0) {
+			// Validar respuesta
+			if (!respuesta || respuesta.error) {
+				swal({
+					type: "warning",
+					title: "Sin productos seleccionados",
+					text: "Primero seleccioná al menos un producto para imprimir.",
+					showConfirmButton: true,
+					confirmButtonText: "Cerrar"
+				});
+				return;
+			}
+
+			// Verificar que hay IDs
+			var ids = respuesta.ids || [];
+			var total = respuesta.total || 0;
+			
+			if (total === 0 || ids.length === 0) {
 				swal({
 					type: "warning",
 					title: "Sin productos seleccionados",
@@ -1004,7 +1020,6 @@ function imprimirPrecios(tipo) {
 			}
 
 			// Construir URL con session_id y también pasar IDs como backup
-			var ids = respuesta.ids || [];
 			var idsParam = JSON.stringify(ids.map(function(id) { return {id: id}; }));
 			
 			var url = "extensiones/vendor/tecnickcom/tcpdf/pdf/" + tipo + ".php";
@@ -1024,7 +1039,16 @@ function imprimirPrecios(tipo) {
 			}
 			
 			console.log("Abriendo PDF:", url);
-			window.open(url, "_blank");
+			// Abrir en nueva ventana
+			var nuevaVentana = window.open(url, "_blank");
+			if (!nuevaVentana) {
+				swal({
+					type: "warning",
+					title: "Bloqueador de ventanas",
+					text: "Por favor, permití que se abran ventanas emergentes para este sitio.",
+					showConfirmButton: true
+				});
+			}
 		},
 		error: function() {
 			swal({
