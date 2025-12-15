@@ -473,6 +473,9 @@ body.login-page .login-box-body {
 }
 </style>
 
+<!-- Elemento de fondo con imagen back2.png -->
+<div id="back"></div>
+
 <div class="login-box">
   
   <div class="login-logo">
