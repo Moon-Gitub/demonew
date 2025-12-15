@@ -995,8 +995,20 @@ function imprimirPrecios(tipo) {
 				return;
 			}
 
-			// Abrir PDF (el script leerá desde sesión)
-			window.open("extensiones/vendor/tecnickcom/tcpdf/pdf/" + tipo + ".php", "_blank");
+			// Obtener session_id de la cookie para pasarlo al script PDF
+			var sessionId = getCookie('PHPSESSID');
+			if (!sessionId) {
+				// Intentar obtener de otra forma
+				sessionId = document.cookie.match(/PHPSESSID=([^;]+)/);
+				sessionId = sessionId ? sessionId[1] : '';
+			}
+
+			// Abrir PDF pasando el session_id para que use la misma sesión
+			var url = "extensiones/vendor/tecnickcom/tcpdf/pdf/" + tipo + ".php";
+			if (sessionId) {
+				url += "?PHPSESSID=" + encodeURIComponent(sessionId);
+			}
+			window.open(url, "_blank");
 		},
 		error: function() {
 			swal({
@@ -1007,6 +1019,18 @@ function imprimirPrecios(tipo) {
 			});
 		}
 	});
+}
+
+// Función helper para obtener cookies
+function getCookie(name) {
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for(var i = 0; i < ca.length; i++) {
+		var c = ca[i];
+		while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+	}
+	return null;
 }	
 
 var arrayProductosBorrarMultiple = [];

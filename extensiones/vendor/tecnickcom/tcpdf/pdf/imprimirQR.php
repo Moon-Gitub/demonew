@@ -582,13 +582,18 @@ $pdf->Output('precios-gondola.pdf');
 
 $precios = new imprimirPreciosProductos();
 // Inicializar sesión para leer productos seleccionados
+// Si se pasa PHPSESSID como parámetro, usarlo para mantener la misma sesión
+if (isset($_GET['PHPSESSID'])) {
+    session_id($_GET['PHPSESSID']);
+}
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 // Verificar que hay productos en sesión
 if (!isset($_SESSION['productos_impresion']) || empty($_SESSION['productos_impresion'])) {
-    die('Error: No hay productos seleccionados para imprimir.');
+    die('Error: No hay productos seleccionados para imprimir. Por favor, seleccioná productos desde la página de impresión.');
 }
 
 // Convertir productos de sesión al formato JSON esperado
