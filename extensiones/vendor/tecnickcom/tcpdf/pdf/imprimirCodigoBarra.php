@@ -61,7 +61,17 @@ public $lista;
 public function traerImpresionPrecios(){
 
 //REQUERIMOS LA CLASE TCPDF
-require_once('tcpdf_include.php');
+// tcpdf_include.php debe estar en el mismo directorio (pdf/)
+$tcpdfIncludePath = __DIR__ . '/tcpdf_include.php';
+if (file_exists($tcpdfIncludePath)) {
+    require_once($tcpdfIncludePath);
+} else {
+    // Fallback: cargar TCPDF directamente
+    define('K_PATH_MAIN', dirname(__DIR__) . '/');
+    define('K_PATH_FONTS', K_PATH_MAIN . 'fonts/');
+    define('K_PATH_IMAGES', __DIR__ . '/images/');
+    require_once(K_PATH_MAIN . 'tcpdf.php');
+}
 
 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 $pdf->setPrintHeader(false);
