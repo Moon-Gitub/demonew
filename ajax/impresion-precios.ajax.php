@@ -81,7 +81,7 @@ function agregarProducto() {
     
     // Obtener datos del producto
     require_once "../modelos/productos.modelo.php";
-    $producto = ModeloProductos::mdlMostrarProductos("id", $idProducto);
+    $producto = ModeloProductos::mdlMostrarProductos("productos", "id", $idProducto, "id");
     
     if (!$producto) {
         http_response_code(404);
