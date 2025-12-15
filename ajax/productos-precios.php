@@ -1,5 +1,15 @@
 <?php
 
+// Inicializar entorno (.env) para que Conexion pueda leer las credenciales
+require_once dirname(__DIR__) . "/extensiones/vendor/autoload.php";
+if (class_exists('Dotenv\\Dotenv')) {
+    $raiz = dirname(__DIR__);
+    if (file_exists($raiz . "/.env")) {
+        $dotenv = Dotenv\Dotenv::createImmutable($raiz);
+        $dotenv->safeLoad();
+    }
+}
+
 require_once "../modelos/conexion.php";
 $db = new Conexion;
 $con = $db->getDatosConexion();
