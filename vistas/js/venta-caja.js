@@ -2051,13 +2051,39 @@ $( "#ventaCajaDetalle" ).autocomplete({
     minLength: 3,
     focus: function (event, ui) {
         event.preventDefault();
+        // Mostrar el label en el input mientras navegas
+        $(this).val(ui.item.label);
     },
     select: function( event, ui ) {
         event.preventDefault();
-        var idSeleccionado = ui.item.value.codigo;
-        $("#ventaCajaDetalleHidden").val(idSeleccionado);
-        $("#ventaCajaDetalle").val(idSeleccionado);
         
+        // Validar que ui.item y ui.item.value existan
+        if (!ui.item || !ui.item.value) {
+            console.error("Error: ui.item.value no está definido", ui.item);
+            return false;
+        }
+        
+        // Guardar el código del producto seleccionado
+        var codigoSeleccionado = ui.item.value.codigo || ui.item.value.id || '';
+        var idProducto = ui.item.value.id || '';
+        
+        if (!codigoSeleccionado) {
+            console.error("Error: No se pudo obtener el código del producto", ui.item);
+            return false;
+        }
+        
+        // Guardar en los campos hidden y visible
+        $("#ventaCajaDetalleHidden").val(codigoSeleccionado);
+        $("#ventaCajaDetalle").val(codigoSeleccionado);
+        $("#seleccionarProducto").val(idProducto);
+        
+        // Disparar automáticamente la función que agrega el producto
+        // Usar setTimeout para asegurar que el DOM se actualice primero
+        setTimeout(function() {
+            agregarProductoListaCompra();
+        }, 100);
+        
+        return false;
     }
 });
 
