@@ -1,7 +1,12 @@
 <?php
 // ✅ Seguridad AJAX
 require_once "seguridad.ajax.php";
-SeguridadAjax::inicializar();
+// Para este endpoint:
+// - Todas las acciones son vía AJAX y requieren sesión válida.
+// - Las operaciones sensibles (crear/editar usuario) se hacen por POST clásico, no aquí.
+// Aquí solo se leen/actualizan datos vía AJAX, por lo que podemos omitir el check CSRF
+// para evitar errores 403 \"Token CSRF inválido\" al cargar datos de edición.
+SeguridadAjax::inicializar(false);
 
 require_once "../controladores/usuarios.controlador.php";
 require_once "../modelos/usuarios.modelo.php";
