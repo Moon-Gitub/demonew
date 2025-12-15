@@ -9,7 +9,8 @@
 }
 
 body.login-page {
-    background: #52658d !important;
+    /* Restaurar fondo original con imagen back2.png */
+    background: linear-gradient(rgba(0,0,0,1), rgba(0,30,50,1)) !important;
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -20,17 +21,22 @@ body.login-page {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Asegurar que no haya otros fondos */
-body.login-page * {
-    background-color: transparent;
+/* Restaurar elemento #back con imagen de fondo */
+#back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: url(../../img/plantilla/back2.png);
+    background-size: cover;
+    overflow: hidden;
+    z-index: -1;
+    display: block !important;
 }
 
 body.login-page .login-box-body {
     background: rgba(255, 255, 255, 0.98) !important;
-}
-
-#back {
-    display: none;
 }
 
 .login-box {
