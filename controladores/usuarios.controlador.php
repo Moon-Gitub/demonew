@@ -328,7 +328,9 @@ class ControladorUsuarios{
 							   "foto" => $ruta);
 
 				$respuesta = ModeloUsuarios::mdlEditarUsuario($tabla, $datos);
-				if($respuesta == "ok"){
+
+				// Aceptar tanto "ok" (nuevo modelo) como true (por compatibilidad antigua)
+				if($respuesta === "ok" || $respuesta === true){
 
 					echo'<script>
 
@@ -343,17 +345,27 @@ class ControladorUsuarios{
                     });
 					</script>';
 				} else {
-				    $msjResp = (isset($respuesta[2])) ? $respuesta[2] : "Error desconocido";
+				    // Normalizar mensaje de error
+				    if (is_array($respuesta) && isset($respuesta[2])) {
+				        $msjResp = $respuesta[2];
+				    } elseif (is_string($respuesta)) {
+				        $msjResp = $respuesta;
+				    } elseif ($respuesta === false) {
+				        $msjResp = "No se pudo actualizar el usuario (respuesta false del modelo)";
+				    } else {
+				        $msjResp = "Error desconocido al editar el usuario";
+				    }
+
 				    echo '<script>
-					swal({
-						type: "error",
-						title: "Usuarios",
-					  	text: "'.$msjResp.'",
-						showConfirmButton: true,
-						confirmButtonText: "Cerrar"
-					}).then(function() {
-                        window.location.href = "usuarios";
-                    });
+						swal({
+							type: "error",
+							title: "Usuarios",
+						  	text: "'.$msjResp.'",
+							showConfirmButton: true,
+							confirmButtonText: "Cerrar"
+						}).then(function() {
+	                        window.location.href = "usuarios";
+	                    });
 					</script>';
 				}
 			}else{
