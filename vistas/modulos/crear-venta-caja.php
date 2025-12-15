@@ -836,12 +836,14 @@
 					<tr>
 						<td>
 						 <div class="input-group">
-							<label for="gross_amount" class="col-sm-12 control-label">Día: <?php echo date('d-m-Y') ?></label>
+							<span class="input-group-addon" style="background-color: #ddd"><i class="fa fa-calendar"></i> Día</span>
+							<input type="text" class="form-control input-sm" id="fechaEmision" name="fechaEmision" value="<?php echo date('d-m-Y') ?>" placeholder="dd-mm-yyyy" readonly style="background-color: #fff; cursor: pointer;">
 							</div>
 						</td>
 						<td>
 						 <div class="input-group">
-							<label for="gross_amount" class="col-sm-12 control-label">Hora: <?php echo date('h:i a') ?></label>
+							<span class="input-group-addon" style="background-color: #ddd"><i class="fa fa-clock-o"></i> Hora</span>
+							<input type="time" class="form-control input-sm" id="horaEmision" name="horaEmision" value="<?php echo date('H:i') ?>" step="1">
 							</div>
 						</td>
 					<td>
@@ -871,6 +873,51 @@
               </table>
 
               <input type="hidden" id="fechaActual" name="fechaActual" value="<?php echo date("Y-m-d H:i:s");?>">
+
+<script>
+// Inicializar datepicker para fecha de emisión
+$(document).ready(function() {
+	// Configurar datepicker en español
+	$("#fechaEmision").datepicker({
+		dateFormat: 'dd-mm-yy',
+		dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+		dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+		monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+		monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+		changeMonth: true,
+		changeYear: true,
+		yearRange: '2020:2030',
+		onSelect: function(dateText) {
+			actualizarFechaActual();
+		}
+	});
+
+	// Función para actualizar el campo hidden fechaActual cuando cambian fecha o hora
+	function actualizarFechaActual() {
+		var fecha = $("#fechaEmision").val();
+		var hora = $("#horaEmision").val();
+		
+		if (fecha && hora) {
+			// Convertir fecha de dd-mm-yyyy a yyyy-mm-dd
+			var partesFecha = fecha.split('-');
+			if (partesFecha.length === 3) {
+				var fechaFormato = partesFecha[2] + '-' + partesFecha[1] + '-' + partesFecha[0];
+				// Combinar fecha y hora
+				var fechaHoraCompleta = fechaFormato + ' ' + hora + ':00';
+				$("#fechaActual").val(fechaHoraCompleta);
+			}
+		}
+	}
+
+	// Actualizar cuando cambia la hora
+	$("#horaEmision").on('change', function() {
+		actualizarFechaActual();
+	});
+
+	// Inicializar con la fecha y hora actuales
+	actualizarFechaActual();
+});
+</script>
 
               <input type="hidden" name="idVendedor" id="idVendedor" value="<?php echo $_SESSION["id"]; ?>">
               <input type="hidden" id="tokenIdTablaVentas">

@@ -214,10 +214,15 @@ class ControladorVentas{
     
     			}
     
-    			date_default_timezone_set('America/Argentina/Mendoza');
-    			$fecha = date('Y-m-d');
-    			$hora = date('H:i:s');
-    			$fec_hor = $fecha.' '.$hora;
+    			// Usar fecha de emisión personalizada si está disponible, sino usar fecha/hora actual
+    			if (isset($postVentaCaja["fechaActual"]) && !empty($postVentaCaja["fechaActual"])) {
+    				$fec_hor = $postVentaCaja["fechaActual"];
+    			} else {
+    				date_default_timezone_set('America/Argentina/Mendoza');
+    				$fecha = date('Y-m-d');
+    				$hora = date('H:i:s');
+    				$fec_hor = $fecha.' '.$hora;
+    			}
     
     			/*=============================================
     					FACTURACION ELECTRONICA
