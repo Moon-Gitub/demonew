@@ -488,24 +488,54 @@ DESELECCIONAR PRODUCTOS PARA IMPRIMIR
 =============================================*/
 $("#btnImprimirPreciosComunProductos").click(function(){
 	var getLista = $("#arrayProductosImpresion").val();
+	if(!getLista || getLista === "[]") {
+		swal({
+			type: "warning",
+			title: "Impresión de precios",
+			text: "Primero seleccioná al menos un producto para imprimir.",
+			showConfirmButton: true,
+			confirmButtonText: "Cerrar"
+		});
+		return;
+	}
 	window.open("extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php?lista="+getLista, "_blank");
-		$("#arrayProductosImpresion").val('');
-		window.location = "index.php?ruta=impresion-precios";
+	$("#arrayProductosImpresion").val('');
+	window.location = "index.php?ruta=impresion-precios";
 });
 
 $("#btnImprimirPreciosSuperProductos").click(function(){
 	var getLista = $("#arrayProductosImpresion").val();
+	if(!getLista || getLista === "[]") {
+		swal({
+			type: "warning",
+			title: "Impresión de precios",
+			text: "Primero seleccioná al menos un producto para imprimir.",
+			showConfirmButton: true,
+			confirmButtonText: "Cerrar"
+		});
+		return;
+	}
 	window.open("extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php?lista="+getLista, "_blank");
-		$("#arrayProductosImpresion").val('');
-		window.location = "index.php?ruta=impresion-precios";
+	$("#arrayProductosImpresion").val('');
+	window.location = "index.php?ruta=impresion-precios";
 
 });
 
 $("#btnImprimirCodigosBarra").click(function(){
 	var getLista = $("#arrayProductosImpresion").val();
+	if(!getLista || getLista === "[]") {
+		swal({
+			type: "warning",
+			title: "Impresión de códigos de barra",
+			text: "Primero seleccioná al menos un producto para imprimir.",
+			showConfirmButton: true,
+			confirmButtonText: "Cerrar"
+		});
+		return;
+	}
 	window.open("extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php?lista="+getLista, "_blank");
-		$("#arrayProductosImpresion").val('');
-		window.location = "index.php?ruta=impresion-precios";
+	$("#arrayProductosImpresion").val('');
+	window.location = "index.php?ruta=impresion-precios";
 });
 
 $("#btnImprimirCodigosBarraAuto").click(function(){
@@ -517,9 +547,19 @@ $("#btnImprimirCodigosBarraAuto").click(function(){
 
 $("#btnImprimirCodigosQr").click(function(){
 	var getLista = $("#arrayProductosImpresion").val();
+	if(!getLista || getLista === "[]") {
+		swal({
+			type: "warning",
+			title: "Impresión de códigos QR",
+			text: "Primero seleccioná al menos un producto para imprimir.",
+			showConfirmButton: true,
+			confirmButtonText: "Cerrar"
+		});
+		return;
+	}
 	window.open("extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php?lista="+getLista, "_blank");
-		$("#arrayProductosImpresion").val('');
-		window.location = "index.php?ruta=impresion-precios";
+	$("#arrayProductosImpresion").val('');
+	window.location = "index.php?ruta=impresion-precios";
 });
 
 /*============================================
@@ -636,18 +676,9 @@ var tblProdImpresion = $('#tablaImpresionProductosImpresion').dataTable({
 	   
 var arrayProductosImpresion = [];
 var contador=0;
+
 function cargarArrarPrecio(valor){
 
-	// Mostrar panel de selección si existe en la vista actual
-	var panelPrecios = document.getElementById("precioPlace");
-	var detallePlace = document.getElementById("detallePlace");
-	if(panelPrecios){
-		panelPrecios.style.display = "block";
-	}
-	if(detallePlace){
-		detallePlace.style.display = "block";
-	}
-			
 	var datos = new FormData();
     datos.append("idPro", valor);
 
@@ -662,9 +693,9 @@ function cargarArrarPrecio(valor){
       dataType:"json",
       success:function(respuesta){
 		arrayProductosImpresion.push({ "id" : valor, "descripcion" : respuesta[4], "precio_venta" : respuesta[9]}); 
-		contador++;
+		contador = arrayProductosImpresion.length;
 		$("#arrayProductosImpresion").val(JSON.stringify(arrayProductosImpresion)); 
-		document.getElementById("contador").innerHTML="Precios Para Imprimir:"+contador;	
+		actualizarResumenSeleccion();
 	}
 
   })  
@@ -672,53 +703,37 @@ function cargarArrarPrecio(valor){
 
 function borrarArrarPrecio(idProducto) {
 
-var array =  JSON.parse($("#arrayProductosImpresion").val());
-
-//array.splice(array.findIndex(a => array.id !== idProducto) , 1);
-
-for (var i = 0; i < array.length; i++) {
-  if (array[i].id == idProducto) {
-    array.splice(i, 1);
+for (var i = 0; i < arrayProductosImpresion.length; i++) {
+  if (arrayProductosImpresion[i].id == idProducto) {
+    arrayProductosImpresion.splice(i, 1);
     break;
   }
 }
 
-document.getElementById("arrayProductosImpresion").value = JSON.stringify(array);
-contador--;
-var lblContador = document.getElementById("contador");
-if(lblContador){
-	lblContador.innerHTML="Precios Para Imprimir:"+contador;
-}
-var cambioEstado = "botonAgregar"+idProducto;
-document.getElementById(cambioEstado).removeAttribute('disabled');
-if(contador==0){
-		if(document.getElementById("precioPlace")){
-			document.getElementById("precioPlace").style.display = "none";
-		}
-		if(document.getElementById("detallePlace")){
-			document.getElementById("detallePlace").style.display = "none";
-		}
-	}else{
-	}
+contador = arrayProductosImpresion.length;
+$("#arrayProductosImpresion").val(JSON.stringify(arrayProductosImpresion)); 
+actualizarResumenSeleccion();
 }
 
-function verProductosImpresion () {
-	var array =  JSON.parse($("#arrayProductosImpresion").val());
-	$('#tablaProductosImprimir').DataTable().clear().destroy();
-	$('#tablaProductosImprimir tbody').detach();
-	$('#tablaProductosImprimir').dataTable({
-	paging: false,
-            	language: {
-                url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
-				},
-				dom: 'Bfrtip',
-		   		data: array,
-		columns: [
-			{ data: 'id', className: "uniqueClassName"},
-			{ data: 'descripcion', className: "uniqueClassName" },
-			{ data: 'precio_venta', className: "uniqueClassName" }
-		]
-	});
+function actualizarResumenSeleccion () {
+\tvar cont = arrayProductosImpresion.length;
+\t$("#contadorSeleccion").text(cont);
+\tvar $lista = $("#listaSeleccionImpresion");
+\t$lista.empty();
+\t
+\tif (cont === 0) {
+\t\t$lista.append('<p class=\"text-muted texto-sin-seleccion\">No hay productos seleccionados. Usa el botón <strong>Agregar</strong> de la tabla para armar tu lista.</p>');
+\t\treturn;
+\t}
+\t
+\tarrayProductosImpresion.forEach(function(item){
+\t\tvar html = '<div class=\"item-seleccion-impresion\">' +
+\t\t\t'<div class=\"descripcion\" title=\"' + item.descripcion + '\">' + item.descripcion + '</div>' +
+\t\t\t'<div class=\"precio\">$ ' + item.precio_venta + '</div>' +
+\t\t\t'<button type=\"button\" class=\"btn btn-xs btn-danger\" onclick=\"borrarArrarPrecio(' + item.id + ')\"><i class=\"fa fa-times\"></i></button>' +
+\t\t'</div>';
+\t\t$lista.append(html);
+\t});
 }	
 
 var arrayProductosBorrarMultiple = [];
