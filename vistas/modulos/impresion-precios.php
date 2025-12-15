@@ -64,15 +64,6 @@
             </h3>
           </div>
           <div class="box-body">
-            <!-- Búsqueda rápida -->
-            <div class="form-group">
-              <label>Buscar por código o descripción</label>
-              <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-search"></i></span>
-                <input type="text" class="form-control" id="buscarProductoImpresion" placeholder="Escribe código o nombre del producto..." autocomplete="off">
-              </div>
-            </div>
-            <hr>
             <!-- Tabla de productos disponibles -->
             <div class="table-responsive">
               <table class="table table-bordered table-striped" id="tablaImpresionProductosImpresion">

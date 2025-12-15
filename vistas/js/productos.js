@@ -984,7 +984,7 @@ function imprimirPrecios(tipo) {
 		method: "GET",
 		dataType: "json",
 		success: function(respuesta) {
-			// Validar respuesta
+			// Validar respuesta - solo mostrar mensaje si realmente no hay productos
 			if (!respuesta || respuesta.error) {
 				swal({
 					type: "warning",
@@ -1038,25 +1038,13 @@ function imprimirPrecios(tipo) {
 				url += "?" + params.join("&");
 			}
 			
-			console.log("Abriendo PDF:", url);
-			// Abrir en nueva ventana
-			var nuevaVentana = window.open(url, "_blank");
-			if (!nuevaVentana) {
-				swal({
-					type: "warning",
-					title: "Bloqueador de ventanas",
-					text: "Por favor, permití que se abran ventanas emergentes para este sitio.",
-					showConfirmButton: true
-				});
-			}
-			// No mostrar mensaje de error si la ventana se abrió correctamente
-			// El mensaje solo debe aparecer si realmente no hay productos
+			// Abrir en nueva ventana - sin mostrar mensajes después
+			window.open(url, "_blank");
 		},
 		error: function(xhr, status, error) {
 			console.error("Error AJAX:", status, error);
-			// Solo mostrar error si realmente falló la petición
-			// No mostrar si es un problema de red menor
-			if (xhr.status !== 0) {
+			// Solo mostrar error si realmente falló la petición (no por bloqueador de ventanas)
+			if (xhr.status !== 0 && xhr.status !== 200) {
 				swal({
 					type: "error",
 					title: "Error",
