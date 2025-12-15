@@ -1,5 +1,15 @@
 <?php
 
+// Inicializar entorno (.env) para que la conexión a BD funcione
+require_once dirname(__DIR__, 3) . "/vendor/autoload.php";
+if (class_exists('Dotenv\\Dotenv')) {
+    $raiz = dirname(__DIR__, 3);
+    if (file_exists($raiz . "/.env")) {
+        $dotenv = Dotenv\Dotenv::createImmutable($raiz);
+        $dotenv->safeLoad();
+    }
+}
+
 require_once "../../../controladores/productos.controlador.php";
 require_once "../../../modelos/productos.modelo.php";
 
