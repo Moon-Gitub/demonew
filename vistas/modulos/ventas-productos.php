@@ -164,6 +164,102 @@
 
       <div class="box-body">
 
+       <?php
+          // Calcular datos ANTES de mostrarlos
+          date_default_timezone_set('America/Argentina/Mendoza');
+
+          if(isset($_GET["fechaInicial"])){
+            $fechaInicial = $_GET["fechaInicial"];
+            $fechaFinal = $_GET["fechaFinal"];
+          }else{
+            $hoy = date('Y-m-d');
+            $fechaInicial = $hoy . ' 00:00';
+            $fechaFinal = $hoy . ' 23:59';
+          }
+
+          // Para productos más vendidos (rango completo con horas)
+          $desde = $fechaInicial;
+          $hasta = $fechaFinal;
+          
+          // Si no tiene hora, agregar
+          if (strpos($desde, ' ') === false) {
+            $desde = $fechaInicial . ' 00:00';
+          }
+          if (strpos($hasta, ' ') === false) {
+            $hasta = $fechaFinal . ' 23:59';
+          }
+
+          // Obtener productos más vendidos
+          require_once "../controladores/productos.controlador.php";
+          $productosMasVendidos = ControladorProductos::ctrMostrarProductosMasVendidos($desde, $hasta);
+
+          // Calcular totales desde la tabla de ventas
+          require_once "../controladores/ventas.controlador.php";
+          $respuestaVta = ControladorVentas::ctrRangoFechasVentas($fechaInicial, $fechaFinal);
+          
+          $totalUnidades = 0;
+          $totalCompra = 0;
+          $totalVenta = 0;
+          
+          if (is_array($respuestaVta)) {
+            foreach ($respuestaVta as $key => $value) {
+              $productos = json_decode($value["productos"], true);
+              if (is_array($productos)) {
+                foreach ($productos as $keyPro => $valuePro) {
+                  $totalUnidades += isset($valuePro["cantidad"]) ? intval($valuePro["cantidad"]) : 0;
+                  $precioCompra = isset($valuePro["precio_compra"]) ? floatval($valuePro["precio_compra"]) : 0;
+                  $cantidad = isset($valuePro["cantidad"]) ? intval($valuePro["cantidad"]) : 0;
+                  $totalCompra += $precioCompra * $cantidad;
+                  $totalVenta += isset($valuePro["total"]) ? floatval($valuePro["total"]) : 0;
+                }
+              }
+            }
+          }
+          
+          $totalMargen = $totalVenta - $totalCompra;
+          
+          // Preparar datos para el gráfico (top 10 por monto vendido)
+          $colores = array("#3498db","#e74c3c","#2ecc71","#9b59b6","#f1c40f",
+                          "#1abc9c","#e67e22","#34495e","#ff7675","#6c5ce7");
+          
+          $labelsProductos = [];
+          $dataProductos = [];
+          $colorsProductos = [];
+          
+          // Agrupar productos por descripción y sumar montos
+          $productosAgrupados = [];
+          if (is_array($respuestaVta)) {
+            foreach ($respuestaVta as $key => $value) {
+              $productos = json_decode($value["productos"], true);
+              if (is_array($productos)) {
+                foreach ($productos as $keyPro => $valuePro) {
+                  $desc = $valuePro["descripcion"] ?? "Sin descripción";
+                  if (!isset($productosAgrupados[$desc])) {
+                    $productosAgrupados[$desc] = 0;
+                  }
+                  $productosAgrupados[$desc] += isset($valuePro["total"]) ? floatval($valuePro["total"]) : 0;
+                }
+              }
+            }
+          }
+          
+          // Ordenar por monto descendente
+          arsort($productosAgrupados);
+          
+          $i = 0;
+          foreach ($productosAgrupados as $desc => $monto) {
+            if ($i >= 10) break; // top 10
+            $labelsProductos[] = $desc;
+            $dataProductos[] = round($monto, 2);
+            $colorsProductos[] = $colores[$i % count($colores)];
+            $i++;
+          }
+          
+          $labelsJson = json_encode($labelsProductos);
+          $dataJson = json_encode($dataProductos);
+          $colorsJson = json_encode($colorsProductos);
+       ?>
+
        <!-- =======================
             Resumen + gráfico
             ======================= -->
@@ -229,15 +325,15 @@
        <!-- =======================
             Tabla detalle
             ======================= -->
-       <table class="table table-bordered table-striped " id="tablaListarProductosPorVenta" width="100%">
+       <table class="table table-bordered table-striped" id="tablaListarProductosPorVenta" width="100%" style="margin-top: 20px;">
         <thead>
-         <tr>
-           <th>Fecha</th>
-           <th>Nro. Int.</th>
-           <th>Cant.</th>
-           <th>Descripcion</th>
-           <th>$ Compra (Compra x Cant)</th>
-           <th>$ Venta (Venta x Cant)</th> 
+         <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Fecha</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Nro. Int.</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Cant.</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Descripcion</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">$ Compra (Compra x Cant)</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">$ Venta (Venta x Cant)</th> 
          </tr> 
         </thead>
         <tfoot>
@@ -254,118 +350,28 @@
         <tbody>
 
         <?php
-
-          date_default_timezone_set('America/Argentina/Mendoza');
-
-          if(isset($_GET["fechaInicial"])){
-
-            $fechaInicial = $_GET["fechaInicial"];
-            $fechaFinal = $_GET["fechaFinal"];
-
-          }else{
-
-            $hoy = date('Y-m-d');
-
-             $fechaInicial = $hoy . ' 00:00';
-             $fechaFinal = $hoy . ' 23:59';
-
-          }
-
-          // Para productos más vendidos (rango completo con horas)
-          $desde = $fechaInicial;
-          $hasta = $fechaFinal;
-          
-          // Si no tiene hora, agregar
-          if (strpos($desde, ' ') === false) {
-            $desde = $fechaInicial . ' 00:00';
-          }
-          if (strpos($hasta, ' ') === false) {
-            $hasta = $fechaFinal . ' 23:59';
-          }
-
-          // Obtener productos más vendidos
-          require_once "../controladores/productos.controlador.php";
-          $productosMasVendidos = ControladorProductos::ctrMostrarProductosMasVendidos($desde, $hasta);
-
-          // Calcular totales desde la tabla de ventas
-          $respuestaVta = ControladorVentas::ctrRangoFechasVentas($fechaInicial, $fechaFinal);
-          
-          $totalUnidades = 0;
-          $totalCompra = 0;
-          $totalVenta = 0;
-          
-          foreach ($respuestaVta as $key => $value) {
-            $productos = json_decode($value["productos"], true);
-            foreach ($productos as $keyPro => $valuePro) {
-              $totalUnidades += isset($valuePro["cantidad"]) ? intval($valuePro["cantidad"]) : 0;
-              $precioCompra = isset($valuePro["precio_compra"]) ? floatval($valuePro["precio_compra"]) : 0;
-              $cantidad = isset($valuePro["cantidad"]) ? intval($valuePro["cantidad"]) : 0;
-              $totalCompra += $precioCompra * $cantidad;
-              $totalVenta += isset($valuePro["total"]) ? floatval($valuePro["total"]) : 0;
-            }
-          }
-          
-          $totalMargen = $totalVenta - $totalCompra;
-          
-          // Preparar datos para el gráfico (top 10 por monto vendido)
-          $colores = array("#3498db","#e74c3c","#2ecc71","#9b59b6","#f1c40f",
-                          "#1abc9c","#e67e22","#34495e","#ff7675","#6c5ce7");
-          
-          $labelsProductos = [];
-          $dataProductos = [];
-          $colorsProductos = [];
-          
-          // Agrupar productos por descripción y sumar montos
-          $productosAgrupados = [];
-          foreach ($respuestaVta as $key => $value) {
-            $productos = json_decode($value["productos"], true);
-            foreach ($productos as $keyPro => $valuePro) {
-              $desc = $valuePro["descripcion"] ?? "Sin descripción";
-              if (!isset($productosAgrupados[$desc])) {
-                $productosAgrupados[$desc] = 0;
+          // Usar las variables ya calculadas arriba
+          if (is_array($respuestaVta)) {
+            foreach ($respuestaVta as $key => $value) {
+              $productos = json_decode($value["productos"], true);
+              if (is_array($productos)) {
+                foreach ($productos as $keyPro => $valuePro) {
+                  echo '<tr>';
+                  echo '<td>'.($value["fecha"] ?? '').'</td>';
+                  echo '<td><a href="#" class="verDetalleVenta" data-id-venta="'.($value["id"] ?? '').'" data-codigo-venta="'.($value["codigo"] ?? '').'" style="cursor: pointer; color: #3498db; font-weight: 600;">' . ($value["codigo"] ?? '') . '</a></td>';
+                  echo '<td>'.(isset($valuePro["cantidad"]) ? $valuePro["cantidad"] : 0).'</td>';
+                  echo '<td>'.(isset($valuePro["descripcion"]) ? $valuePro["descripcion"] : '').'</td>';
+                  $precioCompra = isset($valuePro["precio_compra"]) ? floatval($valuePro["precio_compra"]) : 0;
+                  $cantidad = isset($valuePro["cantidad"]) ? intval($valuePro["cantidad"]) : 0;
+                  echo '<td>'.number_format($precioCompra, 2, ',', '.').' ('.number_format($precioCompra * $cantidad, 2, ',', '.').')</td>';
+                  $precioVenta = isset($valuePro["precio"]) ? floatval($valuePro["precio"]) : 0;
+                  $total = isset($valuePro["total"]) ? floatval($valuePro["total"]) : 0;
+                  echo '<td>'.number_format($precioVenta, 2, ',', '.').' ('.number_format($total, 2, ',', '.').')</td>';
+                  echo '</tr>';
+                }
               }
-              $productosAgrupados[$desc] += isset($valuePro["total"]) ? floatval($valuePro["total"]) : 0;
             }
           }
-          
-          // Ordenar por monto descendente
-          arsort($productosAgrupados);
-          
-          $i = 0;
-          foreach ($productosAgrupados as $desc => $monto) {
-            if ($i >= 10) break; // top 10
-            $labelsProductos[] = $desc;
-            $dataProductos[] = round($monto, 2);
-            $colorsProductos[] = $colores[$i % count($colores)];
-            $i++;
-          }
-          
-          $labelsJson = json_encode($labelsProductos);
-          $dataJson = json_encode($dataProductos);
-          $colorsJson = json_encode($colorsProductos);
-
-          foreach ($respuestaVta as $key => $value) {
-
-            $productos = json_decode($value["productos"], true);
-            
-            foreach ($productos as $keyPro => $valuePro) {
-                
-                
-             
-             echo '<tr>
-
-                    <td>'.$value["fecha"].'</td>
-                    <td><a href="#" class="verDetalleVenta" data-id-venta="'.$value["id"].'" data-codigo-venta="'.$value["codigo"].'" style="cursor: pointer; color: #3498db; font-weight: 600;">' . $value["codigo"] . '</a></td>
-                    <td>'.$valuePro["cantidad"].'</td>
-                    <td>'.$valuePro["descripcion"].'</td>
-                    <td>'.round($valuePro["precio_compra"],2).' ('.round($valuePro["precio_compra"] * $valuePro["cantidad"],2) .')</td>
-                    <td>'.round($valuePro["precio"],2).' ('.round($valuePro["total"],2).') </td>
-
-              </tr>';
-            }
-            
-          }
-
         ?>
                
         </tbody>
@@ -466,81 +472,99 @@ $('#btnInformeVentaProductoRango').daterangepicker(
 // ============================================
 // Gráfico de productos más vendidos
 // ============================================
-var vpLabels  = <?php echo $labelsJson; ?>;
-var vpData    = <?php echo $dataJson; ?>;
-var vpColors  = <?php echo $colorsJson; ?>;
+$(document).ready(function() {
+  var vpLabels  = <?php echo $labelsJson; ?>;
+  var vpData    = <?php echo $dataJson; ?>;
+  var vpColors  = <?php echo $colorsJson; ?>;
 
-// Verificar que Chart.js esté disponible
-if (typeof Chart !== 'undefined') {
-  var ctxVp = document.getElementById('vpProductosPie');
-  if (ctxVp) {
-    var pieChartCanvas = ctxVp.getContext('2d');
-    var pieChart = new Chart(pieChartCanvas);
-    
-    var PieData = [];
-    for (var i = 0; i < vpLabels.length; i++) {
-      PieData.push({
-        value    : vpData[i],
-        color    : vpColors[i],
-        highlight: vpColors[i],
-        label    : vpLabels[i]
-      });
+  // Esperar a que Chart.js esté disponible
+  function inicializarGrafico() {
+    if (typeof Chart !== 'undefined') {
+      var ctxVp = document.getElementById('vpProductosPie');
+      if (ctxVp) {
+        try {
+          var pieChartCanvas = ctxVp.getContext('2d');
+          var pieChart = new Chart(pieChartCanvas);
+          
+          var PieData = [];
+          for (var i = 0; i < vpLabels.length; i++) {
+            PieData.push({
+              value    : vpData[i],
+              color    : vpColors[i],
+              highlight: vpColors[i],
+              label    : vpLabels[i]
+            });
+          }
+          
+          var pieOptions = {
+            segmentShowStroke    : true,
+            segmentStrokeColor   : '#fff',
+            segmentStrokeWidth   : 1,
+            percentageInnerCutout: 50,
+            animationSteps       : 80,
+            animationEasing      : 'easeOutQuad',
+            animateRotate        : true,
+            animateScale         : false,
+            responsive           : true,
+            maintainAspectRatio  : false,
+            tooltipTemplate      : '<%=label%>: $ <%=value.toLocaleString() %>'
+          };
+          
+          pieChart.Doughnut(PieData, pieOptions);
+        } catch (e) {
+          console.error("Error al inicializar gráfico:", e);
+        }
+      }
+    } else {
+      // Reintentar después de 500ms si Chart.js aún no está disponible
+      setTimeout(inicializarGrafico, 500);
     }
-    
-    var pieOptions = {
-      segmentShowStroke    : true,
-      segmentStrokeColor   : '#fff',
-      segmentStrokeWidth   : 1,
-      percentageInnerCutout: 50,
-      animationSteps       : 80,
-      animationEasing      : 'easeOutQuad',
-      animateRotate        : true,
-      animateScale         : false,
-      responsive           : true,
-      maintainAspectRatio  : false,
-      tooltipTemplate      : '<%=label%>: $ <%=value.toLocaleString() %>'
-    };
-    
-    pieChart.Doughnut(PieData, pieOptions);
   }
-}
 
-// Leyenda de productos
-var legendContainer = document.getElementById('vpProductosLegend');
-if (legendContainer) {
-  legendContainer.innerHTML = '';
-  
-  var total = vpData.reduce(function(a,b){ return a + b; }, 0);
-  
-  for (var i = 0; i < vpLabels.length; i++) {
-    var li = document.createElement('li');
+  // Inicializar gráfico
+  inicializarGrafico();
+
+  // Leyenda de productos
+  var legendContainer = document.getElementById('vpProductosLegend');
+  if (legendContainer) {
+    legendContainer.innerHTML = '';
     
-    var wrap = document.createElement('div');
-    wrap.className = 'vp-legend-label';
+    var total = vpData.reduce(function(a,b){ return a + b; }, 0);
     
-    var color = document.createElement('span');
-    color.className = 'vp-legend-color';
-    color.style.backgroundColor = vpColors[i];
-    
-    var text = document.createElement('span');
-    text.textContent = vpLabels[i];
-    text.style.overflow = 'hidden';
-    text.style.textOverflow = 'ellipsis';
-    text.style.whiteSpace = 'nowrap';
-    
-    wrap.appendChild(color);
-    wrap.appendChild(text);
-    
-    var percent = document.createElement('span');
-    percent.className = 'vp-legend-percent';
-    var pct = total > 0 ? Math.round((vpData[i] * 100) / total) : 0;
-    percent.textContent = pct + '%';
-    
-    li.appendChild(wrap);
-    li.appendChild(percent);
-    legendContainer.appendChild(li);
+    if (vpLabels.length === 0) {
+      legendContainer.innerHTML = '<li style="color: #95a5a6; font-style: italic;">No hay datos para mostrar</li>';
+    } else {
+      for (var i = 0; i < vpLabels.length; i++) {
+        var li = document.createElement('li');
+        
+        var wrap = document.createElement('div');
+        wrap.className = 'vp-legend-label';
+        
+        var color = document.createElement('span');
+        color.className = 'vp-legend-color';
+        color.style.backgroundColor = vpColors[i];
+        
+        var text = document.createElement('span');
+        text.textContent = vpLabels[i];
+        text.style.overflow = 'hidden';
+        text.style.textOverflow = 'ellipsis';
+        text.style.whiteSpace = 'nowrap';
+        
+        wrap.appendChild(color);
+        wrap.appendChild(text);
+        
+        var percent = document.createElement('span');
+        percent.className = 'vp-legend-percent';
+        var pct = total > 0 ? Math.round((vpData[i] * 100) / total) : 0;
+        percent.textContent = pct + '%';
+        
+        li.appendChild(wrap);
+        li.appendChild(percent);
+        legendContainer.appendChild(li);
+      }
+    }
   }
-}
+});
 
 </script>
 
