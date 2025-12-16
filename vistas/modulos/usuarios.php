@@ -21,21 +21,6 @@
     padding: 6px 4px !important; /* Menos padding para ver mejor el dropdown */
   }
 
-  /* Centrar el dropdown de Acciones justo encima del botón */
-  .tabla-usuarios .btn-group.dropup .dropdown-menu {
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%);
-    margin-bottom: 4px;
-  }
-
-  /* Dar un poco más de aire debajo de la última fila para que
-     el menú de Acciones del último registro nunca se pegue a la paginación
-     ni quede visualmente “cortado” */
-  .tabla-usuarios {
-    margin-bottom: 40px !important;
-  }
-
   /* Responsive: en pantallas chicas priorizar columna USUARIO (y acciones) */
   @media (max-width: 768px) {
     .tabla-usuarios th:nth-child(1),
@@ -130,7 +115,7 @@
                         <td class="text-center">
                           <!-- Usamos dropup para que el menú se abra hacia arriba
                                y no quede oculto detrás de la paginación en el último registro -->
-                          <div class="btn-group dropup">
+                          <div class="btn-group dropup acciones-dropdown">
                             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                               <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
                             </button>

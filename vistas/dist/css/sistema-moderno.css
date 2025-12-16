@@ -604,6 +604,30 @@ select {
     width: 100%;
 }
 
+/* Estilo base para TODAS las tablas DataTables del sistema */
+table.dataTable > thead > tr > th,
+table.dataTable > tbody > tr > td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 6px 4px;
+}
+
+/* Espacio inferior extra para que los dropdowns de la última fila
+   no queden pegados a la paginación ni al borde inferior */
+table.dataTable {
+    margin-bottom: 40px;
+}
+
+/* Centrar y elevar los dropdowns de acciones (incluyendo dropup) */
+table.dataTable .btn-group.dropup .dropdown-menu,
+table.dataTable .btn-group .dropdown-menu {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%);
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
 /* Asegurar que los dropdowns (Acciones, etc.) queden siempre por encima
    de la paginación y de cualquier otro contenido dentro de las tablas */
 .box .dropdown-menu,

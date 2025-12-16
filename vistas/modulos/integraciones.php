@@ -58,13 +58,13 @@ if($_SESSION["perfil"] == "Vendedor"){
                     <td>'.$webhookUrl.'</td>
                     <td>'.$estado.'</td>
                     <td>'.$fecha.'</td>
-                    <td>
+                    <td class="text-center">
                     <center>
-                      <div class="btn-group">
-                        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
-                          <span class="fa fa-caret-down" title="Menu desplegable"></span>
-                        </a>
-                        <ul class="dropdown-menu">
+                      <div class="btn-group dropup acciones-dropdown">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                          <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
                           <li><a class="btnEditarIntegracion" data-toggle="modal" data-target="#modalEditarIntegracion" idIntegracion="'.$value["id"].'"><i class="fa fa-pencil fa-fw"></i> Editar</a></li>';
               if($_SESSION["perfil"] == "Administrador"){
                 echo '<li><a class="btnEliminarIntegracion" idIntegracion="'.$value["id"].'" href="#"><i class="fa fa-times fa-fw"></i> Borrar</a></li>';

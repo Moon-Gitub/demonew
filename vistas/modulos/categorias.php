@@ -67,17 +67,18 @@
                     
                     <td class="text-uppercase">'.$value["categoria"].'</td>
 
-                    <td>
+                    <td class="text-center">
 
-                      <div class="btn-group">
-                          
-                        <button title="Editar" class="btn btn-primary btnEditarCategoria" idCategoria="'.$value["id"].'" data-toggle="modal" data-target="#modalEditarCategoria"><i class="fa fa-pencil"></i></button>';
-
-                        echo '<button title="Modificar precio" class="btn btn-primary btnModificarPrecioCategoria" data-toggle="modal" data-target="#modalModificarPrecioCategoria" idCategoria="'.$value["id"].'" nombreCategoria="'.$value["categoria"].'"><i class="fa fa-sort"></i></button>';
-
-                        echo '<button class="btn btn-danger btnEliminarCategoria" idCategoria="'.$value["id"].'"><i class="fa fa-times"></i></button>';
-
-                      echo '</div>  
+                      <div class="btn-group dropup acciones-dropdown">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                          <i class="fa fa-cog"></i> Acciones <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                          <li><a href="#" class="btnEditarCategoria" idCategoria="'.$value["id"].'" data-toggle="modal" data-target="#modalEditarCategoria"><i class="fa fa-pencil"></i> Editar</a></li>
+                          <li><a href="#" class="btnModificarPrecioCategoria" data-toggle="modal" data-target="#modalModificarPrecioCategoria" idCategoria="'.$value["id"].'" nombreCategoria="'.$value["categoria"].'"><i class="fa fa-sort"></i> Modificar precio</a></li>
+                          <li><a href="#" class="btnEliminarCategoria" idCategoria="'.$value["id"].'"><i class="fa fa-times"></i> Borrar</a></li>
+                        </ul>
+                      </div>  
 
                     </td>
 
