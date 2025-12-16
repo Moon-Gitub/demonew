@@ -1001,27 +1001,43 @@ function agregarProductoListaCompra() {
 
 						localStorage.removeItem("quitarProductoCaja");
 
-						// Cerrar y ocultar el autocomplete completamente
+						// CERRAR Y OCULTAR EL AUTOCOMPLETE DE FORMA AGRESIVA
 						var $input = $("#ventaCajaDetalle");
-						$input.autocomplete("close");
-						$input.autocomplete("widget").hide();
-						$(".ui-autocomplete").hide();
 						
-						// Limpiar campos completamente
+						// 1. Cerrar usando el método oficial
+						$input.autocomplete("close");
+						
+						// 2. Cancelar cualquier búsqueda pendiente
+						if ($input.data("ui-autocomplete")) {
+							$input.data("ui-autocomplete").cancelSearch = true;
+						}
+						
+						// 3. Ocultar el menú de todas las formas posibles
+						var $widget = $input.autocomplete("widget");
+						if ($widget && $widget.length) {
+							$widget.hide().css("display", "none");
+						}
+						$(".ui-autocomplete").hide().css("display", "none");
+						$("ul.ui-autocomplete").hide().css("display", "none");
+						
+						// 4. Limpiar campos completamente
 						$("#ventaCajaDetalleHidden").val("");
 						$input.val("");
 						$("#autocompletarProducto").val("");
 						$("#ventaCajaCantidad").val("1");
 						
-						// Resetear bandera
+						// 5. Resetear bandera
 						agregandoProducto = false;
 						
-						// Asegurar que el autocomplete esté habilitado para la siguiente búsqueda
+						// 6. Asegurar que el autocomplete esté habilitado para la siguiente búsqueda
 						$input.autocomplete("enable");
 						
-						// Enfocar campo para siguiente búsqueda (ya está limpio)
+						// 7. Enfocar campo para siguiente búsqueda (ya está limpio)
 						setTimeout(function() {
 							$input.focus();
+							// Asegurar una vez más que el menú esté cerrado
+							$input.autocomplete("close");
+							$(".ui-autocomplete").hide().css("display", "none");
 						}, 150);
 
 						})()
@@ -1155,27 +1171,43 @@ function agregarProductoListaCompra() {
 
 						localStorage.removeItem("quitarProductoCaja");
 
-						// Cerrar y ocultar el autocomplete completamente
+						// CERRAR Y OCULTAR EL AUTOCOMPLETE DE FORMA AGRESIVA
 						var $input = $("#ventaCajaDetalle");
-						$input.autocomplete("close");
-						$input.autocomplete("widget").hide();
-						$(".ui-autocomplete").hide();
 						
-						// Limpiar campos completamente
+						// 1. Cerrar usando el método oficial
+						$input.autocomplete("close");
+						
+						// 2. Cancelar cualquier búsqueda pendiente
+						if ($input.data("ui-autocomplete")) {
+							$input.data("ui-autocomplete").cancelSearch = true;
+						}
+						
+						// 3. Ocultar el menú de todas las formas posibles
+						var $widget = $input.autocomplete("widget");
+						if ($widget && $widget.length) {
+							$widget.hide().css("display", "none");
+						}
+						$(".ui-autocomplete").hide().css("display", "none");
+						$("ul.ui-autocomplete").hide().css("display", "none");
+						
+						// 4. Limpiar campos completamente
 						$("#ventaCajaDetalleHidden").val("");
 						$input.val("");
 						$("#autocompletarProducto").val("");
 						$("#ventaCajaCantidad").val("1");
 						
-						// Resetear bandera
+						// 5. Resetear bandera
 						agregandoProducto = false;
 						
-						// Asegurar que el autocomplete esté habilitado para la siguiente búsqueda
+						// 6. Asegurar que el autocomplete esté habilitado para la siguiente búsqueda
 						$input.autocomplete("enable");
 						
-						// Enfocar campo para siguiente búsqueda (ya está limpio)
+						// 7. Enfocar campo para siguiente búsqueda (ya está limpio)
 						setTimeout(function() {
 							$input.focus();
+							// Asegurar una vez más que el menú esté cerrado
+							$input.autocomplete("close");
+							$(".ui-autocomplete").hide().css("display", "none");
 						}, 150);
 
 	      			}
