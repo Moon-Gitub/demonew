@@ -604,6 +604,13 @@ select {
     width: 100%;
 }
 
+/* Asegurar que los dropdowns (Acciones, etc.) queden siempre por encima
+   de la paginación y de cualquier otro contenido dentro de las tablas */
+.box .dropdown-menu,
+.dataTables_wrapper .dropdown-menu {
+    z-index: 1050 !important; /* similar a los modales de Bootstrap */
+}
+
 /* Tablas dentro de wrappers responsive */
 .ventas-table-wrapper table,
 .table-responsive-wrapper table {
