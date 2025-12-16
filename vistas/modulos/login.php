@@ -1,7 +1,29 @@
+<?php
+// Obtener configuración del login desde $arrayEmpresa (ya disponible desde plantilla.php)
+// Valores por defecto si no están configurados
+$loginFondo = !empty($arrayEmpresa['login_fondo']) ? $arrayEmpresa['login_fondo'] : 'linear-gradient(rgba(0,0,0,1), rgba(0,30,50,1))';
+$loginLogo = !empty($arrayEmpresa['login_logo']) ? $arrayEmpresa['login_logo'] : 'vistas/img/plantilla/logo-moon-desarrollos.png';
+$loginFondoForm = !empty($arrayEmpresa['login_fondo_form']) ? $arrayEmpresa['login_fondo_form'] : 'rgba(255, 255, 255, 0.98)';
+$loginColorBoton = !empty($arrayEmpresa['login_color_boton']) ? $arrayEmpresa['login_color_boton'] : '#52658d';
+$loginFuente = !empty($arrayEmpresa['login_fuente']) ? $arrayEmpresa['login_fuente'] : 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+
+// Convertir color hexadecimal a RGB para rgba en hover
+function hexToRgb($hex) {
+    $hex = str_replace('#', '', $hex);
+    if(strlen($hex) == 3) {
+        $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+    }
+    $r = hexdec(substr($hex, 0, 2));
+    $g = hexdec(substr($hex, 2, 2));
+    $b = hexdec(substr($hex, 4, 2));
+    return "$r, $g, $b";
+}
+$loginColorBotonRgb = hexToRgb($loginColorBoton);
+?>
 <style>
 /* ============================================
    DISEÑO MODERNO Y VISUAL DE LOGIN - POS MOON
-   Fondo y botón: #52658d
+   Configuración dinámica desde base de datos
    ============================================ */
 
 * {
@@ -9,8 +31,7 @@
 }
 
 body.login-page {
-    /* Restaurar fondo original con imagen back2.png */
-    background: linear-gradient(rgba(0,0,0,1), rgba(0,30,50,1)) !important;
+    background: <?php echo $loginFondo; ?> !important;
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -18,27 +39,30 @@ body.login-page {
     position: relative;
     overflow: hidden;
     padding: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: <?php echo $loginFuente; ?>;
 }
 
-/* Restaurar elemento #back con imagen de fondo */
+/* Elemento de fondo - solo si es una URL de imagen */
 body.login-page #back {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100vh;
-    background: url(../../img/plantilla/back2.png) !important;
+    <?php if(strpos($loginFondo, 'url(') !== false): ?>
+    background: <?php echo $loginFondo; ?> !important;
     background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
+    <?php else: ?>
+    display: none !important;
+    <?php endif; ?>
     overflow: hidden;
     z-index: -1;
-    display: block !important;
 }
 
 body.login-page .login-box-body {
-    background: rgba(255, 255, 255, 0.98) !important;
+    background: <?php echo $loginFondoForm; ?> !important;
 }
 
 .login-box {
@@ -120,7 +144,7 @@ body.login-page .login-box-body {
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #52658d 0%, #52658d 50%, #52658d 100%);
+    background: linear-gradient(90deg, <?php echo $loginColorBoton; ?> 0%, <?php echo $loginColorBoton; ?> 50%, <?php echo $loginColorBoton; ?> 100%);
     background-size: 200% 100%;
     animation: shimmer 3s linear infinite;
 }
@@ -148,7 +172,7 @@ body.login-page .login-box-body {
     transform: translateX(-50%);
     width: 60px;
     height: 3px;
-    background: #52658d;
+    background: <?php echo $loginColorBoton; ?>;
     border-radius: 2px;
 }
 
@@ -171,11 +195,11 @@ body.login-page .login-box-body {
 }
 
 .form-control:focus {
-    border-color: #52658d;
+    border-color: <?php echo $loginColorBoton; ?>;
     background-color: #ffffff;
     box-shadow: 
-        0 0 0 4px rgba(82, 101, 141, 0.1),
-        0 4px 12px rgba(82, 101, 141, 0.15);
+        0 0 0 4px rgba(<?php echo $loginColorBotonRgb; ?>, 0.1),
+        0 4px 12px rgba(<?php echo $loginColorBotonRgb; ?>, 0.15);
     outline: none;
     transform: translateY(-2px);
 }
@@ -192,7 +216,7 @@ body.login-page .login-box-body {
 
 .form-control-feedback {
     left: 18px;
-    color: #52658d;
+    color: <?php echo $loginColorBoton; ?>;
     font-size: 20px;
     line-height: 55px;
     transition: all 0.3s ease;
@@ -200,7 +224,7 @@ body.login-page .login-box-body {
 }
 
 .form-group:focus-within .form-control-feedback {
-    color: #52658d;
+    color: <?php echo $loginColorBoton; ?>;
     transform: scale(1.15);
 }
 
@@ -213,8 +237,8 @@ body.login-page .login-box-body {
 }
 
 .btn-login {
-    background: #52658d !important;
-    border: 2px solid #52658d !important;
+    background: <?php echo $loginColorBoton; ?> !important;
+    border: 2px solid <?php echo $loginColorBoton; ?> !important;
     border-radius: 15px;
     height: 55px;
     font-size: 17px;
@@ -224,7 +248,7 @@ body.login-page .login-box-body {
     letter-spacing: 1.5px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 
-        0 6px 20px rgba(82, 101, 141, 0.4),
+        0 6px 20px rgba(<?php echo $loginColorBotonRgb; ?>, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
     position: relative;
     overflow: hidden;
@@ -249,17 +273,17 @@ body.login-page .login-box-body {
 .btn-login:hover {
     transform: translateY(-3px);
     box-shadow: 
-        0 10px 30px rgba(82, 101, 141, 0.6),
+        0 10px 30px rgba(<?php echo $loginColorBotonRgb; ?>, 0.6),
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    background: #52658d !important;
-    border-color: #52658d !important;
+    background: <?php echo $loginColorBoton; ?> !important;
+    border-color: <?php echo $loginColorBoton; ?> !important;
     opacity: 0.9;
 }
 
 .btn-login:active {
     transform: translateY(-1px);
     box-shadow: 
-        0 4px 15px rgba(95, 115, 142, 0.5),
+        0 4px 15px rgba(<?php echo $loginColorBotonRgb; ?>, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
@@ -482,7 +506,7 @@ body.login-page .login-box-body {
   
   <div class="login-logo">
     <div class="logo-container">
-      <img src="vistas/img/plantilla/logo-moon-desarrollos.png" 
+      <img src="<?php echo htmlspecialchars($loginLogo); ?>" 
            alt="MOON DESARROLLOS" 
            class="logo-img">
     </div>

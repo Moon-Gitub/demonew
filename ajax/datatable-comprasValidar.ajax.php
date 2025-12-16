@@ -1,7 +1,9 @@
 <?php
 // ✅ Seguridad AJAX
 require_once "seguridad.ajax.php";
-SeguridadAjax::inicializar();
+// Esta tabla se consume solo por GET (lectura desde DataTables),
+// por lo que no requiere validación de token CSRF.
+SeguridadAjax::inicializar(false);
 
 
 require_once "../controladores/productos.controlador.php";

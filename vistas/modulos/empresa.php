@@ -814,6 +814,107 @@ input[type="file"]:disabled {
           </div>
         </div>
       </div>
+
+      <hr>
+      <p><b>Configuración del Login</b></p>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <!-- ENTRADA PARA FONDO DEL LOGIN -->
+          <div class="form-group">
+            <label class="control-label">Fondo de la página (color o URL de imagen)</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-paint-brush"></i></span>
+              <?php 
+                $loginFondo = isset($arrayEmpresa['login_fondo']) && !empty($arrayEmpresa['login_fondo']) 
+                  ? $arrayEmpresa['login_fondo'] 
+                  : 'linear-gradient(rgba(0,0,0,1), rgba(0,30,50,1))';
+                echo '<input type="text" class="form-control" name="empLoginFondo" id="empLoginFondo" placeholder="Ej: #ffffff o url(imagen.jpg)" value="'.htmlspecialchars($loginFondo).'">';
+              ?>
+            </div>
+            <p class="help-block">Color hexadecimal (ej: #ffffff) o URL de imagen (ej: url(../../img/plantilla/back2.png))</p>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <!-- ENTRADA PARA LOGO DEL LOGIN -->
+          <div class="form-group">
+            <label class="control-label">Logo del login</label>
+            <div class="input-group">
+              <div class="panel">Subir logo para el login</div>
+              <?php 
+                echo '<input type="hidden" id="hayLoginLogo" name="hayLoginLogo" value="'.(isset($arrayEmpresa['login_logo']) ? $arrayEmpresa['login_logo'] : '').'">';
+                echo '<input type="file" id="empLoginLogo" name="empLoginLogo" accept="image/*">';
+                echo '<p class="help-block">Peso máximo de la imagen 2MB</p>';
+                if(isset($arrayEmpresa['login_logo']) && !empty($arrayEmpresa['login_logo'])){
+                  echo '<img src="'.$arrayEmpresa['login_logo'].'" class="img-thumbnail" width="100px" style="margin-top: 10px;">';
+                } else {
+                  echo '<img src="vistas/img/plantilla/logo-moon-desarrollos.png" class="img-thumbnail" width="100px" style="margin-top: 10px;">';
+                }
+              ?>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <!-- ENTRADA PARA FONDO DEL FORMULARIO -->
+          <div class="form-group">
+            <label class="control-label">Fondo del formulario de login</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-square"></i></span>
+              <?php 
+                $loginFondoForm = isset($arrayEmpresa['login_fondo_form']) && !empty($arrayEmpresa['login_fondo_form']) 
+                  ? $arrayEmpresa['login_fondo_form'] 
+                  : 'rgba(255, 255, 255, 0.98)';
+                echo '<input type="text" class="form-control" name="empLoginFondoForm" id="empLoginFondoForm" placeholder="Ej: rgba(255,255,255,0.98) o #ffffff" value="'.htmlspecialchars($loginFondoForm).'">';
+              ?>
+            </div>
+            <p class="help-block">Color con transparencia recomendado (ej: rgba(255,255,255,0.98))</p>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <!-- ENTRADA PARA COLOR DEL BOTÓN -->
+          <div class="form-group">
+            <label class="control-label">Color del botón "Ingresar"</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-tint"></i></span>
+              <?php 
+                $loginColorBoton = isset($arrayEmpresa['login_color_boton']) && !empty($arrayEmpresa['login_color_boton']) 
+                  ? $arrayEmpresa['login_color_boton'] 
+                  : '#52658d';
+                echo '<input type="text" class="form-control" name="empLoginColorBoton" id="empLoginColorBoton" placeholder="#52658d" value="'.htmlspecialchars($loginColorBoton).'">';
+              ?>
+              <span class="input-group-addon">
+                <input type="color" id="empLoginColorBotonPicker" value="<?php echo htmlspecialchars($loginColorBoton); ?>" style="width: 40px; height: 34px; border: none; cursor: pointer;" onchange="document.getElementById('empLoginColorBoton').value = this.value;">
+              </span>
+            </div>
+            <p class="help-block">Color hexadecimal del botón de ingresar</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <!-- ENTRADA PARA FUENTE -->
+          <div class="form-group">
+            <label class="control-label">Fuente del login</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-font"></i></span>
+              <?php 
+                $loginFuente = isset($arrayEmpresa['login_fuente']) && !empty($arrayEmpresa['login_fuente']) 
+                  ? $arrayEmpresa['login_fuente'] 
+                  : 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+                echo '<input type="text" class="form-control" name="empLoginFuente" id="empLoginFuente" placeholder="Ej: Arial, sans-serif" value="'.htmlspecialchars($loginFuente).'">';
+              ?>
+            </div>
+            <p class="help-block">Fuente CSS (ej: Arial, sans-serif o "Times New Roman", serif)</p>
+          </div>
+        </div>
+      </div>
+
     </div>
     <div class="box-footer with-border">
       <button type="submit" class="btn btn-primary pull-right">

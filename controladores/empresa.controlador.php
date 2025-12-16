@@ -61,6 +61,19 @@ class ControladorEmpresa{
 
 				$tabla = "empresa";
 
+				// Manejo de logo del login
+				$login_logo_bd = isset($_POST["hayLoginLogo"]) ? $_POST["hayLoginLogo"] : '';
+				$dir_subida_login = "vistas/img/plantilla/";
+				
+				if (!empty($_FILES['empLoginLogo']['name']) && !$_FILES['empLoginLogo']['error']) {
+					if(isset($_FILES["empLoginLogo"]["tmp_name"])){
+						$login_logo_subido = $dir_subida_login . basename($_FILES['empLoginLogo']['name']);
+						if (move_uploaded_file($_FILES['empLoginLogo']['tmp_name'], $login_logo_subido)) {
+							$login_logo_bd = "vistas/img/plantilla/" . basename($_FILES['empLoginLogo']['name']);
+						}
+					}
+				}
+
 				$datos = array(
 					"id"=>$_POST["idEmpresa"],
 					"razon_social" => $_POST["empRazonSocial"],
@@ -87,7 +100,12 @@ class ControladorEmpresa{
 					"csr" => $csr_bd, 
 					"passphrase" => $frasepass,
 					"pem" => $pem_db,
-					"logo" => ''
+					"logo" => '',
+					"login_fondo" => isset($_POST["empLoginFondo"]) ? $_POST["empLoginFondo"] : '',
+					"login_logo" => $login_logo_bd,
+					"login_fondo_form" => isset($_POST["empLoginFondoForm"]) ? $_POST["empLoginFondoForm"] : '',
+					"login_color_boton" => isset($_POST["empLoginColorBoton"]) ? $_POST["empLoginColorBoton"] : '#52658d',
+					"login_fuente" => isset($_POST["empLoginFuente"]) ? $_POST["empLoginFuente"] : 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif'
 				);
 
 				$respuesta = ModeloEmpresa::mdlEditarEmpresa($tabla, $datos);
