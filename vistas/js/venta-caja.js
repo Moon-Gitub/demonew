@@ -2156,8 +2156,17 @@ function ocultarPrecio(){
 /*=============================================
 AUTOCOMPLETAR PRODUCTOS
 =============================================*/
+// Flag para prevenir que el autocomplete se abra después de seleccionar
+var prevenirAperturaAutocomplete = false;
+
 $( "#ventaCajaDetalle" ).autocomplete({
     source: function( request, response ) {
+        // Si está la bandera activa, no hacer búsqueda
+        if (prevenirAperturaAutocomplete) {
+            response([]);
+            return;
+        }
+        
         $.ajax({
             url:"ajax/productos.ajax.php",
             dataType: "json",
@@ -2166,12 +2175,16 @@ $( "#ventaCajaDetalle" ).autocomplete({
                 listadoProd: request.term
             },
             success: function( data ) {
-                response( data );
+                // Solo responder si no está la bandera activa
+                if (!prevenirAperturaAutocomplete) {
+                    response( data );
+                } else {
+                    response([]);
+                }
             }, 
             error: function(xhr, status, error){
                 console.error("Error en autocomplete:", status, error);
                 console.error("Respuesta del servidor:", xhr.responseText);
-                // En caso de error, devolver array vacío para que no se bloquee el autocomplete
                 response([]);
             }
         });        
@@ -2179,8 +2192,15 @@ $( "#ventaCajaDetalle" ).autocomplete({
     minLength: 3,
     focus: function (event, ui) {
         event.preventDefault();
-        // Mostrar el label en el input mientras navegas
         $(this).val(ui.item.label);
+    },
+    open: function(event, ui) {
+        // Si la bandera está activa, cerrar inmediatamente
+        if (prevenirAperturaAutocomplete) {
+            $(this).autocomplete("close");
+            $(".ui-autocomplete").hide().css("display", "none !important");
+            return false;
+        }
     },
     select: function( event, ui ) {
         event.preventDefault();
@@ -2204,48 +2224,62 @@ $( "#ventaCajaDetalle" ).autocomplete({
         
         var $input = $("#ventaCajaDetalle");
         
-        // CERRAR Y OCULTAR EL AUTOCOMPLETE DE FORMA AGRESIVA
-        // 1. Cerrar usando el método oficial
+        // ACTIVAR BANDERA PARA PREVENIR APERTURA
+        prevenirAperturaAutocomplete = true;
+        
+        // CERRAR Y OCULTAR EL AUTOCOMPLETE INMEDIATAMENTE
         $input.autocomplete("close");
         
-        // 2. Cancelar cualquier búsqueda pendiente
-        if ($input.data("ui-autocomplete")) {
-            $input.data("ui-autocomplete").cancelSearch = true;
+        // Ocultar el menú de forma agresiva con CSS
+        $(".ui-autocomplete").css({
+            "display": "none !important",
+            "visibility": "hidden",
+            "opacity": "0"
+        }).hide();
+        $("ul.ui-autocomplete").css({
+            "display": "none !important",
+            "visibility": "hidden",
+            "opacity": "0"
+        }).hide();
+        
+        // Cancelar búsquedas pendientes
+        var autocompleteInstance = $input.data("ui-autocomplete");
+        if (autocompleteInstance) {
+            autocompleteInstance.cancelSearch = true;
         }
         
-        // 3. Ocultar el menú de todas las formas posibles
-        var $widget = $input.autocomplete("widget");
-        if ($widget && $widget.length) {
-            $widget.hide().css("display", "none");
-        }
-        $(".ui-autocomplete").hide().css("display", "none");
-        $("ul.ui-autocomplete").hide().css("display", "none");
-        
-        // 4. Limpiar el campo ANTES de guardar para evitar que se dispare una nueva búsqueda
-        $input.val("");
-        
-        // 5. Guardar en los campos hidden y visible
+        // Guardar en los campos hidden y visible
         $("#ventaCajaDetalleHidden").val(codigoSeleccionado);
         $input.val(codigoSeleccionado);
         $("#seleccionarProducto").val(idProducto);
         
-        // 6. Deshabilitar temporalmente el autocomplete para prevenir que se abra
-        $input.autocomplete("disable");
-        
-        // 7. Disparar automáticamente la función que agrega el producto
+        // Disparar automáticamente la función que agrega el producto
         setTimeout(function() {
             agregarProductoListaCompra();
             
-            // Re-habilitar el autocomplete después de agregar
+            // Desactivar bandera después de un tiempo
             setTimeout(function() {
-                $input.autocomplete("enable");
+                prevenirAperturaAutocomplete = false;
                 // Asegurar que el menú esté cerrado
                 $input.autocomplete("close");
-                $(".ui-autocomplete").hide().css("display", "none");
-            }, 400);
+                $(".ui-autocomplete").hide().css("display", "none !important");
+            }, 500);
         }, 200);
         
         return false;
+    }
+});
+
+// Listener global para cerrar el autocomplete cuando se hace click fuera
+$(document).on('click', function(e) {
+    var $target = $(e.target);
+    var $input = $("#ventaCajaDetalle");
+    
+    // Si el click NO es en el input ni en el menú del autocomplete, cerrarlo
+    if (!$target.closest("#ventaCajaDetalle").length && 
+        !$target.closest(".ui-autocomplete").length) {
+        $input.autocomplete("close");
+        $(".ui-autocomplete").hide().css("display", "none !important");
     }
 });
 
