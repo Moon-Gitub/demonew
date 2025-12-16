@@ -92,9 +92,16 @@
                     <td class="text-uppercase">'.$value["total_ingresos"].'</td>
                     <td >'.$value["total_egresos"].'</td>
                     <td >'.$value["detalle"].'</td>
-                    <td >
-                        <button class="btnCierreCaja" idCierreCaja="'.$value["id"].'" data-toggle="modal" data-target="#modalVerCierreCaja" data-dismiss="modal"><i class="fa fa-search"></i></button>
-                        <button class="btnListadoCierreCaja" idCierreCaja="'.$value["id"].'" ><i class="fa fa-list-ul"></i></button>
+                    <td class="text-center">
+                        <div class="btn-group dropup acciones-dropdown">
+                          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="#" class="btnCierreCaja" idCierreCaja="'.$value["id"].'" data-toggle="modal" data-target="#modalVerCierreCaja" data-dismiss="modal"><i class="fa fa-search"></i> Ver detalle</a></li>
+                            <li><a href="#" class="btnListadoCierreCaja" idCierreCaja="'.$value["id"].'"><i class="fa fa-list-ul"></i> Listado movimientos</a></li>
+                          </ul>
+                        </div>
                     </td>
 
                   </tr>';
