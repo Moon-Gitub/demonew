@@ -97,6 +97,249 @@
 
 <input type="hidden" id="numCaja" value="<?php echo $numeroCaja; ?>"> <!-- Este hidden lo uso para el rango de fechas -->
 
+<style>
+  /* ============================
+     Estilos modernos para cajas
+     ============================ */
+
+  .cajas-box {
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    border: 1px solid #e0e0e0;
+  }
+
+  .cajas-box-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-bottom: 1px solid #e0e0e0;
+    padding: 15px 20px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .cajas-box-body {
+    padding: 25px;
+  }
+
+  /* Cards de ingresos/egresos mejoradas */
+  .cajas-card-ingresos {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    border-radius: 12px;
+    padding: 25px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+  }
+
+  .cajas-card-ingresos:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+  }
+
+  .cajas-card-egresos {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    border-radius: 12px;
+    padding: 25px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+  }
+
+  .cajas-card-egresos:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+  }
+
+  .cajas-card-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .cajas-card-detail {
+    font-size: 18px;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .cajas-card-detail b {
+    font-weight: 700;
+    font-size: 20px;
+  }
+
+  .cajas-card-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 60px;
+    opacity: 0.3;
+  }
+
+  /* Botones mejorados */
+  .cajas-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    color: white;
+  }
+
+  .cajas-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    color: white;
+  }
+
+  .cajas-btn-date {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .cajas-btn-date:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    color: white;
+  }
+
+  /* Selector de caja mejorado */
+  .cajas-selector-wrapper {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border: 1px solid #f0f0f0;
+  }
+
+  /* Tabla responsive */
+  .cajas-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  #tablaCajaCentral {
+    width: 100% !important;
+    min-width: 900px;
+  }
+
+  #tablaCajaCentral thead tr {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  #tablaCajaCentral thead tr th {
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    border: none;
+    padding: 12px 8px;
+    white-space: nowrap;
+  }
+
+  #tablaCajaCentral tfoot th {
+    background: #f8f9fa;
+    padding: 8px;
+    border-top: 2px solid #e0e0e0;
+  }
+
+  #tablaCajaCentral tfoot th input {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 13px;
+    transition: all 0.3s ease;
+  }
+
+  #tablaCajaCentral tfoot th input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+  }
+
+  #tablaCajaCentral tbody tr {
+    transition: background-color 0.2s ease;
+  }
+
+  #tablaCajaCentral tbody tr:hover {
+    background-color: #f8f9fa;
+  }
+
+  #tablaCajaCentral tbody td {
+    vertical-align: middle;
+    padding: 12px 8px;
+  }
+
+  /* Mejorar buscador */
+  #tablaCajaCentral_filter {
+    margin-bottom: 20px !important;
+  }
+
+  #tablaCajaCentral_filter label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    font-weight: 600 !important;
+    color: #2c3e50 !important;
+  }
+
+  #tablaCajaCentral_filter input {
+    border: 2px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+    padding: 10px 15px !important;
+    font-size: 14px !important;
+    transition: all 0.3s ease !important;
+    width: 300px !important;
+    max-width: 100% !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  #tablaCajaCentral_filter input:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2) !important;
+    outline: none !important;
+  }
+
+  /* Responsive para móviles */
+  @media (max-width: 768px) {
+    .cajas-box-body {
+      padding: 15px;
+    }
+
+    .cajas-table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #tablaCajaCentral {
+      min-width: 1000px;
+    }
+
+    .cajas-card-ingresos,
+    .cajas-card-egresos {
+      padding: 20px;
+    }
+
+    .cajas-card-icon {
+      font-size: 40px;
+    }
+  }
+</style>
+
 <div class="content-wrapper">
 
   <section class="content-header">
@@ -107,39 +350,43 @@
     </h1>
     
     <!-- COMBO PARA SELECCIONAR CAJA -->  
-    <div class="row" style="padding: 10px">
-      <div class="col-xs-4">
-        
-        <div class="input-group">
-          <?php 
+    <div class="cajas-selector-wrapper">
+      <div class="row">
+        <div class="col-md-4 col-sm-6">
+          <label style="font-weight: 600; color: #2c3e50; margin-bottom: 8px; display: block;">
+            <i class="fa fa-building"></i> Seleccionar caja
+          </label>
+          <div class="input-group">
+            <?php 
 
-            echo '<select title="Seleccione el punto de cobro/pago" class="form-control input-sm" id="cajasListadoPuntosVta" name="cajasListadoPuntosVta">';
+              echo '<select title="Seleccione el punto de cobro/pago" class="form-control" id="cajasListadoPuntosVta" name="cajasListadoPuntosVta" style="border-radius: 8px 0 0 8px;">';
 
-            foreach ($arrPuntos as $key => $value) {
+              foreach ($arrPuntos as $key => $value) {
 
-              if (in_array($value["pto"], $arrPuntosHabilitados)) {
-                if($value["pto"] == $numeroCaja) {
-                  echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+                if (in_array($value["pto"], $arrPuntosHabilitados)) {
+                  if($value["pto"] == $numeroCaja) {
+                    echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+                  } else {
+                    echo '<option value="' . $value["pto"] . '" >' . $value["pto"] . "-" . $value["det"]  . '</option>';
+                  }
                 } else {
-                  echo '<option value="' . $value["pto"] . '" >' . $value["pto"] . "-" . $value["det"]  . '</option>';
+                  echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
                 }
-              } else {
-                echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+
               }
 
-            }
+              $sele = ($numeroCaja == 0) ? 'selected' : '';
 
-            $sele = ($numeroCaja == 0) ? 'selected' : '';
+              echo ($_SESSION['perfil'] == 'Administrador') ? '<option value="0" '.$sele.'>TODOS</option>' : '';
+               echo '</select>';
 
-            echo ($_SESSION['perfil'] == 'Administrador') ? '<option value="0" '.$sele.'>TODOS</option>' : '';
-             echo '</select>';
-
-             echo '<span class="input-group-btn"><a id="aCajaVerCajas" class="btn btn-default btn-sm">Ir</a></span>';
-          ?>
-      </div >
+               echo '<span class="input-group-btn"><a id="aCajaVerCajas" class="btn cajas-btn-primary" style="border-radius: 0 8px 8px 0; color: white;">Ir</a></span>';
+            ?>
+          </div>
+        </div>
+      </div>
     </div>
 
-    </div>
     <ol class="breadcrumb">
       
       <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
@@ -173,13 +420,19 @@
     -->
 
     <?php if($numeroCaja <> 0) { ?>
-      <div class="col-lg-3 col-xs-6">
+      <div class="col-lg-6 col-md-6 col-sm-12">
 
-        <div class="small-box bg-green">
+        <div class="cajas-card-ingresos" style="position: relative;">
           
-          <div class="inner">
+          <div class="cajas-card-title">
+            <i class="fa fa-arrow-up"></i> Ingresos
+          </div>
 
-            <span style="font-size: 25px;">Ingresos</span><br>
+          <div class="cajas-card-icon">
+            <i class="fa fa-usd"></i>
+          </div>
+
+          <div class="inner" style="position: relative; z-index: 1;">
 
             <?php 
 
@@ -194,8 +447,8 @@
                 if($totMedio > 0){
                   $totalIngresos += $totMedio;
                   array_push($detalleIngresos, array($value => $totMedio));
-                  $vistaIngresos .= '<span style="font-size:20px">' . $value . ': $<b>' . $totMedio . '</b></span><br>';
-                  echo '<span style="font-size:20px">' . $value . ': $<b>' . $totMedio . '</b></span><br>';
+                  $vistaIngresos .= '<div class="cajas-card-detail">' . $value . ': $<b>' . number_format($totMedio, 2, ',', '.') . '</b></div>';
+                  echo '<div class="cajas-card-detail">' . $value . ': $<b>' . number_format($totMedio, 2, ',', '.') . '</b></div>';
                 }
 
               }
@@ -205,24 +458,24 @@
             ?>
 
           </div>
-          
-          <div class="icon">
-            
-            <i class="ion ion-social-usd"></i>
-          
-          </div>
 
         </div>
 
       </div>
 
-      <div class="col-lg-3 col-xs-6">
+      <div class="col-lg-6 col-md-6 col-sm-12">
 
-        <div class="small-box bg-red">
+        <div class="cajas-card-egresos" style="position: relative;">
           
-          <div class="inner">
+          <div class="cajas-card-title">
+            <i class="fa fa-arrow-down"></i> Egresos
+          </div>
 
-            <span style="font-size: 25px;">Egresos</span><br>
+          <div class="cajas-card-icon">
+            <i class="fa fa-usd"></i>
+          </div>
+
+          <div class="inner" style="position: relative; z-index: 1;">
 
             <?php 
 
@@ -236,8 +489,8 @@
                 if($totMedio > 0){
                   $totalEgresos += $totMedio;
                   array_push($detalleEgresos, array($value => $totMedio));
-                  $vistaEgresos .= '<span style="font-size:20px">' . $value . ': $<b>' . $totMedio . '</b></span><br>';
-                  echo '<span style="font-size:20px">' . $value . ': $<b>' . $totMedio . '</b></span><br>';
+                  $vistaEgresos .= '<div class="cajas-card-detail">' . $value . ': $<b>' . number_format($totMedio, 2, ',', '.') . '</b></div>';
+                  echo '<div class="cajas-card-detail">' . $value . ': $<b>' . number_format($totMedio, 2, ',', '.') . '</b></div>';
                 }
 
               }
@@ -245,12 +498,6 @@
               $detalleEgresos = json_encode($detalleEgresos);
             ?>
 
-          </div>
-          
-          <div class="icon">
-            
-            <i class="ion ion-social-usd"></i>
-          
           </div>
 
         </div>
@@ -265,67 +512,66 @@
 
   <section class="content" style="padding-top: 0px"> 
 
-      <div class="box">
+      <div class="box cajas-box">
 
-       <nav class="navbar">
-          <div class="container-fluid">
-            <div class="pull-left" data-example-id="split-button-dropdown">
-              
-              <div class="btn-group">
-                <a href="#" data-toggle="modal" data-target="#modalAgregarMovimientoCaja" data-dismiss="modal" class="btn btn-primary btn-sm menuCajaCentral">Agregar Movimientos</a>
-              </div><!-- /btn-group -->
-
-              <div class="btn-group">
-                <a href="#" data-toggle="modal" data-target="#modalAgregarCierreCaja" data-dismiss="modal" class="btn btn-primary btn-sm" style="<?php echo $habilitoCierre; ?> ">Cierre caja</a>
+       <div class="box-header with-border cajas-box-header">
+          <div class="row">
+            <div class="col-md-8 col-sm-12">
+              <div class="btn-group" style="margin-bottom: 10px;">
+                <a href="#" data-toggle="modal" data-target="#modalAgregarMovimientoCaja" data-dismiss="modal" class="btn cajas-btn-primary menuCajaCentral" style="margin-right: 10px;">
+                  <i class="fa fa-plus"></i> Agregar Movimientos
+                </a>
+                <a href="#" data-toggle="modal" data-target="#modalAgregarCierreCaja" data-dismiss="modal" class="btn cajas-btn-primary" style="<?php echo $habilitoCierre; ?>">
+                  <i class="fa fa-lock"></i> Cierre caja
+                </a>
               </div>
-          
-              <div class="btn-group">
-                <button type="button" class="btn btn-default btn-sm" id="daterangeCajaCentral">
-           
-                    <span>
-                    <i class="fa fa-calendar"></i> 
+            </div>
+            <div class="col-md-4 col-sm-12 text-right">
+              <button type="button" class="btn cajas-btn-date" id="daterangeCajaCentral" style="color: white;">
+         
+                  <span>
+                  <i class="fa fa-calendar"></i> 
 
-                    <?php
+                  <?php
 
-                      if(isset($_GET["fechaInicial"])){
+                    if(isset($_GET["fechaInicial"])){
 
-                        echo $_GET["fechaInicial"]." - ".$_GET["fechaFinal"];
-                      
-                      }else{
-                       
-                        echo 'Rango de fecha';
+                      echo $_GET["fechaInicial"]." - ".$_GET["fechaFinal"];
+                    
+                    }else{
+                     
+                      echo 'Rango de fecha';
 
-                      }
+                    }
 
-                    ?>
-                  </span>
+                  ?>
+                </span>
 
-                  <i class="fa fa-caret-down"></i>
+                <i class="fa fa-caret-down"></i>
 
-                </button>
-
-              </div><!-- /btn-group -->
-
+              </button>
+            </div>
           </div>
         </div>
 
-      <div class="box-body">
+      <div class="box-body cajas-box-body">
 
+       <div class="cajas-table-wrapper">
        <table class="table table-bordered table-striped dt-responsive" id="tablaCajaCentral" width="100%">
 
         <thead>
 
-      <tr>
+      <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
 
-        <th>Fecha</th>
-        <th>Control</th>
-        <th>Usuario</th>
-        <th>Punto</th>
-        <th>Detalle</th>
-        <th>Medio</th>
-        <th>Entrada</th>
-        <th>Salida</th>
-        <th>Saldo</th>
+        <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Fecha</th>
+        <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Control</th>
+        <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Usuario</th>
+        <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Punto</th>
+        <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Detalle</th>
+        <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Medio</th>
+        <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Entrada</th>
+        <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Salida</th>
+        <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Saldo</th>
 
       </tr>
 
@@ -404,6 +650,7 @@
         </tbody>
 
        </table>
+       </div>
 
       </div>
 
