@@ -592,7 +592,11 @@ select {
 /* Asegurar que todas las tablas DataTables sean responsive */
 .dataTables_wrapper {
     border-radius: 8px;
-    overflow: hidden;
+    /* Importante:
+       Usamos overflow: visible para que los menús desplegables
+       (por ejemplo, botones de acciones en la última fila)
+       no queden cortados dentro del contenedor de la tabla. */
+    overflow: visible;
     width: 100%;
 }
 

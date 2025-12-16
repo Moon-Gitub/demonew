@@ -71,11 +71,11 @@
                       echo '<td>'.$value["ultimo_login"].'</td>
                         <td>
                           <div class="btn-group">
-                            <a class="btn btn-primary" ><i class="fa fa-cog fa-fw"></i> Acciones</a>
-                            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
-                              <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
-                            </a>
-                            <ul class="dropdown-menu"><li><a class="btnEditarUsuario" idUsuario="'.$value["id"].'" href="#"><i class="fa fa-pencil fa-fw"></i> Editar</a></li>';
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                              <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                              <li><a class="btnEditarUsuario" idUsuario="'.$value["id"].'" href="#"><i class="fa fa-pencil fa-fw"></i> Editar</a></li>';
                             if($_SESSION["perfil"] == "Administrador"){
                               echo '<li><a class="btnEliminarUsuario" idProveedor="'.$value["id"].'" idUsuario="'.$value["id"].'" fotoUsuario="'.$value["foto"].'" usuario="'.$value["usuario"].'" href="#"><i class="fa fa-times fa-fw"></i> Borrar</a></li>';
                             }
