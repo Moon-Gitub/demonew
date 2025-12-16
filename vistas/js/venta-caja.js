@@ -621,8 +621,12 @@ $(".tablas").on("click", ".btnImprimirFacturaCaja", function(){
 /*=============================================
 AGREGAR PRODUCTO DESDE PANEL DERECHO - INPUT DETALLE
 =============================================*/
+// Bandera para prevenir doble ejecución
+var agregandoProducto = false;
+
 $("#ventaCajaDetalle").keyup( function (e) {
-    if (e.keyCode == 13 ) {
+    // Solo procesar Enter si no se está agregando un producto (evitar duplicados)
+    if (e.keyCode == 13 && !agregandoProducto) {
     	agregarProductoListaCompra();
 	} 
 	if (e.keyCode == 37) {
@@ -655,6 +659,13 @@ async function esperarPrecio(precio){
 }
 
 function agregarProductoListaCompra() {
+    // Prevenir ejecución múltiple
+    if (agregandoProducto) {
+        console.log("Ya se está agregando un producto, ignorando llamada duplicada");
+        return;
+    }
+    
+    agregandoProducto = true;
     
     var cantEnDetalle = $("#ventaCajaDetalle").val();
 
@@ -705,7 +716,9 @@ function agregarProductoListaCompra() {
 	}
 
 	if(idProductoDos == "" || idProductoDos == undefined) {
-
+		// Resetear bandera en caso de error
+		agregandoProducto = false;
+		
 		swal({
 	      title: "Ventas",
 	      text: "Error, no se ha seleccionado ningun producto",
@@ -741,6 +754,9 @@ function agregarProductoListaCompra() {
 		}
         
         if(stockSucursal == "" || tipoPrecio == ""){
+        	// Resetear bandera en caso de error
+        	agregandoProducto = false;
+        	
             swal({
         	   title: "Error",
         	   text: "El usuario debe definir sucursal y lista de precio",
@@ -994,6 +1010,9 @@ function agregarProductoListaCompra() {
 						// Cerrar el autocomplete si está abierto
 						$("#ventaCajaDetalle").autocomplete("close");
 						
+						// Resetear bandera y limpiar campo
+						agregandoProducto = false;
+						
 						// Limpiar el campo visible y enfocar para siguiente búsqueda
 						setTimeout(function() {
 							$("#ventaCajaDetalle").val("").focus();
@@ -1139,6 +1158,9 @@ function agregarProductoListaCompra() {
 						// Cerrar el autocomplete si está abierto
 						$("#ventaCajaDetalle").autocomplete("close");
 						
+						// Resetear bandera y limpiar campo
+						agregandoProducto = false;
+						
 						// Limpiar el campo visible y enfocar para siguiente búsqueda
 						setTimeout(function() {
 							$("#ventaCajaDetalle").val("").focus();
@@ -1147,6 +1169,8 @@ function agregarProductoListaCompra() {
 	      			}
 
 				} else {
+					// Resetear bandera en caso de error
+					agregandoProducto = false;
 
 					swal({
 				      title: "Ventas",
@@ -2137,17 +2161,25 @@ $( "#ventaCajaDetalle" ).autocomplete({
         $("#ventaCajaDetalle").val(codigoSeleccionado);
         $("#seleccionarProducto").val(idProducto);
         
-        // Cerrar el autocomplete inmediatamente
+        // Cerrar el autocomplete inmediatamente y limpiar
         $("#ventaCajaDetalle").autocomplete("close");
         
         // Limpiar el valor visible del input para que no muestre el label completo
         $("#ventaCajaDetalle").val(codigoSeleccionado);
         
+        // Prevenir que el evento keyup se dispare después
+        // Bloquear temporalmente el evento keyup
+        $("#ventaCajaDetalle").off('keyup.autocomplete').on('keyup.autocomplete', function(e) {
+            if (e.keyCode == 13 && !agregandoProducto) {
+                agregarProductoListaCompra();
+            }
+        });
+        
         // Disparar automáticamente la función que agrega el producto
         // Usar setTimeout para asegurar que el DOM se actualice primero
         setTimeout(function() {
             agregarProductoListaCompra();
-        }, 150);
+        }, 200);
         
         return false;
     }
