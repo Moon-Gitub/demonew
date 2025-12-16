@@ -999,7 +999,8 @@ function agregarProductoListaCompra() {
         	          	});
         	          	*/
 
-	      				precioVta = respuesta[tipoPrecio];
+	      				// Usar el precio obtenido de la validación anterior
+	      				precioVta = precioDelProducto;
 	      				var precioXCantidad = precioVta * cantidad;
 	      				precioNeto = precioVta / ((iva / 100) + 1); //precio neto para cantidad 1
 	      				ivaValor = (precioNeto * iva / 100); // * cantidad;
