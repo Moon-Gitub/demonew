@@ -577,8 +577,15 @@ $(document).on('click', '.verDetalleVenta', function(e) {
       var productos = JSON.parse(respuesta.productos);
       
       // Llenar datos básicos
-      $('#ventaDetalleFecha').text(respuesta.fecha || '-');
-      $('#ventaDetalleCliente').text(respuesta.id_cliente == 1 ? 'Consumidor Final' : (respuesta.cliente_nombre || 'Cliente #' + respuesta.id_cliente));
+      var fechaFormateada = respuesta.fecha ? respuesta.fecha.replace(/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/, '$3/$2/$1 $4:$5') : '-';
+      $('#ventaDetalleFecha').text(fechaFormateada);
+      
+      var nombreCliente = respuesta.id_cliente == 1 ? 'Consumidor Final' : (respuesta.cliente_nombre || 'Cliente #' + respuesta.id_cliente);
+      if (respuesta.cliente_documento) {
+        nombreCliente += ' (' + respuesta.cliente_documento + ')';
+      }
+      $('#ventaDetalleCliente').text(nombreCliente);
+      
       $('#ventaDetalleVendedor').text(respuesta.vendedor_nombre || 'N/A');
       
       // Actualizar link de editar

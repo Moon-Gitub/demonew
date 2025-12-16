@@ -39,6 +39,39 @@ class AjaxVentas{
 		$valor = $this->idVenta;
 
 		$respuesta = ControladorVentas::ctrMostrarVentas($item, $valor);
+		
+		// Agregar datos del cliente si existe
+		if ($respuesta && isset($respuesta["id_cliente"])) {
+			require_once "../controladores/clientes.controlador.php";
+			require_once "../modelos/clientes.modelo.php";
+			
+			$itemCliente = "id";
+			$valorCliente = $respuesta["id_cliente"];
+			$cliente = ControladorClientes::ctrMostrarClientes($itemCliente, $valorCliente);
+			
+			if ($cliente) {
+				$respuesta["cliente_nombre"] = $cliente["nombre"] ?? "Consumidor Final";
+				$respuesta["cliente_documento"] = $cliente["documento"] ?? "";
+			} else {
+				$respuesta["cliente_nombre"] = $respuesta["id_cliente"] == 1 ? "Consumidor Final" : "Cliente #" . $respuesta["id_cliente"];
+			}
+		}
+		
+		// Agregar datos del vendedor si existe
+		if ($respuesta && isset($respuesta["id_vendedor"])) {
+			require_once "../controladores/usuarios.controlador.php";
+			require_once "../modelos/usuarios.modelo.php";
+			
+			$itemUsuario = "id";
+			$valorUsuario = $respuesta["id_vendedor"];
+			$vendedor = ControladorUsuarios::ctrMostrarUsuarios($itemUsuario, $valorUsuario);
+			
+			if ($vendedor) {
+				$respuesta["vendedor_nombre"] = $vendedor["nombre"] ?? "N/A";
+			} else {
+				$respuesta["vendedor_nombre"] = "N/A";
+			}
+		}
 
 		echo json_encode($respuesta);
 
