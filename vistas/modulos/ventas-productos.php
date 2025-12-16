@@ -190,11 +190,11 @@
           }
 
           // Obtener productos más vendidos
-          require_once "../controladores/productos.controlador.php";
+          require_once __DIR__ . "/../../controladores/productos.controlador.php";
           $productosMasVendidos = ControladorProductos::ctrMostrarProductosMasVendidos($desde, $hasta);
 
           // Calcular totales desde la tabla de ventas
-          require_once "../controladores/ventas.controlador.php";
+          require_once __DIR__ . "/../../controladores/ventas.controlador.php";
           $respuestaVta = ControladorVentas::ctrRangoFechasVentas($fechaInicial, $fechaFinal);
           
           $totalUnidades = 0;
