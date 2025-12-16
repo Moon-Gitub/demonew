@@ -105,6 +105,43 @@
       .vp-chart-legend .vp-legend-percent {
         font-weight: 600;
       }
+
+      /* Estilo para la cabecera de la tabla con gradiente */
+      #tablaListarProductosPorVenta thead tr:first-child {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      #tablaListarProductosPorVenta thead tr:first-child th {
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        border: none;
+        padding: 12px 8px;
+      }
+
+      #tablaListarProductosPorVenta tfoot th {
+        background: white;
+        padding: 8px;
+      }
+
+      #tablaListarProductosPorVenta tfoot th input {
+        width: 100%;
+        padding: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      /* Asegurar que el canvas del gráfico tenga altura */
+      #vpProductosPie {
+        min-height: 250px;
+        max-height: 300px;
+      }
+
+      .chart-responsive {
+        position: relative;
+        height: 300px;
+      }
     </style>
 
     <div class="box">
