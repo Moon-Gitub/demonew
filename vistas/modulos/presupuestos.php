@@ -155,19 +155,19 @@
 
                 echo '<td>'.round($value["total"],2).'</td>
 
-                <td width="150px">
+                <td class="text-center">
                 
                   <center>
 
-                    <div class="btn-group">
-                      
-                       <button title="Pasar a venta" class="btn btn-primary btnPresupuestoAVenta" idPresupuesto="'.$value["id"].'"><i class="fa fa-check"></i></button>';
-
-                        echo '<button class="btn btn-primary btnImprimirPresupuesto" idPresupuesto="'.$value["id"].'"><i class="fa fa-print"></i></button>';
-
-                        echo '<button class="btn btn-danger btnEliminarPresupuesto" idPresupuesto="'.$value["id"].'"><i class="fa fa-times"></i></button>
-
-
+                    <div class="btn-group dropup acciones-dropdown">
+                      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a href="#" class="btnPresupuestoAVenta" idPresupuesto="'.$value["id"].'"><i class="fa fa-check"></i> Pasar a venta</a></li>
+                        <li><a href="#" class="btnImprimirPresupuesto" idPresupuesto="'.$value["id"].'"><i class="fa fa-print"></i> Imprimir</a></li>
+                        <li><a href="#" class="btnEliminarPresupuesto" idPresupuesto="'.$value["id"].'"><i class="fa fa-times"></i> Borrar</a></li>
+                      </ul>
                     </div>
 
                   </center>

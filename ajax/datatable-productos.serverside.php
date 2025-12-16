@@ -169,10 +169,13 @@ $columns = array(
            'dt' => 10,
            'formatter' => function( $d, $row ) {
                 $d = is_null($d) ? 0 : $d;
+                $idProducto = $row["id"];
+                $codigo = htmlspecialchars($row["codigo"] ?? '', ENT_QUOTES, 'UTF-8');
+                
                 if($row["id"] < 10){
-                    return "<div class='btn-group'><button class='btn btn-warning btnEditarProducto' idProducto='".$row["id"]."' data-toggle='modal' data-target='#modalEditarProducto'><i class='fa fa-pencil'></i></button></div>";
+                    return "<div class='btn-group dropup acciones-dropdown'><button type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown'><i class='fa fa-cog fa-fw'></i> Acciones <span class='caret'></span></button><ul class='dropdown-menu dropdown-menu-right'><li><a href='#' class='btnEditarProducto' idProducto='".$idProducto."' data-toggle='modal' data-target='#modalEditarProducto'><i class='fa fa-pencil fa-fw'></i> Editar</a></li></ul></div>";
                 } else {
-                    return "<div class='btn-group'><button class='btn btn-warning btnEditarProducto' idProducto='".$row["id"]."' data-toggle='modal' data-target='#modalEditarProducto'><i class='fa fa-pencil'></i></button><button class='btn btn-danger btnEliminarProducto' idProducto='".$row["id"]."' codigo='".$row["codigo"]."' ><i class='fa fa-times'></i></button><button class='btn btn-info' onclick='cargarArrarBorrarMultiple(".$row["id"].")' idProducto='".$row["id"]."' codigo='".$row["codigo"]."'><i class='fa fa-times'></i></button></div></div>";   
+                    return "<div class='btn-group dropup acciones-dropdown'><button type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown'><i class='fa fa-cog fa-fw'></i> Acciones <span class='caret'></span></button><ul class='dropdown-menu dropdown-menu-right'><li><a href='#' class='btnEditarProducto' idProducto='".$idProducto."' data-toggle='modal' data-target='#modalEditarProducto'><i class='fa fa-pencil fa-fw'></i> Editar</a></li><li><a href='#' class='btnEliminarProducto' idProducto='".$idProducto."' codigo='".$codigo."'><i class='fa fa-times fa-fw'></i> Borrar</a></li><li><a href='#' onclick='cargarArrarBorrarMultiple(".$idProducto.")' idProducto='".$idProducto."' codigo='".$codigo."'><i class='fa fa-list fa-fw'></i> Seleccionar</a></li></ul></div>";   
                 }
         } 
     ),

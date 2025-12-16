@@ -468,17 +468,17 @@
 
               <td>'. $signoVta . round($value["total"],2).'</td>
 
-              <td>
+              <td class="text-center">
               
               <center>
 
-                <div class="btn-group">
-                      <span style="'.$deshAutorizarSpan.'"><a class="btn btn-primary btnAutorizarCbte" style="' . $deshAutorizarA . '" title="Autorizar comprobante." data-toggle="modal" data-target="#modalAutorizarComprobante" data-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-exchange fa-fw"></i> </a><span>
-                      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
-                        <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
-                      </a>
-                      <ul class="dropdown-menu" style="background-color: #f4f4f4">
-                        <li style="'.$btnCobroLi.'"><a title="Cobrar venta" style="' .$botonCobro. '" class="btnCobrarVenta" data-toggle="modal" data-target="#modalCobrarVenta" data-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-usd fa-fw"></i> Cobrar</a></li>';
+                <div class="btn-group dropup acciones-dropdown">
+                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-right" style="background-color: #f4f4f4">
+                    <li style="'.$btnCobroLi.'"><a title="Cobrar venta" style="' .$botonCobro. '" class="btnCobrarVenta" data-toggle="modal" data-target="#modalCobrarVenta" data-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-usd fa-fw"></i> Cobrar</a></li>';
+                      echo '<li style="'.$deshAutorizarSpan.'"><a style="' . $deshAutorizarA . '" title="Autorizar comprobante." class="btnAutorizarCbte" data-toggle="modal" data-target="#modalAutorizarComprobante" data-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-exchange fa-fw"></i> Autorizar</a></li>';
                       echo '<li><a title="Ver" style="cursor: pointer;" class="btnEditarVenta" idVenta="'.$value["id"].'"><i class="fa fa-pencil fa-fw"></i> Ver</a></li>';
                       
                       echo '<li role="separator" class="divider"></li>';                        
@@ -492,14 +492,12 @@
                       echo '<li><a class="btnImprimirTicket" style="cursor: pointer;" idVenta="'.$value["id"].'" data-toggle="modal" data-target="#modalImprimirTicketCajaVenta" data-dismiss="modal"><i class="fa fa-ticket fa-fw"></i> Ticket</a></li>';
                      
                      echo '<li role="separator" class="divider"></li>';
-                     //echo '<li style="'.$botonMailLi.'"><a class="btnMailComprobante" style="'.$botonMail.'" codigoVenta="'.$value["codigo"].'" mailCliente="'.$respuestaCliente["email"].'"><i class="fa fa-envelope fa-fw"></i> Email</a></li>';
                      echo '<li><a class="btnMailComprobante" codigoVenta="'.$value["codigo"].'" mailCliente="'.$respuestaCliente["email"].'"><i class="fa fa-envelope fa-fw"></i> Email</a></li>';
 
                      if($_SESSION["perfil"] == "Administrador"){
 
                         echo '<li role="separator" class="divider"></li>';
 
-                        //if($value["estado"] == 1 || $facturada) {
                         if($facturada) {
 
                           echo '<li><a style="cursor: not-allowed;" ><i class="fa fa-times fa-fw"></i> Eliminar</a></li>';

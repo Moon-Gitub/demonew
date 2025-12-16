@@ -174,19 +174,18 @@ if($_SESSION["perfil"] == "Especial"){
               <td>'.$value["impuestoInterno"].'</td>
               <td>'.$value["total"].'</td>';
 
-                echo '<td>
-                   <div class="btn-group">
-                      <button class="btn btn-info btnImprimirIngresoMercaderia" codigoCompra="'.$value["id"].'">
-                       <i class="fa fa-print"></i>
-                      </button>';
-
+                echo '<td class="text-center">
+                   <div class="btn-group dropup acciones-dropdown">
+                     <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                       <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
+                     </button>
+                     <ul class="dropdown-menu dropdown-menu-right">
+                       <li><a href="#" class="btnImprimirIngresoMercaderia" codigoCompra="'.$value["id"].'"><i class="fa fa-print"></i> Imprimir</a></li>';
                       if($_SESSION["perfil"] == "Administrador"){
-
-                          echo '<button class="btn btn-danger btnEliminarCompra" idCompra="'.$value["id"].'"><i class="fa fa-times"></i></button>';
+                          echo '<li><a href="#" class="btnEliminarCompra" idCompra="'.$value["id"].'"><i class="fa fa-times"></i> Borrar</a></li>';
                       }
-
-                echo '</div></center>
-
+                echo '</ul>
+                   </div>
                   </td>';
             
             echo '</tr>';

@@ -111,16 +111,20 @@ if($_SESSION["perfil"] == "Vendedor"){
 					
 					<td>'.$value["fecha"].'</td>
 					
-                   	<td>
+                   	<td class="text-center">
 
                       <center>
 					  
-							<button class="btn btn-info btnImprimirPedidoParcial" codigoPedido="'.$value["id"].'">
-								<i class="fa fa-print"></i>
-							</button>   
-							<button class="btn btn-warning btnEditarPedido" idPedido="'.$value["id"].'"><i class="fa fa-pencil"></i></button>
-							
-							<button class="btn btn-danger btnEliminarPedido" idPedido="'.$value["id"].'"><i class="fa fa-times"></i></button>';
+                      <div class="btn-group dropup acciones-dropdown">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                          <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                          <li><a href="#" class="btnImprimirPedidoParcial" codigoPedido="'.$value["id"].'"><i class="fa fa-print"></i> Imprimir</a></li>
+                          <li><a href="#" class="btnEditarPedido" idPedido="'.$value["id"].'"><i class="fa fa-pencil"></i> Editar</a></li>
+                          <li><a href="#" class="btnEliminarPedido" idPedido="'.$value["id"].'"><i class="fa fa-times"></i> Borrar</a></li>
+                        </ul>
+                      </div>';
 
                    
                       echo '</center>
