@@ -627,7 +627,12 @@ var agregandoProducto = false;
 $("#ventaCajaDetalle").keyup( function (e) {
     // Solo procesar Enter si no se está agregando un producto (evitar duplicados)
     if (e.keyCode == 13 && !agregandoProducto) {
-    	agregarProductoListaCompra();
+        // Cerrar el autocomplete por si quedó abierto
+        try {
+            $("#ventaCajaDetalle").autocomplete("close");
+        } catch (err) {}
+
+        agregarProductoListaCompra();
 	} 
 	if (e.keyCode == 37) {
 		document.getElementById('ventaCajaCantidad').focus();
