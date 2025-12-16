@@ -2167,6 +2167,12 @@ AUTOCOMPLETAR PRODUCTOS
 
 $( "#ventaCajaDetalle" ).autocomplete({
     source: function( request, response ) {
+        // Si está agregando un producto, no hacer búsqueda
+        if (agregandoProducto) {
+            response([]);
+            return;
+        }
+        
         $.ajax({
             url:"ajax/productos.ajax.php",
             dataType: "json",
@@ -2175,11 +2181,18 @@ $( "#ventaCajaDetalle" ).autocomplete({
                 listadoProd: request.term
             },
             success: function( data ) {
-                response( data );
+                // Validar que la respuesta sea un array
+                if (Array.isArray(data)) {
+                    response( data );
+                } else {
+                    console.error("Error: respuesta no es un array", data);
+                    response([]);
+                }
             }, 
             error: function(xhr, status, error){
                 console.error("Error en autocomplete:", status, error);
                 console.error("Respuesta del servidor:", xhr.responseText);
+                // Devolver array vacío para que no se bloquee el autocomplete
                 response([]);
             }
         });        
@@ -2191,8 +2204,10 @@ $( "#ventaCajaDetalle" ).autocomplete({
         $(this).val(ui.item.label);
     },
     select: function( event, ui ) {
-        // NO prevenimos todo, solo el valor por defecto
+        // Prevenir comportamiento por defecto y propagación
         event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
 
         if (!ui.item || !ui.item.value) {
             console.error("Error: ui.item.value no está definido", ui.item);
@@ -2209,6 +2224,11 @@ $( "#ventaCajaDetalle" ).autocomplete({
 
         var $input = $("#ventaCajaDetalle");
 
+        // Si ya se está agregando, no hacer nada
+        if (agregandoProducto) {
+            return false;
+        }
+
         // Guardar en campos ocultos
         $("#ventaCajaDetalleHidden").val(codigoSeleccionado);
         $input.val(codigoSeleccionado);
@@ -2221,7 +2241,7 @@ $( "#ventaCajaDetalle" ).autocomplete({
         // Agregar el producto una sola vez
         setTimeout(function() {
             agregarProductoListaCompra();
-        }, 100);
+        }, 150);
 
         return false;
     }
