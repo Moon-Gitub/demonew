@@ -942,11 +942,19 @@ function agregarProductoListaCompra() {
 
 						localStorage.removeItem("quitarProductoCaja");
 
+						// Limpiar campos y cerrar autocomplete
 						$("#ventaCajaDetalleHidden").val("");
 						$("#ventaCajaDetalle").val("");
 						$("#autocompletarProducto").val("");
 						$("#ventaCajaCantidad").val("1");
-						$("#ventaCajaDetalle").focus();						
+						
+						// Cerrar el autocomplete si está abierto
+						$("#ventaCajaDetalle").autocomplete("close");
+						
+						// Limpiar el campo visible y enfocar para siguiente búsqueda
+						setTimeout(function() {
+							$("#ventaCajaDetalle").val("").focus();
+						}, 100);
 
 						})()
 
@@ -1078,11 +1086,19 @@ function agregarProductoListaCompra() {
 
 						localStorage.removeItem("quitarProductoCaja");
 
+						// Limpiar campos y cerrar autocomplete
 						$("#ventaCajaDetalleHidden").val("");
 						$("#ventaCajaDetalle").val("");
 						$("#autocompletarProducto").val("");
 						$("#ventaCajaCantidad").val("1");
-						$("#ventaCajaDetalle").focus();
+						
+						// Cerrar el autocomplete si está abierto
+						$("#ventaCajaDetalle").autocomplete("close");
+						
+						// Limpiar el campo visible y enfocar para siguiente búsqueda
+						setTimeout(function() {
+							$("#ventaCajaDetalle").val("").focus();
+						}, 100);
 
 	      			}
 
