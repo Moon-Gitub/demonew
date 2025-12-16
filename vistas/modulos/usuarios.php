@@ -3,6 +3,48 @@
     $objUsuario = new ControladorUsuarios();
 ?>
 
+<style>
+  /* ============================
+     TABLA USUARIOS - ESTILO
+     ============================ */
+
+  .usuarios-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabla-usuarios th,
+  .tabla-usuarios td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 6px 4px !important; /* Menos padding para ver mejor el dropdown */
+  }
+
+  /* Responsive: en pantallas chicas priorizar columna USUARIO (y acciones) */
+  @media (max-width: 768px) {
+    .tabla-usuarios th:nth-child(1),
+    .tabla-usuarios td:nth-child(1), /* # */
+    .tabla-usuarios th:nth-child(2),
+    .tabla-usuarios td:nth-child(2), /* Nombre */
+    .tabla-usuarios th:nth-child(4),
+    .tabla-usuarios td:nth-child(4), /* Foto */
+    .tabla-usuarios th:nth-child(5),
+    .tabla-usuarios td:nth-child(5), /* Perfil */
+    .tabla-usuarios th:nth-child(6),
+    .tabla-usuarios td:nth-child(6), /* Estado */
+    .tabla-usuarios th:nth-child(7),
+    .tabla-usuarios td:nth-child(7)  /* Último login */ {
+      display: none;
+    }
+
+    /* Opcional: hacer que la tabla no sea tan ancha en mobile */
+    .tabla-usuarios {
+      min-width: 0;
+    }
+  }
+</style>
+
 <div class="content-wrapper">
   <section class="content-header">
     <h1>
@@ -24,7 +66,8 @@
       </div>
 
       <div class="box-body">
-       <table class="table table-bordered table-striped tablas" width="100%">
+       <div class="usuarios-table-wrapper">
+       <table class="table table-bordered table-striped tablas tabla-usuarios" width="100%">
         <thead>
          <tr>
            <th style="width:10px">#</th>
@@ -89,6 +132,7 @@
 
         </tbody>
        </table>
+       </div>
       </div>
     </div>
   </section>
