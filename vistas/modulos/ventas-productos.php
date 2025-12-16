@@ -142,6 +142,158 @@
         position: relative;
         height: 300px;
       }
+
+      /* ============================
+         Botones modernos DataTables
+         ============================ */
+      .dt-button {
+        border-radius: 8px !important;
+        padding: 10px 18px !important;
+        margin: 0 5px 10px 5px !important;
+        font-weight: 600 !important;
+        font-size: 13px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+        border: none !important;
+        color: white !important;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .dt-button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+      }
+
+      /* Botón Copy - Azul */
+      .dt-button.buttons-copy {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%) !important;
+      }
+
+      .dt-button.buttons-copy:hover {
+        background: linear-gradient(135deg, #2980b9 0%, #1f6391 100%) !important;
+      }
+
+      /* Botón CSV - Verde */
+      .dt-button.buttons-csv {
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%) !important;
+      }
+
+      .dt-button.buttons-csv:hover {
+        background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%) !important;
+      }
+
+      /* Botón Excel - Verde esmeralda */
+      .dt-button.buttons-excel {
+        background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%) !important;
+      }
+
+      .dt-button.buttons-excel:hover {
+        background: linear-gradient(135deg, #16a085 0%, #138d75 100%) !important;
+      }
+
+      /* Botón PDF - Naranja/Rojo */
+      .dt-button.buttons-pdf {
+        background: linear-gradient(135deg, #e67e22 0%, #d35400 100%) !important;
+      }
+
+      .dt-button.buttons-pdf:hover {
+        background: linear-gradient(135deg, #d35400 0%, #ba4a00 100%) !important;
+      }
+
+      /* Botón Print - Púrpura */
+      .dt-button.buttons-print {
+        background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%) !important;
+      }
+
+      .dt-button.buttons-print:hover {
+        background: linear-gradient(135deg, #8e44ad 0%, #7d3c98 100%) !important;
+      }
+
+      /* Botón Page Length - Gris moderno */
+      .dt-button.buttons-page-length {
+        background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%) !important;
+      }
+
+      .dt-button.buttons-page-length:hover {
+        background: linear-gradient(135deg, #7f8c8d 0%, #6c7a7b 100%) !important;
+      }
+
+      /* Contenedor de botones */
+      .dt-buttons {
+        margin-bottom: 20px !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+      }
+
+      /* Mejorar el buscador de DataTables */
+      #tablaListarProductosPorVenta_filter {
+        margin: 20px 0 25px 0 !important;
+        text-align: left !important;
+      }
+
+      #tablaListarProductosPorVenta_filter label {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        font-weight: 600 !important;
+        color: #2c3e50 !important;
+      }
+
+      #tablaListarProductosPorVenta_filter input {
+        border: 2px solid #e0e0e0 !important;
+        border-radius: 8px !important;
+        padding: 10px 15px !important;
+        font-size: 14px !important;
+        transition: all 0.3s ease !important;
+        background: #ffffff !important;
+        width: 300px !important;
+        max-width: 100% !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+      }
+
+      #tablaListarProductosPorVenta_filter input:focus {
+        border-color: #667eea !important;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2) !important;
+        outline: none !important;
+      }
+
+      /* Mejorar el box header */
+      .box-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        border-bottom: 1px solid #e0e0e0;
+        padding: 15px 20px;
+      }
+
+      /* Mejorar el botón de rango de fechas */
+      #btnInformeVentaProductoRango {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: 600;
+        box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      #btnInformeVentaProductoRango:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      /* Mejorar el box body */
+      .box-body {
+        padding: 25px;
+      }
+
+      /* Mejorar el box general */
+      .box {
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e0e0e0;
+      }
     </style>
 
     <div class="box">
