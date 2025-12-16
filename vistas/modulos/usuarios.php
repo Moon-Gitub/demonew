@@ -21,6 +21,13 @@
     padding: 6px 4px !important; /* Menos padding para ver mejor el dropdown */
   }
 
+  /* Dar un poco más de aire debajo de la última fila para que
+     el menú de Acciones del último registro nunca se pegue a la paginación
+     ni quede visualmente “cortado” */
+  .tabla-usuarios {
+    margin-bottom: 40px !important;
+  }
+
   /* Responsive: en pantallas chicas priorizar columna USUARIO (y acciones) */
   @media (max-width: 768px) {
     .tabla-usuarios th:nth-child(1),
