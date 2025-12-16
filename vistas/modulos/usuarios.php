@@ -120,7 +120,9 @@
     
                       echo '<td>'.$value["ultimo_login"].'</td>
                         <td class="text-center">
-                          <div class="btn-group">
+                          <!-- Usamos dropup para que el menú se abra hacia arriba
+                               y no quede oculto detrás de la paginación en el último registro -->
+                          <div class="btn-group dropup">
                             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                               <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
                             </button>
