@@ -773,11 +773,22 @@ function agregarProductoListaCompra() {
 
 	      			var precioVta = 0;
 					var precioNeto = 0;
-	          		var iva = Number(respuesta["tipo_iva"]);
+	          		var iva = Number(respuesta["tipo_iva"]) || 0;
 	          		var ivaValor = 0;
-	      			var stock = respuesta[stockSucursal]; //TOMO EL STOCK DE LA SUCURSAL ASIGNADA AL USUARIO LOGUEADO
+	      			var stock = respuesta[stockSucursal] || 0; //TOMO EL STOCK DE LA SUCURSAL ASIGNADA AL USUARIO LOGUEADO
 
-	      			if(respuesta[tipoPrecio] == 0) {
+	      			// Validar que tipoPrecio esté definido y obtener el precio
+	      			var precioDelProducto = null;
+	      			if (tipoPrecio && respuesta.hasOwnProperty(tipoPrecio)) {
+	      				precioDelProducto = parseFloat(respuesta[tipoPrecio]) || 0;
+	      			} else {
+	      				// Si no existe el tipoPrecio, intentar con precio_venta
+	      				precioDelProducto = parseFloat(respuesta["precio_venta"]) || 0;
+	      				console.warn("tipoPrecio no encontrado, usando precio_venta:", precioDelProducto);
+	      			}
+
+	      			// Solo mostrar modal si el precio es realmente 0 o no existe
+	      			if (!precioDelProducto || precioDelProducto == 0) {
 
 						(async()=> {
 							const { value: formValues } = await swal({
@@ -2096,11 +2107,14 @@ $( "#ventaCajaDetalle" ).autocomplete({
         // Cerrar el autocomplete inmediatamente
         $("#ventaCajaDetalle").autocomplete("close");
         
+        // Limpiar el valor visible del input para que no muestre el label completo
+        $("#ventaCajaDetalle").val(codigoSeleccionado);
+        
         // Disparar automáticamente la función que agrega el producto
         // Usar setTimeout para asegurar que el DOM se actualice primero
         setTimeout(function() {
             agregarProductoListaCompra();
-        }, 100);
+        }, 150);
         
         return false;
     }
