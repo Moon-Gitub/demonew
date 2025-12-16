@@ -794,17 +794,29 @@ function agregarProductoListaCompra() {
 
 	      			// Validar que tipoPrecio esté definido y obtener el precio
 	      			var precioDelProducto = null;
-	      			console.log("Buscando precio con tipoPrecio:", tipoPrecio);
-	      			console.log("Respuesta del producto:", respuesta);
+	      			
+	      			// Intentar obtener el precio en este orden de prioridad:
+	      			// 1. El campo especificado por tipoPrecio
+	      			// 2. precio_venta (fallback común)
+	      			// 3. Cualquier campo que contenga "precio" en el nombre
 	      			
 	      			if (tipoPrecio && respuesta.hasOwnProperty(tipoPrecio)) {
 	      				precioDelProducto = parseFloat(respuesta[tipoPrecio]) || 0;
-	      				console.log("Precio encontrado en", tipoPrecio + ":", precioDelProducto);
-	      			} else {
-	      				// Si no existe el tipoPrecio, intentar con precio_venta
+	      			} else if (respuesta.hasOwnProperty("precio_venta")) {
 	      				precioDelProducto = parseFloat(respuesta["precio_venta"]) || 0;
-	      				console.warn("tipoPrecio '" + tipoPrecio + "' no encontrado en respuesta, usando precio_venta:", precioDelProducto);
-	      				console.warn("Propiedades disponibles en respuesta:", Object.keys(respuesta));
+	      			} else {
+	      				// Buscar cualquier campo de precio disponible
+	      				for (var key in respuesta) {
+	      					if (key.toLowerCase().indexOf("precio") !== -1 && !isNaN(parseFloat(respuesta[key]))) {
+	      						precioDelProducto = parseFloat(respuesta[key]) || 0;
+	      						break;
+	      					}
+	      				}
+	      			}
+	      			
+	      			// Si aún no hay precio, usar 0
+	      			if (precioDelProducto === null || isNaN(precioDelProducto)) {
+	      				precioDelProducto = 0;
 	      			}
 
 	      			// Solo mostrar modal si el precio es realmente 0 o no existe
