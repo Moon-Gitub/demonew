@@ -144,87 +144,10 @@
       }
 
       /* ============================
-         Botones modernos DataTables
+         Botones DataTables - Igual que ventas
          ============================ */
-      .dt-button {
-        border-radius: 8px !important;
-        padding: 10px 18px !important;
-        margin: 0 5px 10px 5px !important;
-        font-weight: 600 !important;
-        font-size: 13px !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
-        border: none !important;
-        color: white !important;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .dt-button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
-      }
-
-      /* Botón Copy - Azul */
-      .dt-button.buttons-copy {
-        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%) !important;
-      }
-
-      .dt-button.buttons-copy:hover {
-        background: linear-gradient(135deg, #2980b9 0%, #1f6391 100%) !important;
-      }
-
-      /* Botón CSV - Verde */
-      .dt-button.buttons-csv {
-        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%) !important;
-      }
-
-      .dt-button.buttons-csv:hover {
-        background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%) !important;
-      }
-
-      /* Botón Excel - Verde esmeralda */
-      .dt-button.buttons-excel {
-        background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%) !important;
-      }
-
-      .dt-button.buttons-excel:hover {
-        background: linear-gradient(135deg, #16a085 0%, #138d75 100%) !important;
-      }
-
-      /* Botón PDF - Naranja/Rojo */
-      .dt-button.buttons-pdf {
-        background: linear-gradient(135deg, #e67e22 0%, #d35400 100%) !important;
-      }
-
-      .dt-button.buttons-pdf:hover {
-        background: linear-gradient(135deg, #d35400 0%, #ba4a00 100%) !important;
-      }
-
-      /* Botón Print - Púrpura */
-      .dt-button.buttons-print {
-        background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%) !important;
-      }
-
-      .dt-button.buttons-print:hover {
-        background: linear-gradient(135deg, #8e44ad 0%, #7d3c98 100%) !important;
-      }
-
-      /* Botón Page Length - Gris moderno */
-      .dt-button.buttons-page-length {
-        background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%) !important;
-      }
-
-      .dt-button.buttons-page-length:hover {
-        background: linear-gradient(135deg, #7f8c8d 0%, #6c7a7b 100%) !important;
-      }
-
-      /* Contenedor de botones */
       .dt-buttons {
         margin-bottom: 20px !important;
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 8px !important;
       }
 
       /* Mejorar el buscador de DataTables */
@@ -549,37 +472,10 @@ $("#tablaListarProductosPorVenta tfoot th").each(function (i) {
 var tablaListarProductosPorVenta = $("#tablaListarProductosPorVenta").DataTable({
     "order": [[ 0, "desc" ]],
     "pageLength": 50,
-	"language": {
-
-		"sProcessing":     "Procesando...",
-		"sLengthMenu":     "Mostrar _MENU_ registros",
-		"sZeroRecords":    "No se encontraron resultados",
-		"sEmptyTable":     "Ningún dato disponible en esta tabla",
-		"sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_",
-		"sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0",
-		"sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
-		"sInfoPostFix":    "",
-		"sSearch":         "Buscar:",
-		"sUrl":            "",
-		"sInfoThousands":  ",",
-		"sLoadingRecords": "Cargando...",
-		"oPaginate": {
-		"sFirst":    "Primero",
-		"sLast":     "Último",
-		"sNext":     "Siguiente",
-		"sPrevious": "Anterior"
-		},
-		"oAria": {
-			"sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
-			"sSortDescending": ": Activar para ordenar la columna de manera descendente"
-		}
-
-	},
+	"language": GL_DATATABLE_LENGUAJE,
     //dom: 'Blfrtip', Muestra el page lenth 
     dom: 'Bfrtip',
-    buttons: [
-        'copy', 'csv', 'excel', 'pdf', 'print', 'pageLength'
-    ]
+    "buttons": GL_DATATABLE_BOTONES
 
 });
 
