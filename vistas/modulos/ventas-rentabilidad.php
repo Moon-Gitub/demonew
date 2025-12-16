@@ -1,3 +1,9 @@
+<?php
+  require_once __DIR__ . "/../../controladores/ventas.controlador.php";
+  require_once __DIR__ . "/../../controladores/cajas.controlador.php";
+  require_once __DIR__ . "/../../controladores/clientes.controlador.php";
+?>
+
 <div class="content-wrapper">
 
   <section class="content-header">
