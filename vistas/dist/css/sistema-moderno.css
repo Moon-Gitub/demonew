@@ -15,7 +15,11 @@
     border: none !important;
     background: #ffffff !important;
     transition: all 0.3s ease !important;
-    overflow: hidden;
+    /* Importante:
+       Dejamos overflow visible para que los dropdowns, tooltips
+       y menús de acciones (especialmente en la última fila de las tablas)
+       no queden cortados por el borde de la caja. */
+    overflow: visible;
     margin-bottom: 20px;
 }
 

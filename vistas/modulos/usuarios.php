@@ -69,7 +69,7 @@
                       }             
     
                       echo '<td>'.$value["ultimo_login"].'</td>
-                        <td>
+                        <td class="text-center">
                           <div class="btn-group">
                             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                               <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
