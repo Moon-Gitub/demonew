@@ -724,6 +724,21 @@ function agregarProductoListaCompra() {
 	    //tipo de precio seleccionado (según lista precio)
 		//var tipoPrecio = $('input[name=radioPrecio]:checked').val(); 
 		var tipoPrecio = $('#radioPrecio').val(); 
+		
+		// Validar que tipoPrecio esté definido
+		if (!tipoPrecio || tipoPrecio === "") {
+			console.error("Error: tipoPrecio no está definido. Valor del select:", $('#radioPrecio').val());
+			swal({
+				title: "Error",
+				text: "Debe seleccionar una lista de precio",
+				type: "error",
+				toast: true,
+				timer: 3000,
+				position: 'top',
+				confirmButtonText: "¡Cerrar!"
+			});
+			return;
+		}
         
         if(stockSucursal == "" || tipoPrecio == ""){
             swal({
@@ -779,12 +794,17 @@ function agregarProductoListaCompra() {
 
 	      			// Validar que tipoPrecio esté definido y obtener el precio
 	      			var precioDelProducto = null;
+	      			console.log("Buscando precio con tipoPrecio:", tipoPrecio);
+	      			console.log("Respuesta del producto:", respuesta);
+	      			
 	      			if (tipoPrecio && respuesta.hasOwnProperty(tipoPrecio)) {
 	      				precioDelProducto = parseFloat(respuesta[tipoPrecio]) || 0;
+	      				console.log("Precio encontrado en", tipoPrecio + ":", precioDelProducto);
 	      			} else {
 	      				// Si no existe el tipoPrecio, intentar con precio_venta
 	      				precioDelProducto = parseFloat(respuesta["precio_venta"]) || 0;
-	      				console.warn("tipoPrecio no encontrado, usando precio_venta:", precioDelProducto);
+	      				console.warn("tipoPrecio '" + tipoPrecio + "' no encontrado en respuesta, usando precio_venta:", precioDelProducto);
+	      				console.warn("Propiedades disponibles en respuesta:", Object.keys(respuesta));
 	      			}
 
 	      			// Solo mostrar modal si el precio es realmente 0 o no existe
