@@ -2158,6 +2158,36 @@ AUTOCOMPLETAR PRODUCTOS
 =============================================*/
 // Flag para prevenir que el autocomplete se abra después de seleccionar
 var prevenirAperturaAutocomplete = false;
+var intervaloVerificarAutocomplete = null;
+
+// Función para forzar el cierre del autocomplete
+function forzarCierreAutocomplete() {
+    var $input = $("#ventaCajaDetalle");
+    $input.autocomplete("close");
+    
+    // Ocultar TODOS los posibles menús del autocomplete
+    $(".ui-autocomplete").each(function() {
+        $(this).css({
+            "display": "none !important",
+            "visibility": "hidden",
+            "opacity": "0",
+            "height": "0",
+            "overflow": "hidden"
+        }).hide();
+    });
+    
+    // También buscar por ID específico si existe
+    $("#ui-id-1, #ui-id-2, #ui-id-3").hide().css("display", "none !important");
+    
+    // Cancelar búsquedas pendientes
+    var autocompleteInstance = $input.data("ui-autocomplete");
+    if (autocompleteInstance) {
+        autocompleteInstance.cancelSearch = true;
+        if (autocompleteInstance.menu && autocompleteInstance.menu.element) {
+            autocompleteInstance.menu.element.hide();
+        }
+    }
+}
 
 $( "#ventaCajaDetalle" ).autocomplete({
     source: function( request, response ) {
@@ -2197,9 +2227,27 @@ $( "#ventaCajaDetalle" ).autocomplete({
     open: function(event, ui) {
         // Si la bandera está activa, cerrar inmediatamente
         if (prevenirAperturaAutocomplete) {
-            $(this).autocomplete("close");
-            $(".ui-autocomplete").hide().css("display", "none !important");
+            forzarCierreAutocomplete();
             return false;
+        }
+        
+        // Verificar periódicamente si el menú debe estar cerrado
+        if (intervaloVerificarAutocomplete) {
+            clearInterval(intervaloVerificarAutocomplete);
+        }
+        
+        intervaloVerificarAutocomplete = setInterval(function() {
+            if (prevenirAperturaAutocomplete) {
+                forzarCierreAutocomplete();
+                clearInterval(intervaloVerificarAutocomplete);
+            }
+        }, 50);
+    },
+    close: function(event, ui) {
+        // Limpiar intervalo cuando se cierra
+        if (intervaloVerificarAutocomplete) {
+            clearInterval(intervaloVerificarAutocomplete);
+            intervaloVerificarAutocomplete = null;
         }
     },
     select: function( event, ui ) {
@@ -2224,34 +2272,26 @@ $( "#ventaCajaDetalle" ).autocomplete({
         
         var $input = $("#ventaCajaDetalle");
         
-        // ACTIVAR BANDERA PARA PREVENIR APERTURA
+        // ACTIVAR BANDERA INMEDIATAMENTE
         prevenirAperturaAutocomplete = true;
         
-        // CERRAR Y OCULTAR EL AUTOCOMPLETE INMEDIATAMENTE
-        $input.autocomplete("close");
-        
-        // Ocultar el menú de forma agresiva con CSS
-        $(".ui-autocomplete").css({
-            "display": "none !important",
-            "visibility": "hidden",
-            "opacity": "0"
-        }).hide();
-        $("ul.ui-autocomplete").css({
-            "display": "none !important",
-            "visibility": "hidden",
-            "opacity": "0"
-        }).hide();
-        
-        // Cancelar búsquedas pendientes
-        var autocompleteInstance = $input.data("ui-autocomplete");
-        if (autocompleteInstance) {
-            autocompleteInstance.cancelSearch = true;
-        }
+        // FORZAR CIERRE INMEDIATO
+        forzarCierreAutocomplete();
         
         // Guardar en los campos hidden y visible
         $("#ventaCajaDetalleHidden").val(codigoSeleccionado);
         $input.val(codigoSeleccionado);
         $("#seleccionarProducto").val(idProducto);
+        
+        // Verificar y cerrar cada 10ms durante 1 segundo
+        var intentos = 0;
+        var intervaloForzar = setInterval(function() {
+            intentos++;
+            forzarCierreAutocomplete();
+            if (intentos >= 100) { // 1 segundo (100 * 10ms)
+                clearInterval(intervaloForzar);
+            }
+        }, 10);
         
         // Disparar automáticamente la función que agrega el producto
         setTimeout(function() {
@@ -2260,10 +2300,9 @@ $( "#ventaCajaDetalle" ).autocomplete({
             // Desactivar bandera después de un tiempo
             setTimeout(function() {
                 prevenirAperturaAutocomplete = false;
-                // Asegurar que el menú esté cerrado
-                $input.autocomplete("close");
-                $(".ui-autocomplete").hide().css("display", "none !important");
-            }, 500);
+                clearInterval(intervaloForzar);
+                forzarCierreAutocomplete();
+            }, 800);
         }, 200);
         
         return false;
@@ -2277,11 +2316,21 @@ $(document).on('click', function(e) {
     
     // Si el click NO es en el input ni en el menú del autocomplete, cerrarlo
     if (!$target.closest("#ventaCajaDetalle").length && 
-        !$target.closest(".ui-autocomplete").length) {
-        $input.autocomplete("close");
-        $(".ui-autocomplete").hide().css("display", "none !important");
+        !$target.closest(".ui-autocomplete").length &&
+        !$target.closest("ul[role='listbox']").length) {
+        forzarCierreAutocomplete();
     }
 });
+
+// Verificar periódicamente si el menú está visible cuando no debería
+setInterval(function() {
+    if (prevenirAperturaAutocomplete) {
+        var $menu = $(".ui-autocomplete:visible");
+        if ($menu.length > 0) {
+            forzarCierreAutocomplete();
+        }
+    }
+}, 100);
 
 /*=============================================
 AGREGAR PRECIO
