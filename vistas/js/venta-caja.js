@@ -2077,6 +2077,9 @@ $( "#ventaCajaDetalle" ).autocomplete({
         $("#ventaCajaDetalle").val(codigoSeleccionado);
         $("#seleccionarProducto").val(idProducto);
         
+        // Cerrar el autocomplete inmediatamente
+        $("#ventaCajaDetalle").autocomplete("close");
+        
         // Disparar automáticamente la función que agrega el producto
         // Usar setTimeout para asegurar que el DOM se actualice primero
         setTimeout(function() {
