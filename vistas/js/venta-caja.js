@@ -2140,6 +2140,7 @@ $( "#ventaCajaDetalle" ).autocomplete({
     },
     select: function( event, ui ) {
         event.preventDefault();
+        event.stopPropagation();
         
         // Validar que ui.item y ui.item.value existan
         if (!ui.item || !ui.item.value) {
@@ -2156,21 +2157,30 @@ $( "#ventaCajaDetalle" ).autocomplete({
             return false;
         }
         
+        // Cerrar el autocomplete ANTES de cambiar valores
+        var $input = $("#ventaCajaDetalle");
+        $input.autocomplete("close");
+        
+        // Ocultar manualmente el menú del autocomplete por si acaso
+        $input.autocomplete("widget").hide();
+        $(".ui-autocomplete").hide();
+        
         // Guardar en los campos hidden y visible
         $("#ventaCajaDetalleHidden").val(codigoSeleccionado);
-        $("#ventaCajaDetalle").val(codigoSeleccionado);
+        $input.val(codigoSeleccionado);
         $("#seleccionarProducto").val(idProducto);
         
-        // Cerrar el autocomplete inmediatamente y limpiar
-        $("#ventaCajaDetalle").autocomplete("close");
-        
-        // Limpiar el valor visible del input para que no muestre el label completo
-        $("#ventaCajaDetalle").val(codigoSeleccionado);
+        // Prevenir que se abra de nuevo deshabilitando temporalmente el autocomplete
+        $input.autocomplete("disable");
         
         // Disparar automáticamente la función que agrega el producto
-        // Usar setTimeout para asegurar que el DOM se actualice primero
         setTimeout(function() {
             agregarProductoListaCompra();
+            
+            // Re-habilitar el autocomplete después de agregar
+            setTimeout(function() {
+                $input.autocomplete("enable");
+            }, 300);
         }, 200);
         
         return false;
