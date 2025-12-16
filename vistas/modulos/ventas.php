@@ -1,3 +1,222 @@
+<style>
+  /* ============================
+     Estilos modernos para ventas
+     ============================ */
+
+  .ventas-box {
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    border: 1px solid #e0e0e0;
+  }
+
+  .ventas-box-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-bottom: 1px solid #e0e0e0;
+    padding: 15px 20px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .ventas-box-body {
+    padding: 25px;
+  }
+
+  .ventas-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .ventas-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  .ventas-btn-secondary {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(52, 152, 219, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .ventas-btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+  }
+
+  .ventas-btn-date {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .ventas-btn-date:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  /* Tabla responsive */
+  .ventas-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+
+  #tablaListarVentas {
+    width: 100% !important;
+    min-width: 800px;
+  }
+
+  #tablaListarVentas thead tr {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  #tablaListarVentas thead tr th {
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    border: none;
+    padding: 12px 8px;
+    white-space: nowrap;
+  }
+
+  #tablaListarVentas tfoot th {
+    background: #f8f9fa;
+    padding: 8px;
+    border-top: 2px solid #e0e0e0;
+  }
+
+  #tablaListarVentas tfoot th input {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 13px;
+    transition: all 0.3s ease;
+  }
+
+  #tablaListarVentas tfoot th input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+  }
+
+  #tablaListarVentas tbody tr {
+    transition: background-color 0.2s ease;
+  }
+
+  #tablaListarVentas tbody tr:hover {
+    background-color: #f8f9fa;
+  }
+
+  #tablaListarVentas tbody td {
+    vertical-align: middle;
+    padding: 12px 8px;
+  }
+
+  /* Mejorar buscador */
+  #tablaListarVentas_filter {
+    margin-bottom: 20px !important;
+  }
+
+  #tablaListarVentas_filter label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    font-weight: 600 !important;
+    color: #2c3e50 !important;
+  }
+
+  #tablaListarVentas_filter input {
+    border: 2px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+    padding: 10px 15px !important;
+    font-size: 14px !important;
+    transition: all 0.3s ease !important;
+    width: 300px !important;
+    max-width: 100% !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  #tablaListarVentas_filter input:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2) !important;
+    outline: none !important;
+  }
+
+  /* Responsive para móviles */
+  @media (max-width: 768px) {
+    .ventas-box-body {
+      padding: 15px;
+    }
+
+    .ventas-table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #tablaListarVentas {
+      min-width: 1000px;
+    }
+
+    #tablaListarVentas_filter input {
+      width: 100% !important;
+    }
+
+    .ventas-btn-primary,
+    .ventas-btn-secondary,
+    .ventas-btn-date {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  }
+
+  /* Mejorar labels de estado */
+  .label-success {
+    background-color: #2ecc71 !important;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  .label-danger {
+    background-color: #e74c3c !important;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  .label-warning {
+    background-color: #f39c12 !important;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  /* Mejorar botones de acciones */
+  .btn-group .btn-primary {
+    border-radius: 6px;
+    transition: all 0.3s ease;
+  }
+
+  .btn-group .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+</style>
+
 <div class="content-wrapper">
   <section class="content-header">
     <h1>
@@ -9,52 +228,63 @@
     </ol>
   </section>
   <section class="content">
-    <div class="box">
-      <div class="box-header with-border">
-        <a href="crear-venta-caja" class="btn btn-primary">Agregar venta</a>
-        <a href="libro-iva-ventas" class="btn btn-primary">IVA Ventas</a>
-         <button type="button" class="btn btn-default pull-right" id="daterange-btn">
-            <span>
-              <i class="fa fa-calendar"></i> 
+    <div class="box ventas-box">
+      <div class="box-header with-border ventas-box-header">
+        <div class="row">
+          <div class="col-md-6 col-sm-12">
+            <a href="crear-venta-caja" class="btn ventas-btn-primary" style="color: white; margin-right: 10px; margin-bottom: 10px;">
+              <i class="fa fa-plus"></i> Agregar venta
+            </a>
+            <a href="libro-iva-ventas" class="btn ventas-btn-secondary" style="color: white; margin-bottom: 10px;">
+              <i class="fa fa-file-text"></i> IVA Ventas
+            </a>
+          </div>
+          <div class="col-md-6 col-sm-12 text-right">
+            <button type="button" class="btn ventas-btn-date pull-right" id="daterange-btn" style="color: white;">
+              <span>
+                <i class="fa fa-calendar"></i> 
 
-              <?php
+                <?php
 
-                if(isset($_GET["fechaInicial"])){
+                  if(isset($_GET["fechaInicial"])){
 
-                  echo $_GET["fechaInicial"]." - ".$_GET["fechaFinal"];
-                
-                }else{
-                 
-                  echo 'Hoy';
+                    echo $_GET["fechaInicial"]." - ".$_GET["fechaFinal"];
+                  
+                  }else{
+                   
+                    echo 'Hoy';
 
-                }
+                  }
 
-              ?>
-            </span>
+                ?>
+              </span>
 
-            <i class="fa fa-caret-down"></i>
+              <i class="fa fa-caret-down"></i>
 
-         </button>
+            </button>
+          </div>
+        </div>
 
       </div>
 
-      <div class="box-body">
+      <div class="box-body ventas-box-body">
         
-       <table class="table table-bordered table-striped dt-responsive" width="100%" id="tablaListarVentas">
+       <div class="ventas-table-wrapper">
+         <table class="table table-bordered table-striped dt-responsive" width="100%" id="tablaListarVentas">
 
         <thead>
          
-         <tr>
+         <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
 
-           <th>Fecha</th>
-           <th>Nro. Int.</th>
-           <th>Sucursal</th>
-           <th>Cbte.</th>
-           <th>Cliente</th>
-           <th>Medio pago</th>
-           <th>Estado</th>
-           <th>Total</th> 
-           <th>Acciones</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Fecha</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Nro. Int.</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Sucursal</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Cbte.</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Cliente</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Medio pago</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Estado</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Total</th> 
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Acciones</th>
 
          </tr> 
 
@@ -298,6 +528,7 @@
         </tbody>
 
        </table>
+       </div>
 
        <?php
 
