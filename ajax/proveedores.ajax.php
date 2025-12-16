@@ -1,8 +1,13 @@
 <?php
 // ✅ Seguridad AJAX
 require_once "seguridad.ajax.php";
-SeguridadAjax::inicializar();
 
+// Exentar endpoint GET de CSRF (autocompletar)
+if(isset($_GET["listadoProveedor"])){
+  SeguridadAjax::inicializar(false); // false = no verificar CSRF para GET
+} else {
+  SeguridadAjax::inicializar(); // true por defecto = verificar CSRF para POST
+}
 
 require_once "../controladores/proveedores.controlador.php";
 require_once "../modelos/proveedores.modelo.php";

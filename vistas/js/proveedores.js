@@ -7,6 +7,9 @@ $(".tablas").on("click", ".btnEditarProveedor", function(){
 
   var datos = new FormData();
     datos.append("idProveedor", idProveedor);
+	// Agregar token CSRF
+	var token = $('meta[name="csrf-token"]').attr('content') || '';
+	datos.append('csrf_token', token);
 
     $.ajax({
 
@@ -17,6 +20,9 @@ $(".tablas").on("click", ".btnEditarProveedor", function(){
       contentType: false,
       processData: false,
       dataType:"json",
+      headers: {
+      	'X-CSRF-TOKEN': token
+      },
       success:function(respuesta){
 
         console.log(respuesta)

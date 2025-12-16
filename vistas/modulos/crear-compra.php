@@ -37,6 +37,8 @@ if($_SESSION["perfil"] == "Especial"){
                                         ======================================-->
                                         <input type="hidden" class="form-control input-sm" id="usuarioPedido" value="<?php echo $_SESSION["nombre"]; ?>" readonly>
                                         <input type="hidden" name="usuarioPedidoOculto" value="<?php echo $_SESSION["nombre"]; ?>">
+                                        <!-- Token CSRF -->
+                                        <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : ''; ?>">
                                         <?php
                                             date_default_timezone_set('America/Argentina/Mendoza'); 
                                             $fecha = date('Y-m-d');

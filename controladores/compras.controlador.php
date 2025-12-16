@@ -19,6 +19,20 @@ class ControladorCompras{
 	//CREAR VENTA
 	static public function ctrCrearCompra(){
 		if(isset($_POST["seleccionarProveedor"])){
+			// Validar token CSRF
+			if(!isset($_POST["csrf_token"]) || !isset($_SESSION['csrf_token']) || $_POST["csrf_token"] !== $_SESSION['csrf_token']){
+				echo'<script>
+				swal({
+					  type: "error",
+					  title: "Error de seguridad",
+					  text: "Token CSRF inválido",
+					  showConfirmButton: true,
+					  confirmButtonText: "Cerrar"
+					  })
+				</script>';
+				return;
+			}
+			
 			if($_POST["listaProductosCompras"] == ""){
 				echo'<script>
 				swal({

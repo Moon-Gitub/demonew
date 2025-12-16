@@ -46,6 +46,9 @@ $("#tablaCompras tbody").on("click", "button.agregarProductoCompra", function(){
 	$(this).addClass("btn-default");
 	var datos = new FormData();
   datos.append("idProducto", idProducto);
+	// Agregar token CSRF
+	var token = $('meta[name="csrf-token"]').attr('content') || '';
+	datos.append('csrf_token', token);
 	var total = 0;
   $.ajax({
      	url:"ajax/productos.ajax.php",
@@ -55,6 +58,9 @@ $("#tablaCompras tbody").on("click", "button.agregarProductoCompra", function(){
     	contentType: false,
     	processData: false,
     	dataType:"json",
+    	headers: {
+      		'X-CSRF-TOKEN': token
+    	},
     	success:function(respuesta){
     		console.log(respuesta["tipo_iva"])
 				var codigo = respuesta["codigo"];	
@@ -112,6 +118,9 @@ $("#tablaCompras_filter input").keyup( function (e) {
 		console.log(idProducto);
 		var datos = new FormData();
 	  datos.append("codigoProducto", idProducto);
+		// Agregar token CSRF
+		var token = $('meta[name="csrf-token"]').attr('content') || '';
+		datos.append('csrf_token', token);
 		var total = 0;
 	  $.ajax({
 			url:"ajax/productos.ajax.php",
@@ -121,6 +130,9 @@ $("#tablaCompras_filter input").keyup( function (e) {
 			contentType: false,
 			processData: false,
 			dataType:"json",
+			headers: {
+      		'X-CSRF-TOKEN': token
+    	},
 			success:function(respuesta){
 				var codigo = respuesta["codigo"];	
 				var descripcion = respuesta["descripcion"];
@@ -514,6 +526,9 @@ $("#tablaListarCompras tfoot th").each(function (i) {
 
 		var datos = new FormData();
 	    datos.append("idProducto", idProducto);
+		// Agregar token CSRF
+		var token = $('meta[name="csrf-token"]').attr('content') || '';
+		datos.append('csrf_token', token);
 
 	     $.ajax({
 
@@ -524,6 +539,9 @@ $("#tablaListarCompras tfoot th").each(function (i) {
 	      	contentType: false,
 	      	processData: false,
 	      	dataType:"json",
+	      	headers: {
+      		'X-CSRF-TOKEN': token
+    	},
 	      	success:function(respuesta){
 
 	      	    var descripcion = respuesta["descripcion"];
@@ -1113,6 +1131,9 @@ $("#tablaCompras tbody").on("click", "div.detalleProductoCompras", function(){
 
 	var datos = new FormData();
 	datos.append("idProducto", idProducto);
+	// Agregar token CSRF
+	var token = $('meta[name="csrf-token"]').attr('content') || '';
+	datos.append('csrf_token', token);
 	var total = 0;
 	var sucursal1 = 0;
 	var sucursal2 = 0;
@@ -1125,11 +1146,16 @@ $("#tablaCompras tbody").on("click", "div.detalleProductoCompras", function(){
 		contentType: false,
 		processData: false,
 		dataType:"json",
+		headers: {
+      		'X-CSRF-TOKEN': token
+    	},
 		success:function(respuesta){
 			
 			var codigo = respuesta["codigo"];
 			var datosDos = new FormData();
 			datosDos.append("producto", codigo);
+			// Agregar token CSRF
+			datosDos.append('csrf_token', token);
 
 			$.ajax({
 				url:"ajax/sumaProductos.ajax.php",
@@ -1139,6 +1165,9 @@ $("#tablaCompras tbody").on("click", "div.detalleProductoCompras", function(){
 				contentType: false,
 				processData: false,
 				dataType:"json",
+				headers: {
+      			'X-CSRF-TOKEN': token
+    		},
 				success:function(respuestaDos) {
 
 					for (var i = 0; i < respuestaDos.length; i++) {
