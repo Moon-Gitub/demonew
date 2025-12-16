@@ -183,26 +183,43 @@ class AjaxProductos{
   =============================================*/
   public function ajaxListadoProductosAutocompletar(){
 
-      $respuesta = ControladorProductos::ctrMostrarProductosFiltrados($this->txtBuscado);
+      // Establecer header JSON
+      header('Content-Type: application/json; charset=utf-8');
+      
+      try {
+          $respuesta = ControladorProductos::ctrMostrarProductosFiltrados($this->txtBuscado);
 
-      $listaProducto = [];
-      foreach ($respuesta as $key => $value) {
-        array_push($listaProducto, 
-            array(
-              'label' => $value["codigo"] . ' - ' . $value["descripcion"],
-              'value' => array(
-                            'id' => $value["id"],
-                            'codigo' => $value["codigo"],
-                            'descripcion' => $value["descripcion"],
-                            'stock' => $value["stock"],
-                            'tipo_iva' => $value["tipo_iva"],
-                            'precio_venta' => $value["precio_venta"]                            
-                             )
-                  )
-            );
+          $listaProducto = [];
+          
+          // Validar que $respuesta sea un array
+          if (is_array($respuesta)) {
+              foreach ($respuesta as $key => $value) {
+                  // Validar que cada elemento tenga los campos necesarios
+                  if (isset($value["id"]) && isset($value["codigo"]) && isset($value["descripcion"])) {
+                      array_push($listaProducto, 
+                          array(
+                            'label' => $value["codigo"] . ' - ' . $value["descripcion"],
+                            'value' => array(
+                                          'id' => $value["id"],
+                                          'codigo' => $value["codigo"],
+                                          'descripcion' => $value["descripcion"],
+                                          'stock' => $value["stock"] ?? 0,
+                                          'tipo_iva' => $value["tipo_iva"] ?? 0,
+                                          'precio_venta' => $value["precio_venta"] ?? 0                            
+                                           )
+                                )
+                          );
+                  }
+              }
+          }
+          
+          echo json_encode($listaProducto);
+          
+      } catch (Exception $e) {
+          // En caso de error, devolver array vacío
+          error_log("Error en ajaxListadoProductosAutocompletar: " . $e->getMessage());
+          echo json_encode([]);
       }
-
-      echo json_encode($listaProducto);
 
   }  
  
