@@ -1001,22 +1001,22 @@ function agregarProductoListaCompra() {
 
 						localStorage.removeItem("quitarProductoCaja");
 
-						// Limpiar campos y cerrar autocomplete
+						// Cerrar el autocomplete primero
+						$("#ventaCajaDetalle").autocomplete("close");
+						
+						// Limpiar campos completamente
 						$("#ventaCajaDetalleHidden").val("");
 						$("#ventaCajaDetalle").val("");
 						$("#autocompletarProducto").val("");
 						$("#ventaCajaCantidad").val("1");
 						
-						// Cerrar el autocomplete si está abierto
-						$("#ventaCajaDetalle").autocomplete("close");
-						
-						// Resetear bandera y limpiar campo
+						// Resetear bandera
 						agregandoProducto = false;
 						
-						// Limpiar el campo visible y enfocar para siguiente búsqueda
+						// Enfocar campo para siguiente búsqueda (ya está limpio)
 						setTimeout(function() {
-							$("#ventaCajaDetalle").val("").focus();
-						}, 100);
+							$("#ventaCajaDetalle").focus();
+						}, 150);
 
 						})()
 
@@ -1149,22 +1149,22 @@ function agregarProductoListaCompra() {
 
 						localStorage.removeItem("quitarProductoCaja");
 
-						// Limpiar campos y cerrar autocomplete
+						// Cerrar el autocomplete primero
+						$("#ventaCajaDetalle").autocomplete("close");
+						
+						// Limpiar campos completamente
 						$("#ventaCajaDetalleHidden").val("");
 						$("#ventaCajaDetalle").val("");
 						$("#autocompletarProducto").val("");
 						$("#ventaCajaCantidad").val("1");
 						
-						// Cerrar el autocomplete si está abierto
-						$("#ventaCajaDetalle").autocomplete("close");
-						
-						// Resetear bandera y limpiar campo
+						// Resetear bandera
 						agregandoProducto = false;
 						
-						// Limpiar el campo visible y enfocar para siguiente búsqueda
+						// Enfocar campo para siguiente búsqueda (ya está limpio)
 						setTimeout(function() {
-							$("#ventaCajaDetalle").val("").focus();
-						}, 100);
+							$("#ventaCajaDetalle").focus();
+						}, 150);
 
 	      			}
 
@@ -2166,14 +2166,6 @@ $( "#ventaCajaDetalle" ).autocomplete({
         
         // Limpiar el valor visible del input para que no muestre el label completo
         $("#ventaCajaDetalle").val(codigoSeleccionado);
-        
-        // Prevenir que el evento keyup se dispare después
-        // Bloquear temporalmente el evento keyup
-        $("#ventaCajaDetalle").off('keyup.autocomplete').on('keyup.autocomplete', function(e) {
-            if (e.keyCode == 13 && !agregandoProducto) {
-                agregarProductoListaCompra();
-            }
-        });
         
         // Disparar automáticamente la función que agrega el producto
         // Usar setTimeout para asegurar que el DOM se actualice primero
