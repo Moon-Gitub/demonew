@@ -1,9 +1,264 @@
+<style>
+  /* ============================
+     Estilos modernos para cuenta corriente cliente
+     ============================ */
+
+  .ccc-box {
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    border: 1px solid #e0e0e0;
+  }
+
+  .ccc-box-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-bottom: 1px solid #e0e0e0;
+    padding: 15px 20px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .ccc-box-body {
+    padding: 25px;
+  }
+
+  /* Card de información del cliente con gradiente */
+  .ccc-card-cliente {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    padding: 25px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ccc-card-cliente::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .ccc-card-cliente-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 80px;
+    opacity: 0.2;
+  }
+
+  .ccc-card-cliente-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .ccc-card-cliente-info {
+    font-size: 14px;
+    line-height: 1.8;
+    margin-bottom: 8px;
+  }
+
+  .ccc-card-cliente-info b {
+    font-weight: 600;
+    opacity: 0.9;
+  }
+
+  /* Card de saldo total */
+  .ccc-card-saldo {
+    background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+    border-radius: 12px;
+    padding: 25px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(26, 188, 156, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ccc-card-saldo.negativo {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+  }
+
+  .ccc-card-saldo:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(26, 188, 156, 0.4);
+  }
+
+  .ccc-card-saldo.negativo:hover {
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+  }
+
+  .ccc-card-saldo-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 60px;
+    opacity: 0.3;
+  }
+
+  .ccc-card-saldo-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.9;
+  }
+
+  .ccc-card-saldo-value {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+
+  /* Botones modernos */
+  .ccc-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    color: white;
+  }
+
+  .ccc-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    color: white;
+  }
+
+  /* Tabla responsive */
+  .ccc-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .tablasBotonesCtaCteCliente2 {
+    width: 100% !important;
+    min-width: 800px;
+  }
+
+  .tablasBotonesCtaCteCliente2 thead tr {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .tablasBotonesCtaCteCliente2 thead tr th {
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    border: none;
+    padding: 12px 8px;
+    white-space: nowrap;
+  }
+
+  .tablasBotonesCtaCteCliente2 tbody tr {
+    transition: background-color 0.2s ease;
+  }
+
+  .tablasBotonesCtaCteCliente2 tbody tr:hover {
+    background-color: #f8f9fa;
+  }
+
+  .tablasBotonesCtaCteCliente2 tbody td {
+    vertical-align: middle;
+    padding: 12px 8px;
+  }
+
+  /* Mejorar buscador */
+  .tablasBotonesCtaCteCliente2_filter {
+    margin-bottom: 20px !important;
+  }
+
+  .tablasBotonesCtaCteCliente2_filter label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    font-weight: 600 !important;
+    color: #2c3e50 !important;
+  }
+
+  .tablasBotonesCtaCteCliente2_filter input {
+    border: 2px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+    padding: 10px 15px !important;
+    font-size: 14px !important;
+    transition: all 0.3s ease !important;
+    width: 300px !important;
+    max-width: 100% !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .tablasBotonesCtaCteCliente2_filter input:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2) !important;
+    outline: none !important;
+  }
+
+  /* Responsive para móviles */
+  @media (max-width: 768px) {
+    .ccc-box-body {
+      padding: 15px;
+    }
+
+    .ccc-table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .tablasBotonesCtaCteCliente2 {
+      min-width: 900px;
+    }
+
+    .ccc-card-cliente,
+    .ccc-card-saldo {
+      padding: 20px;
+    }
+
+    .ccc-card-cliente-icon {
+      font-size: 50px;
+    }
+
+    .ccc-card-saldo-icon {
+      font-size: 40px;
+    }
+  }
+</style>
+
 <?php
 
     $item = 'id';
     $valor = $_GET["id_cliente"];
 
     $cliente = ControladorClientes::ctrMostrarClientes($item, $valor);
+
+    // Calcular saldo total del cliente
+    $respuesta = ControladorClientesCtaCte::ctrMostrarCtaCteCliente("id_cliente", $valor);
+    $saldoTotalCliente = 0;
+    
+    foreach ($respuesta as $key => $value) {
+      if($value["tipo"] == 0) {
+        $saldoTotalCliente = $saldoTotalCliente - $value["importe"];
+      } elseif ($value["tipo"] == 1) {
+        $saldoTotalCliente = $saldoTotalCliente + $value["importe"];
+      }
+    }
+
+    $esSaldoNegativo = $saldoTotalCliente < 0;
 
 ?>
 
@@ -29,59 +284,67 @@
 
   <section class="content">
 
+    <!-- Card de información del cliente -->
     <div class="row">
-
-
-      <div class="col-lg-12 col-xs-12">
-
-        <div class="small-box bg-blue">
-
-          <div class="inner">
-
-            <p><b>Domicilio</b>: <?php echo $cliente["direccion"]; ?> 
-            <p><b>Email</b>: <?php echo $cliente["email"]; ?> - <b>Telefono</b>: <?php echo $cliente["telefono"]; ?></p>
-            <p><b>Observaciones</b>: <?php echo $cliente["observaciones"]; ?> </p>
-
+      <div class="col-md-8 col-sm-12">
+        <div class="ccc-card-cliente">
+          <div class="ccc-card-cliente-icon">
+            <i class="fa fa-user-circle"></i>
           </div>
-
-          <div class="icon">
-
-            <i class="fa fa-address-card-o"></i>
-
+          <div class="ccc-card-cliente-title">
+            <i class="fa fa-address-card-o"></i> Información del Cliente
           </div>
-
+          <div class="ccc-card-cliente-info">
+            <b>Domicilio:</b> <?php echo $cliente["direccion"] ?? 'N/A'; ?>
+          </div>
+          <div class="ccc-card-cliente-info">
+            <b>Email:</b> <?php echo $cliente["email"] ?? 'N/A'; ?> - <b>Teléfono:</b> <?php echo $cliente["telefono"] ?? 'N/A'; ?>
+          </div>
+          <?php if(!empty($cliente["observaciones"])): ?>
+          <div class="ccc-card-cliente-info">
+            <b>Observaciones:</b> <?php echo $cliente["observaciones"]; ?>
+          </div>
+          <?php endif; ?>
         </div>
-
       </div>
-
+      <div class="col-md-4 col-sm-12">
+        <div class="ccc-card-saldo <?php echo $esSaldoNegativo ? 'negativo' : ''; ?>">
+          <div class="ccc-card-saldo-icon">
+            <i class="fa fa-usd"></i>
+          </div>
+          <div class="ccc-card-saldo-title">Saldo Total</div>
+          <div class="ccc-card-saldo-value">
+            $<?php echo number_format($saldoTotalCliente, 2, ',', '.'); ?>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="box">
+    <div class="box ccc-box">
 
-      <div class="box-header with-border">
-
+      <div class="box-header with-border ccc-box-header">
         <a href="#" data-toggle="modal" data-target="#modalAgregarMovimiento" data-dismiss="modal">
-
-          <button class="btn btn-primary">Agregar movimiento</button>
-
+          <button class="btn ccc-btn-primary">
+            <i class="fa fa-plus"></i> Agregar movimiento
+          </button>
         </a>
-
       </div>
 
-      <div class="box-body">
+      <div class="box-body ccc-box-body">
         
+       <div class="ccc-table-wrapper">
        <table class="table table-bordered table-striped dt-responsive tablasBotonesCtaCteCliente2" width="100%">
          
         <thead>
          
-         <tr>
+         <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
            
-           <th>Fecha</th>
-           <th>Descripcion</th>
-           <th>$ Venta/ND</th>
-           <th>$ Pago/NC</th>
-           <th>$ Saldo</th>           
-           <th>Acciones</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Fecha</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Descripción</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">$ Venta/ND</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">$ Pago/NC</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">$ Saldo</th>           
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Acciones</th>
 
          </tr> 
 
@@ -180,6 +443,7 @@
         </tbody>
 
        </table>
+       </div>
 
        <?php
 
