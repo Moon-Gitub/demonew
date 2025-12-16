@@ -1001,21 +1001,27 @@ function agregarProductoListaCompra() {
 
 						localStorage.removeItem("quitarProductoCaja");
 
-						// Cerrar el autocomplete primero
-						$("#ventaCajaDetalle").autocomplete("close");
+						// Cerrar y ocultar el autocomplete completamente
+						var $input = $("#ventaCajaDetalle");
+						$input.autocomplete("close");
+						$input.autocomplete("widget").hide();
+						$(".ui-autocomplete").hide();
 						
 						// Limpiar campos completamente
 						$("#ventaCajaDetalleHidden").val("");
-						$("#ventaCajaDetalle").val("");
+						$input.val("");
 						$("#autocompletarProducto").val("");
 						$("#ventaCajaCantidad").val("1");
 						
 						// Resetear bandera
 						agregandoProducto = false;
 						
+						// Asegurar que el autocomplete esté habilitado para la siguiente búsqueda
+						$input.autocomplete("enable");
+						
 						// Enfocar campo para siguiente búsqueda (ya está limpio)
 						setTimeout(function() {
-							$("#ventaCajaDetalle").focus();
+							$input.focus();
 						}, 150);
 
 						})()
@@ -1149,21 +1155,27 @@ function agregarProductoListaCompra() {
 
 						localStorage.removeItem("quitarProductoCaja");
 
-						// Cerrar el autocomplete primero
-						$("#ventaCajaDetalle").autocomplete("close");
+						// Cerrar y ocultar el autocomplete completamente
+						var $input = $("#ventaCajaDetalle");
+						$input.autocomplete("close");
+						$input.autocomplete("widget").hide();
+						$(".ui-autocomplete").hide();
 						
 						// Limpiar campos completamente
 						$("#ventaCajaDetalleHidden").val("");
-						$("#ventaCajaDetalle").val("");
+						$input.val("");
 						$("#autocompletarProducto").val("");
 						$("#ventaCajaCantidad").val("1");
 						
 						// Resetear bandera
 						agregandoProducto = false;
 						
+						// Asegurar que el autocomplete esté habilitado para la siguiente búsqueda
+						$input.autocomplete("enable");
+						
 						// Enfocar campo para siguiente búsqueda (ya está limpio)
 						setTimeout(function() {
-							$("#ventaCajaDetalle").focus();
+							$input.focus();
 						}, 150);
 
 	      			}
