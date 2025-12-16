@@ -379,7 +379,8 @@
           <div class="vr-chart-title">
             <i class="fa fa-cube"></i> Rentabilidad por Producto
           </div>
-          <table class="table table-bordered table-striped" id="tablaRentabilidadProductos" width="100%">
+          <div class="ventas-table-wrapper" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+          <table class="table table-bordered table-striped dt-responsive" id="tablaRentabilidadProductos" width="100%" style="min-width: 700px;">
             <thead>
               <tr>
                 <th>Producto</th>
@@ -408,6 +409,7 @@
               ?>
             </tbody>
           </table>
+          </div>
         </div>
 
         <!-- =======================
@@ -417,7 +419,8 @@
           <div class="vr-chart-title">
             <i class="fa fa-users"></i> Rentabilidad por Cliente
           </div>
-          <table class="table table-bordered table-striped" id="tablaRentabilidadClientes" width="100%">
+          <div class="ventas-table-wrapper" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+          <table class="table table-bordered table-striped dt-responsive" id="tablaRentabilidadClientes" width="100%" style="min-width: 600px;">
             <thead>
               <tr>
                 <th>Cliente</th>
@@ -444,6 +447,7 @@
               ?>
             </tbody>
           </table>
+          </div>
         </div>
 
       </div>

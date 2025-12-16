@@ -416,7 +416,8 @@
               <i class="fa fa-table"></i> 
               Detalle de Ventas por <?php echo $categoriaSel ? 'Categorías' : ($proveedorSel ? 'Proveedores' : 'Productos'); ?>
             </div>
-            <table class="table table-bordered table-striped" id="tablaVentasCategoriaProveedor" width="100%">
+            <div class="ventas-table-wrapper" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+            <table class="table table-bordered table-striped dt-responsive" id="tablaVentasCategoriaProveedor" width="100%" style="min-width: 600px;">
               <thead>
                 <tr>
                   <?php if ($categoriaSel): ?>
@@ -517,6 +518,7 @@
                 ?>
               </tbody>
             </table>
+            </div>
           </div>
 
         <?php else: ?>

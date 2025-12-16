@@ -400,7 +400,8 @@
        <!-- =======================
             Tabla detalle
             ======================= -->
-       <table class="table table-bordered table-striped" id="tablaListarProductosPorVenta" width="100%" style="margin-top: 20px;">
+       <div class="ventas-table-wrapper" style="overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 20px;">
+       <table class="table table-bordered table-striped dt-responsive" id="tablaListarProductosPorVenta" width="100%" style="min-width: 800px;">
         <thead>
          <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
            <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Fecha</th>
@@ -452,6 +453,7 @@
         </tbody>
 
        </table>
+       </div>
 
       </div>
     </div>

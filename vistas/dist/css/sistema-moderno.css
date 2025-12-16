@@ -577,12 +577,69 @@ select {
 }
 
 /* ============================================
-   DATATABLES
+   DATATABLES - RESPONSIVE GLOBAL
    ============================================ */
 
+/* Wrapper responsive para todas las tablas */
+.ventas-table-wrapper,
+.table-responsive-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Asegurar que todas las tablas DataTables sean responsive */
 .dataTables_wrapper {
     border-radius: 8px;
     overflow: hidden;
+    width: 100%;
+}
+
+/* Tablas dentro de wrappers responsive */
+.ventas-table-wrapper table,
+.table-responsive-wrapper table {
+    width: 100% !important;
+    min-width: 600px;
+}
+
+/* Tablas dt-responsive */
+table.dt-responsive {
+    width: 100% !important;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .ventas-table-wrapper,
+    .table-responsive-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+    }
+    
+    .ventas-table-wrapper table,
+    .table-responsive-wrapper table,
+    table.dt-responsive {
+        min-width: 800px;
+    }
+    
+    /* Ocultar columnas menos importantes en móviles */
+    .dataTables_wrapper .dataTables_scrollHeadInner,
+    .dataTables_wrapper .dataTables_scrollBody {
+        overflow-x: auto;
+    }
+    
+    /* Ajustar botones de DataTables en móviles */
+    .dt-buttons {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .dt-button {
+        margin: 2px !important;
+        font-size: 11px !important;
+        padding: 6px 10px !important;
+    }
 }
 
 .dataTables_wrapper .dataTables_filter input {
