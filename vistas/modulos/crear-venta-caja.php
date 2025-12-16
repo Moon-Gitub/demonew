@@ -44,7 +44,9 @@
     border-left: none !important;
 }
 
-/* Asegurar que el autocomplete de jQuery UI funcione correctamente */
+/* Estilos visuales para el autocomplete de jQuery UI
+   IMPORTANTE: NO forzar display/visibility/opacity para que jQuery UI
+   pueda abrir/cerrar el menú correctamente. */
 .ui-autocomplete {
     z-index: 99999 !important;
     position: absolute !important;
@@ -56,9 +58,6 @@
     border-radius: 8px !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
     padding: 5px 0 !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
 }
 
 .ui-autocomplete .ui-menu-item {
