@@ -472,10 +472,60 @@ $("#tablaListarProductosPorVenta tfoot th").each(function (i) {
 var tablaListarProductosPorVenta = $("#tablaListarProductosPorVenta").DataTable({
     "order": [[ 0, "desc" ]],
     "pageLength": 50,
-	"language": GL_DATATABLE_LENGUAJE,
+	"language": {
+
+		"sProcessing":     "Procesando...",
+		"sLengthMenu":     "Mostrar _MENU_ registros",
+		"sZeroRecords":    "No se encontraron resultados",
+		"sEmptyTable":     "Ningún dato disponible en esta tabla",
+		"sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_",
+		"sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0",
+		"sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+		"sInfoPostFix":    "",
+		"sSearch":         "Buscar:",
+		"sUrl":            "",
+		"sInfoThousands":  ",",
+		"sLoadingRecords": "Cargando...",
+		"oPaginate": {
+		"sFirst":    "Primero",
+		"sLast":     "Último",
+		"sNext":     "Siguiente",
+		"sPrevious": "Anterior"
+		},
+		"oAria": {
+			"sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+			"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+		}
+
+	},
     //dom: 'Blfrtip', Muestra el page lenth 
     dom: 'Bfrtip',
-    "buttons": GL_DATATABLE_BOTONES
+    "buttons": [
+        {
+          extend:    'excelHtml5',
+          text:      '<i class="fa fa-file-excel-o"></i>',
+          titleAttr: 'Exportar a Excel',
+          className: 'btn btn-success'
+        },
+        {
+          extend:    'pdfHtml5',
+          text:      '<i class="fa fa-file-pdf-o"></i> ',
+          titleAttr: 'Exportar a PDF',
+          className: 'btn btn-danger'
+        },
+        {
+          extend:    'print',
+          text:      '<i class="fa fa-print"></i> ',
+          titleAttr: 'Imprimir',
+          className: 'btn btn-info'
+        },
+        {
+          extend:    'pageLength',
+          text:      '<i class="fa fa-list-alt"></i>',
+          titleAttr: 'Mostrar registros',
+          className: 'btn btn-primary'
+        }
+    ]
 
 });
 
