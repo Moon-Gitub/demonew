@@ -2153,6 +2153,7 @@ $( "#ventaCajaDetalle" ).autocomplete({
     select: function( event, ui ) {
         event.preventDefault();
         event.stopPropagation();
+        event.stopImmediatePropagation();
         
         // Validar que ui.item y ui.item.value existan
         if (!ui.item || !ui.item.value) {
@@ -2169,30 +2170,47 @@ $( "#ventaCajaDetalle" ).autocomplete({
             return false;
         }
         
-        // Cerrar el autocomplete ANTES de cambiar valores
         var $input = $("#ventaCajaDetalle");
+        
+        // CERRAR Y OCULTAR EL AUTOCOMPLETE DE FORMA AGRESIVA
+        // 1. Cerrar usando el método oficial
         $input.autocomplete("close");
         
-        // Ocultar manualmente el menú del autocomplete por si acaso
-        $input.autocomplete("widget").hide();
-        $(".ui-autocomplete").hide();
+        // 2. Cancelar cualquier búsqueda pendiente
+        if ($input.data("ui-autocomplete")) {
+            $input.data("ui-autocomplete").cancelSearch = true;
+        }
         
-        // Guardar en los campos hidden y visible
+        // 3. Ocultar el menú de todas las formas posibles
+        var $widget = $input.autocomplete("widget");
+        if ($widget && $widget.length) {
+            $widget.hide().css("display", "none");
+        }
+        $(".ui-autocomplete").hide().css("display", "none");
+        $("ul.ui-autocomplete").hide().css("display", "none");
+        
+        // 4. Limpiar el campo ANTES de guardar para evitar que se dispare una nueva búsqueda
+        $input.val("");
+        
+        // 5. Guardar en los campos hidden y visible
         $("#ventaCajaDetalleHidden").val(codigoSeleccionado);
         $input.val(codigoSeleccionado);
         $("#seleccionarProducto").val(idProducto);
         
-        // Prevenir que se abra de nuevo deshabilitando temporalmente el autocomplete
+        // 6. Deshabilitar temporalmente el autocomplete para prevenir que se abra
         $input.autocomplete("disable");
         
-        // Disparar automáticamente la función que agrega el producto
+        // 7. Disparar automáticamente la función que agrega el producto
         setTimeout(function() {
             agregarProductoListaCompra();
             
             // Re-habilitar el autocomplete después de agregar
             setTimeout(function() {
                 $input.autocomplete("enable");
-            }, 300);
+                // Asegurar que el menú esté cerrado
+                $input.autocomplete("close");
+                $(".ui-autocomplete").hide().css("display", "none");
+            }, 400);
         }, 200);
         
         return false;
