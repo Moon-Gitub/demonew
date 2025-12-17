@@ -233,9 +233,17 @@ body.login-page .login-box-body,
     font-size: 14px;
     transition: all 0.2s ease;
     background-color: #ffffff;
-    color: #2c3e50;
+    color: #2c3e50 !important;
     font-weight: 400;
     box-shadow: none;
+}
+
+.form-control:-webkit-autofill,
+.form-control:-webkit-autofill:hover,
+.form-control:-webkit-autofill:focus {
+    -webkit-text-fill-color: #2c3e50 !important;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    box-shadow: 0 0 0px 1000px #ffffff inset !important;
 }
 
 .form-control:focus {
