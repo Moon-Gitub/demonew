@@ -152,10 +152,14 @@ body.login-page #back {
 }
 
 /* FORZAR fondo del formulario - máxima especificidad */
+/* DEBUG: Valor aplicado: <?php echo htmlspecialchars($loginFondoForm, ENT_QUOTES, 'UTF-8'); ?> */
 html body.login-page .login-box .login-box-body,
+body.login-page .login-box .login-box-body,
 body.login-page .login-box-body,
+.login-box .login-box-body,
 .login-box-body {
     background: <?php echo htmlspecialchars($loginFondoForm, ENT_QUOTES, 'UTF-8'); ?> !important;
+    background-color: <?php echo htmlspecialchars($loginFondoForm, ENT_QUOTES, 'UTF-8'); ?> !important;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-radius: 25px;
