@@ -12,72 +12,121 @@ $(document).ready(function() {
     
     // Función auxiliar para procesar una tabla markdown
     function procesarTablaMarkdown(lineas) {
-            if (lineas.length < 2) return lineas.join('\n');
-            
-            // Buscar encabezado (primera línea con pipes que no sea separador)
-            let headerIndex = 0;
-            let separatorIndex = -1;
-            
-            for (let i = 0; i < lineas.length; i++) {
-                if (lineas[i].match(/^[\s\|\-\:]+$/)) {
-                    separatorIndex = i;
-                    break;
-                }
+        if (lineas.length < 2) return lineas.join('\n');
+        
+        // Buscar encabezado (primera línea con pipes que no sea separador)
+        let headerIndex = 0;
+        let separatorIndex = -1;
+        
+        for (let i = 0; i < lineas.length; i++) {
+            if (lineas[i].match(/^[\s\|\-\:]+$/)) {
+                separatorIndex = i;
+                break;
             }
-            
-            // Extraer encabezados
-            const headerLine = lineas[headerIndex];
-            const headers = headerLine.split('|')
-                .map(c => c.trim())
-                .filter(c => c && c.length > 0);
-            
-            if (headers.length === 0) return lineas.join('\n');
-            
-            // Construir tabla HTML
-            let tablaHtml = '<div class="markdown-table-wrapper"><table class="markdown-table"><thead><tr>';
-            
-            headers.forEach(h => {
-                let headerText = h.replace(/\*\*/g, '').trim();
-                tablaHtml += `<th>${headerText}</th>`;
-            });
-            
-            tablaHtml += '</tr></thead><tbody>';
-            
-            // Procesar filas de datos
-            const startDataIndex = separatorIndex !== -1 ? separatorIndex + 1 : headerIndex + 1;
-            
-            for (let i = startDataIndex; i < lineas.length; i++) {
-                const linea = lineas[i];
-                if (linea.match(/^[\s\|\-\:]+$/)) continue;
-                
-                if (linea.includes('|')) {
-                    const cells = linea.split('|')
-                        .map(c => c.trim())
-                        .filter(c => c && c.length > 0);
-                    
-                    if (cells.length > 0) {
-                        tablaHtml += '<tr>';
-                        cells.forEach(cell => {
-                            let cellHtml = cell
-                                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-                                .replace(/\*/g, '');
-                            // Formatear números
-                            if (/^\d+\.?\d*$/.test(cellHtml.trim())) {
-                                cellHtml = parseFloat(cellHtml).toLocaleString('es-AR', {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                });
-                            }
-                            tablaHtml += `<td>${cellHtml}</td>`;
-                        });
-                        tablaHtml += '</tr>';
-                    }
-                }
-            }
-            
-            tablaHtml += '</tbody></table></div>';
-            return tablaHtml;
         }
+        
+        // Extraer encabezados
+        const headerLine = lineas[headerIndex];
+        const headers = headerLine.split('|')
+            .map(c => c.trim())
+            .filter(c => c && c.length > 0);
+        
+        if (headers.length === 0) return lineas.join('\n');
+        
+        // Construir tabla HTML
+        let tablaHtml = '<div class="markdown-table-wrapper"><table class="markdown-table"><thead><tr>';
+        
+        headers.forEach(h => {
+            let headerText = h.replace(/\*\*/g, '').trim();
+            tablaHtml += `<th>${headerText}</th>`;
+        });
+        
+        tablaHtml += '</tr></thead><tbody>';
+        
+        // Procesar filas de datos
+        const startDataIndex = separatorIndex !== -1 ? separatorIndex + 1 : headerIndex + 1;
+        
+        for (let i = startDataIndex; i < lineas.length; i++) {
+            const linea = lineas[i];
+            if (linea.match(/^[\s\|\-\:]+$/)) continue;
+            
+            if (linea.includes('|')) {
+                const cells = linea.split('|')
+                    .map(c => c.trim())
+                    .filter(c => c && c.length > 0);
+                
+                if (cells.length > 0) {
+                    tablaHtml += '<tr>';
+                    cells.forEach(cell => {
+                        let cellHtml = cell
+                            .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                            .replace(/\*/g, '');
+                        // Formatear números
+                        if (/^\d+\.?\d*$/.test(cellHtml.trim())) {
+                            cellHtml = parseFloat(cellHtml).toLocaleString('es-AR', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
+                        }
+                        tablaHtml += `<td>${cellHtml}</td>`;
+                    });
+                    tablaHtml += '</tr>';
+                }
+            }
+        }
+        
+        tablaHtml += '</tbody></table></div>';
+        return tablaHtml;
+    }
+    
+    // Función para convertir markdown a HTML
+    function markdownToHtml(texto) {
+        let html = texto;
+        
+        // Detectar y procesar tablas markdown - MÉTODO MÁS ROBUSTO
+        const lineasCompletas = html.split('\n');
+        let enTabla = false;
+        let lineasTabla = [];
+        let resultadoFinal = [];
+        
+        for (let i = 0; i < lineasCompletas.length; i++) {
+            const linea = lineasCompletas[i].trim();
+            const tienePipes = linea.includes('|');
+            const esSeparador = linea.match(/^[\s\|\-\:]+$/);
+            
+            if (tienePipes && !esSeparador) {
+                if (!enTabla) {
+                    enTabla = true;
+                    lineasTabla = [linea];
+                } else {
+                    lineasTabla.push(linea);
+                }
+            } else if (enTabla) {
+                // Fin de la tabla, procesarla
+                if (lineasTabla.length >= 2) {
+                    resultadoFinal.push(procesarTablaMarkdown(lineasTabla));
+                } else {
+                    resultadoFinal.push(...lineasTabla.map(l => l + '\n'));
+                }
+                enTabla = false;
+                lineasTabla = [];
+                
+                if (!esSeparador) {
+                    resultadoFinal.push(lineasCompletas[i] + '\n');
+                }
+            } else {
+                resultadoFinal.push(lineasCompletas[i] + '\n');
+            }
+        }
+        
+        // Procesar última tabla si quedó abierta
+        if (enTabla && lineasTabla.length >= 2) {
+            resultadoFinal.push(procesarTablaMarkdown(lineasTabla));
+        } else if (enTabla) {
+            resultadoFinal.push(...lineasTabla.map(l => l + '\n'));
+        }
+        
+        html = resultadoFinal.join('');
         
         // Convertir negritas **texto** (después de procesar tablas)
         html = html.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
@@ -89,7 +138,7 @@ $(document).ready(function() {
         html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code class="code-block">$2</code></pre>');
         
         // Convertir listas con viñetas
-        const listasViñetas = html.split(/(<table[\s\S]*?<\/table>|<pre[\s\S]*?<\/pre>)/g);
+        const listasViñetas = html.split(/(<table[\s\S]*?<\/table>|<pre[\s\S]*?<\/pre>|<div[\s\S]*?<\/div>)/g);
         for (let i = 0; i < listasViñetas.length; i += 2) {
             if (listasViñetas[i]) {
                 listasViñetas[i] = listasViñetas[i].replace(/^[\*\-\+]\s+(.+)$/gm, '<li>$1</li>');
@@ -104,15 +153,13 @@ $(document).ready(function() {
         html = listasViñetas.join('');
         
         // Dividir en párrafos y procesar
-        const partes = html.split(/(<table[\s\S]*?<\/table>|<pre[\s\S]*?<\/pre>|<ul[\s\S]*?<\/ul>|<ol[\s\S]*?<\/ol>)/g);
+        const partes = html.split(/(<table[\s\S]*?<\/table>|<pre[\s\S]*?<\/pre>|<ul[\s\S]*?<\/ul>|<ol[\s\S]*?<\/ol>|<div[\s\S]*?<\/div>)/g);
         let resultado = '';
         
         for (let i = 0; i < partes.length; i++) {
             if (partes[i].match(/^<(table|pre|ul|ol|div)/)) {
-                // Es un elemento HTML, dejarlo tal cual
                 resultado += partes[i];
             } else if (partes[i].trim()) {
-                // Es texto, procesarlo
                 let textoProcesado = partes[i]
                     .replace(/\n\n+/g, '</p><p>')
                     .replace(/\n/g, '<br>');
