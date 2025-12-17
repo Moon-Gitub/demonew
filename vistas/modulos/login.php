@@ -97,11 +97,11 @@ body.login-page #back {
 
 .login-box {
     width: 100%;
-    max-width: 420px;
+    max-width: 360px;
     margin: 0 auto;
     position: relative;
     z-index: 1;
-    animation: fadeInUp 0.6s ease-out;
+    animation: fadeInUp 0.5s ease-out;
 }
 
 @keyframes fadeInUp {
@@ -117,7 +117,7 @@ body.login-page #back {
 
 .login-logo {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 28px;
     padding-top: 0 !important;
 }
 
@@ -141,7 +141,7 @@ body.login-page #back {
     height: auto;
     display: block;
     width: 100%;
-    max-width: 400px;
+    max-width: 280px;
     margin: 0 auto;
     filter: none;
     box-shadow: none;
@@ -164,13 +164,13 @@ body.login-page .login-box-body,
     background-color: <?php echo htmlspecialchars($loginFondoForm, ENT_QUOTES, 'UTF-8'); ?> !important;
     backdrop-filter: blur(30px) saturate(180%);
     -webkit-backdrop-filter: blur(30px) saturate(180%);
-    border-radius: 20px;
-    padding: 50px 45px !important;
+    border-radius: 16px;
+    padding: 35px 32px !important;
     box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.12),
-        0 2px 8px rgba(0, 0, 0, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+        0 4px 20px rgba(0, 0, 0, 0.1),
+        0 1px 4px rgba(0, 0, 0, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     position: relative;
     overflow: hidden;
 }
@@ -192,43 +192,42 @@ body.login-page .login-box-body,
 
 .login-box-msg {
     color: <?php echo $loginColorTextoTitulo; ?> !important;
-    font-size: 28px;
-    font-weight: 600;
-    margin-bottom: 40px;
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 28px;
     text-align: center;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
     position: relative;
-    line-height: 1.3;
+    line-height: 1.4;
 }
 
 .form-group {
-    margin-bottom: 24px;
+    margin-bottom: 18px;
     position: relative;
 }
 
 .form-control {
-    height: 52px;
-    border-radius: 12px;
-    border: 1.5px solid rgba(0, 0, 0, 0.08);
-    padding-left: 18px;
-    padding-right: 18px;
-    font-size: 15px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 46px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding-left: 16px;
+    padding-right: 16px;
+    font-size: 14px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     background-color: rgba(255, 255, 255, 0.95);
     color: #2c3e50;
     font-weight: 400;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .form-control:focus {
     border-color: <?php echo $loginColorBoton; ?>;
     background-color: #ffffff;
     box-shadow: 
-        0 0 0 3px rgba(<?php echo $loginColorBotonRgb; ?>, 0.08),
-        0 4px 12px rgba(<?php echo $loginColorBotonRgb; ?>, 0.12),
-        0 2px 4px rgba(0, 0, 0, 0.06);
+        0 0 0 2px rgba(<?php echo $loginColorBotonRgb; ?>, 0.1),
+        0 2px 8px rgba(<?php echo $loginColorBotonRgb; ?>, 0.1),
+        0 1px 2px rgba(0, 0, 0, 0.05);
     outline: none;
-    transform: translateY(-1px);
 }
 
 .form-control::placeholder {
@@ -250,20 +249,20 @@ body.login-page .login-box-body,
 .btn-login {
     background: <?php echo $loginColorBoton; ?> !important;
     border: none !important;
-    border-radius: 12px;
-    height: 50px;
-    font-size: 15px;
-    font-weight: 600;
+    border-radius: 10px;
+    height: 44px;
+    font-size: 14px;
+    font-weight: 500;
     color: #ffffff;
     text-transform: none;
-    letter-spacing: 0.3px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.2px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 
-        0 4px 12px rgba(<?php echo $loginColorBotonRgb; ?>, 0.25),
-        0 2px 4px rgba(0, 0, 0, 0.1);
+        0 2px 8px rgba(<?php echo $loginColorBotonRgb; ?>, 0.2),
+        0 1px 2px rgba(0, 0, 0, 0.08);
     position: relative;
     overflow: hidden;
-    margin-top: 8px;
+    margin-top: 6px;
 }
 
 .btn-login::before {
@@ -282,10 +281,10 @@ body.login-page .login-box-body,
 }
 
 .btn-login:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: 
-        0 6px 20px rgba(<?php echo $loginColorBotonRgb; ?>, 0.35),
-        0 2px 6px rgba(0, 0, 0, 0.12);
+        0 4px 12px rgba(<?php echo $loginColorBotonRgb; ?>, 0.3),
+        0 1px 3px rgba(0, 0, 0, 0.1);
     background: <?php echo $loginColorBoton; ?> !important;
 }
 
