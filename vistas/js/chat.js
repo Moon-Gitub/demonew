@@ -10,36 +10,20 @@ $(document).ready(function() {
     // Historial de conversación (últimos 10 mensajes)
     let historial = [];
     
-    // Función para convertir markdown a HTML
-    function markdownToHtml(texto) {
-        let html = texto;
-        
-        // Detectar y procesar tablas markdown
-        // Buscar patrones como: | Columna1 | Columna2 | seguido de |---| y luego | dato1 | dato2 |
-        const tablaPattern = /(\|[^\n]+\|(?:\s*\n\|[\s\|\-\:]+\|)?(?:\s*\n\|[^\n]+\|)+)/g;
-        
-        html = html.replace(tablaPattern, function(match) {
-            const lineas = match.split('\n')
-                .map(l => l.trim())
-                .filter(l => l && l.length > 0);
+    // Función auxiliar para procesar una tabla markdown
+    function procesarTablaMarkdown(lineas) {
+            if (lineas.length < 2) return lineas.join('\n');
             
-            if (lineas.length < 2) return match;
-            
-            // Buscar la primera línea con datos (no separador)
-            let headerIndex = -1;
+            // Buscar encabezado (primera línea con pipes que no sea separador)
+            let headerIndex = 0;
             let separatorIndex = -1;
             
             for (let i = 0; i < lineas.length; i++) {
-                const linea = lineas[i];
-                // Detectar separador (solo tiene |, -, :, espacios)
-                if (linea.match(/^[\s\|\-\:]+$/) && separatorIndex === -1) {
+                if (lineas[i].match(/^[\s\|\-\:]+$/)) {
                     separatorIndex = i;
-                } else if (linea.includes('|') && headerIndex === -1 && !linea.match(/^[\s\|\-\:]+$/)) {
-                    headerIndex = i;
+                    break;
                 }
             }
-            
-            if (headerIndex === -1) return match;
             
             // Extraer encabezados
             const headerLine = lineas[headerIndex];
@@ -47,13 +31,12 @@ $(document).ready(function() {
                 .map(c => c.trim())
                 .filter(c => c && c.length > 0);
             
-            if (headers.length === 0) return match;
+            if (headers.length === 0) return lineas.join('\n');
             
             // Construir tabla HTML
             let tablaHtml = '<div class="markdown-table-wrapper"><table class="markdown-table"><thead><tr>';
             
             headers.forEach(h => {
-                // Limpiar y procesar encabezado
                 let headerText = h.replace(/\*\*/g, '').trim();
                 tablaHtml += `<th>${headerText}</th>`;
             });
@@ -65,7 +48,6 @@ $(document).ready(function() {
             
             for (let i = startDataIndex; i < lineas.length; i++) {
                 const linea = lineas[i];
-                // Ignorar separadores
                 if (linea.match(/^[\s\|\-\:]+$/)) continue;
                 
                 if (linea.includes('|')) {
@@ -76,10 +58,16 @@ $(document).ready(function() {
                     if (cells.length > 0) {
                         tablaHtml += '<tr>';
                         cells.forEach(cell => {
-                            // Procesar negritas y otros formatos
                             let cellHtml = cell
                                 .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
                                 .replace(/\*/g, '');
+                            // Formatear números
+                            if (/^\d+\.?\d*$/.test(cellHtml.trim())) {
+                                cellHtml = parseFloat(cellHtml).toLocaleString('es-AR', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                });
+                            }
                             tablaHtml += `<td>${cellHtml}</td>`;
                         });
                         tablaHtml += '</tr>';
@@ -89,7 +77,7 @@ $(document).ready(function() {
             
             tablaHtml += '</tbody></table></div>';
             return tablaHtml;
-        });
+        }
         
         // Convertir negritas **texto** (después de procesar tablas)
         html = html.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
