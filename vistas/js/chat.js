@@ -10,6 +10,89 @@ $(document).ready(function() {
     // Historial de conversación (últimos 10 mensajes)
     let historial = [];
     
+    // Función para convertir markdown a HTML
+    function markdownToHtml(texto) {
+        let html = texto;
+        
+        // Convertir tablas markdown
+        html = html.replace(/\|(.+)\|/g, function(match, contenido) {
+            // Detectar si es encabezado de tabla
+            if (contenido.match(/^[\s\-\|:]+$/)) {
+                return ''; // Ignorar separador
+            }
+            return match;
+        });
+        
+        // Procesar tablas completas
+        html = html.replace(/(\|[^\n]+\|(?:\n\|[^\n]+\|)+)/g, function(tabla) {
+            const lineas = tabla.trim().split('\n').filter(l => l.trim());
+            if (lineas.length < 2) return tabla;
+            
+            let tablaHtml = '<div class="markdown-table-wrapper"><table class="markdown-table">';
+            
+            // Primera línea es el encabezado
+            const encabezados = lineas[0].split('|').filter(c => c.trim());
+            tablaHtml += '<thead><tr>';
+            encabezados.forEach(h => {
+                tablaHtml += `<th>${h.trim()}</th>`;
+            });
+            tablaHtml += '</tr></thead><tbody>';
+            
+            // Ignorar la segunda línea (separador) y procesar filas
+            for (let i = 2; i < lineas.length; i++) {
+                const celdas = lineas[i].split('|').filter(c => c.trim());
+                if (celdas.length > 0) {
+                    tablaHtml += '<tr>';
+                    celdas.forEach(c => {
+                        tablaHtml += `<td>${c.trim()}</td>`;
+                    });
+                    tablaHtml += '</tr>';
+                }
+            }
+            
+            tablaHtml += '</tbody></table></div>';
+            return tablaHtml;
+        });
+        
+        // Convertir negritas **texto**
+        html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        
+        // Convertir cursivas *texto*
+        html = html.replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em>$1</em>');
+        
+        // Convertir código inline `código`
+        html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+        
+        // Convertir bloques de código ```
+        html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code class="code-block">$2</code></pre>');
+        
+        // Convertir listas con viñetas
+        html = html.replace(/^[\*\-\+]\s+(.+)$/gm, '<li>$1</li>');
+        html = html.replace(/(<li>.*<\/li>\n?)+/g, function(match) {
+            return '<ul class="markdown-list">' + match + '</ul>';
+        });
+        
+        // Convertir listas numeradas
+        html = html.replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>');
+        html = html.replace(/(<li>.*<\/li>\n?)+/g, function(match) {
+            if (!match.includes('<ul')) {
+                return '<ol class="markdown-list">' + match + '</ol>';
+            }
+            return match;
+        });
+        
+        // Convertir saltos de línea
+        html = html.replace(/\n\n/g, '</p><p>');
+        html = html.replace(/\n/g, '<br>');
+        
+        // Envolver en párrafo si no hay tablas
+        if (!html.includes('<table') && !html.includes('<ul') && !html.includes('<ol') && !html.includes('<pre')) {
+            html = '<p>' + html + '</p>';
+        }
+        
+        return html;
+    }
+    
     // Función para agregar mensaje al chat
     function agregarMensaje(texto, esUsuario = false) {
         const hora = new Date().toLocaleTimeString('es-AR', { 
@@ -20,8 +103,10 @@ $(document).ready(function() {
         const mensajeClass = esUsuario ? 'user-message' : 'bot-message';
         const icono = esUsuario ? 'fa-user' : 'fa-robot';
         
-        // Escapar HTML pero permitir saltos de línea
-        const textoEscapado = $('<div>').text(texto).html().replace(/\n/g, '<br>');
+        // Convertir markdown a HTML (solo para mensajes del bot)
+        const contenidoHTML = esUsuario 
+            ? $('<div>').text(texto).html().replace(/\n/g, '<br>')
+            : markdownToHtml(texto);
         
         const mensajeHTML = `
             <div class="chat-message ${mensajeClass}">
@@ -29,7 +114,7 @@ $(document).ready(function() {
                     <i class="fa ${icono}"></i>
                 </div>
                 <div class="message-content">
-                    <p>${textoEscapado}</p>
+                    ${contenidoHTML}
                     <span class="message-time">${hora}</span>
                 </div>
             </div>
@@ -204,5 +289,49 @@ $(document).ready(function() {
     
     // Auto-focus en el input
     $chatInput.focus();
+    
+    // Preguntas sugeridas
+    const preguntasSugeridas = [
+        '¿Cuánto dinero tengo en cuenta corriente?',
+        '¿Qué me deben?',
+        '¿Cuáles son mis productos más vendidos?',
+        '¿Cuántas ventas hice este mes?',
+        '¿Qué clientes tienen deuda?',
+        '¿Cuál es mi stock actual?',
+        '¿Cuánto facturé este mes?',
+        '¿Qué productos están por vencer?'
+    ];
+    
+    // Función para mostrar preguntas sugeridas
+    function mostrarPreguntasSugeridas() {
+        const $suggestedContainer = $('#suggested-questions');
+        const $questionsList = $('.suggested-questions-list');
+        
+        // Solo mostrar si no hay mensajes del usuario aún
+        if (historial.filter(m => m.role === 'user').length === 0) {
+            $questionsList.empty();
+            preguntasSugeridas.slice(0, 4).forEach(pregunta => {
+                const $btn = $('<button>')
+                    .addClass('suggested-question-btn')
+                    .text(pregunta)
+                    .on('click', function() {
+                        $chatInput.val(pregunta);
+                        $chatForm.submit();
+                    });
+                $questionsList.append($btn);
+            });
+            $suggestedContainer.show();
+        } else {
+            $suggestedContainer.hide();
+        }
+    }
+    
+    // Mostrar preguntas sugeridas al inicio
+    mostrarPreguntasSugeridas();
+    
+    // Ocultar preguntas sugeridas cuando se envía un mensaje
+    $chatForm.on('submit', function() {
+        $('#suggested-questions').hide();
+    });
 });
 

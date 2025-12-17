@@ -85,6 +85,16 @@ if($integraciones && is_array($integraciones) && count($integraciones) > 0){
               </div>
             </div>
             
+            <!-- Preguntas sugeridas -->
+            <div id="suggested-questions" style="padding: 15px 20px; background: #f8f9fa; border-top: 1px solid #e0e0e0; display: none;">
+              <div style="font-size: 12px; color: #666; margin-bottom: 10px; font-weight: 600;">
+                <i class="fa fa-lightbulb-o"></i> Preguntas sugeridas:
+              </div>
+              <div class="suggested-questions-list" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <!-- Las preguntas se agregarán dinámicamente -->
+              </div>
+            </div>
+            
             <!-- Área de entrada -->
             <div class="box-footer" style="border-top: 1px solid #ddd;">
               <form id="chat-form">
@@ -165,9 +175,137 @@ if($integraciones && is_array($integraciones) && count($integraciones) > 0){
 }
 
 .message-content p {
-  margin: 0;
+  margin: 0 0 8px 0;
   word-wrap: break-word;
   white-space: pre-wrap;
+}
+
+.message-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Estilos para tablas markdown */
+.markdown-table-wrapper {
+  margin: 12px 0;
+  overflow-x: auto;
+  border-radius: 8px;
+}
+
+.markdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 200px;
+}
+
+.markdown-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.markdown-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.markdown-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+}
+
+.markdown-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.markdown-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.markdown-table td {
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #333;
+}
+
+.markdown-table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.markdown-table tbody tr:nth-child(even):hover {
+  background: #f0f0f0;
+}
+
+/* Estilos para listas markdown */
+.markdown-list {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.markdown-list li {
+  margin: 6px 0;
+  line-height: 1.6;
+}
+
+/* Estilos para código */
+.inline-code {
+  background: #f4f4f4;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+  color: #e83e8c;
+  border: 1px solid #e0e0e0;
+}
+
+.code-block {
+  background: #2d2d2d;
+  color: #f8f8f2;
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 12px 0;
+  display: block;
+}
+
+pre {
+  margin: 12px 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Estilos para preguntas sugeridas */
+.suggested-question-btn {
+  background: white;
+  border: 1.5px solid #667eea;
+  color: #667eea;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.suggested-question-btn:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.suggested-question-btn:active {
+  transform: translateY(0);
 }
 
 .message-time {
