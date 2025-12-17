@@ -52,9 +52,12 @@ $loginColorBotonRgb = hexToRgb($loginColorBoton);
     box-sizing: border-box;
 }
 
-body.login-page {
+html, body, body.login-page {
     background: <?php echo $loginFondo; ?> !important;
-    min-height: 100vh;
+    min-height: 100vh !important;
+}
+
+body.login-page {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -173,7 +176,11 @@ body.login-page .login-box-body {
 }
 
 .login-box-msg {
-    color: #3d4751 !important;
+    <?php 
+    // Si el fondo del form es oscuro, usar texto claro
+    $esOscuro = (strpos($loginFondoForm, '#') === 0 && $loginFondoForm !== '#ffffff');
+    ?>
+    color: <?php echo $esOscuro ? '#ffffff' : '#3d4751'; ?> !important;
     font-size: 26px;
     font-weight: 700;
     margin-bottom: 35px;
