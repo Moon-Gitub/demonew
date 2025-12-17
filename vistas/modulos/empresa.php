@@ -829,8 +829,13 @@ input[type="file"]:disabled {
                 $loginFondo = isset($arrayEmpresa['login_fondo']) && !empty($arrayEmpresa['login_fondo']) 
                   ? $arrayEmpresa['login_fondo'] 
                   : 'linear-gradient(rgba(0,0,0,1), rgba(0,30,50,1))';
+                // Extraer color hex si existe, sino usar color por defecto
+                $loginFondoColor = (strpos($loginFondo, '#') === 0) ? $loginFondo : '#4f658a';
                 echo '<input type="text" class="form-control" name="empLoginFondo" id="empLoginFondo" placeholder="Ej: #ffffff o url(imagen.jpg)" value="'.htmlspecialchars($loginFondo).'">';
               ?>
+              <span class="input-group-addon">
+                <input type="color" id="empLoginFondoPicker" value="<?php echo htmlspecialchars($loginFondoColor); ?>" style="width: 40px; height: 34px; border: none; cursor: pointer;" onchange="document.getElementById('empLoginFondo').value = this.value;">
+              </span>
             </div>
             <p class="help-block">Color hexadecimal (ej: #ffffff) o URL de imagen (ej: url(../../img/plantilla/back2.png))</p>
           </div>
@@ -868,8 +873,13 @@ input[type="file"]:disabled {
                 $loginFondoForm = isset($arrayEmpresa['login_fondo_form']) && !empty($arrayEmpresa['login_fondo_form']) 
                   ? $arrayEmpresa['login_fondo_form'] 
                   : 'rgba(255, 255, 255, 0.98)';
+                // Extraer color hex si existe, sino usar color por defecto
+                $loginFondoFormColor = (strpos($loginFondoForm, '#') === 0) ? $loginFondoForm : '#ffffff';
                 echo '<input type="text" class="form-control" name="empLoginFondoForm" id="empLoginFondoForm" placeholder="Ej: rgba(255,255,255,0.98) o #ffffff" value="'.htmlspecialchars($loginFondoForm).'">';
               ?>
+              <span class="input-group-addon">
+                <input type="color" id="empLoginFondoFormPicker" value="<?php echo htmlspecialchars($loginFondoFormColor); ?>" style="width: 40px; height: 34px; border: none; cursor: pointer;" onchange="document.getElementById('empLoginFondoForm').value = this.value;">
+              </span>
             </div>
             <p class="help-block">Color con transparencia recomendado (ej: rgba(255,255,255,0.98))</p>
           </div>
