@@ -874,7 +874,15 @@ input[type="file"]:disabled {
                   ? $arrayEmpresa['login_fondo_form'] 
                   : 'rgba(255, 255, 255, 0.98)';
                 // Extraer color hex si existe, sino usar color por defecto
-                $loginFondoFormColor = (strpos($loginFondoForm, '#') === 0) ? $loginFondoForm : '#ffffff';
+                // Si es rgba, intentar convertir a hex aproximado, sino usar blanco
+                if(strpos($loginFondoForm, '#') === 0) {
+                    $loginFondoFormColor = $loginFondoForm;
+                } elseif(strpos($loginFondoForm, 'rgba') === 0 || strpos($loginFondoForm, 'rgb') === 0) {
+                    // Si es rgba/rgb, usar blanco por defecto en el picker
+                    $loginFondoFormColor = '#ffffff';
+                } else {
+                    $loginFondoFormColor = '#ffffff';
+                }
                 echo '<input type="text" class="form-control" name="empLoginFondoForm" id="empLoginFondoForm" placeholder="Ej: rgba(255,255,255,0.98) o #ffffff" value="'.htmlspecialchars($loginFondoForm).'">';
               ?>
               <span class="input-group-addon">
