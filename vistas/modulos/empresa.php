@@ -897,7 +897,7 @@ input[type="file"]:disabled {
       </div>
 
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <!-- ENTRADA PARA FUENTE -->
           <div class="form-group">
             <label class="control-label">Fuente del login</label>
@@ -911,6 +911,26 @@ input[type="file"]:disabled {
               ?>
             </div>
             <p class="help-block">Fuente CSS (ej: Arial, sans-serif o "Times New Roman", serif)</p>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <!-- ENTRADA PARA COLOR DEL TEXTO DEL TÍTULO -->
+          <div class="form-group">
+            <label class="control-label">Color del título "Ingresar al sistema"</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-text-height"></i></span>
+              <?php 
+                $loginColorTextoTitulo = isset($arrayEmpresa['login_color_texto_titulo']) && !empty($arrayEmpresa['login_color_texto_titulo']) 
+                  ? $arrayEmpresa['login_color_texto_titulo'] 
+                  : '#ffffff';
+                echo '<input type="text" class="form-control" name="empLoginColorTextoTitulo" id="empLoginColorTextoTitulo" placeholder="#ffffff" value="'.htmlspecialchars($loginColorTextoTitulo).'">';
+              ?>
+              <span class="input-group-addon">
+                <input type="color" id="empLoginColorTextoTituloPicker" value="<?php echo htmlspecialchars($loginColorTextoTitulo); ?>" style="width: 40px; height: 34px; border: none; cursor: pointer;" onchange="document.getElementById('empLoginColorTextoTitulo').value = this.value;">
+              </span>
+            </div>
+            <p class="help-block">Color del texto "Ingresar al sistema"</p>
           </div>
         </div>
       </div>

@@ -19,6 +19,7 @@ $loginLogo = !empty($arrayEmpresa['login_logo']) ? $arrayEmpresa['login_logo'] :
 $loginFondoForm = !empty($arrayEmpresa['login_fondo_form']) ? $arrayEmpresa['login_fondo_form'] : 'rgba(255, 255, 255, 0.98)';
 $loginColorBoton = !empty($arrayEmpresa['login_color_boton']) ? $arrayEmpresa['login_color_boton'] : '#52658d';
 $loginFuente = !empty($arrayEmpresa['login_fuente']) ? $arrayEmpresa['login_fuente'] : 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+$loginColorTextoTitulo = !empty($arrayEmpresa['login_color_texto_titulo']) ? $arrayEmpresa['login_color_texto_titulo'] : '#ffffff';
 
 // ========== DEBUG - VALORES FINALES ==========
 echo "<!-- Valor final loginFondo: '" . htmlspecialchars($loginFondo) . "' -->\n";
@@ -26,6 +27,7 @@ echo "<!-- Valor final loginLogo: '" . htmlspecialchars($loginLogo) . "' -->\n";
 echo "<!-- Valor final loginFondoForm: '" . htmlspecialchars($loginFondoForm) . "' -->\n";
 echo "<!-- Valor final loginColorBoton: '" . htmlspecialchars($loginColorBoton) . "' -->\n";
 echo "<!-- Valor final loginFuente: '" . htmlspecialchars($loginFuente) . "' -->\n";
+echo "<!-- Valor final loginColorTextoTitulo: '" . htmlspecialchars($loginColorTextoTitulo) . "' -->\n";
 echo "<!-- ==================== FIN DEBUG ==================== -->\n";
 // ========== DEBUG - FIN ==========
 
@@ -176,11 +178,7 @@ body.login-page .login-box-body {
 }
 
 .login-box-msg {
-    <?php 
-    // Si el fondo del form es oscuro, usar texto claro
-    $esOscuro = (strpos($loginFondoForm, '#') === 0 && $loginFondoForm !== '#ffffff');
-    ?>
-    color: <?php echo $esOscuro ? '#ffffff' : '#3d4751'; ?> !important;
+    color: <?php echo $loginColorTextoTitulo; ?> !important;
     font-size: 26px;
     font-weight: 700;
     margin-bottom: 35px;
@@ -210,8 +208,8 @@ body.login-page .login-box-body {
     height: 55px;
     border-radius: 15px;
     border: 2px solid #e8e8e8;
-    padding-left: 50px;
-    padding-right: 15px;
+    padding-left: 20px;
+    padding-right: 20px;
     font-size: 16px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     background-color: #f8f9fa;
@@ -239,26 +237,8 @@ body.login-page .login-box-body {
     color: #ccc;
 }
 
-.form-control-feedback {
-    left: 18px;
-    color: <?php echo $loginColorBoton; ?>;
-    font-size: 20px;
-    line-height: 55px;
-    transition: all 0.3s ease;
-    z-index: 2;
-}
-
-.form-group:focus-within .form-control-feedback {
-    color: <?php echo $loginColorBoton; ?>;
-    transform: scale(1.15);
-}
-
 .form-group.has-error .form-control {
     border-color: #e74c3c;
-}
-
-.form-group.has-error .form-control-feedback {
-    color: #e74c3c;
 }
 
 .btn-login {
@@ -422,14 +402,9 @@ body.login-page .login-box-body {
     .form-control {
         height: 50px;
         font-size: 15px;
-        padding-left: 45px;
+        padding-left: 20px;
+        padding-right: 20px;
         border-radius: 12px;
-    }
-    
-    .form-control-feedback {
-        left: 15px;
-        font-size: 18px;
-        line-height: 50px;
     }
     
     .btn-login {
@@ -486,10 +461,6 @@ body.login-page .login-box-body {
         height: 45px;
     }
     
-    .form-control-feedback {
-        line-height: 45px;
-    }
-    
     .btn-login {
         height: 45px;
     }
@@ -541,7 +512,7 @@ body.login-page .login-box-body {
     <p class="login-box-msg">Ingresar al sistema</p>
 
     <form method="post" id="loginForm">
-      <div class="form-group has-feedback">
+      <div class="form-group">
         <input type="text" 
                autocomplete="username" 
                class="form-control" 
@@ -550,10 +521,9 @@ body.login-page .login-box-body {
                required
                id="usuarioInput"
                aria-label="Usuario">
-        <span class="glyphicon glyphicon-user form-control-feedback"></span>
       </div>
 
-      <div class="form-group has-feedback">
+      <div class="form-group">
         <input type="password" 
                autocomplete="current-password" 
                class="form-control" 
@@ -562,7 +532,6 @@ body.login-page .login-box-body {
                required
                id="passwordInput"
                aria-label="Contraseña">
-        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
 
       <div class="row">
