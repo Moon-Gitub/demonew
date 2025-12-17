@@ -7,6 +7,8 @@ if(isset($arrayEmpresa)) {
     echo "<!-- login_fondo de BD: '" . (isset($arrayEmpresa['login_fondo']) ? $arrayEmpresa['login_fondo'] : 'NO EXISTE') . "' -->\n";
     echo "<!-- login_logo de BD: '" . (isset($arrayEmpresa['login_logo']) ? $arrayEmpresa['login_logo'] : 'NO EXISTE') . "' -->\n";
     echo "<!-- login_fondo_form de BD: '" . (isset($arrayEmpresa['login_fondo_form']) ? $arrayEmpresa['login_fondo_form'] : 'NO EXISTE') . "' -->\n";
+echo "<!-- login_fondo_form tipo: " . (isset($arrayEmpresa['login_fondo_form']) ? gettype($arrayEmpresa['login_fondo_form']) : 'N/A') . " -->\n";
+echo "<!-- login_fondo_form vacío?: " . (isset($arrayEmpresa['login_fondo_form']) && empty($arrayEmpresa['login_fondo_form']) ? 'SI' : 'NO') . " -->\n";
     echo "<!-- login_color_boton de BD: '" . (isset($arrayEmpresa['login_color_boton']) ? $arrayEmpresa['login_color_boton'] : 'NO EXISTE') . "' -->\n";
     echo "<!-- login_fuente de BD: '" . (isset($arrayEmpresa['login_fuente']) ? $arrayEmpresa['login_fuente'] : 'NO EXISTE') . "' -->\n";
 }
@@ -16,7 +18,10 @@ if(isset($arrayEmpresa)) {
 // Valores por defecto si no están configurados
 $loginFondo = !empty($arrayEmpresa['login_fondo']) ? $arrayEmpresa['login_fondo'] : 'linear-gradient(rgba(0,0,0,1), rgba(0,30,50,1))';
 $loginLogo = !empty($arrayEmpresa['login_logo']) ? $arrayEmpresa['login_logo'] : 'vistas/img/plantilla/logo-moon-desarrollos.png';
-$loginFondoForm = !empty($arrayEmpresa['login_fondo_form']) ? $arrayEmpresa['login_fondo_form'] : 'rgba(255, 255, 255, 0.98)';
+// Leer login_fondo_form de la BD - usar isset y verificar que no sea string vacío
+$loginFondoForm = (isset($arrayEmpresa['login_fondo_form']) && trim($arrayEmpresa['login_fondo_form']) !== '') 
+    ? trim($arrayEmpresa['login_fondo_form']) 
+    : 'rgba(255, 255, 255, 0.98)';
 $loginColorBoton = !empty($arrayEmpresa['login_color_boton']) ? $arrayEmpresa['login_color_boton'] : '#52658d';
 $loginFuente = !empty($arrayEmpresa['login_fuente']) ? $arrayEmpresa['login_fuente'] : 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
 $loginColorTextoTitulo = !empty($arrayEmpresa['login_color_texto_titulo']) ? $arrayEmpresa['login_color_texto_titulo'] : '#ffffff';
@@ -146,8 +151,11 @@ body.login-page #back {
     box-shadow: none;
 }
 
-body.login-page .login-box-body {
-    background: <?php echo $loginFondoForm; ?> !important;
+/* FORZAR fondo del formulario - máxima especificidad */
+html body.login-page .login-box .login-box-body,
+body.login-page .login-box-body,
+.login-box-body {
+    background: <?php echo htmlspecialchars($loginFondoForm, ENT_QUOTES, 'UTF-8'); ?> !important;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-radius: 25px;
