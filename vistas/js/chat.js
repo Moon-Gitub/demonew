@@ -14,37 +14,66 @@ $(document).ready(function() {
     function markdownToHtml(texto) {
         let html = texto;
         
-        // Convertir tablas markdown
-        html = html.replace(/\|(.+)\|/g, function(match, contenido) {
-            // Detectar si es encabezado de tabla
-            if (contenido.match(/^[\s\-\|:]+$/)) {
-                return ''; // Ignorar separador
-            }
-            return match;
-        });
+        // Primero, procesar tablas markdown (debe ser antes de otros procesamientos)
+        // Patrón para detectar tablas: líneas que empiezan y terminan con |
+        const tablaRegex = /(\|[\s\S]*?\|(?:\n\|[\s\S]*?\|)+)/g;
         
-        // Procesar tablas completas
-        html = html.replace(/(\|[^\n]+\|(?:\n\|[^\n]+\|)+)/g, function(tabla) {
-            const lineas = tabla.trim().split('\n').filter(l => l.trim());
-            if (lineas.length < 2) return tabla;
+        html = html.replace(tablaRegex, function(tablaCompleta) {
+            const lineas = tablaCompleta.trim().split('\n').map(l => l.trim()).filter(l => l.length > 0);
             
-            let tablaHtml = '<div class="markdown-table-wrapper"><table class="markdown-table">';
+            if (lineas.length < 2) return tablaCompleta;
             
-            // Primera línea es el encabezado
-            const encabezados = lineas[0].split('|').filter(c => c.trim());
-            tablaHtml += '<thead><tr>';
+            // Detectar encabezados (primera línea que tiene pipes)
+            let indiceEncabezado = -1;
+            let indiceSeparador = -1;
+            
+            for (let i = 0; i < lineas.length; i++) {
+                if (lineas[i].includes('|') && !lineas[i].match(/^[\s\|\-\:]+$/)) {
+                    if (indiceEncabezado === -1) {
+                        indiceEncabezado = i;
+                    }
+                } else if (lineas[i].match(/^[\s\|\-\:]+$/)) {
+                    indiceSeparador = i;
+                    break;
+                }
+            }
+            
+            if (indiceEncabezado === -1) return tablaCompleta;
+            
+            // Extraer encabezados
+            const encabezados = lineas[indiceEncabezado]
+                .split('|')
+                .map(c => c.trim())
+                .filter(c => c.length > 0);
+            
+            if (encabezados.length === 0) return tablaCompleta;
+            
+            let tablaHtml = '<div class="markdown-table-wrapper"><table class="markdown-table"><thead><tr>';
+            
             encabezados.forEach(h => {
                 tablaHtml += `<th>${h.trim()}</th>`;
             });
+            
             tablaHtml += '</tr></thead><tbody>';
             
-            // Ignorar la segunda línea (separador) y procesar filas
-            for (let i = 2; i < lineas.length; i++) {
-                const celdas = lineas[i].split('|').filter(c => c.trim());
+            // Procesar filas de datos (después del separador)
+            const inicioDatos = indiceSeparador !== -1 ? indiceSeparador + 1 : indiceEncabezado + 1;
+            
+            for (let i = inicioDatos; i < lineas.length; i++) {
+                const linea = lineas[i];
+                if (!linea.includes('|')) continue;
+                
+                const celdas = linea
+                    .split('|')
+                    .map(c => c.trim())
+                    .filter(c => c.length > 0);
+                
                 if (celdas.length > 0) {
                     tablaHtml += '<tr>';
                     celdas.forEach(c => {
-                        tablaHtml += `<td>${c.trim()}</td>`;
+                        // Procesar negritas dentro de las celdas
+                        let celdaHtml = c.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+                        tablaHtml += `<td>${celdaHtml}</td>`;
                     });
                     tablaHtml += '</tr>';
                 }
@@ -54,43 +83,56 @@ $(document).ready(function() {
             return tablaHtml;
         });
         
-        // Convertir negritas **texto**
-        html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-        
-        // Convertir cursivas *texto*
-        html = html.replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em>$1</em>');
+        // Convertir negritas **texto** (después de procesar tablas)
+        html = html.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
         
         // Convertir código inline `código`
-        html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+        html = html.replace(/`([^`\n]+)`/g, '<code class="inline-code">$1</code>');
         
         // Convertir bloques de código ```
         html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code class="code-block">$2</code></pre>');
         
         // Convertir listas con viñetas
-        html = html.replace(/^[\*\-\+]\s+(.+)$/gm, '<li>$1</li>');
-        html = html.replace(/(<li>.*<\/li>\n?)+/g, function(match) {
-            return '<ul class="markdown-list">' + match + '</ul>';
-        });
-        
-        // Convertir listas numeradas
-        html = html.replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>');
-        html = html.replace(/(<li>.*<\/li>\n?)+/g, function(match) {
-            if (!match.includes('<ul')) {
-                return '<ol class="markdown-list">' + match + '</ol>';
+        const listasViñetas = html.split(/(<table[\s\S]*?<\/table>|<pre[\s\S]*?<\/pre>)/g);
+        for (let i = 0; i < listasViñetas.length; i += 2) {
+            if (listasViñetas[i]) {
+                listasViñetas[i] = listasViñetas[i].replace(/^[\*\-\+]\s+(.+)$/gm, '<li>$1</li>');
+                listasViñetas[i] = listasViñetas[i].replace(/(<li>.*?<\/li>\s*)+/g, function(match) {
+                    if (!match.includes('<ul')) {
+                        return '<ul class="markdown-list">' + match + '</ul>';
+                    }
+                    return match;
+                });
             }
-            return match;
-        });
+        }
+        html = listasViñetas.join('');
         
-        // Convertir saltos de línea
-        html = html.replace(/\n\n/g, '</p><p>');
-        html = html.replace(/\n/g, '<br>');
+        // Dividir en párrafos y procesar
+        const partes = html.split(/(<table[\s\S]*?<\/table>|<pre[\s\S]*?<\/pre>|<ul[\s\S]*?<\/ul>|<ol[\s\S]*?<\/ol>)/g);
+        let resultado = '';
         
-        // Envolver en párrafo si no hay tablas
-        if (!html.includes('<table') && !html.includes('<ul') && !html.includes('<ol') && !html.includes('<pre')) {
-            html = '<p>' + html + '</p>';
+        for (let i = 0; i < partes.length; i++) {
+            if (partes[i].match(/^<(table|pre|ul|ol|div)/)) {
+                // Es un elemento HTML, dejarlo tal cual
+                resultado += partes[i];
+            } else if (partes[i].trim()) {
+                // Es texto, procesarlo
+                let textoProcesado = partes[i]
+                    .replace(/\n\n+/g, '</p><p>')
+                    .replace(/\n/g, '<br>');
+                
+                if (!textoProcesado.startsWith('<')) {
+                    textoProcesado = '<p>' + textoProcesado;
+                }
+                if (!textoProcesado.endsWith('>')) {
+                    textoProcesado = textoProcesado + '</p>';
+                }
+                
+                resultado += textoProcesado;
+            }
         }
         
-        return html;
+        return resultado || html;
     }
     
     // Función para agregar mensaje al chat

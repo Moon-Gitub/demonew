@@ -166,7 +166,8 @@ if($integraciones && is_array($integraciones) && count($integraciones) > 0){
 .bot-message .message-content {
   background: white;
   border: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-radius: 18px;
 }
 
 .user-message .message-content {
@@ -184,21 +185,23 @@ if($integraciones && is_array($integraciones) && count($integraciones) > 0){
   margin-bottom: 0;
 }
 
-/* Estilos para tablas markdown */
+/* Estilos para tablas markdown - DISEÑO MODERNO Y ELEGANTE */
 .markdown-table-wrapper {
-  margin: 12px 0;
+  margin: 16px 0;
   overflow-x: auto;
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background: white;
 }
 
 .markdown-table {
   width: 100%;
   border-collapse: collapse;
   background: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  min-width: 200px;
+  min-width: 250px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
 .markdown-table thead {
@@ -207,21 +210,24 @@ if($integraciones && is_array($integraciones) && count($integraciones) > 0){
 }
 
 .markdown-table th {
-  padding: 12px 16px;
+  padding: 14px 18px;
   text-align: left;
   font-weight: 600;
   font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
+  white-space: nowrap;
 }
 
 .markdown-table tbody tr {
-  border-bottom: 1px solid #f0f0f0;
-  transition: background 0.2s;
+  border-bottom: 1px solid #e8e8e8;
+  transition: all 0.2s ease;
 }
 
 .markdown-table tbody tr:hover {
-  background: #f8f9fa;
+  background: linear-gradient(90deg, #f8f9ff 0%, #ffffff 100%);
+  transform: scale(1.01);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
 }
 
 .markdown-table tbody tr:last-child {
@@ -229,17 +235,40 @@ if($integraciones && is_array($integraciones) && count($integraciones) > 0){
 }
 
 .markdown-table td {
-  padding: 10px 16px;
+  padding: 12px 18px;
   font-size: 14px;
-  color: #333;
+  color: #2c3e50;
+  font-weight: 400;
 }
 
 .markdown-table tbody tr:nth-child(even) {
-  background: #fafafa;
+  background: #fafbfc;
 }
 
 .markdown-table tbody tr:nth-child(even):hover {
-  background: #f0f0f0;
+  background: linear-gradient(90deg, #f0f2ff 0%, #fafbfc 100%);
+}
+
+/* Números en tablas con mejor formato */
+.markdown-table td:has-text {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Responsive para tablas */
+@media (max-width: 768px) {
+  .markdown-table-wrapper {
+    margin: 12px -10px;
+    border-radius: 0;
+  }
+  
+  .markdown-table {
+    font-size: 12px;
+  }
+  
+  .markdown-table th,
+  .markdown-table td {
+    padding: 10px 12px;
+  }
 }
 
 /* Estilos para listas markdown */
