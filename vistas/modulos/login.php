@@ -1,4 +1,17 @@
 <?php
+// ========== DEBUG - INICIO ==========
+// Mostrar en comentarios HTML qué valores está recibiendo
+echo "<!-- ==================== DEBUG LOGIN CONFIG ==================== -->\n";
+echo "<!-- arrayEmpresa existe: " . (isset($arrayEmpresa) ? 'SI' : 'NO') . " -->\n";
+if(isset($arrayEmpresa)) {
+    echo "<!-- login_fondo de BD: '" . (isset($arrayEmpresa['login_fondo']) ? $arrayEmpresa['login_fondo'] : 'NO EXISTE') . "' -->\n";
+    echo "<!-- login_logo de BD: '" . (isset($arrayEmpresa['login_logo']) ? $arrayEmpresa['login_logo'] : 'NO EXISTE') . "' -->\n";
+    echo "<!-- login_fondo_form de BD: '" . (isset($arrayEmpresa['login_fondo_form']) ? $arrayEmpresa['login_fondo_form'] : 'NO EXISTE') . "' -->\n";
+    echo "<!-- login_color_boton de BD: '" . (isset($arrayEmpresa['login_color_boton']) ? $arrayEmpresa['login_color_boton'] : 'NO EXISTE') . "' -->\n";
+    echo "<!-- login_fuente de BD: '" . (isset($arrayEmpresa['login_fuente']) ? $arrayEmpresa['login_fuente'] : 'NO EXISTE') . "' -->\n";
+}
+// ========== DEBUG - FIN ==========
+
 // Obtener configuración del login desde $arrayEmpresa (ya disponible desde plantilla.php)
 // Valores por defecto si no están configurados
 $loginFondo = !empty($arrayEmpresa['login_fondo']) ? $arrayEmpresa['login_fondo'] : 'linear-gradient(rgba(0,0,0,1), rgba(0,30,50,1))';
@@ -6,6 +19,15 @@ $loginLogo = !empty($arrayEmpresa['login_logo']) ? $arrayEmpresa['login_logo'] :
 $loginFondoForm = !empty($arrayEmpresa['login_fondo_form']) ? $arrayEmpresa['login_fondo_form'] : 'rgba(255, 255, 255, 0.98)';
 $loginColorBoton = !empty($arrayEmpresa['login_color_boton']) ? $arrayEmpresa['login_color_boton'] : '#52658d';
 $loginFuente = !empty($arrayEmpresa['login_fuente']) ? $arrayEmpresa['login_fuente'] : 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+
+// ========== DEBUG - VALORES FINALES ==========
+echo "<!-- Valor final loginFondo: '" . htmlspecialchars($loginFondo) . "' -->\n";
+echo "<!-- Valor final loginLogo: '" . htmlspecialchars($loginLogo) . "' -->\n";
+echo "<!-- Valor final loginFondoForm: '" . htmlspecialchars($loginFondoForm) . "' -->\n";
+echo "<!-- Valor final loginColorBoton: '" . htmlspecialchars($loginColorBoton) . "' -->\n";
+echo "<!-- Valor final loginFuente: '" . htmlspecialchars($loginFuente) . "' -->\n";
+echo "<!-- ==================== FIN DEBUG ==================== -->\n";
+// ========== DEBUG - FIN ==========
 
 // Convertir color hexadecimal a RGB para rgba en hover
 function hexToRgb($hex) {
