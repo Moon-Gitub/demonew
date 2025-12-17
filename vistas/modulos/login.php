@@ -97,7 +97,7 @@ body.login-page #back {
 
 .login-box {
     width: 100%;
-    max-width: 360px;
+    max-width: 400px;
     margin: 0 auto;
     position: relative;
     z-index: 1;
@@ -117,7 +117,7 @@ body.login-page #back {
 
 .login-logo {
     text-align: center;
-    margin-bottom: 28px;
+    margin-bottom: 32px;
     padding-top: 0 !important;
 }
 
@@ -162,84 +162,68 @@ body.login-page .login-box-body,
 .login-box-body {
     background: <?php echo htmlspecialchars($loginFondoForm, ENT_QUOTES, 'UTF-8'); ?> !important;
     background-color: <?php echo htmlspecialchars($loginFondoForm, ENT_QUOTES, 'UTF-8'); ?> !important;
-    backdrop-filter: blur(30px) saturate(180%);
-    -webkit-backdrop-filter: blur(30px) saturate(180%);
-    border-radius: 16px;
-    padding: 35px 32px !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 14px;
+    padding: 40px 36px !important;
     box-shadow: 
-        0 4px 20px rgba(0, 0, 0, 0.1),
-        0 1px 4px rgba(0, 0, 0, 0.06),
-        inset 0 1px 0 rgba(255, 255, 255, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+        0 8px 24px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(135, 206, 250, 0.2),
+        0 0 20px rgba(135, 206, 250, 0.1);
+    border: 1px solid rgba(135, 206, 250, 0.3);
     position: relative;
     overflow: hidden;
 }
 
 .login-box-body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, 
-        transparent 0%, 
-        <?php echo $loginColorBoton; ?> 20%, 
-        <?php echo $loginColorBoton; ?> 80%, 
-        transparent 100%);
-    opacity: 0.6;
+    display: none;
 }
 
 .login-box-msg {
     color: <?php echo $loginColorTextoTitulo; ?> !important;
-    font-size: 22px;
-    font-weight: 500;
-    margin-bottom: 28px;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 32px;
     text-align: center;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
     position: relative;
-    line-height: 1.4;
+    line-height: 1.3;
 }
 
 .form-group {
-    margin-bottom: 18px;
+    margin-bottom: 20px;
     position: relative;
 }
 
 .form-control {
-    height: 46px;
+    height: 48px;
     border-radius: 10px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid #d0d0d0;
     padding-left: 16px;
     padding-right: 16px;
     font-size: 14px;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    background-color: rgba(255, 255, 255, 0.95);
+    transition: all 0.2s ease;
+    background-color: #ffffff;
     color: #2c3e50;
     font-weight: 400;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: none;
 }
 
 .form-control:focus {
-    border-color: <?php echo $loginColorBoton; ?>;
+    border-color: #87ceeb;
     background-color: #ffffff;
-    box-shadow: 
-        0 0 0 2px rgba(<?php echo $loginColorBotonRgb; ?>, 0.1),
-        0 2px 8px rgba(<?php echo $loginColorBotonRgb; ?>, 0.1),
-        0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 0 2px rgba(135, 206, 235, 0.2);
     outline: none;
 }
 
 .form-control::placeholder {
-    color: #95a5a6;
+    color: #999;
     font-weight: 400;
-    transition: color 0.25s;
-    opacity: 0.7;
+    transition: color 0.2s;
 }
 
 .form-control:focus::placeholder {
-    color: #bdc3c7;
-    opacity: 0.5;
+    color: #bbb;
 }
 
 .form-group.has-error .form-control {
@@ -247,52 +231,34 @@ body.login-page .login-box-body,
 }
 
 .btn-login {
-    background: <?php echo $loginColorBoton; ?> !important;
-    border: none !important;
+    background: transparent !important;
+    border: 1px solid #87ceeb !important;
     border-radius: 10px;
-    height: 44px;
+    height: 48px;
     font-size: 14px;
     font-weight: 500;
-    color: #ffffff;
+    color: #ffffff !important;
     text-transform: none;
     letter-spacing: 0.2px;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 
-        0 2px 8px rgba(<?php echo $loginColorBotonRgb; ?>, 0.2),
-        0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+    box-shadow: none;
     position: relative;
     overflow: hidden;
-    margin-top: 6px;
+    margin-top: 8px;
 }
 
 .btn-login::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-}
-
-.btn-login:hover::before {
-    left: 100%;
+    display: none;
 }
 
 .btn-login:hover {
-    transform: translateY(-1px);
-    box-shadow: 
-        0 4px 12px rgba(<?php echo $loginColorBotonRgb; ?>, 0.3),
-        0 1px 3px rgba(0, 0, 0, 0.1);
-    background: <?php echo $loginColorBoton; ?> !important;
+    background: rgba(135, 206, 235, 0.1) !important;
+    border-color: #87ceeb !important;
+    color: #ffffff !important;
 }
 
 .btn-login:active {
-    transform: translateY(0);
-    box-shadow: 
-        0 2px 8px rgba(<?php echo $loginColorBotonRgb; ?>, 0.3),
-        0 1px 2px rgba(0, 0, 0, 0.1);
+    background: rgba(135, 206, 235, 0.15) !important;
 }
 
 .btn-login:disabled {
