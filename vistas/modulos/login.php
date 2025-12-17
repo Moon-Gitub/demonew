@@ -68,12 +68,14 @@ html, body, body.login-page {
 
 body.login-page {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
-    padding: 20px;
+    padding: 30px 20px;
     font-family: <?php echo $loginFuente; ?>;
+    min-height: 100vh;
 }
 
 /* Elemento de fondo - solo si es una URL de imagen */
@@ -102,6 +104,9 @@ body.login-page #back {
     position: relative;
     z-index: 1;
     animation: fadeInUp 0.5s ease-out;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 }
 
 @keyframes fadeInUp {
@@ -117,8 +122,11 @@ body.login-page #back {
 
 .login-logo {
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 0;
     padding-top: 0 !important;
+    padding-bottom: 0;
+    flex-shrink: 0;
+    order: 1;
 }
 
 .login-logo .logo-container {
@@ -130,6 +138,7 @@ body.login-page #back {
     border: none;
     box-shadow: none !important;
     filter: none;
+    max-width: 100%;
 }
 
 .login-logo .logo-container:hover {
@@ -140,12 +149,27 @@ body.login-page #back {
     max-width: 100%;
     height: auto;
     display: block;
-    width: 100%;
-    max-width: 280px;
+    width: auto;
+    max-width: 100%;
+    max-height: 150px;
     margin: 0 auto;
     filter: none;
     box-shadow: none;
     transition: none;
+    object-fit: contain;
+    object-position: center;
+}
+
+/* Adaptación dinámica: el logo puede ser de cualquier tamaño */
+.login-logo .logo-img {
+    /* Permitir que el logo sea flexible */
+    min-height: 40px;
+}
+
+/* Si el logo es más grande, el formulario se adapta automáticamente */
+.login-logo {
+    /* El espaciado se ajusta automáticamente con flexbox */
+    min-height: 60px;
 }
 
 .login-logo .logo-container:hover .logo-img {
@@ -173,6 +197,11 @@ body.login-page .login-box-body,
     border: 1px solid rgba(135, 206, 250, 0.3);
     position: relative;
     overflow: hidden;
+    flex-shrink: 0;
+    order: 2;
+    margin-top: 28px;
+    /* El formulario se adapta automáticamente al espacio disponible */
+    width: 100%;
 }
 
 .login-box-body::before {
@@ -328,7 +357,8 @@ body.login-page .login-box-body,
     }
     
     .login-logo .logo-img {
-        max-width: 350px;
+        max-width: 100%;
+        max-height: 120px;
     }
     
     .login-box-body {
@@ -351,11 +381,16 @@ body.login-page .login-box-body,
     }
     
     .login-logo {
-        margin-bottom: 30px;
+        margin-bottom: 0;
+    }
+
+    .login-logo .logo-img {
+        max-width: 100%;
+        max-height: 100px;
     }
     
-    .login-logo .logo-img {
-        max-width: 280px;
+    .login-box-body {
+        margin-top: 20px;
     }
     
     .login-box-body {
@@ -391,7 +426,8 @@ body.login-page .login-box-body,
 /* Móviles pequeños */
 @media (max-width: 360px) {
     .login-logo .logo-img {
-        max-width: 240px;
+        max-width: 100%;
+        max-height: 80px;
     }
     
     .login-box-body {
@@ -411,11 +447,16 @@ body.login-page .login-box-body,
     }
     
     .login-logo {
-        margin-bottom: 20px;
+        margin-bottom: 0;
+    }
+
+    .login-logo .logo-img {
+        max-width: 100%;
+        max-height: 90px;
     }
     
-    .login-logo .logo-img {
-        max-width: 250px;
+    .login-box-body {
+        margin-top: 16px;
     }
     
     .login-box-body {
