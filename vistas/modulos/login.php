@@ -83,10 +83,6 @@ body.login-page #back {
     z-index: -1;
 }
 
-body.login-page .login-box-body {
-    background: <?php echo $loginFondoForm; ?> !important;
-}
-
 .login-box {
     width: 100%;
     max-width: 450px;
@@ -145,8 +141,8 @@ body.login-page .login-box-body {
     box-shadow: none;
 }
 
-.login-box-body {
-    background: rgba(255, 255, 255, 0.98) !important;
+body.login-page .login-box-body {
+    background: <?php echo $loginFondoForm; ?> !important;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-radius: 25px;
