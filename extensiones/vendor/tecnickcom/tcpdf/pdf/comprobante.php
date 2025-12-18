@@ -28,7 +28,9 @@ if(!isset($_GET['codigo']) || empty($_GET['codigo'])) {
 }
 
 // Obtener la ruta base del proyecto (raíz donde está .env)
-$rutaBase = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
+// Desde: extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php
+// Hacia: raíz del proyecto
+$rutaBase = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
 error_log("Ruta base calculada: " . $rutaBase);
 error_log("Ruta base existe: " . (is_dir($rutaBase) ? 'SÍ' : 'NO'));
 
@@ -43,9 +45,17 @@ $autoloadPath = $rutaBase . '/extensiones/vendor/autoload.php';
 error_log("Buscando autoload en: " . $autoloadPath);
 if(!file_exists($autoloadPath)) {
     error_log("ERROR: autoload.php no encontrado en: " . $autoloadPath);
-    die('Error: No se encuentra autoload.php en: ' . $autoloadPath);
+    // Intentar ruta alternativa
+    $autoloadPathAlt = dirname(dirname(dirname(dirname(__FILE__)))) . '/autoload.php';
+    error_log("Intentando ruta alternativa: " . $autoloadPathAlt);
+    if(file_exists($autoloadPathAlt)) {
+        $autoloadPath = $autoloadPathAlt;
+        error_log("✅ autoload.php encontrado en ruta alternativa");
+    } else {
+        die('Error: No se encuentra autoload.php en: ' . $autoloadPath . ' ni en: ' . $autoloadPathAlt);
+    }
 }
-error_log("✅ autoload.php encontrado, cargando...");
+error_log("✅ autoload.php encontrado, cargando desde: " . $autoloadPath);
 require_once $autoloadPath;
 error_log("✅ autoload.php cargado");
 
@@ -1160,7 +1170,22 @@ $pdf->Output($nomArchivo);
 
 }
 
-$comprobante = new imprimirComprobante();
-$comprobante -> traerImpresionComprobante();
+error_log("Creando instancia de imprimirComprobante...");
+try {
+    $comprobante = new imprimirComprobante();
+    error_log("Instancia creada, llamando traerImpresionComprobante()...");
+    $comprobante -> traerImpresionComprobante();
+    error_log("✅ PDF generado exitosamente");
+} catch (Exception $e) {
+    error_log("❌ ERROR FATAL en comprobante.php: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    http_response_code(500);
+    die('Error al generar el comprobante: ' . $e->getMessage());
+} catch (Error $e) {
+    error_log("❌ ERROR FATAL (Error) en comprobante.php: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    http_response_code(500);
+    die('Error fatal al generar el comprobante: ' . $e->getMessage());
+}
 
 ?>
