@@ -242,8 +242,20 @@ $pdf->Output('factura.pdf');
 
 }
 
-$factura = new imprimirFactura();
-$factura -> id_registro = $_GET["idRegistro"];
-$factura -> traerImpresionFactura();
+try {
+    $factura = new imprimirFactura();
+    $factura -> id_registro = intval($_GET["idRegistro"]);
+    $factura -> traerImpresionFactura();
+} catch (Exception $e) {
+    error_log("ERROR FATAL en recibo.php: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    http_response_code(500);
+    die('Error al generar el recibo: ' . $e->getMessage());
+} catch (Error $e) {
+    error_log("ERROR FATAL (Error) en recibo.php: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    http_response_code(500);
+    die('Error fatal al generar el recibo: ' . $e->getMessage());
+}
 
 ?>

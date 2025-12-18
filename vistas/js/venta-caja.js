@@ -4,6 +4,19 @@ $('.selectTipoCbte').change(function(){
 	cambiaTipoCbte();
 });
 
+/*=============================================
+RESTAURAR PRODUCTOS AL CARGAR LA PÁGINA
+=============================================*/
+$(document).ready(function(){
+	// Solo restaurar si estamos en la página crear-venta-caja
+	if(window.location.href.includes('crear-venta-caja')) {
+		// Esperar un momento para que la página termine de cargar
+		setTimeout(function(){
+			restaurarProductosDesdeLocalStorage();
+		}, 500);
+	}
+});
+
 function cambiaTipoCbte(){
 	if($('.selectTipoCbte').val() == 2 || $('.selectTipoCbte').val() == 3 || $('.selectTipoCbte').val() == 7 || $('.selectTipoCbte').val() == 8 || $('.selectTipoCbte').val() == 12 || $('.selectTipoCbte').val() == 13 || $('.selectTipoCbte').val() == 202 || $('.selectTipoCbte').val() == 203 || $('.selectTipoCbte').val() == 207 || $('.selectTipoCbte').val() == 208 || $('.selectTipoCbte').val() == 212 || $('.selectTipoCbte').val() == 213) {
 		$('.lineaCbteAsociados').show();
@@ -25,7 +38,10 @@ localStorage.removeItem("quitarProductoCaja");
 $(".nuevoProductoCaja").on("click", "button.quitarProductoCaja", function() {
 
 	$(this).parent().parent().parent().parent().remove();
-	var idProducto = $(this).attr("quitarProductoCaja");
+	var idProducto = $(this).attr("idProducto");
+	
+	// Actualizar localStorage después de quitar producto
+	listarProductosCaja();
 
 	/*=============================================
 	ALMACENAR EN EL LOCALSTORAGE EL ID DEL PRODUCTO A QUITAR
@@ -542,6 +558,160 @@ function listarProductosCaja(){
 									"total" : $(precio[i]).val()})
 	}
 	$("#listaProductosCaja").val(JSON.stringify(listaProductosCaja));
+	
+	// Guardar en localStorage cada vez que se actualiza la lista
+	guardarProductosEnLocalStorage();
+}
+
+/*=============================================
+GUARDAR PRODUCTOS EN LOCALSTORAGE
+=============================================*/
+function guardarProductosEnLocalStorage(){
+	var listaProductos = $("#listaProductosCaja").val();
+	if(listaProductos && listaProductos !== "[]" && listaProductos !== "") {
+		try {
+			var productosArray = JSON.parse(listaProductos);
+			if(productosArray && productosArray.length > 0) {
+				localStorage.setItem("ventaCajaProductos", listaProductos);
+				console.log("Productos guardados en localStorage:", productosArray.length);
+			}
+		} catch(e) {
+			console.error("Error al guardar productos en localStorage:", e);
+		}
+	}
+}
+
+/*=============================================
+RESTAURAR PRODUCTOS DESDE LOCALSTORAGE
+=============================================*/
+function restaurarProductosDesdeLocalStorage(){
+	var productosGuardados = localStorage.getItem("ventaCajaProductos");
+	if(productosGuardados && productosGuardados !== "[]" && productosGuardados !== "") {
+		try {
+			var productosArray = JSON.parse(productosGuardados);
+			if(productosArray && productosArray.length > 0) {
+				console.log("Restaurando productos desde localStorage:", productosArray.length);
+				
+				// Restaurar cada producto de forma secuencial para evitar problemas
+				var indice = 0;
+				function restaurarSiguiente() {
+					if(indice < productosArray.length) {
+						var producto = productosArray[indice];
+						restaurarProductoIndividual(producto);
+						indice++;
+						// Esperar un poco antes de restaurar el siguiente para evitar sobrecarga
+						setTimeout(restaurarSiguiente, 200);
+					} else {
+						// Todos los productos restaurados, actualizar totales
+						setTimeout(function(){
+							sumarTotalPreciosCaja();
+							calcularDescuentoCaja("nuevoDescuentoPorcentajeCaja");
+							calcularInteresCaja("nuevoInteresPorcentajeCaja");
+							listarProductosCaja();
+						}, 500);
+					}
+				}
+				restaurarSiguiente();
+			}
+		} catch(e) {
+			console.error("Error al restaurar productos desde localStorage:", e);
+			localStorage.removeItem("ventaCajaProductos");
+		}
+	}
+}
+
+/*=============================================
+RESTAURAR PRODUCTO INDIVIDUAL
+=============================================*/
+function restaurarProductoIndividual(producto){
+	// Verificar si el producto ya está en la lista
+	var existe = false;
+	$(".nuevaDescripcionProductoCaja").each(function(){
+		if($(this).attr("idProducto") == producto.id) {
+			existe = true;
+			return false;
+		}
+	});
+	
+	if(existe) {
+		return; // Ya existe, no agregar duplicado
+	}
+	
+	// Obtener datos del producto desde el servidor
+	$.ajax({
+		url: "ajax/productos.ajax.php",
+		method: "POST",
+		data: {
+			idProducto: producto.id,
+			traerProductos: "ok"
+		},
+		dataType: "json",
+		success: function(respuesta){
+			if(respuesta && respuesta.length > 0) {
+				var prod = respuesta[0];
+				// Usar los datos guardados para restaurar exactamente como estaba
+				var cantidad = parseFloat(producto.cantidad) || 1;
+				var precioUnitario = parseFloat(producto.precio) || parseFloat(prod["precio_venta"]) || 0;
+				var precioTotal = parseFloat(producto.total) || (precioUnitario * cantidad);
+				var stock = parseFloat(prod["stock"]) || 0;
+				var iva = parseFloat(prod["tipo_iva"]) || 0;
+				
+				agregarProductoVisualmente(prod, cantidad, precioUnitario, precioTotal, stock, iva);
+			}
+		},
+		error: function(){
+			console.error("Error al obtener datos del producto:", producto.id);
+		}
+	});
+}
+
+/*=============================================
+AGREGAR PRODUCTO VISUALMENTE (sin AJAX)
+=============================================*/
+function agregarProductoVisualmente(respuesta, cantidad, precioUnitario, precioTotal, stock, iva){
+	// Esta función agrega el producto visualmente sin hacer AJAX
+	// Similar a lo que hace agregarProductoListaCompra pero solo para restaurar
+	
+	stock = stock || respuesta["stock"] || 0;
+	iva = iva || respuesta["tipo_iva"] || 0;
+	var precioVta = precioUnitario || respuesta["precio_venta"] || 0;
+	var cantidadNum = parseFloat(cantidad) || 1;
+	var precioXCantidad = precioTotal || (precioVta * cantidadNum);
+	
+	// Calcular IVA y neto (similar a agregarProductoListaCompra)
+	var precioNeto = precioVta / (1 + (iva / 100));
+	var ivaValor = (precioVta * cantidadNum) - (precioNeto * cantidadNum);
+	
+	// Construir HTML del producto (similar al que se genera en agregarProductoListaCompra)
+	var cargarProductoSegunVista = '<div class="row" style="padding-left:25px;padding-bottom:5px;">'+
+		'<div class="col-xs-2 nuevaCantidad">'+
+			'<input type="number" style="text-align:center;" class="form-control input-sm nuevaCantidadProductoCaja" stock="'+stock+'" nuevoStock="'+(stock-cantidadNum)+'" min="0" value="'+cantidadNum+'" required>'+
+		'</div>'+
+		'<div class="col-xs-6">'+
+			'<div class="input-group">'+
+				'<span class="input-group-btn"><button type="button" class="btn btn-danger btn-sm quitarProductoCaja" idProducto="'+respuesta['id']+'"><i class="fa fa-times"></i></button></span>'+
+				'<input type="text" class="form-control input-sm nuevaDescripcionProductoCaja" idProducto="'+respuesta['id']+'" name="agregarProductoCaja" value="'+respuesta['descripcion']+'" readonly>'+
+				'<input type="hidden" class="nuevaCategoria" value="'+(respuesta["id_categoria"] || "")+'">'+
+			'</div>'+
+		'</div>'+
+		'<div class="col-xs-2 nuevoPrecio">'+
+			'<div class="input-group">'+
+				'<span class="input-group-addon"><i class="ion ion-social-usd"></i></span>'+
+				'<input type="text" style="text-align:center;" class="form-control input-sm nuevaPrecioUnitario" value="'+precioVta+'" readonly>'+
+			'</div>'+
+		'</div>'+
+		'<div class="col-xs-2 ingresoPrecio" style="padding-left:0px">'+
+			'<div class="input-group">'+
+				'<span class="input-group-addon"><i class="ion ion-social-usd"></i></span>'+
+				'<input type="hidden" class="nuevoTipoIvaValorProducto" value="'+ivaValor+'" netoUnitario="'+(precioNeto*cantidadNum)+'" tipoIva="'+iva+'" cantxIva="'+cantidadNum+'" readonly required>'+
+				'<input type="hidden" class="nuevoValorTipoIva" value="'+iva+'" readonly required>'+
+				'<input type="text" class="form-control input-sm nuevoPrecioProductoCaja" precioReal="'+precioVta+'" precioCompra="'+(respuesta["precio_compra"] || 0)+'" style="text-align:center;" value="'+precioXCantidad+'" required readonly>'+
+			'</div>'+
+		'</div>'+
+	'</div>';
+	
+	$(".nuevoProductoCaja").prepend(cargarProductoSegunVista);
+	$(".nuevoPrecioProductoCaja").number(true, 2);
 }
 
 /*=============================================
@@ -1563,6 +1733,10 @@ $("#btnCobrarMedioPagoCaja").click(function(e){
       		console.log(respuesta);
       		var mesajes = "";
       		if(respuesta['estado'] == "ok") {
+      			// Limpiar localStorage cuando se completa la venta exitosamente
+      			localStorage.removeItem("ventaCajaProductos");
+      			console.log("Productos eliminados de localStorage - Venta completada");
+      			
       			swal({
 			      title: "Ventas",
 			      text: "Venta guardada correctamente",
@@ -2077,6 +2251,8 @@ $("#btnSalirTicketControl").click(function(){
 
 	var pathname = window.location.href;
     if (pathname.includes('crear-venta-caja')) { 
+    	// Limpiar localStorage antes de redirigir
+    	localStorage.removeItem("ventaCajaProductos");
     	window.location = 'crear-venta-caja';
     } else {
         window.location = 'crear-venta';
@@ -2486,6 +2662,8 @@ function atajoModalVentaCaja(e) {
     if ($('#modalImprimirTicketCaja').hasClass('in')===true && e.keyCode == 120) {//atajo para imprimir ticket F9
     
         $("#btnImprimirTicketControl").click();
+        // Limpiar localStorage antes de redirigir
+        localStorage.removeItem("ventaCajaProductos");
         window.location = 'crear-venta-caja';
     }
 
@@ -2496,6 +2674,8 @@ function atajoModalVentaCaja(e) {
     
     if ($('#modalImprimirTicketCaja').hasClass('in')===true && e.keyCode == 27) {//atajo para salir sin imprimir ticket
     
+        // Limpiar localStorage antes de redirigir
+        localStorage.removeItem("ventaCajaProductos");
         window.location = 'crear-venta-caja';
     }
     
