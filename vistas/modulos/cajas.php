@@ -799,6 +799,7 @@ MODAL CIERRE CAJA
         <div class="modal-body">
           <div class="box-body">
 
+            <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : ''; ?>">
             <input type="hidden" id="idUsuarioCierre" name="idUsuarioCierre" value="<?php echo $_SESSION["id"]; ?>">
             <input type="hidden" id="ultimoIdCajaCierre" name="ultimoIdCajaCierre" value="<?php echo $idParaCierre; ?>">
             <input type="hidden" id="totalIngresosCierre" name="totalIngresosCierre" value="<?php echo $totalIngresos; ?>">
