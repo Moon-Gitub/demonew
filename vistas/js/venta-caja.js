@@ -41,7 +41,7 @@ $(".nuevoProductoCaja").on("click", "button.quitarProductoCaja", function() {
 	var idProducto = $(this).attr("idProducto");
 	
 	// Actualizar localStorage después de quitar producto
-	listarProductosCaja();
+	listarProductosCaja(); // Esto ya llama a guardarProductosEnLocalStorage()
 
 	/*=============================================
 	ALMACENAR EN EL LOCALSTORAGE EL ID DEL PRODUCTO A QUITAR
@@ -2693,7 +2693,7 @@ function atajoModalVentaCaja(e) {
 // register the handler 
 document.addEventListener('keyup', atajoModalVentaCaja, false);
 
-$(".nuevoProductoCaja").on("keyup", "input.nuevaCantidadProductoCaja", function() {
+$(".nuevoProductoCaja").on("keyup change", "input.nuevaCantidadProductoCaja", function() {
 	
 	$(this).parent().parent().children(".ingresoPrecio").children().children(".nuevoTipoIvaValorProducto").attr('cantxiva', $(this).val());
 	 
