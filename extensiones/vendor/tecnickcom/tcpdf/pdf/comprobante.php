@@ -4,7 +4,16 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1); // Mostrar errores temporalmente para debugging
 ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/../../../../error_log_comprobante.txt');
+
+// Crear log específico para este archivo
+$logFile = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/error_log_comprobante.txt';
+ini_set('error_log', $logFile);
+
+// Registrar inicio de ejecución
+error_log("==========================================");
+error_log("INICIO comprobante.php - " . date('Y-m-d H:i:s'));
+error_log("Código recibido: " . (isset($_GET['codigo']) ? $_GET['codigo'] : 'NO DEFINIDO'));
+error_log("==========================================");
 
 // Iniciar sesión si no está iniciada
 if (session_status() === PHP_SESSION_NONE) {
@@ -20,18 +29,25 @@ if(!isset($_GET['codigo']) || empty($_GET['codigo'])) {
 
 // Obtener la ruta base del proyecto (raíz donde está .env)
 $rutaBase = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
+error_log("Ruta base calculada: " . $rutaBase);
+error_log("Ruta base existe: " . (is_dir($rutaBase) ? 'SÍ' : 'NO'));
 
 // Verificar que la ruta base existe
 if(!is_dir($rutaBase)) {
+    error_log("ERROR: Ruta base no existe: " . $rutaBase);
     die('Error: No se pudo determinar la ruta base del proyecto. Ruta intentada: ' . $rutaBase);
 }
 
 // Cargar vendor autoload primero (necesario para Dotenv)
 $autoloadPath = $rutaBase . '/extensiones/vendor/autoload.php';
+error_log("Buscando autoload en: " . $autoloadPath);
 if(!file_exists($autoloadPath)) {
+    error_log("ERROR: autoload.php no encontrado en: " . $autoloadPath);
     die('Error: No se encuentra autoload.php en: ' . $autoloadPath);
 }
+error_log("✅ autoload.php encontrado, cargando...");
 require_once $autoloadPath;
+error_log("✅ autoload.php cargado");
 
 // Cargar variables de entorno desde .env PRIMERO (si existe y si Dotenv está instalado)
 // IMPORTANTE: Se carga antes de los modelos para que .env esté disponible
@@ -93,19 +109,27 @@ $archivos = [
 
 foreach ($archivos as $archivo) {
     $rutaCompleta = __DIR__ . '/' . $archivo;
+    error_log("Verificando archivo: " . basename($archivo) . " en " . $rutaCompleta);
     if (!file_exists($rutaCompleta)) {
         error_log("❌ Archivo no encontrado: " . $rutaCompleta);
-        die('Error: Archivo requerido no encontrado: ' . basename($archivo));
+        die('Error: Archivo requerido no encontrado: ' . basename($archivo) . ' en ' . $rutaCompleta);
     }
+    error_log("✅ Cargando: " . basename($archivo));
     require_once $archivo;
+    error_log("✅ Cargado: " . basename($archivo));
 }
+error_log("✅ Todos los archivos requeridos cargados correctamente");
 
 class imprimirComprobante{
 
 public function traerImpresionComprobante(){
 
+error_log("Iniciando traerImpresionComprobante()");
+
 try {
+    error_log("Obteniendo datos de empresa...");
     $respEmpresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', 1);
+    error_log("Datos de empresa obtenidos: " . (is_array($respEmpresa) ? 'SÍ' : 'NO'));
     
     // Validar que se obtuvo la empresa
     if(!$respEmpresa || empty($respEmpresa)) {
