@@ -237,15 +237,36 @@ $condIva = array(
 $tipoIva = $condIva[$respEmpresa["condicion_iva"]];
 $tipoIvaCliente = $condIva[$respuestaCliente["condicion_iva"]];
 
-$fecha = substr($respuestaVenta["fecha"],0,-8);
-$fecha = date("d-m-Y",strtotime($fecha));
-$productos = json_decode($respuestaVenta["productos"], true);
-$total = number_format($respuestaVenta["total"],2, ',', '.');
-$observaciones = $respuestaVenta["observaciones"];
-
-$subTotal = number_format($respuestaVenta["neto"],2, ',', '.');
-$neto_grav = number_format($respuestaVenta["neto_gravado"],2, ',', '.');
-$jsnPago = json_decode($respuestaVenta["metodo_pago"], true);
+    // Validar y procesar datos del presupuesto
+    if(!isset($respuestaVenta["fecha"]) || empty($respuestaVenta["fecha"])) {
+        error_log("ERROR: El presupuesto no tiene fecha");
+        http_response_code(500);
+        die('Error: El presupuesto no tiene fecha');
+    }
+    
+    $fecha = substr($respuestaVenta["fecha"],0,-8);
+    $fecha = date("d-m-Y",strtotime($fecha));
+    
+    if(!isset($respuestaVenta["productos"]) || empty($respuestaVenta["productos"])) {
+        error_log("ERROR: El presupuesto no tiene productos");
+        http_response_code(500);
+        die('Error: El presupuesto no tiene productos');
+    }
+    
+    $productos = json_decode($respuestaVenta["productos"], true);
+    if(!is_array($productos) || empty($productos)) {
+        error_log("ERROR: Los productos del presupuesto no son válidos");
+        http_response_code(500);
+        die('Error: Los productos del presupuesto no son válidos');
+    }
+    error_log("✅ Productos obtenidos: " . count($productos) . " items");
+    
+    $total = isset($respuestaVenta["total"]) ? number_format($respuestaVenta["total"],2, ',', '.') : '0,00';
+    $observaciones = isset($respuestaVenta["observaciones"]) ? $respuestaVenta["observaciones"] : '';
+    
+    $subTotal = isset($respuestaVenta["neto"]) ? number_format($respuestaVenta["neto"],2, ',', '.') : '0,00';
+    $neto_grav = isset($respuestaVenta["neto_gravado"]) ? number_format($respuestaVenta["neto_gravado"],2, ',', '.') : '0,00';
+    $jsnPago = isset($respuestaVenta["metodo_pago"]) ? json_decode($respuestaVenta["metodo_pago"], true) : array();
 
 //$descuentos = $jsnPago[0]["descuento"] * $respuestaVenta["neto"] / 100;
 // $descuentos = $respuestaVenta["descuento"] * $respuestaVenta["neto"] / 100;
@@ -565,17 +586,42 @@ $bloqueDatosFact .= '</td>
 
 $pdf->writeHTML($bloqueDatosFact, false, false, false, false, '');
 
-//SALIDA DEL ARCHIVO
+    //SALIDA DEL ARCHIVO
+    error_log("Generando PDF del presupuesto...");
+    //$pdf->Output('factura.pdf', 'D');
+    $pdf->Output('Presupuesto.pdf');
+    error_log("✅ PDF generado exitosamente");
 
-//$pdf->Output('factura.pdf', 'D');
-$pdf->Output('Comprobante.pdf');
-
+} catch (Exception $e) {
+    error_log("❌ EXCEPCIÓN en presupuesto.php: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    http_response_code(500);
+    die('Error al generar el presupuesto: ' . $e->getMessage());
+} catch (Error $e) {
+    error_log("❌ ERROR FATAL en presupuesto.php: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    http_response_code(500);
+    die('Error fatal al generar el presupuesto: ' . $e->getMessage());
 }
 
 }
 
-$comprobante = new imprimirComprobante();
-$comprobante -> codigo = $_GET["idPresupuesto"];
-$comprobante -> traerImpresionComprobante();
+try {
+    error_log("Inicializando clase imprimirComprobante...");
+    $comprobante = new imprimirComprobante();
+    $comprobante -> codigo = $_GET["idPresupuesto"];
+    $comprobante -> traerImpresionComprobante();
+    error_log("✅ Proceso completado exitosamente");
+} catch (Exception $e) {
+    error_log("❌ EXCEPCIÓN al inicializar: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    http_response_code(500);
+    die('Error al generar el presupuesto: ' . $e->getMessage());
+} catch (Error $e) {
+    error_log("❌ ERROR FATAL al inicializar: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    http_response_code(500);
+    die('Error fatal al generar el presupuesto: ' . $e->getMessage());
+}
 
 ?>
