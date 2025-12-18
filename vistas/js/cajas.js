@@ -172,8 +172,25 @@ $("#aCajaVerCajas").click(function(){
 
 $(".tablaCierresCaja").on("click", "button.btnCierreCaja", function(){ 
   var valor = $(this).attr('idCierreCaja');
+  
+  if(!valor) {
+    swal({
+      type: "error",
+      title: "Error",
+      text: "No se pudo obtener el ID del cierre"
+    });
+    return;
+  }
+  
   var datos = new FormData();
-  datos.append("esteCierre", valor);  
+  datos.append("esteCierre", valor);
+  
+  // Agregar token CSRF si existe
+  var token = $('meta[name="csrf-token"]').attr('content');
+  if(token) {
+    datos.append("csrf_token", token);
+  }
+  
   $.ajax({
     url:"ajax/cajas.ajax.php",
     method: "POST",
@@ -182,6 +199,7 @@ $(".tablaCierresCaja").on("click", "button.btnCierreCaja", function(){
     contentType: false,
     processData: false,
     dataType:"json",
+    headers: token ? { 'X-CSRF-TOKEN': token } : {},
     success:function(respuesta){
       console.log("Respuesta completa:", respuesta);
       
