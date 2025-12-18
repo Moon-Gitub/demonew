@@ -72,7 +72,7 @@ class ControladorCajas{
 
 		   	if($respuesta == "ok"){
 
-				// Si viene desde la página de cajas, usar toast y recargar tabla
+				// Si viene desde la página de cajas, usar toast y recargar página
 				if (isset($_POST["ingresoCajaDesde"]) && $_POST["ingresoCajaDesde"] == "cajas") {
 					
 					echo'<script>
@@ -81,24 +81,18 @@ class ControladorCajas{
 							title: "Caja",
 							text: "' . $msjCaja . ' cargado correctamente",
 							toast: true,
-							timer: 2000,
+							timer: 1500,
 							position: "top",
 							showConfirmButton: false,
 							allowOutsideClick: false
 						});
 						
-						// Cerrar el modal
+						// Cerrar el modal y recargar la página después del toast
 						$("#modalAgregarMovimientoCaja").modal("hide");
 						
-						// Recargar la tabla sin recargar la página
 						setTimeout(function(){
-							if(typeof cajaCentralTabla !== "undefined" && cajaCentralTabla) {
-								cajaCentralTabla.ajax.reload(null, false);
-							} else {
-								// Si no existe la tabla, recargar la página
-								window.location.reload();
-							}
-						}, 500);
+							window.location.reload();
+						}, 1500);
 					</script>';
 
 				} else {
