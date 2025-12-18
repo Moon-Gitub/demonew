@@ -1,5 +1,67 @@
 <?php
 
+// Habilitar reporte de errores para debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+// Iniciar sesión si no está iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Validar que se haya proporcionado el idRegistro
+if(!isset($_GET['idRegistro']) || empty($_GET['idRegistro'])) {
+    error_log("Error recibo.php: No se proporcionó el idRegistro");
+    http_response_code(400);
+    die('Error: No se proporcionó el ID del registro');
+}
+
+// Cargar autoload primero (usar ruta relativa)
+$autoloadPath = '../../../autoload.php';
+if(!file_exists(__DIR__ . '/' . $autoloadPath)) {
+    error_log("ERROR: autoload.php no encontrado en: " . __DIR__ . '/' . $autoloadPath);
+    die('Error: No se encuentra autoload.php');
+}
+require_once $autoloadPath;
+
+// Obtener la ruta base del proyecto (raíz donde está .env)
+$rutaBase = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
+
+// Cargar variables de entorno desde .env PRIMERO (si existe y si Dotenv está instalado)
+$envPath = $rutaBase . '/.env';
+if (file_exists($envPath)) {
+    if (class_exists('Dotenv\Dotenv')) {
+        try {
+            $dotenv = Dotenv\Dotenv::createImmutable($rutaBase);
+            $dotenv->load();
+        } catch (Exception $e) {
+            error_log("Error al cargar .env en recibo.php: " . $e->getMessage());
+        }
+    } else {
+        // Leer .env manualmente si Dotenv no está disponible
+        $envLines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($envLines as $line) {
+            if (strpos(trim($line), '#') === 0) continue;
+            if (strpos($line, '=') !== false) {
+                list($key, $value) = explode('=', $line, 2);
+                $key = trim($key);
+                $value = trim($value);
+                if (!empty($key)) {
+                    $_ENV[$key] = $value;
+                    $_SERVER[$key] = $value;
+                    putenv("$key=$value");
+                }
+            }
+        }
+    }
+}
+
+// Cargar helpers (incluye función env() para leer variables)
+if (file_exists($rutaBase . '/helpers.php')) {
+    require_once $rutaBase . '/helpers.php';
+}
+
 require_once "../../../../../controladores/clientes.controlador.php";
 require_once "../../../../../modelos/clientes.modelo.php";
 require_once "../../../../../controladores/clientes_cta_cte.controlador.php";
@@ -9,34 +71,66 @@ require_once "../../../../../modelos/usuarios.modelo.php";
 require_once "../../../../../controladores/empresa.controlador.php";
 require_once "../../../../../modelos/empresa.modelo.php";
 
-require_once '../../../autoload.php';
-
 class imprimirFactura{
 
 public $id_registro;
 
 public function traerImpresionFactura(){
 
-//TRAEMOS LA INFORMACION REGISTRO
-$item = "id";
-$valor = $this->id_registro;
-$respuestaRegistro = ControladorClientesCtaCte::ctrMostrarCtaCteClienteId($item, $valor);
-
-$fecha = date('d//m/Y', strtotime($respuestaRegistro["fecha"]));
-$descripcion = $respuestaRegistro["descripcion"];
-$total = number_format($respuestaRegistro["importe"],2);
-$metPago = (isset($respuestaRegistro["metodo_pago"])) ? "Medio de pago: " . $respuestaRegistro["metodo_pago"] : "";
-
-//TRAEMOS LA INFORMACIÓN DEL CLIENTE
-$itemCliente = "id";
-$valorCliente = $respuestaRegistro["id_cliente"];
-$respuestaCliente = ControladorClientes::ctrMostrarClientes($itemCliente, $valorCliente);
-
-//TRAEMOS LA INFO DE EMPRESA
-$respEmpresa = ControladorEmpresa::ctrMostrarempresa('id', 1);
-
-//REQUERIMOS LA CLASE TCPDF
-$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+try {
+    //TRAEMOS LA INFORMACION REGISTRO
+    $item = "id";
+    $valor = $this->id_registro;
+    
+    if(empty($valor)) {
+        throw new Exception("ID de registro no válido");
+    }
+    
+    $respuestaRegistro = ControladorClientesCtaCte::ctrMostrarCtaCteClienteId($item, $valor);
+    
+    // Validar que se obtuvo el registro
+    if(!$respuestaRegistro || empty($respuestaRegistro)) {
+        throw new Exception("No se encontró el registro con ID: " . $valor);
+    }
+    
+    $fecha = isset($respuestaRegistro["fecha"]) ? date('d/m/Y', strtotime($respuestaRegistro["fecha"])) : date('d/m/Y');
+    $descripcion = isset($respuestaRegistro["descripcion"]) ? $respuestaRegistro["descripcion"] : "";
+    $total = isset($respuestaRegistro["importe"]) ? number_format($respuestaRegistro["importe"], 2, ',', '.') : "0,00";
+    $metPago = (isset($respuestaRegistro["metodo_pago"]) && !empty($respuestaRegistro["metodo_pago"])) ? "Medio de pago: " . $respuestaRegistro["metodo_pago"] : "";
+    
+    //TRAEMOS LA INFORMACIÓN DEL CLIENTE
+    if(!isset($respuestaRegistro["id_cliente"]) || empty($respuestaRegistro["id_cliente"])) {
+        throw new Exception("El registro no tiene cliente asociado");
+    }
+    
+    $itemCliente = "id";
+    $valorCliente = $respuestaRegistro["id_cliente"];
+    $respuestaCliente = ControladorClientes::ctrMostrarClientes($itemCliente, $valorCliente);
+    
+    // Validar que se obtuvo el cliente
+    if(!$respuestaCliente || empty($respuestaCliente)) {
+        throw new Exception("No se encontró el cliente con ID: " . $valorCliente);
+    }
+    
+    //TRAEMOS LA INFO DE EMPRESA
+    $respEmpresa = ControladorEmpresa::ctrMostrarempresa('id', 1);
+    
+    // Validar que se obtuvo la empresa
+    if(!$respEmpresa || empty($respEmpresa)) {
+        throw new Exception("No se pudo obtener la información de la empresa");
+    }
+    
+    //REQUERIMOS LA CLASE TCPDF
+    if(!class_exists('TCPDF')) {
+        throw new Exception("La clase TCPDF no está disponible");
+    }
+    
+    $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+} catch(Exception $e) {
+    error_log("Error recibo.php: " . $e->getMessage());
+    http_response_code(500);
+    die('Error al generar el recibo: ' . $e->getMessage());
+}
 // Configuración del documento
 $pdf->SetCreator('Posmoon');
 $pdf->SetTitle($respEmpresa["razon_social"]);
