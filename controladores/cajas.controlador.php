@@ -9,11 +9,17 @@ class ControladorCajas{
 	    
 		if(isset($_POST["ingresoCajaTipo"])){ //0 egreso - 1 ingreso - 2 movimiento interno
 			
-			// Validar CSRF token
+			// Iniciar sesión si no está iniciada
 			if (session_status() === PHP_SESSION_NONE) {
 				session_start();
 			}
 			
+			// Generar token CSRF si no existe
+			if (!isset($_SESSION['csrf_token'])) {
+				$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+			}
+			
+			// Validar CSRF token
 			$token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : null;
 			if (!$token || !isset($_SESSION['csrf_token']) || $token !== $_SESSION['csrf_token']) {
 				echo'<script>

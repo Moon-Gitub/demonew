@@ -4,6 +4,11 @@
 
   setcookie(session_name(), session_id(), 0, "/");
 
+  // Generar token CSRF si no existe (para sesiones existentes que no tienen token)
+  if (!isset($_SESSION['csrf_token']) && isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"] == "ok") {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+  }
+
   //$arrayEmpresa y $objParametros LO DEFINIMOS UNA SOLA VEZ Y ES USADO EN TODAS LAS VISTAS DEL SISTEMA
   $idEmpresaPorSesion = isset($_SESSION["empresa"]) ? $_SESSION["empresa"] : 1;
   $arrayEmpresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', $idEmpresaPorSesion);
