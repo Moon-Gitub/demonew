@@ -40,6 +40,16 @@ class AjaxCajas {
   public $caracteres;
 
   /*=============================================
+  CREAR MOVIMIENTO DE CAJA
+  =============================================*/
+  public function ajaxCrearMovimientoCaja($datos){
+    
+    $respuesta = ControladorCajas::ctrCrearCajaAjax($datos);
+    
+    echo json_encode($respuesta);
+  }
+
+  /*=============================================
   LISTAR AUTOCOMPLETAR TEXTO
   =============================================*/
   public function ajaxListadoDescripcion(){
@@ -116,4 +126,12 @@ GUARDAR CIERRE DE CAJA CAJERO
 if(isset($_POST["cierre_caja_rol_cajero"])) {
   $data = new AjaxCajas();
   $data -> ajaxCierreCajaPorCajero($_POST);
+}
+
+/*=============================================
+CREAR MOVIMIENTO DE CAJA (AJAX)
+=============================================*/ 
+if(isset($_POST["crearMovimientoCaja"])) {
+  $data = new AjaxCajas();
+  $data -> ajaxCrearMovimientoCaja($_POST);
 }

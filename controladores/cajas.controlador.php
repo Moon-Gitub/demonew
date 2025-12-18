@@ -117,6 +117,87 @@ class ControladorCajas{
 	}
 
 	/*=============================================
+	CREAR CAJA (AJAX - devuelve JSON)
+	=============================================*/
+	static public function ctrCrearCajaAjax($datos){
+	    
+		if(isset($datos["ingresoCajaTipo"])){ //0 egreso - 1 ingreso - 2 movimiento interno
+			
+			// Iniciar sesión si no está iniciada
+			if (session_status() === PHP_SESSION_NONE) {
+				session_start();
+			}
+			
+			// Generar token CSRF si no existe
+			if (!isset($_SESSION['csrf_token'])) {
+				$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+			}
+			
+			// Validar CSRF token
+			$token = isset($datos['csrf_token']) ? $datos['csrf_token'] : null;
+			if (!$token || !isset($_SESSION['csrf_token']) || $token !== $_SESSION['csrf_token']) {
+				return array(
+					"status" => "error",
+					"mensaje" => "Token CSRF inválido. Por favor, recargá la página."
+				);
+			}
+
+	   		if(isset($datos["ingresoCajaidVenta"])) {
+	   			$respuestaVentaEstado = ModeloVentas::mdlActualizarVenta("ventas", "estado", 1, $datos["ingresoCajaidVenta"]);
+	   		}
+
+		   	date_default_timezone_set('America/Argentina/Mendoza');
+
+			$fecha = date('Y-m-d');
+			$hora = date('H:i:s');
+			$fec_hor = $fecha.' '.$hora;
+		   	$tabla = "cajas";
+
+			$dineroMedio = (isset($datos["ingresoMedioPago"])) ? $datos["ingresoMedioPago"] : 'Efectivo';
+
+			$codVenta = (isset($datos["ingresoCajaCodVenta"])) ? $datos["ingresoCajaCodVenta"] : "";
+
+			$observa = (isset($datos["ingresoObservacionesCajaCentral"])) ? $datos["ingresoObservacionesCajaCentral"] : "";
+
+	   		$msjCaja = (($datos["ingresoCajaTipo"] == 1) ? "Ingreso" : "Egreso");
+
+	   		$idVenta = (isset($datos["ingresoCajaidVenta"])) ? $datos["ingresoCajaidVenta"] : null;
+			
+	   		$datosArray = array(
+	   				"id_usuario" => $datos["idUsuarioMovimiento"],
+	   				"punto_venta" => $datos["puntoVentaMovimiento"],
+	   				"tipo" => $datos["ingresoCajaTipo"],
+	   				"descripcion" => $datos["ingresoDetalleCajaCentral"],
+	   				"monto" => $datos["ingresoMontoCajaCentral"],
+	   				"medio_pago" => $dineroMedio,
+	   				"codigo_venta" => $codVenta,
+	   				"fecha" => $fec_hor,
+	   				"id_venta" => $idVenta,
+	   				"id_cliente_proveedor" => null, 
+	   				"observaciones" => $observa);
+
+	   		$respuesta = ModeloCajas::mdlIngresarCaja($tabla, $datosArray);
+
+		   	if($respuesta == "ok"){
+				return array(
+					"status" => "ok",
+					"mensaje" => $msjCaja . " cargado correctamente"
+				);
+			} else {
+				return array(
+					"status" => "error",
+					"mensaje" => "Error al guardar el movimiento: " . $respuesta
+				);
+			}
+		}
+		
+		return array(
+			"status" => "error",
+			"mensaje" => "Datos inválidos"
+		);
+	}
+
+	/*=============================================
 	RANGO FECHAS
 	=============================================*/	
 	static public function ctrRangoFechasCajas($fechaInicial, $fechaFinal, $numCaja){

@@ -156,6 +156,132 @@ $( "#ingresoDetalleCajaCentral" ).autocomplete({
   }
 });
 
+/*=============================================
+CREAR MOVIMIENTO DE CAJA (AJAX)
+=============================================*/
+var enviandoMovimientoCaja = false;
+
+$("#formAgregarMovimientoCaja").on("submit", function(e){
+  e.preventDefault();
+  
+  // Prevenir múltiples envíos
+  if(enviandoMovimientoCaja) {
+    return false;
+  }
+  
+  // Validar campos requeridos
+  if(!$("#ingresoCajaTipo").val() || $("#ingresoCajaTipo").val() == "Seleccionar Tipo") {
+    swal({
+      type: "warning",
+      title: "Atención",
+      text: "Por favor seleccioná el tipo de movimiento",
+      showConfirmButton: true,
+      confirmButtonText: "Cerrar"
+    });
+    return false;
+  }
+  
+  if(!$("#ingresoMontoCajaCentral").val() || parseFloat($("#ingresoMontoCajaCentral").val()) <= 0) {
+    swal({
+      type: "warning",
+      title: "Atención",
+      text: "Por favor ingresá un monto válido",
+      showConfirmButton: true,
+      confirmButtonText: "Cerrar"
+    });
+    return false;
+  }
+  
+  // Deshabilitar botón y marcar como enviando
+  enviandoMovimientoCaja = true;
+  $("#btnGuardarMovimientoCaja").prop("disabled", true).html('<i class="fa fa-spinner fa-spin"></i> Guardando...');
+  
+  // Obtener token CSRF
+  var token = $('meta[name="csrf-token"]').attr('content') || $("#csrf_token_movimiento").val();
+  
+  // Preparar datos
+  var datos = new FormData(this);
+  datos.append("csrf_token", token);
+  
+  $.ajax({
+    url: "ajax/cajas.ajax.php",
+    method: "POST",
+    data: datos,
+    cache: false,
+    contentType: false,
+    processData: false,
+    dataType: "json",
+    headers: {
+      'X-CSRF-TOKEN': token
+    },
+    success: function(respuesta){
+      
+      enviandoMovimientoCaja = false;
+      $("#btnGuardarMovimientoCaja").prop("disabled", false).html('Guardar');
+      
+      if(respuesta && respuesta.status == "ok") {
+        
+        // Mostrar toast de éxito
+        swal({
+          type: "success",
+          title: "Caja",
+          text: respuesta.mensaje,
+          toast: true,
+          timer: 1500,
+          position: "top",
+          showConfirmButton: false,
+          allowOutsideClick: false
+        });
+        
+        // Cerrar modal y limpiar formulario
+        $("#modalAgregarMovimientoCaja").modal("hide");
+        $("#formAgregarMovimientoCaja")[0].reset();
+        
+        // Recargar página después del toast
+        setTimeout(function(){
+          window.location.reload();
+        }, 1500);
+        
+      } else {
+        
+        // Mostrar error
+        swal({
+          type: "error",
+          title: "Error",
+          text: respuesta && respuesta.mensaje ? respuesta.mensaje : "Error al guardar el movimiento",
+          showConfirmButton: true,
+          confirmButtonText: "Cerrar"
+        });
+      }
+    },
+    error: function(xhr, status, error){
+      
+      enviandoMovimientoCaja = false;
+      $("#btnGuardarMovimientoCaja").prop("disabled", false).html('Guardar');
+      
+      var mensajeError = "Error al guardar el movimiento";
+      
+      if(xhr.status == 403) {
+        mensajeError = "Token CSRF inválido. Por favor, recargá la página.";
+      } else if(xhr.status == 500) {
+        mensajeError = "Error del servidor. Por favor, intentá nuevamente.";
+      }
+      
+      swal({
+        type: "error",
+        title: "Error",
+        text: mensajeError,
+        showConfirmButton: true,
+        confirmButtonText: "Cerrar"
+      });
+      
+      console.error("Error AJAX:", status, error, xhr.responseText);
+    }
+  });
+  
+  return false;
+});
+
 //BOTON PARA VISUALIZAR CAJAS 
 $("#aCajaVerCajas").click(function(){
   var caja = $("#cajasListadoPuntosVta").val();

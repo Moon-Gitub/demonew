@@ -666,7 +666,7 @@ MODAL INGRESAR MOVIMIENTO
 <div id="modalAgregarMovimientoCaja" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form role="form" method="post">
+      <form role="form" method="post" id="formAgregarMovimientoCaja">
         
         <!--=====================================
         CABEZA DEL MODAL
@@ -681,9 +681,10 @@ MODAL INGRESAR MOVIMIENTO
         ======================================-->
         <div class="modal-body">
           <div class="box-body">
-            <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : ''; ?>">
+            <input type="hidden" name="csrf_token" id="csrf_token_movimiento" value="<?php echo isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : ''; ?>">
             <input type="hidden" id="idUsuarioMovimiento" name="idUsuarioMovimiento" value="<?php echo $_SESSION["id"]; ?>">
             <input type="hidden" id="ingresoCajaDesde" name="ingresoCajaDesde" value="cajas">
+            <input type="hidden" name="crearMovimientoCaja" value="1">
             <div class="form-group">
                 <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-terminal"></i></span> 
@@ -768,14 +769,10 @@ MODAL INGRESAR MOVIMIENTO
         <!--PIE DEL MODAL-->
         <div class="modal-footer">
           <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
-          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="submit" class="btn btn-primary" id="btnGuardarMovimientoCaja">Guardar</button>
         </div>
 
       </form>
-
-      <?php
-        $objCaja -> ctrCrearCaja();
-      ?>
 
     </div>
   </div>
