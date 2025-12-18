@@ -314,11 +314,38 @@ $(".tablaCierresCaja").on("click", "button.btnCierreCaja", function(){
       }
     },
     error: function(xhr, status, error) {
-      console.log( xhr.responseText);
-      console.log( xhr);
-      console.log( status);
-      console.log( error);
-    }, timeout: 5000
+      console.error("Error al cargar cierre de caja:", {
+        status: xhr.status,
+        statusText: xhr.statusText,
+        error: error,
+        responseText: xhr.responseText
+      });
+      
+      var mensajeError = "Error al cargar los datos del cierre";
+      if(xhr.status === 403) {
+        mensajeError = "Error de seguridad (CSRF). Por favor, recargá la página.";
+      } else if(xhr.status === 404) {
+        mensajeError = "No se encontró el cierre solicitado";
+      } else if(xhr.responseText) {
+        try {
+          var errorResponse = JSON.parse(xhr.responseText);
+          if(errorResponse.mensaje || errorResponse.error) {
+            mensajeError = errorResponse.mensaje || errorResponse.error;
+          }
+        } catch(e) {
+          // Si no es JSON, usar el mensaje por defecto
+        }
+      }
+      
+      swal({
+        type: "error",
+        title: "Error",
+        text: mensajeError,
+        showConfirmButton: true,
+        confirmButtonText: "Cerrar"
+      });
+    }, 
+    timeout: 10000
   });
 });
 
