@@ -17,6 +17,28 @@ if(!isset($_GET['codigo']) || empty($_GET['codigo'])) {
     die('Error: No se proporcionó el código del comprobante');
 }
 
+// Obtener la ruta base del proyecto (raíz donde está .env)
+$rutaBase = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
+
+// Cargar vendor autoload primero (necesario para Dotenv)
+require_once $rutaBase . '/extensiones/vendor/autoload.php';
+
+// Cargar variables de entorno desde .env PRIMERO (si existe y si Dotenv está instalado)
+// IMPORTANTE: Se carga antes de los modelos para que .env esté disponible
+if (file_exists($rutaBase . '/.env') && class_exists('Dotenv\Dotenv')) {
+    try {
+        $dotenv = Dotenv\Dotenv::createImmutable($rutaBase);
+        $dotenv->load();
+    } catch (Exception $e) {
+        error_log("Error al cargar .env en comprobante.php: " . $e->getMessage());
+    }
+}
+
+// Cargar helpers (incluye función env() para leer variables)
+if (file_exists($rutaBase . '/helpers.php')) {
+    require_once $rutaBase . '/helpers.php';
+}
+
 // Usar rutas relativas como en recibo.php que funciona
 require_once "../../../../../controladores/empresa.controlador.php";
 require_once "../../../../../modelos/empresa.modelo.php";
@@ -135,35 +157,74 @@ $condIva = array(
 ''=>"(no definido)");
 
 //TRAEMOS LA INFORMACIÓN DE LA VENTA
-$codigoVenta = intval($_GET['codigo']);
-$respuestaVenta = ControladorVentas::ctrMostrarVentas('codigo', $codigoVenta);
-
-// Validar que se obtuvo la venta
-if(!$respuestaVenta || empty($respuestaVenta) || !isset($respuestaVenta["id"])) {
-    die('Error: No se encontró la venta con código ' . $codigoVenta);
-}
-
-$facturada = ControladorVentas::ctrVentaFacturada($respuestaVenta["id"]);
-$respuestaCliente = ControladorClientes::ctrMostrarClientes('id', $respuestaVenta["id_cliente"]);
-
-// Validar que se obtuvo el cliente
-if(!$respuestaCliente || empty($respuestaCliente)) {
-    die('Error: No se encontró el cliente de la venta');
+try {
+    $codigoVenta = intval($_GET['codigo']);
+    
+    if($codigoVenta <= 0) {
+        error_log("Error comprobante.php: Código de venta inválido: " . $_GET['codigo']);
+        http_response_code(400);
+        die('Error: Código de venta inválido');
+    }
+    
+    $respuestaVenta = ControladorVentas::ctrMostrarVentas('codigo', $codigoVenta);
+    
+    // Validar que se obtuvo la venta
+    if(!$respuestaVenta || empty($respuestaVenta) || !isset($respuestaVenta["id"])) {
+        error_log("Error comprobante.php: No se encontró la venta con código " . $codigoVenta);
+        http_response_code(404);
+        die('Error: No se encontró la venta con código ' . $codigoVenta);
+    }
+    
+    $facturada = ControladorVentas::ctrVentaFacturada($respuestaVenta["id"]);
+    
+    if(!isset($respuestaVenta["id_cliente"]) || empty($respuestaVenta["id_cliente"])) {
+        error_log("Error comprobante.php: La venta no tiene cliente asociado");
+        http_response_code(500);
+        die('Error: La venta no tiene cliente asociado');
+    }
+    
+    $respuestaCliente = ControladorClientes::ctrMostrarClientes('id', $respuestaVenta["id_cliente"]);
+    
+    // Validar que se obtuvo el cliente
+    if(!$respuestaCliente || empty($respuestaCliente)) {
+        error_log("Error comprobante.php: No se encontró el cliente con ID " . $respuestaVenta["id_cliente"]);
+        http_response_code(404);
+        die('Error: No se encontró el cliente de la venta');
+    }
+} catch(Exception $e) {
+    error_log("Error comprobante.php al obtener datos de venta: " . $e->getMessage());
+    http_response_code(500);
+    die('Error al obtener los datos de la venta: ' . $e->getMessage());
 }
 
 $tipoDocumento = isset($arrTipoDocumento[$respuestaCliente["tipo_documento"]]) ? $arrTipoDocumento[$respuestaCliente["tipo_documento"]] : "(no definido)";
 $tipoIva = isset($condIva[$respEmpresa["condicion_iva"]]) ? $condIva[$respEmpresa["condicion_iva"]] : "(no definido)";
 $tipoIvaCliente = isset($condIva[$respuestaCliente["condicion_iva"]]) ? $condIva[$respuestaCliente["condicion_iva"]] : "(no definido)";
-$fecha = isset($respuestaVenta["fecha"]) ? substr($respuestaVenta["fecha"],0,-8) : date("Y-m-d");
-$fecha = date("d-m-Y",strtotime($fecha));
-$productos = json_decode($respuestaVenta["productos"], true);
-
-// Validar que se obtuvieron los productos
-if(!is_array($productos) || empty($productos)) {
-    die('Error: No se encontraron productos en la venta');
+try {
+    $fecha = isset($respuestaVenta["fecha"]) ? substr($respuestaVenta["fecha"],0,-8) : date("Y-m-d");
+    $fecha = date("d-m-Y",strtotime($fecha));
+    
+    if(!isset($respuestaVenta["productos"]) || empty($respuestaVenta["productos"])) {
+        error_log("Error comprobante.php: La venta no tiene productos");
+        http_response_code(500);
+        die('Error: La venta no tiene productos');
+    }
+    
+    $productos = json_decode($respuestaVenta["productos"], true);
+    
+    // Validar que se obtuvieron los productos
+    if(!is_array($productos) || empty($productos)) {
+        error_log("Error comprobante.php: No se pudieron decodificar los productos de la venta");
+        http_response_code(500);
+        die('Error: No se encontraron productos en la venta');
+    }
+    
+    $tamanioProd = count($productos);
+} catch(Exception $e) {
+    error_log("Error comprobante.php al procesar productos: " . $e->getMessage());
+    http_response_code(500);
+    die('Error al procesar los productos: ' . $e->getMessage());
 }
-
-$tamanioProd = count($productos);
 $total = number_format($respuestaVenta["total"],2, ',', '.');
 $observaciones = $respuestaVenta["observaciones"];
 $subTotal = number_format($respuestaVenta["neto"],2, ',', '.');
