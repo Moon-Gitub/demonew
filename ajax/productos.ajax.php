@@ -112,18 +112,6 @@ class AjaxProductos{
 
   }
   
-  /*=============================================
-  Borrar Masivo
-  =============================================*/
-  public function ajaxBorrarProductos(){
-
-    $valor = $this->idProductoBorrar;
-
-    $respuesta = ControladorProductos::ctrBorrarProductosMasivo($valor);
-
-    echo json_encode($respuesta);
-
-  }
 
   /*=============================================
   ULTIMO CÓDIGO PRODUCTO
@@ -366,14 +354,6 @@ if(isset($_POST["idPro"])){
 
 }
 
-/*=============================================
-BORRAR PRODUCTO MASIVO
-=============================================*/ 
-if(isset($_POST["idProductoBorrar"])){
-  $borrarProductos = new AjaxProductos();
-  $borrarProductos -> idProductoBorrar = $_POST["idProductoBorrar"];
-  $borrarProductos -> ajaxBorrarProductos();
-}
 /*=============================================
 MOSTRAR PRODUCTO POR CODIGO O CODIGOPROVEEDOR (usado en crear-venta para traer con lector de codigo de barra)
 =============================================*/ 

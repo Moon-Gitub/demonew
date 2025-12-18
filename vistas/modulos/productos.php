@@ -355,24 +355,6 @@
               </a>
             </div>
          </div>
-		  <div class="col-md-3">
-		      <button class="btn btn-danger" onclick="borradoMultiple()"  id="boronBorrado" style="display:none;"  id="verSeleccion">
-              <i class="fa fa-file-pdf-o"> Borrado Multiple</i>
-        </button>
-          </div>
-          <div class="col-md-3">
-		  <div class="panel panel-default" id="precioPlace" style="display:none;">
-		  <div class="panel-heading">
-            <center><h4 id="contador"></h4>
-			<button class="btn btn-primary" onclick="verProductosBorrar()"  id="detallePlace" style="display:none;" data-toggle="modal" data-target="#modalVerSeleccion">
-              <i class="fa fa-file-pdf-o"> Ver Seleccion</i>
-            </button>
-			
-			</center>
-          </div>
-		  </div>
-		 
-		  </div>
       </div>
       <div class="box-body">
         <div class="productos-columnas-selector">
@@ -398,7 +380,6 @@
           </div>
         </div>
         
-        <input type="hidden" id="arrayProductosBorrarMultiple" name="arrayProductosBorrarMultiple"/>
         
         <div class="productos-table-container">
        <table class="table table-bordered table-striped dt-responsive" id="tablaProductos" width="100%">
@@ -935,61 +916,6 @@ MODAL EDITAR PRODUCTO
 <!--=====================================
 MODAL AGREGAR MARCA
 ======================================-->
-<div id="modalVerSeleccion" class="modal fade" role="dialog">
-
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form role="form" method="post">
-        <!--=====================================
-        CABEZA DEL MODAL
-        ======================================-->
-        <div class="modal-header" style="background:#3c8dbc; color:white">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Productos Seleccionados</h4>
-        </div>
-        <!--=====================================
-        CUERPO DEL MODAL
-        ======================================-->
-        <div class="modal-body">
-          <div class="box-body">
-			<table class="table table-bordered table-striped dt-responsive" id="tablaProductosBorrarMultiple" width="100%">
-          <thead>
-		<tr>
-           <th><center>Código</center></th>
-		   <th><center>Descripción</center></th>
-        </tr> 
-
-        </thead>      
-
-       </table>
-  
-          </div>
-
-        </div>
-
-        <!--=====================================
-        PIE DEL MODAL
-        ======================================-->
-
-        <div class="modal-footer">
-
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
-
-
-        </div>
-
-      </form>
-
-    </div>
-
-  </div>
-
-</div>
- <style>
-.uniqueClassName {
-    text-align: center;
-}
-</style>
 <!--=====================================
 MODAL EDITAR PRODUCTO - AJUSTE STOCK
 ======================================-->
