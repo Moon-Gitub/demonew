@@ -714,8 +714,17 @@ function restaurarProductoIndividual(producto, callback){
 		dataType: "json",
 		success: function(respuesta){
 			console.log("Respuesta AJAX para producto", producto.id, ":", respuesta);
-			if(respuesta && Array.isArray(respuesta) && respuesta.length > 0) {
-				var prod = respuesta[0];
+			
+			// La respuesta puede ser un objeto único o un array
+			var prod = null;
+			if(Array.isArray(respuesta) && respuesta.length > 0) {
+				prod = respuesta[0];
+			} else if(respuesta && typeof respuesta === 'object' && !Array.isArray(respuesta)) {
+				// Si es un objeto único (como devuelve ajaxEditarProducto cuando hay idProducto)
+				prod = respuesta;
+			}
+			
+			if(prod && prod.id) {
 				// Usar los datos guardados para restaurar exactamente como estaba
 				var cantidad = parseFloat(producto.cantidad) || 1;
 				var precioUnitario = parseFloat(producto.precio) || parseFloat(prod["precio_venta"]) || 0;
@@ -728,10 +737,11 @@ function restaurarProductoIndividual(producto, callback){
 					callback(true);
 				} catch(e) {
 					console.error("Error al agregar producto visualmente:", e);
+					console.error("Stack:", e.stack);
 					callback(false);
 				}
 			} else {
-				console.warn("Respuesta AJAX inválida o vacía para producto", producto.id);
+				console.warn("Respuesta AJAX inválida o vacía para producto", producto.id, "Respuesta:", respuesta);
 				callback(false);
 			}
 		},

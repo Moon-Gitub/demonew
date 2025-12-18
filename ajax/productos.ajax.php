@@ -73,6 +73,13 @@ class AjaxProductos{
   EDITAR PRODUCTO
   =============================================*/ 
   public function ajaxEditarProducto(){
+    // Limpiar cualquier output previo
+    if (ob_get_level()) {
+      ob_clean();
+    }
+    
+    // Establecer header JSON
+    header('Content-Type: application/json; charset=utf-8');
 
     if(isset($this->idProducto) && $this->idProducto != "" && $this->idProducto != null){
 
@@ -85,12 +92,15 @@ class AjaxProductos{
       // Devolver solo el primer producto (debería ser único por ID)
       if(is_array($respuesta) && !empty($respuesta) && isset($respuesta[0])){
         echo json_encode($respuesta[0]);
+        exit; // Asegurar que no se ejecute más código
       } else if(is_array($respuesta) && empty($respuesta)){
         // Si el array está vacío, devolver error
         echo json_encode(array("error" => "Producto no encontrado"));
+        exit;
       } else {
         // Si no es array, devolver tal cual
         echo json_encode($respuesta);
+        exit;
       }
 
     }else if($this->traerProductos == "ok"){
@@ -103,6 +113,7 @@ class AjaxProductos{
         $orden);
 
       echo json_encode($respuesta);
+      exit;
 
 
     }else if($this->nombreProducto != ""){
@@ -115,6 +126,7 @@ class AjaxProductos{
         $orden);
 
       echo json_encode($respuesta);
+      exit;
 
     }else{
 
@@ -126,6 +138,7 @@ class AjaxProductos{
         $orden);
 
       echo json_encode($respuesta);
+      exit;
 
     }
 
@@ -257,7 +270,7 @@ if(isset($_POST["idCategoria"])){
 EDITAR PRODUCTO
 =============================================*/ 
 
-if(isset($_POST["idProducto"])){
+if(isset($_POST["idProducto"]) && (!isset($_POST["traerProductos"]) || $_POST["traerProductos"] != "ok")){
 
   $editarProducto = new AjaxProductos();
   $editarProducto -> idProducto = $_POST["idProducto"];
