@@ -74,8 +74,30 @@ class AjaxCajas {
   INFORME CIERRE DE CAJA
   =============================================*/
   public function ajaxInformeCierreCajas($idCierre){
-      $respuesta = ControladorCajaCierres::ctrInformeCierreCajas($idCierre);
-      echo json_encode($respuesta);
+      try {
+          $respuesta = ControladorCajaCierres::ctrInformeCierreCajas($idCierre);
+          
+          // Validar que la respuesta sea válida
+          if(!is_array($respuesta)) {
+              echo json_encode(array(
+                  'ingresos' => array(), 
+                  'egresos' => array(), 
+                  'otros' => null,
+                  'error' => 'Error al procesar los datos del cierre'
+              ));
+              return;
+          }
+          
+          echo json_encode($respuesta);
+      } catch(Exception $e) {
+          error_log("Error en ajaxInformeCierreCajas: " . $e->getMessage());
+          echo json_encode(array(
+              'ingresos' => array(), 
+              'egresos' => array(), 
+              'otros' => null,
+              'error' => 'Error al cargar los datos del cierre: ' . $e->getMessage()
+          ));
+      }
   } 
   
   /*=============================================

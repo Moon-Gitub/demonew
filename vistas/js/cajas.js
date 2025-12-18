@@ -300,6 +300,8 @@ $(".tablaCierresCaja").on("click", "a.btnCierreCaja", function(e){
   e.preventDefault();
   var valor = $(this).attr('idCierreCaja');
   
+  console.log("ID del cierre obtenido:", valor);
+  
   if(!valor) {
     swal({
       type: "error",
@@ -308,6 +310,27 @@ $(".tablaCierresCaja").on("click", "a.btnCierreCaja", function(e){
     });
     return;
   }
+  
+  // Abrir el modal primero
+  $("#modalVerCierreCaja").modal("show");
+  
+  // Limpiar campos del modal
+  $("#resumenCierreCajaFecha").text("");
+  $("#resumenCierreCajaPunto").text("");
+  $("#resumenCierreCajaUsuario").text("");
+  $("#resumenCierreCajaApertura").text("");
+  $("#resumenCierreCajaDetalle").text("");
+  $("#resumenCierreTotalIngresos").text("");
+  $("#resumenCierreTotalEgresos").text("");
+  
+  // Limpiar tablas
+  $("#tblIngresosCategoriasResumenCierreCaja").empty();
+  $("#tblIngresosClientesResumenCierreCaja").empty();
+  $("#tblIngresosVariosResumenCierreCaja").empty();
+  $("#tblIngresosDetalleMediosPago").empty();
+  $("#tblEgresosComunesResumenCierreCaja").empty();
+  $("#tblEgresosProveedoresResumenCierreCaja").empty();
+  $("#tblEgresosDetalleMediosPago").empty();
   
   var datos = new FormData();
   datos.append("esteCierre", valor);
