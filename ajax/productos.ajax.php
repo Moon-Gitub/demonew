@@ -83,9 +83,13 @@ class AjaxProductos{
       $respuesta = ControladorProductos::ctrMostrarProductos($item, $valor, $orden);
 
       // Devolver solo el primer producto (debería ser único por ID)
-      if(is_array($respuesta) && count($respuesta) > 0){
+      if(is_array($respuesta) && !empty($respuesta) && isset($respuesta[0])){
         echo json_encode($respuesta[0]);
+      } else if(is_array($respuesta) && empty($respuesta)){
+        // Si el array está vacío, devolver error
+        echo json_encode(array("error" => "Producto no encontrado"));
       } else {
+        // Si no es array, devolver tal cual
         echo json_encode($respuesta);
       }
 
