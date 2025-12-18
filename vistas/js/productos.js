@@ -306,58 +306,130 @@ function calcularPrecioVentaNuevo() {
 /*============================================
 				EDITAR PRODUCTO
 =============================================*/
-$("#tablaProductos tbody").on("click", "button.btnEditarProducto", function(){
+$("#tablaProductos tbody").on("click", "a.btnEditarProducto, button.btnEditarProducto", function(e){
+	e.preventDefault();
 	var idProducto = $(this).attr("idProducto");
+	
+	if(!idProducto) {
+		console.error("Error: No se encontró idProducto en el elemento");
+		swal({
+			type: "error",
+			title: "Error",
+			text: "No se pudo obtener el ID del producto",
+			showConfirmButton: true,
+			confirmButtonText: "Cerrar"
+		});
+		return;
+	}
+	
 	var datos = new FormData();
-    datos.append("idProducto", idProducto);
-     $.ajax({
-      url:"ajax/productos.ajax.php",
-      method: "POST",
-      data: datos,
-      cache: false,
-      contentType: false,
-      processData: false,
-      dataType:"json",
-      success:function(respuesta){
+	datos.append("idProducto", idProducto);
+	
+	// Agregar token CSRF
+	var token = $('meta[name="csrf-token"]').attr('content');
+	if(token) {
+		datos.append("csrf_token", token);
+	}
+	
+	$.ajax({
+		url:"ajax/productos.ajax.php",
+		method: "POST",
+		data: datos,
+		cache: false,
+		contentType: false,
+		processData: false,
+		dataType:"json",
+		headers: token ? {
+			'X-CSRF-TOKEN': token
+		} : {},
+		success:function(respuesta){
+			if(!respuesta || !respuesta["id"]) {
+				console.error("Error: Respuesta inválida del servidor", respuesta);
+				swal({
+					type: "error",
+					title: "Error",
+					text: "No se pudieron cargar los datos del producto",
+					showConfirmButton: true,
+					confirmButtonText: "Cerrar"
+				});
+				return;
+			}
 
-        $("#editarId").val(respuesta["id"]);
-		$("#editarCategoria").val(respuesta["id_categoria"]);
-        $("#editarCodigo").val(respuesta["codigo"]);
-        $("#editarProveedor").val(respuesta["id_proveedor"]);
-        $("#editarDescripcion").val(respuesta["descripcion"]);
-        $("#editarStock").val(respuesta["stock"]);
-        $("#editarStockMedio").val(respuesta["stock_medio"]);
-        $("#editarStockBajo").val(respuesta["stock_bajo"]);
-		if(respuesta["precio_compra_dolar"] == 0) {
-			$("#radioPrecioCompraPeso").prop('checked', true);
-			$("#editarPrecioCompraNeto").prop('readonly', false);
-			$("#editarPrecioCompraNetoDolar").prop('readonly', true);
-		} else {
-			$("#editarPrecioCompraNeto").prop('readonly', true);
-			$("#editarPrecioCompraNetoDolar").prop('readonly', false);
-			$("#radioPrecioCompraDolar").prop('checked', true);
-		}		
-		$("#editarPrecioCompraNeto").val(respuesta["precio_compra"]);
-		$("#editarPrecioCompraNetoDolar").val(respuesta["precio_compra_dolar"]);		
-		if(respuesta["margen_ganancia"] == 0 || respuesta["margen_ganancia"] == null) {
-			$("#editarPorcentajeChk").prop('checked', false);
-			$('#editarPrecioVenta').prop("readonly", false);
-			$('#editarPorcentajeText').prop("readonly", true);
-		} else {
-			$("#editarPorcentajeChk").prop('checked', true);
-			$('#editarPrecioVenta').prop("readonly", true);
-			$('#editarPorcentajeText').prop("readonly", false);
-		}
+			$("#editarId").val(respuesta["id"]);
+			$("#editarCategoria").val(respuesta["id_categoria"]);
+			$("#editarCodigo").val(respuesta["codigo"]);
+			$("#editarProveedor").val(respuesta["id_proveedor"]);
+			$("#editarDescripcion").val(respuesta["descripcion"]);
+			$("#editarStock").val(respuesta["stock"]);
+			$("#editarStockMedio").val(respuesta["stock_medio"]);
+			$("#editarStockBajo").val(respuesta["stock_bajo"]);
+			
+			if(respuesta["precio_compra_dolar"] == 0 || respuesta["precio_compra_dolar"] == null) {
+				$("#radioPrecioCompraPeso").prop('checked', true);
+				$("#editarPrecioCompraNeto").prop('readonly', false);
+				$("#editarPrecioCompraNetoDolar").prop('readonly', true);
+			} else {
+				$("#editarPrecioCompraNeto").prop('readonly', true);
+				$("#editarPrecioCompraNetoDolar").prop('readonly', false);
+				$("#radioPrecioCompraDolar").prop('checked', true);
+			}		
+			
+			$("#editarPrecioCompraNeto").val(respuesta["precio_compra"]);
+			$("#editarPrecioCompraNetoDolar").val(respuesta["precio_compra_dolar"]);		
+			
+			if(respuesta["margen_ganancia"] == 0 || respuesta["margen_ganancia"] == null) {
+				$("#editarPorcentajeChk").prop('checked', false);
+				$('#editarPrecioVenta').prop("readonly", false);
+				$('#editarPorcentajeText').prop("readonly", true);
+			} else {
+				$("#editarPorcentajeChk").prop('checked', true);
+				$('#editarPrecioVenta').prop("readonly", true);
+				$('#editarPorcentajeText').prop("readonly", false);
+			}
 
-		$("#editarPorcentajeText").val(respuesta["margen_ganancia"]);
-		$("#editarIvaVenta").val(respuesta["tipo_iva"]).change();
-		$("#editarPrecioVentaIvaIncluido").val(respuesta["precio_venta"]);
-		if(respuesta["imagen"] != ""){
-			$("#imagenActual").val(respuesta["imagen"]);
-			$(".previsualizar").attr("src",  respuesta["imagen"]);
+			$("#editarPorcentajeText").val(respuesta["margen_ganancia"]);
+			$("#editarIvaVenta").val(respuesta["tipo_iva"]).change();
+			$("#editarPrecioVentaIvaIncluido").val(respuesta["precio_venta"]);
+			
+			if(respuesta["imagen"] != "" && respuesta["imagen"] != null){
+				$("#imagenActual").val(respuesta["imagen"]);
+				$(".previsualizar").attr("src",  respuesta["imagen"]);
+			}
+			
+			// Mostrar el modal
+			$("#modalEditarProducto").modal('show');
+		},
+		error: function(xhr, status, error) {
+			console.error("Error en AJAX:", {
+				status: xhr.status,
+				statusText: xhr.statusText,
+				error: error,
+				responseText: xhr.responseText
+			});
+			
+			let mensajeError = "Error al cargar los datos del producto";
+			if(xhr.status === 403) {
+				mensajeError = "Error de seguridad (CSRF). Por favor, recargá la página.";
+			} else if(xhr.responseText) {
+				try {
+					const errorResponse = JSON.parse(xhr.responseText);
+					if(errorResponse.mensaje) {
+						mensajeError = errorResponse.mensaje;
+					}
+				} catch(e) {
+					// Si no es JSON, usar el mensaje por defecto
+				}
+			}
+			
+			swal({
+				type: "error",
+				title: "Error",
+				text: mensajeError,
+				showConfirmButton: true,
+				confirmButtonText: "Cerrar"
+			});
 		}
-      }
-  })
+	})
 });
 
 /*============================================
