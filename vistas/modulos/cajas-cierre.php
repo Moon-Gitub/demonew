@@ -98,7 +98,7 @@
                             <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
                           </button>
                           <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#" class="btnCierreCaja" idCierreCaja="'.$value["id"].'" data-toggle="modal" data-target="#modalVerCierreCaja" data-dismiss="modal"><i class="fa fa-search"></i> Ver detalle</a></li>
+                            <li><a href="#" class="btnCierreCaja" idCierreCaja="'.$value["id"].'"><i class="fa fa-search"></i> Ver detalle</a></li>
                             <li><a href="#" class="btnListadoCierreCaja" idCierreCaja="'.$value["id"].'"><i class="fa fa-list-ul"></i> Listado movimientos</a></li>
                           </ul>
                         </div>

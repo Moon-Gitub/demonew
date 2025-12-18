@@ -407,6 +407,11 @@ $(".tablaCierresCaja").on("click", "a.btnCierreCaja", function(e){
         };
       }
       
+      // Asegurar que el modal esté abierto
+      if(!$("#modalVerCierreCaja").hasClass("in")) {
+        $("#modalVerCierreCaja").modal("show");
+      }
+      
       // Llenar campos del resumen
       $("#resumenCierreCajaFecha").text(respuesta["otros"]["fecha_hora"] || "");
       $("#resumenCierreCajaPunto").text(respuesta["otros"]["punto_venta_cobro"] || "");
