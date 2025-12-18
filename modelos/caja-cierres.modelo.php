@@ -117,8 +117,10 @@ class ModeloCajaCierres{
 	OBTENER EL CIERRE DE CAJA ANTERIOR AL SELECCIONADO
 	=============================================*/	
 	static public function mdlAnteriorSeleccionadoCierreCaja($numCaja, $idCierre){
-		$stmt = Conexion::conectar()->prepare("SELECT * FROM caja_cierres WHERE punto_venta_cobro = :punto_venta_cobro AND id = (SELECT MAX(id) FROM caja_cierres WHERE punto_venta_cobro = :punto_venta_cobro AND id < :id_cierre)");
+		// Usar parámetros diferentes para evitar SQLSTATE[HY093]
+		$stmt = Conexion::conectar()->prepare("SELECT * FROM caja_cierres WHERE punto_venta_cobro = :punto_venta_cobro AND id = (SELECT MAX(id) FROM caja_cierres WHERE punto_venta_cobro = :punto_venta_cobro2 AND id < :id_cierre)");
 		$stmt -> bindParam(":punto_venta_cobro", $numCaja, PDO::PARAM_INT);
+		$stmt -> bindParam(":punto_venta_cobro2", $numCaja, PDO::PARAM_INT);
 		$stmt -> bindParam(":id_cierre", $idCierre, PDO::PARAM_INT);
 		$stmt -> execute();
 		return $stmt -> fetch();
