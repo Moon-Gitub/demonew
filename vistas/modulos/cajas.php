@@ -681,6 +681,7 @@ MODAL INGRESAR MOVIMIENTO
         ======================================-->
         <div class="modal-body">
           <div class="box-body">
+            <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : ''; ?>">
             <input type="hidden" id="idUsuarioMovimiento" name="idUsuarioMovimiento" value="<?php echo $_SESSION["id"]; ?>">
             <input type="hidden" id="ingresoCajaDesde" name="ingresoCajaDesde" value="cajas">
             <div class="form-group">

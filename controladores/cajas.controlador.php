@@ -8,6 +8,25 @@ class ControladorCajas{
 	static public function ctrCrearCaja(){
 	    
 		if(isset($_POST["ingresoCajaTipo"])){ //0 egreso - 1 ingreso - 2 movimiento interno
+			
+			// Validar CSRF token
+			if (session_status() === PHP_SESSION_NONE) {
+				session_start();
+			}
+			
+			$token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : null;
+			if (!$token || !isset($_SESSION['csrf_token']) || $token !== $_SESSION['csrf_token']) {
+				echo'<script>
+					swal({
+						type: "error",
+						title: "Acceso denegado",
+						text: "Token CSRF inválido. Por favor, recargá la página.",
+						showConfirmButton: true,
+						confirmButtonText: "Cerrar"
+					});
+				</script>';
+				return;
+			}
 
 	   		if(isset($_POST["ingresoCajaidVenta"])) {
 	   			$respuestaVentaEstado = ModeloVentas::mdlActualizarVenta("ventas", "estado", 1, $_POST["ingresoCajaidVenta"]);
