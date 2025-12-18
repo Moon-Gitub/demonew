@@ -220,7 +220,8 @@ $(".nuevaImagen").change(function(){
 /*=============================================
 ELIMINAR PRODUCTO
 =============================================*/
-$("#tablaProductos tbody").on("click", "button.btnEliminarProducto", function(){
+$("#tablaProductos tbody").on("click", "a.btnEliminarProducto, button.btnEliminarProducto", function(e){
+	e.preventDefault();
 
 	var idProducto = $(this).attr("idProducto");
 	var codigo = $(this).attr("codigo");
