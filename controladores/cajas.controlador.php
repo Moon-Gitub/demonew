@@ -72,46 +72,52 @@ class ControladorCajas{
 
 		   	if($respuesta == "ok"){
 
-		  //  		if ($_POST["ingresoCajaDesde"] == "cajas") {
-		   			
-		  //  			echo'<script>
+				// Si viene desde la página de cajas, usar toast y recargar tabla
+				if (isset($_POST["ingresoCajaDesde"]) && $_POST["ingresoCajaDesde"] == "cajas") {
+					
+					echo'<script>
+						swal({
+							type: "success",
+							title: "Caja",
+							text: "' . $msjCaja . ' cargado correctamente",
+							toast: true,
+							timer: 2000,
+							position: "top",
+							showConfirmButton: false,
+							allowOutsideClick: false
+						});
+						
+						// Cerrar el modal
+						$("#modalAgregarMovimientoCaja").modal("hide");
+						
+						// Recargar la tabla sin recargar la página
+						setTimeout(function(){
+							if(typeof cajaCentralTabla !== "undefined" && cajaCentralTabla) {
+								cajaCentralTabla.ajax.reload(null, false);
+							} else {
+								// Si no existe la tabla, recargar la página
+								window.location.reload();
+							}
+						}, 500);
+					</script>';
 
-				// 	swal({
-				// 	  type: "success",
-				// 	  title: "' . $msjCaja . ' cargado correctamente",
-				// 	  toast: true,
-				// 	  timer: 3000,
-				// 	  position: "top",
-				// 		confirmButtonText: "¡Cerrar!"
-
-				// 	  });
-					  
-				// 	$("#tablaCajaCentral").DataTable().ajax.reload();
-
-				// 	</script>';
-
-				// } else {
+				} else {
 
 					echo'<script>
-
-					swal({
-					  type: "success",
-					  title: "Caja",
-					  text: "' . $msjCaja . ' cargado correctamente",
-					  showConfirmButton: true,
-					  confirmButtonText: "Cerrar",
-					  allowOutsideClick: false
-					  }).then(function(result){
-								if (result.value) {
-
-								window.location = "' . $_POST["ingresoCajaDesde"] . '";
-
-								}
-							})
-
+						swal({
+							type: "success",
+							title: "Caja",
+							text: "' . $msjCaja . ' cargado correctamente",
+							showConfirmButton: true,
+							confirmButtonText: "Cerrar",
+							allowOutsideClick: false
+						}).then(function(result){
+							if (result.value) {
+								window.location = "' . (isset($_POST["ingresoCajaDesde"]) ? $_POST["ingresoCajaDesde"] : "cajas") . '";
+							}
+						})
 					</script>';
-		   			
-				// }
+				}
 			}
 		}
 	}
