@@ -254,9 +254,14 @@ class ControladorProductos{
 			$tabla ="productos";
 			$datos = $_GET["idProducto"];
 			
-			if($_GET["imagen"] != "" && $_GET["imagen"] != "vistas/img/productos/default/anonymous.png"){
-				unlink($_GET["imagen"]);
-				rmdir('vistas/img/productos/'.$_GET["codigo"]);
+			if(isset($_GET["imagen"]) && $_GET["imagen"] != "" && $_GET["imagen"] != "vistas/img/productos/default/anonymous.png" && file_exists($_GET["imagen"])){
+				@unlink($_GET["imagen"]);
+				if(isset($_GET["codigo"]) && $_GET["codigo"] != ""){
+					$dir = 'vistas/img/productos/'.$_GET["codigo"];
+					if(is_dir($dir)){
+						@rmdir($dir);
+					}
+				}
 			}
 			
 			$respuesta = ModeloProductos::mdlEliminarProducto($tabla, $datos);
@@ -332,27 +337,81 @@ class ControladorProductos{
 	MOFIDICAR PRECIOS PRODUCTOS POR CATEGORIA
 	=============================================*/
 	static public function ctrModificarPrecioCategoria() {
-		if(isset($_POST["nuevoModificacionPrecio"])){
+		if(isset($_POST["nuevoModificacionPrecio"]) && isset($_POST["idCategoriaNuevoPrecio"])){
 			$tabla = 'productos';
-			$id_categoria = $_POST["idCategoriaNuevoPrecio"];
-			$porcentaje = $_POST["nuevoModificacionPrecio"];
+			$id_categoria = intval($_POST["idCategoriaNuevoPrecio"]);
+			$porcentaje = floatval($_POST["nuevoModificacionPrecio"]);
+			
+			// Validar que los datos sean válidos
+			if(empty($id_categoria) || $id_categoria <= 0) {
+				echo'<script>
+					swal({
+						type: "error",
+						title: "Error",
+						text: "Debe seleccionar una categoría válida",
+						showConfirmButton: true,
+						confirmButtonText: "Cerrar"
+					});
+				</script>';
+				return;
+			}
+			
+			if(!is_numeric($porcentaje)) {
+				echo'<script>
+					swal({
+						type: "error",
+						title: "Error",
+						text: "El porcentaje debe ser un número válido",
+						showConfirmButton: true,
+						confirmButtonText: "Cerrar"
+					});
+				</script>';
+				return;
+			}
+			
 			$respuesta = ModeloProductos::mdlModificarPrecioCategoria($tabla, $id_categoria, $porcentaje);
+			
 			if($respuesta == "ok"){
 				echo'<script>
-
 					swal({
-						  type: "success",
-						  title: "Productos",
-						  text: "Los productos de la categoría seleccionada, han sido modificados",
-						  showConfirmButton: true,
-						  confirmButtonText: "Cerrar"
-						  }).then(function(result){
-								if (result.value) {
-									window.location = "categorias";
-									}
-								})
-					</script>';
+						type: "success",
+						title: "Productos",
+						text: "Los productos de la categoría seleccionada, han sido modificados",
+						showConfirmButton: true,
+						confirmButtonText: "Cerrar"
+					}).then(function(result){
+						if (result.value) {
+							window.location = "categorias";
+						}
+					})
+				</script>';
+			} else {
+				$mensajeError = "No se pudieron modificar los precios";
+				if(is_array($respuesta) && isset($respuesta['error'])) {
+					$mensajeError = $respuesta['error'];
+				} else if(is_array($respuesta) && isset($respuesta[2])) {
+					$mensajeError = "Error SQL: " . $respuesta[2];
+				}
+				echo'<script>
+					swal({
+						type: "error",
+						title: "Error",
+						text: "' . addslashes($mensajeError) . '",
+						showConfirmButton: true,
+						confirmButtonText: "Cerrar"
+					});
+				</script>';
 			}
+		} else {
+			echo'<script>
+				swal({
+					type: "error",
+					title: "Error",
+					text: "Faltan datos requeridos",
+					showConfirmButton: true,
+					confirmButtonText: "Cerrar"
+				});
+			</script>';
 		}
 	}
 

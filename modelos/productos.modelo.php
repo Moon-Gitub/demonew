@@ -513,12 +513,25 @@ class ModeloProductos{
 	=============================================*/	
 	static public function mdlModificarPrecioCategoria($tabla, $id_categoria, $porcentaje){
 
+		// Iniciar sesión si no está iniciada
+		if (session_status() === PHP_SESSION_NONE) {
+			session_start();
+		}
+		
+		// Obtener nombre de usuario de la sesión o usar valor por defecto
+		$nombreUsuario = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Sistema';
+		
+		// Validar que los parámetros sean válidos
+		if(empty($id_categoria) || !is_numeric($porcentaje)) {
+			return array("error" => "Parámetros inválidos");
+		}
+		
 		$stmt = Conexion::conectar()->prepare(
-		"UPDATE productos SET precio_compra = precio_compra + (precio_compra * :porcentaje / 100), precio_venta = precio_venta + (precio_venta * :porcentaje / 100), nombre_usuario = :nombre_usuario, cambio_desde = 'Administrar Categorias' WHERE id_categoria = :id_categoria;");
+		"UPDATE productos SET precio_compra = precio_compra + (precio_compra * :porcentaje / 100), precio_venta = precio_venta + (precio_venta * :porcentaje / 100), nombre_usuario = :nombre_usuario, cambio_desde = 'Administrar Categorias' WHERE id_categoria = :id_categoria");
 
 		$stmt->bindParam(":porcentaje", $porcentaje, PDO::PARAM_STR);
 		$stmt->bindParam(":id_categoria", $id_categoria, PDO::PARAM_INT);
-		$stmt->bindParam(":nombre_usuario", $_SESSION['nombre'] , PDO::PARAM_STR);
+		$stmt->bindParam(":nombre_usuario", $nombreUsuario, PDO::PARAM_STR);
 		
 		if($stmt->execute()){
 
