@@ -140,8 +140,14 @@ class ControladorCajaCierres{
 		$cierreCaja = ModeloCajaCierres::mdlMostrarCierresCaja($idCierre); //datos del cierre
 		
 		// Validar que se encontró el cierre
-		if(!$cierreCaja || empty($cierreCaja)) {
-			return array('ingresos' => array(), 'egresos' => array(), 'otros' => array());
+		if(!$cierreCaja || empty($cierreCaja) || !isset($cierreCaja["id"])) {
+			// Devolver estructura con error para que el frontend pueda manejarlo
+			return array(
+				'ingresos' => array(), 
+				'egresos' => array(), 
+				'otros' => null,
+				'error' => 'Cierre no encontrado'
+			);
 		}
 		
 		// Obtener nombre de usuario

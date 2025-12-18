@@ -331,12 +331,25 @@ $(".tablaCierresCaja").on("click", "a.btnCierreCaja", function(e){
       console.log("Respuesta completa:", respuesta);
       
       // Validar que la respuesta tenga la estructura esperada
-      if(!respuesta || !respuesta["otros"]) {
-        console.error("Error: Respuesta inválida", respuesta);
+      if(!respuesta || typeof respuesta !== 'object') {
+        console.error("Error: Respuesta inválida o no es un objeto", respuesta);
         swal({
           type: "error",
           title: "Error",
-          text: "No se pudieron cargar los datos del cierre",
+          text: "No se pudieron cargar los datos del cierre. La respuesta del servidor es inválida.",
+          showConfirmButton: true,
+          confirmButtonText: "Cerrar"
+        });
+        return;
+      }
+      
+      // Validar que tenga la clave "otros" y que no esté vacía
+      if(!respuesta["otros"] || (typeof respuesta["otros"] === 'object' && Object.keys(respuesta["otros"]).length === 0)) {
+        console.error("Error: No se encontraron datos del cierre", respuesta);
+        swal({
+          type: "error",
+          title: "Error",
+          text: "No se encontraron datos para este cierre. Puede que el cierre no exista o haya sido eliminado.",
           showConfirmButton: true,
           confirmButtonText: "Cerrar"
         });
