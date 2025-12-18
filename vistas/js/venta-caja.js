@@ -10,10 +10,24 @@ RESTAURAR PRODUCTOS AL CARGAR LA PÁGINA
 $(document).ready(function(){
 	// Solo restaurar si estamos en la página crear-venta-caja
 	if(window.location.href.includes('crear-venta-caja')) {
-		// Esperar un momento para que la página termine de cargar
+		console.log("Página crear-venta-caja detectada, verificando localStorage...");
+		// Esperar a que todos los elementos estén listos
 		setTimeout(function(){
-			restaurarProductosDesdeLocalStorage();
-		}, 500);
+			// Verificar que los elementos necesarios existan
+			if($("#listaProductosCaja").length > 0 && $(".nuevoProductoCaja").length > 0) {
+				console.log("Elementos listos, restaurando productos...");
+				restaurarProductosDesdeLocalStorage();
+			} else {
+				console.warn("Elementos no encontrados, reintentando en 1 segundo...");
+				setTimeout(function(){
+					if($("#listaProductosCaja").length > 0 && $(".nuevoProductoCaja").length > 0) {
+						restaurarProductosDesdeLocalStorage();
+					} else {
+						console.error("No se pudieron encontrar los elementos necesarios");
+					}
+				}, 1000);
+			}
+		}, 1000);
 	}
 });
 
@@ -585,38 +599,75 @@ function guardarProductosEnLocalStorage(){
 RESTAURAR PRODUCTOS DESDE LOCALSTORAGE
 =============================================*/
 function restaurarProductosDesdeLocalStorage(){
+	console.log("Iniciando restauración de productos...");
 	var productosGuardados = localStorage.getItem("ventaCajaProductos");
-	if(productosGuardados && productosGuardados !== "[]" && productosGuardados !== "") {
-		try {
-			var productosArray = JSON.parse(productosGuardados);
-			if(productosArray && productosArray.length > 0) {
-				console.log("Restaurando productos desde localStorage:", productosArray.length);
-				
-				// Restaurar cada producto de forma secuencial para evitar problemas
-				var indice = 0;
-				function restaurarSiguiente() {
-					if(indice < productosArray.length) {
-						var producto = productosArray[indice];
-						restaurarProductoIndividual(producto);
-						indice++;
-						// Esperar un poco antes de restaurar el siguiente para evitar sobrecarga
-						setTimeout(restaurarSiguiente, 200);
-					} else {
-						// Todos los productos restaurados, actualizar totales
-						setTimeout(function(){
-							sumarTotalPreciosCaja();
-							calcularDescuentoCaja("nuevoDescuentoPorcentajeCaja");
-							calcularInteresCaja("nuevoInteresPorcentajeCaja");
-							listarProductosCaja();
-						}, 500);
-					}
-				}
-				restaurarSiguiente();
-			}
-		} catch(e) {
-			console.error("Error al restaurar productos desde localStorage:", e);
+	console.log("Productos guardados:", productosGuardados);
+	
+	if(!productosGuardados || productosGuardados === "[]" || productosGuardados === "") {
+		console.log("No hay productos guardados en localStorage");
+		return;
+	}
+	
+	try {
+		var productosArray = JSON.parse(productosGuardados);
+		console.log("Productos parseados:", productosArray);
+		
+		if(!productosArray || !Array.isArray(productosArray) || productosArray.length === 0) {
+			console.log("Array de productos vacío o inválido");
 			localStorage.removeItem("ventaCajaProductos");
+			return;
 		}
+		
+		console.log("Restaurando", productosArray.length, "productos desde localStorage");
+		
+		// Restaurar cada producto de forma secuencial para evitar problemas
+		var indice = 0;
+		var productosRestaurados = 0;
+		var productosError = 0;
+		
+		function restaurarSiguiente() {
+			if(indice < productosArray.length) {
+				var producto = productosArray[indice];
+				console.log("Restaurando producto", indice + 1, "de", productosArray.length, ":", producto);
+				
+				// Verificar que el producto tenga los datos necesarios
+				if(!producto || !producto.id) {
+					console.warn("Producto inválido en índice", indice, ":", producto);
+					productosError++;
+					indice++;
+					setTimeout(restaurarSiguiente, 100);
+					return;
+				}
+				
+				restaurarProductoIndividual(producto, function(success){
+					if(success) {
+						productosRestaurados++;
+						console.log("Producto restaurado exitosamente:", producto.id);
+					} else {
+						productosError++;
+						console.warn("Error al restaurar producto:", producto.id);
+					}
+					indice++;
+					// Esperar un poco antes de restaurar el siguiente para evitar sobrecarga
+					setTimeout(restaurarSiguiente, 300);
+				});
+			} else {
+				// Todos los productos procesados, actualizar totales
+				console.log("Restauración completada. Exitosos:", productosRestaurados, "Errores:", productosError);
+				setTimeout(function(){
+					sumarTotalPreciosCaja();
+					calcularDescuentoCaja("nuevoDescuentoPorcentajeCaja");
+					calcularInteresCaja("nuevoInteresPorcentajeCaja");
+					listarProductosCaja();
+					console.log("Totales actualizados después de restaurar productos");
+				}, 500);
+			}
+		}
+		restaurarSiguiente();
+	} catch(e) {
+		console.error("Error al restaurar productos desde localStorage:", e);
+		console.error("Stack:", e.stack);
+		localStorage.removeItem("ventaCajaProductos");
 	}
 }
 
