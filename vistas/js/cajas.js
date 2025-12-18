@@ -183,21 +183,37 @@ $(".tablaCierresCaja").on("click", "button.btnCierreCaja", function(){
     processData: false,
     dataType:"json",
     success:function(respuesta){
-      console.log(respuesta);
-      $("#resumenCierreCajaFecha").text(respuesta["otros"]["fecha_hora"]);
-      $("#resumenCierreCajaPunto").text(respuesta["otros"]["punto_venta_cobro"]);
-      $("#resumenCierreCajaUsuario").text(respuesta["otros"]["id_usuario_cierre"]);
-      $("#resumenCierreCajaApertura").text(respuesta["otros"]["apertura_siguiente_monto"]);
-      $("#resumenCierreCajaDetalle").text(respuesta["otros"]["detalle"]);
-      $("#resumenCierreTotalIngresos").text(respuesta["otros"]["total_ingresos"]);
-      $("#resumenCierreTotalEgresos").text(respuesta["otros"]["total_egresos"]);
+      console.log("Respuesta completa:", respuesta);
+      
+      // Validar que la respuesta tenga la estructura esperada
+      if(!respuesta || !respuesta["otros"]) {
+        console.error("Error: Respuesta inválida", respuesta);
+        swal({
+          type: "error",
+          title: "Error",
+          text: "No se pudieron cargar los datos del cierre",
+          showConfirmButton: true,
+          confirmButtonText: "Cerrar"
+        });
+        return;
+      }
+      
+      // Llenar campos del resumen
+      $("#resumenCierreCajaFecha").text(respuesta["otros"]["fecha_hora"] || "");
+      $("#resumenCierreCajaPunto").text(respuesta["otros"]["punto_venta_cobro"] || "");
+      $("#resumenCierreCajaUsuario").text(respuesta["otros"]["id_usuario_cierre"] || "");
+      $("#resumenCierreCajaApertura").text(respuesta["otros"]["apertura_siguiente_monto"] || "0");
+      $("#resumenCierreCajaDetalle").text(respuesta["otros"]["detalle"] || "");
+      $("#resumenCierreTotalIngresos").text(respuesta["otros"]["total_ingresos"] || "0");
+      $("#resumenCierreTotalEgresos").text(respuesta["otros"]["total_egresos"] || "0");
 
-      //var jsonProductos = JSON.parse($("#listaProductosCaja").val());
-      var jsonIngresos = respuesta["ingresos"];
-      var jsonEgresos = respuesta["egresos"];
-      var jsonOtrosIn = respuesta["otros"]["detalle_ingresos"];
-      var jsonOtrosEg = respuesta["otros"]["detalle_egresos"];
+      // Obtener arrays de ingresos y egresos
+      var jsonIngresos = respuesta["ingresos"] || [];
+      var jsonEgresos = respuesta["egresos"] || [];
+      var jsonOtrosIn = respuesta["otros"]["detalle_ingresos"] || "[]";
+      var jsonOtrosEg = respuesta["otros"]["detalle_egresos"] || "[]";
 
+      // Limpiar tablas
       $("#tblIngresosCategoriasResumenCierreCaja").empty();
       $("#tblIngresosClientesResumenCierreCaja").empty();
       $("#tblIngresosVariosResumenCierreCaja").empty();
@@ -207,32 +223,76 @@ $(".tablaCierresCaja").on("click", "button.btnCierreCaja", function(){
       $("#tblEgresosProveedoresResumenCierreCaja").empty();
       $("#tblEgresosDetalleMediosPago").empty();
 
-      for(var i = 0; i < jsonIngresos.length; i++){
-
-        if(jsonIngresos[i]["tipo"] == "categoria") {
-          $("#tblIngresosCategoriasResumenCierreCaja").append("<tr><td>"+jsonIngresos[i]["descripcion"]+"</td><td> <b>$ "+jsonIngresos[i]["monto"]+"</b></td></tr>");
-        } else if(jsonIngresos[i]["tipo"] == "cliente") {
-          $("#tblIngresosClientesResumenCierreCaja").append("<tr><td>"+jsonIngresos[i]["descripcion"]+"</td><td> <b>$ "+jsonIngresos[i]["monto"]+"</b></td></tr>");
-        } else {
-          $("#tblIngresosVariosResumenCierreCaja").append("<tr><td>"+jsonIngresos[i]["descripcion"]+"</td><td> <b>$ "+jsonIngresos[i]["monto"]+"</b></td></tr>");
+      // Procesar ingresos
+      if(Array.isArray(jsonIngresos)) {
+        for(var i = 0; i < jsonIngresos.length; i++){
+          if(jsonIngresos[i] && jsonIngresos[i]["monto"] > 0) {
+            var monto = parseFloat(jsonIngresos[i]["monto"] || 0).toFixed(2);
+            if(jsonIngresos[i]["tipo"] == "categoria") {
+              $("#tblIngresosCategoriasResumenCierreCaja").append("<tr><td>"+(jsonIngresos[i]["descripcion"] || "")+"</td><td> <b>$ "+monto+"</b></td></tr>");
+            } else if(jsonIngresos[i]["tipo"] == "cliente") {
+              $("#tblIngresosClientesResumenCierreCaja").append("<tr><td>"+(jsonIngresos[i]["descripcion"] || "")+"</td><td> <b>$ "+monto+"</b></td></tr>");
+            } else {
+              $("#tblIngresosVariosResumenCierreCaja").append("<tr><td>"+(jsonIngresos[i]["descripcion"] || "")+"</td><td> <b>$ "+monto+"</b></td></tr>");
+            }
+          }
         }
       }
 
-      for(var i = 0; i < jsonEgresos.length; i++){
-        if(jsonEgresos[i]["tipo"] == "comun") {
-          $("#tblEgresosComunesResumenCierreCaja").append("<tr><td>"+jsonEgresos[i]["descripcion"]+"</td><td> <b>$ "+jsonEgresos[i]["monto"]+"</b></td></tr>");
-        } else if(jsonEgresos[i]["tipo"] == "proveedor") {
-          $("#tblEgresosProveedoresResumenCierreCaja").append("<tr><td>"+jsonEgresos[i]["descripcion"]+"</td><td> <b>$ "+jsonEgresos[i]["monto"]+"</b></td></tr>");
-        } 
+      // Procesar egresos
+      if(Array.isArray(jsonEgresos)) {
+        for(var i = 0; i < jsonEgresos.length; i++){
+          if(jsonEgresos[i] && jsonEgresos[i]["monto"] > 0) {
+            var monto = parseFloat(jsonEgresos[i]["monto"] || 0).toFixed(2);
+            if(jsonEgresos[i]["tipo"] == "comun") {
+              $("#tblEgresosComunesResumenCierreCaja").append("<tr><td>"+(jsonEgresos[i]["descripcion"] || "")+"</td><td> <b>$ "+monto+"</b></td></tr>");
+            } else if(jsonEgresos[i]["tipo"] == "proveedor") {
+              $("#tblEgresosProveedoresResumenCierreCaja").append("<tr><td>"+(jsonEgresos[i]["descripcion"] || "")+"</td><td> <b>$ "+monto+"</b></td></tr>");
+            } 
+          }
+        }
       }
-      jsonOtrosIn = JSON.parse(jsonOtrosIn);
-      //var valores = Object.values(jsonOtrosIn)
-      for(var i = 0; i < jsonOtrosIn.length; i++){
-          $("#tblIngresosDetalleMediosPago").append("<tr><td>"+Object.keys(jsonOtrosIn[i])+"</td><td>  <b>$ "+Object.values(jsonOtrosIn[i])+" </b></td></tr>");
+      
+      // Procesar detalle de medios de pago (ingresos)
+      try {
+        if(typeof jsonOtrosIn === 'string' && jsonOtrosIn !== "") {
+          jsonOtrosIn = JSON.parse(jsonOtrosIn);
+        }
+        if(Array.isArray(jsonOtrosIn)) {
+          for(var i = 0; i < jsonOtrosIn.length; i++){
+            if(jsonOtrosIn[i]) {
+              var keys = Object.keys(jsonOtrosIn[i]);
+              var values = Object.values(jsonOtrosIn[i]);
+              if(keys.length > 0 && values.length > 0) {
+                var monto = parseFloat(values[0] || 0).toFixed(2);
+                $("#tblIngresosDetalleMediosPago").append("<tr><td>"+keys[0]+"</td><td> <b>$ "+monto+"</b></td></tr>");
+              }
+            }
+          }
+        }
+      } catch(e) {
+        console.error("Error al parsear detalle ingresos:", e);
       }
-      jsonOtrosEg = JSON.parse(jsonOtrosEg);
-      for(var i = 0; i < jsonOtrosEg.length; i++){
-          $("#tblEgresosDetalleMediosPago").append("<tr><td>"+Object.keys(jsonOtrosEg[i])+"</td><td> <b>$ "+Object.values(jsonOtrosEg[i])+" </b></td></tr>");
+      
+      // Procesar detalle de medios de pago (egresos)
+      try {
+        if(typeof jsonOtrosEg === 'string' && jsonOtrosEg !== "") {
+          jsonOtrosEg = JSON.parse(jsonOtrosEg);
+        }
+        if(Array.isArray(jsonOtrosEg)) {
+          for(var i = 0; i < jsonOtrosEg.length; i++){
+            if(jsonOtrosEg[i]) {
+              var keys = Object.keys(jsonOtrosEg[i]);
+              var values = Object.values(jsonOtrosEg[i]);
+              if(keys.length > 0 && values.length > 0) {
+                var monto = parseFloat(values[0] || 0).toFixed(2);
+                $("#tblEgresosDetalleMediosPago").append("<tr><td>"+keys[0]+"</td><td> <b>$ "+monto+"</b></td></tr>");
+              }
+            }
+          }
+        }
+      } catch(e) {
+        console.error("Error al parsear detalle egresos:", e);
       }
     },
     error: function(xhr, status, error) {
