@@ -2,11 +2,11 @@
 // ✅ Seguridad AJAX
 require_once "seguridad.ajax.php";
 
-// Para endpoints de cierres de caja, verificar sesión pero no CSRF (se agrega desde JS)
-if(isset($_POST["esteCierre"]) || isset($_POST["esteCierreListado"])) {
-    SeguridadAjax::inicializar(false); // false = no verificar CSRF
+// Para autocompletar (GET) y endpoints de cierres de caja, verificar sesión pero no CSRF
+if(isset($_GET["listadoDesc"]) || isset($_POST["esteCierre"]) || isset($_POST["esteCierreListado"])) {
+    SeguridadAjax::inicializar(false); // false = no verificar CSRF para GET y cierres
 } else {
-    SeguridadAjax::inicializar(); // Verificar CSRF para otros endpoints
+    SeguridadAjax::inicializar(); // Verificar CSRF para otros endpoints POST
 }
 
 
