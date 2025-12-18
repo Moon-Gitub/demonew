@@ -1,5 +1,10 @@
 <?php
 
+// Habilitar reporte de errores para debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 0); // No mostrar errores en pantalla, solo en logs
+ini_set('log_errors', 1);
+
 // Iniciar sesión si no está iniciada
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -7,38 +12,52 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Validar que se haya proporcionado el código
 if(!isset($_GET['codigo']) || empty($_GET['codigo'])) {
+    error_log("Error comprobante.php: No se proporcionó el código");
+    http_response_code(400);
     die('Error: No se proporcionó el código del comprobante');
 }
 
-// Obtener la ruta base del proyecto
-$rutaBase = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
+// Usar rutas relativas como en recibo.php que funciona
+require_once "../../../../../controladores/empresa.controlador.php";
+require_once "../../../../../modelos/empresa.modelo.php";
+require_once "../../../../../controladores/ventas.controlador.php";
+require_once "../../../../../modelos/ventas.modelo.php";
+require_once "../../../../../controladores/clientes.controlador.php";
+require_once "../../../../../modelos/clientes.modelo.php";
+require_once "../../../../../controladores/usuarios.controlador.php";
+require_once "../../../../../modelos/usuarios.modelo.php";
+require_once "../../../../../controladores/productos.controlador.php";
+require_once "../../../../../modelos/productos.modelo.php";
 
-require_once $rutaBase . "/controladores/empresa.controlador.php";
-require_once $rutaBase . "/modelos/empresa.modelo.php";
-require_once $rutaBase . "/controladores/ventas.controlador.php";
-require_once $rutaBase . "/modelos/ventas.modelo.php";
-require_once $rutaBase . "/controladores/clientes.controlador.php";
-require_once $rutaBase . "/modelos/clientes.modelo.php";
-require_once $rutaBase . "/controladores/usuarios.controlador.php";
-require_once $rutaBase . "/modelos/usuarios.modelo.php";
-require_once $rutaBase . "/controladores/productos.controlador.php";
-require_once $rutaBase . "/modelos/productos.modelo.php";
-
-require_once dirname(__FILE__) . '/../../autoload.php';
+require_once '../../../autoload.php';
 
 class imprimirComprobante{
 
 public function traerImpresionComprobante(){
 
-$respEmpresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', 1);
-
-// Validar que se obtuvo la empresa
-if(!$respEmpresa || empty($respEmpresa)) {
-    die('Error: No se pudo obtener la información de la empresa');
+try {
+    $respEmpresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', 1);
+    
+    // Validar que se obtuvo la empresa
+    if(!$respEmpresa || empty($respEmpresa)) {
+        error_log("Error comprobante.php: No se pudo obtener la información de la empresa");
+        http_response_code(500);
+        die('Error: No se pudo obtener la información de la empresa');
+    }
+    
+    //REQUERIMOS LA CLASE TCPDF
+    if(!class_exists('TCPDF')) {
+        error_log("Error comprobante.php: La clase TCPDF no está disponible");
+        http_response_code(500);
+        die('Error: La clase TCPDF no está disponible');
+    }
+    
+    $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+} catch(Exception $e) {
+    error_log("Error comprobante.php en inicialización: " . $e->getMessage());
+    http_response_code(500);
+    die('Error al inicializar el PDF: ' . $e->getMessage());
 }
-
-//REQUERIMOS LA CLASE TCPDF
-$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 // Configuración del documento
 $pdf->SetCreator('Posmoon');
 $pdf->SetTitle($respEmpresa["razon_social"]);
