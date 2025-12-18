@@ -139,8 +139,8 @@ class ControladorCajaCierres{
 	static public function ctrInformeCierreCajas($idCierre){
 		$cierreCaja = ModeloCajaCierres::mdlMostrarCierresCaja($idCierre); //datos del cierre
 		
-		// Validar que se encontró el cierre
-		if(!$cierreCaja || empty($cierreCaja) || !isset($cierreCaja["id"])) {
+		// Validar que se encontró el cierre (fetch() devuelve false si no encuentra)
+		if($cierreCaja === false || !is_array($cierreCaja)) {
 			// Devolver estructura con error para que el frontend pueda manejarlo
 			return array(
 				'ingresos' => array(), 
@@ -150,14 +150,25 @@ class ControladorCajaCierres{
 			);
 		}
 		
-		// Obtener nombre de usuario
-		$usuario = ModeloUsuarios::mdlMostrarUsuariosPorId($cierreCaja["id_usuario_cierre"]);
-		$cierreCaja["id_usuario_cierre"] = isset($usuario["nombre"]) ? $usuario["nombre"] : "";
+		// Asegurar que $cierreCaja tenga al menos los campos básicos
+		if(!isset($cierreCaja["id"])) {
+			$cierreCaja["id"] = $idCierre;
+		}
 		
-		$cierreCajaAnterior = ModeloCajaCierres::mdlAnteriorSeleccionadoCierreCaja($cierreCaja["punto_venta_cobro"], $idCierre); //datos del cierre anterior
+		// Obtener nombre de usuario
+		if(isset($cierreCaja["id_usuario_cierre"])) {
+			$usuario = ModeloUsuarios::mdlMostrarUsuariosPorId($cierreCaja["id_usuario_cierre"]);
+			$cierreCaja["id_usuario_cierre"] = (is_array($usuario) && isset($usuario["nombre"])) ? $usuario["nombre"] : (isset($cierreCaja["id_usuario_cierre"]) ? $cierreCaja["id_usuario_cierre"] : "");
+		} else {
+			$cierreCaja["id_usuario_cierre"] = "";
+		}
+		
+		// Obtener cierre anterior
+		$puntoVenta = isset($cierreCaja["punto_venta_cobro"]) ? $cierreCaja["punto_venta_cobro"] : 1;
+		$cierreCajaAnterior = ModeloCajaCierres::mdlAnteriorSeleccionadoCierreCaja($puntoVenta, $idCierre); //datos del cierre anterior
 		
 		// Validar cierre anterior, si no existe usar valores por defecto
-		if(!$cierreCajaAnterior || empty($cierreCajaAnterior)) {
+		if($cierreCajaAnterior === false || !is_array($cierreCajaAnterior) || empty($cierreCajaAnterior)) {
 			$cierreCajaAnterior = array("ultimo_id_caja" => 1);
 		}
 		
