@@ -138,50 +138,109 @@ class ControladorCajaCierres{
 	=============================================*/
 	static public function ctrInformeCierreCajas($idCierre){
 		$cierreCaja = ModeloCajaCierres::mdlMostrarCierresCaja($idCierre); //datos del cierre
-		$cierreCaja["id_usuario_cierre"] = ModeloUsuarios::mdlMostrarUsuariosPorId($cierreCaja["id_usuario_cierre"])["nombre"];
+		
+		// Validar que se encontró el cierre
+		if(!$cierreCaja || empty($cierreCaja)) {
+			return array('ingresos' => array(), 'egresos' => array(), 'otros' => array());
+		}
+		
+		// Obtener nombre de usuario
+		$usuario = ModeloUsuarios::mdlMostrarUsuariosPorId($cierreCaja["id_usuario_cierre"]);
+		$cierreCaja["id_usuario_cierre"] = isset($usuario["nombre"]) ? $usuario["nombre"] : "";
+		
 		$cierreCajaAnterior = ModeloCajaCierres::mdlAnteriorSeleccionadoCierreCaja($cierreCaja["punto_venta_cobro"], $idCierre); //datos del cierre anterior
+		
+		// Validar cierre anterior, si no existe usar valores por defecto
+		if(!$cierreCajaAnterior || empty($cierreCajaAnterior)) {
+			$cierreCajaAnterior = array("ultimo_id_caja" => 1);
+		}
+		
 		$cierreCajaAnterior["ultimo_id_caja"] = (isset($cierreCajaAnterior["ultimo_id_caja"])) ? $cierreCajaAnterior["ultimo_id_caja"] : 1;
-		$cajas = ModeloCajas::mdlMovimientosCajaSegunCierre($cierreCaja["punto_venta_cobro"], $cierreCajaAnterior["ultimo_id_caja"], $cierreCaja["ultimo_id_caja"]); //movimientos de caja entre el cierre anterior y el elegido
+		
+		$puntoVenta = isset($cierreCaja["punto_venta_cobro"]) ? $cierreCaja["punto_venta_cobro"] : 1;
+		$ultimoIdCaja = isset($cierreCaja["ultimo_id_caja"]) ? $cierreCaja["ultimo_id_caja"] : 1;
+		
+		$cajas = ModeloCajas::mdlMovimientosCajaSegunCierre($puntoVenta, $cierreCajaAnterior["ultimo_id_caja"], $ultimoIdCaja); //movimientos de caja entre el cierre anterior y el elegido
+		
+		// Asegurar que $cajas sea un array
+		if(!is_array($cajas)) {
+			$cajas = array();
+		}
+		
 		$categorias = ModeloCategorias::mdlMostrarCategorias('categorias', null, null); //traigo todas las categorias
+		
+		// Asegurar que $categorias sea un array
+		if(!is_array($categorias)) {
+			$categorias = array();
+		}
+		
 		$datos = array('ingresos' => array(), 'egresos' => array(), 'otros' => $cierreCaja); //defino array de datos
 		$indexIngresos = 0;
 		$indexEgresos = 0;
 		
 		foreach ($categorias as $key => $valueCat) { //cargo el array de datos con las categorias existentes
-			$datos["ingresos"] += [$indexIngresos => array('id' => $valueCat["id"],'descripcion' => $valueCat["categoria"], 'monto' => 0, 'tipo' => 'categoria')];
-			$indexIngresos++;
+			if(isset($valueCat["id"]) && isset($valueCat["categoria"])) {
+				$datos["ingresos"] += [$indexIngresos => array('id' => $valueCat["id"],'descripcion' => $valueCat["categoria"], 'monto' => 0, 'tipo' => 'categoria')];
+				$indexIngresos++;
+			}
 		}
 
 		foreach ($cajas as $key => $value) {
+			if(!is_array($value) || !isset($value["tipo"])) {
+				continue; // Saltar elementos inválidos
+			}
 			if($value["tipo"] == 0) { //pago o gasto
-				if(isset($value["id_cliente_proveedor"])) { //es un pago de cta cte proveedor
-					$nombreProveedor = ModeloProveedores::mdlMostrarProveedoresPorId($value["id_cliente_proveedor"])["nombre"];
-					$datos["egresos"][$indexEgresos] = array('id' => $value["id"], 'tipo' => 'proveedor', 'descripcion' => $nombreProveedor, 'monto' => $value["monto"]);
+				if(isset($value["id_cliente_proveedor"]) && $value["id_cliente_proveedor"]) { //es un pago de cta cte proveedor
+					$nombreProveedor = ModeloProveedores::mdlMostrarProveedoresPorId($value["id_cliente_proveedor"]);
+					if($nombreProveedor && isset($nombreProveedor["nombre"])) {
+						$datos["egresos"][$indexEgresos] = array('id' => isset($value["id"]) ? $value["id"] : 0, 'tipo' => 'proveedor', 'descripcion' => $nombreProveedor["nombre"], 'monto' => isset($value["monto"]) ? floatval($value["monto"]) : 0);
+						$indexEgresos++;
+					}
 				} else {
-					$datos["egresos"][$indexEgresos] = array('id' => $value["id"], 'tipo' => 'comun', 'descripcion' => $value["descripcion"], 'monto' => $value["monto"]);
+					$descripcion = isset($value["descripcion"]) ? $value["descripcion"] : "";
+					$monto = isset($value["monto"]) ? floatval($value["monto"]) : 0;
+					if($descripcion || $monto > 0) {
+						$datos["egresos"][$indexEgresos] = array('id' => isset($value["id"]) ? $value["id"] : 0, 'tipo' => 'comun', 'descripcion' => $descripcion, 'monto' => $monto);
+						$indexEgresos++;
+					}
 				}
-				$indexEgresos++;
 
 			} else { //ingreso
-				if(isset($value["id_venta"])){ //es un ingreso por venta 
+				if(isset($value["id_venta"]) && $value["id_venta"]){ //es un ingreso por venta 
 					$venta = ModeloVentas::mdlMostrarVentaConCliente($value["id_venta"]); //traigo venta
-					$separoProd = json_decode($venta["productos"], true); //separo productos
 					
-					foreach ($separoProd as $keyPro => $valuePro) {
-						$cate_prod = ModeloProductos::mdlMostrarCategoriaProducto($valuePro["id"]); //consulto categoria producto
-						$itemArray = array_search($cate_prod["id"], array_column($datos["ingresos"], 'id'));
-    					$datos["ingresos"][$itemArray]["monto"] += $valuePro["total"];
-
+					if($venta && isset($venta["productos"])) {
+						$separoProd = json_decode($venta["productos"], true); //separo productos
+						
+						if(is_array($separoProd)) {
+							foreach ($separoProd as $keyPro => $valuePro) {
+								if(isset($valuePro["id"])) {
+									$cate_prod = ModeloProductos::mdlMostrarCategoriaProducto($valuePro["id"]); //consulto categoria producto
+									if($cate_prod && isset($cate_prod["id"])) {
+										$itemArray = array_search($cate_prod["id"], array_column($datos["ingresos"], 'id'));
+										if($itemArray !== false && isset($datos["ingresos"][$itemArray]) && isset($valuePro["total"])) {
+											$datos["ingresos"][$itemArray]["monto"] += floatval($valuePro["total"]);
+										}
+									}
+								}
+							}
+						}
 					}
 
-				} elseif(isset($value["id_cliente_proveedor"])) { //ingreso por cta cte cliente
+				} elseif(isset($value["id_cliente_proveedor"]) && $value["id_cliente_proveedor"]) { //ingreso por cta cte cliente
 					$nombreCliente = ModeloClientes::mdlMostrarClientesPorId($value["id_cliente_proveedor"]);
-					$datos["ingresos"][$indexIngresos] = array('id' => $value["id"], 'tipo' => 'cliente', 'descripcion' => $nombreCliente["nombre"], 'monto' => $value["monto"]);
-					$indexIngresos++;
+					if($nombreCliente && isset($nombreCliente["nombre"])) {
+						$datos["ingresos"][$indexIngresos] = array('id' => isset($value["id"]) ? $value["id"] : 0, 'tipo' => 'cliente', 'descripcion' => $nombreCliente["nombre"], 'monto' => isset($value["monto"]) ? floatval($value["monto"]) : 0);
+						$indexIngresos++;
+					}
 
 				} else { //ingreso de otro tipo
-					$datos["ingresos"][$indexIngresos] = array('id' => $value["id"], 'tipo' => 'comun', 'descripcion' => $value["descripcion"], 'monto' => $value["monto"]);
-					$indexIngresos++;
+					$descripcion = isset($value["descripcion"]) ? $value["descripcion"] : "";
+					$monto = isset($value["monto"]) ? floatval($value["monto"]) : 0;
+					if($descripcion || $monto > 0) {
+						$datos["ingresos"][$indexIngresos] = array('id' => isset($value["id"]) ? $value["id"] : 0, 'tipo' => 'comun', 'descripcion' => $descripcion, 'monto' => $monto);
+						$indexIngresos++;
+					}
 
 				}
 			}
@@ -196,14 +255,28 @@ class ControladorCajaCierres{
 	    
 	    $cierreCajaHasta = ModeloCajaCierres::mdlMostrarCierresCaja($idCierre); //datos del cierre
 	    
+	    // Validar que se encontró el cierre
+	    if(!$cierreCajaHasta || empty($cierreCajaHasta)) {
+	        return array();
+	    }
+	    
 	    $idCierreAnt = $idCierre - 1;
 	    $cierreCajaDesde = ModeloCajaCierres::mdlMostrarCierresCaja($idCierreAnt); //datos del cierre anterior (obtengo id desde)
 	    
-	    $idCajaDesde = $cierreCajaDesde["ultimo_id_caja"] + 1;
-	    $idCajaHasta = $cierreCajaHasta["ultimo_id_caja"];
-	    $listado = ModeloCajas::mdlRangoIdsCajas('cajas', $idCajaDesde, $idCajaHasta, $cierreCajaHasta["punto_venta_cobro"]);
+	    // Si no hay cierre anterior, usar desde el inicio (id_caja = 1)
+	    if(!$cierreCajaDesde || empty($cierreCajaDesde)) {
+	        $idCajaDesde = 1;
+	    } else {
+	        $idCajaDesde = (isset($cierreCajaDesde["ultimo_id_caja"])) ? $cierreCajaDesde["ultimo_id_caja"] + 1 : 1;
+	    }
 	    
-	    return $listado;
+	    $idCajaHasta = (isset($cierreCajaHasta["ultimo_id_caja"])) ? $cierreCajaHasta["ultimo_id_caja"] : 1;
+	    $puntoVenta = (isset($cierreCajaHasta["punto_venta_cobro"])) ? $cierreCajaHasta["punto_venta_cobro"] : 1;
+	    
+	    $listado = ModeloCajas::mdlRangoIdsCajas('cajas', $idCajaDesde, $idCajaHasta, $puntoVenta);
+	    
+	    // Asegurar que siempre devolvemos un array
+	    return is_array($listado) ? $listado : array();
 	    
 	}
  }
