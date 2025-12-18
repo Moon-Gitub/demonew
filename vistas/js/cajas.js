@@ -366,8 +366,21 @@ $(".tablaCierresCaja").on("click", "a.btnCierreCaja", function(e){
         return;
       }
       
-      // Validar que tenga la clave "otros" y que no esté vacía
-      if(!respuesta["otros"] || (typeof respuesta["otros"] === 'object' && Object.keys(respuesta["otros"]).length === 0)) {
+      // Si hay un error en la respuesta, mostrarlo
+      if(respuesta["error"]) {
+        console.error("Error del servidor:", respuesta["error"]);
+        swal({
+          type: "error",
+          title: "Error",
+          text: respuesta["error"],
+          showConfirmButton: true,
+          confirmButtonText: "Cerrar"
+        });
+        return;
+      }
+      
+      // Validar que tenga la clave "otros"
+      if(!respuesta["otros"]) {
         console.error("Error: No se encontraron datos del cierre", respuesta);
         swal({
           type: "error",
@@ -377,6 +390,21 @@ $(".tablaCierresCaja").on("click", "a.btnCierreCaja", function(e){
           confirmButtonText: "Cerrar"
         });
         return;
+      }
+      
+      // Si otros está vacío pero existe, intentar continuar con datos por defecto
+      if(typeof respuesta["otros"] === 'object' && Object.keys(respuesta["otros"]).length === 0) {
+        console.warn("Advertencia: El cierre existe pero no tiene datos completos", respuesta);
+        // Continuar pero con valores por defecto
+        respuesta["otros"] = {
+          fecha_hora: "",
+          punto_venta_cobro: "",
+          id_usuario_cierre: "",
+          apertura_siguiente_monto: "0",
+          detalle: "",
+          total_ingresos: "0",
+          total_egresos: "0"
+        };
       }
       
       // Llenar campos del resumen

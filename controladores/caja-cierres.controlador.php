@@ -150,13 +150,34 @@ class ControladorCajaCierres{
 			);
 		}
 		
-		// Asegurar que $cierreCaja tenga al menos los campos básicos
+		// Asegurar que $cierreCaja tenga al menos los campos básicos con valores por defecto
 		if(!isset($cierreCaja["id"])) {
 			$cierreCaja["id"] = $idCierre;
 		}
+		if(!isset($cierreCaja["punto_venta_cobro"])) {
+			$cierreCaja["punto_venta_cobro"] = 1;
+		}
+		if(!isset($cierreCaja["ultimo_id_caja"])) {
+			$cierreCaja["ultimo_id_caja"] = 1;
+		}
+		if(!isset($cierreCaja["fecha_hora"])) {
+			$cierreCaja["fecha_hora"] = "";
+		}
+		if(!isset($cierreCaja["detalle"])) {
+			$cierreCaja["detalle"] = "";
+		}
+		if(!isset($cierreCaja["total_ingresos"])) {
+			$cierreCaja["total_ingresos"] = "0";
+		}
+		if(!isset($cierreCaja["total_egresos"])) {
+			$cierreCaja["total_egresos"] = "0";
+		}
+		if(!isset($cierreCaja["apertura_siguiente_monto"])) {
+			$cierreCaja["apertura_siguiente_monto"] = "0";
+		}
 		
 		// Obtener nombre de usuario
-		if(isset($cierreCaja["id_usuario_cierre"])) {
+		if(isset($cierreCaja["id_usuario_cierre"]) && $cierreCaja["id_usuario_cierre"]) {
 			$usuario = ModeloUsuarios::mdlMostrarUsuariosPorId($cierreCaja["id_usuario_cierre"]);
 			$cierreCaja["id_usuario_cierre"] = (is_array($usuario) && isset($usuario["nombre"])) ? $usuario["nombre"] : (isset($cierreCaja["id_usuario_cierre"]) ? $cierreCaja["id_usuario_cierre"] : "");
 		} else {
