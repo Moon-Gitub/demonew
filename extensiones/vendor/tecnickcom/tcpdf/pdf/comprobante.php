@@ -27,37 +27,23 @@ if(!isset($_GET['codigo']) || empty($_GET['codigo'])) {
     die('Error: No se proporcionó el código del comprobante');
 }
 
+// Cargar autoload primero (usar ruta relativa como en recibo.php)
+$autoloadPath = '../../../autoload.php';
+error_log("Buscando autoload en: " . __DIR__ . '/' . $autoloadPath);
+if(!file_exists(__DIR__ . '/' . $autoloadPath)) {
+    error_log("ERROR: autoload.php no encontrado en ruta relativa");
+    die('Error: No se encuentra autoload.php');
+}
+error_log("✅ autoload.php encontrado, cargando...");
+require_once $autoloadPath;
+error_log("✅ autoload.php cargado");
+
 // Obtener la ruta base del proyecto (raíz donde está .env)
 // Desde: extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php
-// Hacia: raíz del proyecto
+// Hacia: raíz del proyecto (6 niveles arriba)
 $rutaBase = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
 error_log("Ruta base calculada: " . $rutaBase);
 error_log("Ruta base existe: " . (is_dir($rutaBase) ? 'SÍ' : 'NO'));
-
-// Verificar que la ruta base existe
-if(!is_dir($rutaBase)) {
-    error_log("ERROR: Ruta base no existe: " . $rutaBase);
-    die('Error: No se pudo determinar la ruta base del proyecto. Ruta intentada: ' . $rutaBase);
-}
-
-// Cargar vendor autoload primero (necesario para Dotenv)
-$autoloadPath = $rutaBase . '/extensiones/vendor/autoload.php';
-error_log("Buscando autoload en: " . $autoloadPath);
-if(!file_exists($autoloadPath)) {
-    error_log("ERROR: autoload.php no encontrado en: " . $autoloadPath);
-    // Intentar ruta alternativa
-    $autoloadPathAlt = dirname(dirname(dirname(dirname(__FILE__)))) . '/autoload.php';
-    error_log("Intentando ruta alternativa: " . $autoloadPathAlt);
-    if(file_exists($autoloadPathAlt)) {
-        $autoloadPath = $autoloadPathAlt;
-        error_log("✅ autoload.php encontrado en ruta alternativa");
-    } else {
-        die('Error: No se encuentra autoload.php en: ' . $autoloadPath . ' ni en: ' . $autoloadPathAlt);
-    }
-}
-error_log("✅ autoload.php encontrado, cargando desde: " . $autoloadPath);
-require_once $autoloadPath;
-error_log("✅ autoload.php cargado");
 
 // Cargar variables de entorno desde .env PRIMERO (si existe y si Dotenv está instalado)
 // IMPORTANTE: Se carga antes de los modelos para que .env esté disponible
