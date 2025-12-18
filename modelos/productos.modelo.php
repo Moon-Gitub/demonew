@@ -526,8 +526,8 @@ class ModeloProductos{
 			return array("error" => "Parámetros inválidos");
 		}
 		
-		// Preparar la consulta SQL sin punto y coma al final
-		$sql = "UPDATE productos SET precio_compra = precio_compra + (precio_compra * :porcentaje / 100), precio_venta = precio_venta + (precio_venta * :porcentaje / 100), nombre_usuario = :nombre_usuario, cambio_desde = 'Administrar Categorias' WHERE id_categoria = :id_categoria";
+		// Preparar la consulta SQL - usar parámetros diferentes para cada uso de porcentaje
+		$sql = "UPDATE productos SET precio_compra = precio_compra + (precio_compra * :porcentaje1 / 100), precio_venta = precio_venta + (precio_venta * :porcentaje2 / 100), nombre_usuario = :nombre_usuario, cambio_desde = 'Administrar Categorias' WHERE id_categoria = :id_categoria";
 		
 		$stmt = Conexion::conectar()->prepare($sql);
 
@@ -535,7 +535,9 @@ class ModeloProductos{
 		$porcentajeFloat = floatval($porcentaje);
 		$idCategoriaInt = intval($id_categoria);
 		
-		$stmt->bindValue(":porcentaje", $porcentajeFloat, PDO::PARAM_STR);
+		// Vincular parámetros - usar dos parámetros diferentes para el mismo valor
+		$stmt->bindValue(":porcentaje1", $porcentajeFloat, PDO::PARAM_STR);
+		$stmt->bindValue(":porcentaje2", $porcentajeFloat, PDO::PARAM_STR);
 		$stmt->bindValue(":id_categoria", $idCategoriaInt, PDO::PARAM_INT);
 		$stmt->bindValue(":nombre_usuario", $nombreUsuario, PDO::PARAM_STR);
 		

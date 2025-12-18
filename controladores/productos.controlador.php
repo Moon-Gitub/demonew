@@ -339,80 +339,73 @@ class ControladorProductos{
 	static public function ctrModificarPrecioCategoria() {
 		// Solo ejecutar si se envió el formulario (método POST y campos presentes)
 		if($_SERVER["REQUEST_METHOD"] != "POST"){
-			return; // No hacer nada si no es POST
+			return; // No hacer nada si no es POST - esto evita que se ejecute al cargar la página
 		}
 		
-		if(isset($_POST["nuevoModificacionPrecio"]) && isset($_POST["idCategoriaNuevoPrecio"]) && !empty($_POST["idCategoriaNuevoPrecio"])){
-			$tabla = 'productos';
-			$id_categoria = intval($_POST["idCategoriaNuevoPrecio"]);
-			$porcentaje = floatval($_POST["nuevoModificacionPrecio"]);
-			
-			// Validar que los datos sean válidos
-			if(empty($id_categoria) || $id_categoria <= 0) {
-				echo'<script>
-					swal({
-						type: "error",
-						title: "Error",
-						text: "Debe seleccionar una categoría válida",
-						showConfirmButton: true,
-						confirmButtonText: "Cerrar"
-					});
-				</script>';
-				return;
-			}
-			
-			if(!is_numeric($porcentaje)) {
-				echo'<script>
-					swal({
-						type: "error",
-						title: "Error",
-						text: "El porcentaje debe ser un número válido",
-						showConfirmButton: true,
-						confirmButtonText: "Cerrar"
-					});
-				</script>';
-				return;
-			}
-			
-			$respuesta = ModeloProductos::mdlModificarPrecioCategoria($tabla, $id_categoria, $porcentaje);
-			
-			if($respuesta == "ok"){
-				echo'<script>
-					swal({
-						type: "success",
-						title: "Productos",
-						text: "Los productos de la categoría seleccionada, han sido modificados",
-						showConfirmButton: true,
-						confirmButtonText: "Cerrar"
-					}).then(function(result){
-						if (result.value) {
-							window.location = "categorias";
-						}
-					})
-				</script>';
-			} else {
-				$mensajeError = "No se pudieron modificar los precios";
-				if(is_array($respuesta) && isset($respuesta['error'])) {
-					$mensajeError = $respuesta['error'];
-				} else if(is_array($respuesta) && isset($respuesta[2])) {
-					$mensajeError = "Error SQL: " . $respuesta[2];
-				}
-				echo'<script>
-					swal({
-						type: "error",
-						title: "Error",
-						text: "' . addslashes($mensajeError) . '",
-						showConfirmButton: true,
-						confirmButtonText: "Cerrar"
-					});
-				</script>';
-			}
-		} else {
+		// Verificar que los campos requeridos estén presentes
+		if(!isset($_POST["nuevoModificacionPrecio"]) || !isset($_POST["idCategoriaNuevoPrecio"]) || empty($_POST["idCategoriaNuevoPrecio"])){
+			return; // No mostrar error, solo retornar silenciosamente si no hay datos
+		}
+		
+		$tabla = 'productos';
+		$id_categoria = intval($_POST["idCategoriaNuevoPrecio"]);
+		$porcentaje = floatval($_POST["nuevoModificacionPrecio"]);
+		
+		// Validar que los datos sean válidos
+		if(empty($id_categoria) || $id_categoria <= 0) {
 			echo'<script>
 				swal({
 					type: "error",
 					title: "Error",
-					text: "Faltan datos requeridos",
+					text: "Debe seleccionar una categoría válida",
+					showConfirmButton: true,
+					confirmButtonText: "Cerrar"
+				});
+			</script>';
+			return;
+		}
+		
+		if(!is_numeric($porcentaje)) {
+			echo'<script>
+				swal({
+					type: "error",
+					title: "Error",
+					text: "El porcentaje debe ser un número válido",
+					showConfirmButton: true,
+					confirmButtonText: "Cerrar"
+				});
+			</script>';
+			return;
+		}
+		
+		$respuesta = ModeloProductos::mdlModificarPrecioCategoria($tabla, $id_categoria, $porcentaje);
+		
+		if($respuesta == "ok"){
+			echo'<script>
+				swal({
+					type: "success",
+					title: "Productos",
+					text: "Los productos de la categoría seleccionada, han sido modificados",
+					showConfirmButton: true,
+					confirmButtonText: "Cerrar"
+				}).then(function(result){
+					if (result.value) {
+						window.location = "categorias";
+					}
+				})
+			</script>';
+		} else {
+			$mensajeError = "No se pudieron modificar los precios";
+			if(is_array($respuesta) && isset($respuesta['error'])) {
+				$mensajeError = $respuesta['error'];
+			} else if(is_array($respuesta) && isset($respuesta[2])) {
+				$mensajeError = "Error SQL: " . $respuesta[2];
+			}
+			echo'<script>
+				swal({
+					type: "error",
+					title: "Error",
+					text: "' . addslashes($mensajeError) . '",
 					showConfirmButton: true,
 					confirmButtonText: "Cerrar"
 				});
