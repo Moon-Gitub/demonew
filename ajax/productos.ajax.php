@@ -74,7 +74,22 @@ class AjaxProductos{
   =============================================*/ 
   public function ajaxEditarProducto(){
 
-    if($this->traerProductos == "ok"){
+    if(isset($this->idProducto) && $this->idProducto != "" && $this->idProducto != null){
+
+      $item = "id";
+      $valor = $this->idProducto;
+      $orden = "id";
+
+      $respuesta = ControladorProductos::ctrMostrarProductos($item, $valor, $orden);
+
+      // Devolver solo el primer producto (debería ser único por ID)
+      if(is_array($respuesta) && count($respuesta) > 0){
+        echo json_encode($respuesta[0]);
+      } else {
+        echo json_encode($respuesta);
+      }
+
+    }else if($this->traerProductos == "ok"){
 
       $item = null;
       $valor = null;
