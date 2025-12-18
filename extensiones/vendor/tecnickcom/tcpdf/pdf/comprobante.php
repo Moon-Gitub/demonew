@@ -2,8 +2,9 @@
 
 // Habilitar reporte de errores para debugging
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // No mostrar errores en pantalla, solo en logs
+ini_set('display_errors', 1); // Mostrar errores temporalmente para debugging
 ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/../../../../error_log_comprobante.txt');
 
 // Iniciar sesión si no está iniciada
 if (session_status() === PHP_SESSION_NONE) {
@@ -20,38 +21,84 @@ if(!isset($_GET['codigo']) || empty($_GET['codigo'])) {
 // Obtener la ruta base del proyecto (raíz donde está .env)
 $rutaBase = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
 
+// Verificar que la ruta base existe
+if(!is_dir($rutaBase)) {
+    die('Error: No se pudo determinar la ruta base del proyecto. Ruta intentada: ' . $rutaBase);
+}
+
 // Cargar vendor autoload primero (necesario para Dotenv)
-require_once $rutaBase . '/extensiones/vendor/autoload.php';
+$autoloadPath = $rutaBase . '/extensiones/vendor/autoload.php';
+if(!file_exists($autoloadPath)) {
+    die('Error: No se encuentra autoload.php en: ' . $autoloadPath);
+}
+require_once $autoloadPath;
 
 // Cargar variables de entorno desde .env PRIMERO (si existe y si Dotenv está instalado)
 // IMPORTANTE: Se carga antes de los modelos para que .env esté disponible
-if (file_exists($rutaBase . '/.env') && class_exists('Dotenv\Dotenv')) {
-    try {
-        $dotenv = Dotenv\Dotenv::createImmutable($rutaBase);
-        $dotenv->load();
-    } catch (Exception $e) {
-        error_log("Error al cargar .env en comprobante.php: " . $e->getMessage());
+$envPath = $rutaBase . '/.env';
+if (file_exists($envPath)) {
+    if (class_exists('Dotenv\Dotenv')) {
+        try {
+            $dotenv = Dotenv\Dotenv::createImmutable($rutaBase);
+            $dotenv->load();
+            error_log("✅ .env cargado correctamente desde: " . $envPath);
+        } catch (Exception $e) {
+            error_log("❌ Error al cargar .env en comprobante.php: " . $e->getMessage());
+            // Continuar aunque falle el .env, puede que las variables estén en otro lugar
+        }
+    } else {
+        error_log("⚠️ Dotenv no está disponible, intentando leer .env manualmente");
+        // Leer .env manualmente si Dotenv no está disponible
+        $envLines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($envLines as $line) {
+            if (strpos(trim($line), '#') === 0) continue; // Saltar comentarios
+            if (strpos($line, '=') !== false) {
+                list($key, $value) = explode('=', $line, 2);
+                $key = trim($key);
+                $value = trim($value);
+                if (!empty($key)) {
+                    $_ENV[$key] = $value;
+                    $_SERVER[$key] = $value;
+                    putenv("$key=$value");
+                }
+            }
+        }
     }
+} else {
+    error_log("⚠️ Archivo .env no encontrado en: " . $envPath);
 }
 
 // Cargar helpers (incluye función env() para leer variables)
-if (file_exists($rutaBase . '/helpers.php')) {
-    require_once $rutaBase . '/helpers.php';
+$helpersPath = $rutaBase . '/helpers.php';
+if (file_exists($helpersPath)) {
+    require_once $helpersPath;
+} else {
+    error_log("⚠️ helpers.php no encontrado en: " . $helpersPath);
 }
 
 // Usar rutas relativas como en recibo.php que funciona
-require_once "../../../../../controladores/empresa.controlador.php";
-require_once "../../../../../modelos/empresa.modelo.php";
-require_once "../../../../../controladores/ventas.controlador.php";
-require_once "../../../../../modelos/ventas.modelo.php";
-require_once "../../../../../controladores/clientes.controlador.php";
-require_once "../../../../../modelos/clientes.modelo.php";
-require_once "../../../../../controladores/usuarios.controlador.php";
-require_once "../../../../../modelos/usuarios.modelo.php";
-require_once "../../../../../controladores/productos.controlador.php";
-require_once "../../../../../modelos/productos.modelo.php";
+$archivos = [
+    "../../../../../controladores/empresa.controlador.php",
+    "../../../../../modelos/empresa.modelo.php",
+    "../../../../../controladores/ventas.controlador.php",
+    "../../../../../modelos/ventas.modelo.php",
+    "../../../../../controladores/clientes.controlador.php",
+    "../../../../../modelos/clientes.modelo.php",
+    "../../../../../controladores/usuarios.controlador.php",
+    "../../../../../modelos/usuarios.modelo.php",
+    "../../../../../controladores/productos.controlador.php",
+    "../../../../../modelos/productos.modelo.php",
+    '../../../autoload.php'
+];
 
-require_once '../../../autoload.php';
+foreach ($archivos as $archivo) {
+    $rutaCompleta = __DIR__ . '/' . $archivo;
+    if (!file_exists($rutaCompleta)) {
+        error_log("❌ Archivo no encontrado: " . $rutaCompleta);
+        die('Error: Archivo requerido no encontrado: ' . basename($archivo));
+    }
+    require_once $archivo;
+}
 
 class imprimirComprobante{
 
