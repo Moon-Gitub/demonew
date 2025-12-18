@@ -526,18 +526,19 @@ class ModeloProductos{
 			return array("error" => "Parámetros inválidos");
 		}
 		
-		// Preparar la consulta SQL - usar parámetros diferentes para cada uso de porcentaje
-		$sql = "UPDATE productos SET precio_compra = precio_compra + (precio_compra * :porcentaje1 / 100), precio_venta = precio_venta + (precio_venta * :porcentaje2 / 100), nombre_usuario = :nombre_usuario, cambio_desde = 'Administrar Categorias' WHERE id_categoria = :id_categoria";
-		
-		$stmt = Conexion::conectar()->prepare($sql);
-
 		// Convertir porcentaje a float para asegurar que sea numérico
 		$porcentajeFloat = floatval($porcentaje);
 		$idCategoriaInt = intval($id_categoria);
 		
-		// Vincular parámetros - usar dos parámetros diferentes para el mismo valor
-		$stmt->bindValue(":porcentaje1", $porcentajeFloat, PDO::PARAM_STR);
-		$stmt->bindValue(":porcentaje2", $porcentajeFloat, PDO::PARAM_STR);
+		// Preparar la consulta SQL - calcular el multiplicador primero para evitar problemas con parámetros duplicados
+		$multiplicador = 1 + ($porcentajeFloat / 100);
+		
+		$sql = "UPDATE productos SET precio_compra = precio_compra * :multiplicador, precio_venta = precio_venta * :multiplicador, nombre_usuario = :nombre_usuario, cambio_desde = 'Administrar Categorias' WHERE id_categoria = :id_categoria";
+		
+		$stmt = Conexion::conectar()->prepare($sql);
+		
+		// Vincular parámetros
+		$stmt->bindValue(":multiplicador", $multiplicador, PDO::PARAM_STR);
 		$stmt->bindValue(":id_categoria", $idCategoriaInt, PDO::PARAM_INT);
 		$stmt->bindValue(":nombre_usuario", $nombreUsuario, PDO::PARAM_STR);
 		
