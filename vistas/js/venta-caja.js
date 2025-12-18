@@ -674,7 +674,10 @@ function restaurarProductosDesdeLocalStorage(){
 /*=============================================
 RESTAURAR PRODUCTO INDIVIDUAL
 =============================================*/
-function restaurarProductoIndividual(producto){
+function restaurarProductoIndividual(producto, callback){
+	// callback es una función que se ejecuta con (success: boolean)
+	callback = callback || function(){};
+	
 	// Verificar si el producto ya está en la lista
 	var existe = false;
 	$(".nuevaDescripcionProductoCaja").each(function(){
@@ -685,20 +688,33 @@ function restaurarProductoIndividual(producto){
 	});
 	
 	if(existe) {
-		return; // Ya existe, no agregar duplicado
+		console.log("Producto", producto.id, "ya existe en la lista, omitiendo");
+		callback(true);
+		return;
 	}
 	
 	// Obtener datos del producto desde el servidor
+	// Agregar token CSRF
+	var token = $('meta[name="csrf-token"]').attr('content') || '';
+	var datos = new FormData();
+	datos.append("idProducto", producto.id);
+	datos.append("traerProductos", "ok");
+	if(token) {
+		datos.append('csrf_token', token);
+	}
+	
 	$.ajax({
 		url: "ajax/productos.ajax.php",
 		method: "POST",
-		data: {
-			idProducto: producto.id,
-			traerProductos: "ok"
-		},
+		headers: token ? { 'X-CSRF-TOKEN': token } : {},
+		data: datos,
+		cache: false,
+		contentType: false,
+		processData: false,
 		dataType: "json",
 		success: function(respuesta){
-			if(respuesta && respuesta.length > 0) {
+			console.log("Respuesta AJAX para producto", producto.id, ":", respuesta);
+			if(respuesta && Array.isArray(respuesta) && respuesta.length > 0) {
 				var prod = respuesta[0];
 				// Usar los datos guardados para restaurar exactamente como estaba
 				var cantidad = parseFloat(producto.cantidad) || 1;
@@ -707,11 +723,22 @@ function restaurarProductoIndividual(producto){
 				var stock = parseFloat(prod["stock"]) || 0;
 				var iva = parseFloat(prod["tipo_iva"]) || 0;
 				
-				agregarProductoVisualmente(prod, cantidad, precioUnitario, precioTotal, stock, iva);
+				try {
+					agregarProductoVisualmente(prod, cantidad, precioUnitario, precioTotal, stock, iva);
+					callback(true);
+				} catch(e) {
+					console.error("Error al agregar producto visualmente:", e);
+					callback(false);
+				}
+			} else {
+				console.warn("Respuesta AJAX inválida o vacía para producto", producto.id);
+				callback(false);
 			}
 		},
-		error: function(){
-			console.error("Error al obtener datos del producto:", producto.id);
+		error: function(xhr, status, error){
+			console.error("Error AJAX al obtener datos del producto", producto.id, ":", status, error);
+			console.error("Response:", xhr.responseText);
+			callback(false);
 		}
 	});
 }

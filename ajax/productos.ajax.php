@@ -273,6 +273,10 @@ if(isset($_POST["traerProductos"])){
 
   $traerProductos = new AjaxProductos();
   $traerProductos -> traerProductos = $_POST["traerProductos"];
+  // Si también se envía idProducto, asignarlo para obtener un producto específico
+  if(isset($_POST["idProducto"]) && $_POST["idProducto"] != "" && $_POST["idProducto"] != null){
+    $traerProductos -> idProducto = $_POST["idProducto"];
+  }
   $traerProductos -> ajaxEditarProducto();
 
 }
