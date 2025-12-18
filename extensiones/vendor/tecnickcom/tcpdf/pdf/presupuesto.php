@@ -1,19 +1,111 @@
 <?php
+// Habilitar reporte de errores para debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1); // Mostrar errores temporalmente para debugging
+ini_set('log_errors', 1);
 
-require_once "../../../controladores/empresa.controlador.php";
-require_once "../../../modelos/empresa.modelo.php";
+// Crear log específico para este archivo
+$logFile = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/error_log_presupuesto.txt';
+ini_set('error_log', $logFile);
 
-require_once "../../../controladores/presupuestos.controlador.php";
-require_once "../../../modelos/presupuestos.modelo.php";
+error_log("==========================================");
+error_log("INICIO presupuesto.php - " . date('Y-m-d H:i:s'));
+error_log("ID Presupuesto recibido: " . (isset($_GET['idPresupuesto']) ? $_GET['idPresupuesto'] : 'NO DEFINIDO'));
+error_log("==========================================");
 
-require_once "../../../controladores/clientes.controlador.php";
-require_once "../../../modelos/clientes.modelo.php";
+// Iniciar sesión si no está iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-require_once "../../../controladores/usuarios.controlador.php";
-require_once "../../../modelos/usuarios.modelo.php";
+// Validar que se haya proporcionado el idPresupuesto
+if(!isset($_GET['idPresupuesto']) || empty($_GET['idPresupuesto'])) {
+    error_log("Error presupuesto.php: No se proporcionó el idPresupuesto");
+    http_response_code(400);
+    die('Error: No se proporcionó el ID del presupuesto');
+}
 
-require_once "../../../controladores/productos.controlador.php";
-require_once "../../../modelos/productos.modelo.php";
+// Cargar autoload primero (usar ruta relativa como en recibo.php)
+$autoloadPath = '../../../autoload.php';
+error_log("Buscando autoload en: " . __DIR__ . '/' . $autoloadPath);
+if(!file_exists(__DIR__ . '/' . $autoloadPath)) {
+    error_log("ERROR: autoload.php no encontrado en ruta relativa");
+    die('Error: No se encuentra autoload.php');
+}
+error_log("✅ autoload.php encontrado, cargando...");
+require_once $autoloadPath;
+error_log("✅ autoload.php cargado");
+
+// Obtener la ruta base del proyecto (raíz donde está .env)
+$rutaBase = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
+error_log("Ruta base calculada: " . $rutaBase);
+error_log("Ruta base existe: " . (is_dir($rutaBase) ? 'SÍ' : 'NO'));
+
+// Cargar variables de entorno desde .env PRIMERO
+$envPath = $rutaBase . '/.env';
+if (file_exists($envPath)) {
+    if (class_exists('Dotenv\Dotenv')) {
+        try {
+            $dotenv = Dotenv\Dotenv::createImmutable($rutaBase);
+            $dotenv->load();
+            error_log("✅ .env cargado correctamente desde: " . $envPath);
+        } catch (Exception $e) {
+            error_log("❌ Error al cargar .env en presupuesto.php: " . $e->getMessage());
+        }
+    } else {
+        error_log("⚠️ Dotenv no está disponible, intentando leer .env manualmente");
+        $envLines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($envLines as $line) {
+            if (strpos(trim($line), '#') === 0) continue;
+            if (strpos($line, '=') !== false) {
+                list($key, $value) = explode('=', $line, 2);
+                $key = trim($key);
+                $value = trim($value);
+                if (!empty($key)) {
+                    $_ENV[$key] = $value;
+                    $_SERVER[$key] = $value;
+                    putenv("$key=$value");
+                }
+            }
+        }
+    }
+} else {
+    error_log("⚠️ Archivo .env no encontrado en: " . $envPath);
+}
+
+// Cargar helpers
+$helpersPath = $rutaBase . '/helpers.php';
+if (file_exists($helpersPath)) {
+    require_once $helpersPath;
+} else {
+    error_log("⚠️ helpers.php no encontrado en: " . $helpersPath);
+}
+
+// Usar rutas relativas
+$archivos = [
+    "../../../../../controladores/empresa.controlador.php",
+    "../../../../../modelos/empresa.modelo.php",
+    "../../../../../controladores/presupuestos.controlador.php",
+    "../../../../../modelos/presupuestos.modelo.php",
+    "../../../../../controladores/clientes.controlador.php",
+    "../../../../../modelos/clientes.modelo.php",
+    "../../../../../controladores/usuarios.controlador.php",
+    "../../../../../modelos/usuarios.modelo.php",
+    "../../../../../controladores/productos.controlador.php",
+    "../../../../../modelos/productos.modelo.php"
+];
+
+foreach ($archivos as $archivo) {
+    $rutaCompleta = __DIR__ . '/' . $archivo;
+    if (file_exists($rutaCompleta)) {
+        require_once $archivo;
+        error_log("✅ Cargado: " . basename($archivo));
+    } else {
+        error_log("❌ No encontrado: " . $rutaCompleta);
+        http_response_code(500);
+        die('Error: No se encuentra un archivo necesario: ' . basename($archivo));
+    }
+}
 
 class imprimirComprobante{
 
@@ -21,7 +113,16 @@ public $codigo;
 
 public function traerImpresionComprobante(){
 
-$respEmpresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', 1);
+try {
+    error_log("Obteniendo datos de empresa...");
+    $respEmpresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', 1);
+    
+    if(!$respEmpresa || !is_array($respEmpresa)) {
+        error_log("ERROR: No se pudo obtener datos de la empresa");
+        http_response_code(500);
+        die('Error: No se pudieron obtener los datos de la empresa');
+    }
+    error_log("✅ Datos de empresa obtenidos");
 
 $tiposCbtes = array(
 0 => 'X',
@@ -70,13 +171,36 @@ $tiposCbtesLetras = array(
 );
 
 
-//TRAEMOS LA INFORMACIÓN DE LA VENTA
-$itemPedido = "id";
-$respuestaVenta = ControladorPresupuestos::ctrMostrarPresupuestos($itemPedido, $_GET['idPresupuesto']);
-
-$facturada = false;
-
-$respuestaCliente = ControladorClientes::ctrMostrarClientes('id', $respuestaVenta["id_cliente"]);
+    //TRAEMOS LA INFORMACIÓN DEL PRESUPUESTO
+    error_log("Obteniendo datos del presupuesto ID: " . $_GET['idPresupuesto']);
+    $itemPedido = "id";
+    $respuestaVenta = ControladorPresupuestos::ctrMostrarPresupuestos($itemPedido, $_GET['idPresupuesto']);
+    
+    if(!$respuestaVenta || !is_array($respuestaVenta) || empty($respuestaVenta)) {
+        error_log("ERROR: No se pudo obtener el presupuesto con ID: " . $_GET['idPresupuesto']);
+        http_response_code(404);
+        die('Error: Presupuesto no encontrado');
+    }
+    error_log("✅ Presupuesto obtenido correctamente");
+    
+    // Validar que tenga los campos necesarios
+    if(!isset($respuestaVenta["id_cliente"]) || empty($respuestaVenta["id_cliente"])) {
+        error_log("ERROR: El presupuesto no tiene id_cliente");
+        http_response_code(500);
+        die('Error: El presupuesto no tiene cliente asociado');
+    }
+    
+    $facturada = false;
+    
+    error_log("Obteniendo datos del cliente ID: " . $respuestaVenta["id_cliente"]);
+    $respuestaCliente = ControladorClientes::ctrMostrarClientes('id', $respuestaVenta["id_cliente"]);
+    
+    if(!$respuestaCliente || !is_array($respuestaCliente) || empty($respuestaCliente)) {
+        error_log("ERROR: No se pudo obtener el cliente con ID: " . $respuestaVenta["id_cliente"]);
+        http_response_code(500);
+        die('Error: Cliente no encontrado');
+    }
+    error_log("✅ Cliente obtenido correctamente");
 
 $arrTipoDocumento = array(
 96 => "DNI",
