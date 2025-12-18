@@ -1,23 +1,41 @@
 <?php
 
-require_once "../../../../../controladores/empresa.controlador.php";
-require_once "../../../../../modelos/empresa.modelo.php";
-require_once "../../../../../controladores/ventas.controlador.php";
-require_once "../../../../../modelos/ventas.modelo.php";
-require_once "../../../../../controladores/clientes.controlador.php";
-require_once "../../../../../modelos/clientes.modelo.php";
-require_once "../../../../../controladores/usuarios.controlador.php";
-require_once "../../../../../modelos/usuarios.modelo.php";
-require_once "../../../../../controladores/productos.controlador.php";
-require_once "../../../../../modelos/productos.modelo.php";
+// Iniciar sesión si no está iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-require_once '../../../autoload.php';
+// Validar que se haya proporcionado el código
+if(!isset($_GET['codigo']) || empty($_GET['codigo'])) {
+    die('Error: No se proporcionó el código del comprobante');
+}
+
+// Obtener la ruta base del proyecto
+$rutaBase = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
+
+require_once $rutaBase . "/controladores/empresa.controlador.php";
+require_once $rutaBase . "/modelos/empresa.modelo.php";
+require_once $rutaBase . "/controladores/ventas.controlador.php";
+require_once $rutaBase . "/modelos/ventas.modelo.php";
+require_once $rutaBase . "/controladores/clientes.controlador.php";
+require_once $rutaBase . "/modelos/clientes.modelo.php";
+require_once $rutaBase . "/controladores/usuarios.controlador.php";
+require_once $rutaBase . "/modelos/usuarios.modelo.php";
+require_once $rutaBase . "/controladores/productos.controlador.php";
+require_once $rutaBase . "/modelos/productos.modelo.php";
+
+require_once dirname(__FILE__) . '/../../autoload.php';
 
 class imprimirComprobante{
 
 public function traerImpresionComprobante(){
 
 $respEmpresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', 1);
+
+// Validar que se obtuvo la empresa
+if(!$respEmpresa || empty($respEmpresa)) {
+    die('Error: No se pudo obtener la información de la empresa');
+}
 
 //REQUERIMOS LA CLASE TCPDF
 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
@@ -98,15 +116,34 @@ $condIva = array(
 ''=>"(no definido)");
 
 //TRAEMOS LA INFORMACIÓN DE LA VENTA
-$respuestaVenta = ControladorVentas::ctrMostrarVentas('codigo', $_GET['codigo']);
+$codigoVenta = intval($_GET['codigo']);
+$respuestaVenta = ControladorVentas::ctrMostrarVentas('codigo', $codigoVenta);
+
+// Validar que se obtuvo la venta
+if(!$respuestaVenta || empty($respuestaVenta) || !isset($respuestaVenta["id"])) {
+    die('Error: No se encontró la venta con código ' . $codigoVenta);
+}
+
 $facturada = ControladorVentas::ctrVentaFacturada($respuestaVenta["id"]);
 $respuestaCliente = ControladorClientes::ctrMostrarClientes('id', $respuestaVenta["id_cliente"]);
-$tipoDocumento = $arrTipoDocumento[$respuestaCliente["tipo_documento"]];
-$tipoIva = $condIva[$respEmpresa["condicion_iva"]];
-$tipoIvaCliente = $condIva[$respuestaCliente["condicion_iva"]];
-$fecha = substr($respuestaVenta["fecha"],0,-8);
+
+// Validar que se obtuvo el cliente
+if(!$respuestaCliente || empty($respuestaCliente)) {
+    die('Error: No se encontró el cliente de la venta');
+}
+
+$tipoDocumento = isset($arrTipoDocumento[$respuestaCliente["tipo_documento"]]) ? $arrTipoDocumento[$respuestaCliente["tipo_documento"]] : "(no definido)";
+$tipoIva = isset($condIva[$respEmpresa["condicion_iva"]]) ? $condIva[$respEmpresa["condicion_iva"]] : "(no definido)";
+$tipoIvaCliente = isset($condIva[$respuestaCliente["condicion_iva"]]) ? $condIva[$respuestaCliente["condicion_iva"]] : "(no definido)";
+$fecha = isset($respuestaVenta["fecha"]) ? substr($respuestaVenta["fecha"],0,-8) : date("Y-m-d");
 $fecha = date("d-m-Y",strtotime($fecha));
 $productos = json_decode($respuestaVenta["productos"], true);
+
+// Validar que se obtuvieron los productos
+if(!is_array($productos) || empty($productos)) {
+    die('Error: No se encontraron productos en la venta');
+}
+
 $tamanioProd = count($productos);
 $total = number_format($respuestaVenta["total"],2, ',', '.');
 $observaciones = $respuestaVenta["observaciones"];
