@@ -2718,7 +2718,7 @@ $(".nuevoProductoCaja").on("keyup change", "input.nuevaCantidadProductoCaja", fu
 	//CALCULAR SI HAY INTERES
 	calcularInteresCaja("nuevoInteresPorcentajeCaja");
 
-    // AGRUPAR PRODUCTOS EN FORMATO JSON
+    // AGRUPAR PRODUCTOS EN FORMATO JSON (esto ya guarda en localStorage)
     listarProductosCaja();
 	
 });
