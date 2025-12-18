@@ -296,7 +296,8 @@ $("#aCajaVerCajas").click(function(){
 
 });*/  
 
-$(".tablaCierresCaja").on("click", "button.btnCierreCaja", function(){ 
+$(".tablaCierresCaja").on("click", "a.btnCierreCaja", function(e){ 
+  e.preventDefault();
   var valor = $(this).attr('idCierreCaja');
   
   if(!valor) {
@@ -475,10 +476,28 @@ $(".tablaCierresCaja").on("click", "button.btnCierreCaja", function(){
   });
 });
 
-$(".tablaCierresCaja").on("click", "button.btnListadoCierreCaja", function(){ 
+$(".tablaCierresCaja").on("click", "a.btnListadoCierreCaja", function(e){ 
+  e.preventDefault();
   var valor = $(this).attr('idCierreCaja');
+  
+  if(!valor) {
+    swal({
+      type: "error",
+      title: "Error",
+      text: "No se pudo obtener el ID del cierre"
+    });
+    return;
+  }
+  
+  // Obtener token CSRF
+  var token = $('meta[name="csrf-token"]').attr('content');
+  
   var datos = new FormData();
-  datos.append("esteCierreListado", valor);  
+  datos.append("esteCierreListado", valor);
+  if(token) {
+    datos.append("csrf_token", token);
+  }
+  
   $.ajax({
     url:"ajax/cajas.ajax.php",
     method: "POST",
@@ -487,34 +506,90 @@ $(".tablaCierresCaja").on("click", "button.btnListadoCierreCaja", function(){
     contentType: false,
     processData: false,
     dataType:"json",
+    headers: token ? { 'X-CSRF-TOKEN': token } : {},
     success:function(respuesta){
-        $("#listadoMovCierreCajaContenedor").css('display', '');
-        tableBody = $("#listadoMovCierreCajaTabla tbody");
-        tableBody.empty();
-        respuesta.forEach(function (item, index){
-            markup = "<tr>";
-         	markup += "<td>" + item.fecha + "</td>";
-         	markup += "<td>" + item.id + "</td>";
-         	markup += "<td>" + item.nombre + "</td>";
-         	markup += "<td>" + item.punto_venta + "</td>";
-         	markup += "<td>" + item.descripcion + "</td>";
-         	markup += "<td>" + item.medio_pago + "</td>";
-         	if(item.tipo === "0"){
-         	    markup += "<td></td>";
-         	    markup += "<td>" + item.monto + "</td>";
-         	} else {
-         	    markup += "<td>" + item.monto + "</td>";
-         	    markup += "<td></td>";
-         	}
-         	markup += "</tr>";
-            tableBody.append(markup);
-         });
+      
+      // Validar que la respuesta sea un array
+      if(!Array.isArray(respuesta)) {
+        console.error("Error: Respuesta no es un array", respuesta);
+        swal({
+          type: "error",
+          title: "Error",
+          text: "No se pudieron cargar los movimientos del cierre",
+          showConfirmButton: true,
+          confirmButtonText: "Cerrar"
+        });
+        return;
+      }
+      
+      // Mostrar contenedor y limpiar tabla
+      $("#listadoMovCierreCajaContenedor").css('display', '');
+      var tableBody = $("#listadoMovCierreCajaTabla tbody");
+      tableBody.empty();
+      
+      // Si no hay movimientos
+      if(respuesta.length === 0) {
+        tableBody.append("<tr><td colspan='8' class='text-center'>No hay movimientos para este cierre</td></tr>");
+        return;
+      }
+      
+      // Llenar tabla con movimientos
+      respuesta.forEach(function (item, index){
+        if(!item) return;
+        
+        var markup = "<tr>";
+        markup += "<td>" + (item.fecha || "") + "</td>";
+        markup += "<td>" + (item.id || "") + "</td>";
+        markup += "<td>" + (item.nombre || "") + "</td>";
+        markup += "<td>" + (item.punto_venta || "") + "</td>";
+        markup += "<td>" + (item.descripcion || "") + "</td>";
+        markup += "<td>" + (item.medio_pago || "") + "</td>";
+        
+        if(item.tipo === "0" || item.tipo === 0){
+          markup += "<td></td>";
+          markup += "<td style='color: red;'>" + (parseFloat(item.monto || 0).toFixed(2)) + "</td>";
+        } else {
+          markup += "<td style='color: green;'>" + (parseFloat(item.monto || 0).toFixed(2)) + "</td>";
+          markup += "<td></td>";
+        }
+        markup += "</tr>";
+        tableBody.append(markup);
+      });
+      
+      // Inicializar DataTable si no está inicializado
+      if(!$.fn.DataTable.isDataTable("#listadoMovCierreCajaTabla")) {
+        $("#listadoMovCierreCajaTabla").DataTable({
+          "language": GL_DATATABLE_LENGUAJE,
+          "pageLength": 25,
+          "order": [[0, "desc"]]
+        });
+      } else {
+        $("#listadoMovCierreCajaTabla").DataTable().ajax.reload();
+      }
     },
     error: function(xhr, status, error) {
-      console.log( xhr.responseText);
-      console.log( xhr);
-      console.log( status);
-      console.log( error);
-    }, timeout: 5000
+      console.error("Error al cargar movimientos de cierre:", {
+        status: xhr.status,
+        statusText: xhr.statusText,
+        error: error,
+        responseText: xhr.responseText
+      });
+      
+      var mensajeError = "Error al cargar los movimientos del cierre";
+      if(xhr.status === 403) {
+        mensajeError = "Error de seguridad (CSRF). Por favor, recargá la página.";
+      } else if(xhr.status === 404) {
+        mensajeError = "No se encontraron movimientos para este cierre";
+      }
+      
+      swal({
+        type: "error",
+        title: "Error",
+        text: mensajeError,
+        showConfirmButton: true,
+        confirmButtonText: "Cerrar"
+      });
+    }, 
+    timeout: 10000
   });
 });
