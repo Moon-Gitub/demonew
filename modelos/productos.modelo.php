@@ -526,12 +526,18 @@ class ModeloProductos{
 			return array("error" => "Parámetros inválidos");
 		}
 		
-		$stmt = Conexion::conectar()->prepare(
-		"UPDATE productos SET precio_compra = precio_compra + (precio_compra * :porcentaje / 100), precio_venta = precio_venta + (precio_venta * :porcentaje / 100), nombre_usuario = :nombre_usuario, cambio_desde = 'Administrar Categorias' WHERE id_categoria = :id_categoria");
+		// Preparar la consulta SQL sin punto y coma al final
+		$sql = "UPDATE productos SET precio_compra = precio_compra + (precio_compra * :porcentaje / 100), precio_venta = precio_venta + (precio_venta * :porcentaje / 100), nombre_usuario = :nombre_usuario, cambio_desde = 'Administrar Categorias' WHERE id_categoria = :id_categoria";
+		
+		$stmt = Conexion::conectar()->prepare($sql);
 
-		$stmt->bindParam(":porcentaje", $porcentaje, PDO::PARAM_STR);
-		$stmt->bindParam(":id_categoria", $id_categoria, PDO::PARAM_INT);
-		$stmt->bindParam(":nombre_usuario", $nombreUsuario, PDO::PARAM_STR);
+		// Convertir porcentaje a float para asegurar que sea numérico
+		$porcentajeFloat = floatval($porcentaje);
+		$idCategoriaInt = intval($id_categoria);
+		
+		$stmt->bindValue(":porcentaje", $porcentajeFloat, PDO::PARAM_STR);
+		$stmt->bindValue(":id_categoria", $idCategoriaInt, PDO::PARAM_INT);
+		$stmt->bindValue(":nombre_usuario", $nombreUsuario, PDO::PARAM_STR);
 		
 		if($stmt->execute()){
 

@@ -337,7 +337,8 @@ class ControladorProductos{
 	MOFIDICAR PRECIOS PRODUCTOS POR CATEGORIA
 	=============================================*/
 	static public function ctrModificarPrecioCategoria() {
-		if(isset($_POST["nuevoModificacionPrecio"]) && isset($_POST["idCategoriaNuevoPrecio"])){
+		// Solo ejecutar si se envió el formulario (método POST y campos presentes)
+		if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["nuevoModificacionPrecio"]) && isset($_POST["idCategoriaNuevoPrecio"]) && !empty($_POST["idCategoriaNuevoPrecio"])){
 			$tabla = 'productos';
 			$id_categoria = intval($_POST["idCategoriaNuevoPrecio"]);
 			$porcentaje = floatval($_POST["nuevoModificacionPrecio"]);
