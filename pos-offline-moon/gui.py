@@ -675,13 +675,20 @@ class POSApp:
     
     def recargar_clientes_en_ventana(self, ventana, tree):
         """Recargar clientes y actualizar el árbol"""
+        # Mostrar mensaje de carga
+        for item in tree.get_children():
+            tree.delete(item)
+        tree.insert("", tk.END, values=("", "🔄 Cargando clientes...", "", ""))
+        ventana.update()
+        
         self.cargar_clientes()
+        
         # Limpiar y recargar
         for item in tree.get_children():
             tree.delete(item)
         
         if not self.clientes_disponibles or len(self.clientes_disponibles) == 0:
-            tree.insert("", tk.END, values=("", "No hay clientes disponibles", "", ""))
+            tree.insert("", tk.END, values=("", "⚠️ No hay clientes disponibles", "", ""))
         else:
             for cliente in self.clientes_disponibles:
                 tree.insert("", tk.END, values=(
