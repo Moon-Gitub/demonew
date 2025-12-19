@@ -30,10 +30,33 @@ if (!$id_cliente && $_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 }
 
-// Para POST siempre requiere sesión
+// Para POST: verificar sesión o permitir desde sistema offline
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    require_once "../seguridad.ajax.php";
-    SeguridadAjax::inicializar();
+    // Verificar si viene del sistema offline (tiene id_cliente en datos)
+    $raw_input = file_get_contents('php://input');
+    $datos_temp = json_decode($raw_input, true);
+    
+    // Si no hay sesión pero viene del sistema offline, permitir
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    
+    if (!isset($_SESSION["iniciarSesion"]) || $_SESSION["iniciarSesion"] != "ok") {
+        // Si no hay sesión, verificar si es del sistema offline
+        if (isset($datos_temp['creado_local']) && $datos_temp['creado_local'] === true) {
+            // Permitir desde sistema offline, usar valores por defecto
+            $_SESSION['id'] = 1; // Usuario por defecto
+            $_SESSION['nombre'] = 'Sistema Offline';
+            error_log("Permitiendo venta desde sistema offline sin sesión activa");
+        } else {
+            // Requerir sesión para otros casos
+            require_once "../seguridad.ajax.php";
+            SeguridadAjax::inicializar();
+        }
+    } else {
+        // Hay sesión activa, todo bien
+        error_log("Sesión activa encontrada: usuario " . ($_SESSION['id'] ?? 'N/A'));
+    }
 }
 
 require_once "../controladores/ventas.controlador.php";
