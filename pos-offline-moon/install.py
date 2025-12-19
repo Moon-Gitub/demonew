@@ -26,13 +26,48 @@ def check_python_version():
     print(f"✅ Python {version.major}.{version.minor}.{version.micro} detectado")
     return True
 
-def install_dependencies():
-    """Instala dependencias desde requirements.txt"""
-    print("\n📦 Instalando dependencias...")
+def create_venv():
+    """Crea entorno virtual si no existe"""
+    venv_path = Path("venv")
     
+    if venv_path.exists():
+        print("✅ Entorno virtual ya existe")
+        return True
+    
+    print("\n🔧 Creando entorno virtual...")
     try:
         subprocess.check_call([
-            sys.executable, "-m", "pip", "install", "--upgrade", "pip"
+            sys.executable, "-m", "venv", "venv"
+        ])
+        print("✅ Entorno virtual creado")
+        return True
+    except subprocess.CalledProcessError:
+        print("❌ Error al crear entorno virtual")
+        print("💡 Asegúrate de tener instalado: python3-venv")
+        print("   En Ubuntu/Debian: sudo apt-get install python3-venv")
+        return False
+
+def get_venv_python():
+    """Obtiene la ruta del Python del entorno virtual"""
+    if sys.platform == 'win32':
+        return Path("venv") / "Scripts" / "python.exe"
+    else:
+        return Path("venv") / "bin" / "python"
+
+def install_dependencies():
+    """Instala dependencias desde requirements.txt en entorno virtual"""
+    print("\n📦 Instalando dependencias en entorno virtual...")
+    
+    venv_python = get_venv_python()
+    
+    if not venv_python.exists():
+        print("❌ Entorno virtual no encontrado")
+        return False
+    
+    try:
+        # Actualizar pip en el venv
+        subprocess.check_call([
+            str(venv_python), "-m", "pip", "install", "--upgrade", "pip"
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         print("✅ pip actualizado")
     except:
@@ -40,7 +75,7 @@ def install_dependencies():
     
     try:
         subprocess.check_call([
-            sys.executable, "-m", "pip", "install", "-r", "requirements.txt"
+            str(venv_python), "-m", "pip", "install", "-r", "requirements.txt"
         ])
         print("✅ Dependencias instaladas correctamente")
         return True
@@ -89,12 +124,62 @@ def create_config_file():
         print("✅ Archivo config.json creado con valores por defecto")
         print("⚠️  IMPORTANTE: Edita config.json con tus datos")
 
+def create_run_script():
+    """Crea scripts de ejecución para usar el entorno virtual"""
+    print("\n📝 Creando scripts de ejecución...")
+    
+    system = platform.system()
+    base_dir = Path(__file__).parent.absolute()
+    
+    if system == "Windows":
+        # Script batch para Windows
+        run_bat = base_dir / "run.bat"
+        content = """@echo off
+cd /d "%~dp0"
+call venv\\Scripts\\activate.bat
+python main.py
+pause
+"""
+        run_bat.write_text(content, encoding='utf-8')
+        print("✅ run.bat creado")
+    else:
+        # Script bash para Linux/Mac
+        run_sh = base_dir / "run.sh"
+        content = """#!/bin/bash
+cd "$(dirname "$0")"
+source venv/bin/activate
+python main.py
+"""
+        run_sh.write_text(content, encoding='utf-8')
+        run_sh.chmod(0o755)
+        print("✅ run.sh creado")
+    
+    # Script para setup también
+    if system == "Windows":
+        setup_bat = base_dir / "setup.bat"
+        content = """@echo off
+cd /d "%~dp0"
+call venv\\Scripts\\activate.bat
+python setup.py
+pause
+"""
+        setup_bat.write_text(content, encoding='utf-8')
+    else:
+        setup_sh = base_dir / "setup.sh"
+        content = """#!/bin/bash
+cd "$(dirname "$0")"
+source venv/bin/activate
+python setup.py
+"""
+        setup_sh.write_text(content, encoding='utf-8')
+        setup_sh.chmod(0o755)
+
 def create_desktop_shortcut():
     """Crea acceso directo en escritorio (Windows/Linux)"""
     print("\n🔗 Creando acceso directo...")
     
     system = platform.system()
-    script_path = Path(__file__).parent.absolute() / "main.py"
+    base_dir = Path(__file__).parent.absolute()
     
     if system == "Windows":
         try:
@@ -103,16 +188,14 @@ def create_desktop_shortcut():
             
             desktop = winshell.desktop()
             shortcut_path = os.path.join(desktop, "POS Offline Moon.lnk")
-            target = sys.executable
-            wDir = str(script_path.parent)
-            icon = target
+            target = str(base_dir / "run.bat")
+            wDir = str(base_dir)
             
             shell = Dispatch('WScript.Shell')
             shortcut = shell.CreateShortCut(shortcut_path)
             shortcut.Targetpath = target
-            shortcut.Arguments = f'"{script_path}"'
             shortcut.WorkingDirectory = wDir
-            shortcut.IconLocation = icon
+            shortcut.IconLocation = sys.executable
             shortcut.save()
             
             print("✅ Acceso directo creado en escritorio")
@@ -128,15 +211,17 @@ def create_desktop_shortcut():
         
         desktop_file.parent.mkdir(parents=True, exist_ok=True)
         
+        run_script = base_dir / "run.sh"
         content = f"""[Desktop Entry]
 Version=1.0
 Type=Application
 Name=POS Offline Moon
 Comment=Sistema POS Offline con sincronización
-Exec={sys.executable} {script_path}
+Exec={run_script}
 Icon=application-x-executable
 Terminal=false
 Categories=Office;
+Path={base_dir}
 """
         desktop_file.write_text(content, encoding='utf-8')
         desktop_file.chmod(0o755)
@@ -147,6 +232,11 @@ def main():
     
     # Verificar Python
     if not check_python_version():
+        sys.exit(1)
+    
+    # Crear entorno virtual
+    if not create_venv():
+        print("\n❌ Error al crear entorno virtual. Revisa los mensajes anteriores.")
         sys.exit(1)
     
     # Instalar dependencias
@@ -163,14 +253,18 @@ def main():
     # Crear acceso directo
     create_desktop_shortcut()
     
+    # Crear script de ejecución
+    create_run_script()
+    
     print("\n" + "="*60)
     print("  ✅ INSTALACIÓN COMPLETADA")
     print("="*60)
     print("\n📝 PRÓXIMOS PASOS:")
     print("  1. Edita 'config.json' con tus datos del servidor")
-    print("  2. Ejecuta 'python setup.py' para configuración inicial")
-    print("  3. Ejecuta 'python main.py' para iniciar la aplicación")
-    print("\n💡 TIP: Puedes crear un ejecutable con 'python build_exe.py'")
+    print("  2. Ejecuta './run.sh' (Linux/Mac) o 'run.bat' (Windows) para iniciar")
+    print("  3. O ejecuta 'python setup.py' para configuración inicial")
+    print("\n💡 IMPORTANTE: Usa './run.sh' o 'run.bat' para ejecutar la aplicación")
+    print("   (esto asegura que use el entorno virtual correcto)")
     print("\n")
 
 if __name__ == "__main__":
