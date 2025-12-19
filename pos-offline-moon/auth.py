@@ -85,7 +85,8 @@ class AuthManager:
         try:
             # Incluir ID de cliente como parámetro para autenticación básica
             params = {'id_cliente': config.ID_CLIENTE_MOON}
-            url = f"{config.API_BASE}/usuarios"
+            # Usar ruta directa al archivo PHP
+            url = f"{config.SERVER_URL}/api/usuarios.php"
             print(f"🔍 Sincronizando usuarios desde: {url}")
             print(f"🔍 Parámetros: {params}")
             
@@ -182,10 +183,10 @@ class AuthManager:
     def sync_estado_cuenta(self, id_cliente_moon):
         """Sincroniza estado de cuenta desde servidor"""
         try:
-            response = requests.get(
-                f"{config.API_BASE}/estado-cuenta/{id_cliente_moon}",
-                timeout=10
-            )
+            # Usar ruta directa al archivo PHP
+            url = f"{config.SERVER_URL}/api/estado-cuenta.php"
+            params = {'id': id_cliente_moon}
+            response = requests.get(url, params=params, timeout=10)
             
             if response.status_code == 200:
                 estado_data = response.json()
