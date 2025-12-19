@@ -60,6 +60,7 @@ class Venta(Base):
     id_servidor = Column(Integer, nullable=True)
     fecha = Column(DateTime, default=datetime.now, nullable=False)
     cliente = Column(String, default="Consumidor Final")
+    id_cliente = Column(Integer, default=1)  # ID del cliente para sincronización
     productos = Column(JSON, nullable=False)
     total = Column(Float, nullable=False)
     metodo_pago = Column(String, default="Efectivo")

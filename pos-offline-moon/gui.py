@@ -287,9 +287,30 @@ class POSApp:
         # Enfocar en la lista de productos al cargar
         self.productos_tree.focus_set()
         
-        # COLUMNA CENTRAL: Carrito de venta
+        # COLUMNA CENTRAL: Cliente y Carrito de venta
         center_col = tk.Frame(main_container, bg="white", relief=tk.RAISED, bd=1)
         center_col.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5)
+        
+        # Sección de cliente
+        cliente_frame = tk.Frame(center_col, bg="#f8f9fa", relief=tk.RAISED, bd=1)
+        cliente_frame.pack(fill=tk.X, padx=15, pady=(15, 10))
+        
+        tk.Label(cliente_frame, text="👤 CLIENTE", font=("Arial", 12, "bold"),
+                bg="#f8f9fa", fg="#2c3e50").pack(side=tk.LEFT, padx=10, pady=10)
+        
+        self.cliente_seleccionado = tk.StringVar(value="1-Consumidor Final")
+        self.cliente_id = 1  # ID por defecto
+        
+        cliente_entry_frame = tk.Frame(cliente_frame, bg="#f8f9fa")
+        cliente_entry_frame.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=10, pady=10)
+        
+        self.cliente_entry = tk.Entry(cliente_entry_frame, textvariable=self.cliente_seleccionado,
+                                     font=("Arial", 11), relief=tk.SOLID, bd=1, state="readonly")
+        self.cliente_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, ipady=5)
+        
+        tk.Button(cliente_entry_frame, text="🔍 Buscar", bg="#3498db", fg="white",
+                 font=("Arial", 9, "bold"), command=self.buscar_cliente, relief=tk.FLAT,
+                 padx=15, pady=5, cursor="hand2").pack(side=tk.LEFT, padx=(5, 0))
         
         tk.Label(center_col, text="🛒 CARRITO DE VENTA", font=("Arial", 16, "bold"),
                 bg="#667eea", fg="white").pack(fill=tk.X, pady=0, ipady=15)
@@ -779,10 +800,18 @@ class POSApp:
                     'stock': item.get('stock', 0)
                 })
             
+            # Obtener nombre del cliente seleccionado
+            cliente_nombre = "Consumidor Final"
+            for cliente in self.clientes_disponibles:
+                if cliente.get('id') == self.cliente_id:
+                    cliente_nombre = cliente.get('nombre', 'Consumidor Final')
+                    break
+            
             session = get_session()
             venta = Venta(
                 fecha=datetime.now(),
-                cliente="Consumidor Final",
+                cliente=cliente_nombre,
+                id_cliente=self.cliente_id,
                 productos=productos_json,
                 total=self.total_venta,
                 metodo_pago=self.medio_pago,

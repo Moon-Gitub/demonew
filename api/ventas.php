@@ -140,7 +140,15 @@ try {
         $postVentaCaja['idVendedor'] = $_SESSION['id'] ?? 1;
         $postVentaCaja['sucursalVendedor'] = $datos['sucursal'] ?? 'Local';
         $postVentaCaja['nombreVendedor'] = $_SESSION['nombre'] ?? 'Sistema';
-        $postVentaCaja['seleccionarCliente'] = $datos['cliente'] ?? '1';
+        // El cliente puede venir como ID (número) o como string "ID-Nombre"
+        $cliente_id = $datos['cliente'] ?? '1';
+        if (is_string($cliente_id) && strpos($cliente_id, '-') !== false) {
+            // Si viene como "ID-Nombre", extraer solo el ID
+            $cliente_id = intval(explode('-', $cliente_id)[0]);
+        } else {
+            $cliente_id = intval($cliente_id);
+        }
+        $postVentaCaja['seleccionarCliente'] = $cliente_id;
         $postVentaCaja['nuevaVentaCaja'] = '1';
         
         // Asegurar que los productos tengan el formato correcto
