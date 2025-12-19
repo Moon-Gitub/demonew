@@ -107,43 +107,66 @@ class AuthManager:
                     return False
                 
                 session = get_session()
+                print(f"🔍 Sesión de base de datos obtenida")
+                
                 usuarios_guardados = 0
                 usuarios_actualizados = 0
                 
-                for user_data in usuarios_data:
-                    print(f"🔍 Procesando usuario: {user_data.get('usuario', 'N/A')}")
+                try:
+                    for user_data in usuarios_data:
+                        print(f"🔍 Procesando usuario: {user_data.get('usuario', 'N/A')}")
+                        print(f"🔍 Datos recibidos: {user_data}")
+                        
+                        usuario = session.query(Usuario).filter_by(
+                            usuario=user_data['usuario']
+                        ).first()
+                        
+                        if usuario:
+                            # Actualizar existente
+                            print(f"🔍 Usuario existente encontrado, actualizando...")
+                            usuario.nombre = user_data['nombre']
+                            usuario.perfil = user_data.get('perfil', 'Vendedor')
+                            usuario.sucursal = user_data.get('sucursal', 'Local')
+                            usuario.estado = user_data.get('estado', 1)
+                            usuario.password_hash = user_data['password']  # Actualizar hash
+                            usuario.ultima_sincronizacion = datetime.now()
+                            usuarios_actualizados += 1
+                            print(f"✅ Usuario actualizado: {user_data['usuario']}")
+                        else:
+                            # Crear nuevo
+                            print(f"🔍 Creando nuevo usuario...")
+                            usuario = Usuario(
+                                id_servidor=user_data.get('id'),
+                                usuario=user_data['usuario'],
+                                password_hash=user_data['password'],
+                                nombre=user_data['nombre'],
+                                perfil=user_data.get('perfil', 'Vendedor'),
+                                sucursal=user_data.get('sucursal', 'Local'),
+                                estado=user_data.get('estado', 1)
+                            )
+                            session.add(usuario)
+                            usuarios_guardados += 1
+                            print(f"✅ Usuario agregado a sesión: {user_data['usuario']}")
                     
-                    usuario = session.query(Usuario).filter_by(
-                        usuario=user_data['usuario']
-                    ).first()
+                    print(f"🔍 Haciendo commit a la base de datos...")
+                    session.commit()
+                    print(f"✅ Commit exitoso")
                     
-                    if usuario:
-                        # Actualizar existente
-                        usuario.nombre = user_data['nombre']
-                        usuario.perfil = user_data.get('perfil', 'Vendedor')
-                        usuario.sucursal = user_data.get('sucursal', 'Local')
-                        usuario.estado = user_data.get('estado', 1)
-                        usuario.password_hash = user_data['password']  # Actualizar hash
-                        usuario.ultima_sincronizacion = datetime.now()
-                        usuarios_actualizados += 1
-                        print(f"✅ Usuario actualizado: {user_data['usuario']}")
-                    else:
-                        # Crear nuevo
-                        usuario = Usuario(
-                            id_servidor=user_data['id'],
-                            usuario=user_data['usuario'],
-                            password_hash=user_data['password'],
-                            nombre=user_data['nombre'],
-                            perfil=user_data.get('perfil', 'Vendedor'),
-                            sucursal=user_data.get('sucursal', 'Local'),
-                            estado=user_data.get('estado', 1)
-                        )
-                        session.add(usuario)
-                        usuarios_guardados += 1
-                        print(f"✅ Usuario creado: {user_data['usuario']}")
-                
-                session.commit()
-                session.close()
+                    # Verificar que se guardaron
+                    session2 = get_session()
+                    count = session2.query(Usuario).count()
+                    session2.close()
+                    print(f"✅ Verificación: {count} usuarios en base de datos")
+                    
+                except Exception as e:
+                    print(f"❌ Error al procesar usuarios: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    session.rollback()
+                    raise
+                finally:
+                    session.close()
+                    print(f"🔍 Sesión cerrada")
                 
                 print(f"✅ Sincronización completada: {usuarios_guardados} nuevos, {usuarios_actualizados} actualizados")
                 return True
