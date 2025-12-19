@@ -485,6 +485,7 @@ class POSApp:
         try:
             if self.connection_monitor.check_connection():
                 import requests
+                # Intentar primero con el endpoint API
                 url = f"{config.SERVER_URL}/api/clientes.php"
                 params = {'id_cliente': self.id_cliente_moon}
                 print(f"🔍 Cargando clientes desde: {url}")
@@ -493,16 +494,42 @@ class POSApp:
                 print(f"🔍 Status code clientes: {response.status_code}")
                 
                 if response.status_code == 200:
-                    clientes_data = response.json()
-                    if isinstance(clientes_data, list) and len(clientes_data) > 0:
-                        self.clientes_disponibles = clientes_data
-                        print(f"✅ Cargados {len(self.clientes_disponibles)} clientes")
-                    else:
-                        print("⚠️ No se recibieron clientes válidos")
-                        self.clientes_disponibles = [{'id': 1, 'nombre': 'Consumidor Final', 'display': '1-Consumidor Final'}]
-                else:
-                    print(f"⚠️ Error HTTP {response.status_code}: {response.text[:200]}")
-                    self.clientes_disponibles = [{'id': 1, 'nombre': 'Consumidor Final', 'display': '1-Consumidor Final'}]
+                    try:
+                        clientes_data = response.json()
+                        if isinstance(clientes_data, list) and len(clientes_data) > 0:
+                            self.clientes_disponibles = clientes_data
+                            print(f"✅ Cargados {len(self.clientes_disponibles)} clientes")
+                            return
+                    except:
+                        pass
+                
+                # Si falla, intentar con ajax/clientes.ajax.php usando POST
+                print("⚠️ Endpoint API no disponible, intentando con ajax...")
+                url_ajax = f"{config.SERVER_URL}/ajax/clientes.ajax.php"
+                data = {'listarClientes': '1'}
+                response_ajax = requests.post(url_ajax, data=data, timeout=10)
+                
+                if response_ajax.status_code == 200:
+                    try:
+                        clientes_data = response_ajax.json()
+                        if isinstance(clientes_data, list) and len(clientes_data) > 0:
+                            # Convertir formato del ajax al formato esperado
+                            self.clientes_disponibles = []
+                            for cliente in clientes_data:
+                                self.clientes_disponibles.append({
+                                    'id': int(cliente.get('id', 1)),
+                                    'nombre': cliente.get('nombre', 'Sin nombre'),
+                                    'documento': cliente.get('documento', ''),
+                                    'telefono': cliente.get('telefono', ''),
+                                    'display': f"{cliente.get('id', 1)}-{cliente.get('nombre', 'Sin nombre')}"
+                                })
+                            print(f"✅ Cargados {len(self.clientes_disponibles)} clientes desde ajax")
+                            return
+                    except Exception as e:
+                        print(f"⚠️ Error parseando respuesta ajax: {e}")
+                
+                print("⚠️ No se pudieron cargar clientes, usando cliente por defecto")
+                self.clientes_disponibles = [{'id': 1, 'nombre': 'Consumidor Final', 'display': '1-Consumidor Final'}]
             else:
                 print("⚠️ Sin conexión, usando cliente por defecto")
                 self.clientes_disponibles = [{'id': 1, 'nombre': 'Consumidor Final', 'display': '1-Consumidor Final'}]
@@ -601,6 +628,9 @@ class POSApp:
                  font=("Arial", 10, "bold"), command=buscar_cliente, relief=tk.FLAT, padx=20, pady=8).pack(side=tk.LEFT)
         
         # Cargar todos los clientes inicialmente
+        if not hasattr(self, 'clientes_disponibles') or not self.clientes_disponibles:
+            self.clientes_disponibles = [{'id': 1, 'nombre': 'Consumidor Final', 'display': '1-Consumidor Final'}]
+        
         actualizar_lista()
         
         def seleccionar_cliente(event=None):
