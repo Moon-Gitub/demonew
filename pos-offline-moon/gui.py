@@ -191,21 +191,33 @@ class LoginWindow:
             import threading
             def sync_thread():
                 try:
-                    # Sincronizar en modo silencioso (sin prints)
-                    self.sync_manager.sync_all(id_cliente_moon=self.id_cliente_moon, silent=True)
+                    print("🔄 Iniciando sincronización inicial...")
+                    # Sincronizar (con prints para debug)
+                    self.sync_manager.sync_all(id_cliente_moon=self.id_cliente_moon, silent=False)
+                    
+                    # Verificar que se guardaron usuarios
+                    from database import get_session, Usuario
+                    session = get_session()
+                    count = session.query(Usuario).count()
+                    session.close()
+                    print(f"✅ Usuarios en base local después de sync: {count}")
                     
                     # Actualizar estado de conexión en la UI
                     self.window.after(0, lambda: self.connection_status.config(
-                        text="🟢 En línea - Sincronizado"
+                        text=f"🟢 En línea - Sincronizado ({count} usuarios)"
                     ))
                 except Exception as e:
-                    print(f"Error en sincronización inicial: {e}")
+                    print(f"❌ Error en sincronización inicial: {e}")
+                    import traceback
+                    traceback.print_exc()
                     self.window.after(0, lambda: self.connection_status.config(
                         text="🟢 En línea - Error en sync"
                     ))
             
             thread = threading.Thread(target=sync_thread, daemon=True)
             thread.start()
+        else:
+            print("⚠️  Sin conexión, no se puede sincronizar")
     
     def manual_sync(self, show_message=True):
         """Sincronización manual"""
@@ -221,12 +233,28 @@ class LoginWindow:
         import threading
         def sync_thread():
             try:
-                self.sync_manager.sync_all(id_cliente_moon=self.id_cliente_moon)
+                print("🔄 Sincronización manual iniciada...")
+                self.sync_manager.sync_all(id_cliente_moon=self.id_cliente_moon, silent=False)
+                
+                # Verificar usuarios después de sync
+                from database import get_session, Usuario
+                session = get_session()
+                count = session.query(Usuario).count()
+                usuarios = session.query(Usuario).all()
+                session.close()
+                
+                print(f"✅ Usuarios después de sync: {count}")
+                for u in usuarios:
+                    print(f"  - {u.usuario} (Estado: {u.estado})")
+                
                 if show_message:
-                    self.window.after(0, lambda: messagebox.showinfo("Listo", "Sincronización completada"))
+                    msg = f"Sincronización completada.\n{count} usuario(s) disponible(s)."
+                    self.window.after(0, lambda: messagebox.showinfo("Listo", msg))
             except Exception as e:
                 error_msg = f"Error en sincronización: {str(e)}"
                 print(error_msg)
+                import traceback
+                traceback.print_exc()
                 if show_message:
                     self.window.after(0, lambda: messagebox.showerror("Error", error_msg))
         
