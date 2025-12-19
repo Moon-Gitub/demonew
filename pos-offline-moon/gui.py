@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-INTERFAZ GRÁFICA MODERNA
-Interfaz mejorada con tkinter para el sistema POS offline
+INTERFAZ GRÁFICA MODERNA Y FUNCIONAL
+Sistema POS offline con diseño inspirado en crear-venta-caja
 """
 
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, simpledialog
 from datetime import datetime, timedelta
 from database import get_session, Producto, Venta
 from sync import SyncManager
@@ -16,253 +16,103 @@ from config import config
 
 class LoginWindow:
     def __init__(self, parent):
-        print("LoginWindow: Inicializando...")
         self.parent = parent
-        try:
-            self.auth_manager = AuthManager()
-            print("LoginWindow: AuthManager creado")
-            self.sync_manager = SyncManager()
-            print("LoginWindow: SyncManager creado")
-            self.connection_monitor = ConnectionMonitor()
-            print("LoginWindow: ConnectionMonitor creado")
-            self.id_cliente_moon = config.ID_CLIENTE_MOON
-            print(f"LoginWindow: ID Cliente Moon = {self.id_cliente_moon}")
-            
-            self.setup_login_ui()
-            print("LoginWindow: UI configurada")
-            # Ejecutar sincronización después de que la ventana se muestre
-            self.window.after(500, self.check_initial_sync)
-            print("LoginWindow: Sincronización programada")
-        except Exception as e:
-            print(f"❌ Error en LoginWindow.__init__: {e}")
-            import traceback
-            traceback.print_exc()
-            raise
+        self.auth_manager = AuthManager()
+        self.sync_manager = SyncManager()
+        self.connection_monitor = ConnectionMonitor()
+        self.id_cliente_moon = config.ID_CLIENTE_MOON
+        
+        self.setup_login_ui()
+        self.window.after(500, self.check_initial_sync)
     
     def setup_login_ui(self):
-        print("setup_login_ui: Creando ventana...")
-        try:
-            self.window = tk.Toplevel(self.parent)
-            print("setup_login_ui: Toplevel creado")
-            self.window.title("POS Offline Moon - Login")
-            self.window.configure(bg="#667eea")
-            self.window.resizable(False, False)
-            
-            # Centrar ventana
-            self.window.transient(self.parent)
-            self.window.grab_set()
-            
-            print("setup_login_ui: Configurando widgets...")
-            
-            # Frame principal
-            main_frame = tk.Frame(self.window, bg="#667eea")
-            main_frame.pack(fill=tk.BOTH, expand=True, padx=40, pady=40)
-            
-            # Logo/Título
-            title = tk.Label(
-                main_frame,
-                text="POS | Moon",
-                font=("Arial", 28, "bold"),
-                bg="#667eea",
-                fg="white"
-            )
-            title.pack(pady=(0, 10))
-            
-            subtitle = tk.Label(
-                main_frame,
-                text="Sistema Offline",
-                font=("Arial", 12),
-                bg="#667eea",
-                fg="white"
-            )
-            subtitle.pack(pady=(0, 30))
-            
-            # Frame de login
-            login_frame = tk.Frame(main_frame, bg="white", relief=tk.RAISED, bd=2)
-            login_frame.pack(fill=tk.BOTH, expand=True)
-            
-            tk.Label(
-                login_frame,
-                text="Iniciar Sesión",
-                font=("Arial", 16, "bold"),
-                bg="white"
-            ).pack(pady=20)
-            
-            # Usuario
-            tk.Label(login_frame, text="Usuario:", bg="white", anchor="w", font=("Arial", 10)).pack(fill=tk.X, padx=20, pady=(10, 5))
-            self.usuario_entry = tk.Entry(login_frame, font=("Arial", 12), width=30, relief=tk.SOLID, bd=1)
-            self.usuario_entry.pack(padx=20, pady=(0, 10))
-            self.usuario_entry.focus()
-            
-            # Contraseña
-            tk.Label(login_frame, text="Contraseña:", bg="white", anchor="w", font=("Arial", 10)).pack(fill=tk.X, padx=20, pady=(10, 5))
-            self.password_entry = tk.Entry(login_frame, font=("Arial", 12), show="*", width=30, relief=tk.SOLID, bd=1)
-            self.password_entry.pack(padx=20, pady=(0, 20))
-            self.password_entry.bind("<Return>", lambda e: self.login())
-            
-            # Estado de conexión
-            self.connection_status = tk.Label(
-                login_frame,
-                text="🟢 En línea" if self.connection_monitor.check_connection() else "🔴 Sin conexión",
-                bg="white",
-                fg="#666",
-                font=("Arial", 9)
-            )
-            self.connection_status.pack(pady=5)
-            
-            # Botón login
-            btn_login = tk.Button(
-                login_frame,
-                text="Ingresar",
-                bg="#667eea",
-                fg="white",
-                font=("Arial", 12, "bold"),
-                command=self.login,
-                relief=tk.FLAT,
-                padx=30,
-                pady=10,
-                cursor="hand2"
-            )
-            btn_login.pack(pady=20)
-            
-            # Botón sincronizar
-            btn_sync = tk.Button(
-                login_frame,
-                text="🔄 Sincronizar",
-                bg="#764ba2",
-                fg="white",
-                font=("Arial", 10),
-                command=self.manual_sync,
-                relief=tk.FLAT,
-                padx=20,
-                pady=5,
-                cursor="hand2"
-            )
-            btn_sync.pack(pady=5)
-            
-            print("setup_login_ui: Widgets creados")
-            
-            # Forzar actualización para calcular tamaño real
-            self.window.update_idletasks()
-            self.window.update()
-            
-            # Obtener tamaño real después de que los widgets se rendericen
-            width = self.window.winfo_reqwidth()
-            height = self.window.winfo_reqheight()
-            
-            # Si el tamaño es muy pequeño, usar tamaño fijo
-            if width < 400 or height < 500:
-                width = 450
-                height = 550
-            
-            # Centrar en pantalla
-            screen_width = self.window.winfo_screenwidth()
-            screen_height = self.window.winfo_screenheight()
-            x = (screen_width // 2) - (width // 2)
-            y = (screen_height // 2) - (height // 2)
-            
-            # Establecer tamaño y posición
-            self.window.geometry(f'{width}x{height}+{x}+{y}')
-            
-            # Forzar que la ventana se muestre
-            self.window.deiconify()
-            self.window.lift()
-            self.window.focus_force()
-            
-            # Asegurar que esté visible
-            self.window.update()
-            self.window.update_idletasks()
-            
-            print(f"setup_login_ui: Ventana mostrada - Tamaño: {width}x{height}, Posición: {x},{y}")
-        except Exception as e:
-            print(f"❌ Error en setup_login_ui: {e}")
-            import traceback
-            traceback.print_exc()
-            raise
+        self.window = tk.Toplevel(self.parent)
+        self.window.title("POS Offline Moon - Login")
+        self.window.geometry("450x550")
+        self.window.configure(bg="#667eea")
+        self.window.resizable(False, False)
+        self.window.transient(self.parent)
+        self.window.grab_set()
+        
+        main_frame = tk.Frame(self.window, bg="#667eea")
+        main_frame.pack(fill=tk.BOTH, expand=True, padx=40, pady=40)
+        
+        tk.Label(main_frame, text="POS | Moon", font=("Arial", 28, "bold"), bg="#667eea", fg="white").pack(pady=(0, 10))
+        tk.Label(main_frame, text="Sistema Offline", font=("Arial", 12), bg="#667eea", fg="white").pack(pady=(0, 30))
+        
+        login_frame = tk.Frame(main_frame, bg="white", relief=tk.RAISED, bd=2)
+        login_frame.pack(fill=tk.BOTH, expand=True)
+        
+        tk.Label(login_frame, text="Iniciar Sesión", font=("Arial", 16, "bold"), bg="white").pack(pady=20)
+        
+        tk.Label(login_frame, text="Usuario:", bg="white", anchor="w", font=("Arial", 10)).pack(fill=tk.X, padx=20, pady=(10, 5))
+        self.usuario_entry = tk.Entry(login_frame, font=("Arial", 12), width=30, relief=tk.SOLID, bd=1)
+        self.usuario_entry.pack(padx=20, pady=(0, 10))
+        self.usuario_entry.focus()
+        
+        tk.Label(login_frame, text="Contraseña:", bg="white", anchor="w", font=("Arial", 10)).pack(fill=tk.X, padx=20, pady=(10, 5))
+        self.password_entry = tk.Entry(login_frame, font=("Arial", 12), show="*", width=30, relief=tk.SOLID, bd=1)
+        self.password_entry.pack(padx=20, pady=(0, 20))
+        self.password_entry.bind("<Return>", lambda e: self.login())
+        
+        self.connection_status = tk.Label(
+            login_frame,
+            text="🟢 En línea" if self.connection_monitor.check_connection() else "🔴 Sin conexión",
+            bg="white", fg="#666", font=("Arial", 9)
+        )
+        self.connection_status.pack(pady=5)
+        
+        tk.Button(login_frame, text="Ingresar", bg="#667eea", fg="white", font=("Arial", 12, "bold"),
+                 command=self.login, relief=tk.FLAT, padx=30, pady=10, cursor="hand2").pack(pady=20)
+        
+        tk.Button(login_frame, text="🔄 Sincronizar", bg="#764ba2", fg="white", font=("Arial", 10),
+                 command=self.manual_sync, relief=tk.FLAT, padx=20, pady=5, cursor="hand2").pack(pady=5)
+        
+        self.window.update_idletasks()
+        width = max(450, self.window.winfo_reqwidth())
+        height = max(550, self.window.winfo_reqheight())
+        x = (self.window.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.window.winfo_screenheight() // 2) - (height // 2)
+        self.window.geometry(f'{width}x{height}+{x}+{y}')
+        self.window.deiconify()
+        self.window.lift()
+        self.window.focus_force()
     
     def check_initial_sync(self):
-        """Sincroniza al iniciar si hay conexión (en segundo plano)"""
         if self.connection_monitor.check_connection():
-            # Actualizar estado mientras sincroniza
             self.connection_status.config(text="🟢 En línea - Sincronizando...")
-            self.window.update()
-            
-            # Ejecutar sincronización en un hilo separado para no bloquear UI
             import threading
             def sync_thread():
                 try:
-                    print("🔄 Iniciando sincronización inicial...")
-                    # Sincronizar (con prints para debug)
-                    self.sync_manager.sync_all(id_cliente_moon=self.id_cliente_moon, silent=False)
-                    
-                    # Verificar que se guardaron usuarios
+                    self.sync_manager.sync_all(id_cliente_moon=self.id_cliente_moon, silent=True)
                     from database import get_session, Usuario
                     session = get_session()
                     count = session.query(Usuario).count()
                     session.close()
-                    print(f"✅ Usuarios en base local después de sync: {count}")
-                    
-                    # Actualizar estado de conexión en la UI
-                    self.window.after(0, lambda: self.connection_status.config(
-                        text=f"🟢 En línea - Sincronizado ({count} usuarios)"
-                    ))
-                except Exception as e:
-                    print(f"❌ Error en sincronización inicial: {e}")
-                    import traceback
-                    traceback.print_exc()
-                    self.window.after(0, lambda: self.connection_status.config(
-                        text="🟢 En línea - Error en sync"
-                    ))
-            
-            thread = threading.Thread(target=sync_thread, daemon=True)
-            thread.start()
-        else:
-            print("⚠️  Sin conexión, no se puede sincronizar")
+                    self.window.after(0, lambda: self.connection_status.config(text=f"🟢 En línea ({count} usuarios)"))
+                except:
+                    self.window.after(0, lambda: self.connection_status.config(text="🟢 En línea - Error"))
+            threading.Thread(target=sync_thread, daemon=True).start()
     
     def manual_sync(self, show_message=True):
-        """Sincronización manual"""
         if not self.connection_monitor.check_connection():
             if show_message:
                 messagebox.showwarning("Sin conexión", "No hay conexión a internet")
             return
-        
         if show_message:
             messagebox.showinfo("Sincronizando", "Sincronizando datos...")
-        
-        # Ejecutar sincronización en hilo separado
         import threading
         def sync_thread():
             try:
-                print("🔄 Sincronización manual iniciada...")
                 self.sync_manager.sync_all(id_cliente_moon=self.id_cliente_moon, silent=False)
-                
-                # Verificar usuarios después de sync
-                from database import get_session, Usuario
-                session = get_session()
-                count = session.query(Usuario).count()
-                usuarios = session.query(Usuario).all()
-                session.close()
-                
-                print(f"✅ Usuarios después de sync: {count}")
-                for u in usuarios:
-                    print(f"  - {u.usuario} (Estado: {u.estado})")
-                
                 if show_message:
-                    msg = f"Sincronización completada.\n{count} usuario(s) disponible(s)."
-                    self.window.after(0, lambda: messagebox.showinfo("Listo", msg))
+                    self.window.after(0, lambda: messagebox.showinfo("Listo", "Sincronización completada"))
             except Exception as e:
-                error_msg = f"Error en sincronización: {str(e)}"
-                print(error_msg)
-                import traceback
-                traceback.print_exc()
                 if show_message:
-                    self.window.after(0, lambda: messagebox.showerror("Error", error_msg))
-        
-        thread = threading.Thread(target=sync_thread, daemon=True)
-        thread.start()
+                    self.window.after(0, lambda: messagebox.showerror("Error", f"Error: {str(e)}"))
+        threading.Thread(target=sync_thread, daemon=True).start()
     
     def login(self):
-        """Procesa el login"""
         usuario = self.usuario_entry.get().strip()
         password = self.password_entry.get()
         
@@ -270,11 +120,9 @@ class LoginWindow:
             messagebox.showwarning("Campos vacíos", "Complete usuario y contraseña")
             return
         
-        # Intentar login local primero
         resultado = self.auth_manager.login(usuario, password)
         
         if not resultado["success"]:
-            # Si falla local, intentar sincronizar y volver a intentar
             if self.connection_monitor.check_connection():
                 self.manual_sync(show_message=False)
                 resultado = self.auth_manager.login(usuario, password)
@@ -286,7 +134,6 @@ class LoginWindow:
                 messagebox.showerror("Error de login", mensaje)
                 return
         
-        # Verificar estado de cuenta (si hay conexión o desde cache)
         if self.connection_monitor.check_connection():
             self.sync_manager.sync_estado_cuenta(self.id_cliente_moon)
         
@@ -299,7 +146,6 @@ class LoginWindow:
             messagebox.showerror("Acceso bloqueado", mensaje)
             return
         
-        # Login exitoso - cerrar ventana de login y abrir aplicación
         self.window.destroy()
         app = POSApp(self.parent, self.auth_manager, self.sync_manager, self.connection_monitor, self.id_cliente_moon)
         app.run()
@@ -311,146 +157,136 @@ class POSApp:
         self.sync_manager = sync_manager
         self.connection_monitor = connection_monitor
         self.id_cliente_moon = id_cliente_moon
-        
-        # Variables
         self.productos_carrito = []
         self.total_venta = 0.0
         
         self.setup_ui()
         self.connection_monitor.start_monitoring()
-        
-        # Verificar estado de cuenta periódicamente
         self.check_account_status()
     
     def check_account_status(self):
-        """Verifica estado de cuenta periódicamente"""
         if self.connection_monitor.check_connection():
             self.sync_manager.sync_estado_cuenta(self.id_cliente_moon)
-        
         estado = self.auth_manager.verificar_estado_cuenta_local(self.id_cliente_moon)
-        
         if not estado["activo"]:
-            messagebox.showerror(
-                "Cuenta bloqueada",
-                f"{estado['mensaje']}\n\nEl sistema se cerrará."
-            )
+            messagebox.showerror("Cuenta bloqueada", f"{estado['mensaje']}\n\nEl sistema se cerrará.")
             self.root.quit()
             return
-        
-        # Verificar cada 5 minutos
         self.root.after(config.ACCOUNT_CHECK_INTERVAL * 1000, self.check_account_status)
     
     def setup_ui(self):
-        """Configura la interfaz principal con diseño moderno"""
-        self.root.title("POS Offline Moon - Sistema de Ventas")
-        self.root.geometry("1400x900")
-        self.root.configure(bg="#f0f2f5")
+        """Interfaz principal funcional y visualmente atractiva"""
+        self.root.title("POS Offline Moon")
+        self.root.geometry("1600x1000")
+        self.root.configure(bg="#ecf0f5")
         
-        # Header moderno con gradiente
-        header = tk.Frame(self.root, bg="#667eea", height=70)
+        # Menú superior
+        menu_bar = tk.Menu(self.root)
+        self.root.config(menu=menu_bar)
+        
+        menu_archivo = tk.Menu(menu_bar, tearoff=0)
+        menu_bar.add_cascade(label="Archivo", menu=menu_archivo)
+        menu_archivo.add_command(label="Sincronizar", command=self.manual_sync)
+        menu_archivo.add_separator()
+        menu_archivo.add_command(label="Salir", command=self.root.quit)
+        
+        menu_productos = tk.Menu(menu_bar, tearoff=0)
+        menu_bar.add_cascade(label="Productos", menu=menu_productos)
+        menu_productos.add_command(label="Ver Catálogo", command=self.mostrar_catalogo)
+        menu_productos.add_command(label="Recargar", command=lambda: self.cargar_productos())
+        
+        menu_ventas = tk.Menu(menu_bar, tearoff=0)
+        menu_bar.add_cascade(label="Ventas", menu=menu_ventas)
+        menu_ventas.add_command(label="Ver Ventas (30 días)", command=self.mostrar_ventas)
+        
+        menu_ayuda = tk.Menu(menu_bar, tearoff=0)
+        menu_bar.add_cascade(label="Ayuda", menu=menu_ayuda)
+        menu_ayuda.add_command(label="Atajos: F7=Cobrar, F5=Recargar, F1=Catálogo", command=lambda: None)
+        
+        # Header
+        header = tk.Frame(self.root, bg="#2c3e50", height=60)
         header.pack(fill=tk.X)
         
-        # Título en header
-        title_frame = tk.Frame(header, bg="#667eea")
-        title_frame.pack(side=tk.LEFT, padx=20, pady=15)
+        tk.Label(header, text="POS | Moon - Sistema Offline", font=("Arial", 18, "bold"),
+                bg="#2c3e50", fg="white").pack(side=tk.LEFT, padx=20, pady=15)
         
-        tk.Label(
-            title_frame,
-            text="POS | Moon",
-            font=("Arial", 20, "bold"),
-            bg="#667eea",
-            fg="white"
-        ).pack(side=tk.LEFT)
+        self.status_label = tk.Label(header, text="🟢 En línea", bg="#2c3e50", fg="white",
+                                     font=("Arial", 11, "bold"))
+        self.status_label.pack(side=tk.RIGHT, padx=10, pady=15)
         
-        tk.Label(
-            title_frame,
-            text="Sistema Offline",
-            font=("Arial", 10),
-            bg="#667eea",
-            fg="rgba(255,255,255,0.9)"
-        ).pack(side=tk.LEFT, padx=(10, 0))
+        tk.Label(header, text=f"👤 {self.auth_manager.current_user.nombre}", bg="#2c3e50",
+                fg="white", font=("Arial", 10)).pack(side=tk.RIGHT, padx=10, pady=15)
         
-        # Estado de conexión y usuario
-        status_frame = tk.Frame(header, bg="#667eea")
-        status_frame.pack(side=tk.RIGHT, padx=20, pady=15)
+        # Contenedor principal - 3 columnas
+        main_container = tk.Frame(self.root, bg="#ecf0f5")
+        main_container.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
-        self.status_label = tk.Label(
-            status_frame,
-            text="🟢 En línea",
-            bg="#667eea",
-            fg="white",
-            font=("Arial", 11, "bold")
-        )
-        self.status_label.pack(side=tk.LEFT, padx=5)
+        # COLUMNA IZQUIERDA: Búsqueda y lista de productos
+        left_col = tk.Frame(main_container, bg="white", relief=tk.RAISED, bd=1)
+        left_col.pack(side=tk.LEFT, fill=tk.BOTH, expand=False, padx=(0, 5))
+        left_col.config(width=400)
         
-        user_label = tk.Label(
-            status_frame,
-            text=f"👤 {self.auth_manager.current_user.nombre}",
-            bg="#667eea",
-            fg="white",
-            font=("Arial", 10)
-        )
-        user_label.pack(side=tk.LEFT, padx=10)
+        tk.Label(left_col, text="🔍 BUSCAR PRODUCTO", font=("Arial", 14, "bold"),
+                bg="white", fg="#2c3e50").pack(pady=15)
         
-        btn_sync = tk.Button(
-            status_frame,
-            text="🔄 Sincronizar",
-            bg="#764ba2",
-            fg="white",
-            font=("Arial", 9, "bold"),
-            command=self.manual_sync,
-            relief=tk.FLAT,
-            padx=15,
-            pady=5,
-            cursor="hand2"
-        )
-        btn_sync.pack(side=tk.LEFT, padx=5)
+        search_frame = tk.Frame(left_col, bg="white")
+        search_frame.pack(fill=tk.X, padx=15, pady=10)
         
-        # Contenedor principal con layout mejorado
-        main_container = tk.Frame(self.root, bg="#f0f2f5")
-        main_container.pack(fill=tk.BOTH, expand=True, padx=15, pady=15)
+        self.search_var = tk.StringVar()
+        search_entry = tk.Entry(search_frame, textvariable=self.search_var, font=("Arial", 13),
+                               relief=tk.SOLID, bd=2, bg="#f8f9fa")
+        search_entry.pack(fill=tk.X, ipady=10)
+        search_entry.focus()
+        self.search_var.trace("w", lambda *args: self.buscar_producto())
         
-        # Panel izquierdo - Carrito (más ancho)
-        left_panel = tk.Frame(main_container, bg="white", relief=tk.FLAT, bd=0)
-        left_panel.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 10))
+        tk.Button(search_frame, text="📋 Ver Catálogo Completo", bg="#3498db", fg="white",
+                 font=("Arial", 10, "bold"), command=self.mostrar_catalogo, relief=tk.FLAT,
+                 padx=15, pady=8, cursor="hand2").pack(fill=tk.X, pady=(10, 0))
         
-        # Título del carrito con estilo
-        carrito_header = tk.Frame(left_panel, bg="#667eea", height=50)
-        carrito_header.pack(fill=tk.X)
+        tk.Label(left_col, text="LISTA DE PRODUCTOS", font=("Arial", 12, "bold"),
+                bg="white", fg="#7f8c8d").pack(pady=(15, 5))
         
-        tk.Label(
-            carrito_header,
-            text="🛒 Carrito de Venta",
-            font=("Arial", 16, "bold"),
-            bg="#667eea",
-            fg="white"
-        ).pack(side=tk.LEFT, padx=15, pady=12)
+        productos_frame = tk.Frame(left_col, bg="white")
+        productos_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=(0, 15))
         
-        # Tabla de productos en carrito con mejor estilo
-        carrito_frame = tk.Frame(left_panel, bg="white")
-        carrito_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=15)
-        
-        # Estilo para el treeview
+        # Treeview de productos
         style = ttk.Style()
         style.theme_use("clam")
-        style.configure("Carrito.Treeview", 
-                        background="white",
-                        foreground="#2c3e50",
-                        fieldbackground="white",
-                        rowheight=30,
-                        font=("Arial", 11))
-        style.configure("Carrito.Treeview.Heading", 
-                        background="#667eea",
-                        foreground="white",
-                        font=("Arial", 11, "bold"))
         
-        self.carrito_tree = ttk.Treeview(
-            carrito_frame,
-            columns=("cantidad", "producto", "precio", "subtotal"),
-            show="headings",
-            height=18,
-            style="Carrito.Treeview"
-        )
+        self.productos_tree = ttk.Treeview(productos_frame, columns=("codigo", "descripcion", "precio", "stock"),
+                                          show="headings", height=25)
+        self.productos_tree.heading("codigo", text="Código")
+        self.productos_tree.heading("descripcion", text="Descripción")
+        self.productos_tree.heading("precio", text="Precio")
+        self.productos_tree.heading("stock", text="Stock")
+        
+        self.productos_tree.column("codigo", width=90, anchor=tk.CENTER)
+        self.productos_tree.column("descripcion", width=200)
+        self.productos_tree.column("precio", width=90, anchor=tk.CENTER)
+        self.productos_tree.column("stock", width=70, anchor=tk.CENTER)
+        
+        scrollbar_prod = ttk.Scrollbar(productos_frame, orient=tk.VERTICAL, command=self.productos_tree.yview)
+        self.productos_tree.configure(yscrollcommand=scrollbar_prod.set)
+        
+        self.productos_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar_prod.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        self.productos_tree.bind("<Double-1>", self.agregar_al_carrito)
+        self.productos_tree.bind("<Return>", self.agregar_al_carrito)
+        
+        # COLUMNA CENTRAL: Carrito de venta
+        center_col = tk.Frame(main_container, bg="white", relief=tk.RAISED, bd=1)
+        center_col.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5)
+        
+        tk.Label(center_col, text="🛒 CARRITO DE VENTA", font=("Arial", 16, "bold"),
+                bg="#667eea", fg="white").pack(fill=tk.X, pady=0, ipady=15)
+        
+        # Tabla del carrito
+        carrito_frame = tk.Frame(center_col, bg="white")
+        carrito_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=15)
+        
+        self.carrito_tree = ttk.Treeview(carrito_frame, columns=("cantidad", "producto", "precio", "subtotal"),
+                                        show="headings", height=20)
         self.carrito_tree.heading("cantidad", text="Cant.")
         self.carrito_tree.heading("producto", text="Producto")
         self.carrito_tree.heading("precio", text="P. Unit.")
@@ -468,211 +304,108 @@ class POSApp:
         scrollbar_carrito.pack(side=tk.RIGHT, fill=tk.Y)
         
         # Botones de acción del carrito
-        carrito_actions = tk.Frame(left_panel, bg="white")
+        carrito_actions = tk.Frame(center_col, bg="white")
         carrito_actions.pack(fill=tk.X, padx=15, pady=5)
         
-        btn_limpiar = tk.Button(
-            carrito_actions,
-            text="🗑️ Limpiar",
-            bg="#e74c3c",
-            fg="white",
-            font=("Arial", 10, "bold"),
-            command=self.limpiar_carrito,
-            relief=tk.FLAT,
-            padx=20,
-            pady=8,
-            cursor="hand2"
-        )
-        btn_limpiar.pack(side=tk.LEFT, padx=5)
+        tk.Button(carrito_actions, text="➕ Aumentar", bg="#27ae60", fg="white",
+                 font=("Arial", 10, "bold"), command=self.aumentar_cantidad, relief=tk.FLAT,
+                 padx=15, pady=8, cursor="hand2").pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
         
-        # Total con diseño destacado
-        total_frame = tk.Frame(left_panel, bg="#f8f9fa", relief=tk.RAISED, bd=1)
+        tk.Button(carrito_actions, text="➖ Disminuir", bg="#f39c12", fg="white",
+                 font=("Arial", 10, "bold"), command=self.disminuir_cantidad, relief=tk.FLAT,
+                 padx=15, pady=8, cursor="hand2").pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
+        
+        tk.Button(carrito_actions, text="🗑️ Eliminar", bg="#e74c3c", fg="white",
+                 font=("Arial", 10, "bold"), command=self.eliminar_item, relief=tk.FLAT,
+                 padx=15, pady=8, cursor="hand2").pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
+        
+        tk.Button(carrito_actions, text="🗑️ Limpiar Todo", bg="#c0392b", fg="white",
+                 font=("Arial", 10, "bold"), command=self.limpiar_carrito, relief=tk.FLAT,
+                 padx=15, pady=8, cursor="hand2").pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
+        
+        # Total destacado
+        total_frame = tk.Frame(center_col, bg="#34495e", relief=tk.RAISED, bd=2)
         total_frame.pack(fill=tk.X, padx=15, pady=10)
         
-        tk.Label(
-            total_frame,
-            text="TOTAL A COBRAR:",
-            font=("Arial", 16, "bold"),
-            bg="#f8f9fa",
-            fg="#2c3e50"
-        ).pack(side=tk.LEFT, padx=15, pady=12)
+        tk.Label(total_frame, text="TOTAL A COBRAR:", font=("Arial", 16, "bold"),
+                bg="#34495e", fg="white").pack(side=tk.LEFT, padx=20, pady=15)
         
-        self.total_label = tk.Label(
-            total_frame,
-            text="$ 0.00",
-            font=("Arial", 24, "bold"),
-            fg="#667eea",
-            bg="#f8f9fa"
-        )
-        self.total_label.pack(side=tk.LEFT, padx=10)
+        self.total_label = tk.Label(total_frame, text="$ 0.00", font=("Arial", 28, "bold"),
+                                    fg="#2ecc71", bg="#34495e")
+        self.total_label.pack(side=tk.RIGHT, padx=20, pady=15)
         
-        # Botón cobrar destacado
-        btn_cobrar = tk.Button(
-            left_panel,
-            text="💳 COBRAR VENTA (F7)",
-            bg="#27ae60",
-            fg="white",
-            font=("Arial", 16, "bold"),
-            command=self.cobrar_venta,
-            relief=tk.FLAT,
-            padx=40,
-            pady=18,
-            cursor="hand2"
-        )
+        # Botón cobrar grande
+        btn_cobrar = tk.Button(center_col, text="💳 COBRAR VENTA (F7)", bg="#27ae60", fg="white",
+                              font=("Arial", 18, "bold"), command=self.cobrar_venta, relief=tk.FLAT,
+                              padx=40, pady=20, cursor="hand2")
         btn_cobrar.pack(fill=tk.X, padx=15, pady=15)
         
-        # Panel derecho - Productos y menú
-        right_panel = tk.Frame(main_container, bg="white", relief=tk.FLAT, bd=0)
-        right_panel.pack(side=tk.RIGHT, fill=tk.BOTH, padx=(10, 0))
+        # COLUMNA DERECHA: Acciones y resumen
+        right_col = tk.Frame(main_container, bg="white", relief=tk.RAISED, bd=1)
+        right_col.pack(side=tk.LEFT, fill=tk.BOTH, expand=False, padx=(5, 0))
+        right_col.config(width=300)
         
-        # Título del panel de productos
-        productos_header = tk.Frame(right_panel, bg="#764ba2", height=50)
-        productos_header.pack(fill=tk.X)
+        tk.Label(right_col, text="⚡ ACCIONES RÁPIDAS", font=("Arial", 14, "bold"),
+                bg="#764ba2", fg="white").pack(fill=tk.X, pady=0, ipady=15)
         
-        tk.Label(
-            productos_header,
-            text="📦 Productos",
-            font=("Arial", 16, "bold"),
-            bg="#764ba2",
-            fg="white"
-        ).pack(side=tk.LEFT, padx=15, pady=12)
+        actions_frame = tk.Frame(right_col, bg="white")
+        actions_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=15)
         
-        # Búsqueda mejorada
-        search_container = tk.Frame(right_panel, bg="white")
-        search_container.pack(fill=tk.X, padx=15, pady=15)
+        tk.Button(actions_frame, text="📊 Ver Ventas\n(Últimos 30 días)", bg="#9b59b6", fg="white",
+                 font=("Arial", 12, "bold"), command=self.mostrar_ventas, relief=tk.FLAT,
+                 padx=20, pady=15, cursor="hand2", width=25).pack(fill=tk.X, pady=10)
         
-        search_label = tk.Label(
-            search_container,
-            text="🔍 Buscar:",
-            font=("Arial", 11, "bold"),
-            bg="white",
-            fg="#2c3e50"
-        )
-        search_label.pack(side=tk.LEFT, padx=(0, 10))
+        tk.Button(actions_frame, text="🔄 Sincronizar", bg="#3498db", fg="white",
+                 font=("Arial", 12, "bold"), command=self.manual_sync, relief=tk.FLAT,
+                 padx=20, pady=15, cursor="hand2", width=25).pack(fill=tk.X, pady=10)
         
-        self.search_var = tk.StringVar()
-        self.search_var.trace("w", lambda *args: self.buscar_producto())
+        tk.Button(actions_frame, text="📋 Catálogo\nCompleto", bg="#16a085", fg="white",
+                 font=("Arial", 12, "bold"), command=self.mostrar_catalogo, relief=tk.FLAT,
+                 padx=20, pady=15, cursor="hand2", width=25).pack(fill=tk.X, pady=10)
         
-        search_entry = tk.Entry(
-            search_container,
-            textvariable=self.search_var,
-            font=("Arial", 12),
-            relief=tk.SOLID,
-            bd=1,
-            bg="#f8f9fa"
-        )
-        search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, ipady=8)
-        search_entry.focus()
+        # Resumen de sesión
+        resumen_frame = tk.Frame(right_col, bg="#ecf0f5", relief=tk.RAISED, bd=1)
+        resumen_frame.pack(fill=tk.X, padx=15, pady=15)
         
-        # Botón catálogo
-        btn_catalogo = tk.Button(
-            search_container,
-            text="📋 Ver Catálogo",
-            bg="#3498db",
-            fg="white",
-            font=("Arial", 10, "bold"),
-            command=self.mostrar_catalogo,
-            relief=tk.FLAT,
-            padx=15,
-            pady=8,
-            cursor="hand2"
-        )
-        btn_catalogo.pack(side=tk.LEFT, padx=(10, 0))
+        tk.Label(resumen_frame, text="📈 RESUMEN", font=("Arial", 12, "bold"),
+                bg="#ecf0f5", fg="#2c3e50").pack(pady=10)
         
-        # Lista de productos con mejor estilo
-        productos_frame = tk.Frame(right_panel, bg="white")
-        productos_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=(0, 15))
+        self.resumen_label = tk.Label(resumen_frame, text="Productos: 0\nTotal: $0.00",
+                                     font=("Arial", 11), bg="#ecf0f5", fg="#7f8c8d", justify=tk.LEFT)
+        self.resumen_label.pack(pady=(0, 10), padx=10)
         
-        style.configure("Productos.Treeview",
-                       background="white",
-                       foreground="#2c3e50",
-                       fieldbackground="white",
-                       rowheight=35,
-                       font=("Arial", 10))
-        style.configure("Productos.Treeview.Heading",
-                       background="#764ba2",
-                       foreground="white",
-                       font=("Arial", 10, "bold"))
-        
-        self.productos_tree = ttk.Treeview(
-            productos_frame,
-            columns=("codigo", "descripcion", "precio", "stock"),
-            show="headings",
-            height=22,
-            style="Productos.Treeview"
-        )
-        self.productos_tree.heading("codigo", text="Código")
-        self.productos_tree.heading("descripcion", text="Descripción")
-        self.productos_tree.heading("precio", text="Precio")
-        self.productos_tree.heading("stock", text="Stock")
-        
-        self.productos_tree.column("codigo", width=100, anchor=tk.CENTER)
-        self.productos_tree.column("descripcion", width=250)
-        self.productos_tree.column("precio", width=120, anchor=tk.CENTER)
-        self.productos_tree.column("stock", width=80, anchor=tk.CENTER)
-        
-        scrollbar_productos = ttk.Scrollbar(productos_frame, orient=tk.VERTICAL, command=self.productos_tree.yview)
-        self.productos_tree.configure(yscrollcommand=scrollbar_productos.set)
-        
-        self.productos_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        scrollbar_productos.pack(side=tk.RIGHT, fill=tk.Y)
-        
-        self.productos_tree.bind("<Double-1>", self.agregar_al_carrito)
-        self.productos_tree.bind("<Return>", self.agregar_al_carrito)
-        
-        # Botones de acción en panel derecho
-        acciones_frame = tk.Frame(right_panel, bg="white")
-        acciones_frame.pack(fill=tk.X, padx=15, pady=(0, 15))
-        
-        btn_ventas = tk.Button(
-            acciones_frame,
-            text="📊 Ventas (30 días)",
-            bg="#9b59b6",
-            fg="white",
-            font=("Arial", 11, "bold"),
-            command=self.mostrar_ventas,
-            relief=tk.FLAT,
-            padx=20,
-            pady=10,
-            cursor="hand2"
-        )
-        btn_ventas.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
-        
-        # Atajos de teclado
+        # Atajos
         self.root.bind('<F7>', lambda e: self.cobrar_venta())
         self.root.bind('<F5>', lambda e: self.cargar_productos())
         self.root.bind('<F1>', lambda e: self.mostrar_catalogo())
+        self.root.bind('<Delete>', lambda e: self.eliminar_item())
+        self.root.bind('<plus>', lambda e: self.aumentar_cantidad())
+        self.root.bind('<minus>', lambda e: self.disminuir_cantidad())
         
-        # Cargar productos
         self.cargar_productos()
     
     def on_connection_change(self, is_online):
-        """Actualiza UI cuando cambia conexión"""
         if is_online:
             self.status_label.config(text="🟢 En línea", fg="white")
             self.sync_manager.sync_all(id_cliente_moon=self.id_cliente_moon)
-            # Verificar estado de cuenta cuando vuelve conexión
             self.sync_manager.sync_estado_cuenta(self.id_cliente_moon)
             estado = self.auth_manager.verificar_estado_cuenta_local(self.id_cliente_moon)
             if not estado["activo"]:
                 messagebox.showerror("Cuenta bloqueada", estado["mensaje"])
                 self.root.quit()
         else:
-            self.status_label.config(text="🔴 Sin conexión - Modo offline", fg="#ffeb3b")
+            self.status_label.config(text="🔴 Sin conexión", fg="#ffeb3b")
     
     def manual_sync(self):
-        """Sincronización manual"""
         if not self.connection_monitor.check_connection():
             messagebox.showwarning("Sin conexión", "No hay conexión a internet")
             return
-        
         messagebox.showinfo("Sincronizando", "Sincronizando datos...")
         self.sync_manager.sync_all(id_cliente_moon=self.id_cliente_moon)
         self.cargar_productos()
         messagebox.showinfo("Listo", "Sincronización completada")
     
     def cargar_productos(self, filtro=""):
-        """Carga productos desde base local"""
         session = get_session()
         query = session.query(Producto)
         
@@ -684,104 +417,56 @@ class POSApp:
         
         productos = query.all()
         
-        # Limpiar tree
         for item in self.productos_tree.get_children():
             self.productos_tree.delete(item)
         
-        # Agregar productos
         for prod in productos:
-            self.productos_tree.insert(
-                "",
-                tk.END,
-                values=(
-                    prod.codigo,
-                    prod.descripcion,
-                    f"${prod.precio_venta:.2f}",
-                    f"{prod.stock:.0f}" if prod.stock else "0"
-                ),
-                tags=(prod.id,)
-            )
+            self.productos_tree.insert("", tk.END, values=(
+                prod.codigo, prod.descripcion, f"${prod.precio_venta:.2f}",
+                f"{prod.stock:.0f}" if prod.stock else "0"
+            ), tags=(prod.id,))
         
         session.close()
+        self.actualizar_resumen()
     
     def buscar_producto(self):
-        """Filtra productos según búsqueda"""
         filtro = self.search_var.get()
         self.cargar_productos(filtro)
     
     def mostrar_catalogo(self):
-        """Muestra catálogo completo de productos con precios"""
-        ventana_catalogo = tk.Toplevel(self.root)
-        ventana_catalogo.title("📋 Catálogo de Productos")
-        ventana_catalogo.geometry("900x700")
-        ventana_catalogo.configure(bg="#f0f2f5")
+        """Ventana de catálogo completo"""
+        cat_window = tk.Toplevel(self.root)
+        cat_window.title("📋 Catálogo de Productos")
+        cat_window.geometry("1000x700")
+        cat_window.configure(bg="#ecf0f5")
         
-        # Header
-        header_cat = tk.Frame(ventana_catalogo, bg="#667eea", height=60)
-        header_cat.pack(fill=tk.X)
+        header = tk.Frame(cat_window, bg="#667eea", height=60)
+        header.pack(fill=tk.X)
+        tk.Label(header, text="📋 Catálogo Completo de Productos", font=("Arial", 18, "bold"),
+                bg="#667eea", fg="white").pack(pady=15)
         
-        tk.Label(
-            header_cat,
-            text="📋 Catálogo Completo de Productos",
-            font=("Arial", 18, "bold"),
-            bg="#667eea",
-            fg="white"
-        ).pack(pady=15)
-        
-        # Búsqueda en catálogo
-        search_frame = tk.Frame(ventana_catalogo, bg="#f0f2f5")
+        search_frame = tk.Frame(cat_window, bg="#ecf0f5")
         search_frame.pack(fill=tk.X, padx=20, pady=15)
         
         search_var_cat = tk.StringVar()
-        search_entry_cat = tk.Entry(
-            search_frame,
-            textvariable=search_var_cat,
-            font=("Arial", 12),
-            relief=tk.SOLID,
-            bd=1
-        )
-        search_entry_cat.pack(side=tk.LEFT, fill=tk.X, expand=True, ipady=8, padx=(0, 10))
-        search_entry_cat.focus()
+        search_entry = tk.Entry(search_frame, textvariable=search_var_cat, font=("Arial", 12),
+                               relief=tk.SOLID, bd=1)
+        search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, ipady=8, padx=(0, 10))
+        search_entry.focus()
         
-        def buscar_catalogo():
+        def buscar():
             filtro = search_var_cat.get()
             cargar_catalogo(filtro)
         
-        search_entry_cat.bind("<KeyRelease>", lambda e: buscar_catalogo())
+        search_entry.bind("<KeyRelease>", lambda e: buscar())
+        tk.Button(search_frame, text="🔍 Buscar", bg="#667eea", fg="white",
+                 font=("Arial", 10, "bold"), command=buscar, relief=tk.FLAT, padx=20, pady=8).pack(side=tk.LEFT)
         
-        btn_buscar = tk.Button(
-            search_frame,
-            text="🔍 Buscar",
-            bg="#667eea",
-            fg="white",
-            font=("Arial", 10, "bold"),
-            command=buscar_catalogo,
-            relief=tk.FLAT,
-            padx=20,
-            pady=8
-        )
-        btn_buscar.pack(side=tk.LEFT)
-        
-        # Tabla de catálogo
-        cat_frame = tk.Frame(ventana_catalogo, bg="white")
+        cat_frame = tk.Frame(cat_window, bg="white")
         cat_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=(0, 20))
         
-        style = ttk.Style()
-        style.configure("Catalogo.Treeview",
-                       background="white",
-                       rowheight=40,
-                       font=("Arial", 11))
-        style.configure("Catalogo.Treeview.Heading",
-                       background="#667eea",
-                       foreground="white",
-                       font=("Arial", 11, "bold"))
-        
-        cat_tree = ttk.Treeview(
-            cat_frame,
-            columns=("codigo", "descripcion", "precio", "stock", "categoria"),
-            show="headings",
-            style="Catalogo.Treeview"
-        )
+        cat_tree = ttk.Treeview(cat_frame, columns=("codigo", "descripcion", "precio", "stock", "categoria"),
+                               show="headings")
         cat_tree.heading("codigo", text="Código")
         cat_tree.heading("descripcion", text="Descripción")
         cat_tree.heading("precio", text="Precio Venta")
@@ -794,42 +479,31 @@ class POSApp:
         cat_tree.column("stock", width=100, anchor=tk.CENTER)
         cat_tree.column("categoria", width=150)
         
-        scrollbar_cat = ttk.Scrollbar(cat_frame, orient=tk.VERTICAL, command=cat_tree.yview)
-        cat_tree.configure(yscrollcommand=scrollbar_cat.set)
+        scrollbar = ttk.Scrollbar(cat_frame, orient=tk.VERTICAL, command=cat_tree.yview)
+        cat_tree.configure(yscrollcommand=scrollbar.set)
         
         cat_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        scrollbar_cat.pack(side=tk.RIGHT, fill=tk.Y)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
         def cargar_catalogo(filtro=""):
             session = get_session()
             query = session.query(Producto)
-            
             if filtro:
                 query = query.filter(
                     (Producto.descripcion.contains(filtro)) |
                     (Producto.codigo.contains(filtro)) |
                     (Producto.categoria.contains(filtro) if Producto.categoria else False)
                 )
-            
             productos = query.all()
             
-            # Limpiar
             for item in cat_tree.get_children():
                 cat_tree.delete(item)
             
-            # Agregar productos
             for prod in productos:
-                cat_tree.insert(
-                    "",
-                    tk.END,
-                    values=(
-                        prod.codigo,
-                        prod.descripcion,
-                        f"${prod.precio_venta:.2f}",
-                        f"{prod.stock:.0f}" if prod.stock else "0",
-                        prod.categoria or "Sin categoría"
-                    )
-                )
+                cat_tree.insert("", tk.END, values=(
+                    prod.codigo, prod.descripcion, f"${prod.precio_venta:.2f}",
+                    f"{prod.stock:.0f}" if prod.stock else "0", prod.categoria or "Sin categoría"
+                ))
             
             session.close()
         
@@ -837,7 +511,6 @@ class POSApp:
             selection = cat_tree.selection()
             if not selection:
                 return
-            
             item = cat_tree.item(selection[0])
             codigo = item['values'][0]
             
@@ -846,7 +519,6 @@ class POSApp:
             session.close()
             
             if producto:
-                # Buscar si ya está en carrito
                 for i, item_carrito in enumerate(self.productos_carrito):
                     if item_carrito['id'] == producto.id:
                         item_carrito['cantidad'] += 1
@@ -855,26 +527,17 @@ class POSApp:
                         messagebox.showinfo("Producto agregado", f"Se agregó 1 unidad más de {producto.descripcion}")
                         return
                 
-                # Agregar nuevo
                 self.productos_carrito.append({
-                    'id': producto.id,
-                    'codigo': producto.codigo,
-                    'descripcion': producto.descripcion,
-                    'precio': producto.precio_venta,
-                    'cantidad': 1,
-                    'subtotal': producto.precio_venta
+                    'id': producto.id, 'codigo': producto.codigo, 'descripcion': producto.descripcion,
+                    'precio': producto.precio_venta, 'cantidad': 1, 'subtotal': producto.precio_venta
                 })
-                
                 self.actualizar_carrito()
                 messagebox.showinfo("Producto agregado", f"{producto.descripcion} agregado al carrito")
         
         cat_tree.bind("<Double-1>", agregar_desde_catalogo)
-        
-        # Cargar catálogo inicial
         cargar_catalogo()
     
     def agregar_al_carrito(self, event):
-        """Agrega producto seleccionado al carrito"""
         selection = self.productos_tree.selection()
         if not selection:
             return
@@ -889,7 +552,6 @@ class POSApp:
         if not producto:
             return
         
-        # Buscar si ya está en carrito
         for i, item_carrito in enumerate(self.productos_carrito):
             if item_carrito['id'] == producto.id:
                 item_carrito['cantidad'] += 1
@@ -897,108 +559,116 @@ class POSApp:
                 self.actualizar_carrito()
                 return
         
-        # Agregar nuevo
         self.productos_carrito.append({
-            'id': producto.id,
-            'codigo': producto.codigo,
-            'descripcion': producto.descripcion,
-            'precio': producto.precio_venta,
-            'cantidad': 1,
-            'subtotal': producto.precio_venta
+            'id': producto.id, 'codigo': producto.codigo, 'descripcion': producto.descripcion,
+            'precio': producto.precio_venta, 'cantidad': 1, 'subtotal': producto.precio_venta
         })
+        self.actualizar_carrito()
+    
+    def aumentar_cantidad(self):
+        selection = self.carrito_tree.selection()
+        if not selection:
+            messagebox.showwarning("Seleccionar", "Seleccione un producto del carrito")
+            return
         
+        item = self.carrito_tree.item(selection[0])
+        producto_desc = item['values'][1]
+        
+        for item_carrito in self.productos_carrito:
+            if item_carrito['descripcion'] == producto_desc:
+                item_carrito['cantidad'] += 1
+                item_carrito['subtotal'] = item_carrito['cantidad'] * item_carrito['precio']
+                self.actualizar_carrito()
+                return
+    
+    def disminuir_cantidad(self):
+        selection = self.carrito_tree.selection()
+        if not selection:
+            messagebox.showwarning("Seleccionar", "Seleccione un producto del carrito")
+            return
+        
+        item = self.carrito_tree.item(selection[0])
+        producto_desc = item['values'][1]
+        
+        for item_carrito in self.productos_carrito:
+            if item_carrito['descripcion'] == producto_desc:
+                if item_carrito['cantidad'] > 1:
+                    item_carrito['cantidad'] -= 1
+                    item_carrito['subtotal'] = item_carrito['cantidad'] * item_carrito['precio']
+                    self.actualizar_carrito()
+                else:
+                    messagebox.showinfo("Cantidad mínima", "La cantidad mínima es 1. Use Eliminar para quitar el producto.")
+                return
+    
+    def eliminar_item(self):
+        selection = self.carrito_tree.selection()
+        if not selection:
+            messagebox.showwarning("Seleccionar", "Seleccione un producto del carrito")
+            return
+        
+        item = self.carrito_tree.item(selection[0])
+        producto_desc = item['values'][1]
+        
+        self.productos_carrito = [p for p in self.productos_carrito if p['descripcion'] != producto_desc]
         self.actualizar_carrito()
     
     def limpiar_carrito(self):
-        """Limpia el carrito de ventas"""
         if not self.productos_carrito:
             return
-        
-        respuesta = messagebox.askyesno(
-            "Limpiar carrito",
-            "¿Está seguro de que desea limpiar el carrito?"
-        )
-        
-        if respuesta:
+        if messagebox.askyesno("Limpiar carrito", "¿Está seguro de limpiar todo el carrito?"):
             self.productos_carrito = []
             self.actualizar_carrito()
     
     def actualizar_carrito(self):
-        """Actualiza visualización del carrito"""
-        # Limpiar
         for item in self.carrito_tree.get_children():
             self.carrito_tree.delete(item)
         
-        # Agregar items
         self.total_venta = 0
         for item in self.productos_carrito:
-            self.carrito_tree.insert(
-                "",
-                tk.END,
-                values=(
-                    item['cantidad'],
-                    item['descripcion'],
-                    f"${item['precio']:.2f}",
-                    f"${item['subtotal']:.2f}"
-                )
-            )
+            self.carrito_tree.insert("", tk.END, values=(
+                item['cantidad'], item['descripcion'], f"${item['precio']:.2f}", f"${item['subtotal']:.2f}"
+            ))
             self.total_venta += item['subtotal']
         
         self.total_label.config(text=f"${self.total_venta:.2f}")
+        self.actualizar_resumen()
+    
+    def actualizar_resumen(self):
+        cantidad_productos = sum(item['cantidad'] for item in self.productos_carrito)
+        self.resumen_label.config(text=f"Productos: {cantidad_productos}\nTotal: ${self.total_venta:.2f}")
     
     def seleccionar_medio_pago(self):
-        """Muestra diálogo para seleccionar medio de pago"""
-        ventana_pago = tk.Toplevel(self.root)
-        ventana_pago.title("Seleccionar Medio de Pago")
-        ventana_pago.geometry("500x400")
-        ventana_pago.configure(bg="#f0f2f5")
-        ventana_pago.transient(self.root)
-        ventana_pago.grab_set()
+        """Diálogo para seleccionar medio de pago"""
+        pago_window = tk.Toplevel(self.root)
+        pago_window.title("Seleccionar Medio de Pago")
+        pago_window.geometry("500x500")
+        pago_window.configure(bg="#ecf0f5")
+        pago_window.transient(self.root)
+        pago_window.grab_set()
         
-        # Centrar ventana
-        ventana_pago.update_idletasks()
-        x = (ventana_pago.winfo_screenwidth() // 2) - (500 // 2)
-        y = (ventana_pago.winfo_screenheight() // 2) - (400 // 2)
-        ventana_pago.geometry(f'500x400+{x}+{y}')
+        pago_window.update_idletasks()
+        x = (pago_window.winfo_screenwidth() // 2) - (500 // 2)
+        y = (pago_window.winfo_screenheight() // 2) - (500 // 2)
+        pago_window.geometry(f'500x500+{x}+{y}')
         
-        # Header
-        header_pago = tk.Frame(ventana_pago, bg="#667eea", height=60)
-        header_pago.pack(fill=tk.X)
+        header = tk.Frame(pago_window, bg="#667eea", height=60)
+        header.pack(fill=tk.X)
+        tk.Label(header, text="💳 Seleccionar Medio de Pago", font=("Arial", 16, "bold"),
+                bg="#667eea", fg="white").pack(pady=15)
         
-        tk.Label(
-            header_pago,
-            text="💳 Seleccionar Medio de Pago",
-            font=("Arial", 16, "bold"),
-            bg="#667eea",
-            fg="white"
-        ).pack(pady=15)
-        
-        # Total a cobrar
-        total_frame = tk.Frame(ventana_pago, bg="#f8f9fa", relief=tk.RAISED, bd=1)
+        total_frame = tk.Frame(pago_window, bg="#34495e", relief=tk.RAISED, bd=1)
         total_frame.pack(fill=tk.X, padx=20, pady=20)
         
-        tk.Label(
-            total_frame,
-            text="Total a cobrar:",
-            font=("Arial", 12),
-            bg="#f8f9fa"
-        ).pack(pady=10)
+        tk.Label(total_frame, text="Total a cobrar:", font=("Arial", 12), bg="#34495e", fg="white").pack(pady=10)
+        tk.Label(total_frame, text=f"${self.total_venta:.2f}", font=("Arial", 24, "bold"),
+                fg="#2ecc71", bg="#34495e").pack(pady=(0, 10))
         
-        tk.Label(
-            total_frame,
-            text=f"${self.total_venta:.2f}",
-            font=("Arial", 24, "bold"),
-            fg="#667eea",
-            bg="#f8f9fa"
-        ).pack(pady=(0, 10))
-        
-        # Opciones de pago
-        opciones_frame = tk.Frame(ventana_pago, bg="#f0f2f5")
+        opciones_frame = tk.Frame(pago_window, bg="#ecf0f5")
         opciones_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
         
         self.medio_pago_seleccionado = tk.StringVar(value="Efectivo")
         
-        medios_pago = [
+        medios = [
             ("💵 Efectivo", "Efectivo"),
             ("💳 Tarjeta Débito", "TD"),
             ("💳 Tarjeta Crédito", "TC"),
@@ -1008,74 +678,38 @@ class POSApp:
             ("📋 Cuenta Corriente", "CC")
         ]
         
-        for texto, valor in medios_pago:
-            radio = tk.Radiobutton(
-                opciones_frame,
-                text=texto,
-                variable=self.medio_pago_seleccionado,
-                value=valor,
-                font=("Arial", 12),
-                bg="#f0f2f5",
-                activebackground="#f0f2f5",
-                selectcolor="white",
-                cursor="hand2",
-                padx=20,
-                pady=8
-            )
+        for texto, valor in medios:
+            radio = tk.Radiobutton(opciones_frame, text=texto, variable=self.medio_pago_seleccionado,
+                                  value=valor, font=("Arial", 12), bg="#ecf0f5", padx=20, pady=8,
+                                  cursor="hand2", selectcolor="white")
             radio.pack(anchor=tk.W, pady=5)
         
-        # Botones
-        botones_frame = tk.Frame(ventana_pago, bg="#f0f2f5")
+        botones_frame = tk.Frame(pago_window, bg="#ecf0f5")
         botones_frame.pack(fill=tk.X, padx=20, pady=20)
         
-        def confirmar_pago():
+        def confirmar():
             self.medio_pago = self.medio_pago_seleccionado.get()
-            ventana_pago.destroy()
+            pago_window.destroy()
             self.procesar_cobro()
         
-        btn_confirmar = tk.Button(
-            botones_frame,
-            text="✅ Confirmar Pago",
-            bg="#27ae60",
-            fg="white",
-            font=("Arial", 12, "bold"),
-            command=confirmar_pago,
-            relief=tk.FLAT,
-            padx=30,
-            pady=12,
-            cursor="hand2"
-        )
-        btn_confirmar.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
+        tk.Button(botones_frame, text="✅ Confirmar", bg="#27ae60", fg="white",
+                 font=("Arial", 12, "bold"), command=confirmar, relief=tk.FLAT,
+                 padx=30, pady=12, cursor="hand2").pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
         
-        btn_cancelar = tk.Button(
-            botones_frame,
-            text="❌ Cancelar",
-            bg="#e74c3c",
-            fg="white",
-            font=("Arial", 12, "bold"),
-            command=ventana_pago.destroy,
-            relief=tk.FLAT,
-            padx=30,
-            pady=12,
-            cursor="hand2"
-        )
-        btn_cancelar.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
+        tk.Button(botones_frame, text="❌ Cancelar", bg="#e74c3c", fg="white",
+                 font=("Arial", 12, "bold"), command=pago_window.destroy, relief=tk.FLAT,
+                 padx=30, pady=12, cursor="hand2").pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
         
-        ventana_pago.focus_force()
+        pago_window.focus_force()
     
     def cobrar_venta(self):
-        """Inicia el proceso de cobro"""
         if not self.productos_carrito:
             messagebox.showwarning("Carrito vacío", "Agregue productos al carrito antes de cobrar")
             return
-        
-        # Mostrar selección de medio de pago
         self.seleccionar_medio_pago()
     
     def procesar_cobro(self):
-        """Procesa la venta después de seleccionar medio de pago"""
         try:
-            # Guardar venta en base local
             session = get_session()
             venta = Venta(
                 fecha=datetime.now(),
@@ -1093,17 +727,15 @@ class POSApp:
             
             print(f"✅ Venta guardada localmente con ID: {venta_id}")
             
-            # Intentar sincronizar si hay conexión
             if self.connection_monitor.check_connection():
-                print("🔄 Intentando sincronizar venta...")
+                print("🔄 Sincronizando venta...")
                 self.sync_manager.sync_ventas()
             
-            messagebox.showinfo(
-                "Venta registrada",
-                f"Venta guardada exitosamente.\n\nTotal: ${self.total_venta:.2f}\nMedio de pago: {self.medio_pago}\n\nLa venta se sincronizará cuando haya conexión."
-            )
+            messagebox.showinfo("Venta registrada",
+                              f"Venta guardada exitosamente.\n\nTotal: ${self.total_venta:.2f}\n"
+                              f"Medio de pago: {self.medio_pago}\n\n"
+                              f"La venta se sincronizará cuando haya conexión.")
             
-            # Limpiar carrito
             self.productos_carrito = []
             self.actualizar_carrito()
             
@@ -1114,118 +746,61 @@ class POSApp:
             messagebox.showerror("Error", f"Error al guardar la venta: {str(e)}")
     
     def mostrar_ventas(self):
-        """Muestra ventas de últimos 30 días con diseño mejorado"""
-        ventana_ventas = tk.Toplevel(self.root)
-        ventana_ventas.title("📊 Ventas - Últimos 30 días")
-        ventana_ventas.geometry("1100x700")
-        ventana_ventas.configure(bg="#f0f2f5")
+        """Muestra ventas de últimos 30 días"""
+        ventana = tk.Toplevel(self.root)
+        ventana.title("📊 Ventas - Últimos 30 días")
+        ventana.geometry("1200x700")
+        ventana.configure(bg="#ecf0f5")
         
-        # Header
-        header_ventas = tk.Frame(ventana_ventas, bg="#667eea", height=60)
-        header_ventas.pack(fill=tk.X)
+        header = tk.Frame(ventana, bg="#667eea", height=60)
+        header.pack(fill=tk.X)
+        tk.Label(header, text="📊 Ventas - Últimos 30 días", font=("Arial", 18, "bold"),
+                bg="#667eea", fg="white").pack(pady=15)
         
-        tk.Label(
-            header_ventas,
-            text="📊 Ventas - Últimos 30 días",
-            font=("Arial", 18, "bold"),
-            bg="#667eea",
-            fg="white"
-        ).pack(pady=15)
-        
-        # Intentar cargar desde servidor si hay conexión
         ventas_data = []
         try:
             if self.connection_monitor.check_connection():
-                print("🔄 Cargando ventas desde servidor...")
                 ventas_data = self.sync_manager.sync_ventas_historial(30)
                 if ventas_data is None:
                     ventas_data = []
-                print(f"✅ Ventas recibidas del servidor: {len(ventas_data)}")
             else:
-                print("⚠️  Sin conexión, cargando desde base local...")
-                # Cargar desde base local
                 session = get_session()
                 fecha_desde = datetime.now() - timedelta(days=30)
                 ventas = session.query(Venta).filter(Venta.fecha >= fecha_desde).order_by(Venta.fecha.desc()).all()
-                ventas_data = [
-                    {
-                        'fecha': v.fecha.isoformat(),
-                        'total': v.total,
-                        'cliente': v.cliente,
-                        'metodo_pago': v.metodo_pago,
-                        'sincronizado': '✅' if v.sincronizado else '⏳ Pendiente'
-                    }
-                    for v in ventas
-                ]
+                ventas_data = [{
+                    'fecha': v.fecha.isoformat(), 'total': v.total, 'cliente': v.cliente,
+                    'metodo_pago': v.metodo_pago, 'sincronizado': '✅' if v.sincronizado else '⏳ Pendiente'
+                } for v in ventas]
                 session.close()
-                print(f"✅ Ventas cargadas desde base local: {len(ventas_data)}")
         except Exception as e:
-            print(f"❌ Error al cargar ventas: {e}")
-            import traceback
-            traceback.print_exc()
-            # Cargar desde base local como fallback
+            print(f"❌ Error: {e}")
             try:
                 session = get_session()
                 fecha_desde = datetime.now() - timedelta(days=30)
                 ventas = session.query(Venta).filter(Venta.fecha >= fecha_desde).order_by(Venta.fecha.desc()).all()
-                ventas_data = [
-                    {
-                        'fecha': v.fecha.isoformat(),
-                        'total': v.total,
-                        'cliente': v.cliente,
-                        'metodo_pago': v.metodo_pago,
-                        'sincronizado': '✅' if v.sincronizado else '⏳ Pendiente'
-                    }
-                    for v in ventas
-                ]
+                ventas_data = [{
+                    'fecha': v.fecha.isoformat(), 'total': v.total, 'cliente': v.cliente,
+                    'metodo_pago': v.metodo_pago, 'sincronizado': '✅' if v.sincronizado else '⏳ Pendiente'
+                } for v in ventas]
                 session.close()
-            except Exception as e2:
-                print(f"❌ Error al cargar desde base local: {e2}")
+            except:
                 ventas_data = []
         
-        # Resumen
-        resumen_frame = tk.Frame(ventana_ventas, bg="white", relief=tk.RAISED, bd=1)
+        resumen_frame = tk.Frame(ventana, bg="white", relief=tk.RAISED, bd=1)
         resumen_frame.pack(fill=tk.X, padx=20, pady=15)
         
         total_ventas = sum(v.get('total', 0) for v in ventas_data)
-        cantidad_ventas = len(ventas_data)
+        cantidad = len(ventas_data)
         
-        tk.Label(
-            resumen_frame,
-            text=f"Total de ventas: {cantidad_ventas}",
-            font=("Arial", 12, "bold"),
-            bg="white",
-            fg="#2c3e50"
-        ).pack(side=tk.LEFT, padx=20, pady=15)
+        tk.Label(resumen_frame, text=f"Total de ventas: {cantidad}", font=("Arial", 12, "bold"),
+                bg="white", fg="#2c3e50").pack(side=tk.LEFT, padx=20, pady=15)
+        tk.Label(resumen_frame, text=f"Total recaudado: ${total_ventas:.2f}", font=("Arial", 14, "bold"),
+                bg="white", fg="#667eea").pack(side=tk.RIGHT, padx=20, pady=15)
         
-        tk.Label(
-            resumen_frame,
-            text=f"Total recaudado: ${total_ventas:.2f}",
-            font=("Arial", 14, "bold"),
-            bg="white",
-            fg="#667eea"
-        ).pack(side=tk.RIGHT, padx=20, pady=15)
-        
-        # Tabla de ventas
-        tree_frame = tk.Frame(ventana_ventas, bg="white")
+        tree_frame = tk.Frame(ventana, bg="white")
         tree_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=(0, 20))
         
-        style = ttk.Style()
-        style.configure("Ventas.Treeview",
-                       background="white",
-                       rowheight=35,
-                       font=("Arial", 11))
-        style.configure("Ventas.Treeview.Heading",
-                       background="#667eea",
-                       foreground="white",
-                       font=("Arial", 11, "bold"))
-        
-        tree = ttk.Treeview(
-            tree_frame,
-            columns=("fecha", "cliente", "metodo_pago", "total", "estado"),
-            show="headings",
-            style="Ventas.Treeview"
-        )
+        tree = ttk.Treeview(tree_frame, columns=("fecha", "cliente", "metodo_pago", "total", "estado"), show="headings")
         tree.heading("fecha", text="Fecha y Hora")
         tree.heading("cliente", text="Cliente")
         tree.heading("metodo_pago", text="Medio de Pago")
@@ -1244,53 +819,33 @@ class POSApp:
         tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
-        # Agregar ventas a la tabla
         if ventas_data:
+            metodos = {'Efectivo': '💵 Efectivo', 'TD': '💳 Débito', 'TC': '💳 Crédito',
+                      'MP': '📱 Mercado Pago', 'TR': '🏦 Transferencia', 'CH': '📄 Cheque',
+                      'CC': '📋 Cta. Cte.'}
+            
             for venta in ventas_data:
                 fecha_str = venta.get('fecha', '')
-                if fecha_str:
-                    try:
-                        if 'T' in fecha_str:
-                            fecha_obj = datetime.fromisoformat(fecha_str.replace('Z', '+00:00'))
-                        else:
-                            fecha_obj = datetime.fromisoformat(fecha_str)
-                        fecha_formateada = fecha_obj.strftime('%d/%m/%Y %H:%M')
-                    except:
-                        fecha_formateada = fecha_str[:19] if len(fecha_str) > 19 else fecha_str
-                else:
-                    fecha_formateada = "N/A"
+                try:
+                    if 'T' in fecha_str:
+                        fecha_obj = datetime.fromisoformat(fecha_str.replace('Z', '+00:00'))
+                    else:
+                        fecha_obj = datetime.fromisoformat(fecha_str)
+                    fecha_formateada = fecha_obj.strftime('%d/%m/%Y %H:%M')
+                except:
+                    fecha_formateada = fecha_str[:19] if len(fecha_str) > 19 else fecha_str
                 
-                metodo_pago = venta.get('metodo_pago', 'Efectivo')
-                # Mapear códigos a nombres
-                metodos = {
-                    'Efectivo': '💵 Efectivo',
-                    'TD': '💳 Débito',
-                    'TC': '💳 Crédito',
-                    'MP': '📱 Mercado Pago',
-                    'TR': '🏦 Transferencia',
-                    'CH': '📄 Cheque',
-                    'CC': '📋 Cta. Cte.'
-                }
-                metodo_display = metodos.get(metodo_pago, metodo_pago)
+                metodo = venta.get('metodo_pago', 'Efectivo')
+                metodo_display = metodos.get(metodo, metodo)
                 
                 tree.insert("", tk.END, values=(
-                    fecha_formateada,
-                    venta.get('cliente', 'Consumidor Final'),
-                    metodo_display,
-                    f"${venta.get('total', 0):.2f}",
+                    fecha_formateada, venta.get('cliente', 'Consumidor Final'),
+                    metodo_display, f"${venta.get('total', 0):.2f}",
                     venta.get('sincronizado', '✅')
                 ))
         else:
-            # Mensaje si no hay ventas
-            tree.insert("", tk.END, values=(
-                "No hay ventas",
-                "en los últimos 30 días",
-                "",
-                "",
-                ""
-            ))
+            tree.insert("", tk.END, values=("No hay ventas", "en los últimos 30 días", "", "", ""))
     
     def run(self):
-        """Inicia la aplicación"""
         self.root.deiconify()
         self.root.mainloop()
