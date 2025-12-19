@@ -159,6 +159,7 @@ class POSApp:
         self.id_cliente_moon = id_cliente_moon
         self.productos_carrito = []
         self.total_venta = 0.0
+        self.clientes_disponibles = [{'id': 1, 'display': '1-Consumidor Final'}]  # Inicializar con valor por defecto
         
         self.setup_ui()
         self.connection_monitor.start_monitoring()

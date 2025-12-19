@@ -60,7 +60,7 @@ class Venta(Base):
     id_servidor = Column(Integer, nullable=True)
     fecha = Column(DateTime, default=datetime.now, nullable=False)
     cliente = Column(String, default="Consumidor Final")
-    id_cliente = Column(Integer, default=1)  # ID del cliente para sincronización
+    id_cliente = Column(Integer, default=1, nullable=True)  # ID del cliente para sincronización (nullable para compatibilidad)
     productos = Column(JSON, nullable=False)
     total = Column(Float, nullable=False)
     metodo_pago = Column(String, default="Efectivo")
@@ -83,6 +83,21 @@ engine = create_engine(f'sqlite:///{config.DB_PATH}', echo=False)
 print(f"🔍 Creando tablas...")
 Base.metadata.create_all(engine)
 print(f"✅ Tablas creadas/verificadas")
+
+# Migración: agregar columna id_cliente si no existe
+try:
+    from sqlalchemy import inspect, text
+    inspector = inspect(engine)
+    columns = [col['name'] for col in inspector.get_columns('ventas')]
+    
+    if 'id_cliente' not in columns:
+        print("🔧 Agregando columna id_cliente a tabla ventas...")
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE ventas ADD COLUMN id_cliente INTEGER DEFAULT 1"))
+            conn.commit()
+        print("✅ Columna id_cliente agregada")
+except Exception as e:
+    print(f"⚠️  Error al agregar columna id_cliente (puede que ya exista): {e}")
 
 Session = sessionmaker(bind=engine)
 
