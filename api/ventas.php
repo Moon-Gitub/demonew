@@ -69,13 +69,20 @@ try {
         // GET: Listar ventas (historial)
         $fecha_desde = isset($_GET['desde']) ? $_GET['desde'] : null;
         
+        require_once "../modelos/conexion.php";
+        
         if($fecha_desde) {
-            // Obtener ventas desde fecha
-            $item = "fecha";
-            $valor = $fecha_desde;
-            $orden = "id";
+            // Convertir fecha ISO a formato MySQL si es necesario
+            if(strpos($fecha_desde, 'T') !== false) {
+                $fecha_desde = str_replace('T', ' ', $fecha_desde);
+                $fecha_desde = substr($fecha_desde, 0, 19); // Quitar timezone si existe
+            }
             
-            $ventas = ControladorVentas::ctrMostrarVentas($item, $valor, $orden);
+            // Obtener ventas desde fecha usando consulta directa con >=
+            $stmt = Conexion::conectar()->prepare("SELECT * FROM ventas WHERE fecha >= :fecha_desde ORDER BY id DESC");
+            $stmt->bindParam(":fecha_desde", $fecha_desde, PDO::PARAM_STR);
+            $stmt->execute();
+            $ventas = $stmt->fetchAll();
         } else {
             // Obtener todas las ventas
             $ventas = ControladorVentas::ctrMostrarVentas(null, null, "id");
@@ -84,13 +91,37 @@ try {
         $resultado = [];
         if($ventas && is_array($ventas)) {
             foreach($ventas as $venta) {
+                // Obtener nombre del cliente si existe
+                $cliente_nombre = 'Consumidor Final';
+                if(isset($venta['id_cliente']) && $venta['id_cliente'] != 1) {
+                    require_once "../modelos/clientes.modelo.php";
+                    $cliente = ModeloClientes::mdlMostrarClientesPorId($venta['id_cliente']);
+                    if($cliente && isset($cliente['nombre'])) {
+                        $cliente_nombre = $cliente['nombre'];
+                    }
+                }
+                
+                // Parsear método de pago si es JSON
+                $metodo_pago = 'Efectivo';
+                if(isset($venta['metodo_pago'])) {
+                    $metodo_pago_raw = $venta['metodo_pago'];
+                    if(is_string($metodo_pago_raw) && (strpos($metodo_pago_raw, '[') === 0 || strpos($metodo_pago_raw, '{') === 0)) {
+                        $metodo_pago_array = json_decode($metodo_pago_raw, true);
+                        if(is_array($metodo_pago_array) && isset($metodo_pago_array[0]['tipo'])) {
+                            $metodo_pago = $metodo_pago_array[0]['tipo'];
+                        }
+                    } else {
+                        $metodo_pago = $metodo_pago_raw;
+                    }
+                }
+                
                 $resultado[] = [
-                    'id' => $venta['id'],
+                    'id' => intval($venta['id']),
                     'fecha' => $venta['fecha'],
-                    'cliente' => $venta['id_cliente'] ?? 'Consumidor Final',
+                    'cliente' => $cliente_nombre,
                     'total' => floatval($venta['total']),
-                    'metodo_pago' => $venta['metodo_pago'] ?? 'Efectivo',
-                    'sucursal' => 'Local'
+                    'metodo_pago' => $metodo_pago,
+                    'sucursal' => $venta['sucursal'] ?? 'Local'
                 ];
             }
         }

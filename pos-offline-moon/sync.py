@@ -179,28 +179,35 @@ class SyncManager:
     def sync_ventas_historial(self, dias=30):
         """Descarga ventas de los últimos N días"""
         try:
-            fecha_desde = (datetime.now() - timedelta(days=dias)).isoformat()
+            # Formatear fecha en formato MySQL (YYYY-MM-DD HH:MM:SS)
+            fecha_desde = datetime.now() - timedelta(days=dias)
+            fecha_desde_str = fecha_desde.strftime('%Y-%m-%d %H:%M:%S')
+            
             # Usar ruta directa al archivo PHP
             url = f"{config.SERVER_URL}/api/ventas.php"
-            print(f"🔍 Descargando historial de ventas desde: {fecha_desde}")
+            print(f"🔍 Descargando historial de ventas desde: {fecha_desde_str} (últimos {dias} días)")
+            
             response = requests.get(
                 url,
-                params={'desde': fecha_desde, 'id_cliente': config.ID_CLIENTE_MOON},
-                timeout=10
+                params={'desde': fecha_desde_str, 'id_cliente': config.ID_CLIENTE_MOON},
+                timeout=30
             )
             
             print(f"🔍 Status code historial: {response.status_code}")
             
             if response.status_code == 200:
                 data = response.json()
-                print(f"✅ Ventas recibidas del servidor: {len(data) if isinstance(data, list) else 'No es lista'}")
                 if isinstance(data, list):
+                    print(f"✅ Ventas recibidas del servidor: {len(data)}")
+                    if len(data) > 0:
+                        print(f"   Primera venta: {data[0].get('fecha', 'N/A')} - ${data[0].get('total', 0):.2f}")
                     return data
                 else:
-                    print(f"⚠️  Respuesta no es lista: {type(data)}")
+                    print(f"⚠️  Respuesta no es lista: {type(data)}, contenido: {str(data)[:200]}")
                     return []
             else:
-                print(f"❌ Error HTTP {response.status_code}: {response.text[:200]}")
+                error_text = response.text[:500] if hasattr(response, 'text') else str(response)
+                print(f"❌ Error HTTP {response.status_code}: {error_text}")
                 return []
         except Exception as e:
             print(f"❌ Error descargando historial: {e}")

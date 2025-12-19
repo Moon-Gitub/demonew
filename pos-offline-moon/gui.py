@@ -985,31 +985,51 @@ class POSApp:
         
         ventas_data = []
         try:
+            # Intentar obtener ventas del servidor si hay conexión
             if self.connection_monitor.check_connection():
-                ventas_data = self.sync_manager.sync_ventas_historial(30)
-                if ventas_data is None:
+                print("🔄 Obteniendo ventas del servidor...")
+                ventas_servidor = self.sync_manager.sync_ventas_historial(30)
+                if ventas_servidor and isinstance(ventas_servidor, list):
+                    ventas_data = ventas_servidor
+                    print(f"✅ Obtenidas {len(ventas_data)} ventas del servidor")
+                else:
+                    print("⚠️ No se obtuvieron ventas del servidor, usando locales")
                     ventas_data = []
-            else:
+            
+            # Si no hay datos del servidor o no hay conexión, usar ventas locales
+            if not ventas_data:
+                print("🔄 Obteniendo ventas locales...")
                 session = get_session()
                 fecha_desde = datetime.now() - timedelta(days=30)
                 ventas = session.query(Venta).filter(Venta.fecha >= fecha_desde).order_by(Venta.fecha.desc()).all()
                 ventas_data = [{
-                    'fecha': v.fecha.isoformat(), 'total': v.total, 'cliente': v.cliente,
-                    'metodo_pago': v.metodo_pago, 'sincronizado': '✅' if v.sincronizado else '⏳ Pendiente'
+                    'fecha': v.fecha.isoformat() if hasattr(v.fecha, 'isoformat') else str(v.fecha),
+                    'total': float(v.total),
+                    'cliente': v.cliente or 'Consumidor Final',
+                    'metodo_pago': v.metodo_pago or 'Efectivo',
+                    'sincronizado': '✅' if v.sincronizado else '⏳ Pendiente'
                 } for v in ventas]
                 session.close()
+                print(f"✅ Obtenidas {len(ventas_data)} ventas locales")
         except Exception as e:
-            print(f"❌ Error: {e}")
+            print(f"❌ Error obteniendo ventas: {e}")
+            import traceback
+            traceback.print_exc()
             try:
+                # Fallback a ventas locales
                 session = get_session()
                 fecha_desde = datetime.now() - timedelta(days=30)
                 ventas = session.query(Venta).filter(Venta.fecha >= fecha_desde).order_by(Venta.fecha.desc()).all()
                 ventas_data = [{
-                    'fecha': v.fecha.isoformat(), 'total': v.total, 'cliente': v.cliente,
-                    'metodo_pago': v.metodo_pago, 'sincronizado': '✅' if v.sincronizado else '⏳ Pendiente'
+                    'fecha': v.fecha.isoformat() if hasattr(v.fecha, 'isoformat') else str(v.fecha),
+                    'total': float(v.total),
+                    'cliente': v.cliente or 'Consumidor Final',
+                    'metodo_pago': v.metodo_pago or 'Efectivo',
+                    'sincronizado': '✅' if v.sincronizado else '⏳ Pendiente'
                 } for v in ventas]
                 session.close()
-            except:
+            except Exception as e2:
+                print(f"❌ Error en fallback: {e2}")
                 ventas_data = []
         
         resumen_frame = tk.Frame(ventana, bg="white", relief=tk.RAISED, bd=1)
