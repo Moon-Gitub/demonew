@@ -247,14 +247,14 @@ class POSApp:
                 bg="white", fg="#7f8c8d").pack(pady=(15, 5))
         
         productos_frame = tk.Frame(left_col, bg="white")
-        productos_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=(0, 15))
+        productos_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=(0, 10))
         
         # Treeview de productos
         style = ttk.Style()
         style.theme_use("clam")
         
         self.productos_tree = ttk.Treeview(productos_frame, columns=("codigo", "descripcion", "precio", "stock"),
-                                          show="headings", height=25)
+                                          show="headings", height=22)
         self.productos_tree.heading("codigo", text="Código")
         self.productos_tree.heading("descripcion", text="Descripción")
         self.productos_tree.heading("precio", text="Precio")
@@ -271,8 +271,21 @@ class POSApp:
         self.productos_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar_prod.pack(side=tk.RIGHT, fill=tk.Y)
         
+        # Botón Agregar producto
+        btn_agregar = tk.Button(left_col, text="➕ Agregar Producto Seleccionado (Enter)", bg="#27ae60", fg="white",
+                               font=("Arial", 10, "bold"), command=self.agregar_producto_seleccionado,
+                               relief=tk.FLAT, padx=15, pady=8, cursor="hand2")
+        btn_agregar.pack(fill=tk.X, padx=15, pady=(0, 15))
+        
+        # Eventos para productos
         self.productos_tree.bind("<Double-1>", self.agregar_al_carrito)
         self.productos_tree.bind("<Return>", self.agregar_al_carrito)
+        self.productos_tree.bind("<space>", self.agregar_al_carrito)
+        self.productos_tree.bind("<Up>", self.navegar_productos)
+        self.productos_tree.bind("<Down>", self.navegar_productos)
+        
+        # Enfocar en la lista de productos al cargar
+        self.productos_tree.focus_set()
         
         # COLUMNA CENTRAL: Carrito de venta
         center_col = tk.Frame(main_container, bg="white", relief=tk.RAISED, bd=1)
@@ -405,13 +418,20 @@ class POSApp:
                                      font=("Arial", 11), bg="#ecf0f5", fg="#7f8c8d", justify=tk.LEFT)
         self.resumen_label.pack(pady=(0, 10), padx=10)
         
-        # Atajos
+        # Atajos de teclado globales
         self.root.bind('<F7>', lambda e: self.cobrar_venta())
         self.root.bind('<F5>', lambda e: self.cargar_productos())
         self.root.bind('<F1>', lambda e: self.mostrar_catalogo())
         self.root.bind('<Delete>', lambda e: self.eliminar_item())
         self.root.bind('<plus>', lambda e: self.aumentar_cantidad())
         self.root.bind('<minus>', lambda e: self.disminuir_cantidad())
+        
+        # Navegación por teclado
+        search_entry.bind('<Tab>', lambda e: self.focus_next_widget(e))
+        search_entry.bind('<Return>', lambda e: self.agregar_producto_seleccionado())
+        
+        # Enfocar en búsqueda al iniciar
+        search_entry.focus_set()
         
         self.cargar_productos()
     
@@ -568,7 +588,24 @@ class POSApp:
         cat_tree.bind("<Double-1>", agregar_desde_catalogo)
         cargar_catalogo()
     
+    def agregar_producto_seleccionado(self):
+        """Agregar producto seleccionado al carrito (puede llamarse desde botón o teclado)"""
+        selection = self.productos_tree.selection()
+        if not selection:
+            # Si no hay selección, seleccionar el primer item
+            items = self.productos_tree.get_children()
+            if items:
+                self.productos_tree.selection_set(items[0])
+                self.productos_tree.focus(items[0])
+                selection = self.productos_tree.selection()
+            else:
+                messagebox.showinfo("Sin productos", "No hay productos para agregar")
+                return
+        
+        self.agregar_al_carrito(None)
+    
     def agregar_al_carrito(self, event):
+        """Agregar producto al carrito desde evento"""
         selection = self.productos_tree.selection()
         if not selection:
             return
@@ -588,13 +625,58 @@ class POSApp:
                 item_carrito['cantidad'] += 1
                 item_carrito['subtotal'] = item_carrito['cantidad'] * item_carrito['precio']
                 self.actualizar_carrito()
+                # Volver a enfocar en la lista de productos
+                self.productos_tree.focus_set()
                 return
         
         self.productos_carrito.append({
             'id': producto.id, 'codigo': producto.codigo, 'descripcion': producto.descripcion,
-            'precio': producto.precio_venta, 'cantidad': 1, 'subtotal': producto.precio_venta
+            'precio': producto.precio_venta, 'cantidad': 1, 'subtotal': producto.precio_venta,
+            'categoria': producto.categoria or '', 'stock': producto.stock or 0,
+            'precio_compra': producto.precio_compra or 0
         })
         self.actualizar_carrito()
+        # Volver a enfocar en la lista de productos
+        self.productos_tree.focus_set()
+    
+    def navegar_productos(self, event):
+        """Navegar por productos con flechas"""
+        selection = self.productos_tree.selection()
+        items = self.productos_tree.get_children()
+        
+        if not items:
+            return
+        
+        if not selection:
+            self.productos_tree.selection_set(items[0])
+            self.productos_tree.focus(items[0])
+            return
+        
+        current_index = items.index(selection[0])
+        
+        if event.keysym == 'Up' and current_index > 0:
+            next_index = current_index - 1
+        elif event.keysym == 'Down' and current_index < len(items) - 1:
+            next_index = current_index + 1
+        else:
+            return
+        
+        self.productos_tree.selection_set(items[next_index])
+        self.productos_tree.focus(items[next_index])
+        self.productos_tree.see(items[next_index])
+    
+    def focus_next_widget(self, event):
+        """Navegar entre widgets con Tab"""
+        widget = event.widget
+        if isinstance(widget, tk.Entry):
+            if widget == self.search_var:
+                # Desde búsqueda, ir a lista de productos
+                self.productos_tree.focus_set()
+                items = self.productos_tree.get_children()
+                if items:
+                    self.productos_tree.selection_set(items[0])
+                    self.productos_tree.focus(items[0])
+                return "break"
     
     def aumentar_cantidad(self):
         selection = self.carrito_tree.selection()
@@ -679,11 +761,29 @@ class POSApp:
     
     def procesar_cobro(self):
         try:
+            # Convertir productos al formato correcto para la base de datos
+            productos_json = []
+            for item in self.productos_carrito:
+                productos_json.append({
+                    'id': item.get('id', 0),
+                    'id_producto': item.get('id', 0),
+                    'codigo': item.get('codigo', ''),
+                    'descripcion': item.get('descripcion', ''),
+                    'cantidad': item.get('cantidad', 1),
+                    'precio': item.get('precio', 0),
+                    'precio_venta': item.get('precio', 0),
+                    'precio_compra': item.get('precio_compra', 0),
+                    'subtotal': item.get('subtotal', 0),
+                    'total': item.get('subtotal', 0),
+                    'categoria': item.get('categoria', ''),
+                    'stock': item.get('stock', 0)
+                })
+            
             session = get_session()
             venta = Venta(
                 fecha=datetime.now(),
                 cliente="Consumidor Final",
-                productos=self.productos_carrito,
+                productos=productos_json,
                 total=self.total_venta,
                 metodo_pago=self.medio_pago,
                 sincronizado=False,
@@ -695,18 +795,37 @@ class POSApp:
             session.close()
             
             print(f"✅ Venta guardada localmente con ID: {venta_id}")
+            print(f"   Productos: {len(productos_json)}, Total: ${self.total_venta:.2f}")
             
+            sincronizado = False
             if self.connection_monitor.check_connection():
                 print("🔄 Sincronizando venta...")
-                self.sync_manager.sync_ventas()
+                sincronizado = self.sync_manager.sync_ventas()
+                if sincronizado:
+                    print("✅ Venta sincronizada exitosamente")
+                else:
+                    print("⚠️ Error al sincronizar, se intentará más tarde")
             
-            messagebox.showinfo("Venta registrada",
-                              f"Venta guardada exitosamente.\n\nTotal: ${self.total_venta:.2f}\n"
-                              f"Medio de pago: {self.medio_pago}\n\n"
-                              f"La venta se sincronizará cuando haya conexión.")
+            mensaje = f"Venta guardada exitosamente.\n\nTotal: ${self.total_venta:.2f}\n"
+            mensaje += f"Medio de pago: {self.medio_pago}\n"
+            if sincronizado:
+                mensaje += "\n✅ Venta sincronizada con el servidor."
+            else:
+                mensaje += "\n⏳ La venta se sincronizará cuando haya conexión."
+            
+            messagebox.showinfo("Venta registrada", mensaje)
             
             self.productos_carrito = []
             self.actualizar_carrito()
+            # Volver a enfocar en búsqueda
+            for widget in self.root.winfo_children():
+                if isinstance(widget, tk.Frame):
+                    for child in widget.winfo_children():
+                        if isinstance(child, tk.Frame):
+                            for entry in child.winfo_children():
+                                if isinstance(entry, tk.Entry):
+                                    entry.focus_set()
+                                    break
             
         except Exception as e:
             print(f"❌ Error al guardar venta: {e}")

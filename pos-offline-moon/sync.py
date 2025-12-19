@@ -90,33 +90,65 @@ class SyncManager:
             url = f"{config.SERVER_URL}/api/ventas.php"
             
             for venta in ventas_pendientes:
+                # Convertir productos al formato esperado por el API
+                productos_formateados = []
+                if isinstance(venta.productos, list):
+                    for prod in venta.productos:
+                        if isinstance(prod, dict):
+                            productos_formateados.append({
+                                'id': prod.get('id', prod.get('id_producto', 0)),
+                                'descripcion': prod.get('descripcion', ''),
+                                'cantidad': prod.get('cantidad', 1),
+                                'categoria': prod.get('categoria', ''),
+                                'stock': prod.get('stock', 0),
+                                'precio_compra': prod.get('precio_compra', 0),
+                                'precio': prod.get('precio', prod.get('precio_venta', 0)),
+                                'total': prod.get('subtotal', prod.get('total', prod.get('precio', 0) * prod.get('cantidad', 1)))
+                            })
+                
                 venta_data = {
                     'fecha': venta.fecha.isoformat(),
                     'cliente': venta.cliente,
-                    'productos': venta.productos,
-                    'total': venta.total,
+                    'productos': productos_formateados,
+                    'total': float(venta.total),
                     'metodo_pago': venta.metodo_pago,
-                    'sucursal': venta.sucursal,
+                    'sucursal': venta.sucursal or 'Local',
                     'creado_local': True
                 }
+                
+                print(f"🔄 Sincronizando venta ID {venta.id} con {len(productos_formateados)} productos...")
+                print(f"   Total: ${venta.total}, Método: {venta.metodo_pago}")
                 
                 response = requests.post(
                     url,
                     json=venta_data,
-                    timeout=10
+                    timeout=30,
+                    headers={'Content-Type': 'application/json'}
                 )
+                
+                print(f"   Status: {response.status_code}")
+                if response.status_code != 200:
+                    print(f"   Error: {response.text}")
                 
                 if response.status_code == 200:
                     resultado = response.json()
-                    venta.id_servidor = resultado.get('id')
-                    venta.sincronizado = True
-                    venta.fecha_sincronizacion = datetime.now()
-                    session.commit()
+                    if resultado.get('success') or resultado.get('id'):
+                        venta.id_servidor = resultado.get('id')
+                        venta.sincronizado = True
+                        venta.fecha_sincronizacion = datetime.now()
+                        session.commit()
+                        print(f"   ✅ Venta sincronizada exitosamente (ID servidor: {venta.id_servidor})")
+                    else:
+                        print(f"   ❌ Error en respuesta: {resultado}")
+                else:
+                    print(f"   ❌ Error HTTP {response.status_code}: {response.text}")
             
             session.close()
             return True
         except Exception as e:
-            print(f"Error sincronizando ventas: {e}")
+            print(f"❌ Error sincronizando ventas: {e}")
+            import traceback
+            traceback.print_exc()
             session.close()
             return False
     
