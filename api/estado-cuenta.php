@@ -4,8 +4,16 @@
  * GET: Obtener estado de cuenta de un cliente Moon
  */
 
-require_once "../seguridad.ajax.php";
-SeguridadAjax::inicializar();
+// Cargar autoload para Dotenv
+require_once "../extensiones/vendor/autoload.php";
+
+// Cargar .env si existe
+if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+    $dotenv->safeLoad();
+}
+
+// Este endpoint ya usa id_cliente como parámetro, así que no necesita sesión
 
 require_once "../controladores/sistema_cobro.controlador.php";
 require_once "../modelos/sistema_cobro.modelo.php";

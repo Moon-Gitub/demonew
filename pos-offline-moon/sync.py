@@ -37,7 +37,11 @@ class SyncManager:
     def sync_productos(self):
         """Descarga productos desde el servidor"""
         try:
-            response = requests.get(f"{config.API_BASE}/productos", timeout=10)
+            # Incluir ID de cliente como parámetro para autenticación básica
+            params = {'id_cliente': config.ID_CLIENTE_MOON}
+            # Usar ruta directa al archivo PHP
+            url = f"{config.SERVER_URL}/api/productos.php"
+            response = requests.get(url, params=params, timeout=10)
             
             if response.status_code == 200:
                 productos_data = response.json()
@@ -82,6 +86,9 @@ class SyncManager:
             return True
         
         try:
+            # Usar ruta directa al archivo PHP
+            url = f"{config.SERVER_URL}/api/ventas.php"
+            
             for venta in ventas_pendientes:
                 venta_data = {
                     'fecha': venta.fecha.isoformat(),
@@ -94,7 +101,7 @@ class SyncManager:
                 }
                 
                 response = requests.post(
-                    f"{config.API_BASE}/ventas",
+                    url,
                     json=venta_data,
                     timeout=10
                 )
@@ -117,8 +124,10 @@ class SyncManager:
         """Descarga ventas de los últimos N días"""
         try:
             fecha_desde = (datetime.now() - timedelta(days=dias)).isoformat()
+            # Usar ruta directa al archivo PHP
+            url = f"{config.SERVER_URL}/api/ventas.php"
             response = requests.get(
-                f"{config.API_BASE}/ventas",
+                url,
                 params={'desde': fecha_desde},
                 timeout=10
             )

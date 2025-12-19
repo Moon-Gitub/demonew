@@ -75,12 +75,20 @@ class Configuracion(Base):
     valor = Column(Text)
 
 # Inicializar base de datos
+print(f"🔍 Inicializando base de datos en: {config.DB_PATH}")
 engine = create_engine(f'sqlite:///{config.DB_PATH}', echo=False)
+
+# Crear todas las tablas
+print(f"🔍 Creando tablas...")
 Base.metadata.create_all(engine)
+print(f"✅ Tablas creadas/verificadas")
+
 Session = sessionmaker(bind=engine)
 
 def get_session():
-    return Session()
+    session = Session()
+    print(f"🔍 Nueva sesión creada")
+    return session
 
 def hash_password(password):
     """Hashea la contraseña usando bcrypt"""

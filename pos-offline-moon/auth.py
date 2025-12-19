@@ -21,11 +21,18 @@ class AuthManager:
         
         try:
             # Buscar usuario local
+            print(f"🔍 Buscando usuario: {usuario}")
             user = session.query(Usuario).filter_by(usuario=usuario).first()
             
             if not user:
+                # Listar todos los usuarios disponibles para debug
+                todos_usuarios = session.query(Usuario).all()
+                print(f"🔍 Usuarios en base local: {len(todos_usuarios)}")
+                for u in todos_usuarios:
+                    print(f"  - {u.usuario} (ID: {u.id}, Estado: {u.estado})")
+                
                 session.close()
-                return {"success": False, "message": "Usuario no encontrado"}
+                return {"success": False, "message": "Usuario no encontrado. Verifica que la sincronización se haya completado."}
             
             # Verificar contraseña
             if not verify_password(password, user.password_hash):
@@ -76,52 +83,110 @@ class AuthManager:
     def sync_usuarios(self):
         """Sincroniza usuarios desde servidor"""
         try:
-            response = requests.get(f"{config.API_BASE}/usuarios", timeout=10)
+            # Incluir ID de cliente como parámetro para autenticación básica
+            params = {'id_cliente': config.ID_CLIENTE_MOON}
+            # Usar ruta directa al archivo PHP
+            url = f"{config.SERVER_URL}/api/usuarios.php"
+            print(f"🔍 Sincronizando usuarios desde: {url}")
+            print(f"🔍 Parámetros: {params}")
+            
+            response = requests.get(url, params=params, timeout=10)
+            
+            print(f"🔍 Status code: {response.status_code}")
             
             if response.status_code == 200:
                 usuarios_data = response.json()
+                print(f"🔍 Usuarios recibidos: {len(usuarios_data) if isinstance(usuarios_data, list) else 'No es lista'}")
+                
+                if not isinstance(usuarios_data, list):
+                    print(f"❌ Error: respuesta no es una lista: {type(usuarios_data)}")
+                    print(f"❌ Contenido: {usuarios_data}")
+                    return False
+                
+                if len(usuarios_data) == 0:
+                    print("⚠️  No se recibieron usuarios del servidor")
+                    return False
+                
                 session = get_session()
+                print(f"🔍 Sesión de base de datos obtenida")
                 
-                for user_data in usuarios_data:
-                    usuario = session.query(Usuario).filter_by(
-                        usuario=user_data['usuario']
-                    ).first()
+                usuarios_guardados = 0
+                usuarios_actualizados = 0
+                
+                try:
+                    for user_data in usuarios_data:
+                        print(f"🔍 Procesando usuario: {user_data.get('usuario', 'N/A')}")
+                        print(f"🔍 Datos recibidos: {user_data}")
+                        
+                        usuario = session.query(Usuario).filter_by(
+                            usuario=user_data['usuario']
+                        ).first()
+                        
+                        if usuario:
+                            # Actualizar existente
+                            print(f"🔍 Usuario existente encontrado, actualizando...")
+                            usuario.nombre = user_data['nombre']
+                            usuario.perfil = user_data.get('perfil', 'Vendedor')
+                            usuario.sucursal = user_data.get('sucursal', 'Local')
+                            usuario.estado = user_data.get('estado', 1)
+                            usuario.password_hash = user_data['password']  # Actualizar hash
+                            usuario.ultima_sincronizacion = datetime.now()
+                            usuarios_actualizados += 1
+                            print(f"✅ Usuario actualizado: {user_data['usuario']}")
+                        else:
+                            # Crear nuevo
+                            print(f"🔍 Creando nuevo usuario...")
+                            usuario = Usuario(
+                                id_servidor=user_data.get('id'),
+                                usuario=user_data['usuario'],
+                                password_hash=user_data['password'],
+                                nombre=user_data['nombre'],
+                                perfil=user_data.get('perfil', 'Vendedor'),
+                                sucursal=user_data.get('sucursal', 'Local'),
+                                estado=user_data.get('estado', 1)
+                            )
+                            session.add(usuario)
+                            usuarios_guardados += 1
+                            print(f"✅ Usuario agregado a sesión: {user_data['usuario']}")
                     
-                    if usuario:
-                        # Actualizar existente
-                        usuario.nombre = user_data['nombre']
-                        usuario.perfil = user_data.get('perfil', 'Vendedor')
-                        usuario.sucursal = user_data.get('sucursal', 'Local')
-                        usuario.estado = user_data.get('estado', 1)
-                        usuario.password_hash = user_data['password']  # Actualizar hash
-                        usuario.ultima_sincronizacion = datetime.now()
-                    else:
-                        # Crear nuevo
-                        usuario = Usuario(
-                            id_servidor=user_data['id'],
-                            usuario=user_data['usuario'],
-                            password_hash=user_data['password'],
-                            nombre=user_data['nombre'],
-                            perfil=user_data.get('perfil', 'Vendedor'),
-                            sucursal=user_data.get('sucursal', 'Local'),
-                            estado=user_data.get('estado', 1)
-                        )
-                        session.add(usuario)
+                    print(f"🔍 Haciendo commit a la base de datos...")
+                    session.commit()
+                    print(f"✅ Commit exitoso")
+                    
+                    # Verificar que se guardaron
+                    session2 = get_session()
+                    count = session2.query(Usuario).count()
+                    session2.close()
+                    print(f"✅ Verificación: {count} usuarios en base de datos")
+                    
+                except Exception as e:
+                    print(f"❌ Error al procesar usuarios: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    session.rollback()
+                    raise
+                finally:
+                    session.close()
+                    print(f"🔍 Sesión cerrada")
                 
-                session.commit()
-                session.close()
+                print(f"✅ Sincronización completada: {usuarios_guardados} nuevos, {usuarios_actualizados} actualizados")
                 return True
+            else:
+                print(f"❌ Error HTTP {response.status_code}: {response.text}")
+                return False
         except Exception as e:
-            print(f"Error sincronizando usuarios: {e}")
+            print(f"❌ Error sincronizando usuarios: {e}")
+            import traceback
+            traceback.print_exc()
             return False
     
     def sync_estado_cuenta(self, id_cliente_moon):
         """Sincroniza estado de cuenta desde servidor"""
         try:
-            response = requests.get(
-                f"{config.API_BASE}/estado-cuenta/{id_cliente_moon}",
-                timeout=10
-            )
+            # Usar ruta directa al archivo PHP
+            url = f"{config.SERVER_URL}/api/estado-cuenta.php"
+            params = {'id': id_cliente_moon}
+            response = requests.get(url, params=params, timeout=10)
             
             if response.status_code == 200:
                 estado_data = response.json()
