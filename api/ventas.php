@@ -76,26 +76,70 @@ try {
         
     } elseif($_SERVER['REQUEST_METHOD'] === 'POST') {
         // POST: Crear venta desde sistema offline
-        $datos = json_decode(file_get_contents('php://input'), true);
+        error_log("=== INICIO CREAR VENTA OFFLINE ===");
+        
+        $raw_input = file_get_contents('php://input');
+        error_log("Raw input recibido: " . substr($raw_input, 0, 500));
+        
+        $datos = json_decode($raw_input, true);
         
         if(!$datos) {
+            $error = json_last_error_msg();
+            error_log("Error decodificando JSON: " . $error);
             http_response_code(400);
-            echo json_encode(['error' => 'Datos inválidos']);
+            echo json_encode(['error' => 'Datos inválidos: ' . $error]);
+            exit;
+        }
+        
+        error_log("Datos decodificados: " . print_r($datos, true));
+        
+        // Validar que hay productos
+        if(empty($datos['productos']) || !is_array($datos['productos'])) {
+            error_log("Error: No hay productos o no es un array");
+            http_response_code(400);
+            echo json_encode(['error' => 'No hay productos en la venta']);
             exit;
         }
         
         // Preparar datos para el controlador (formato que espera ctrCrearVentaCaja)
         $postVentaCaja = array();
         $postVentaCaja['tokenIdTablaVentas'] = uniqid('offline_', true);
-        $postVentaCaja['fechaActual'] = $datos['fecha'] ?? date('Y-m-d H:i:s');
+        
+        // Formatear fecha correctamente
+        $fecha = $datos['fecha'] ?? date('Y-m-d H:i:s');
+        if(strpos($fecha, 'T') !== false) {
+            // Convertir formato ISO a formato MySQL
+            $fecha = str_replace('T', ' ', $fecha);
+            $fecha = substr($fecha, 0, 19); // Quitar timezone si existe
+        }
+        $postVentaCaja['fechaActual'] = $fecha;
+        
         $postVentaCaja['idVendedor'] = $_SESSION['id'] ?? 1;
         $postVentaCaja['sucursalVendedor'] = $datos['sucursal'] ?? 'Local';
         $postVentaCaja['nombreVendedor'] = $_SESSION['nombre'] ?? 'Sistema';
         $postVentaCaja['seleccionarCliente'] = $datos['cliente'] ?? '1';
         $postVentaCaja['nuevaVentaCaja'] = '1';
-        $postVentaCaja['listaProductosCaja'] = json_encode($datos['productos']);
+        
+        // Asegurar que los productos tengan el formato correcto
+        $productos_formateados = [];
+        foreach($datos['productos'] as $prod) {
+            $productos_formateados[] = [
+                'id' => intval($prod['id'] ?? $prod['id_producto'] ?? 0),
+                'descripcion' => $prod['descripcion'] ?? '',
+                'cantidad' => floatval($prod['cantidad'] ?? 1),
+                'categoria' => $prod['categoria'] ?? '',
+                'stock' => floatval($prod['stock'] ?? 0),
+                'precio_compra' => floatval($prod['precio_compra'] ?? 0),
+                'precio' => floatval($prod['precio'] ?? $prod['precio_venta'] ?? 0),
+                'total' => floatval($prod['total'] ?? $prod['subtotal'] ?? 0)
+            ];
+        }
+        
+        $postVentaCaja['listaProductosCaja'] = json_encode($productos_formateados);
+        error_log("Lista productos formateada: " . $postVentaCaja['listaProductosCaja']);
+        
         $postVentaCaja['listaDescuentoCaja'] = '';
-        $postVentaCaja['nuevoTotalVentaCaja'] = $datos['total'];
+        $postVentaCaja['nuevoTotalVentaCaja'] = floatval($datos['total']);
         $postVentaCaja['listaMetodoPagoCaja'] = $datos['metodo_pago'] ?? 'Efectivo';
         $postVentaCaja['nuevoPrecioImpuestoCaja'] = '0';
         $postVentaCaja['nuevoVtaCajaIva2'] = '0';
@@ -141,25 +185,38 @@ try {
         require_once "../controladores/empresa.controlador.php";
         require_once "../modelos/empresa.modelo.php";
         
-        $respuesta = ControladorVentas::ctrCrearVentaCaja($postVentaCaja);
+        error_log("Llamando a ctrCrearVentaCaja con datos: " . print_r($postVentaCaja, true));
         
-        if($respuesta && isset($respuesta['estado']) && $respuesta['estado'] == 'ok') {
-            // Obtener el último ID de venta creada
-            require_once "../modelos/ventas.modelo.php";
-            $ultimoId = ModeloVentas::mdlUltimoId('ventas');
-            $ultimoCodigo = ModeloVentas::mdlMostrarUltimoCodigo('ventas');
+        try {
+            $respuesta = ControladorVentas::ctrCrearVentaCaja($postVentaCaja);
+            error_log("Respuesta del controlador: " . print_r($respuesta, true));
             
-            $codigo = isset($respuesta['codigoVta']) ? $respuesta['codigoVta'] : ($ultimoCodigo['ultimo'] ?? null);
-            
-            echo json_encode([
-                'id' => $ultimoId['ultimo'] ?? null,
-                'codigo' => $codigo,
-                'success' => true
-            ]);
-        } else {
+            if($respuesta && isset($respuesta['estado']) && $respuesta['estado'] == 'ok') {
+                // Obtener el último ID de venta creada
+                require_once "../modelos/ventas.modelo.php";
+                $ultimoId = ModeloVentas::mdlUltimoId('ventas');
+                $ultimoCodigo = ModeloVentas::mdlMostrarUltimoCodigo('ventas');
+                
+                $codigo = isset($respuesta['codigoVta']) ? $respuesta['codigoVta'] : ($ultimoCodigo['ultimo'] ?? null);
+                
+                error_log("✅ Venta creada exitosamente. ID: " . ($ultimoId['ultimo'] ?? 'N/A'));
+                
+                echo json_encode([
+                    'id' => $ultimoId['ultimo'] ?? null,
+                    'codigo' => $codigo,
+                    'success' => true
+                ]);
+            } else {
+                $error = is_array($respuesta) ? ($respuesta['modeloVentas'] ?? $respuesta['modeloCaja'] ?? 'Error desconocido') : (is_string($respuesta) ? $respuesta : 'Error al crear la venta');
+                error_log("❌ Error en respuesta del controlador: " . $error);
+                http_response_code(500);
+                echo json_encode(['error' => $error, 'respuesta_completa' => $respuesta]);
+            }
+        } catch(Exception $e) {
+            error_log("❌ Excepción al crear venta: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
             http_response_code(500);
-            $error = is_array($respuesta) ? ($respuesta['modeloVentas'] ?? 'Error desconocido') : 'Error al crear la venta';
-            echo json_encode(['error' => $error]);
+            echo json_encode(['error' => 'Excepción: ' . $e->getMessage()]);
         }
     } else {
         http_response_code(405);

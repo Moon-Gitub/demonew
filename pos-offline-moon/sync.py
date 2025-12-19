@@ -118,30 +118,44 @@ class SyncManager:
                 
                 print(f"🔄 Sincronizando venta ID {venta.id} con {len(productos_formateados)} productos...")
                 print(f"   Total: ${venta.total}, Método: {venta.metodo_pago}")
+                print(f"   Productos: {json.dumps([p.get('descripcion', 'N/A') for p in productos_formateados[:3]], ensure_ascii=False)}")
                 
-                response = requests.post(
-                    url,
-                    json=venta_data,
-                    timeout=30,
-                    headers={'Content-Type': 'application/json'}
-                )
-                
-                print(f"   Status: {response.status_code}")
-                if response.status_code != 200:
-                    print(f"   Error: {response.text}")
-                
-                if response.status_code == 200:
-                    resultado = response.json()
-                    if resultado.get('success') or resultado.get('id'):
-                        venta.id_servidor = resultado.get('id')
-                        venta.sincronizado = True
-                        venta.fecha_sincronizacion = datetime.now()
-                        session.commit()
-                        print(f"   ✅ Venta sincronizada exitosamente (ID servidor: {venta.id_servidor})")
+                try:
+                    response = requests.post(
+                        url,
+                        json=venta_data,
+                        timeout=30,
+                        headers={'Content-Type': 'application/json'}
+                    )
+                    
+                    print(f"   Status: {response.status_code}")
+                    
+                    if response.status_code == 200:
+                        resultado = response.json()
+                        if resultado.get('success') or resultado.get('id'):
+                            venta.id_servidor = resultado.get('id')
+                            venta.sincronizado = True
+                            venta.fecha_sincronizacion = datetime.now()
+                            session.commit()
+                            print(f"   ✅ Venta sincronizada exitosamente (ID servidor: {venta.id_servidor})")
+                        else:
+                            error_msg = resultado.get('error', 'Error desconocido')
+                            print(f"   ❌ Error en respuesta: {error_msg}")
+                            if resultado.get('respuesta_completa'):
+                                print(f"   Detalles: {resultado.get('respuesta_completa')}")
                     else:
-                        print(f"   ❌ Error en respuesta: {resultado}")
-                else:
-                    print(f"   ❌ Error HTTP {response.status_code}: {response.text}")
+                        try:
+                            error_data = response.json()
+                            error_msg = error_data.get('error', response.text[:200])
+                        except:
+                            error_msg = response.text[:200]
+                        print(f"   ❌ Error HTTP {response.status_code}: {error_msg}")
+                except requests.exceptions.RequestException as e:
+                    print(f"   ❌ Error de conexión: {str(e)}")
+                except Exception as e:
+                    print(f"   ❌ Error inesperado: {str(e)}")
+                    import traceback
+                    traceback.print_exc()
             
             session.close()
             return True
