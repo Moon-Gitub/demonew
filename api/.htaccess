@@ -1,0 +1,18 @@
+# Habilitar rewrite
+RewriteEngine On
+
+# Permitir acceso a archivos PHP directamente
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Ruta para estado-cuenta con ID
+RewriteRule ^estado-cuenta/([0-9]+)$ estado-cuenta.php?id=$1 [L,QSA]
+
+# Ruta para health check
+RewriteRule ^health$ health.php [L,QSA]
+
+# Por defecto, permitir acceso directo a archivos
+<FilesMatch "\.php$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
