@@ -5,8 +5,36 @@
  * POST: Crear venta (desde sistema offline)
  */
 
-require_once "../seguridad.ajax.php";
-SeguridadAjax::inicializar();
+// Cargar autoload para Dotenv
+require_once "../extensiones/vendor/autoload.php";
+
+// Cargar .env si existe
+if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+    $dotenv->safeLoad();
+}
+
+// Verificación básica: requerir ID de cliente Moon como parámetro para GET
+$id_cliente = isset($_GET['id_cliente']) ? intval($_GET['id_cliente']) : null;
+
+// Si no se proporciona ID, intentar verificar sesión (para compatibilidad)
+if (!$id_cliente && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    
+    if (!isset($_SESSION["iniciarSesion"]) || $_SESSION["iniciarSesion"] != "ok") {
+        http_response_code(401);
+        echo json_encode(['error' => 'Se requiere id_cliente como parámetro o sesión activa']);
+        exit;
+    }
+}
+
+// Para POST siempre requiere sesión
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once "../seguridad.ajax.php";
+    SeguridadAjax::inicializar();
+}
 
 require_once "../controladores/ventas.controlador.php";
 require_once "../modelos/ventas.modelo.php";

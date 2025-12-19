@@ -126,16 +126,30 @@ class SyncManager:
             fecha_desde = (datetime.now() - timedelta(days=dias)).isoformat()
             # Usar ruta directa al archivo PHP
             url = f"{config.SERVER_URL}/api/ventas.php"
+            print(f"🔍 Descargando historial de ventas desde: {fecha_desde}")
             response = requests.get(
                 url,
-                params={'desde': fecha_desde},
+                params={'desde': fecha_desde, 'id_cliente': config.ID_CLIENTE_MOON},
                 timeout=10
             )
             
+            print(f"🔍 Status code historial: {response.status_code}")
+            
             if response.status_code == 200:
-                return response.json()
+                data = response.json()
+                print(f"✅ Ventas recibidas del servidor: {len(data) if isinstance(data, list) else 'No es lista'}")
+                if isinstance(data, list):
+                    return data
+                else:
+                    print(f"⚠️  Respuesta no es lista: {type(data)}")
+                    return []
+            else:
+                print(f"❌ Error HTTP {response.status_code}: {response.text[:200]}")
+                return []
         except Exception as e:
-            print(f"Error descargando historial: {e}")
+            print(f"❌ Error descargando historial: {e}")
+            import traceback
+            traceback.print_exc()
             return []
     
     def sync_all(self, id_cliente_moon=None, silent=False):
