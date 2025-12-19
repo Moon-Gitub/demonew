@@ -507,11 +507,15 @@ class POSApp:
                 print("⚠️ Endpoint API no disponible, intentando con ajax...")
                 url_ajax = f"{config.SERVER_URL}/ajax/clientes.ajax.php"
                 params_ajax = {'id_cliente': self.id_cliente_moon, 'listarClientes': '1'}
+                print(f"🔍 Intentando ajax con: {url_ajax}?id_cliente={self.id_cliente_moon}&listarClientes=1")
                 response_ajax = requests.get(url_ajax, params=params_ajax, timeout=10)
+                
+                print(f"🔍 Status code ajax: {response_ajax.status_code}")
                 
                 if response_ajax.status_code == 200:
                     try:
                         clientes_data = response_ajax.json()
+                        print(f"🔍 Respuesta ajax recibida: {len(clientes_data) if isinstance(clientes_data, list) else 'no es lista'} elementos")
                         if isinstance(clientes_data, list) and len(clientes_data) > 0:
                             # Convertir formato del ajax al formato esperado
                             self.clientes_disponibles = []
@@ -519,14 +523,19 @@ class POSApp:
                                 self.clientes_disponibles.append({
                                     'id': int(cliente.get('id', 1)),
                                     'nombre': cliente.get('nombre', 'Sin nombre'),
-                                    'documento': cliente.get('documento', ''),
-                                    'telefono': cliente.get('telefono', ''),
+                                    'documento': str(cliente.get('documento', '')),
+                                    'telefono': str(cliente.get('telefono', '')),
                                     'display': f"{cliente.get('id', 1)}-{cliente.get('nombre', 'Sin nombre')}"
                                 })
                             print(f"✅ Cargados {len(self.clientes_disponibles)} clientes desde ajax")
                             return
+                        else:
+                            print(f"⚠️ Respuesta ajax vacía o inválida: {clientes_data[:200] if not isinstance(clientes_data, list) else 'lista vacía'}")
                     except Exception as e:
                         print(f"⚠️ Error parseando respuesta ajax: {e}")
+                        print(f"🔍 Respuesta raw: {response_ajax.text[:500]}")
+                else:
+                    print(f"⚠️ Error HTTP ajax {response_ajax.status_code}: {response_ajax.text[:200]}")
                 
                 print("⚠️ No se pudieron cargar clientes, usando cliente por defecto")
                 self.clientes_disponibles = [{'id': 1, 'nombre': 'Consumidor Final', 'display': '1-Consumidor Final'}]
