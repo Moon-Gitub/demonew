@@ -340,28 +340,59 @@ class POSApp:
                               padx=40, pady=20, cursor="hand2")
         btn_cobrar.pack(fill=tk.X, padx=15, pady=15)
         
-        # COLUMNA DERECHA: Acciones y resumen
+        # COLUMNA DERECHA: Acciones, método de pago y resumen
         right_col = tk.Frame(main_container, bg="white", relief=tk.RAISED, bd=1)
         right_col.pack(side=tk.LEFT, fill=tk.BOTH, expand=False, padx=(5, 0))
-        right_col.config(width=300)
+        right_col.config(width=320)
         
+        # Sección: Método de Pago (PRIMERO, más visible)
+        pago_header = tk.Frame(right_col, bg="#667eea", height=50)
+        pago_header.pack(fill=tk.X, pady=(0, 0))
+        
+        tk.Label(pago_header, text="💳 MÉTODO DE PAGO", font=("Arial", 14, "bold"),
+                bg="#667eea", fg="white").pack(pady=12)
+        
+        pago_frame = tk.Frame(right_col, bg="white", relief=tk.RAISED, bd=1)
+        pago_frame.pack(fill=tk.X, padx=15, pady=15)
+        
+        self.medio_pago_seleccionado = tk.StringVar(value="Efectivo")
+        self.medio_pago = "Efectivo"  # Valor inicial
+        
+        medios = [
+            ("💵 Efectivo", "Efectivo"),
+            ("💳 Tarjeta Débito", "TD"),
+            ("💳 Tarjeta Crédito", "TC"),
+            ("📱 Mercado Pago", "MP"),
+            ("🏦 Transferencia", "TR"),
+            ("📄 Cheque", "CH"),
+            ("📋 Cuenta Corriente", "CC")
+        ]
+        
+        for texto, valor in medios:
+            radio = tk.Radiobutton(pago_frame, text=texto, variable=self.medio_pago_seleccionado,
+                                  value=valor, font=("Arial", 11), bg="white", padx=15, pady=6,
+                                  cursor="hand2", selectcolor="#667eea",
+                                  command=lambda v=valor: setattr(self, 'medio_pago', v))
+            radio.pack(anchor=tk.W, pady=2)
+        
+        # Sección: Acciones Rápidas
         tk.Label(right_col, text="⚡ ACCIONES RÁPIDAS", font=("Arial", 14, "bold"),
-                bg="#764ba2", fg="white").pack(fill=tk.X, pady=0, ipady=15)
+                bg="#764ba2", fg="white").pack(fill=tk.X, pady=(10, 0), ipady=15)
         
         actions_frame = tk.Frame(right_col, bg="white")
-        actions_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=15)
+        actions_frame.pack(fill=tk.X, padx=15, pady=15)
         
         tk.Button(actions_frame, text="📊 Ver Ventas\n(Últimos 30 días)", bg="#9b59b6", fg="white",
-                 font=("Arial", 12, "bold"), command=self.mostrar_ventas, relief=tk.FLAT,
-                 padx=20, pady=15, cursor="hand2", width=25).pack(fill=tk.X, pady=10)
+                 font=("Arial", 11, "bold"), command=self.mostrar_ventas, relief=tk.FLAT,
+                 padx=15, pady=12, cursor="hand2", width=25).pack(fill=tk.X, pady=5)
         
         tk.Button(actions_frame, text="🔄 Sincronizar", bg="#3498db", fg="white",
-                 font=("Arial", 12, "bold"), command=self.manual_sync, relief=tk.FLAT,
-                 padx=20, pady=15, cursor="hand2", width=25).pack(fill=tk.X, pady=10)
+                 font=("Arial", 11, "bold"), command=self.manual_sync, relief=tk.FLAT,
+                 padx=15, pady=12, cursor="hand2", width=25).pack(fill=tk.X, pady=5)
         
         tk.Button(actions_frame, text="📋 Catálogo\nCompleto", bg="#16a085", fg="white",
-                 font=("Arial", 12, "bold"), command=self.mostrar_catalogo, relief=tk.FLAT,
-                 padx=20, pady=15, cursor="hand2", width=25).pack(fill=tk.X, pady=10)
+                 font=("Arial", 11, "bold"), command=self.mostrar_catalogo, relief=tk.FLAT,
+                 padx=15, pady=12, cursor="hand2", width=25).pack(fill=tk.X, pady=5)
         
         # Resumen de sesión
         resumen_frame = tk.Frame(right_col, bg="#ecf0f5", relief=tk.RAISED, bd=1)
@@ -637,76 +668,14 @@ class POSApp:
         cantidad_productos = sum(item['cantidad'] for item in self.productos_carrito)
         self.resumen_label.config(text=f"Productos: {cantidad_productos}\nTotal: ${self.total_venta:.2f}")
     
-    def seleccionar_medio_pago(self):
-        """Diálogo para seleccionar medio de pago"""
-        pago_window = tk.Toplevel(self.root)
-        pago_window.title("Seleccionar Medio de Pago")
-        pago_window.geometry("500x500")
-        pago_window.configure(bg="#ecf0f5")
-        pago_window.transient(self.root)
-        pago_window.grab_set()
-        
-        pago_window.update_idletasks()
-        x = (pago_window.winfo_screenwidth() // 2) - (500 // 2)
-        y = (pago_window.winfo_screenheight() // 2) - (500 // 2)
-        pago_window.geometry(f'500x500+{x}+{y}')
-        
-        header = tk.Frame(pago_window, bg="#667eea", height=60)
-        header.pack(fill=tk.X)
-        tk.Label(header, text="💳 Seleccionar Medio de Pago", font=("Arial", 16, "bold"),
-                bg="#667eea", fg="white").pack(pady=15)
-        
-        total_frame = tk.Frame(pago_window, bg="#34495e", relief=tk.RAISED, bd=1)
-        total_frame.pack(fill=tk.X, padx=20, pady=20)
-        
-        tk.Label(total_frame, text="Total a cobrar:", font=("Arial", 12), bg="#34495e", fg="white").pack(pady=10)
-        tk.Label(total_frame, text=f"${self.total_venta:.2f}", font=("Arial", 24, "bold"),
-                fg="#2ecc71", bg="#34495e").pack(pady=(0, 10))
-        
-        opciones_frame = tk.Frame(pago_window, bg="#ecf0f5")
-        opciones_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
-        
-        self.medio_pago_seleccionado = tk.StringVar(value="Efectivo")
-        
-        medios = [
-            ("💵 Efectivo", "Efectivo"),
-            ("💳 Tarjeta Débito", "TD"),
-            ("💳 Tarjeta Crédito", "TC"),
-            ("📱 Mercado Pago", "MP"),
-            ("🏦 Transferencia", "TR"),
-            ("📄 Cheque", "CH"),
-            ("📋 Cuenta Corriente", "CC")
-        ]
-        
-        for texto, valor in medios:
-            radio = tk.Radiobutton(opciones_frame, text=texto, variable=self.medio_pago_seleccionado,
-                                  value=valor, font=("Arial", 12), bg="#ecf0f5", padx=20, pady=8,
-                                  cursor="hand2", selectcolor="white")
-            radio.pack(anchor=tk.W, pady=5)
-        
-        botones_frame = tk.Frame(pago_window, bg="#ecf0f5")
-        botones_frame.pack(fill=tk.X, padx=20, pady=20)
-        
-        def confirmar():
-            self.medio_pago = self.medio_pago_seleccionado.get()
-            pago_window.destroy()
-            self.procesar_cobro()
-        
-        tk.Button(botones_frame, text="✅ Confirmar", bg="#27ae60", fg="white",
-                 font=("Arial", 12, "bold"), command=confirmar, relief=tk.FLAT,
-                 padx=30, pady=12, cursor="hand2").pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
-        
-        tk.Button(botones_frame, text="❌ Cancelar", bg="#e74c3c", fg="white",
-                 font=("Arial", 12, "bold"), command=pago_window.destroy, relief=tk.FLAT,
-                 padx=30, pady=12, cursor="hand2").pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
-        
-        pago_window.focus_force()
-    
     def cobrar_venta(self):
         if not self.productos_carrito:
             messagebox.showwarning("Carrito vacío", "Agregue productos al carrito antes de cobrar")
             return
-        self.seleccionar_medio_pago()
+        
+        # Usar el método de pago seleccionado directamente (sin modal)
+        self.medio_pago = self.medio_pago_seleccionado.get()
+        self.procesar_cobro()
     
     def procesar_cobro(self):
         try:
