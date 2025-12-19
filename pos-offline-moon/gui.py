@@ -456,6 +456,8 @@ class POSApp:
         search_entry.focus_set()
         
         self.cargar_productos()
+        # Cargar clientes después de crear la UI (con delay para no bloquear)
+        self.root.after(500, self.cargar_clientes)
     
     def on_connection_change(self, is_online):
         if is_online:
