@@ -503,11 +503,11 @@ class POSApp:
                     except:
                         pass
                 
-                # Si falla, intentar con ajax/clientes.ajax.php usando POST
+                # Si falla, intentar con ajax/clientes.ajax.php usando GET con id_cliente
                 print("⚠️ Endpoint API no disponible, intentando con ajax...")
                 url_ajax = f"{config.SERVER_URL}/ajax/clientes.ajax.php"
-                data = {'listarClientes': '1'}
-                response_ajax = requests.post(url_ajax, data=data, timeout=10)
+                params_ajax = {'id_cliente': self.id_cliente_moon, 'listarClientes': '1'}
+                response_ajax = requests.get(url_ajax, params=params_ajax, timeout=10)
                 
                 if response_ajax.status_code == 200:
                     try:

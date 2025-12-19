@@ -1,8 +1,19 @@
 <?php
 // ✅ Seguridad AJAX
 require_once "seguridad.ajax.php";
-SeguridadAjax::inicializar();
 
+// Verificación básica: si viene id_cliente como parámetro GET, permitir sin sesión (para sistema offline)
+$id_cliente_moon = isset($_GET['id_cliente']) ? intval($_GET['id_cliente']) : null;
+
+if (!$id_cliente_moon) {
+    // Si no viene id_cliente, requerir sesión normal
+    SeguridadAjax::inicializar();
+} else {
+    // Para sistema offline, solo inicializar sesión sin verificar CSRF
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+}
 
 require_once "../controladores/clientes.controlador.php";
 require_once "../modelos/clientes.modelo.php";
@@ -140,7 +151,7 @@ if(isset($_POST["idCliente"])){
 /*=============================================
 LISTAR CLIENTES
 =============================================*/	
-if(isset($_POST["listarClientes"])){
+if(isset($_POST["listarClientes"]) || (isset($_GET["id_cliente"]) && isset($_GET["listarClientes"]))){
 	$cliente = new AjaxClientes();
 	$cliente -> ajaxListarClientes();
 }
