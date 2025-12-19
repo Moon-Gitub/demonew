@@ -106,21 +106,19 @@ class SyncManager:
                                 'total': prod.get('subtotal', prod.get('total', prod.get('precio', 0) * prod.get('cantidad', 1)))
                             })
                 
-                # Extraer ID del cliente desde el nombre (formato: "ID-Nombre" o solo nombre)
-                cliente_id = 1  # Por defecto Consumidor Final
-                if venta.cliente and venta.cliente != "Consumidor Final":
+                # Usar id_cliente si está disponible, sino usar cliente (nombre) para extraer ID
+                cliente_id = getattr(venta, 'id_cliente', None) or 1
+                if cliente_id == 1 and venta.cliente and venta.cliente != "Consumidor Final":
                     # Intentar extraer ID si está en formato "ID-Nombre"
                     if '-' in str(venta.cliente):
                         try:
                             cliente_id = int(str(venta.cliente).split('-')[0])
                         except:
                             cliente_id = 1
-                    # Si no, buscar por nombre en la lista de clientes disponibles
-                    # Por ahora, usar ID 1 por defecto si no se encuentra
                 
                 venta_data = {
                     'fecha': venta.fecha.isoformat(),
-                    'cliente': cliente_id,  # Enviar ID del cliente, no el nombre
+                    'cliente': cliente_id,  # Enviar ID del cliente
                     'productos': productos_formateados,
                     'total': float(venta.total),
                     'metodo_pago': venta.metodo_pago,

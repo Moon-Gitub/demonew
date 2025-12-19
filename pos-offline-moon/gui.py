@@ -477,6 +477,115 @@ class POSApp:
         self.cargar_productos()
         messagebox.showinfo("Listo", "Sincronización completada")
     
+    def cargar_clientes(self):
+        """Cargar lista de clientes desde el servidor"""
+        try:
+            if self.connection_monitor.check_connection():
+                import requests
+                url = f"{config.SERVER_URL}/api/clientes.php"
+                params = {'id_cliente': self.id_cliente_moon}
+                response = requests.get(url, params=params, timeout=10)
+                
+                if response.status_code == 200:
+                    self.clientes_disponibles = response.json()
+                else:
+                    self.clientes_disponibles = [{'id': 1, 'display': '1-Consumidor Final'}]
+            else:
+                self.clientes_disponibles = [{'id': 1, 'display': '1-Consumidor Final'}]
+        except:
+            self.clientes_disponibles = [{'id': 1, 'display': '1-Consumidor Final'}]
+    
+    def buscar_cliente(self):
+        """Abrir ventana para buscar y seleccionar cliente"""
+        ventana_cliente = tk.Toplevel(self.root)
+        ventana_cliente.title("🔍 Buscar Cliente")
+        ventana_cliente.geometry("600x500")
+        ventana_cliente.configure(bg="#ecf0f5")
+        ventana_cliente.transient(self.root)
+        
+        ventana_cliente.update_idletasks()
+        x = (ventana_cliente.winfo_screenwidth() // 2) - (600 // 2)
+        y = (ventana_cliente.winfo_screenheight() // 2) - (500 // 2)
+        ventana_cliente.geometry(f'600x500+{x}+{y}')
+        
+        header = tk.Frame(ventana_cliente, bg="#667eea", height=50)
+        header.pack(fill=tk.X)
+        tk.Label(header, text="🔍 Buscar Cliente", font=("Arial", 16, "bold"),
+                bg="#667eea", fg="white").pack(pady=12)
+        
+        search_frame = tk.Frame(ventana_cliente, bg="#ecf0f5")
+        search_frame.pack(fill=tk.X, padx=20, pady=15)
+        
+        search_var_cliente = tk.StringVar()
+        search_entry = tk.Entry(search_frame, textvariable=search_var_cliente, font=("Arial", 12),
+                               relief=tk.SOLID, bd=1)
+        search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, ipady=8, padx=(0, 10))
+        search_entry.focus()
+        
+        def buscar_cliente():
+            filtro = search_var_cliente.get().lower()
+            for item in cliente_tree.get_children():
+                cliente_tree.delete(item)
+            
+            for cliente in self.clientes_disponibles:
+                display = cliente.get('display', f"{cliente.get('id', '')}-{cliente.get('nombre', '')}")
+                if filtro in display.lower() or filtro in cliente.get('documento', '').lower():
+                    cliente_tree.insert("", tk.END, values=(
+                        cliente.get('id', ''),
+                        cliente.get('nombre', 'Sin nombre'),
+                        cliente.get('documento', ''),
+                        cliente.get('telefono', '')
+                    ))
+        
+        search_entry.bind("<KeyRelease>", lambda e: buscar_cliente())
+        tk.Button(search_frame, text="🔍 Buscar", bg="#667eea", fg="white",
+                 font=("Arial", 10, "bold"), command=buscar_cliente, relief=tk.FLAT, padx=20, pady=8).pack(side=tk.LEFT)
+        
+        tree_frame = tk.Frame(ventana_cliente, bg="white")
+        tree_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=(0, 20))
+        
+        cliente_tree = ttk.Treeview(tree_frame, columns=("id", "nombre", "documento", "telefono"), show="headings")
+        cliente_tree.heading("id", text="ID")
+        cliente_tree.heading("nombre", text="Nombre")
+        cliente_tree.heading("documento", text="Documento")
+        cliente_tree.heading("telefono", text="Teléfono")
+        
+        cliente_tree.column("id", width=60, anchor=tk.CENTER)
+        cliente_tree.column("nombre", width=250)
+        cliente_tree.column("documento", width=120, anchor=tk.CENTER)
+        cliente_tree.column("telefono", width=120)
+        
+        scrollbar = ttk.Scrollbar(tree_frame, orient=tk.VERTICAL, command=cliente_tree.yview)
+        cliente_tree.configure(yscrollcommand=scrollbar.set)
+        
+        cliente_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        # Cargar todos los clientes inicialmente
+        for cliente in self.clientes_disponibles:
+            cliente_tree.insert("", tk.END, values=(
+                cliente.get('id', ''),
+                cliente.get('nombre', 'Sin nombre'),
+                cliente.get('documento', ''),
+                cliente.get('telefono', '')
+            ))
+        
+        def seleccionar_cliente(event):
+            selection = cliente_tree.selection()
+            if not selection:
+                return
+            
+            item = cliente_tree.item(selection[0])
+            cliente_id = int(item['values'][0])
+            cliente_nombre = item['values'][1]
+            
+            self.cliente_id = cliente_id
+            self.cliente_seleccionado.set(f"{cliente_id}-{cliente_nombre}")
+            ventana_cliente.destroy()
+        
+        cliente_tree.bind("<Double-1>", seleccionar_cliente)
+        cliente_tree.bind("<Return>", seleccionar_cliente)
+    
     def cargar_productos(self, filtro=""):
         session = get_session()
         query = session.query(Producto)
