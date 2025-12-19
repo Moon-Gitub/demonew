@@ -7,6 +7,12 @@ __pycache__/
 env/
 venv/
 ENV/
+
+# Scripts de ejecución (se generan automáticamente)
+run.sh
+run.bat
+setup.sh
+setup.bat
 build/
 develop-eggs/
 dist/

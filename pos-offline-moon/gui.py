@@ -23,7 +23,8 @@ class LoginWindow:
         self.id_cliente_moon = config.ID_CLIENTE_MOON
         
         self.setup_login_ui()
-        self.check_initial_sync()
+        # Ejecutar sincronización después de que la ventana se muestre
+        self.window.after(500, self.check_initial_sync)
     
     def setup_login_ui(self):
         self.window = tk.Toplevel(self.parent)
@@ -131,9 +132,25 @@ class LoginWindow:
         btn_sync.pack(pady=5)
     
     def check_initial_sync(self):
-        """Sincroniza al iniciar si hay conexión"""
+        """Sincroniza al iniciar si hay conexión (en segundo plano)"""
         if self.connection_monitor.check_connection():
-            self.manual_sync(show_message=False)
+            # Ejecutar sincronización en un hilo separado para no bloquear UI
+            import threading
+            def sync_thread():
+                try:
+                    self.sync_manager.sync_all(id_cliente_moon=self.id_cliente_moon)
+                    # Actualizar estado de conexión en la UI
+                    self.window.after(0, lambda: self.connection_status.config(
+                        text="🟢 En línea - Sincronizado"
+                    ))
+                except Exception as e:
+                    print(f"Error en sincronización inicial: {e}")
+                    self.window.after(0, lambda: self.connection_status.config(
+                        text="🟢 En línea - Error en sync"
+                    ))
+            
+            thread = threading.Thread(target=sync_thread, daemon=True)
+            thread.start()
     
     def manual_sync(self, show_message=True):
         """Sincronización manual"""
@@ -145,10 +162,21 @@ class LoginWindow:
         if show_message:
             messagebox.showinfo("Sincronizando", "Sincronizando datos...")
         
-        self.sync_manager.sync_all(id_cliente_moon=self.id_cliente_moon)
+        # Ejecutar sincronización en hilo separado
+        import threading
+        def sync_thread():
+            try:
+                self.sync_manager.sync_all(id_cliente_moon=self.id_cliente_moon)
+                if show_message:
+                    self.window.after(0, lambda: messagebox.showinfo("Listo", "Sincronización completada"))
+            except Exception as e:
+                error_msg = f"Error en sincronización: {str(e)}"
+                print(error_msg)
+                if show_message:
+                    self.window.after(0, lambda: messagebox.showerror("Error", error_msg))
         
-        if show_message:
-            messagebox.showinfo("Listo", "Sincronización completada")
+        thread = threading.Thread(target=sync_thread, daemon=True)
+        thread.start()
     
     def login(self):
         """Procesa el login"""
