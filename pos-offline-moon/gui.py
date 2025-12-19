@@ -485,34 +485,58 @@ class POSApp:
                 import requests
                 url = f"{config.SERVER_URL}/api/clientes.php"
                 params = {'id_cliente': self.id_cliente_moon}
+                print(f"🔍 Cargando clientes desde: {url}")
                 response = requests.get(url, params=params, timeout=10)
                 
+                print(f"🔍 Status code clientes: {response.status_code}")
+                
                 if response.status_code == 200:
-                    self.clientes_disponibles = response.json()
+                    clientes_data = response.json()
+                    if isinstance(clientes_data, list) and len(clientes_data) > 0:
+                        self.clientes_disponibles = clientes_data
+                        print(f"✅ Cargados {len(self.clientes_disponibles)} clientes")
+                    else:
+                        print("⚠️ No se recibieron clientes válidos")
+                        self.clientes_disponibles = [{'id': 1, 'nombre': 'Consumidor Final', 'display': '1-Consumidor Final'}]
                 else:
-                    self.clientes_disponibles = [{'id': 1, 'display': '1-Consumidor Final'}]
+                    print(f"⚠️ Error HTTP {response.status_code}: {response.text[:200]}")
+                    self.clientes_disponibles = [{'id': 1, 'nombre': 'Consumidor Final', 'display': '1-Consumidor Final'}]
             else:
-                self.clientes_disponibles = [{'id': 1, 'display': '1-Consumidor Final'}]
-        except:
-            self.clientes_disponibles = [{'id': 1, 'display': '1-Consumidor Final'}]
+                print("⚠️ Sin conexión, usando cliente por defecto")
+                self.clientes_disponibles = [{'id': 1, 'nombre': 'Consumidor Final', 'display': '1-Consumidor Final'}]
+        except Exception as e:
+            print(f"❌ Error cargando clientes: {e}")
+            import traceback
+            traceback.print_exc()
+            self.clientes_disponibles = [{'id': 1, 'nombre': 'Consumidor Final', 'display': '1-Consumidor Final'}]
     
     def buscar_cliente(self):
         """Abrir ventana para buscar y seleccionar cliente"""
+        # Recargar clientes antes de abrir la ventana
+        self.cargar_clientes()
+        
         ventana_cliente = tk.Toplevel(self.root)
         ventana_cliente.title("🔍 Buscar Cliente")
-        ventana_cliente.geometry("600x500")
+        ventana_cliente.geometry("700x600")
         ventana_cliente.configure(bg="#ecf0f5")
         ventana_cliente.transient(self.root)
+        ventana_cliente.grab_set()
         
         ventana_cliente.update_idletasks()
-        x = (ventana_cliente.winfo_screenwidth() // 2) - (600 // 2)
-        y = (ventana_cliente.winfo_screenheight() // 2) - (500 // 2)
-        ventana_cliente.geometry(f'600x500+{x}+{y}')
+        x = (ventana_cliente.winfo_screenwidth() // 2) - (700 // 2)
+        y = (ventana_cliente.winfo_screenheight() // 2) - (600 // 2)
+        ventana_cliente.geometry(f'700x600+{x}+{y}')
         
         header = tk.Frame(ventana_cliente, bg="#667eea", height=50)
         header.pack(fill=tk.X)
         tk.Label(header, text="🔍 Buscar Cliente", font=("Arial", 16, "bold"),
                 bg="#667eea", fg="white").pack(pady=12)
+        
+        # Botón recargar clientes
+        btn_recargar = tk.Button(header, text="🔄 Recargar", bg="#764ba2", fg="white",
+                                font=("Arial", 9, "bold"), command=lambda: self.recargar_clientes_en_ventana(ventana_cliente, cliente_tree),
+                                relief=tk.FLAT, padx=10, pady=5, cursor="hand2")
+        btn_recargar.pack(side=tk.RIGHT, padx=10, pady=10)
         
         search_frame = tk.Frame(ventana_cliente, bg="#ecf0f5")
         search_frame.pack(fill=tk.X, padx=20, pady=15)
@@ -522,25 +546,6 @@ class POSApp:
                                relief=tk.SOLID, bd=1)
         search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, ipady=8, padx=(0, 10))
         search_entry.focus()
-        
-        def buscar_cliente():
-            filtro = search_var_cliente.get().lower()
-            for item in cliente_tree.get_children():
-                cliente_tree.delete(item)
-            
-            for cliente in self.clientes_disponibles:
-                display = cliente.get('display', f"{cliente.get('id', '')}-{cliente.get('nombre', '')}")
-                if filtro in display.lower() or filtro in cliente.get('documento', '').lower():
-                    cliente_tree.insert("", tk.END, values=(
-                        cliente.get('id', ''),
-                        cliente.get('nombre', 'Sin nombre'),
-                        cliente.get('documento', ''),
-                        cliente.get('telefono', '')
-                    ))
-        
-        search_entry.bind("<KeyRelease>", lambda e: buscar_cliente())
-        tk.Button(search_frame, text="🔍 Buscar", bg="#667eea", fg="white",
-                 font=("Arial", 10, "bold"), command=buscar_cliente, relief=tk.FLAT, padx=20, pady=8).pack(side=tk.LEFT)
         
         tree_frame = tk.Frame(ventana_cliente, bg="white")
         tree_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=(0, 20))
@@ -552,9 +557,9 @@ class POSApp:
         cliente_tree.heading("telefono", text="Teléfono")
         
         cliente_tree.column("id", width=60, anchor=tk.CENTER)
-        cliente_tree.column("nombre", width=250)
-        cliente_tree.column("documento", width=120, anchor=tk.CENTER)
-        cliente_tree.column("telefono", width=120)
+        cliente_tree.column("nombre", width=300)
+        cliente_tree.column("documento", width=150, anchor=tk.CENTER)
+        cliente_tree.column("telefono", width=150)
         
         scrollbar = ttk.Scrollbar(tree_frame, orient=tk.VERTICAL, command=cliente_tree.yview)
         cliente_tree.configure(yscrollcommand=scrollbar.set)
@@ -562,30 +567,97 @@ class POSApp:
         cliente_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
-        # Cargar todos los clientes inicialmente
-        for cliente in self.clientes_disponibles:
-            cliente_tree.insert("", tk.END, values=(
-                cliente.get('id', ''),
-                cliente.get('nombre', 'Sin nombre'),
-                cliente.get('documento', ''),
-                cliente.get('telefono', '')
-            ))
+        def actualizar_lista():
+            """Actualizar la lista de clientes según el filtro"""
+            filtro = search_var_cliente.get().lower()
+            for item in cliente_tree.get_children():
+                cliente_tree.delete(item)
+            
+            if not self.clientes_disponibles or len(self.clientes_disponibles) == 0:
+                cliente_tree.insert("", tk.END, values=("", "No hay clientes disponibles", "", ""))
+                return
+            
+            for cliente in self.clientes_disponibles:
+                nombre = cliente.get('nombre', 'Sin nombre')
+                display = cliente.get('display', f"{cliente.get('id', '')}-{nombre}")
+                documento = str(cliente.get('documento', ''))
+                
+                # Si no hay filtro o el filtro coincide
+                if not filtro or filtro in display.lower() or filtro in nombre.lower() or filtro in documento.lower():
+                    cliente_tree.insert("", tk.END, values=(
+                        cliente.get('id', ''),
+                        nombre,
+                        documento,
+                        cliente.get('telefono', '')
+                    ))
         
-        def seleccionar_cliente(event):
+        def buscar_cliente():
+            actualizar_lista()
+        
+        search_entry.bind("<KeyRelease>", lambda e: buscar_cliente())
+        tk.Button(search_frame, text="🔍 Buscar", bg="#667eea", fg="white",
+                 font=("Arial", 10, "bold"), command=buscar_cliente, relief=tk.FLAT, padx=20, pady=8).pack(side=tk.LEFT)
+        
+        # Cargar todos los clientes inicialmente
+        actualizar_lista()
+        
+        def seleccionar_cliente(event=None):
             selection = cliente_tree.selection()
             if not selection:
+                messagebox.showwarning("Seleccionar", "Seleccione un cliente de la lista")
                 return
             
             item = cliente_tree.item(selection[0])
-            cliente_id = int(item['values'][0])
-            cliente_nombre = item['values'][1]
+            cliente_id_str = item['values'][0]
             
-            self.cliente_id = cliente_id
-            self.cliente_seleccionado.set(f"{cliente_id}-{cliente_nombre}")
-            ventana_cliente.destroy()
+            if not cliente_id_str or cliente_id_str == "":
+                return
+            
+            try:
+                cliente_id = int(cliente_id_str)
+                cliente_nombre = item['values'][1]
+                
+                self.cliente_id = cliente_id
+                self.cliente_seleccionado.set(f"{cliente_id}-{cliente_nombre}")
+                ventana_cliente.destroy()
+                messagebox.showinfo("Cliente seleccionado", f"Cliente seleccionado: {cliente_nombre}")
+            except (ValueError, IndexError):
+                messagebox.showerror("Error", "Error al seleccionar el cliente")
         
         cliente_tree.bind("<Double-1>", seleccionar_cliente)
         cliente_tree.bind("<Return>", seleccionar_cliente)
+        
+        # Botón seleccionar
+        btn_frame = tk.Frame(ventana_cliente, bg="#ecf0f5")
+        btn_frame.pack(fill=tk.X, padx=20, pady=10)
+        
+        tk.Button(btn_frame, text="✅ Seleccionar Cliente", bg="#27ae60", fg="white",
+                 font=("Arial", 12, "bold"), command=seleccionar_cliente, relief=tk.FLAT,
+                 padx=30, pady=10, cursor="hand2").pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
+        
+        tk.Button(btn_frame, text="❌ Cancelar", bg="#e74c3c", fg="white",
+                 font=("Arial", 12, "bold"), command=ventana_cliente.destroy, relief=tk.FLAT,
+                 padx=30, pady=10, cursor="hand2").pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
+        
+        ventana_cliente.focus_force()
+    
+    def recargar_clientes_en_ventana(self, ventana, tree):
+        """Recargar clientes y actualizar el árbol"""
+        self.cargar_clientes()
+        # Limpiar y recargar
+        for item in tree.get_children():
+            tree.delete(item)
+        
+        if not self.clientes_disponibles or len(self.clientes_disponibles) == 0:
+            tree.insert("", tk.END, values=("", "No hay clientes disponibles", "", ""))
+        else:
+            for cliente in self.clientes_disponibles:
+                tree.insert("", tk.END, values=(
+                    cliente.get('id', ''),
+                    cliente.get('nombre', 'Sin nombre'),
+                    cliente.get('documento', ''),
+                    cliente.get('telefono', '')
+                ))
     
     def cargar_productos(self, filtro=""):
         session = get_session()
@@ -912,16 +984,17 @@ class POSApp:
             
             # Obtener nombre del cliente seleccionado
             cliente_nombre = "Consumidor Final"
-            for cliente in self.clientes_disponibles:
-                if cliente.get('id') == self.cliente_id:
-                    cliente_nombre = cliente.get('nombre', 'Consumidor Final')
-                    break
+            if hasattr(self, 'clientes_disponibles') and self.clientes_disponibles:
+                for cliente in self.clientes_disponibles:
+                    if cliente.get('id') == self.cliente_id:
+                        cliente_nombre = cliente.get('nombre', cliente.get('display', 'Consumidor Final').split('-', 1)[-1] if '-' in cliente.get('display', '') else 'Consumidor Final')
+                        break
             
             session = get_session()
             venta = Venta(
                 fecha=datetime.now(),
                 cliente=cliente_nombre,
-                id_cliente=self.cliente_id,
+                id_cliente=getattr(self, 'cliente_id', 1),
                 productos=productos_json,
                 total=self.total_venta,
                 metodo_pago=self.medio_pago,
