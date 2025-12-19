@@ -18,11 +18,14 @@ def main():
         # Mostrar ventana de login
         login = LoginWindow(root)
         
-        # Mostrar la ventana principal (aunque esté oculta, es necesaria para el loop)
-        root.deiconify()
-        root.withdraw()  # Ocultarla de nuevo inmediatamente
+        # Asegurar que la ventana de login esté visible
+        root.update()
         
+        # Iniciar el loop principal
         root.mainloop()
+    except KeyboardInterrupt:
+        print("\nAplicación cerrada por el usuario")
+        root.destroy()
     except Exception as e:
         print(f"Error al iniciar aplicación: {e}")
         import traceback

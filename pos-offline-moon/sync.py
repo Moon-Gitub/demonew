@@ -129,7 +129,7 @@ class SyncManager:
             print(f"Error descargando historial: {e}")
             return []
     
-    def sync_all(self, id_cliente_moon=None):
+    def sync_all(self, id_cliente_moon=None, silent=False):
         """Sincroniza todo cuando hay conexión"""
         if self.syncing:
             return
@@ -137,17 +137,22 @@ class SyncManager:
         self.syncing = True
         id_cliente = id_cliente_moon or config.ID_CLIENTE_MOON
         
-        print("🔄 Sincronizando usuarios...")
+        if not silent:
+            print("🔄 Sincronizando usuarios...")
         self.sync_usuarios()
         
-        print("🔄 Sincronizando estado de cuenta...")
+        if not silent:
+            print("🔄 Sincronizando estado de cuenta...")
         self.sync_estado_cuenta(id_cliente)
         
-        print("🔄 Sincronizando productos...")
+        if not silent:
+            print("🔄 Sincronizando productos...")
         self.sync_productos()
         
-        print("🔄 Sincronizando ventas pendientes...")
+        if not silent:
+            print("🔄 Sincronizando ventas pendientes...")
         self.sync_ventas()
         
-        print("✅ Sincronización completada")
+        if not silent:
+            print("✅ Sincronización completada")
         self.syncing = False

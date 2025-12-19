@@ -37,6 +37,11 @@ class LoginWindow:
         self.window.transient(self.parent)
         self.window.grab_set()
         
+        # Forzar que la ventana se muestre
+        self.window.deiconify()
+        self.window.lift()
+        self.window.focus_force()
+        
         # Centrar en pantalla
         self.window.update_idletasks()
         width = self.window.winfo_width()
@@ -44,6 +49,9 @@ class LoginWindow:
         x = (self.window.winfo_screenwidth() // 2) - (width // 2)
         y = (self.window.winfo_screenheight() // 2) - (height // 2)
         self.window.geometry(f'{width}x{height}+{x}+{y}')
+        
+        # Asegurar que esté visible
+        self.window.update()
         
         # Frame principal
         main_frame = tk.Frame(self.window, bg="#667eea")
@@ -134,11 +142,17 @@ class LoginWindow:
     def check_initial_sync(self):
         """Sincroniza al iniciar si hay conexión (en segundo plano)"""
         if self.connection_monitor.check_connection():
+            # Actualizar estado mientras sincroniza
+            self.connection_status.config(text="🟢 En línea - Sincronizando...")
+            self.window.update()
+            
             # Ejecutar sincronización en un hilo separado para no bloquear UI
             import threading
             def sync_thread():
                 try:
-                    self.sync_manager.sync_all(id_cliente_moon=self.id_cliente_moon)
+                    # Sincronizar en modo silencioso (sin prints)
+                    self.sync_manager.sync_all(id_cliente_moon=self.id_cliente_moon, silent=True)
+                    
                     # Actualizar estado de conexión en la UI
                     self.window.after(0, lambda: self.connection_status.config(
                         text="🟢 En línea - Sincronizado"
