@@ -45,11 +45,10 @@ class LoginWindow:
             self.window = tk.Toplevel(self.parent)
             print("setup_login_ui: Toplevel creado")
             self.window.title("POS Offline Moon - Login")
-            self.window.geometry("450x550")
             self.window.configure(bg="#667eea")
             self.window.resizable(False, False)
             
-            # Centrar ventana
+            # Configurar ventana como modal
             self.window.transient(self.parent)
             self.window.grab_set()
             
@@ -143,12 +142,26 @@ class LoginWindow:
             
             print("setup_login_ui: Widgets creados")
             
-            # Centrar en pantalla
+            # Forzar actualización para calcular tamaño real
             self.window.update_idletasks()
-            width = self.window.winfo_width()
-            height = self.window.winfo_height()
-            x = (self.window.winfo_screenwidth() // 2) - (width // 2)
-            y = (self.window.winfo_screenheight() // 2) - (height // 2)
+            self.window.update()
+            
+            # Obtener tamaño real después de que los widgets se rendericen
+            width = self.window.winfo_reqwidth()
+            height = self.window.winfo_reqheight()
+            
+            # Si el tamaño es muy pequeño, usar tamaño fijo
+            if width < 400 or height < 500:
+                width = 450
+                height = 550
+            
+            # Centrar en pantalla
+            screen_width = self.window.winfo_screenwidth()
+            screen_height = self.window.winfo_screenheight()
+            x = (screen_width // 2) - (width // 2)
+            y = (screen_height // 2) - (height // 2)
+            
+            # Establecer tamaño y posición
             self.window.geometry(f'{width}x{height}+{x}+{y}')
             
             # Forzar que la ventana se muestre
@@ -160,98 +173,12 @@ class LoginWindow:
             self.window.update()
             self.window.update_idletasks()
             
-            print("setup_login_ui: Ventana mostrada y centrada")
+            print(f"setup_login_ui: Ventana mostrada - Tamaño: {width}x{height}, Posición: {x},{y}")
         except Exception as e:
             print(f"❌ Error en setup_login_ui: {e}")
             import traceback
             traceback.print_exc()
             raise
-        
-        # Frame principal
-        main_frame = tk.Frame(self.window, bg="#667eea")
-        main_frame.pack(fill=tk.BOTH, expand=True, padx=40, pady=40)
-        
-        # Logo/Título
-        title = tk.Label(
-            main_frame,
-            text="POS | Moon",
-            font=("Arial", 28, "bold"),
-            bg="#667eea",
-            fg="white"
-        )
-        title.pack(pady=(0, 10))
-        
-        subtitle = tk.Label(
-            main_frame,
-            text="Sistema Offline",
-            font=("Arial", 12),
-            bg="#667eea",
-            fg="white"
-        )
-        subtitle.pack(pady=(0, 30))
-        
-        # Frame de login
-        login_frame = tk.Frame(main_frame, bg="white", relief=tk.RAISED, bd=2)
-        login_frame.pack(fill=tk.BOTH, expand=True)
-        
-        tk.Label(
-            login_frame,
-            text="Iniciar Sesión",
-            font=("Arial", 16, "bold"),
-            bg="white"
-        ).pack(pady=20)
-        
-        # Usuario
-        tk.Label(login_frame, text="Usuario:", bg="white", anchor="w", font=("Arial", 10)).pack(fill=tk.X, padx=20, pady=(10, 5))
-        self.usuario_entry = tk.Entry(login_frame, font=("Arial", 12), width=30, relief=tk.SOLID, bd=1)
-        self.usuario_entry.pack(padx=20, pady=(0, 10))
-        self.usuario_entry.focus()
-        
-        # Contraseña
-        tk.Label(login_frame, text="Contraseña:", bg="white", anchor="w", font=("Arial", 10)).pack(fill=tk.X, padx=20, pady=(10, 5))
-        self.password_entry = tk.Entry(login_frame, font=("Arial", 12), show="*", width=30, relief=tk.SOLID, bd=1)
-        self.password_entry.pack(padx=20, pady=(0, 20))
-        self.password_entry.bind("<Return>", lambda e: self.login())
-        
-        # Estado de conexión
-        self.connection_status = tk.Label(
-            login_frame,
-            text="🟢 En línea" if self.connection_monitor.check_connection() else "🔴 Sin conexión",
-            bg="white",
-            fg="#666",
-            font=("Arial", 9)
-        )
-        self.connection_status.pack(pady=5)
-        
-        # Botón login
-        btn_login = tk.Button(
-            login_frame,
-            text="Ingresar",
-            bg="#667eea",
-            fg="white",
-            font=("Arial", 12, "bold"),
-            command=self.login,
-            relief=tk.FLAT,
-            padx=30,
-            pady=10,
-            cursor="hand2"
-        )
-        btn_login.pack(pady=20)
-        
-        # Botón sincronizar
-        btn_sync = tk.Button(
-            login_frame,
-            text="🔄 Sincronizar",
-            bg="#764ba2",
-            fg="white",
-            font=("Arial", 10),
-            command=self.manual_sync,
-            relief=tk.FLAT,
-            padx=20,
-            pady=5,
-            cursor="hand2"
-        )
-        btn_sync.pack(pady=5)
     
     def check_initial_sync(self):
         """Sincroniza al iniciar si hay conexión (en segundo plano)"""
