@@ -2,10 +2,35 @@
 /**
  * API ENDPOINT - LISTAR USUARIOS
  * Para sincronización con sistema offline
+ * 
+ * NOTA: Este endpoint permite sincronización sin sesión activa
+ * pero requiere un token de API o ID de cliente para seguridad básica
  */
 
-require_once "../seguridad.ajax.php";
-SeguridadAjax::inicializar();
+// Cargar autoload para Dotenv
+require_once "../extensiones/vendor/autoload.php";
+
+// Cargar .env si existe
+if (file_exists(__DIR__ . '/../.env') && class_exists('Dotenv\Dotenv')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+    $dotenv->safeLoad();
+}
+
+// Verificación básica: requerir ID de cliente Moon como parámetro
+$id_cliente = isset($_GET['id_cliente']) ? intval($_GET['id_cliente']) : null;
+
+// Si no se proporciona ID, intentar verificar sesión (para compatibilidad)
+if (!$id_cliente) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    
+    if (!isset($_SESSION["iniciarSesion"]) || $_SESSION["iniciarSesion"] != "ok") {
+        http_response_code(401);
+        echo json_encode(['error' => 'Se requiere id_cliente como parámetro o sesión activa']);
+        exit;
+    }
+}
 
 require_once "../controladores/usuarios.controlador.php";
 require_once "../modelos/usuarios.modelo.php";

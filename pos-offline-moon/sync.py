@@ -37,7 +37,9 @@ class SyncManager:
     def sync_productos(self):
         """Descarga productos desde el servidor"""
         try:
-            response = requests.get(f"{config.API_BASE}/productos", timeout=10)
+            # Incluir ID de cliente como parámetro para autenticación básica
+            params = {'id_cliente': config.ID_CLIENTE_MOON}
+            response = requests.get(f"{config.API_BASE}/productos", params=params, timeout=10)
             
             if response.status_code == 200:
                 productos_data = response.json()

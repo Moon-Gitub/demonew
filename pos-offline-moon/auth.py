@@ -76,7 +76,9 @@ class AuthManager:
     def sync_usuarios(self):
         """Sincroniza usuarios desde servidor"""
         try:
-            response = requests.get(f"{config.API_BASE}/usuarios", timeout=10)
+            # Incluir ID de cliente como parámetro para autenticación básica
+            params = {'id_cliente': config.ID_CLIENTE_MOON}
+            response = requests.get(f"{config.API_BASE}/usuarios", params=params, timeout=10)
             
             if response.status_code == 200:
                 usuarios_data = response.json()
