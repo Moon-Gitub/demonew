@@ -1,0 +1,5 @@
+requests==2.31.0
+sqlalchemy==2.0.23
+bcrypt==4.1.2
+Pillow==10.1.0
+pyinstaller==6.3.0

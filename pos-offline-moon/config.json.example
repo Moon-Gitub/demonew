@@ -1,0 +1,8 @@
+{
+    "server_url": "https://newmoon.posmoon.com.ar",
+    "api_base": "https://newmoon.posmoon.com.ar/api",
+    "id_cliente_moon": 14,
+    "sync_interval": 60,
+    "connection_check_interval": 5,
+    "account_check_interval": 300
+}
