@@ -3017,6 +3017,7 @@ PAGO CON QR MERCADO PAGO
 // Variable global para el intervalo de verificación
 var intervaloVerificacionQR = null;
 var externalReferenceActual = null; // External reference para QR estático
+var orderIdActual = null; // Order ID para modelo atendido
 var paymentIdConfirmado = null; // Payment ID confirmado en Mercado Pago
 var qrEstaticoCache = null; // Cache del QR estático
 
@@ -3047,37 +3048,71 @@ function crearPreferenciaPagoQR(){
 	// Generar external_reference único para esta venta
 	externalReferenceActual = "venta_pos_" + Date.now() + "_" + monto.toFixed(2).replace('.', '_');
 	
-	// Si ya tenemos el QR estático en cache, usarlo directamente
-	if(qrEstaticoCache && qrEstaticoCache.qr_code){
-		mostrarQREstatico(monto, qrEstaticoCache);
-		return;
-	}
-	
 	// Obtener token CSRF
 	var token = $('meta[name="csrf-token"]').attr('content') || '';
 	
-	// Obtener o crear POS estático
+	// PASO 1: Crear la orden con el monto (MODELO ATENDIDO)
 	$.ajax({
 		url: "ajax/mercadopago.ajax.php",
-		method: "GET",
+		method: "POST",
 		data: {
-			obtenerQREstatico: "1"
+			crearOrdenAtendido: "1",
+			monto: monto,
+			descripcion: "Venta POS - " + monto.toFixed(2),
+			external_reference: externalReferenceActual
+		},
+		headers: {
+			'X-CSRF-TOKEN': token
 		},
 		dataType: "json",
-		success: function(respuesta){
-			$("#qrLoading").hide();
-			
-			if(respuesta.error){
+		success: function(respuestaOrden){
+			if(respuestaOrden.error){
+				$("#qrLoading").hide();
 				$("#qrError").show();
-				$("#qrErrorMensaje").text(respuesta.mensaje || "Error al obtener código QR estático");
+				$("#qrErrorMensaje").text(respuestaOrden.mensaje || "Error al crear orden");
 				return;
 			}
 			
-			// Guardar en cache
-			qrEstaticoCache = respuesta;
+			// Guardar order_id
+			orderIdActual = respuestaOrden.order_id;
 			
-			// Mostrar QR estático
-			mostrarQREstatico(monto, respuesta);
+			// PASO 2: Obtener QR estático del POS
+			// Si ya tenemos el QR estático en cache, usarlo directamente
+			if(qrEstaticoCache && qrEstaticoCache.qr_code){
+				mostrarQREstatico(monto, qrEstaticoCache);
+				return;
+			}
+			
+			// Obtener o crear POS estático
+			$.ajax({
+				url: "ajax/mercadopago.ajax.php",
+				method: "GET",
+				data: {
+					obtenerQREstatico: "1"
+				},
+				dataType: "json",
+				success: function(respuesta){
+					$("#qrLoading").hide();
+					
+					if(respuesta.error){
+						$("#qrError").show();
+						$("#qrErrorMensaje").text(respuesta.mensaje || "Error al obtener código QR estático");
+						return;
+					}
+					
+					// Guardar en cache
+					qrEstaticoCache = respuesta;
+					
+					// Mostrar QR estático
+					mostrarQREstatico(monto, respuesta);
+				},
+				error: function(xhr, status, error){
+					$("#qrLoading").hide();
+					$("#qrError").show();
+					$("#qrErrorMensaje").text("Error al obtener código QR estático");
+					console.error("Error:", error);
+				}
+			});
 		},
 		error: function(xhr, status, error){
 			$("#qrLoading").hide();
@@ -3243,9 +3278,10 @@ $("#modalPagoQR").on('hidden.bs.modal', function(){
 		clearInterval(intervaloVerificacionQR);
 		intervaloVerificacionQR = null;
 	}
-	// No limpiar externalReferenceActual ni paymentIdConfirmado si el pago ya fue confirmado
+	// No limpiar externalReferenceActual, orderIdActual ni paymentIdConfirmado si el pago ya fue confirmado
 	// Solo limpiar si se cierra sin confirmar
 	if(!paymentIdConfirmado){
 		externalReferenceActual = null;
+		orderIdActual = null;
 	}
 });

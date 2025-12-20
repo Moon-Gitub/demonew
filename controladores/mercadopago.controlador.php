@@ -456,6 +456,205 @@ class ControladorMercadoPago {
 	}
 
 	/*=============================================
+	CREAR ORDEN PARA MODELO ATENDIDO (QR ESTÁTICO)
+	En el modelo atendido, se crea una orden con el monto específico y se asigna al POS.
+	Cuando el cliente escanea el QR estático, ve la orden con el monto.
+	=============================================*/
+	static public function ctrCrearOrdenAtendido($monto, $descripcion, $externalReference) {
+		try {
+			$credenciales = self::ctrObtenerCredenciales();
+			
+			// Obtener POS ID desde la empresa
+			$posId = null;
+			try {
+				if (class_exists('ControladorEmpresa')) {
+					$empresa = ControladorEmpresa::ctrMostrarempresa('id', 1);
+					if ($empresa && isset($empresa['mp_pos_id']) && !empty($empresa['mp_pos_id'])) {
+						$posId = $empresa['mp_pos_id'];
+					}
+				}
+			} catch (Exception $e) {
+				error_log("Error obteniendo POS ID: " . $e->getMessage());
+			}
+			
+			if (!$posId) {
+				// Si no hay POS, crear uno primero
+				$posResult = self::ctrObtenerOcrearPOSEstatico();
+				if ($posResult['error']) {
+					return $posResult;
+				}
+				$posId = $posResult['pos_id'];
+			}
+			
+			// Obtener user_id (collector_id) desde el access_token
+			// El access_token tiene formato: APP_USR-XXXX-XXXX-XXXX-XXXX-USER_ID
+			$userId = null;
+			$tokenParts = explode('-', $credenciales['access_token']);
+			if (count($tokenParts) >= 5) {
+				$userId = $tokenParts[count($tokenParts) - 1];
+			}
+			
+			if (!$userId) {
+				// Intentar obtener desde la API
+				$url = "https://api.mercadopago.com/users/me";
+				$ch = curl_init($url);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+					'Authorization: Bearer ' . $credenciales['access_token'],
+					'Content-Type: application/json'
+				));
+				
+				$response = curl_exec($ch);
+				$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+				curl_close($ch);
+				
+				if ($httpCode == 200) {
+					$userData = json_decode($response, true);
+					$userId = isset($userData['id']) ? $userData['id'] : null;
+				}
+			}
+			
+			if (!$userId) {
+				return array(
+					'error' => true,
+					'mensaje' => 'No se pudo obtener el user_id de Mercado Pago'
+				);
+			}
+			
+			// Crear la orden y asignarla al POS
+			// Endpoint: PUT /instore/orders/qr/seller/collectors/{user_id}/pos/{external_pos_id}/qrs
+			$url = "https://api.mercadopago.com/instore/orders/qr/seller/collectors/$userId/pos/$posId/qrs";
+			
+			// Construir URL de notificación
+			$notificationUrl = "";
+			if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+				$notificationUrl = "https://";
+			} else {
+				$notificationUrl = "http://";
+			}
+			$notificationUrl .= $_SERVER['HTTP_HOST'] . "/webhook-mercadopago.php";
+			
+			$data = array(
+				"external_reference" => $externalReference,
+				"title" => $descripcion,
+				"description" => $descripcion,
+				"notification_url" => $notificationUrl,
+				"total_amount" => floatval($monto),
+				"items" => array(
+					array(
+						"title" => $descripcion,
+						"description" => $descripcion,
+						"quantity" => 1,
+						"unit_price" => floatval($monto)
+					)
+				)
+			);
+			
+			$ch = curl_init($url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				'Authorization: Bearer ' . $credenciales['access_token'],
+				'Content-Type: application/json'
+			));
+			
+			$response = curl_exec($ch);
+			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			curl_close($ch);
+			
+			if ($httpCode == 200 || $httpCode == 201) {
+				$order = json_decode($response, true);
+				error_log("Orden creada exitosamente: " . json_encode($order));
+				return array(
+					'error' => false,
+					'order_id' => isset($order['id']) ? $order['id'] : null,
+					'qr_code' => isset($order['qr_code']) ? $order['qr_code'] : null,
+					'status' => isset($order['status']) ? $order['status'] : 'pending',
+					'external_reference' => $externalReference
+				);
+			} else {
+				error_log("Error creando orden: HTTP $httpCode - $response");
+				return array(
+					'error' => true,
+					'mensaje' => 'Error al crear orden: ' . $response
+				);
+			}
+			
+		} catch (Exception $e) {
+			error_log("Error creando orden atendido: " . $e->getMessage());
+			return array(
+				'error' => true,
+				'mensaje' => $e->getMessage()
+			);
+		}
+	}
+
+	/*=============================================
+	VERIFICAR ESTADO DE ORDEN (MODELO ATENDIDO)
+	=============================================*/
+	static public function ctrVerificarEstadoOrden($orderId) {
+		try {
+			$credenciales = self::ctrObtenerCredenciales();
+			
+			// Obtener user_id
+			$userId = null;
+			$tokenParts = explode('-', $credenciales['access_token']);
+			if (count($tokenParts) >= 5) {
+				$userId = $tokenParts[count($tokenParts) - 1];
+			}
+			
+			if (!$userId) {
+				return array(
+					'error' => true,
+					'mensaje' => 'No se pudo obtener el user_id'
+				);
+			}
+			
+			// Consultar estado de la orden
+			$url = "https://api.mercadopago.com/merchant_orders/$orderId";
+			
+			$ch = curl_init($url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				'Authorization: Bearer ' . $credenciales['access_token'],
+				'Content-Type: application/json'
+			));
+			
+			$response = curl_exec($ch);
+			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			curl_close($ch);
+			
+			if ($httpCode == 200) {
+				$order = json_decode($response, true);
+				$status = isset($order['status']) ? $order['status'] : 'unknown';
+				$closed = ($status === 'closed');
+				
+				return array(
+					'error' => false,
+					'aprobado' => $closed,
+					'status' => $status,
+					'order_id' => $orderId,
+					'payment_id' => isset($order['payments']) && count($order['payments']) > 0 ? $order['payments'][0]['id'] : null
+				);
+			} else {
+				error_log("Error consultando orden $orderId: HTTP $httpCode - $response");
+				return array(
+					'error' => true,
+					'mensaje' => 'Error al consultar estado de la orden'
+				);
+			}
+			
+		} catch (Exception $e) {
+			error_log("Error verificando orden: " . $e->getMessage());
+			return array(
+				'error' => true,
+				'mensaje' => $e->getMessage()
+			);
+		}
+	}
+
+	/*=============================================
 	VERIFICAR PAGO POR POS ID Y MONTO (PARA QR ESTÁTICO - MODELO ATENDIDO)
 	En el modelo atendido, el cliente escanea el QR estático e ingresa el monto manualmente.
 	Mercado Pago NO incluye external_reference automáticamente, así que buscamos por:

@@ -2,9 +2,9 @@
 // ✅ Seguridad AJAX
 require_once "seguridad.ajax.php";
 
-// Para peticiones GET (verificar pago) no requerir CSRF, solo sesión y AJAX
-// Para peticiones POST (crear preferencia) sí requerir CSRF
-if (isset($_GET["verificarPago"])) {
+// Para peticiones GET (verificar pago, obtener QR) no requerir CSRF, solo sesión y AJAX
+// Para peticiones POST (crear preferencia, crear orden) sí requerir CSRF
+if (isset($_GET["verificarPago"]) || isset($_GET["obtenerQREstatico"]) || isset($_GET["verificarPagoPorReference"])) {
     SeguridadAjax::inicializar(false); // false = no verificar CSRF para GET
 } else {
     SeguridadAjax::inicializar(); // Verificar CSRF para POST
@@ -53,6 +53,46 @@ OBTENER O CREAR POS ESTÁTICO (QR ESTÁTICO)
 =============================================*/
 if(isset($_GET["obtenerQREstatico"]) || isset($_POST["obtenerQREstatico"])){
 	$respuesta = ControladorMercadoPago::ctrObtenerOcrearPOSEstatico();
+	echo json_encode($respuesta);
+	exit;
+}
+
+/*=============================================
+CREAR ORDEN PARA MODELO ATENDIDO
+=============================================*/
+if(isset($_POST["crearOrdenAtendido"])){
+	$monto = isset($_POST["monto"]) ? floatval($_POST["monto"]) : 0;
+	$descripcion = isset($_POST["descripcion"]) ? $_POST["descripcion"] : "Venta POS";
+	$externalReference = isset($_POST["external_reference"]) ? $_POST["external_reference"] : null;
+
+	if($monto <= 0){
+		http_response_code(400);
+		echo json_encode(array("error" => true, "mensaje" => "El monto debe ser mayor a 0"));
+		exit;
+	}
+
+	if(!$externalReference){
+		$externalReference = "venta_pos_" . time() . "_" . str_replace('.', '_', $monto);
+	}
+
+	$respuesta = ControladorMercadoPago::ctrCrearOrdenAtendido($monto, $descripcion, $externalReference);
+	echo json_encode($respuesta);
+	exit;
+}
+
+/*=============================================
+VERIFICAR ESTADO DE ORDEN (MODELO ATENDIDO)
+=============================================*/
+if(isset($_GET["verificarOrden"]) || isset($_POST["verificarOrden"])){
+	$orderId = isset($_GET["order_id"]) ? $_GET["order_id"] : (isset($_POST["order_id"]) ? $_POST["order_id"] : null);
+
+	if(!$orderId){
+		http_response_code(400);
+		echo json_encode(array("error" => true, "mensaje" => "Order ID requerido"));
+		exit;
+	}
+
+	$respuesta = ControladorMercadoPago::ctrVerificarEstadoOrden($orderId);
 	echo json_encode($respuesta);
 	exit;
 }
