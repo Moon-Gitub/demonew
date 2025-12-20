@@ -17,11 +17,12 @@
 				</ul>
 			</li>
 
-			<li class="treeview <?php echo (in_array($paginaActualMenu, ['productos', 'categorias', 'impresion-precios', 'productos-importar-excel2'])) ? 'active' : '' ?>">
+			<li class="treeview <?php echo (in_array($paginaActualMenu, ['productos', 'categorias', 'combos', 'impresion-precios', 'productos-importar-excel2'])) ? 'active' : '' ?>">
 				<a><i class="fa fa-product-hunt"></i><span>Productos</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
 				<ul class="treeview-menu">
 					<li><a href="productos"><i class="fa fa-circle-o"></i><span>Administrar Productos</span></a></li>
 					<li><a href="categorias"><i class="fa fa-circle-o"></i><span>Categorias</span></a></li>
+					<li><a href="combos"><i class="fa fa-circle-o"></i><span>Combos</span></a></li>
 					<li><a href="impresion-precios"><i class="fa fa-circle-o"></i><span>Imprimir Precios</span></a></li>
 					<li><a href="productos-importar-excel2"><i class="fa fa-circle-o"></i><span>Importar excel</span></a></li>
 				</ul>

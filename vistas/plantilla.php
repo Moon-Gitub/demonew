@@ -183,6 +183,7 @@
         $_GET["ruta"] == "usuarios" ||
         $_GET["ruta"] == "categorias" ||
         $_GET["ruta"] == "productos" ||
+        $_GET["ruta"] == "combos" ||
         $_GET["ruta"] == "productos-stock-medio" ||
         $_GET["ruta"] == "productos-stock-bajo" ||
         $_GET["ruta"] == "productos-stock-valorizado" ||
@@ -234,6 +235,7 @@
         $_GET["ruta"] == "parametros-facturacion" ||
         $_GET["ruta"] == "factura-manual" ||
         $_GET["ruta"] == "procesar-pago" ||
+        $_GET["ruta"] == "combos" ||
         $_GET["ruta"] == "salir"){
 
           include "modulos/".$_GET["ruta"].".php";
@@ -279,6 +281,7 @@
   <script src="vistas/js/empresa.js"></script>
   <script src="vistas/js/categorias.js"></script>
   <script src="vistas/js/productos.js"></script>
+  <script src="vistas/js/combos.js"></script>
   <script src="vistas/js/compras.js"></script>
   <script src="vistas/js/proveedores.js"></script>
   <script src="vistas/js/clientes.js"></script>

@@ -1,6 +1,66 @@
 <?php
 
+require_once "../modelos/combos.modelo.php";
+
 class ControladorVentas{
+
+	/*=============================================
+	PROCESAR PRODUCTO EN VENTA (CON DETECCIÓN DE COMBOS)
+	=============================================*/
+	static private function procesarProductoVenta($idProducto, $cantidad, $codigoVenta, $sucursal = "stock", $tipoCbte = null, $devolverStock = false){
+		require_once "../modelos/productos.modelo.php";
+		
+		$tablaProductos = "productos";
+		$traerProducto = ModeloProductos::mdlMostrarProductos($tablaProductos, 'id', $idProducto, 'codigo');
+		
+		if(!$traerProducto){
+			return false;
+		}
+
+		// Verificar si es combo
+		$combo = ModeloCombos::mdlEsCombo($idProducto);
+		
+		if($combo){
+			// Es un combo, descontar stock de productos componentes
+			$productosCombo = ModeloCombos::mdlMostrarProductosCombo($combo["id"]);
+			
+			foreach($productosCombo as $productoComponente){
+				$idComponente = $productoComponente["id_producto"];
+				$cantidadComponente = floatval($productoComponente["cantidad"]) * floatval($cantidad);
+				
+				$traerProductoComponente = ModeloProductos::mdlMostrarProductos($tablaProductos, 'id', $idComponente, 'codigo');
+				
+				if($traerProductoComponente){
+					$stockOriginal = isset($traerProductoComponente[$sucursal]) ? $traerProductoComponente[$sucursal] : $traerProductoComponente["stock"];
+					
+					if($idComponente > 9){ //productos del 1 al 10 no hacen movimientos en stock
+						if($devolverStock){
+							$valorStock = $stockOriginal + $cantidadComponente;
+						} else {
+							$valorStock = $stockOriginal - $cantidadComponente;
+						}
+						
+						ModeloProductos::mdlActualizarProducto($tablaProductos, $sucursal, $valorStock, $idComponente, 'Venta combo (' . $codigoVenta. ')');
+					}
+				}
+			}
+		} else {
+			// Producto normal, descontar stock normalmente
+			$stockOriginal = isset($traerProducto[$sucursal]) ? $traerProducto[$sucursal] : $traerProducto["stock"];
+			
+			if($idProducto > 9){ //productos del 1 al 10 no hacen movimientos en stock
+				if($devolverStock){
+					$valorStock = $stockOriginal + $cantidad;
+				} else {
+					$valorStock = $stockOriginal - $cantidad;
+				}
+				
+				ModeloProductos::mdlActualizarProducto($tablaProductos, $sucursal, $valorStock, $idProducto, 'Crear venta (' . $codigoVenta. ')');
+			}
+		}
+		
+		return true;
+	}
 
 	/*=============================================
 	MOSTRAR VENTAS
@@ -36,26 +96,8 @@ class ControladorVentas{
     
     			   array_push($totalProductosComprados, $value["cantidad"]);
     				
-    			   $tablaProductos = "productos";
-    
-    			    $item = "id";
-    			    $valor = $value["id"];
-    			    $orden = "id";
-    			    $traerProducto = ModeloProductos::mdlMostrarProductos($tablaProductos, $item, $valor, $orden);
-    
-    				//Suma la cantidad actual vendida + las ventas totales del producto
-    				//$item1a = "ventas";
-    				//$valor1a = $value["cantidad"] + $traerProducto["ventas"]; 
-    			    //$nuevasVentas = ModeloProductos::mdlActualizarProducto($tablaProductos, $item1a, $valor1a, $valor, 'Crear venta (' . $codigo. ')');
-    
-    				//Establece el nuevo stock disponible del producto - FORMA VIEJA
-    				$item1b = "stock";
-    				// $valor1b = $value["stock"]; 
-    				//Establece el nuevo stock disponible del producto - FORMA NUEVA
-    				//traigo stock actual
-    				$stkActual = $traerProducto["stock"];
-    				$valor1b = $stkActual - $value["cantidad"]; 
-    				$nuevoStock = ModeloProductos::mdlActualizarProducto($tablaProductos, $item1b, $valor1b, $valor, 'Crear venta (' . $codigo. ')');
+    			   // Procesar producto (detecta si es combo y descuenta stock de componentes)
+    			   self::procesarProductoVenta($value["id"], $value["cantidad"], $codigo, "stock", null, false);
     
     			}
     
@@ -647,27 +689,12 @@ class ControladorVentas{
     			foreach ($listaProductos as $key => $value) {
     
     				array_push($totalProductosComprados, $value["cantidad"]);
-    				$valor = $value["id"];
-    				$traerProducto = ModeloProductos::mdlMostrarProductos($tablaProductos, 'id', $valor, 'codigo');
-    				$stockOriginal = $traerProducto[$sacoStockDe];
-    
-    				//SELECCIONO SI LA OPERACION VA A SUMAR O RESTAR STOCK
-    				if($value["id"]>9){ //productos del 1 al 10 no hace movimientos en stock
-    					if(in_array($tipoCbte, $tipoCbteDevuelveStock)) {//si tipocbte esta en array, devuelvo stock
-    						$valorVentas = $value["cantidad"] - $traerProducto["ventas"];
-    						$valorStock = $stockOriginal + $value["cantidad"];
-    					} else {
-    						$valorVentas = $value["cantidad"] + $traerProducto["ventas"];
-    						$valorStock = $stockOriginal - $value["cantidad"];
-    					}
-    
     				
-    				} else {
-    					$valorVentas = 0;
-    				}
-    
-    				//Contabilizo la cantidad de ventas
-    				//$nuevasVentas = ModeloProductos::mdlActualizarProducto($tablaProductos, 'ventas', $valorVentas, $valor, 'Nueva venta  (' . $codigoSiguiente. ')');
+    				// Verificar si es devolución de stock
+    				$devolverStock = in_array($tipoCbte, $tipoCbteDevuelveStock);
+    				
+    				// Procesar producto (detecta si es combo y descuenta stock de componentes)
+    				self::procesarProductoVenta($value["id"], $value["cantidad"], $codigoSiguiente, $sacoStockDe, $tipoCbte, $devolverStock);
     
     			}
     
@@ -924,23 +951,9 @@ class ControladorVentas{
 				foreach ($productos as $key => $value) {
 
 					array_push($totalProductosComprados, $value["cantidad"]);
-					$tablaProductos = "productos";
-
-					$item = "id";
-					$valor = $value["id"];
-					$orden = "id";
-
-					$traerProducto = ModeloProductos::mdlMostrarProductos($tablaProductos, $item, $valor, $orden);
-
-					$item1a = "ventas";
-					$valor1a = $traerProducto["ventas"] - $value["cantidad"];
-
-					$nuevasVentas = ModeloProductos::mdlActualizarProducto($tablaProductos, $item1a, $valor1a, $valor, 'Editar venta  (' . $traerVenta["codigo"]. ') S.A.');
-
-					$item1b = "stock";
-					$valor1b = $value["cantidad"] + $traerProducto["stock"];
-
-					$nuevoStock = ModeloProductos::mdlActualizarProducto($tablaProductos, $item1b, $valor1b, $valor, 'Editar venta  (' . $traerVenta["codigo"]. ') S.A.');
+					
+					// Devolver stock (editar venta - productos antiguos)
+					self::procesarProductoVenta($value["id"], $value["cantidad"], $traerVenta["codigo"], "stock", null, true);
 
 				}
 
@@ -968,23 +981,8 @@ class ControladorVentas{
 
 					array_push($totalProductosComprados_2, $value["cantidad"]);
 					
-					$tablaProductos_2 = "productos";
-
-					$item_2 = "id";
-					$valor_2 = $value["id"];
-					$orden = "id";
-
-					$traerProducto_2 = ModeloProductos::mdlMostrarProductos($tablaProductos_2, $item_2, $valor_2, $orden);
-
-					$item1a_2 = "ventas";
-					$valor1a_2 = $value["cantidad"] + $traerProducto_2["ventas"];
-
-					$nuevasVentas_2 = ModeloProductos::mdlActualizarProducto($tablaProductos_2, $item1a_2, $valor1a_2, $valor_2, 'Editar venta  (' . $traerVenta["codigo"]. ') S.N.');
-
-					$item1b_2 = "stock";
-					$stkActual = $traerProducto_2["stock"];
-					$valor1b_2 = $stkActual - $value["cantidad"];
-					$nuevoStock_2 = ModeloProductos::mdlActualizarProducto($tablaProductos_2, $item1b_2, $valor1b_2, $valor_2, 'Editar venta  (' . $traerVenta["codigo"]. ') S.N.');
+					// Procesar producto (editar venta - productos nuevos)
+					self::procesarProductoVenta($value["id"], $value["cantidad"], $traerVenta["codigo"], "stock", null, false);
 
 				}
 
@@ -1128,11 +1126,8 @@ class ControladorVentas{
 			$totalProductosComprados = array();
 			foreach ($productos as $key => $value) {
 				array_push($totalProductosComprados, $value["cantidad"]);
-				$traerProducto = ModeloProductos::mdlMostrarProductos("productos", "id", $value["id"], "id");
-				$valor1a = $traerProducto["ventas"] - $value["cantidad"];
-				$nuevasVentas = ModeloProductos::mdlActualizarProducto("productos", "ventas", $valor1a, $value["id"], 'Eliminar venta  (' . $traerVenta["codigo"]. ')');
-				$valor1b = $value["cantidad"] + $traerProducto["stock"];
-				$nuevoStock = ModeloProductos::mdlActualizarProducto("productos", "stock", $valor1b, $value["id"], 'Eliminar venta  (' . $traerVenta["codigo"]. ')');
+				// Devolver stock al eliminar venta
+				self::procesarProductoVenta($value["id"], $value["cantidad"], $traerVenta["codigo"], "stock", null, true);
 			}
 
 			/*
