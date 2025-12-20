@@ -3,8 +3,19 @@
 require_once "seguridad.ajax.php";
 SeguridadAjax::inicializar();
 
-require_once "../controladores/combos.controlador.php";
-require_once "../modelos/combos.modelo.php";
+// Verificar que los archivos de combos existan antes de cargarlos
+$rutaBase = dirname(__DIR__);
+$archivoControlador = $rutaBase . "/controladores/combos.controlador.php";
+$archivoModelo = $rutaBase . "/modelos/combos.modelo.php";
+
+if(!file_exists($archivoControlador) || !file_exists($archivoModelo)){
+	http_response_code(503);
+	echo json_encode(array("error" => "Módulo de combos no disponible"));
+	exit;
+}
+
+require_once $archivoControlador;
+require_once $archivoModelo;
 require_once "../controladores/productos.controlador.php";
 require_once "../modelos/productos.modelo.php";
 
