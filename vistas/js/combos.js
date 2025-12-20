@@ -480,8 +480,6 @@ $(".tablas").on("click", ".btnEditarCombo", function(){
 // VER PRODUCTOS COMBO
 $(".tablas").on("click", ".btnVerProductosCombo", function(){
 	var idCombo = $(this).attr("idCombo");
-	var datos = new FormData();
-	datos.append("idCombo", idCombo);
 	
 	$.ajax({
 		url: "ajax/combos.ajax.php",
@@ -505,6 +503,15 @@ $(".tablas").on("click", ".btnVerProductosCombo", function(){
 				html = '<tr><td colspan="6" class="text-center">No hay productos componentes</td></tr>';
 			}
 			$("#tablaProductosCombo").html(html);
+		},
+		error: function(xhr, status, error){
+			console.error("Error al cargar productos del combo:", error);
+			console.error("Respuesta:", xhr.responseText);
+			swal({
+				type: "error",
+				title: "Error",
+				text: "No se pudieron cargar los productos del combo"
+			});
 		}
 	});
 });

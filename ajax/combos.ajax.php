@@ -1,7 +1,14 @@
 <?php
 // ✅ Seguridad AJAX
 require_once "seguridad.ajax.php";
-SeguridadAjax::inicializar();
+
+// Para peticiones GET (obtener productos combo) no requerir CSRF, solo sesión y AJAX
+// Para peticiones POST (editar, crear, eliminar) sí requerir CSRF
+if (isset($_GET["idCombo"]) || isset($_GET["idProducto"])) {
+    SeguridadAjax::inicializar(false); // false = no verificar CSRF para GET
+} else {
+    SeguridadAjax::inicializar(); // Verificar CSRF para POST
+}
 
 // Verificar que los archivos de combos existan antes de cargarlos
 $rutaBase = dirname(__DIR__);
