@@ -81,9 +81,14 @@ if(!class_exists('ControladorCombos') || !class_exists('ModeloCombos')){
           $item = null;
           $valor = null;
 
-          $combos = ControladorCombos::ctrMostrarCombos($item, $valor);
+          try {
+            $combos = ControladorCombos::ctrMostrarCombos($item, $valor);
+          } catch(Exception $e){
+            // Si hay error (probablemente tabla no existe), mostrar mensaje
+            $combos = false;
+          }
 
-          if($combos){
+          if($combos && is_array($combos) && count($combos) > 0){
             foreach ($combos as $key => $value) {
               $productosCombo = ControladorCombos::ctrMostrarProductosCombo($value["id"]);
               $cantidadProductos = count($productosCombo);
@@ -118,6 +123,20 @@ if(!class_exists('ControladorCombos') || !class_exists('ModeloCombos')){
 
                     </tr>';
             }
+          } else {
+            // Mostrar mensaje si no hay combos o si hay error
+            echo '<tr><td colspan="9" class="text-center">';
+            if(isset($e)){
+              echo '<div class="alert alert-warning">
+                <h4><i class="icon fa fa-warning"></i> Tablas de combos no encontradas</h4>
+                <p>Por favor, ejecute el script SQL para crear las tablas necesarias:</p>
+                <p><code>db/crear-tablas-combos.sql</code></p>
+                <p><small>El módulo de combos requiere las tablas <strong>combos</strong> y <strong>combos_productos</strong> en la base de datos.</small></p>
+              </div>';
+            } else {
+              echo '<p class="text-muted">No hay combos registrados. Haga clic en "Agregar Combo" para crear uno nuevo.</p>';
+            }
+            echo '</td></tr>';
           }
 
         ?>

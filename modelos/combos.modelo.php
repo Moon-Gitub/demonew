@@ -8,40 +8,60 @@ class ModeloCombos{
 	MOSTRAR COMBOS
 	=============================================*/
 	static public function mdlMostrarCombos($item, $valor){
-		if($item != null){
-			$stmt = Conexion::conectar()->prepare("SELECT c.*, p.descripcion as producto_descripcion, p.codigo as producto_codigo 
-				FROM combos c 
-				LEFT JOIN productos p ON c.id_producto = p.id 
-				WHERE c.$item = :$item");
-			$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
-			$stmt -> execute();
-			return $stmt -> fetch();
-		}else{
-			$stmt = Conexion::conectar()->prepare("SELECT c.*, p.descripcion as producto_descripcion, p.codigo as producto_codigo 
-				FROM combos c 
-				LEFT JOIN productos p ON c.id_producto = p.id 
-				ORDER BY c.id DESC");
-			$stmt -> execute();
-			return $stmt -> fetchAll();
+		try {
+			if($item != null){
+				$stmt = Conexion::conectar()->prepare("SELECT c.*, p.descripcion as producto_descripcion, p.codigo as producto_codigo 
+					FROM combos c 
+					LEFT JOIN productos p ON c.id_producto = p.id 
+					WHERE c.$item = :$item");
+				$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
+				$stmt -> execute();
+				return $stmt -> fetch();
+			}else{
+				$stmt = Conexion::conectar()->prepare("SELECT c.*, p.descripcion as producto_descripcion, p.codigo as producto_codigo 
+					FROM combos c 
+					LEFT JOIN productos p ON c.id_producto = p.id 
+					ORDER BY c.id DESC");
+				$stmt -> execute();
+				return $stmt -> fetchAll();
+			}
+			$stmt -> close();
+			$stmt = null;
+		} catch(PDOException $e){
+			// Si la tabla no existe, retornar array vacío
+			if(strpos($e->getMessage(), "doesn't exist") !== false || strpos($e->getMessage(), "no existe") !== false){
+				error_log("Tabla combos no existe. Ejecute el script SQL: db/crear-tablas-combos.sql");
+				return ($item != null) ? false : array();
+			}
+			// Re-lanzar otros errores
+			throw $e;
 		}
-		$stmt -> close();
-		$stmt = null;
 	}
 
 	/*=============================================
 	MOSTRAR PRODUCTOS DE UN COMBO
 	=============================================*/
 	static public function mdlMostrarProductosCombo($idCombo){
-		$stmt = Conexion::conectar()->prepare("SELECT cp.*, p.descripcion, p.codigo, p.precio_venta, p.stock, p.tipo_iva 
-			FROM combos_productos cp 
-			LEFT JOIN productos p ON cp.id_producto = p.id 
-			WHERE cp.id_combo = :id_combo 
-			ORDER BY cp.orden ASC, cp.id ASC");
-		$stmt -> bindParam(":id_combo", $idCombo, PDO::PARAM_INT);
-		$stmt -> execute();
-		return $stmt -> fetchAll();
-		$stmt -> close();
-		$stmt = null;
+		try {
+			$stmt = Conexion::conectar()->prepare("SELECT cp.*, p.descripcion, p.codigo, p.precio_venta, p.stock, p.tipo_iva 
+				FROM combos_productos cp 
+				LEFT JOIN productos p ON cp.id_producto = p.id 
+				WHERE cp.id_combo = :id_combo 
+				ORDER BY cp.orden ASC, cp.id ASC");
+			$stmt -> bindParam(":id_combo", $idCombo, PDO::PARAM_INT);
+			$stmt -> execute();
+			return $stmt -> fetchAll();
+			$stmt -> close();
+			$stmt = null;
+		} catch(PDOException $e){
+			// Si la tabla no existe, retornar array vacío
+			if(strpos($e->getMessage(), "doesn't exist") !== false || strpos($e->getMessage(), "no existe") !== false){
+				error_log("Tabla combos_productos no existe. Ejecute el script SQL: db/crear-tablas-combos.sql");
+				return array();
+			}
+			// Re-lanzar otros errores
+			throw $e;
+		}
 	}
 
 	/*=============================================
@@ -264,13 +284,22 @@ class ModeloCombos{
 	VERIFICAR SI UN PRODUCTO ES COMBO
 	=============================================*/
 	static public function mdlEsCombo($idProducto){
-		$stmt = Conexion::conectar()->prepare("SELECT c.* FROM combos c WHERE c.id_producto = :id_producto AND c.activo = 1 LIMIT 1");
-		$stmt -> bindParam(":id_producto", $idProducto, PDO::PARAM_INT);
-		$stmt -> execute();
-		$resultado = $stmt -> fetch();
-		$stmt -> close();
-		$stmt = null;
-		return $resultado ? $resultado : false;
+		try {
+			$stmt = Conexion::conectar()->prepare("SELECT c.* FROM combos c WHERE c.id_producto = :id_producto AND c.activo = 1 LIMIT 1");
+			$stmt -> bindParam(":id_producto", $idProducto, PDO::PARAM_INT);
+			$stmt -> execute();
+			$resultado = $stmt -> fetch();
+			$stmt -> close();
+			$stmt = null;
+			return $resultado ? $resultado : false;
+		} catch(PDOException $e){
+			// Si la tabla no existe, retornar false
+			if(strpos($e->getMessage(), "doesn't exist") !== false || strpos($e->getMessage(), "no existe") !== false){
+				return false;
+			}
+			// Re-lanzar otros errores
+			throw $e;
+		}
 	}
 
 }
