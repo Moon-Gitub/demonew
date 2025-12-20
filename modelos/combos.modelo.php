@@ -15,18 +15,20 @@ class ModeloCombos{
 					LEFT JOIN productos p ON c.id_producto = p.id 
 					WHERE c.$item = :$item");
 				$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
-				$stmt -> execute();
-				return $stmt -> fetch();
-			}else{
-				$stmt = Conexion::conectar()->prepare("SELECT c.*, p.descripcion as producto_descripcion, p.codigo as producto_codigo 
-					FROM combos c 
-					LEFT JOIN productos p ON c.id_producto = p.id 
-					ORDER BY c.id DESC");
-				$stmt -> execute();
-				return $stmt -> fetchAll();
-			}
-			$stmt -> close();
+			$stmt -> execute();
+			$resultado = $stmt -> fetch();
 			$stmt = null;
+			return $resultado;
+		}else{
+			$stmt = Conexion::conectar()->prepare("SELECT c.*, p.descripcion as producto_descripcion, p.codigo as producto_codigo 
+				FROM combos c 
+				LEFT JOIN productos p ON c.id_producto = p.id 
+				ORDER BY c.id DESC");
+			$stmt -> execute();
+			$resultado = $stmt -> fetchAll();
+			$stmt = null;
+			return $resultado;
+		}
 		} catch(PDOException $e){
 			// Si la tabla no existe, retornar array vacío
 			if(strpos($e->getMessage(), "doesn't exist") !== false || strpos($e->getMessage(), "no existe") !== false){
@@ -50,9 +52,9 @@ class ModeloCombos{
 				ORDER BY cp.orden ASC, cp.id ASC");
 			$stmt -> bindParam(":id_combo", $idCombo, PDO::PARAM_INT);
 			$stmt -> execute();
-			return $stmt -> fetchAll();
-			$stmt -> close();
+			$resultado = $stmt -> fetchAll();
 			$stmt = null;
+			return $resultado;
 		} catch(PDOException $e){
 			// Si la tabla no existe, retornar array vacío
 			if(strpos($e->getMessage(), "doesn't exist") !== false || strpos($e->getMessage(), "no existe") !== false){
@@ -124,9 +126,11 @@ class ModeloCombos{
 				$stmtUpdate->execute();
 				
 				$pdo->commit();
+				$stmt = null;
 				return "ok";
 			}else{
 				$pdo->rollBack();
+				$stmt = null;
 				return "error";
 			}
 		} catch(Exception $e){
@@ -134,9 +138,6 @@ class ModeloCombos{
 			error_log("Error al crear combo: " . $e->getMessage());
 			return "error";
 		}
-		
-		$stmt -> close();
-		$stmt = null;
 	}
 
 	/*=============================================
@@ -207,9 +208,11 @@ class ModeloCombos{
 				}
 				
 				$pdo->commit();
+				$stmt = null;
 				return "ok";
 			}else{
 				$pdo->rollBack();
+				$stmt = null;
 				return "error";
 			}
 		} catch(Exception $e){
@@ -217,9 +220,6 @@ class ModeloCombos{
 			error_log("Error al editar combo: " . $e->getMessage());
 			return "error";
 		}
-		
-		$stmt -> close();
-		$stmt = null;
 	}
 
 	/*=============================================
@@ -261,6 +261,7 @@ class ModeloCombos{
 				}
 			}else{
 				$pdo->rollBack();
+				$stmt = null;
 				return "error";
 			}
 		} catch(Exception $e){
@@ -268,9 +269,6 @@ class ModeloCombos{
 			error_log("Error al borrar combo: " . $e->getMessage());
 			return "error";
 		}
-		
-		$stmt -> close();
-		$stmt = null;
 	}
 
 	/*=============================================
@@ -289,7 +287,6 @@ class ModeloCombos{
 			$stmt -> bindParam(":id_producto", $idProducto, PDO::PARAM_INT);
 			$stmt -> execute();
 			$resultado = $stmt -> fetch();
-			$stmt -> close();
 			$stmt = null;
 			return $resultado ? $resultado : false;
 		} catch(PDOException $e){
