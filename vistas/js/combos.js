@@ -3,33 +3,44 @@ var productosComponentes = [];
 var productosComponentesEditar = [];
 
 // Inicializar DataTable para combos
+// Nota: plantilla.js ya inicializa tablas con clase .tablas, así que verificamos si ya está inicializado
 $(document).ready(function(){
-	$('#tablaCombos').DataTable({
-		"language": {
-			"sProcessing":     "Procesando...",
-			"sLengthMenu":     "Mostrar _MENU_ registros",
-			"sZeroRecords":    "No se encontraron resultados",
-			"sEmptyTable":     "Ningún dato disponible en esta tabla",
-			"sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_",
-			"sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0",
-			"sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
-			"sInfoPostFix":    "",
-			"sSearch":         "Buscar:",
-			"sUrl":            "",
-			"sInfoThousands":  ",",
-			"sLoadingRecords": "Cargando...",
-			"oPaginate": {
-				"sFirst":    "Primero",
-				"sLast":     "Último",
-				"sNext":     "Siguiente",
-				"sPrevious": "Anterior"
-			},
-			"oAria": {
-				"sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
-				"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+	// Verificar si la tabla ya tiene DataTables inicializado
+	if($.fn.DataTable.isDataTable('#tablaCombos')){
+		// Si ya está inicializado, obtener la instancia existente
+		var table = $('#tablaCombos').DataTable();
+		// Opcional: destruir y reinicializar si es necesario
+		// table.destroy();
+	} else {
+		// Solo inicializar si no está ya inicializado
+		$('#tablaCombos').DataTable({
+			"retrieve": true, // Permite recuperar instancia existente
+			"language": {
+				"sProcessing":     "Procesando...",
+				"sLengthMenu":     "Mostrar _MENU_ registros",
+				"sZeroRecords":    "No se encontraron resultados",
+				"sEmptyTable":     "Ningún dato disponible en esta tabla",
+				"sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_",
+				"sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0",
+				"sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+				"sInfoPostFix":    "",
+				"sSearch":         "Buscar:",
+				"sUrl":            "",
+				"sInfoThousands":  ",",
+				"sLoadingRecords": "Cargando...",
+				"oPaginate": {
+					"sFirst":    "Primero",
+					"sLast":     "Último",
+					"sNext":     "Siguiente",
+					"sPrevious": "Anterior"
+				},
+				"oAria": {
+					"sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+					"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+				}
 			}
-		}
-	});
+		});
+	}
 
 	// Configurar autocomplete para producto base (agregar)
 	$("#autocompletarProductoCombo").autocomplete({
