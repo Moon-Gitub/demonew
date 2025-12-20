@@ -11,9 +11,9 @@ class ModeloEmpresa{
 		$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE $item = :$item");
 		$stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
 		$stmt -> execute();
-		return $stmt -> fetch();
-		$stmt -> close();
+		$resultado = $stmt -> fetch();
 		$stmt = null;
+		return $resultado;
 	}
 
 	/*=============================================
@@ -64,11 +64,12 @@ class ModeloEmpresa{
 
 		}else{
 
-			return $stmt->errorInfo();
+			$error = $stmt->errorInfo();
+			$stmt = null;
+			return $error;
 
 		}
 
-		$stmt->close();
 		$stmt = null;
 
 	}
