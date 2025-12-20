@@ -215,4 +215,133 @@ class ControladorMercadoPago {
 			);
 		}
 	}
+
+	/*=============================================
+	CREAR PREFERENCIA DE PAGO PARA VENTA (QR ESTÁTICO)
+	=============================================*/
+	static public function ctrCrearPreferenciaVenta($monto, $descripcion, $externalReference = null) {
+		try {
+			require_once __DIR__ . '/../extensiones/vendor/autoload.php';
+			
+			$credenciales = self::ctrObtenerCredenciales();
+			\MercadoPago\MercadoPagoConfig::setAccessToken($credenciales['access_token']);
+
+			$client = new \MercadoPago\Client\Preference\PreferenceClient();
+			
+			$preference = $client->create([
+				"items" => [
+					[
+						"title" => $descripcion ?: "Venta POS",
+						"quantity" => 1,
+						"unit_price" => floatval($monto)
+					]
+				],
+				"external_reference" => $externalReference ?: "venta_" . time(),
+				"binary_mode" => true,
+				"expires" => false // No expira
+			]);
+
+			if ($preference && isset($preference->id)) {
+				return array(
+					'error' => false,
+					'preference_id' => $preference->id,
+					'qr_code' => $preference->qr_code ?: null,
+					'init_point' => $preference->init_point ?: null,
+					'sandbox_init_point' => $preference->sandbox_init_point ?: null
+				);
+			} else {
+				return array(
+					'error' => true,
+					'mensaje' => 'Error al crear preferencia de pago'
+				);
+			}
+
+		} catch (Exception $e) {
+			error_log("Error creando preferencia de venta: " . $e->getMessage());
+			return array(
+				'error' => true,
+				'mensaje' => $e->getMessage()
+			);
+		}
+	}
+
+	/*=============================================
+	VERIFICAR ESTADO DE PAGO POR PREFERENCE_ID
+	=============================================*/
+	static public function ctrVerificarEstadoPago($preferenceId) {
+		try {
+			require_once __DIR__ . '/../extensiones/vendor/autoload.php';
+			
+			$credenciales = self::ctrObtenerCredenciales();
+			\MercadoPago\MercadoPagoConfig::setAccessToken($credenciales['access_token']);
+
+			// Buscar pagos asociados a esta preferencia
+			$client = new \MercadoPago\Client\Payment\PaymentClient();
+			
+			$filters = array(
+				"preference_id" => $preferenceId,
+				"status" => "approved"
+			);
+
+			$searchRequest = new \MercadoPago\Net\MPSearchRequest();
+			$searchRequest->setLimit(1);
+			$searchRequest->setOffset(0);
+			
+			foreach ($filters as $key => $value) {
+				$searchRequest->addFilter($key, "=", $value);
+			}
+
+			$searchResult = $client->search($searchRequest);
+
+			if ($searchResult && isset($searchResult->results) && count($searchResult->results) > 0) {
+				$payment = $searchResult->results[0];
+				return array(
+					'error' => false,
+					'aprobado' => true,
+					'payment_id' => $payment->id,
+					'status' => $payment->status,
+					'transaction_amount' => $payment->transaction_amount
+				);
+			} else {
+				// Verificar si hay pagos pendientes
+				$filtersPending = array(
+					"preference_id" => $preferenceId,
+					"status" => "pending"
+				);
+
+				$searchRequestPending = new \MercadoPago\Net\MPSearchRequest();
+				$searchRequestPending->setLimit(1);
+				$searchRequestPending->setOffset(0);
+				
+				foreach ($filtersPending as $key => $value) {
+					$searchRequestPending->addFilter($key, "=", $value);
+				}
+
+				$searchResultPending = $client->search($searchRequestPending);
+
+				if ($searchResultPending && isset($searchResultPending->results) && count($searchResultPending->results) > 0) {
+					return array(
+						'error' => false,
+						'aprobado' => false,
+						'status' => 'pending',
+						'mensaje' => 'Pago pendiente'
+					);
+				}
+
+				return array(
+					'error' => false,
+					'aprobado' => false,
+					'status' => 'no_payment',
+					'mensaje' => 'Aún no se ha realizado el pago'
+				);
+			}
+
+		} catch (Exception $e) {
+			error_log("Error verificando estado de pago: " . $e->getMessage());
+			return array(
+				'error' => true,
+				'mensaje' => $e->getMessage()
+			);
+		}
+	}
 }

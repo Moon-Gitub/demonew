@@ -415,6 +415,25 @@ function cambiarMetodoPagoCaja(valorMetodo){
 		$("#nuevoDescuentoPorcentajeCaja").keyup();
 
 	}
+	
+	if(metodo == "MPQR") {
+		$("#filaDescuentoCaja").css("display", "");
+		$("#nuevoTotalVentaCaja").val(precioTotal);
+		valorMetodo.parent().parent().parent().children('.cajasMetodoPagoCaja').html(
+		 '<div class="col-xs-6" style="padding-left:0px">'+
+		    '<div class="input-group">'+
+		      '<span class="input-group-addon" style="background-color: #3c8dbc; color:white"><i class="fa fa-qrcode"></i></span>'+
+		      '<button type="button" class="btn btn-primary" id="btnGenerarQR" style="width:100%;">Generar QR de Pago</button>'+
+		    '</div>'+
+          '</div>');
+		$("#nuevoDescuentoPorcentajeCaja").keyup();
+		
+		// Evento para generar QR
+		$("#btnGenerarQR").off('click').on('click', function(){
+			crearPreferenciaPagoQR();
+		});
+	}
+	
 	if(metodo == "TD") {
 		$("#filaDescuentoCaja").css("display", "");
 		$("#nuevoTotalVentaCaja").val(precioTotal);
@@ -813,6 +832,10 @@ function listarMetodosCaja(){
     	break;
     	case "MP":
 	    	$("#listaMetodoPagoCaja").val("MP-"+$("#nuevoCodigoTransaccionCaja").val());
+	    break;
+	    case "MPQR":
+	    	var preferenceId = $("#preferenceIdQR").val() || "";
+	    	$("#listaMetodoPagoCaja").val("MPQR-"+preferenceId);
 	    break;
 	 	case "TD":
 	    	$("#listaMetodoPagoCaja").val("TD-"+$("#nuevoCodigoTransaccionCaja").val());
@@ -2904,3 +2927,205 @@ function listarMediosPagoCaja(){
 	$("#nuevoValorEntrega").val(total-entrado);
 	
 }
+
+/*=============================================
+PAGO CON QR MERCADO PAGO
+=============================================*/
+
+// Variable global para el intervalo de verificación
+var intervaloVerificacionQR = null;
+var preferenceIdActual = null;
+
+/*=============================================
+CREAR PREFERENCIA DE PAGO Y MOSTRAR QR
+=============================================*/
+function crearPreferenciaPagoQR(){
+	var monto = parseFloat($("#nuevoTotalVentaCaja").val()) || 0;
+	
+	if(monto <= 0){
+		swal({
+			title: "Error",
+			text: "El monto debe ser mayor a 0",
+			type: "error",
+			confirmButtonText: "Cerrar"
+		});
+		return;
+	}
+	
+	// Mostrar modal y loading
+	$("#modalPagoQR").modal('show');
+	$("#qrLoading").show();
+	$("#qrContent").hide();
+	$("#qrError").hide();
+	$("#qrEstado").hide();
+	$("#btnVerificarPagoQR").hide();
+	
+	// Obtener token CSRF
+	var token = $('meta[name="csrf-token"]').attr('content') || '';
+	
+	// Crear preferencia de pago
+	var datos = new FormData();
+	datos.append("crearPreferenciaVenta", "1");
+	datos.append("monto", monto);
+	datos.append("descripcion", "Venta POS - " + new Date().toLocaleString('es-AR'));
+	datos.append("external_reference", "venta_" + Date.now());
+	datos.append("csrf_token", token);
+	
+	$.ajax({
+		url: "ajax/mercadopago.ajax.php",
+		method: "POST",
+		headers: {
+			'X-CSRF-TOKEN': token
+		},
+		data: datos,
+		cache: false,
+		contentType: false,
+		processData: false,
+		dataType: "json",
+		success: function(respuesta){
+			$("#qrLoading").hide();
+			
+			if(respuesta.error){
+				$("#qrError").show();
+				$("#qrErrorMensaje").text(respuesta.mensaje || "Error al generar código QR");
+				return;
+			}
+			
+			// Guardar preference_id
+			preferenceIdActual = respuesta.preference_id;
+			$("#preferenceIdQR").remove();
+			$("body").append('<input type="hidden" id="preferenceIdQR" value="' + preferenceIdActual + '">');
+			
+			// Mostrar QR
+			$("#qrMonto").text(monto.toFixed(2));
+			var qrUrl = respuesta.qr_code || respuesta.init_point || respuesta.sandbox_init_point;
+			
+			if(qrUrl){
+				// Generar QR usando el servicio
+				var qrImageUrl = "generar-qr.php?url=" + encodeURIComponent(qrUrl);
+				$("#qrCodeImage").attr("src", qrImageUrl);
+				$("#qrContent").show();
+				$("#qrMensaje").html('<i class="fa fa-info-circle"></i> Escanea el código QR con la app de Mercado Pago para pagar $' + monto.toFixed(2));
+				$("#qrEstado").removeClass("alert-danger alert-success").addClass("alert-info").html('<i class="fa fa-clock-o"></i> Esperando pago...').show();
+				$("#btnVerificarPagoQR").show();
+				
+				// Iniciar verificación periódica
+				iniciarVerificacionPagoQR();
+			} else {
+				$("#qrError").show();
+				$("#qrErrorMensaje").text("No se pudo generar el código QR");
+			}
+		},
+		error: function(xhr, status, error){
+			$("#qrLoading").hide();
+			$("#qrError").show();
+			$("#qrErrorMensaje").text("Error al conectar con el servidor");
+			console.error("Error:", error);
+		}
+	});
+}
+
+/*=============================================
+INICIAR VERIFICACIÓN PERIÓDICA DEL PAGO
+=============================================*/
+function iniciarVerificacionPagoQR(){
+	// Limpiar intervalo anterior si existe
+	if(intervaloVerificacionQR){
+		clearInterval(intervaloVerificacionQR);
+	}
+	
+	// Verificar cada 3 segundos
+	intervaloVerificacionQR = setInterval(function(){
+		verificarPagoQR();
+	}, 3000);
+	
+	// También verificar inmediatamente
+	verificarPagoQR();
+}
+
+/*=============================================
+VERIFICAR ESTADO DEL PAGO
+=============================================*/
+function verificarPagoQR(){
+	if(!preferenceIdActual){
+		return;
+	}
+	
+	var token = $('meta[name="csrf-token"]').attr('content') || '';
+	
+	$.ajax({
+		url: "ajax/mercadopago.ajax.php",
+		method: "GET",
+		data: {
+			verificarPago: "1",
+			preference_id: preferenceIdActual
+		},
+		dataType: "json",
+		success: function(respuesta){
+			if(respuesta.error){
+				console.error("Error verificando pago:", respuesta.mensaje);
+				return;
+			}
+			
+			if(respuesta.aprobado){
+				// Pago aprobado
+				clearInterval(intervaloVerificacionQR);
+				intervaloVerificacionQR = null;
+				
+				$("#qrEstado").removeClass("alert-info alert-danger").addClass("alert-success").html('<i class="fa fa-check-circle"></i> ¡Pago confirmado! Completando venta...');
+				
+				// Completar la venta automáticamente
+				setTimeout(function(){
+					completarVentaConQR();
+				}, 1000);
+			} else if(respuesta.status == 'pending'){
+				$("#qrEstado").removeClass("alert-success alert-danger").addClass("alert-info").html('<i class="fa fa-clock-o"></i> Pago pendiente de confirmación...');
+			} else {
+				// Aún no hay pago
+				$("#qrEstado").removeClass("alert-success alert-danger").addClass("alert-info").html('<i class="fa fa-clock-o"></i> Esperando pago...');
+			}
+		},
+		error: function(xhr, status, error){
+			console.error("Error verificando pago:", error);
+		}
+	});
+}
+
+/*=============================================
+COMPLETAR VENTA CON PAGO QR CONFIRMADO
+=============================================*/
+function completarVentaConQR(){
+	// Agregar el método de pago MPQR a la lista
+	$("#listaMetodoPagoCaja").val("MPQR-" + preferenceIdActual);
+	listarMetodosCaja();
+	
+	// Cerrar modal
+	$("#modalPagoQR").modal('hide');
+	
+	// Mostrar mensaje de éxito
+	swal({
+		title: "¡Pago confirmado!",
+		text: "El pago se ha confirmado correctamente. Puede proceder a guardar la venta.",
+		type: "success",
+		confirmButtonText: "Aceptar"
+	});
+}
+
+/*=============================================
+BOTÓN VERIFICAR PAGO MANUAL
+=============================================*/
+$(document).on('click', '#btnVerificarPagoQR', function(){
+	verificarPagoQR();
+});
+
+/*=============================================
+LIMPIAR AL CERRAR MODAL
+=============================================*/
+$("#modalPagoQR").on('hidden.bs.modal', function(){
+	if(intervaloVerificacionQR){
+		clearInterval(intervaloVerificacionQR);
+		intervaloVerificacionQR = null;
+	}
+	preferenceIdActual = null;
+	$("#preferenceIdQR").remove();
+});
