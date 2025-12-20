@@ -378,16 +378,83 @@ class ControladorMercadoPago {
 				error_log("Error obteniendo POS desde BD: " . $e->getMessage());
 			}
 			
-			// Si no existe, crear uno nuevo
-			$url = "https://api.mercadopago.com/pos";
+			// Si no existe, primero crear o obtener una tienda (store)
+			$storeId = null;
+			$externalStoreId = "tienda" . time(); // ID externo único para la tienda
 			
-			$data = array(
+			// Obtener user_id para crear la tienda
+			$userId = null;
+			$tokenParts = explode('-', $credenciales['access_token']);
+			if (count($tokenParts) >= 5) {
+				$userId = $tokenParts[count($tokenParts) - 1];
+			}
+			
+			if ($userId) {
+				// Intentar crear una tienda
+				$storeUrl = "https://api.mercadopago.com/users/$userId/stores";
+				$storeData = array(
+					"name" => "Tienda Principal",
+					"external_id" => $externalStoreId
+				);
+				
+				$ch = curl_init($storeUrl);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLOPT_POST, true);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($storeData));
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+					'Authorization: Bearer ' . $credenciales['access_token'],
+					'Content-Type: application/json'
+				));
+				
+				$storeResponse = curl_exec($ch);
+				$storeHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+				curl_close($ch);
+				
+				if ($storeHttpCode == 201 || $storeHttpCode == 200) {
+					$store = json_decode($storeResponse, true);
+					$storeId = isset($store['id']) ? $store['id'] : null;
+					error_log("Tienda creada exitosamente: " . json_encode($store));
+				} else {
+					// Si falla, intentar buscar tiendas existentes
+					error_log("Error creando tienda: HTTP $storeHttpCode - $storeResponse");
+					// Intentar obtener tiendas existentes
+					$listUrl = "https://api.mercadopago.com/users/$userId/stores";
+					$ch = curl_init($listUrl);
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+						'Authorization: Bearer ' . $credenciales['access_token'],
+						'Content-Type: application/json'
+					));
+					
+					$listResponse = curl_exec($ch);
+					$listHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					curl_close($ch);
+					
+					if ($listHttpCode == 200) {
+						$stores = json_decode($listResponse, true);
+						if (isset($stores['results']) && count($stores['results']) > 0) {
+							$storeId = $stores['results'][0]['id'];
+							error_log("Usando tienda existente: $storeId");
+						}
+					}
+				}
+			}
+			
+			// Si no se pudo obtener store_id, usar external_store_id
+			$posData = array(
 				"name" => "POS Estático - " . date('Y-m-d H:i:s'),
 				"fixed_amount" => false, // Permite monto dinámico
-				// No incluir "category" - Mercado Pago asignará una categoría genérica por defecto
-				"store_id" => null,
 				"external_id" => "posestatico" . time() // Solo alfanumérico (sin guiones bajos)
 			);
+			
+			if ($storeId) {
+				$posData["store_id"] = $storeId;
+			} else {
+				$posData["external_store_id"] = $externalStoreId;
+			}
+			
+			// Crear el POS
+			$url = "https://api.mercadopago.com/pos";
 			
 			$ch = curl_init($url);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
