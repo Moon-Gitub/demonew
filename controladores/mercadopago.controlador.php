@@ -384,7 +384,7 @@ class ControladorMercadoPago {
 			$data = array(
 				"name" => "POS Estático - " . date('Y-m-d H:i:s'),
 				"fixed_amount" => false, // Permite monto dinámico
-				"category" => 621300,
+				// No incluir "category" - Mercado Pago asignará una categoría genérica por defecto
 				"store_id" => null,
 				"external_id" => "pos_estatico_" . time()
 			);
