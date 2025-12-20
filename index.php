@@ -34,6 +34,11 @@ require_once "controladores/presupuestos.controlador.php";
 require_once "controladores/pedidos.controlador.php";
 require_once "controladores/integraciones.controlador.php";
 
+// Cargar controlador de combos si existe (para compatibilidad)
+if(file_exists(__DIR__ . "/controladores/combos.controlador.php")){
+	require_once "controladores/combos.controlador.php";
+}
+
 require_once "controladores/facturacion/wsaa.class.php";
 require_once "controladores/facturacion/wsaa_padron.class.php";
 require_once "controladores/facturacion/wsfe.class.php";
@@ -55,6 +60,11 @@ require_once "modelos/empresa.modelo.php";
 require_once "modelos/presupuestos.modelo.php";
 require_once "modelos/pedidos.modelo.php";
 require_once "modelos/integraciones.modelo.php";
+
+// Cargar modelo de combos si existe (para compatibilidad)
+if(file_exists(__DIR__ . "/modelos/combos.modelo.php")){
+	require_once "modelos/combos.modelo.php";
+}
 
 require_once "parametros.php";
 
