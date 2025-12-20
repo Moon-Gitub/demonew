@@ -1,36 +1,6 @@
 <?php
-// Verificar que los archivos de combos existan antes de cargarlos
-// Usar rutas relativas desde este archivo (vistas/modulos/)
-$archivoControlador = __DIR__ . "/../../controladores/combos.controlador.php";
-$archivoModelo = __DIR__ . "/../../modelos/combos.modelo.php";
-
-// Normalizar rutas para evitar problemas con barras
-$archivoControlador = realpath($archivoControlador) ?: $archivoControlador;
-$archivoModelo = realpath($archivoModelo) ?: $archivoModelo;
-
-if(file_exists($archivoControlador) && file_exists($archivoModelo)){
-	require_once $archivoControlador;
-	require_once $archivoModelo;
-} else {
-	// Si los archivos no existen, mostrar mensaje y salir
-	echo '<div class="content-wrapper">
-		<section class="content-header">
-			<h1>Módulo de Combos no disponible</h1>
-		</section>
-		<section class="content">
-			<div class="alert alert-warning">
-				<h4><i class="icon fa fa-warning"></i> Atención</h4>
-				<p>El módulo de combos no está completamente instalado. Por favor, asegúrese de que todos los archivos estén presentes en el servidor.</p>
-				<p><small>Rutas verificadas:<br>
-				Controlador: ' . htmlspecialchars($archivoControlador) . '<br>
-				Modelo: ' . htmlspecialchars($archivoModelo) . '<br>
-				__DIR__: ' . htmlspecialchars(__DIR__) . '</small></p>
-			</div>
-		</section>
-	</div>';
-	exit;
-}
-
+require_once "../controladores/combos.controlador.php";
+require_once "../modelos/combos.modelo.php";
 require_once "../controladores/productos.controlador.php";
 require_once "../modelos/productos.modelo.php";
 require_once "../controladores/categorias.controlador.php";
