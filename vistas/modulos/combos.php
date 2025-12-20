@@ -1,8 +1,12 @@
 <?php
 // Verificar que los archivos de combos existan antes de cargarlos
-$rutaBase = dirname(__DIR__);
-$archivoControlador = $rutaBase . "/controladores/combos.controlador.php";
-$archivoModelo = $rutaBase . "/modelos/combos.modelo.php";
+// Usar rutas relativas desde este archivo (vistas/modulos/)
+$archivoControlador = __DIR__ . "/../../controladores/combos.controlador.php";
+$archivoModelo = __DIR__ . "/../../modelos/combos.modelo.php";
+
+// Normalizar rutas para evitar problemas con barras
+$archivoControlador = realpath($archivoControlador) ?: $archivoControlador;
+$archivoModelo = realpath($archivoModelo) ?: $archivoModelo;
 
 if(file_exists($archivoControlador) && file_exists($archivoModelo)){
 	require_once $archivoControlador;
@@ -17,6 +21,10 @@ if(file_exists($archivoControlador) && file_exists($archivoModelo)){
 			<div class="alert alert-warning">
 				<h4><i class="icon fa fa-warning"></i> Atención</h4>
 				<p>El módulo de combos no está completamente instalado. Por favor, asegúrese de que todos los archivos estén presentes en el servidor.</p>
+				<p><small>Rutas verificadas:<br>
+				Controlador: ' . htmlspecialchars($archivoControlador) . '<br>
+				Modelo: ' . htmlspecialchars($archivoModelo) . '<br>
+				__DIR__: ' . htmlspecialchars(__DIR__) . '</small></p>
 			</div>
 		</section>
 	</div>';
