@@ -386,7 +386,7 @@ class ControladorMercadoPago {
 				"fixed_amount" => false, // Permite monto dinámico
 				// No incluir "category" - Mercado Pago asignará una categoría genérica por defecto
 				"store_id" => null,
-				"external_id" => "pos_estatico_" . time()
+				"external_id" => "posestatico" . time() // Solo alfanumérico (sin guiones bajos)
 			);
 			
 			$ch = curl_init($url);
