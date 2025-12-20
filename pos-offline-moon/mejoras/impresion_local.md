@@ -4,7 +4,7 @@
 
 1. [Descripción General](#descripción-general)
 2. [Arquitectura](#arquitectura)
-3. [Instalación y Configuración](#instalación-y-configuración)
+3. [Instalación del Servicio](#instalación-del-servicio)
    - [Windows](#windows)
    - [Linux](#linux)
 4. [Implementación del Servicio](#implementación-del-servicio)
@@ -55,13 +55,13 @@ Este servicio permite imprimir directamente desde el navegador web hacia una imp
 
 ---
 
-## Instalación y Configuración
+## Instalación del Servicio
 
 ### Windows
 
 #### Paso 1: Requisitos Previos
 
-1. **Python 3.7 o superior**
+1. **Python 3.7 o superior** (si no está instalado)
    - Descargar desde [python.org](https://www.python.org/downloads/)
    - ✅ **IMPORTANTE**: Marcar "Add Python to PATH" durante la instalación
    - Verificar instalación:
@@ -69,53 +69,31 @@ Este servicio permite imprimir directamente desde el navegador web hacia una imp
      python --version
      ```
 
-2. **Git (opcional, para clonar el repositorio)**
-   - Descargar desde [git-scm.com](https://git-scm.com/download/win)
-
-#### Paso 2: Descargar el Sistema
-
-**Opción A: Desde Git**
-```cmd
-git clone https://github.com/Moon-Gitub/demonew.git
-cd demonew/pos-offline-moon
-```
-
-**Opción B: Descargar ZIP**
-1. Descargar el repositorio como ZIP
-2. Extraer en una carpeta (ej: `C:\POS-Offline-Moon`)
-3. Abrir PowerShell o CMD en esa carpeta
-
-#### Paso 3: Instalación Automática
+#### Paso 2: Crear Carpeta del Servicio
 
 ```cmd
-python install.py
+cd pos-offline-moon
+mkdir print-service
+cd print-service
 ```
 
-Este script:
-- ✅ Verifica versión de Python
-- ✅ Crea entorno virtual (`venv`)
-- ✅ Instala todas las dependencias
-- ✅ Crea directorios necesarios (`data/`, `logs/`, `backups/`)
-- ✅ Crea archivo de configuración inicial
+#### Paso 3: Crear Archivos del Servicio
 
-#### Paso 4: Configuración Inicial
+Crear los archivos según la sección [Implementación del Servicio](#implementación-del-servicio) más abajo.
+
+#### Paso 4: Instalar Dependencias
 
 ```cmd
-python setup.py
+pip install Flask flask-cors
 ```
 
-O usar el script:
+O si usas entorno virtual:
 ```cmd
-setup.bat
+..\venv\Scripts\activate
+pip install Flask flask-cors
 ```
 
-Seguir las instrucciones para:
-- Configurar URL del servidor (ej: `https://newmoon.posmoon.com.ar`)
-- Configurar ID Cliente Moon (ej: `14`)
-- Probar conexión
-- Sincronización inicial de usuarios y productos
-
-#### Paso 5: Ejecutar el Sistema
+#### Paso 5: Ejecutar el Servicio
 
 **Opción A: Usando el script**
 ```cmd
@@ -124,30 +102,10 @@ run.bat
 
 **Opción B: Manualmente**
 ```cmd
-venv\Scripts\activate
-python main.py
+python server.py
 ```
 
-#### Paso 6: Configuración del Archivo `config.json`
-
-El archivo se crea automáticamente, pero puedes editarlo manualmente:
-
-```json
-{
-    "server_url": "https://newmoon.posmoon.com.ar",
-    "api_base": "https://newmoon.posmoon.com.ar/api",
-    "id_cliente_moon": 14,
-    "sync_interval": 60,
-    "connection_check_interval": 5,
-    "account_check_interval": 300
-}
-```
-
-**Ubicación**: `pos-offline-moon/config.json`
-
-#### Paso 7: Instalar el Servicio de Impresión (Opcional)
-
-Ver sección [Implementación del Servicio](#implementación-del-servicio) más abajo.
+El servicio estará disponible en `http://localhost:8888`
 
 ---
 
@@ -158,71 +116,46 @@ Ver sección [Implementación del Servicio](#implementación-del-servicio) más 
 **Ubuntu/Debian:**
 ```bash
 sudo apt-get update
-sudo apt-get install python3 python3-pip python3-venv python3-tk git
+sudo apt-get install python3 python3-pip cups cups-client
 ```
 
 **CentOS/RHEL:**
 ```bash
-sudo yum install python3 python3-pip python3-tkinter git
+sudo yum install python3 python3-pip cups cups-client
 ```
 
-**Fedora:**
-```bash
-sudo dnf install python3 python3-pip python3-tkinter git
-```
-
-Verificar instalación:
-```bash
-python3 --version
-```
-
-#### Paso 2: Descargar el Sistema
-
-**Opción A: Desde Git**
-```bash
-git clone https://github.com/Moon-Gitub/demonew.git
-cd demonew/pos-offline-moon
-```
-
-**Opción B: Descargar ZIP**
-```bash
-wget https://github.com/Moon-Gitub/demonew/archive/main.zip
-unzip main.zip
-cd demonew-main/pos-offline-moon
-```
-
-#### Paso 3: Instalación Automática
+#### Paso 2: Crear Carpeta del Servicio
 
 ```bash
-python3 install.py
+cd pos-offline-moon
+mkdir -p print-service
+cd print-service
 ```
 
-O dar permisos de ejecución y usar:
-```bash
-chmod +x install.py
-./install.py
-```
+#### Paso 3: Crear Archivos del Servicio
 
-Este script:
-- ✅ Verifica versión de Python
-- ✅ Crea entorno virtual (`venv`)
-- ✅ Instala todas las dependencias
-- ✅ Crea directorios necesarios
-- ✅ Crea archivo de configuración inicial
+Crear los archivos según la sección [Implementación del Servicio](#implementación-del-servicio) más abajo.
 
-#### Paso 4: Configuración Inicial
+#### Paso 4: Instalar Dependencias
 
 ```bash
-python3 setup.py
+pip3 install Flask flask-cors
 ```
 
-O usar el script:
+O si usas entorno virtual:
 ```bash
-chmod +x setup.sh
-./setup.sh
+source ../venv/bin/activate
+pip install Flask flask-cors
 ```
 
-#### Paso 5: Ejecutar el Sistema
+#### Paso 5: Instalar Herramientas de Impresión (Opcional pero Recomendado)
+
+Para mejor soporte de HTML a PDF:
+```bash
+sudo apt-get install wkhtmltopdf
+```
+
+#### Paso 6: Ejecutar el Servicio
 
 **Opción A: Usando el script**
 ```bash
@@ -232,28 +165,10 @@ chmod +x run.sh
 
 **Opción B: Manualmente**
 ```bash
-source venv/bin/activate
-python3 main.py
+python3 server.py
 ```
 
-#### Paso 6: Configuración del Archivo `config.json`
-
-```json
-{
-    "server_url": "https://newmoon.posmoon.com.ar",
-    "api_base": "https://newmoon.posmoon.com.ar/api",
-    "id_cliente_moon": 14,
-    "sync_interval": 60,
-    "connection_check_interval": 5,
-    "account_check_interval": 300
-}
-```
-
-**Ubicación**: `pos-offline-moon/config.json`
-
-#### Paso 7: Instalar el Servicio de Impresión (Opcional)
-
-Ver sección [Implementación del Servicio](#implementación-del-servicio) más abajo.
+El servicio estará disponible en `http://localhost:8888`
 
 ---
 
@@ -352,13 +267,7 @@ def print_html(html_content, printer_name=None):
         
         if system == "Windows":
             # Windows: usar mshta para imprimir HTML
-            if printer:
-                cmd = ['mshta', f'javascript:window.print();close();']
-                # Abrir HTML y usar print dialog
-                subprocess.Popen(['start', 'mshta', f'file:///{temp_file.replace(chr(92), "/")}'], shell=True)
-            else:
-                # Abrir con navegador por defecto y imprimir
-                subprocess.Popen(['start', temp_file], shell=True)
+            subprocess.Popen(['start', 'mshta', f'file:///{temp_file.replace(chr(92), "/")}'], shell=True)
         
         elif system == "Linux":
             # Linux: usar wkhtmltopdf o weasyprint para convertir a PDF y luego imprimir
@@ -416,11 +325,7 @@ def print_pdf(pdf_data, printer_name=None):
         
         if system == "Windows":
             # Windows: usar Adobe Reader o lector PDF por defecto
-            if printer:
-                # Intentar imprimir directamente
-                subprocess.Popen(['start', '/min', temp_file], shell=True)
-            else:
-                subprocess.Popen(['start', temp_file], shell=True)
+            subprocess.Popen(['start', temp_file], shell=True)
         
         elif system == "Linux":
             # Linux: usar lp para imprimir PDF
@@ -459,10 +364,7 @@ def print_text(text_content, printer_name=None):
         
         if system == "Windows":
             # Windows: usar notepad o impresora directa
-            if printer:
-                subprocess.run(['notepad', '/p', temp_file], check=True, timeout=10)
-            else:
-                subprocess.run(['notepad', '/p', temp_file], check=True, timeout=10)
+            subprocess.run(['notepad', '/p', temp_file], check=True, timeout=10)
         
         elif system == "Linux":
             # Linux: usar lp para imprimir texto
@@ -869,39 +771,6 @@ function impTicketCaja(el){
 }
 ```
 
-**Modificar función de imprimir factura:**
-
-```javascript
-// En lugar de:
-// window.open("extensiones/vendor/tecnickcom/tcpdf/pdf/factura.php?codigo="+codigoVenta, "_blank");
-
-// Usar:
-$(".tablas").on("click", ".btnImprimirFacturaCaja", function(){
-    var codigoVenta = $(this).attr("codigoVenta");
-    
-    // Intentar obtener PDF y enviarlo al servicio local
-    fetch(`extensiones/vendor/tecnickcom/tcpdf/pdf/factura.php?codigo=${codigoVenta}`)
-        .then(response => response.blob())
-        .then(blob => {
-            const reader = new FileReader();
-            reader.onloadend = function() {
-                const base64 = reader.result.split(',')[1];
-                PrintService.printPDF(base64).then(success => {
-                    if (!success) {
-                        // Fallback: abrir en nueva ventana
-                        window.open(`extensiones/vendor/tecnickcom/tcpdf/pdf/factura.php?codigo=${codigoVenta}`, "_blank");
-                    }
-                });
-            };
-            reader.readAsDataURL(blob);
-        })
-        .catch(() => {
-            // Fallback: abrir en nueva ventana
-            window.open(`extensiones/vendor/tecnickcom/tcpdf/pdf/factura.php?codigo=${codigoVenta}`, "_blank");
-        });
-});
-```
-
 ---
 
 ## Uso y Ejemplos
@@ -1051,33 +920,6 @@ sudo systemctl status print-service
 
 ---
 
-## Archivos de Configuración Resumen
-
-### `config.json` (Sistema Principal)
-
-```json
-{
-    "server_url": "https://newmoon.posmoon.com.ar",
-    "api_base": "https://newmoon.posmoon.com.ar/api",
-    "id_cliente_moon": 14,
-    "sync_interval": 60,
-    "connection_check_interval": 5,
-    "account_check_interval": 300
-}
-```
-
-### `print-service/config.json` (Opcional)
-
-```json
-{
-    "port": 8888,
-    "default_printer": null,
-    "timeout": 30
-}
-```
-
----
-
 ## Notas Finales
 
 - ✅ El servicio funciona de forma **transparente**: si está disponible lo usa, si no, usa el método tradicional
@@ -1085,16 +927,6 @@ sudo systemctl status print-service
 - ✅ Compatible con **cualquier navegador moderno**
 - ✅ Soporta **Windows y Linux**
 - ✅ Fácil de **instalar y mantener**
-
----
-
-## Próximos Pasos
-
-1. Implementar el servicio Python (`print-service/server.py`)
-2. Crear el helper JavaScript (`vistas/js/print-service.js`)
-3. Modificar las funciones de impresión existentes
-4. Probar en Windows y Linux
-5. Documentar casos de uso específicos
 
 ---
 
