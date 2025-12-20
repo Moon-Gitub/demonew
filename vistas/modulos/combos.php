@@ -1,10 +1,21 @@
 <?php
-require_once "../controladores/combos.controlador.php";
-require_once "../modelos/combos.modelo.php";
-require_once "../controladores/productos.controlador.php";
-require_once "../modelos/productos.modelo.php";
-require_once "../controladores/categorias.controlador.php";
-require_once "../modelos/categorias.modelo.php";
+// Los controladores y modelos ya están cargados en index.php
+// Solo verificamos que las clases existan antes de usar
+if(!class_exists('ControladorCombos') || !class_exists('ModeloCombos')){
+	echo '<div class="content-wrapper">
+		<section class="content-header">
+			<h1>Módulo de Combos no disponible</h1>
+		</section>
+		<section class="content">
+			<div class="alert alert-warning">
+				<h4><i class="icon fa fa-warning"></i> Atención</h4>
+				<p>El módulo de combos no está completamente instalado. Por favor, asegúrese de que todos los archivos estén presentes en el servidor.</p>
+				<p><small>Verifique que los archivos <code>controladores/combos.controlador.php</code> y <code>modelos/combos.modelo.php</code> existan.</small></p>
+			</div>
+		</section>
+	</div>';
+	exit;
+}
 ?>
 
 <div class="content-wrapper">

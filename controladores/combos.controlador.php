@@ -1,10 +1,15 @@
 <?php
 
-// Los modelos se cargan en index.php, solo verificamos que existan
+// Los modelos se cargan en index.php antes de los controladores
+// Solo verificamos que existan, si no están cargados intentamos cargarlos
 if(!class_exists('ModeloCombos')){
-	// Intentar cargar si no está cargado
-	if(file_exists(__DIR__ . "/../modelos/combos.modelo.php")){
-		require_once __DIR__ . "/../modelos/combos.modelo.php";
+	// Intentar cargar si no está cargado (usando ruta absoluta)
+	$rutaModelo = __DIR__ . "/../modelos/combos.modelo.php";
+	if(file_exists($rutaModelo)){
+		require_once $rutaModelo;
+	} else {
+		// Si no existe, el módulo no está instalado completamente
+		// No hacemos nada, el sistema funcionará sin combos
 	}
 }
 
