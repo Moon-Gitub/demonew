@@ -1,6 +1,9 @@
 <?php
 
-require_once "../modelos/combos.modelo.php";
+// Cargar modelo de combos si existe (para compatibilidad con versiones anteriores)
+if(file_exists(__DIR__ . "/../modelos/combos.modelo.php")){
+	require_once __DIR__ . "/../modelos/combos.modelo.php";
+}
 
 class ControladorVentas{
 
@@ -8,7 +11,7 @@ class ControladorVentas{
 	PROCESAR PRODUCTO EN VENTA (CON DETECCIÓN DE COMBOS)
 	=============================================*/
 	static private function procesarProductoVenta($idProducto, $cantidad, $codigoVenta, $sucursal = "stock", $tipoCbte = null, $devolverStock = false){
-		require_once "../modelos/productos.modelo.php";
+		require_once __DIR__ . "/../modelos/productos.modelo.php";
 		
 		$tablaProductos = "productos";
 		$traerProducto = ModeloProductos::mdlMostrarProductos($tablaProductos, 'id', $idProducto, 'codigo');
@@ -17,10 +20,13 @@ class ControladorVentas{
 			return false;
 		}
 
-		// Verificar si es combo
-		$combo = ModeloCombos::mdlEsCombo($idProducto);
+		// Verificar si es combo (solo si el modelo existe)
+		$combo = false;
+		if(class_exists('ModeloCombos')){
+			$combo = ModeloCombos::mdlEsCombo($idProducto);
+		}
 		
-		if($combo){
+		if($combo && is_array($combo) && isset($combo["id"])){
 			// Es un combo, descontar stock de productos componentes
 			$productosCombo = ModeloCombos::mdlMostrarProductosCombo($combo["id"]);
 			

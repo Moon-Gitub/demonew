@@ -449,6 +449,11 @@
 
               $respuestaCliente = ControladorClientes::ctrMostrarClientes($itemCliente, $valorCliente);
 
+              // Validar que respuestaCliente sea un array antes de acceder
+              if(!is_array($respuestaCliente) || empty($respuestaCliente)){
+                $respuestaCliente = array("nombre" => "Cliente no encontrado", "email" => "");
+              }
+
               if($value["id_cliente"] == 1){
                 echo '<td>'.$respuestaCliente["nombre"].'</td>';
               } else {
@@ -492,7 +497,8 @@
                       echo '<li><a class="btnImprimirTicket" style="cursor: pointer;" idVenta="'.$value["id"].'" data-toggle="modal" data-target="#modalImprimirTicketCajaVenta" data-dismiss="modal"><i class="fa fa-ticket fa-fw"></i> Ticket</a></li>';
                      
                      echo '<li role="separator" class="divider"></li>';
-                     echo '<li><a class="btnMailComprobante" codigoVenta="'.$value["codigo"].'" mailCliente="'.$respuestaCliente["email"].'"><i class="fa fa-envelope fa-fw"></i> Email</a></li>';
+                     $emailCliente = isset($respuestaCliente["email"]) ? $respuestaCliente["email"] : "";
+                     echo '<li><a class="btnMailComprobante" codigoVenta="'.$value["codigo"].'" mailCliente="'.$emailCliente.'"><i class="fa fa-envelope fa-fw"></i> Email</a></li>';
 
                      if($_SESSION["perfil"] == "Administrador"){
 
