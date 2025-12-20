@@ -2225,8 +2225,7 @@ function guardarVentaCaja(){
 		  // console.log(err.Message);
 		}
     });
-
-});
+}
 
 // BOTON GUARDAR PRESUPUESTO
 $("#btnGuardarPresupuestoCaja").click(function(e){
