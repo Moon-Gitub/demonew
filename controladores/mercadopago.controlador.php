@@ -270,64 +270,34 @@ class ControladorMercadoPago {
 	=============================================*/
 	static public function ctrVerificarEstadoPago($preferenceId) {
 		try {
-			require_once __DIR__ . '/../extensiones/vendor/autoload.php';
-			
 			$credenciales = self::ctrObtenerCredenciales();
-			\MercadoPago\MercadoPagoConfig::setAccessToken($credenciales['access_token']);
-
-			// Buscar pagos asociados a esta preferencia
-			$client = new \MercadoPago\Client\Payment\PaymentClient();
 			
-			$filters = array(
-				"preference_id" => $preferenceId,
-				"status" => "approved"
-			);
-
-			$searchRequest = new \MercadoPago\Net\MPSearchRequest();
-			$searchRequest->setLimit(1);
-			$searchRequest->setOffset(0);
+			// Usar API REST directamente para buscar pagos por preference_id
+			$url = "https://api.mercadopago.com/v1/payments/search?preference_id=" . urlencode($preferenceId) . "&sort=date_created&criteria=desc&limit=10";
 			
-			foreach ($filters as $key => $value) {
-				$searchRequest->addFilter($key, "=", $value);
-			}
-
-			$searchResult = $client->search($searchRequest);
-
-			if ($searchResult && isset($searchResult->results) && count($searchResult->results) > 0) {
-				$payment = $searchResult->results[0];
+			$ch = curl_init($url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				'Authorization: Bearer ' . $credenciales['access_token'],
+				'Content-Type: application/json'
+			));
+			
+			$response = curl_exec($ch);
+			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			curl_close($ch);
+			
+			if ($httpCode != 200) {
+				error_log("Error consultando pagos de preferencia $preferenceId: HTTP $httpCode - $response");
 				return array(
-					'error' => false,
-					'aprobado' => true,
-					'payment_id' => $payment->id,
-					'status' => $payment->status,
-					'transaction_amount' => $payment->transaction_amount
+					'error' => true,
+					'mensaje' => 'Error al consultar estado del pago'
 				);
-			} else {
-				// Verificar si hay pagos pendientes
-				$filtersPending = array(
-					"preference_id" => $preferenceId,
-					"status" => "pending"
-				);
-
-				$searchRequestPending = new \MercadoPago\Net\MPSearchRequest();
-				$searchRequestPending->setLimit(1);
-				$searchRequestPending->setOffset(0);
-				
-				foreach ($filtersPending as $key => $value) {
-					$searchRequestPending->addFilter($key, "=", $value);
-				}
-
-				$searchResultPending = $client->search($searchRequestPending);
-
-				if ($searchResultPending && isset($searchResultPending->results) && count($searchResultPending->results) > 0) {
-					return array(
-						'error' => false,
-						'aprobado' => false,
-						'status' => 'pending',
-						'mensaje' => 'Pago pendiente'
-					);
-				}
-
+			}
+			
+			$data = json_decode($response, true);
+			
+			if (!isset($data['results']) || !is_array($data['results']) || count($data['results']) == 0) {
+				// No hay pagos aún
 				return array(
 					'error' => false,
 					'aprobado' => false,
@@ -335,6 +305,44 @@ class ControladorMercadoPago {
 					'mensaje' => 'Aún no se ha realizado el pago'
 				);
 			}
+			
+			// Buscar pago aprobado
+			foreach ($data['results'] as $payment) {
+				if (isset($payment['status']) && $payment['status'] === 'approved') {
+					// Pago aprobado encontrado
+					error_log("Pago aprobado encontrado para preference $preferenceId: Payment ID " . $payment['id']);
+					return array(
+						'error' => false,
+						'aprobado' => true,
+						'payment_id' => $payment['id'],
+						'status' => $payment['status'],
+						'transaction_amount' => isset($payment['transaction_amount']) ? $payment['transaction_amount'] : 0,
+						'date_approved' => isset($payment['date_approved']) ? $payment['date_approved'] : null
+					);
+				}
+			}
+			
+			// Buscar pago pendiente
+			foreach ($data['results'] as $payment) {
+				if (isset($payment['status']) && $payment['status'] === 'pending') {
+					return array(
+						'error' => false,
+						'aprobado' => false,
+						'status' => 'pending',
+						'mensaje' => 'Pago pendiente de confirmación',
+						'payment_id' => $payment['id']
+					);
+				}
+			}
+			
+			// Hay pagos pero no están aprobados ni pendientes
+			$ultimoPago = $data['results'][0];
+			return array(
+				'error' => false,
+				'aprobado' => false,
+				'status' => isset($ultimoPago['status']) ? $ultimoPago['status'] : 'unknown',
+				'mensaje' => 'Pago con estado: ' . (isset($ultimoPago['status']) ? $ultimoPago['status'] : 'desconocido')
+			);
 
 		} catch (Exception $e) {
 			error_log("Error verificando estado de pago: " . $e->getMessage());

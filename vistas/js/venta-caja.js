@@ -835,7 +835,12 @@ function listarMetodosCaja(){
 	    break;
 	    case "MPQR":
 	    	var preferenceId = $("#preferenceIdQR").val() || "";
-	    	$("#listaMetodoPagoCaja").val("MPQR-"+preferenceId);
+	    	// Si hay payment_id confirmado, incluirlo
+	    	if(paymentIdConfirmado){
+	    		$("#listaMetodoPagoCaja").val("MPQR-"+preferenceId+"-"+paymentIdConfirmado);
+	    	} else {
+	    		$("#listaMetodoPagoCaja").val("MPQR-"+preferenceId);
+	    	}
 	    break;
 	 	case "TD":
 	    	$("#listaMetodoPagoCaja").val("TD-"+$("#nuevoCodigoTransaccionCaja").val());
@@ -1787,6 +1792,81 @@ $("#btnCobrarMedioPagoCaja").click(function(e){
 		return;	
 	}
 
+	// Validar pago MPQR antes de guardar
+	var metodoPago = $("#listaMetodoPagoCaja").val() || "";
+	if(metodoPago.indexOf("MPQR-") === 0){
+		// Es un pago con QR, verificar que esté confirmado
+		var partes = metodoPago.split("-");
+		if(partes.length < 3 || !paymentIdConfirmado){
+			swal({
+				title: "Pago no confirmado",
+				text: "El pago con Mercado Pago QR aún no ha sido confirmado. Por favor, espere a que se confirme el pago o verifique manualmente en Mercado Pago.",
+				type: "warning",
+				confirmButtonText: "Cerrar"
+			});
+			$("#btnCobrarMedioPagoCaja").removeAttr('disabled');
+			return;
+		}
+		
+		// Verificar una última vez antes de guardar
+		var preferenceId = partes[1];
+		if(preferenceId && preferenceId !== preferenceIdActual){
+			// El preference_id no coincide, verificar
+			swal({
+				title: "Verificando pago...",
+				text: "Verificando estado del pago en Mercado Pago antes de guardar la venta.",
+				type: "info",
+				showConfirmButton: false,
+				allowOutsideClick: false
+			});
+			
+			var token = $('meta[name="csrf-token"]').attr('content') || '';
+			$.ajax({
+				url: "ajax/mercadopago.ajax.php",
+				method: "GET",
+				data: {
+					verificarPago: "1",
+					preference_id: preferenceId
+				},
+				dataType: "json",
+				success: function(respuesta){
+					swal.close();
+					if(!respuesta.aprobado){
+						swal({
+							title: "Pago no confirmado",
+							text: "El pago aún no ha sido confirmado en Mercado Pago. Estado: " + (respuesta.mensaje || respuesta.status || 'Desconocido'),
+							type: "error",
+							confirmButtonText: "Cerrar"
+						});
+						$("#btnCobrarMedioPagoCaja").removeAttr('disabled');
+						return;
+					}
+					// Pago confirmado, continuar con el guardado
+					guardarVentaCaja();
+				},
+				error: function(){
+					swal.close();
+					swal({
+						title: "Error",
+						text: "No se pudo verificar el pago. Por favor, verifique manualmente antes de guardar.",
+						type: "error",
+						confirmButtonText: "Cerrar"
+					});
+					$("#btnCobrarMedioPagoCaja").removeAttr('disabled');
+					return;
+				}
+			});
+			return;
+		}
+	}
+
+	guardarVentaCaja();
+});
+
+/*=============================================
+FUNCIÓN PARA GUARDAR VENTA (EXTRAÍDA PARA REUTILIZAR)
+=============================================*/
+function guardarVentaCaja(){
 	var datosVentaCaja = new FormData();
 	datosVentaCaja.append("fechaActual", $("#fechaActual").val());
 	datosVentaCaja.append("idVendedor", $("#idVendedor").val());
@@ -1914,6 +1994,10 @@ $("#btnCobrarMedioPagoCaja").click(function(e){
                     switch(medioEvaluado[0]){
                         case "TD": tckMedio += "<li>Tarjeta Débito "  + medioEvaluado[1] + " ( $ " + tipoMedioElegido[rec]["entrega"] + ")</li>"; break;
                         case "MP": tckMedio += "<li>Mercado Pago "  + medioEvaluado[1] + " ( $ " + tipoMedioElegido[rec]["entrega"] + ")</li>"; break;
+                        case "MPQR": 
+                            var paymentId = medioEvaluado.length > 2 ? medioEvaluado[2] : "";
+                            tckMedio += "<li>Mercado Pago QR" + (paymentId ? " (Payment ID: " + paymentId + ")" : "") + " ( $ " + tipoMedioElegido[rec]["entrega"] + ")</li>"; 
+                            break;
                         case "TC": tckMedio += "<li>Tarjeta Crédito " + medioEvaluado[1] + " ( $ " + tipoMedioElegido[rec]["entrega"] + ")</li>"; break;
                         case "TR": tckMedio += "<li>Transferencia" + " ( $ " + tipoMedioElegido[rec]["entrega"] + ")</li>"; break;
                         case "CC": tckMedio += "<li>Cuenta Corriente" + " ( $ " + tipoMedioElegido[rec]["entrega"] + ")</li>"; break;
@@ -2935,6 +3019,7 @@ PAGO CON QR MERCADO PAGO
 // Variable global para el intervalo de verificación
 var intervaloVerificacionQR = null;
 var preferenceIdActual = null;
+var paymentIdConfirmado = null; // Payment ID confirmado en Mercado Pago
 
 /*=============================================
 CREAR PREFERENCIA DE PAGO Y MOSTRAR QR
@@ -3067,22 +3152,25 @@ function verificarPagoQR(){
 				return;
 			}
 			
-			if(respuesta.aprobado){
-				// Pago aprobado
+			if(respuesta.aprobado === true){
+				// Pago aprobado - VERIFICAR QUE REALMENTE ESTÉ APROBADO
 				clearInterval(intervaloVerificacionQR);
 				intervaloVerificacionQR = null;
 				
-				$("#qrEstado").removeClass("alert-info alert-danger").addClass("alert-success").html('<i class="fa fa-check-circle"></i> ¡Pago confirmado! Completando venta...');
+				$("#qrEstado").removeClass("alert-info alert-danger").addClass("alert-success").html('<i class="fa fa-check-circle"></i> ¡Pago confirmado en Mercado Pago! Payment ID: ' + (respuesta.payment_id || 'N/A'));
 				
-				// Completar la venta automáticamente
+				// Preparar método de pago (NO completar venta automáticamente)
 				setTimeout(function(){
-					completarVentaConQR();
-				}, 1000);
+					completarVentaConQR(respuesta.payment_id);
+				}, 1500);
 			} else if(respuesta.status == 'pending'){
-				$("#qrEstado").removeClass("alert-success alert-danger").addClass("alert-info").html('<i class="fa fa-clock-o"></i> Pago pendiente de confirmación...');
-			} else {
+				$("#qrEstado").removeClass("alert-success alert-danger").addClass("alert-warning").html('<i class="fa fa-clock-o"></i> Pago pendiente de confirmación en Mercado Pago...');
+			} else if(respuesta.status == 'no_payment'){
 				// Aún no hay pago
-				$("#qrEstado").removeClass("alert-success alert-danger").addClass("alert-info").html('<i class="fa fa-clock-o"></i> Esperando pago...');
+				$("#qrEstado").removeClass("alert-success alert-danger").addClass("alert-info").html('<i class="fa fa-clock-o"></i> Esperando pago... Escanea el QR con la app de Mercado Pago');
+			} else {
+				// Otro estado
+				$("#qrEstado").removeClass("alert-success alert-info").addClass("alert-warning").html('<i class="fa fa-info-circle"></i> Estado: ' + (respuesta.mensaje || respuesta.status || 'Desconocido'));
 			}
 		},
 		error: function(xhr, status, error){
@@ -3094,9 +3182,23 @@ function verificarPagoQR(){
 /*=============================================
 COMPLETAR VENTA CON PAGO QR CONFIRMADO
 =============================================*/
-function completarVentaConQR(){
-	// Agregar el método de pago MPQR a la lista
-	$("#listaMetodoPagoCaja").val("MPQR-" + preferenceIdActual);
+function completarVentaConQR(paymentId){
+	// Validar que realmente tengamos un payment_id confirmado
+	if(!paymentId || !preferenceIdActual){
+		swal({
+			title: "Error",
+			text: "No se pudo verificar el pago correctamente. Por favor, verifique manualmente en Mercado Pago.",
+			type: "error",
+			confirmButtonText: "Cerrar"
+		});
+		return;
+	}
+	
+	// Guardar payment_id confirmado globalmente
+	paymentIdConfirmado = paymentId;
+	
+	// Agregar el método de pago MPQR con el payment_id confirmado
+	$("#listaMetodoPagoCaja").val("MPQR-" + preferenceIdActual + "-" + paymentId);
 	listarMetodosCaja();
 	
 	// Cerrar modal
@@ -3105,7 +3207,7 @@ function completarVentaConQR(){
 	// Mostrar mensaje de éxito
 	swal({
 		title: "¡Pago confirmado!",
-		text: "El pago se ha confirmado correctamente. Puede proceder a guardar la venta.",
+		text: "El pago se ha confirmado correctamente en Mercado Pago (Payment ID: " + paymentId + "). Puede proceder a guardar la venta.",
 		type: "success",
 		confirmButtonText: "Aceptar"
 	});
@@ -3126,6 +3228,10 @@ $("#modalPagoQR").on('hidden.bs.modal', function(){
 		clearInterval(intervaloVerificacionQR);
 		intervaloVerificacionQR = null;
 	}
-	preferenceIdActual = null;
-	$("#preferenceIdQR").remove();
+	// No limpiar preferenceIdActual ni paymentIdConfirmado si el pago ya fue confirmado
+	// Solo limpiar si se cierra sin confirmar
+	if(!paymentIdConfirmado){
+		preferenceIdActual = null;
+		$("#preferenceIdQR").remove();
+	}
 });
