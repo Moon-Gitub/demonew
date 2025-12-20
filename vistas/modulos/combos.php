@@ -125,13 +125,30 @@ if(!class_exists('ControladorCombos') || !class_exists('ModeloCombos')){
             }
           } else {
             // Mostrar mensaje si no hay combos o si hay error
-            echo '<tr><td colspan="9" class="text-center">';
+            echo '<tr><td colspan="9" class="text-center" style="padding: 40px;">';
             if(isset($e)){
-              echo '<div class="alert alert-warning">
+              echo '<div class="alert alert-warning" style="text-align: left; max-width: 800px; margin: 0 auto;">
                 <h4><i class="icon fa fa-warning"></i> Tablas de combos no encontradas</h4>
-                <p>Por favor, ejecute el script SQL para crear las tablas necesarias:</p>
-                <p><code>db/crear-tablas-combos.sql</code></p>
-                <p><small>El módulo de combos requiere las tablas <strong>combos</strong> y <strong>combos_productos</strong> en la base de datos.</small></p>
+                <p><strong>El módulo de combos requiere que se ejecute el script SQL para crear las tablas necesarias.</strong></p>
+                <hr>
+                <p><strong>Pasos para instalar:</strong></p>
+                <ol>
+                  <li>Acceda a su herramienta de gestión de base de datos (phpMyAdmin, MySQL Workbench, etc.)</li>
+                  <li>Seleccione la base de datos: <code>newmoon_newmoon_db</code></li>
+                  <li>Ejecute el script SQL ubicado en: <code>db/crear-tablas-combos.sql</code></li>
+                  <li>O ejecute directamente el siguiente comando SQL:</li>
+                </ol>
+                <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                  <pre style="margin: 0; font-size: 12px;">CREATE TABLE IF NOT EXISTS `combos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_producto` int(11) NOT NULL,
+  `codigo` varchar(255) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `codigo` (`codigo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;</pre>
+                </div>
+                <p><small>El script completo está en: <code>db/crear-tablas-combos.sql</code></small></p>
               </div>';
             } else {
               echo '<p class="text-muted">No hay combos registrados. Haga clic en "Agregar Combo" para crear uno nuevo.</p>';
