@@ -421,8 +421,8 @@ class ControladorMercadoPago {
 						"location" => array(
 							"street_number" => "0",
 							"street_name" => "Sin dirección",
-							"city_name" => "Ciudad",
-							"state_name" => "Provincia",
+							"city_name" => "Buenos Aires",
+							"state_name" => "Capital Federal", // Debe ser una provincia válida de Argentina
 							"latitude" => -34.603722, // Buenos Aires por defecto
 							"longitude" => -58.381592
 						)
