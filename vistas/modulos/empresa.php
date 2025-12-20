@@ -572,6 +572,47 @@ input[type="file"]:disabled {
         
       </div>
 
+      <!-- SECCIÓN MERCADO PAGO -->
+      <div class="row">
+        <div class="col-md-12">
+          <hr>
+          <p><b><i class="fa fa-credit-card"></i> Configuración de Mercado Pago</b></p>
+          <p class="help-block">Ingrese las credenciales de Mercado Pago para habilitar el cobro con QR. Estas credenciales se obtienen desde el panel de desarrolladores de Mercado Pago.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <!-- ENTRADA PARA PUBLIC KEY DE MERCADO PAGO-->
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-key"></i></span>
+              <?php
+                $mpPublicKey = isset($arrayEmpresa['mp_public_key']) ? $arrayEmpresa['mp_public_key'] : '';
+                echo '<input type="text" class="form-control" name="empMPPublicKey" id="empMPPublicKey" placeholder="Public Key de Mercado Pago" value="'. htmlspecialchars($mpPublicKey) . '">';
+              ?>
+            </div>
+            <span class="help-block">Clave pública de Mercado Pago (Public Key)</span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <!-- ENTRADA PARA ACCESS TOKEN DE MERCADO PAGO-->
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+              <?php
+                $mpAccessToken = isset($arrayEmpresa['mp_access_token']) ? $arrayEmpresa['mp_access_token'] : '';
+                echo '<input type="password" class="form-control" name="empMPAccessToken" id="empMPAccessToken" placeholder="Access Token de Mercado Pago" value="'. htmlspecialchars($mpAccessToken) . '">';
+              ?>
+              <span class="input-group-addon" style="cursor: pointer;" onclick="toggleMPToken()">
+                <i class="fa fa-eye" id="iconMPToken"></i>
+              </span>
+            </div>
+            <span class="help-block">Token de acceso de Mercado Pago (Access Token) - Se guarda de forma segura</span>
+          </div>
+        </div>
+      </div>
 
       <!-- ENTRADA TIPOS DE COMPROBANTES-->
       <div class="row">
@@ -966,4 +1007,22 @@ input[type="file"]:disabled {
   </form>
 </div>
 </section>
+
+<script>
+// Función para mostrar/ocultar el Access Token de Mercado Pago
+function toggleMPToken() {
+  var input = document.getElementById('empMPAccessToken');
+  var icon = document.getElementById('iconMPToken');
+  
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.classList.remove('fa-eye');
+    icon.classList.add('fa-eye-slash');
+  } else {
+    input.type = 'password';
+    icon.classList.remove('fa-eye-slash');
+    icon.classList.add('fa-eye');
+  }
+}
+</script>
 </div>

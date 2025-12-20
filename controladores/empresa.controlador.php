@@ -106,7 +106,9 @@ class ControladorEmpresa{
 					"login_fondo_form" => isset($_POST["empLoginFondoForm"]) ? $_POST["empLoginFondoForm"] : '',
 					"login_color_boton" => isset($_POST["empLoginColorBoton"]) ? $_POST["empLoginColorBoton"] : '#52658d',
 					"login_fuente" => isset($_POST["empLoginFuente"]) ? $_POST["empLoginFuente"] : 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
-					"login_color_texto_titulo" => isset($_POST["empLoginColorTextoTitulo"]) ? $_POST["empLoginColorTextoTitulo"] : '#ffffff'
+					"login_color_texto_titulo" => isset($_POST["empLoginColorTextoTitulo"]) ? $_POST["empLoginColorTextoTitulo"] : '#ffffff',
+					"mp_public_key" => isset($_POST["empMPPublicKey"]) ? $_POST["empMPPublicKey"] : '',
+					"mp_access_token" => isset($_POST["empMPAccessToken"]) ? $_POST["empMPAccessToken"] : ''
 				);
 
 				$respuesta = ModeloEmpresa::mdlEditarEmpresa($tabla, $datos);

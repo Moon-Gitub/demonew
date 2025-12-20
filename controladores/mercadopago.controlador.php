@@ -7,9 +7,36 @@ class ControladorMercadoPago {
 	=============================================*/
 	static public function ctrObtenerCredenciales() {
 
-		// Leer de .env, sino credenciales fijas
-		$publicKey = isset($_ENV['MP_PUBLIC_KEY']) ? $_ENV['MP_PUBLIC_KEY'] : (isset($_SERVER['MP_PUBLIC_KEY']) ? $_SERVER['MP_PUBLIC_KEY'] : 'APP_USR-33156d44-12df-4039-8c92-1635d8d3edde');
-		$accessToken = isset($_ENV['MP_ACCESS_TOKEN']) ? $_ENV['MP_ACCESS_TOKEN'] : (isset($_SERVER['MP_ACCESS_TOKEN']) ? $_SERVER['MP_ACCESS_TOKEN'] : 'APP_USR-6921807486493458-102300-5f1cec174eb674c42c9782860caf640c-2916747261');
+		// Intentar leer desde la configuración de empresa (BD)
+		$empresa = null;
+		try {
+			if (class_exists('ControladorEmpresa')) {
+				$empresa = ControladorEmpresa::ctrMostrarempresa('id', 1);
+			}
+		} catch (Exception $e) {
+			error_log("Error obteniendo empresa para credenciales MP: " . $e->getMessage());
+		}
+
+		// Si hay credenciales en la BD de empresa, usarlas
+		if ($empresa && isset($empresa['mp_public_key']) && !empty($empresa['mp_public_key']) && 
+		    isset($empresa['mp_access_token']) && !empty($empresa['mp_access_token'])) {
+			return array(
+				'public_key' => $empresa['mp_public_key'],
+				'access_token' => $empresa['mp_access_token']
+			);
+		}
+
+		// Si no hay en BD, intentar leer de .env
+		$publicKey = isset($_ENV['MP_PUBLIC_KEY']) ? $_ENV['MP_PUBLIC_KEY'] : (isset($_SERVER['MP_PUBLIC_KEY']) ? $_SERVER['MP_PUBLIC_KEY'] : null);
+		$accessToken = isset($_ENV['MP_ACCESS_TOKEN']) ? $_ENV['MP_ACCESS_TOKEN'] : (isset($_SERVER['MP_ACCESS_TOKEN']) ? $_SERVER['MP_ACCESS_TOKEN'] : null);
+
+		// Si tampoco hay en .env, usar credenciales por defecto (solo para desarrollo/testing)
+		if (empty($publicKey)) {
+			$publicKey = 'APP_USR-33156d44-12df-4039-8c92-1635d8d3edde';
+		}
+		if (empty($accessToken)) {
+			$accessToken = 'APP_USR-6921807486493458-102300-5f1cec174eb674c42c9782860caf640c-2916747261';
+		}
 
 		return array(
 			'public_key' => $publicKey,

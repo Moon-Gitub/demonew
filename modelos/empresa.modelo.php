@@ -21,7 +21,7 @@ class ModeloEmpresa{
 	=============================================*/
 	static public function mdlEditarEmpresa($tabla, $datos){
 
-		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET razon_social = :razon_social, titular = :titular, cuit = :cuit, domicilio = :domicilio, localidad = :localidad, codigo_postal = :codigo_postal, mail = :mail, telefono = :telefono, ptos_venta = :ptos_venta, pto_venta_defecto = :pto_venta_defecto, condicion_iva = :condicion_iva, condicion_iibb = :condicion_iibb, numero_iibb = :numero_iibb, inicio_actividades = :inicio_actividades, numero_establecimiento = :numero_establecimiento, cbu = :cbu, cbu_alias = :cbu_alias, concepto_defecto = :concepto_defecto, tipos_cbtes = :tipos_cbtes, entorno_facturacion = :entorno_facturacion, ws_padron = :ws_padron, csr = :csr, passphrase = :passphrase, pem = :pem, logo = :logo, login_fondo = :login_fondo, login_logo = :login_logo, login_fondo_form = :login_fondo_form, login_color_boton = :login_color_boton, login_fuente = :login_fuente, login_color_texto_titulo = :login_color_texto_titulo WHERE id = :id");
+		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET razon_social = :razon_social, titular = :titular, cuit = :cuit, domicilio = :domicilio, localidad = :localidad, codigo_postal = :codigo_postal, mail = :mail, telefono = :telefono, ptos_venta = :ptos_venta, pto_venta_defecto = :pto_venta_defecto, condicion_iva = :condicion_iva, condicion_iibb = :condicion_iibb, numero_iibb = :numero_iibb, inicio_actividades = :inicio_actividades, numero_establecimiento = :numero_establecimiento, cbu = :cbu, cbu_alias = :cbu_alias, concepto_defecto = :concepto_defecto, tipos_cbtes = :tipos_cbtes, entorno_facturacion = :entorno_facturacion, ws_padron = :ws_padron, csr = :csr, passphrase = :passphrase, pem = :pem, logo = :logo, login_fondo = :login_fondo, login_logo = :login_logo, login_fondo_form = :login_fondo_form, login_color_boton = :login_color_boton, login_fuente = :login_fuente, login_color_texto_titulo = :login_color_texto_titulo, mp_public_key = :mp_public_key, mp_access_token = :mp_access_token WHERE id = :id");
 
 		$stmt -> bindParam(":razon_social", $datos["razon_social"], PDO::PARAM_STR);
 		$stmt -> bindParam(":titular", $datos["titular"], PDO::PARAM_STR);
@@ -54,6 +54,8 @@ class ModeloEmpresa{
 		$stmt -> bindParam(":login_color_boton", $datos["login_color_boton"], PDO::PARAM_STR);
 		$stmt -> bindParam(":login_fuente", $datos["login_fuente"], PDO::PARAM_STR);
 		$stmt -> bindParam(":login_color_texto_titulo", $datos["login_color_texto_titulo"], PDO::PARAM_STR);
+		$stmt -> bindParam(":mp_public_key", $datos["mp_public_key"], PDO::PARAM_STR);
+		$stmt -> bindParam(":mp_access_token", $datos["mp_access_token"], PDO::PARAM_STR);
 		$stmt -> bindParam(":id", $datos["id"], PDO::PARAM_INT);
 
 		if($stmt->execute()){
