@@ -456,14 +456,59 @@ class ControladorMercadoPago {
 	}
 
 	/*=============================================
-	VERIFICAR PAGO POR EXTERNAL REFERENCE (PARA QR ESTÁTICO)
+	VERIFICAR PAGO POR POS ID Y MONTO (PARA QR ESTÁTICO - MODELO ATENDIDO)
+	En el modelo atendido, el cliente escanea el QR estático e ingresa el monto manualmente.
+	Mercado Pago NO incluye external_reference automáticamente, así que buscamos por:
+	- POS ID (point_of_interaction.transaction_data.qr_code)
+	- Monto (transaction_amount)
+	- Rango de tiempo (últimos 5 minutos)
 	=============================================*/
 	static public function ctrVerificarPagoPorExternalReference($externalReference) {
 		try {
 			$credenciales = self::ctrObtenerCredenciales();
 			
-			// Buscar pagos por external_reference
-			$url = "https://api.mercadopago.com/v1/payments/search?external_reference=" . urlencode($externalReference) . "&sort=date_created&criteria=desc&limit=10";
+			// Extraer información del external_reference
+			// Formato: venta_pos_TIMESTAMP_MONTO
+			$partes = explode('_', $externalReference);
+			$montoEsperado = 0;
+			$timestampInicio = 0;
+			
+			if (count($partes) >= 4 && $partes[0] === 'venta' && $partes[1] === 'pos') {
+				$timestampInicio = isset($partes[2]) ? intval($partes[2]) : 0;
+				$montoEsperado = isset($partes[3]) ? floatval(str_replace('_', '.', $partes[3])) : 0;
+			}
+			
+			// Obtener POS ID desde la empresa
+			$posId = null;
+			try {
+				if (class_exists('ControladorEmpresa')) {
+					$empresa = ControladorEmpresa::ctrMostrarempresa('id', 1);
+					if ($empresa && isset($empresa['mp_pos_id']) && !empty($empresa['mp_pos_id'])) {
+						$posId = $empresa['mp_pos_id'];
+					}
+				}
+			} catch (Exception $e) {
+				error_log("Error obteniendo POS ID: " . $e->getMessage());
+			}
+			
+			// Buscar pagos recientes (últimos 5 minutos) por monto
+			// En el modelo atendido, buscamos pagos que coincidan con el monto y tiempo
+			$fechaDesde = date('Y-m-d\TH:i:s.000\Z', $timestampInicio - 300); // 5 minutos antes
+			$fechaHasta = date('Y-m-d\TH:i:s.000\Z', time() + 60); // 1 minuto después (margen)
+			
+			// Construir URL de búsqueda
+			// Buscar por rango de fecha y monto aproximado
+			$url = "https://api.mercadopago.com/v1/payments/search";
+			$params = array(
+				'sort' => 'date_created',
+				'criteria' => 'desc',
+				'limit' => 50, // Buscar más pagos para encontrar el correcto
+				'range' => 'date_created',
+				'begin_date' => $fechaDesde,
+				'end_date' => $fechaHasta
+			);
+			
+			$url .= '?' . http_build_query($params);
 			
 			$ch = curl_init($url);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -477,7 +522,7 @@ class ControladorMercadoPago {
 			curl_close($ch);
 			
 			if ($httpCode != 200) {
-				error_log("Error consultando pagos por external_reference $externalReference: HTTP $httpCode - $response");
+				error_log("Error consultando pagos: HTTP $httpCode - $response");
 				return array(
 					'error' => true,
 					'mensaje' => 'Error al consultar estado del pago'
@@ -495,24 +540,50 @@ class ControladorMercadoPago {
 				);
 			}
 			
-			// Buscar pago aprobado
+			// Buscar pago que coincida con:
+			// 1. Monto (con tolerancia de 0.01 para redondeos)
+			// 2. POS ID si está disponible (point_of_interaction)
+			// 3. Estado aprobado
+			$toleranciaMonto = 0.01;
 			foreach ($data['results'] as $payment) {
-				if (isset($payment['status']) && $payment['status'] === 'approved') {
-					error_log("Pago aprobado encontrado para external_reference $externalReference: Payment ID " . $payment['id']);
+				$montoPago = isset($payment['transaction_amount']) ? floatval($payment['transaction_amount']) : 0;
+				$paymentPosId = null;
+				
+				// Intentar obtener POS ID del pago
+				if (isset($payment['point_of_interaction']) && 
+				    isset($payment['point_of_interaction']['transaction_data']) &&
+				    isset($payment['point_of_interaction']['transaction_data']['qr_code'])) {
+					// El POS ID puede estar en el QR code o en metadata
+					$paymentPosId = isset($payment['point_of_interaction']['transaction_data']['qr_code']) 
+						? $payment['point_of_interaction']['transaction_data']['qr_code'] 
+						: null;
+				}
+				
+				// Verificar si coincide el monto (con tolerancia)
+				$montoCoincide = abs($montoPago - $montoEsperado) <= $toleranciaMonto;
+				
+				// Si tenemos POS ID, verificar que coincida
+				$posCoincide = true;
+				if ($posId && $paymentPosId) {
+					// El POS ID puede estar en diferentes formatos, comparar si es posible
+					$posCoincide = (strpos($paymentPosId, $posId) !== false || $posId === $paymentPosId);
+				}
+				
+				// Si el monto coincide y el estado es aprobado
+				if ($montoCoincide && isset($payment['status']) && $payment['status'] === 'approved') {
+					error_log("Pago aprobado encontrado: Payment ID " . $payment['id'] . ", Monto: $montoPago, Esperado: $montoEsperado");
 					return array(
 						'error' => false,
 						'aprobado' => true,
 						'payment_id' => $payment['id'],
 						'status' => $payment['status'],
-						'transaction_amount' => isset($payment['transaction_amount']) ? $payment['transaction_amount'] : 0,
+						'transaction_amount' => $montoPago,
 						'date_approved' => isset($payment['date_approved']) ? $payment['date_approved'] : null
 					);
 				}
-			}
-			
-			// Buscar pago pendiente
-			foreach ($data['results'] as $payment) {
-				if (isset($payment['status']) && $payment['status'] === 'pending') {
+				
+				// Si el monto coincide y está pendiente
+				if ($montoCoincide && isset($payment['status']) && $payment['status'] === 'pending') {
 					return array(
 						'error' => false,
 						'aprobado' => false,
@@ -523,13 +594,12 @@ class ControladorMercadoPago {
 				}
 			}
 			
-			// Hay pagos pero no están aprobados ni pendientes
-			$ultimoPago = $data['results'][0];
+			// No se encontró pago que coincida
 			return array(
 				'error' => false,
 				'aprobado' => false,
-				'status' => isset($ultimoPago['status']) ? $ultimoPago['status'] : 'unknown',
-				'mensaje' => 'Pago con estado: ' . (isset($ultimoPago['status']) ? $ultimoPago['status'] : 'desconocido')
+				'status' => 'no_payment',
+				'mensaje' => 'Aún no se ha realizado el pago con el monto esperado'
 			);
 
 		} catch (Exception $e) {
