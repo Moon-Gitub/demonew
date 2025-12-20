@@ -395,7 +395,7 @@ class ControladorMercadoPago {
 			$ch = curl_init($url);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($ch, CURLOPT_POST, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($posData));
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 				'Authorization: Bearer ' . $credenciales['access_token'],
 				'Content-Type: application/json'
