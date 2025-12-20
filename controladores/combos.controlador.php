@@ -1,7 +1,12 @@
 <?php
 
-require_once "../modelos/combos.modelo.php";
-require_once "../modelos/productos.modelo.php";
+// Los modelos se cargan en index.php, solo verificamos que existan
+if(!class_exists('ModeloCombos')){
+	// Intentar cargar si no está cargado
+	if(file_exists(__DIR__ . "/../modelos/combos.modelo.php")){
+		require_once __DIR__ . "/../modelos/combos.modelo.php";
+	}
+}
 
 class ControladorCombos{
 
