@@ -47,3 +47,29 @@ if(isset($_GET["verificarPago"]) || isset($_POST["verificarPago"])){
 	echo json_encode($respuesta);
 	exit;
 }
+
+/*=============================================
+OBTENER O CREAR POS ESTÁTICO (QR ESTÁTICO)
+=============================================*/
+if(isset($_GET["obtenerQREstatico"]) || isset($_POST["obtenerQREstatico"])){
+	$respuesta = ControladorMercadoPago::ctrObtenerOcrearPOSEstatico();
+	echo json_encode($respuesta);
+	exit;
+}
+
+/*=============================================
+VERIFICAR PAGO POR EXTERNAL REFERENCE (QR ESTÁTICO)
+=============================================*/
+if(isset($_GET["verificarPagoPorReference"]) || isset($_POST["verificarPagoPorReference"])){
+	$externalReference = isset($_GET["external_reference"]) ? $_GET["external_reference"] : (isset($_POST["external_reference"]) ? $_POST["external_reference"] : null);
+
+	if(!$externalReference){
+		http_response_code(400);
+		echo json_encode(array("error" => true, "mensaje" => "External Reference requerido"));
+		exit;
+	}
+
+	$respuesta = ControladorMercadoPago::ctrVerificarPagoPorExternalReference($externalReference);
+	echo json_encode($respuesta);
+	exit;
+}

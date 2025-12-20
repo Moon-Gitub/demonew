@@ -379,4 +379,198 @@ class ControladorMercadoPago {
 			);
 		}
 	}
+
+	/*=============================================
+	OBTENER O CREAR POS ESTÁTICO (QR ESTÁTICO)
+	=============================================*/
+	static public function ctrObtenerOcrearPOSEstatico() {
+		try {
+			$credenciales = self::ctrObtenerCredenciales();
+			
+			// Primero intentar obtener POS existente desde la BD de empresa
+			$empresa = null;
+			try {
+				if (class_exists('ControladorEmpresa')) {
+					$empresa = ControladorEmpresa::ctrMostrarempresa('id', 1);
+					if ($empresa && isset($empresa['mp_pos_id']) && !empty($empresa['mp_pos_id'])) {
+						// Ya existe un POS, obtenerlo de Mercado Pago
+						$posId = $empresa['mp_pos_id'];
+						$url = "https://api.mercadopago.com/pos/$posId";
+						
+						$ch = curl_init($url);
+						curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+						curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+							'Authorization: Bearer ' . $credenciales['access_token'],
+							'Content-Type: application/json'
+						));
+						
+						$response = curl_exec($ch);
+						$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+						curl_close($ch);
+						
+						if ($httpCode == 200) {
+							$pos = json_decode($response, true);
+							return array(
+								'error' => false,
+								'pos_id' => $pos['id'],
+								'qr_code' => $pos['qr']['image'],
+								'qr_data' => $pos['qr']['data'],
+								'name' => $pos['name']
+							);
+						}
+					}
+				}
+			} catch (Exception $e) {
+				error_log("Error obteniendo POS desde BD: " . $e->getMessage());
+			}
+			
+			// Si no existe, crear uno nuevo
+			$url = "https://api.mercadopago.com/pos";
+			
+			$data = array(
+				"name" => "POS Estático - " . date('Y-m-d H:i:s'),
+				"fixed_amount" => false, // Permite monto dinámico
+				"category" => 621300,
+				"store_id" => null,
+				"external_id" => "pos_estatico_" . time()
+			);
+			
+			$ch = curl_init($url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_POST, true);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				'Authorization: Bearer ' . $credenciales['access_token'],
+				'Content-Type: application/json'
+			));
+			
+			$response = curl_exec($ch);
+			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			curl_close($ch);
+			
+			if ($httpCode == 201 || $httpCode == 200) {
+				$pos = json_decode($response, true);
+				
+				// Guardar POS ID en empresa
+				try {
+					if (class_exists('ModeloEmpresa')) {
+						require_once __DIR__ . '/../modelos/empresa.modelo.php';
+						$stmt = \Conexion::conectar()->prepare("UPDATE empresa SET mp_pos_id = :pos_id WHERE id = 1");
+						$stmt->bindParam(":pos_id", $pos['id'], \PDO::PARAM_STR);
+						$stmt->execute();
+						$stmt = null;
+					}
+				} catch (Exception $e) {
+					error_log("Error guardando POS ID en empresa: " . $e->getMessage());
+				}
+				
+				return array(
+					'error' => false,
+					'pos_id' => $pos['id'],
+					'qr_code' => isset($pos['qr']['image']) ? $pos['qr']['image'] : null,
+					'qr_data' => isset($pos['qr']['data']) ? $pos['qr']['data'] : null,
+					'name' => $pos['name']
+				);
+			} else {
+				error_log("Error creando POS: HTTP $httpCode - $response");
+				return array(
+					'error' => true,
+					'mensaje' => 'Error al crear POS estático: ' . $response
+				);
+			}
+			
+		} catch (Exception $e) {
+			error_log("Error obteniendo/creando POS estático: " . $e->getMessage());
+			return array(
+				'error' => true,
+				'mensaje' => $e->getMessage()
+			);
+		}
+	}
+
+	/*=============================================
+	VERIFICAR PAGO POR EXTERNAL REFERENCE (PARA QR ESTÁTICO)
+	=============================================*/
+	static public function ctrVerificarPagoPorExternalReference($externalReference) {
+		try {
+			$credenciales = self::ctrObtenerCredenciales();
+			
+			// Buscar pagos por external_reference
+			$url = "https://api.mercadopago.com/v1/payments/search?external_reference=" . urlencode($externalReference) . "&sort=date_created&criteria=desc&limit=10";
+			
+			$ch = curl_init($url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				'Authorization: Bearer ' . $credenciales['access_token'],
+				'Content-Type: application/json'
+			));
+			
+			$response = curl_exec($ch);
+			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			curl_close($ch);
+			
+			if ($httpCode != 200) {
+				error_log("Error consultando pagos por external_reference $externalReference: HTTP $httpCode - $response");
+				return array(
+					'error' => true,
+					'mensaje' => 'Error al consultar estado del pago'
+				);
+			}
+			
+			$data = json_decode($response, true);
+			
+			if (!isset($data['results']) || !is_array($data['results']) || count($data['results']) == 0) {
+				return array(
+					'error' => false,
+					'aprobado' => false,
+					'status' => 'no_payment',
+					'mensaje' => 'Aún no se ha realizado el pago'
+				);
+			}
+			
+			// Buscar pago aprobado
+			foreach ($data['results'] as $payment) {
+				if (isset($payment['status']) && $payment['status'] === 'approved') {
+					error_log("Pago aprobado encontrado para external_reference $externalReference: Payment ID " . $payment['id']);
+					return array(
+						'error' => false,
+						'aprobado' => true,
+						'payment_id' => $payment['id'],
+						'status' => $payment['status'],
+						'transaction_amount' => isset($payment['transaction_amount']) ? $payment['transaction_amount'] : 0,
+						'date_approved' => isset($payment['date_approved']) ? $payment['date_approved'] : null
+					);
+				}
+			}
+			
+			// Buscar pago pendiente
+			foreach ($data['results'] as $payment) {
+				if (isset($payment['status']) && $payment['status'] === 'pending') {
+					return array(
+						'error' => false,
+						'aprobado' => false,
+						'status' => 'pending',
+						'mensaje' => 'Pago pendiente de confirmación',
+						'payment_id' => $payment['id']
+					);
+				}
+			}
+			
+			// Hay pagos pero no están aprobados ni pendientes
+			$ultimoPago = $data['results'][0];
+			return array(
+				'error' => false,
+				'aprobado' => false,
+				'status' => isset($ultimoPago['status']) ? $ultimoPago['status'] : 'unknown',
+				'mensaje' => 'Pago con estado: ' . (isset($ultimoPago['status']) ? $ultimoPago['status'] : 'desconocido')
+			);
+
+		} catch (Exception $e) {
+			error_log("Error verificando pago por external_reference: " . $e->getMessage());
+			return array(
+				'error' => true,
+				'mensaje' => $e->getMessage()
+			);
+		}
+	}
 }

@@ -108,7 +108,8 @@ class ControladorEmpresa{
 					"login_fuente" => isset($_POST["empLoginFuente"]) ? $_POST["empLoginFuente"] : 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
 					"login_color_texto_titulo" => isset($_POST["empLoginColorTextoTitulo"]) ? $_POST["empLoginColorTextoTitulo"] : '#ffffff',
 					"mp_public_key" => isset($_POST["empMPPublicKey"]) ? $_POST["empMPPublicKey"] : '',
-					"mp_access_token" => isset($_POST["empMPAccessToken"]) ? $_POST["empMPAccessToken"] : ''
+					"mp_access_token" => isset($_POST["empMPAccessToken"]) ? $_POST["empMPAccessToken"] : '',
+					"mp_pos_id" => isset($_POST["empMPPosId"]) ? $_POST["empMPPosId"] : null
 				);
 
 				$respuesta = ModeloEmpresa::mdlEditarEmpresa($tabla, $datos);

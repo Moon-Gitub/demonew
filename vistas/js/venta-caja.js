@@ -834,12 +834,11 @@ function listarMetodosCaja(){
 	    	$("#listaMetodoPagoCaja").val("MP-"+$("#nuevoCodigoTransaccionCaja").val());
 	    break;
 	    case "MPQR":
-	    	var preferenceId = $("#preferenceIdQR").val() || "";
-	    	// Si hay payment_id confirmado, incluirlo
-	    	if(paymentIdConfirmado){
-	    		$("#listaMetodoPagoCaja").val("MPQR-"+preferenceId+"-"+paymentIdConfirmado);
-	    	} else {
-	    		$("#listaMetodoPagoCaja").val("MPQR-"+preferenceId);
+	    	// Para QR estático, usar external_reference
+	    	if(externalReferenceActual && paymentIdConfirmado){
+	    		$("#listaMetodoPagoCaja").val("MPQR-"+externalReferenceActual+"-"+paymentIdConfirmado);
+	    	} else if(externalReferenceActual){
+	    		$("#listaMetodoPagoCaja").val("MPQR-"+externalReferenceActual);
 	    	}
 	    break;
 	 	case "TD":
@@ -1808,10 +1807,10 @@ $("#btnCobrarMedioPagoCaja").click(function(e){
 			return;
 		}
 		
-		// Verificar una última vez antes de guardar
-		var preferenceId = partes[1];
-		if(preferenceId && preferenceId !== preferenceIdActual){
-			// El preference_id no coincide, verificar
+		// Verificar una última vez antes de guardar (usando external_reference para QR estático)
+		var externalRef = partes[1];
+		if(externalRef && externalRef !== externalReferenceActual){
+			// El external_reference no coincide, verificar
 			swal({
 				title: "Verificando pago...",
 				text: "Verificando estado del pago en Mercado Pago antes de guardar la venta.",
@@ -1825,8 +1824,8 @@ $("#btnCobrarMedioPagoCaja").click(function(e){
 				url: "ajax/mercadopago.ajax.php",
 				method: "GET",
 				data: {
-					verificarPago: "1",
-					preference_id: preferenceId
+					verificarPagoPorReference: "1",
+					external_reference: externalRef
 				},
 				dataType: "json",
 				success: function(respuesta){
@@ -3017,11 +3016,12 @@ PAGO CON QR MERCADO PAGO
 
 // Variable global para el intervalo de verificación
 var intervaloVerificacionQR = null;
-var preferenceIdActual = null;
+var externalReferenceActual = null; // External reference para QR estático
 var paymentIdConfirmado = null; // Payment ID confirmado en Mercado Pago
+var qrEstaticoCache = null; // Cache del QR estático
 
 /*=============================================
-CREAR PREFERENCIA DE PAGO Y MOSTRAR QR
+OBTENER QR ESTÁTICO Y MOSTRAR CON MONTO
 =============================================*/
 function crearPreferenciaPagoQR(){
 	var monto = parseFloat($("#nuevoTotalVentaCaja").val()) || 0;
@@ -3044,61 +3044,40 @@ function crearPreferenciaPagoQR(){
 	$("#qrEstado").hide();
 	$("#btnVerificarPagoQR").hide();
 	
+	// Generar external_reference único para esta venta
+	externalReferenceActual = "venta_pos_" + Date.now() + "_" + monto.toFixed(2).replace('.', '_');
+	
+	// Si ya tenemos el QR estático en cache, usarlo directamente
+	if(qrEstaticoCache && qrEstaticoCache.qr_code){
+		mostrarQREstatico(monto, qrEstaticoCache);
+		return;
+	}
+	
 	// Obtener token CSRF
 	var token = $('meta[name="csrf-token"]').attr('content') || '';
 	
-	// Crear preferencia de pago
-	var datos = new FormData();
-	datos.append("crearPreferenciaVenta", "1");
-	datos.append("monto", monto);
-	datos.append("descripcion", "Venta POS - " + new Date().toLocaleString('es-AR'));
-	datos.append("external_reference", "venta_" + Date.now());
-	datos.append("csrf_token", token);
-	
+	// Obtener o crear POS estático
 	$.ajax({
 		url: "ajax/mercadopago.ajax.php",
-		method: "POST",
-		headers: {
-			'X-CSRF-TOKEN': token
+		method: "GET",
+		data: {
+			obtenerQREstatico: "1"
 		},
-		data: datos,
-		cache: false,
-		contentType: false,
-		processData: false,
 		dataType: "json",
 		success: function(respuesta){
 			$("#qrLoading").hide();
 			
 			if(respuesta.error){
 				$("#qrError").show();
-				$("#qrErrorMensaje").text(respuesta.mensaje || "Error al generar código QR");
+				$("#qrErrorMensaje").text(respuesta.mensaje || "Error al obtener código QR estático");
 				return;
 			}
 			
-			// Guardar preference_id
-			preferenceIdActual = respuesta.preference_id;
-			$("#preferenceIdQR").remove();
-			$("body").append('<input type="hidden" id="preferenceIdQR" value="' + preferenceIdActual + '">');
+			// Guardar en cache
+			qrEstaticoCache = respuesta;
 			
-			// Mostrar QR
-			$("#qrMonto").text(monto.toFixed(2));
-			var qrUrl = respuesta.qr_code || respuesta.init_point || respuesta.sandbox_init_point;
-			
-			if(qrUrl){
-				// Generar QR usando el servicio
-				var qrImageUrl = "generar-qr.php?url=" + encodeURIComponent(qrUrl);
-				$("#qrCodeImage").attr("src", qrImageUrl);
-				$("#qrContent").show();
-				$("#qrMensaje").html('<i class="fa fa-info-circle"></i> Escanea el código QR con la app de Mercado Pago para pagar $' + monto.toFixed(2));
-				$("#qrEstado").removeClass("alert-danger alert-success").addClass("alert-info").html('<i class="fa fa-clock-o"></i> Esperando pago...').show();
-				$("#btnVerificarPagoQR").show();
-				
-				// Iniciar verificación periódica
-				iniciarVerificacionPagoQR();
-			} else {
-				$("#qrError").show();
-				$("#qrErrorMensaje").text("No se pudo generar el código QR");
-			}
+			// Mostrar QR estático
+			mostrarQREstatico(monto, respuesta);
 		},
 		error: function(xhr, status, error){
 			$("#qrLoading").hide();
@@ -3107,6 +3086,36 @@ function crearPreferenciaPagoQR(){
 			console.error("Error:", error);
 		}
 	});
+}
+
+/*=============================================
+MOSTRAR QR ESTÁTICO CON MONTO
+=============================================*/
+function mostrarQREstatico(monto, datosQR){
+	// Mostrar monto
+	$("#qrMonto").text(monto.toFixed(2));
+	
+	// Mostrar QR estático (siempre el mismo)
+	if(datosQR.qr_code){
+		// Si viene como URL de imagen directa
+		$("#qrCodeImage").attr("src", datosQR.qr_code);
+	} else if(datosQR.qr_data){
+		// Si viene como data, generar QR
+		var qrImageUrl = "generar-qr.php?url=" + encodeURIComponent(datosQR.qr_data);
+		$("#qrCodeImage").attr("src", qrImageUrl);
+	} else {
+		$("#qrError").show();
+		$("#qrErrorMensaje").text("No se pudo obtener el código QR estático");
+		return;
+	}
+	
+	$("#qrContent").show();
+	$("#qrMensaje").html('<i class="fa fa-info-circle"></i> Escanea el código QR con la app de Mercado Pago e ingresa el monto: <strong>$' + monto.toFixed(2) + '</strong>');
+	$("#qrEstado").removeClass("alert-danger alert-success").addClass("alert-info").html('<i class="fa fa-clock-o"></i> Esperando pago de $' + monto.toFixed(2) + '...').show();
+	$("#btnVerificarPagoQR").show();
+	
+	// Iniciar verificación periódica por external_reference
+	iniciarVerificacionPagoQR();
 }
 
 /*=============================================
@@ -3183,7 +3192,7 @@ COMPLETAR VENTA CON PAGO QR CONFIRMADO
 =============================================*/
 function completarVentaConQR(paymentId){
 	// Validar que realmente tengamos un payment_id confirmado
-	if(!paymentId || !preferenceIdActual){
+	if(!paymentId || !externalReferenceActual){
 		swal({
 			title: "Error",
 			text: "No se pudo verificar el pago correctamente. Por favor, verifique manualmente en Mercado Pago.",
@@ -3196,8 +3205,8 @@ function completarVentaConQR(paymentId){
 	// Guardar payment_id confirmado globalmente
 	paymentIdConfirmado = paymentId;
 	
-	// Agregar el método de pago MPQR con el payment_id confirmado
-	$("#listaMetodoPagoCaja").val("MPQR-" + preferenceIdActual + "-" + paymentId);
+	// Agregar el método de pago MPQR con el external_reference y payment_id confirmado
+	$("#listaMetodoPagoCaja").val("MPQR-" + externalReferenceActual + "-" + paymentId);
 	listarMetodosCaja();
 	
 	// Cerrar modal
@@ -3227,10 +3236,9 @@ $("#modalPagoQR").on('hidden.bs.modal', function(){
 		clearInterval(intervaloVerificacionQR);
 		intervaloVerificacionQR = null;
 	}
-	// No limpiar preferenceIdActual ni paymentIdConfirmado si el pago ya fue confirmado
+	// No limpiar externalReferenceActual ni paymentIdConfirmado si el pago ya fue confirmado
 	// Solo limpiar si se cierra sin confirmar
 	if(!paymentIdConfirmado){
-		preferenceIdActual = null;
-		$("#preferenceIdQR").remove();
+		externalReferenceActual = null;
 	}
 });
