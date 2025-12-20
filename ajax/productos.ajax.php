@@ -52,7 +52,50 @@ class AjaxProductos{
     $valor = $this->codigoProducto;
     $orden = "id";
 
+    // Primero buscar en productos normales
     $respuesta = ControladorProductos::ctrMostrarProductos($item, $valor, $orden);
+
+    // Si no se encuentra, buscar en combos
+    if(!$respuesta || (is_array($respuesta) && empty($respuesta))){
+      // Cargar controlador de combos si existe
+      if(file_exists(dirname(__DIR__) . "/controladores/combos.controlador.php")){
+        require_once dirname(__DIR__) . "/controladores/combos.controlador.php";
+        
+        // Buscar combo por código
+        $combo = ControladorCombos::ctrMostrarCombos("codigo", $valor);
+        
+        if($combo && is_array($combo) && !empty($combo)){
+          // Obtener el producto base del combo
+          $productoBase = ControladorProductos::ctrMostrarProductos("id", $combo["id_producto"], "id");
+          
+          if($productoBase && is_array($productoBase) && !empty($productoBase)){
+            // Si es un array de productos, tomar el primero
+            if(isset($productoBase[0])){
+              $productoBase = $productoBase[0];
+            }
+            
+            // Formatear respuesta como producto pero con flag de combo
+            $respuesta = array(
+              "id" => $combo["id_producto"],
+              "codigo" => $combo["codigo"],
+              "descripcion" => $combo["nombre"],
+              "precio_venta" => $combo["precio_venta"],
+              "precio_venta_mayorista" => $combo["precio_venta_mayorista"],
+              "tipo_iva" => $combo["tipo_iva"],
+              "imagen" => $combo["imagen"] ? $combo["imagen"] : ($productoBase["imagen"] ?? ""),
+              "id_categoria" => $productoBase["id_categoria"] ?? null,
+              "id_proveedor" => $productoBase["id_proveedor"] ?? null,
+              "stock" => $productoBase["stock"] ?? 0,
+              "stock_1" => $productoBase["stock_1"] ?? 0,
+              "stock_2" => $productoBase["stock_2"] ?? 0,
+              "stock_3" => $productoBase["stock_3"] ?? 0,
+              "es_combo" => true, // Flag para indicar que es combo
+              "id_combo" => $combo["id"] // ID del combo para referencia
+            );
+          }
+        }
+      }
+    }
 
     echo json_encode($respuesta);
 
