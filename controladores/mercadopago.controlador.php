@@ -269,12 +269,24 @@ class ControladorMercadoPago {
 			]);
 
 			if ($preference && isset($preference->id)) {
+				// Obtener QR code de la respuesta (puede estar en diferentes lugares según la versión del SDK)
+				$qrCode = null;
+				if (isset($preference->qr_code)) {
+					$qrCode = $preference->qr_code;
+				} elseif (isset($preference->qr_code_base64)) {
+					$qrCode = $preference->qr_code_base64;
+				} elseif (isset($preference->point_of_interaction) && isset($preference->point_of_interaction->transaction_data)) {
+					$qrCode = isset($preference->point_of_interaction->transaction_data->qr_code) 
+						? $preference->point_of_interaction->transaction_data->qr_code 
+						: null;
+				}
+				
 				return array(
 					'error' => false,
 					'preference_id' => $preference->id,
-					'qr_code' => $preference->qr_code ?: null,
-					'init_point' => $preference->init_point ?: null,
-					'sandbox_init_point' => $preference->sandbox_init_point ?: null
+					'qr_code' => $qrCode,
+					'init_point' => isset($preference->init_point) ? $preference->init_point : null,
+					'sandbox_init_point' => isset($preference->sandbox_init_point) ? $preference->sandbox_init_point : null
 				);
 			} else {
 				return array(
@@ -293,91 +305,17 @@ class ControladorMercadoPago {
 	}
 
 	/*=============================================
-	VERIFICAR ESTADO DE PAGO POR PREFERENCE_ID
+	VERIFICAR ESTADO DE PAGO POR PREFERENCE_ID (DEPRECADO - Usar external_reference)
+	NOTA: Este método se mantiene por compatibilidad pero ya no se usa para QR estático
 	=============================================*/
 	static public function ctrVerificarEstadoPago($preferenceId) {
-		try {
-			$credenciales = self::ctrObtenerCredenciales();
-			
-			// Usar API REST directamente para buscar pagos por preference_id
-			$url = "https://api.mercadopago.com/v1/payments/search?preference_id=" . urlencode($preferenceId) . "&sort=date_created&criteria=desc&limit=10";
-			
-			$ch = curl_init($url);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-				'Authorization: Bearer ' . $credenciales['access_token'],
-				'Content-Type: application/json'
-			));
-			
-			$response = curl_exec($ch);
-			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			curl_close($ch);
-			
-			if ($httpCode != 200) {
-				error_log("Error consultando pagos de preferencia $preferenceId: HTTP $httpCode - $response");
-				return array(
-					'error' => true,
-					'mensaje' => 'Error al consultar estado del pago'
-				);
-			}
-			
-			$data = json_decode($response, true);
-			
-			if (!isset($data['results']) || !is_array($data['results']) || count($data['results']) == 0) {
-				// No hay pagos aún
-				return array(
-					'error' => false,
-					'aprobado' => false,
-					'status' => 'no_payment',
-					'mensaje' => 'Aún no se ha realizado el pago'
-				);
-			}
-			
-			// Buscar pago aprobado
-			foreach ($data['results'] as $payment) {
-				if (isset($payment['status']) && $payment['status'] === 'approved') {
-					// Pago aprobado encontrado
-					error_log("Pago aprobado encontrado para preference $preferenceId: Payment ID " . $payment['id']);
-					return array(
-						'error' => false,
-						'aprobado' => true,
-						'payment_id' => $payment['id'],
-						'status' => $payment['status'],
-						'transaction_amount' => isset($payment['transaction_amount']) ? $payment['transaction_amount'] : 0,
-						'date_approved' => isset($payment['date_approved']) ? $payment['date_approved'] : null
-					);
-				}
-			}
-			
-			// Buscar pago pendiente
-			foreach ($data['results'] as $payment) {
-				if (isset($payment['status']) && $payment['status'] === 'pending') {
-					return array(
-						'error' => false,
-						'aprobado' => false,
-						'status' => 'pending',
-						'mensaje' => 'Pago pendiente de confirmación',
-						'payment_id' => $payment['id']
-					);
-				}
-			}
-			
-			// Hay pagos pero no están aprobados ni pendientes
-			$ultimoPago = $data['results'][0];
-			return array(
-				'error' => false,
-				'aprobado' => false,
-				'status' => isset($ultimoPago['status']) ? $ultimoPago['status'] : 'unknown',
-				'mensaje' => 'Pago con estado: ' . (isset($ultimoPago['status']) ? $ultimoPago['status'] : 'desconocido')
-			);
-
-		} catch (Exception $e) {
-			error_log("Error verificando estado de pago: " . $e->getMessage());
-			return array(
-				'error' => true,
-				'mensaje' => $e->getMessage()
-			);
-		}
+		// La API de Mercado Pago no permite buscar por preference_id directamente
+		// Este método está deprecado. Usar ctrVerificarPagoPorExternalReference en su lugar
+		error_log("ADVERTENCIA: ctrVerificarEstadoPago con preference_id está deprecado. Usar external_reference.");
+		return array(
+			'error' => true,
+			'mensaje' => 'Método deprecado. Use verificación por external_reference para QR estático.'
+		);
 	}
 
 	/*=============================================
@@ -410,13 +348,29 @@ class ControladorMercadoPago {
 						
 						if ($httpCode == 200) {
 							$pos = json_decode($response, true);
+							// El QR puede estar en diferentes formatos según la API
+							$qrImage = null;
+							$qrData = null;
+							
+							if (isset($pos['qr']['image'])) {
+								$qrImage = $pos['qr']['image'];
+							}
+							if (isset($pos['qr']['data'])) {
+								$qrData = $pos['qr']['data'];
+							} elseif (isset($pos['qr']['qr_code_base64'])) {
+								$qrData = $pos['qr']['qr_code_base64'];
+							}
+							
 							return array(
 								'error' => false,
 								'pos_id' => $pos['id'],
-								'qr_code' => $pos['qr']['image'],
-								'qr_data' => $pos['qr']['data'],
-								'name' => $pos['name']
+								'qr_code' => $qrImage,
+								'qr_data' => $qrData,
+								'name' => isset($pos['name']) ? $pos['name'] : 'POS Estático'
 							);
+						} else {
+							error_log("Error obteniendo POS $posId: HTTP $httpCode - $response");
+							// Si el POS no existe o hay error, crear uno nuevo
 						}
 					}
 				}
@@ -451,6 +405,19 @@ class ControladorMercadoPago {
 			if ($httpCode == 201 || $httpCode == 200) {
 				$pos = json_decode($response, true);
 				
+				// El QR puede estar en diferentes formatos según la API
+				$qrImage = null;
+				$qrData = null;
+				
+				if (isset($pos['qr']['image'])) {
+					$qrImage = $pos['qr']['image'];
+				}
+				if (isset($pos['qr']['data'])) {
+					$qrData = $pos['qr']['data'];
+				} elseif (isset($pos['qr']['qr_code_base64'])) {
+					$qrData = $pos['qr']['qr_code_base64'];
+				}
+				
 				// Guardar POS ID en empresa
 				try {
 					if (class_exists('ModeloEmpresa')) {
@@ -467,9 +434,9 @@ class ControladorMercadoPago {
 				return array(
 					'error' => false,
 					'pos_id' => $pos['id'],
-					'qr_code' => isset($pos['qr']['image']) ? $pos['qr']['image'] : null,
-					'qr_data' => isset($pos['qr']['data']) ? $pos['qr']['data'] : null,
-					'name' => $pos['name']
+					'qr_code' => $qrImage,
+					'qr_data' => $qrData,
+					'name' => isset($pos['name']) ? $pos['name'] : 'POS Estático'
 				);
 			} else {
 				error_log("Error creando POS: HTTP $httpCode - $response");

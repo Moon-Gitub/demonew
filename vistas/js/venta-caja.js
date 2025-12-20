@@ -3097,15 +3097,22 @@ function mostrarQREstatico(monto, datosQR){
 	
 	// Mostrar QR estático (siempre el mismo)
 	if(datosQR.qr_code){
-		// Si viene como URL de imagen directa
+		// Si viene como URL de imagen directa de Mercado Pago
 		$("#qrCodeImage").attr("src", datosQR.qr_code);
 	} else if(datosQR.qr_data){
-		// Si viene como data, generar QR
-		var qrImageUrl = "generar-qr.php?url=" + encodeURIComponent(datosQR.qr_data);
-		$("#qrCodeImage").attr("src", qrImageUrl);
+		// Si viene como data (texto del QR), generar imagen del QR
+		// El qr_data puede ser una URL o el código QR en texto
+		if(datosQR.qr_data.indexOf('http') === 0 || datosQR.qr_data.indexOf('https') === 0){
+			// Es una URL
+			$("#qrCodeImage").attr("src", datosQR.qr_data);
+		} else {
+			// Es código QR en texto, generar imagen
+			var qrImageUrl = "generar-qr.php?url=" + encodeURIComponent(datosQR.qr_data);
+			$("#qrCodeImage").attr("src", qrImageUrl);
+		}
 	} else {
 		$("#qrError").show();
-		$("#qrErrorMensaje").text("No se pudo obtener el código QR estático");
+		$("#qrErrorMensaje").text("No se pudo obtener el código QR estático. Verifique las credenciales de Mercado Pago.");
 		return;
 	}
 	
