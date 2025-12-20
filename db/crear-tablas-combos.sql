@@ -49,11 +49,41 @@ CREATE TABLE IF NOT EXISTS `combos_productos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_spanish_ci COMMENT='Relación entre combos y productos componentes';
 
 -- Agregar campo es_combo a la tabla productos (opcional, para identificar productos que son combos)
-ALTER TABLE `productos` 
-ADD COLUMN IF NOT EXISTS `es_combo` tinyint(1) DEFAULT 0 COMMENT '1=Es combo, 0=Producto normal' AFTER `cambio_desde`;
+-- Nota: ALTER TABLE con IF NOT EXISTS puede no funcionar en todas las versiones de MySQL
+-- Si da error, ejecutar manualmente: ALTER TABLE productos ADD COLUMN es_combo tinyint(1) DEFAULT 0 AFTER cambio_desde;
+SET @dbname = DATABASE();
+SET @tablename = "productos";
+SET @columnname = "es_combo";
+SET @preparedStatement = (SELECT IF(
+  (
+    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE
+      (table_name = @tablename)
+      AND (table_schema = @dbname)
+      AND (column_name = @columnname)
+  ) > 0,
+  "SELECT 1",
+  CONCAT("ALTER TABLE ", @tablename, " ADD COLUMN ", @columnname, " tinyint(1) DEFAULT 0 COMMENT '1=Es combo, 0=Producto normal' AFTER cambio_desde")
+));
+PREPARE alterIfNotExists FROM @preparedStatement;
+EXECUTE alterIfNotExists;
+DEALLOCATE PREPARE alterIfNotExists;
 
--- Índice para mejorar búsquedas
-ALTER TABLE `productos` ADD INDEX IF NOT EXISTS `es_combo` (`es_combo`);
+-- Índice para mejorar búsquedas (verificar si existe primero)
+SET @preparedStatement = (SELECT IF(
+  (
+    SELECT COUNT(*) FROM INFORMATION_SCHEMA.STATISTICS
+    WHERE
+      (table_name = @tablename)
+      AND (table_schema = @dbname)
+      AND (index_name = @columnname)
+  ) > 0,
+  "SELECT 1",
+  CONCAT("ALTER TABLE ", @tablename, " ADD INDEX ", @columnname, " (", @columnname, ")")
+));
+PREPARE indexIfNotExists FROM @preparedStatement;
+EXECUTE indexIfNotExists;
+DEALLOCATE PREPARE indexIfNotExists;
 
 -- ============================================
 -- NOTAS:
