@@ -635,7 +635,8 @@ class ControladorMercadoPago {
 						"title" => $descripcion,
 						"description" => $descripcion,
 						"quantity" => 1,
-						"unit_price" => floatval($monto)
+						"unit_price" => floatval($monto),
+						"unit_measure" => "unit" // Requerido por Mercado Pago
 					)
 				)
 			);
