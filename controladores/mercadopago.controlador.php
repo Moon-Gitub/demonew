@@ -417,48 +417,13 @@ class ControladorMercadoPago {
 				}
 			}
 			
-			// Si no hay tienda existente, crear una nueva
+			// NO crear nuevas tiendas - solo usar existentes
 			if (!$storeId) {
-				$externalStoreId = "tiendapos" . time(); // ID externo único para la tienda
-				$storeUrl = "https://api.mercadopago.com/users/$userId/stores";
-					$storeData = array(
-						"name" => "Tienda Principal",
-						"external_id" => $externalStoreId,
-						"location" => array(
-							"street_number" => "0",
-							"street_name" => "Sin dirección",
-							"city_name" => "Palermo", // Barrio válido de Capital Federal
-							"state_name" => "Capital Federal", // Debe ser una provincia válida de Argentina
-							"latitude" => -34.603722, // Buenos Aires por defecto
-							"longitude" => -58.381592
-						)
-					);
-				
-				$ch = curl_init($storeUrl);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($ch, CURLOPT_POST, true);
-				curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($storeData));
-				curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-					'Authorization: Bearer ' . $credenciales['access_token'],
-					'Content-Type: application/json'
-				));
-				
-				$storeResponse = curl_exec($ch);
-				$storeHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-				curl_close($ch);
-				
-				if ($storeHttpCode == 201 || $storeHttpCode == 200) {
-					$store = json_decode($storeResponse, true);
-					$storeId = isset($store['id']) ? $store['id'] : null;
-					$tiendaCreada = true;
-					error_log("Tienda creada exitosamente: " . json_encode($store));
-				} else {
-					error_log("Error creando tienda: HTTP $storeHttpCode - $storeResponse");
-					return array(
-						'error' => true,
-						'mensaje' => 'Error al crear la tienda en Mercado Pago: ' . $storeResponse
-					);
-				}
+				error_log("No se encontraron tiendas existentes. Se requiere crear una tienda manualmente en Mercado Pago.");
+				return array(
+					'error' => true,
+					'mensaje' => 'No se encontraron tiendas en Mercado Pago. Por favor, cree una tienda desde la aplicación de Mercado Pago primero.'
+				);
 			}
 			
 			// Crear el POS - SOLO usar store_id (nunca external_store_id)
