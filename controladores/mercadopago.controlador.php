@@ -576,11 +576,17 @@ class ControladorMercadoPago {
 						$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 						curl_close($ch);
 						
-						if ($httpCode == 200) {
-							$pos = json_decode($response, true);
-							$posExternalId = isset($pos['external_id']) ? $pos['external_id'] : null;
-							error_log("POS obtenido - ID: $posId, External ID: $posExternalId");
-						}
+			if ($httpCode == 200) {
+				$pos = json_decode($response, true);
+				$posExternalId = isset($pos['external_id']) ? $pos['external_id'] : null;
+				error_log("POS obtenido - ID: $posId, External ID: $posExternalId, Respuesta completa: " . json_encode($pos));
+				
+				if (!$posExternalId) {
+					error_log("ERROR: El POS no tiene external_id. Respuesta: " . json_encode($pos));
+				}
+			} else {
+				error_log("Error obteniendo POS $posId: HTTP $httpCode - $response");
+			}
 					}
 				}
 			} catch (Exception $e) {
@@ -611,7 +617,13 @@ class ControladorMercadoPago {
 				if ($httpCode == 200) {
 					$pos = json_decode($response, true);
 					$posExternalId = isset($pos['external_id']) ? $pos['external_id'] : null;
-					error_log("POS recién creado - ID: $posId, External ID: $posExternalId");
+					error_log("POS recién creado - ID: $posId, External ID: $posExternalId, Respuesta completa: " . json_encode($pos));
+					
+					if (!$posExternalId) {
+						error_log("ERROR: El POS recién creado no tiene external_id. Respuesta: " . json_encode($pos));
+					}
+				} else {
+					error_log("Error obteniendo POS recién creado $posId: HTTP $httpCode - $response");
 				}
 			}
 			
@@ -660,6 +672,7 @@ class ControladorMercadoPago {
 			// Crear la orden y asignarla al POS
 			// Endpoint: PUT /instore/orders/qr/seller/collectors/{user_id}/pos/{external_pos_id}/qrs
 			// IMPORTANTE: Usar external_id del POS, no el id interno
+			error_log("Creando orden - User ID: $userId, POS External ID: $posExternalId");
 			$url = "https://api.mercadopago.com/instore/orders/qr/seller/collectors/$userId/pos/$posExternalId/qrs";
 			
 			// Construir URL de notificación
