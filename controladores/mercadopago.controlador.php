@@ -556,24 +556,70 @@ class ControladorMercadoPago {
 			
 			// Obtener POS ID desde la empresa
 			$posId = null;
+			$posExternalId = null;
 			try {
 				if (class_exists('ControladorEmpresa')) {
 					$empresa = ControladorEmpresa::ctrMostrarempresa('id', 1);
 					if ($empresa && isset($empresa['mp_pos_id']) && !empty($empresa['mp_pos_id'])) {
 						$posId = $empresa['mp_pos_id'];
+						
+						// Obtener el POS completo para obtener su external_id
+						$url = "https://api.mercadopago.com/pos/$posId";
+						$ch = curl_init($url);
+						curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+						curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+							'Authorization: Bearer ' . $credenciales['access_token'],
+							'Content-Type: application/json'
+						));
+						
+						$response = curl_exec($ch);
+						$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+						curl_close($ch);
+						
+						if ($httpCode == 200) {
+							$pos = json_decode($response, true);
+							$posExternalId = isset($pos['external_id']) ? $pos['external_id'] : null;
+							error_log("POS obtenido - ID: $posId, External ID: $posExternalId");
+						}
 					}
 				}
 			} catch (Exception $e) {
 				error_log("Error obteniendo POS ID: " . $e->getMessage());
 			}
 			
-			if (!$posId) {
+			if (!$posId || !$posExternalId) {
 				// Si no hay POS, crear uno primero
 				$posResult = self::ctrObtenerOcrearPOSEstatico();
 				if ($posResult['error']) {
 					return $posResult;
 				}
 				$posId = $posResult['pos_id'];
+				
+				// Obtener external_id del POS recién creado
+				$url = "https://api.mercadopago.com/pos/$posId";
+				$ch = curl_init($url);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+					'Authorization: Bearer ' . $credenciales['access_token'],
+					'Content-Type: application/json'
+				));
+				
+				$response = curl_exec($ch);
+				$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+				curl_close($ch);
+				
+				if ($httpCode == 200) {
+					$pos = json_decode($response, true);
+					$posExternalId = isset($pos['external_id']) ? $pos['external_id'] : null;
+					error_log("POS recién creado - ID: $posId, External ID: $posExternalId");
+				}
+			}
+			
+			if (!$posExternalId) {
+				return array(
+					'error' => true,
+					'mensaje' => 'No se pudo obtener el external_id del POS'
+				);
 			}
 			
 			// Obtener user_id (collector_id) desde el access_token
@@ -613,7 +659,8 @@ class ControladorMercadoPago {
 			
 			// Crear la orden y asignarla al POS
 			// Endpoint: PUT /instore/orders/qr/seller/collectors/{user_id}/pos/{external_pos_id}/qrs
-			$url = "https://api.mercadopago.com/instore/orders/qr/seller/collectors/$userId/pos/$posId/qrs";
+			// IMPORTANTE: Usar external_id del POS, no el id interno
+			$url = "https://api.mercadopago.com/instore/orders/qr/seller/collectors/$userId/pos/$posExternalId/qrs";
 			
 			// Construir URL de notificación
 			$notificationUrl = "";
