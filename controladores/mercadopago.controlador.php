@@ -524,6 +524,7 @@ class ControladorMercadoPago {
 				return array(
 					'error' => false,
 					'pos_id' => $pos['id'],
+					'pos_external_id' => isset($pos['external_id']) ? $pos['external_id'] : null, // Incluir external_id en la respuesta
 					'qr_code' => $qrImage,
 					'qr_data' => $qrData,
 					'name' => isset($pos['name']) ? $pos['name'] : 'POS Estático'
@@ -601,29 +602,35 @@ class ControladorMercadoPago {
 				}
 				$posId = $posResult['pos_id'];
 				
-				// Obtener external_id del POS recién creado
-				$url = "https://api.mercadopago.com/pos/$posId";
-				$ch = curl_init($url);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-					'Authorization: Bearer ' . $credenciales['access_token'],
-					'Content-Type: application/json'
-				));
-				
-				$response = curl_exec($ch);
-				$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-				curl_close($ch);
-				
-				if ($httpCode == 200) {
-					$pos = json_decode($response, true);
-					$posExternalId = isset($pos['external_id']) ? $pos['external_id'] : null;
-					error_log("POS recién creado - ID: $posId, External ID: $posExternalId, Respuesta completa: " . json_encode($pos));
-					
-					if (!$posExternalId) {
-						error_log("ERROR: El POS recién creado no tiene external_id. Respuesta: " . json_encode($pos));
-					}
+				// Intentar obtener external_id directamente del resultado
+				if (isset($posResult['pos_external_id']) && !empty($posResult['pos_external_id'])) {
+					$posExternalId = $posResult['pos_external_id'];
+					error_log("External ID obtenido directamente del resultado: $posExternalId");
 				} else {
-					error_log("Error obteniendo POS recién creado $posId: HTTP $httpCode - $response");
+					// Si no está en el resultado, obtenerlo desde la API
+					$url = "https://api.mercadopago.com/pos/$posId";
+					$ch = curl_init($url);
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+						'Authorization: Bearer ' . $credenciales['access_token'],
+						'Content-Type: application/json'
+					));
+					
+					$response = curl_exec($ch);
+					$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					curl_close($ch);
+					
+					if ($httpCode == 200) {
+						$pos = json_decode($response, true);
+						$posExternalId = isset($pos['external_id']) ? $pos['external_id'] : null;
+						error_log("POS recién creado - ID: $posId, External ID: $posExternalId, Respuesta completa: " . json_encode($pos));
+						
+						if (!$posExternalId) {
+							error_log("ERROR: El POS recién creado no tiene external_id. Respuesta: " . json_encode($pos));
+						}
+					} else {
+						error_log("Error obteniendo POS recién creado $posId: HTTP $httpCode - $response");
+					}
 				}
 			}
 			
