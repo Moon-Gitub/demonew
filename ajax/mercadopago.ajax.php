@@ -2,9 +2,9 @@
 // ✅ Seguridad AJAX
 require_once "seguridad.ajax.php";
 
-// Para peticiones GET (verificar pago, obtener QR) no requerir CSRF, solo sesión y AJAX
+// Para peticiones GET (verificar pago, obtener QR, verificar orden) no requerir CSRF, solo sesión y AJAX
 // Para peticiones POST (crear preferencia, crear orden) sí requerir CSRF
-if (isset($_GET["verificarPago"]) || isset($_GET["obtenerQREstatico"]) || isset($_GET["verificarPagoPorReference"])) {
+if (isset($_GET["verificarPago"]) || isset($_GET["obtenerQREstatico"]) || isset($_GET["verificarPagoPorReference"]) || isset($_GET["verificarOrden"])) {
     SeguridadAjax::inicializar(false); // false = no verificar CSRF para GET
 } else {
     SeguridadAjax::inicializar(); // Verificar CSRF para POST
