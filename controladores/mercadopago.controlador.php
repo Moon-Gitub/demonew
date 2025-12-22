@@ -624,22 +624,29 @@ class ControladorMercadoPago {
 			}
 			$notificationUrl .= $_SERVER['HTTP_HOST'] . "/webhook-mercadopago.php";
 			
+			// Asegurar que el monto sea numérico (no string)
+			$montoNumerico = floatval($monto);
+			
 			$data = array(
 				"external_reference" => $externalReference,
 				"title" => $descripcion,
 				"description" => $descripcion,
 				"notification_url" => $notificationUrl,
-				"total_amount" => floatval($monto),
+				"total_amount" => $montoNumerico, // Debe ser número, no string
 				"items" => array(
 					array(
 						"title" => $descripcion,
 						"description" => $descripcion,
 						"quantity" => 1,
-						"unit_price" => floatval($monto),
-						"unit_measure" => "unit" // Requerido por Mercado Pago
+						"unit_price" => $montoNumerico,
+						"unit_measure" => "unit", // Requerido por Mercado Pago
+						"total_amount" => $montoNumerico // Cada item también debe tener total_amount
 					)
 				)
 			);
+			
+			// Log para debug
+			error_log("Creando orden con datos: " . json_encode($data));
 			
 			$ch = curl_init($url);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
