@@ -3058,7 +3058,7 @@ function crearPreferenciaPagoQR(){
 		data: {
 			crearOrdenAtendido: "1",
 			monto: monto,
-			descripcion: "Venta POS - " + monto.toFixed(2),
+			descripcion: "Venta POS - $" + monto.toFixed(2),
 			external_reference: externalReferenceActual
 		},
 		headers: {
@@ -3179,10 +3179,10 @@ function iniciarVerificacionPagoQR(){
 }
 
 /*=============================================
-VERIFICAR ESTADO DEL PAGO
+VERIFICAR ESTADO DEL PAGO (MODELO ATENDIDO - Verificar orden)
 =============================================*/
 function verificarPagoQR(){
-	if(!preferenceIdActual){
+	if(!orderIdActual){
 		return;
 	}
 	
@@ -3192,18 +3192,18 @@ function verificarPagoQR(){
 		url: "ajax/mercadopago.ajax.php",
 		method: "GET",
 		data: {
-			verificarPago: "1",
-			preference_id: preferenceIdActual
+			verificarOrden: "1",
+			order_id: orderIdActual
 		},
 		dataType: "json",
 		success: function(respuesta){
 			if(respuesta.error){
-				console.error("Error verificando pago:", respuesta.mensaje);
+				console.error("Error verificando orden:", respuesta.mensaje);
 				return;
 			}
 			
 			if(respuesta.aprobado === true){
-				// Pago aprobado - VERIFICAR QUE REALMENTE ESTÉ APROBADO
+				// Orden cerrada (pago aprobado)
 				clearInterval(intervaloVerificacionQR);
 				intervaloVerificacionQR = null;
 				
@@ -3213,18 +3213,14 @@ function verificarPagoQR(){
 				setTimeout(function(){
 					completarVentaConQR(respuesta.payment_id);
 				}, 1500);
-			} else if(respuesta.status == 'pending'){
+			} else if(respuesta.status === 'pending'){
 				$("#qrEstado").removeClass("alert-success alert-danger").addClass("alert-warning").html('<i class="fa fa-clock-o"></i> Pago pendiente de confirmación en Mercado Pago...');
-			} else if(respuesta.status == 'no_payment'){
-				// Aún no hay pago
-				$("#qrEstado").removeClass("alert-success alert-danger").addClass("alert-info").html('<i class="fa fa-clock-o"></i> Esperando pago... Escanea el QR con la app de Mercado Pago');
 			} else {
-				// Otro estado
-				$("#qrEstado").removeClass("alert-success alert-info").addClass("alert-warning").html('<i class="fa fa-info-circle"></i> Estado: ' + (respuesta.mensaje || respuesta.status || 'Desconocido'));
+				$("#qrEstado").removeClass("alert-success alert-danger").addClass("alert-info").html('<i class="fa fa-clock-o"></i> Esperando pago de $' + $("#qrMonto").text() + '...');
 			}
 		},
 		error: function(xhr, status, error){
-			console.error("Error verificando pago:", error);
+			console.error("Error verificando orden:", error);
 		}
 	});
 }
@@ -3278,10 +3274,9 @@ $("#modalPagoQR").on('hidden.bs.modal', function(){
 		clearInterval(intervaloVerificacionQR);
 		intervaloVerificacionQR = null;
 	}
-	// No limpiar externalReferenceActual, orderIdActual ni paymentIdConfirmado si el pago ya fue confirmado
+	// No limpiar externalReferenceActual ni paymentIdConfirmado si el pago ya fue confirmado
 	// Solo limpiar si se cierra sin confirmar
 	if(!paymentIdConfirmado){
 		externalReferenceActual = null;
-		orderIdActual = null;
 	}
 });
