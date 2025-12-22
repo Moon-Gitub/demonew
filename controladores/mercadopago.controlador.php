@@ -426,28 +426,50 @@ class ControladorMercadoPago {
 				);
 			}
 			
-			// Crear el POS - SOLO usar store_id (nunca external_store_id)
-			if (!$storeId) {
+			// Buscar POS existente llamado "QR-Cobro" en la tienda
+			$posEncontrado = null;
+			$posUrl = "https://api.mercadopago.com/pos?store_id=$storeId";
+			
+			$ch = curl_init($posUrl);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				'Authorization: Bearer ' . $credenciales['access_token'],
+				'Content-Type: application/json'
+			));
+			
+			$posListResponse = curl_exec($ch);
+			$posListHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			curl_close($ch);
+			
+			if ($posListHttpCode == 200) {
+				$posList = json_decode($posListResponse, true);
+				if (isset($posList['results']) && is_array($posList['results'])) {
+					// Buscar el POS llamado "QR-Cobro"
+					foreach ($posList['results'] as $posItem) {
+						if (isset($posItem['name']) && $posItem['name'] === 'QR-Cobro') {
+							$posEncontrado = $posItem;
+							error_log("POS 'QR-Cobro' encontrado: " . json_encode($posEncontrado));
+							break;
+						}
+					}
+				}
+			}
+			
+			// Si no se encontró el POS "QR-Cobro", mostrar error
+			if (!$posEncontrado) {
+				error_log("No se encontró el POS 'QR-Cobro' en la tienda $storeId");
 				return array(
 					'error' => true,
-					'mensaje' => 'No se pudo obtener ni crear una tienda. Verifique las credenciales de Mercado Pago.'
+					'mensaje' => 'No se encontró la caja "QR-Cobro" en Mercado Pago. Por favor, asegúrese de que existe una caja con ese nombre en su tienda.'
 				);
 			}
 			
-			$posData = array(
-				"name" => "POS Estático",
-				"fixed_amount" => false, // Permite monto dinámico
-				"external_id" => "posestatico" . time(), // Solo alfanumérico (sin guiones bajos)
-				"store_id" => $storeId // SIEMPRE usar store_id real, nunca external_store_id
-			);
-			
-			// Crear el POS
-			$url = "https://api.mercadopago.com/pos";
+			// Obtener el POS completo para obtener el QR
+			$posId = $posEncontrado['id'];
+			$url = "https://api.mercadopago.com/pos/$posId";
 			
 			$ch = curl_init($url);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_POST, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($posData));
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 				'Authorization: Bearer ' . $credenciales['access_token'],
 				'Content-Type: application/json'
@@ -457,7 +479,7 @@ class ControladorMercadoPago {
 			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 			curl_close($ch);
 			
-			if ($httpCode == 201 || $httpCode == 200) {
+			if ($httpCode == 200) {
 				$pos = json_decode($response, true);
 				
 				// El QR puede estar en diferentes formatos según la API
@@ -489,16 +511,16 @@ class ControladorMercadoPago {
 				return array(
 					'error' => false,
 					'pos_id' => $pos['id'],
-					'pos_external_id' => isset($pos['external_id']) ? $pos['external_id'] : null, // Incluir external_id en la respuesta
+					'pos_external_id' => isset($pos['external_id']) ? $pos['external_id'] : null,
 					'qr_code' => $qrImage,
 					'qr_data' => $qrData,
-					'name' => isset($pos['name']) ? $pos['name'] : 'POS Estático'
+					'name' => isset($pos['name']) ? $pos['name'] : 'QR-Cobro'
 				);
 			} else {
-				error_log("Error creando POS: HTTP $httpCode - $response");
+				error_log("Error obteniendo POS QR-Cobro: HTTP $httpCode - $response");
 				return array(
 					'error' => true,
-					'mensaje' => 'Error al crear POS estático: ' . $response
+					'mensaje' => 'Error al obtener el POS QR-Cobro: ' . $response
 				);
 			}
 			
