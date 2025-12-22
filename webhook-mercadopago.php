@@ -139,8 +139,8 @@ try {
         error_log("ADVERTENCIA: ControladorMercadoPago no disponible, webhook no se registrará en BD");
     }
 
-    // Solo procesar si es un pago
-    if ($topic === 'payment') {
+    // Procesar si es un pago o una orden (modelo atendido)
+    if ($topic === 'payment' || $topic === 'merchant_order') {
 
         error_log("Procesando pago con ID: $id");
 
@@ -185,8 +185,74 @@ try {
         if ($httpCode == 200) {
             $payment = json_decode($response, true);
 
+            // Si es merchant_order, obtener el payment de la orden
+            if ($topic === 'merchant_order') {
+                error_log("Procesando merchant_order con ID: $id");
+                
+                // Consultar la orden
+                $orderUrl = "https://api.mercadopago.com/merchant_orders/$id";
+                $ch = curl_init($orderUrl);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                    'Authorization: Bearer ' . $credenciales['access_token'],
+                    'Content-Type: application/json'
+                ));
+                
+                $orderResponse = curl_exec($ch);
+                $orderHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+                
+                if ($orderHttpCode == 200) {
+                    $order = json_decode($orderResponse, true);
+                    error_log("Orden obtenida: " . json_encode($order));
+                    
+                    // Verificar si la orden está cerrada (pagada)
+                    if (isset($order['status']) && $order['status'] === 'closed') {
+                        // Obtener el payment_id de la orden
+                        if (isset($order['payments']) && count($order['payments']) > 0) {
+                            $paymentId = $order['payments'][0]['id'];
+                            error_log("Orden cerrada, obteniendo pago con ID: $paymentId");
+                            
+                            // Consultar el pago
+                            $paymentUrl = "https://api.mercadopago.com/v1/payments/$paymentId";
+                            $ch = curl_init($paymentUrl);
+                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                                'Authorization: Bearer ' . $credenciales['access_token'],
+                                'Content-Type: application/json'
+                            ));
+                            
+                            $paymentResponse = curl_exec($ch);
+                            $paymentHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                            curl_close($ch);
+                            
+                            if ($paymentHttpCode == 200) {
+                                $payment = json_decode($paymentResponse, true);
+                                error_log("Pago obtenido de la orden: " . json_encode($payment));
+                            } else {
+                                error_log("ERROR: No se pudo obtener el pago de la orden (HTTP $paymentHttpCode)");
+                                echo json_encode(['error' => false, 'message' => 'Orden procesada pero no se pudo obtener el pago']);
+                                exit;
+                            }
+                        } else {
+                            error_log("ERROR: La orden no tiene pagos asociados");
+                            echo json_encode(['error' => false, 'message' => 'Orden sin pagos']);
+                            exit;
+                        }
+                    } else {
+                        error_log("Orden con estado: " . (isset($order['status']) ? $order['status'] : 'unknown') . " - No se procesa");
+                        echo json_encode(['error' => false, 'message' => 'Orden no cerrada']);
+                        exit;
+                    }
+                } else {
+                    error_log("ERROR: No se pudo consultar la orden (HTTP $orderHttpCode)");
+                    echo json_encode(['error' => true, 'message' => 'Error al consultar orden']);
+                    exit;
+                }
+            }
+
             // Solo procesar si el pago está aprobado
-            if ($payment['status'] === 'approved') {
+            if (isset($payment['status']) && $payment['status'] === 'approved') {
 
                 error_log("Pago aprobado, procesando...");
 
