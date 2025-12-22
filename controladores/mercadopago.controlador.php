@@ -421,18 +421,18 @@ class ControladorMercadoPago {
 			if (!$storeId) {
 				$externalStoreId = "tiendapos" . time(); // ID externo único para la tienda
 				$storeUrl = "https://api.mercadopago.com/users/$userId/stores";
-				$storeData = array(
-					"name" => "Tienda Principal",
-					"external_id" => $externalStoreId,
-					"location" => array(
-						"street_number" => "0",
-						"street_name" => "Sin dirección",
-						"city_name" => "Buenos Aires",
-						"state_name" => "Capital Federal", // Debe ser una provincia válida de Argentina
-						"latitude" => -34.603722, // Buenos Aires por defecto
-						"longitude" => -58.381592
-					)
-				);
+					$storeData = array(
+						"name" => "Tienda Principal",
+						"external_id" => $externalStoreId,
+						"location" => array(
+							"street_number" => "0",
+							"street_name" => "Sin dirección",
+							"city_name" => "Palermo", // Barrio válido de Capital Federal
+							"state_name" => "Capital Federal", // Debe ser una provincia válida de Argentina
+							"latitude" => -34.603722, // Buenos Aires por defecto
+							"longitude" => -58.381592
+						)
+					);
 				
 				$ch = curl_init($storeUrl);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
