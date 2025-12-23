@@ -112,9 +112,16 @@ class ControladorEmpresa{
 					"mp_pos_id" => isset($_POST["empMPPosId"]) ? $_POST["empMPPosId"] : null
 				);
 				
-				// Log para debug
-				error_log("Guardando credenciales MP - Public Key recibido: " . (isset($_POST["empMPPublicKey"]) && !empty($_POST["empMPPublicKey"]) ? "SÍ (" . strlen($_POST["empMPPublicKey"]) . " caracteres)" : "NO"));
-				error_log("Guardando credenciales MP - Access Token recibido: " . (isset($_POST["empMPAccessToken"]) && !empty($_POST["empMPAccessToken"]) ? "SÍ (" . strlen($_POST["empMPAccessToken"]) . " caracteres)" : "NO"));
+				// Log para debug - Detallado
+				error_log("=== DEBUG GUARDAR CREDENCIALES MP ===");
+				error_log("POST completo (sin valores sensibles): " . json_encode(array_keys($_POST)));
+				error_log("empMPPublicKey presente en POST: " . (isset($_POST["empMPPublicKey"]) ? "SÍ" : "NO"));
+				error_log("empMPAccessToken presente en POST: " . (isset($_POST["empMPAccessToken"]) ? "SÍ" : "NO"));
+				error_log("empMPPublicKey valor: " . (isset($_POST["empMPPublicKey"]) && !empty($_POST["empMPPublicKey"]) ? "SÍ (" . strlen($_POST["empMPPublicKey"]) . " caracteres) - Primeros 10: " . substr($_POST["empMPPublicKey"], 0, 10) . "..." : "VACÍO o NO PRESENTE"));
+				error_log("empMPAccessToken valor: " . (isset($_POST["empMPAccessToken"]) && !empty($_POST["empMPAccessToken"]) ? "SÍ (" . strlen($_POST["empMPAccessToken"]) . " caracteres) - Primeros 10: " . substr($_POST["empMPAccessToken"], 0, 10) . "..." : "VACÍO o NO PRESENTE"));
+				error_log("Datos que se enviarán al modelo - mp_public_key: " . (isset($datos["mp_public_key"]) && !empty($datos["mp_public_key"]) ? "SÍ (" . strlen($datos["mp_public_key"]) . " caracteres)" : "NO"));
+				error_log("Datos que se enviarán al modelo - mp_access_token: " . (isset($datos["mp_access_token"]) && !empty($datos["mp_access_token"]) ? "SÍ (" . strlen($datos["mp_access_token"]) . " caracteres)" : "NO"));
+				error_log("=======================================");
 
 				$respuesta = ModeloEmpresa::mdlEditarEmpresa($tabla, $datos);
 
