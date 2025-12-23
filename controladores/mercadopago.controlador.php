@@ -397,7 +397,8 @@ class ControladorMercadoPago {
 			}
 			
 			// Intentar obtener tiendas existentes primero
-			$listUrl = "https://api.mercadopago.com/users/$userId/stores";
+			// Endpoint correcto: /users/{user_id}/stores/search (no /stores)
+			$listUrl = "https://api.mercadopago.com/users/$userId/stores/search";
 			error_log("Buscando tiendas - User ID: $userId, URL: $listUrl");
 			
 			$ch = curl_init($listUrl);
