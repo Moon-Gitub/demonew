@@ -3285,19 +3285,29 @@ $("#modalPagoQR").on('hidden.bs.modal', function(){
 /*=============================================
 SISTEMA COMPLETO DE ATAJOS DE TECLADO PARA POS
 Permite manejar todo el panel de ventas con el teclado
+SOLO SE ACTIVA EN LA PÁGINA crear-venta-caja
 =============================================*/
 
-// Variable para rastrear el producto seleccionado en la lista
+// Variable para rastrear el producto seleccionado en la lista (solo se usan en crear-venta-caja)
 var productoSeleccionadoIndex = -1;
 var productosEnLista = [];
 
 // Función para actualizar la lista de productos disponibles
 function actualizarListaProductos() {
+	// Solo ejecutar si estamos en la página correcta
+	if (!window.location.href.includes('crear-venta-caja')) {
+		return;
+	}
 	productosEnLista = $(".nuevoProductoCaja .nuevaCantidadProductoCaja").toArray();
 }
 
 // Función para seleccionar un producto en la lista
 function seleccionarProducto(index) {
+	// Solo ejecutar si estamos en la página correcta
+	if (!window.location.href.includes('crear-venta-caja')) {
+		return;
+	}
+	
 	if (index < 0) index = 0;
 	if (index >= productosEnLista.length) index = productosEnLista.length - 1;
 	if (index < 0) return;
@@ -3315,7 +3325,7 @@ function seleccionarProducto(index) {
 	$producto[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
-// Agregar estilos para producto seleccionado
+// Agregar estilos para producto seleccionado (solo una vez)
 if (!$('#estilos-atajos-teclado').length) {
 	$('head').append('<style id="estilos-atajos-teclado">' +
 		'.nuevoProductoCaja.producto-seleccionado { ' +
@@ -3328,28 +3338,29 @@ if (!$('#estilos-atajos-teclado').length) {
 		'</style>');
 }
 
-// Actualizar lista cuando se agregan o quitan productos
-$(document).on('DOMNodeInserted DOMNodeRemoved', function() {
-	setTimeout(actualizarListaProductos, 100);
-});
-
-// Inicializar lista al cargar
+// Inicializar lista al cargar (solo en crear-venta-caja)
 $(document).ready(function() {
-	actualizarListaProductos();
-	
-	// Actualizar cuando cambia el contenido de la lista
-	var observer = new MutationObserver(function(mutations) {
+	if (window.location.href.includes('crear-venta-caja')) {
 		actualizarListaProductos();
-	});
-	
-	var listaProductos = document.getElementById('nuevoProductoCaja');
-	if (listaProductos) {
-		observer.observe(listaProductos, { childList: true, subtree: true });
+		
+		// Actualizar cuando cambia el contenido de la lista
+		var listaProductos = document.getElementById('nuevoProductoCaja');
+		if (listaProductos) {
+			var observer = new MutationObserver(function(mutations) {
+				actualizarListaProductos();
+			});
+			observer.observe(listaProductos, { childList: true, subtree: true });
+		}
 	}
 });
 
-// Sistema completo de atajos de teclado
+// Sistema completo de atajos de teclado (SOLO EN crear-venta-caja)
 $(document).on('keydown', function(e) {
+	// CRÍTICO: Solo procesar atajos si estamos en la página de crear-venta-caja
+	if (!window.location.href.includes('crear-venta-caja')) {
+		return; // Salir inmediatamente si no estamos en la página correcta
+	}
+	
 	// Solo procesar si no estamos en un modal o input de texto activo
 	var $target = $(e.target);
 	var esInput = $target.is('input, textarea, select');
@@ -3595,8 +3606,12 @@ $(document).on('keydown', function(e) {
 	}
 });
 
-// Mejorar navegación con Tab: asegurar que todos los elementos sean accesibles
+// Mejorar navegación con Tab: asegurar que todos los elementos sean accesibles (SOLO EN crear-venta-caja)
 $(document).ready(function() {
+	if (!window.location.href.includes('crear-venta-caja')) {
+		return;
+	}
+	
 	// Asegurar que los botones sean accesibles con Tab
 	$("button.quitarProductoCaja").attr("tabindex", "0");
 	$("#btnGuardarVentaCaja").attr("tabindex", "0");
@@ -3612,11 +3627,16 @@ $(document).ready(function() {
 	});
 });
 
-// Mostrar ayuda de atajos al presionar F1 dos veces rápidamente o mantenerlo
+// Mostrar ayuda de atajos al presionar F1 dos veces rápidamente (SOLO EN crear-venta-caja)
 var f1PressCount = 0;
 var f1Timer = null;
 
 $(document).on('keydown', function(e) {
+	// Solo procesar si estamos en crear-venta-caja
+	if (!window.location.href.includes('crear-venta-caja')) {
+		return;
+	}
+	
 	if (e.keyCode === 112) { // F1
 		f1PressCount++;
 		if (f1PressCount === 1) {
