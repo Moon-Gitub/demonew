@@ -699,7 +699,21 @@ class ControladorMercadoPago {
 							$posExternalId = isset($pos['external_id']) ? $pos['external_id'] : null;
 							error_log("POS obtenido desde API - ID: $posId, External ID: $posExternalId");
 							
-							if (!$posExternalId) {
+							if ($posExternalId) {
+								// Guardar automáticamente el external_id en la BD para futuras veces
+								try {
+									if (class_exists('ModeloEmpresa')) {
+										require_once __DIR__ . '/../modelos/empresa.modelo.php';
+										$stmt = \Conexion::conectar()->prepare("UPDATE empresa SET mp_pos_external_id = :external_id WHERE id = 1");
+										$stmt->bindParam(":external_id", $posExternalId, \PDO::PARAM_STR);
+										$stmt->execute();
+										$stmt = null;
+										error_log("External ID guardado automáticamente en BD: $posExternalId");
+									}
+								} catch (Exception $e) {
+									error_log("Error guardando external_id automáticamente: " . $e->getMessage());
+								}
+							} else {
 								error_log("ERROR: El POS no tiene external_id. Respuesta: " . json_encode($pos));
 							}
 						} else {
