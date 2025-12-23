@@ -73,6 +73,7 @@
            <th style="width:10px">#</th>
            <th>Nombre</th>
            <th>Usuario</th>
+           <th>Empresa</th>
            <th>Foto</th>
            <th>Perfil</th>
            <th>Estado</th>
@@ -96,7 +97,8 @@
                       <td>'.$value["id"].'</td>
                       <td>'.$value["nombre"].'</td>
                       <td>'.$value["usuario"].'</td>';
-    
+                      $nomEmp = ControladorEmpresa::ctrMostrarempresa('id', $value["empresa"]);
+                      echo '<td>'.$nomEmp["titular"].'</td>';
                       if($value["foto"] != ""){
                         echo '<td><img src="'.$value["foto"].'" class="img-thumbnail" width="40px"></td>';
                       }else{
@@ -188,6 +190,22 @@ MODAL AGREGAR USUARIO
                   <option value="Administrador">Administrador</option>
                   <option value="Especial">Especial</option>
                   <option value="Vendedor">Vendedor</option>
+                </select>
+              </div>
+            </div>
+
+             <!-- ENTRADA PARA SELECCIONAR EMPRESA -->
+             <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-building"></i></span> 
+                <select class="form-control input-lg" name="nuevoRazonSocial">
+                  <option value="">Selecionar razon social</option>
+                  <?php 
+                    $empresas = ControladorEmpresa::ctrMostrarempresa(null, null);
+                    foreach ($empresas as $key => $value) {
+                      echo "<option value='".$value["id"]."'>".$value["titular"]."</option>";
+                    }
+                  ?>
                 </select>
               </div>
             </div>
@@ -310,6 +328,22 @@ MODAL EDITAR USUARIO
                   <option value="Administrador">Administrador</option>
                   <option value="Especial">Especial</option>
                   <option value="Vendedor">Vendedor</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- ENTRADA PARA SELECCIONAR EMPRESA -->
+            <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-building"></i></span> 
+                <select class="form-control input-lg" name="editarRazonSocial" id="editarRazonSocial">
+                  <option value="">Selecionar razon social</option>
+                  <?php 
+                    $empresas = ControladorEmpresa::ctrMostrarempresa(null, null);
+                    foreach ($empresas as $key => $value) {
+                      echo "<option value='".$value["id"]."'>".$value["titular"]."</option>";
+                    }
+                  ?>
                 </select>
               </div>
             </div>

@@ -919,6 +919,7 @@ $(document).ready(function() {
 </script>
 
               <input type="hidden" name="idVendedor" id="idVendedor" value="<?php echo $_SESSION["id"]; ?>">
+              <input type="hidden" name="idEmpresa" id="idEmpresa" value="<?php echo $_SESSION["empresa"]; ?>">
               <input type="hidden" id="tokenIdTablaVentas">
  
 			  <input type="hidden" name="alto" id="alto" value="">

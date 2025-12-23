@@ -277,6 +277,7 @@
          <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
 
            <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Fecha</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Empresa</th>
            <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Nro. Int.</th>
            <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Sucursal</th>
            <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Cbte.</th>
@@ -294,6 +295,7 @@
 
           <tr>
             <th></th>
+            <th>Empresa</th>
             <th>Nro. Int.</th>
             <th>Sucursal</th>
             <th>Cbte.</th>
@@ -434,6 +436,8 @@
              echo '<tr>
 
                     <td>'.$value["fecha"].'</td>';
+                    $nomEmp = ControladorEmpresa::ctrMostrarempresa('id', $value['id_empresa']);
+                      echo '<td>'.$nomEmp['titular'].'</td>';
 
               echo '<td><a href="index.php?ruta=editar-venta&idVenta='.$value["id"].'">' . $value["codigo"] . '</a></td>';
 

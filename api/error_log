@@ -1,0 +1,1749 @@
+[19-Dec-2025 18:44:13 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:44:13 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/estado-cuenta.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:44:20 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:44:20 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/estado-cuenta.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:44:35 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:44:35 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/estado-cuenta.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:44:46 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:44:46 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/estado-cuenta.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:49:15 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:49:15 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/estado-cuenta.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:49:30 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:49:30 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/estado-cuenta.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:50:39 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:50:39 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/estado-cuenta.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:52:13 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:52:13 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/estado-cuenta.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:53:16 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:53:16 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/estado-cuenta.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:54:37 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:54:37 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/estado-cuenta.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:56:53 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/usuarios.php on line 7
+[19-Dec-2025 18:56:53 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/usuarios.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/usuarios.php on line 7
+[19-Dec-2025 18:56:54 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:56:54 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/estado-cuenta.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/estado-cuenta.php on line 7
+[19-Dec-2025 18:56:54 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/productos.php on line 7
+[19-Dec-2025 18:56:54 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/productos.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/productos.php on line 7
+[19-Dec-2025 19:06:08 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 19:06:08 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 19:06:20 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 19:06:20 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 19:08:17 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 19:08:17 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 19:09:57 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 19:09:57 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 19:09:58 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 19:09:58 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 19:12:43 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 19:12:43 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 19:12:57 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 19:12:57 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 19:12:58 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 19:12:58 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:44:36 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:44:36 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:44:36 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:44:36 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:51:22 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:51:22 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:51:23 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:51:23 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:54:45 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:54:45 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:59:37 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:59:37 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:59:38 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:59:38 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:59:53 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:59:53 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:59:54 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:59:54 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:59:54 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 21:59:54 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:00:26 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:00:26 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:00:27 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:00:27 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:00:27 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:00:27 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:00:28 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:00:28 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:05:38 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:05:38 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:05:38 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:05:38 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:05:39 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:05:39 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:05:39 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:05:39 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:21 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:21 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:22 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:22 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:22 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:22 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:23 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:23 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:57 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:57 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:58 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:58 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:58 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:58 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:59 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:59 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:59 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:23:59 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:00 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:00 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:00 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:00 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:01 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:01 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:01 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:01 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:02 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:02 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:18 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:18 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:19 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:19 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:19 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:19 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:20 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:20 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:20 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:20 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:21 UTC] PHP Warning:  require_once(../seguridad.ajax.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 22:36:21 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../seguridad.ajax.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/api/ventas.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/api/ventas.php on line 8
+[19-Dec-2025 23:10:01 UTC] Permitiendo venta desde sistema offline sin sesión activa
+[19-Dec-2025 23:10:01 UTC] === INICIO CREAR VENTA OFFLINE ===
+[19-Dec-2025 23:10:01 UTC] Raw input recibido: {"fecha": "2025-12-19T16:06:06.882496", "cliente": "Consumidor Final", "productos": [{"id": 107, "descripcion": "LECHE LA ARMONIA", "cantidad": 1, "categoria": "", "stock": 0, "precio_compra": 0, "precio": 0.0, "total": 0.0}, {"id": 105, "descripcion": "Giaroli Tinto Abocado 5lt", "cantidad": 1, "categoria": "", "stock": 0, "precio_compra": 0, "precio": 8932.0, "total": 8932.0}, {"id": 103, "descripcion": "Louvres Aceite De Oliva 2 Lt", "cantidad": 1, "categoria": "", "stock": 0, "precio_compra"
+[19-Dec-2025 23:10:01 UTC] Datos decodificados: Array
+(
+    [fecha] => 2025-12-19T16:06:06.882496
+    [cliente] => Consumidor Final
+    [productos] => Array
+        (
+            [0] => Array
+                (
+                    [id] => 107
+                    [descripcion] => LECHE LA ARMONIA
+                    [cantidad] => 1
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 0
+                    [total] => 0
+                )
+
+            [1] => Array
+                (
+                    [id] => 105
+                    [descripcion] => Giaroli Tinto Abocado 5lt
+                    [cantidad] => 1
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 8932
+                    [total] => 8932
+                )
+
+            [2] => Array
+                (
+                    [id] => 103
+                    [descripcion] => Louvres Aceite De Oliva 2 Lt
+                    [cantidad] => 1
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 15627.15
+                    [total] => 15627.15
+                )
+
+            [3] => Array
+                (
+                    [id] => 120
+                    [descripcion] => ENCHUFE ROSCA MACHO           3/4 POLIETILENO
+                    [cantidad] => 2
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 0
+                    [total] => 0
+                )
+
+        )
+
+    [total] => 24559.15
+    [metodo_pago] => Efectivo
+    [sucursal] => Local
+    [creado_local] => 1
+)
+
+[19-Dec-2025 23:10:01 UTC] Lista productos formateada: [{"id":107,"descripcion":"LECHE LA ARMONIA","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":0,"total":0},{"id":105,"descripcion":"Giaroli Tinto Abocado 5lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":8932,"total":8932},{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":15627.15,"total":15627.15},{"id":120,"descripcion":"ENCHUFE ROSCA MACHO           3\/4 POLIETILENO","cantidad":2,"categoria":"","stock":0,"precio_compra":0,"precio":0,"total":0}]
+[19-Dec-2025 23:10:01 UTC] Llamando a ctrCrearVentaCaja con datos: Array
+(
+    [tokenIdTablaVentas] => offline_6945db499c2b60.50406251
+    [fechaActual] => 2025-12-19 16:06:06
+    [idVendedor] => 1
+    [sucursalVendedor] => Local
+    [nombreVendedor] => Sistema Offline
+    [seleccionarCliente] => Consumidor Final
+    [nuevaVentaCaja] => 1
+    [listaProductosCaja] => [{"id":107,"descripcion":"LECHE LA ARMONIA","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":0,"total":0},{"id":105,"descripcion":"Giaroli Tinto Abocado 5lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":8932,"total":8932},{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":15627.15,"total":15627.15},{"id":120,"descripcion":"ENCHUFE ROSCA MACHO           3\/4 POLIETILENO","cantidad":2,"categoria":"","stock":0,"precio_compra":0,"precio":0,"total":0}]
+    [listaDescuentoCaja] => 
+    [nuevoTotalVentaCaja] => 24559.15
+    [listaMetodoPagoCaja] => Efectivo
+    [nuevoPrecioImpuestoCaja] => 0
+    [nuevoVtaCajaIva2] => 0
+    [nuevoVtaCajaIva5] => 0
+    [nuevoVtaCajaIva10] => 0
+    [nuevoVtaCajaIva21] => 0
+    [nuevoVtaCajaIva27] => 0
+    [nuevoVtaCajaBaseImp0] => 0
+    [nuevoVtaCajaBaseImp2] => 0
+    [nuevoVtaCajaBaseImp5] => 0
+    [nuevoVtaCajaBaseImp10] => 0
+    [nuevoVtaCajaBaseImp21] => 0
+    [nuevoVtaCajaBaseImp27] => 0
+    [nuevoPrecioNetoCaja] => 24559.15
+    [nuevoInteresPorcentajeCaja] => 0
+    [nuevoDescuentoPorcentajeCaja] => 0
+    [nuevotipoCbte] => 0
+    [nuevaPtoVta] => 0
+    [nuevaConcepto] => 
+    [nuevaFecDesde] => 
+    [nuevaFecHasta] => 
+    [nuevaFecVto] => 
+    [nuevotipoCbteAsociado] => 
+    [nuevaPtoVtaAsociado] => 
+    [nuevaNroCbteAsociado] => 
+    [mxMediosPagos] => [{"tipo":"Efectivo","entrega":24559.15}]
+)
+
+[19-Dec-2025 23:10:01 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:01 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:01 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:01 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:01 UTC] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/controladores/ventas.controlador.php on line 678
+[19-Dec-2025 23:10:01 UTC] Respuesta del controlador: Array
+(
+    [estado] => ok
+    [codigoVta] => 150
+    [factura] => Array
+        (
+            [factura] => no
+        )
+
+    [msjAfip] => 
+    [datosFacturacion] => 
+)
+
+[19-Dec-2025 23:10:01 UTC] ✅ Venta creada exitosamente. ID: 182
+[19-Dec-2025 23:10:02 UTC] Permitiendo venta desde sistema offline sin sesión activa
+[19-Dec-2025 23:10:02 UTC] === INICIO CREAR VENTA OFFLINE ===
+[19-Dec-2025 23:10:02 UTC] Raw input recibido: {"fecha": "2025-12-19T16:09:56.539460", "cliente": "Consumidor Final", "productos": [{"id": 121, "descripcion": "ENCHUFE ROSCA MACHO        1     POLIETILENO", "cantidad": 1, "categoria": "", "stock": 0, "precio_compra": 0, "precio": 0.0, "total": 0.0}, {"id": 125, "descripcion": "CODO ENCHUFE ENCHUFE          1/2 POLIETILENO", "cantidad": 1, "categoria": "", "stock": 0, "precio_compra": 0, "precio": 0.0, "total": 0.0}, {"id": 128, "descripcion": "CODO ENCHUFE ROSCA HEMBRA     1/2 POLIETILENO", 
+[19-Dec-2025 23:10:02 UTC] Datos decodificados: Array
+(
+    [fecha] => 2025-12-19T16:09:56.539460
+    [cliente] => Consumidor Final
+    [productos] => Array
+        (
+            [0] => Array
+                (
+                    [id] => 121
+                    [descripcion] => ENCHUFE ROSCA MACHO        1     POLIETILENO
+                    [cantidad] => 1
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 0
+                    [total] => 0
+                )
+
+            [1] => Array
+                (
+                    [id] => 125
+                    [descripcion] => CODO ENCHUFE ENCHUFE          1/2 POLIETILENO
+                    [cantidad] => 1
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 0
+                    [total] => 0
+                )
+
+            [2] => Array
+                (
+                    [id] => 128
+                    [descripcion] => CODO ENCHUFE ROSCA HEMBRA     1/2 POLIETILENO
+                    [cantidad] => 1
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 0
+                    [total] => 0
+                )
+
+            [3] => Array
+                (
+                    [id] => 103
+                    [descripcion] => Louvres Aceite De Oliva 2 Lt
+                    [cantidad] => 1
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 15627.15
+                    [total] => 15627.15
+                )
+
+            [4] => Array
+                (
+                    [id] => 102
+                    [descripcion] => Louvres Aceite De Oliva 1 Lt
+                    [cantidad] => 1
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 10000
+                    [total] => 10000
+                )
+
+            [5] => Array
+                (
+                    [id] => 104
+                    [descripcion] => Giaroli Tinto Seco 5lt
+                    [cantidad] => 1
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 8470
+                    [total] => 8470
+                )
+
+            [6] => Array
+                (
+                    [id] => 107
+                    [descripcion] => LECHE LA ARMONIA
+                    [cantidad] => 1
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 0
+                    [total] => 0
+                )
+
+            [7] => Array
+                (
+                    [id] => 736
+                    [descripcion] => Bon O Bon Alfajor Simple Blanco
+                    [cantidad] => 1
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 0
+                    [total] => 0
+                )
+
+        )
+
+    [total] => 34097.15
+    [metodo_pago] => Efectivo
+    [sucursal] => Local
+    [creado_local] => 1
+)
+
+[19-Dec-2025 23:10:02 UTC] Lista productos formateada: [{"id":121,"descripcion":"ENCHUFE ROSCA MACHO        1     POLIETILENO","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":0,"total":0},{"id":125,"descripcion":"CODO ENCHUFE ENCHUFE          1\/2 POLIETILENO","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":0,"total":0},{"id":128,"descripcion":"CODO ENCHUFE ROSCA HEMBRA     1\/2 POLIETILENO","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":0,"total":0},{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":15627.15,"total":15627.15},{"id":102,"descripcion":"Louvres Aceite De Oliva 1 Lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":10000,"total":10000},{"id":104,"descripcion":"Giaroli Tinto Seco 5lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":8470,"total":8470},{"id":107,"descripcion":"LECHE LA ARMONIA","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":0,"total":0},{"id":736,"descripcion":"Bon O Bon Alfajor Simple Blanco","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":0,"total":0}]
+[19-Dec-2025 23:10:02 UTC] Llamando a ctrCrearVentaCaja con datos: Array
+(
+    [tokenIdTablaVentas] => offline_6945db4a449f21.80314181
+    [fechaActual] => 2025-12-19 16:09:56
+    [idVendedor] => 1
+    [sucursalVendedor] => Local
+    [nombreVendedor] => Sistema Offline
+    [seleccionarCliente] => Consumidor Final
+    [nuevaVentaCaja] => 1
+    [listaProductosCaja] => [{"id":121,"descripcion":"ENCHUFE ROSCA MACHO        1     POLIETILENO","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":0,"total":0},{"id":125,"descripcion":"CODO ENCHUFE ENCHUFE          1\/2 POLIETILENO","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":0,"total":0},{"id":128,"descripcion":"CODO ENCHUFE ROSCA HEMBRA     1\/2 POLIETILENO","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":0,"total":0},{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":15627.15,"total":15627.15},{"id":102,"descripcion":"Louvres Aceite De Oliva 1 Lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":10000,"total":10000},{"id":104,"descripcion":"Giaroli Tinto Seco 5lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":8470,"total":8470},{"id":107,"descripcion":"LECHE LA ARMONIA","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":0,"total":0},{"id":736,"descripcion":"Bon O Bon Alfajor Simple Blanco","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":0,"total":0}]
+    [listaDescuentoCaja] => 
+    [nuevoTotalVentaCaja] => 34097.15
+    [listaMetodoPagoCaja] => Efectivo
+    [nuevoPrecioImpuestoCaja] => 0
+    [nuevoVtaCajaIva2] => 0
+    [nuevoVtaCajaIva5] => 0
+    [nuevoVtaCajaIva10] => 0
+    [nuevoVtaCajaIva21] => 0
+    [nuevoVtaCajaIva27] => 0
+    [nuevoVtaCajaBaseImp0] => 0
+    [nuevoVtaCajaBaseImp2] => 0
+    [nuevoVtaCajaBaseImp5] => 0
+    [nuevoVtaCajaBaseImp10] => 0
+    [nuevoVtaCajaBaseImp21] => 0
+    [nuevoVtaCajaBaseImp27] => 0
+    [nuevoPrecioNetoCaja] => 34097.15
+    [nuevoInteresPorcentajeCaja] => 0
+    [nuevoDescuentoPorcentajeCaja] => 0
+    [nuevotipoCbte] => 0
+    [nuevaPtoVta] => 0
+    [nuevaConcepto] => 
+    [nuevaFecDesde] => 
+    [nuevaFecHasta] => 
+    [nuevaFecVto] => 
+    [nuevotipoCbteAsociado] => 
+    [nuevaPtoVtaAsociado] => 
+    [nuevaNroCbteAsociado] => 
+    [mxMediosPagos] => [{"tipo":"Efectivo","entrega":34097.15}]
+)
+
+[19-Dec-2025 23:10:02 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:02 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:02 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:02 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:02 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:02 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:02 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:02 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:02 UTC] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/controladores/ventas.controlador.php on line 678
+[19-Dec-2025 23:10:02 UTC] Respuesta del controlador: Array
+(
+    [estado] => ok
+    [codigoVta] => 151
+    [factura] => Array
+        (
+            [factura] => no
+        )
+
+    [msjAfip] => 
+    [datosFacturacion] => 
+)
+
+[19-Dec-2025 23:10:02 UTC] ✅ Venta creada exitosamente. ID: 183
+[19-Dec-2025 23:10:02 UTC] Permitiendo venta desde sistema offline sin sesión activa
+[19-Dec-2025 23:10:02 UTC] === INICIO CREAR VENTA OFFLINE ===
+[19-Dec-2025 23:10:02 UTC] Raw input recibido: {"fecha": "2025-12-19T18:59:52.749958", "cliente": "Consumidor Final", "productos": [{"id": 102, "descripcion": "Louvres Aceite De Oliva 1 Lt", "cantidad": 1, "categoria": "", "stock": 0, "precio_compra": 0, "precio": 10000.0, "total": 10000.0}, {"id": 103, "descripcion": "Louvres Aceite De Oliva 2 Lt", "cantidad": 1, "categoria": "", "stock": 0, "precio_compra": 0, "precio": 15627.15, "total": 15627.15}], "total": 25627.15, "metodo_pago": "Efectivo", "sucursal": "Local", "creado_local": true}
+[19-Dec-2025 23:10:02 UTC] Datos decodificados: Array
+(
+    [fecha] => 2025-12-19T18:59:52.749958
+    [cliente] => Consumidor Final
+    [productos] => Array
+        (
+            [0] => Array
+                (
+                    [id] => 102
+                    [descripcion] => Louvres Aceite De Oliva 1 Lt
+                    [cantidad] => 1
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 10000
+                    [total] => 10000
+                )
+
+            [1] => Array
+                (
+                    [id] => 103
+                    [descripcion] => Louvres Aceite De Oliva 2 Lt
+                    [cantidad] => 1
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 15627.15
+                    [total] => 15627.15
+                )
+
+        )
+
+    [total] => 25627.15
+    [metodo_pago] => Efectivo
+    [sucursal] => Local
+    [creado_local] => 1
+)
+
+[19-Dec-2025 23:10:02 UTC] Lista productos formateada: [{"id":102,"descripcion":"Louvres Aceite De Oliva 1 Lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":10000,"total":10000},{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":15627.15,"total":15627.15}]
+[19-Dec-2025 23:10:02 UTC] Llamando a ctrCrearVentaCaja con datos: Array
+(
+    [tokenIdTablaVentas] => offline_6945db4ae38ed1.28884220
+    [fechaActual] => 2025-12-19 18:59:52
+    [idVendedor] => 1
+    [sucursalVendedor] => Local
+    [nombreVendedor] => Sistema Offline
+    [seleccionarCliente] => Consumidor Final
+    [nuevaVentaCaja] => 1
+    [listaProductosCaja] => [{"id":102,"descripcion":"Louvres Aceite De Oliva 1 Lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":10000,"total":10000},{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":15627.15,"total":15627.15}]
+    [listaDescuentoCaja] => 
+    [nuevoTotalVentaCaja] => 25627.15
+    [listaMetodoPagoCaja] => Efectivo
+    [nuevoPrecioImpuestoCaja] => 0
+    [nuevoVtaCajaIva2] => 0
+    [nuevoVtaCajaIva5] => 0
+    [nuevoVtaCajaIva10] => 0
+    [nuevoVtaCajaIva21] => 0
+    [nuevoVtaCajaIva27] => 0
+    [nuevoVtaCajaBaseImp0] => 0
+    [nuevoVtaCajaBaseImp2] => 0
+    [nuevoVtaCajaBaseImp5] => 0
+    [nuevoVtaCajaBaseImp10] => 0
+    [nuevoVtaCajaBaseImp21] => 0
+    [nuevoVtaCajaBaseImp27] => 0
+    [nuevoPrecioNetoCaja] => 25627.15
+    [nuevoInteresPorcentajeCaja] => 0
+    [nuevoDescuentoPorcentajeCaja] => 0
+    [nuevotipoCbte] => 0
+    [nuevaPtoVta] => 0
+    [nuevaConcepto] => 
+    [nuevaFecDesde] => 
+    [nuevaFecHasta] => 
+    [nuevaFecVto] => 
+    [nuevotipoCbteAsociado] => 
+    [nuevaPtoVtaAsociado] => 
+    [nuevaNroCbteAsociado] => 
+    [mxMediosPagos] => [{"tipo":"Efectivo","entrega":25627.15}]
+)
+
+[19-Dec-2025 23:10:02 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:02 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:02 UTC] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/controladores/ventas.controlador.php on line 678
+[19-Dec-2025 23:10:03 UTC] Respuesta del controlador: Array
+(
+    [estado] => ok
+    [codigoVta] => 152
+    [factura] => Array
+        (
+            [factura] => no
+        )
+
+    [msjAfip] => 
+    [datosFacturacion] => 
+)
+
+[19-Dec-2025 23:10:03 UTC] ✅ Venta creada exitosamente. ID: 184
+[19-Dec-2025 23:10:03 UTC] Permitiendo venta desde sistema offline sin sesión activa
+[19-Dec-2025 23:10:03 UTC] === INICIO CREAR VENTA OFFLINE ===
+[19-Dec-2025 23:10:03 UTC] Raw input recibido: {"fecha": "2025-12-19T19:00:25.777986", "cliente": "Consumidor Final", "productos": [{"id": 103, "descripcion": "Louvres Aceite De Oliva 2 Lt", "cantidad": 1, "categoria": "", "stock": 0, "precio_compra": 0, "precio": 15627.15, "total": 15627.15}, {"id": 105, "descripcion": "Giaroli Tinto Abocado 5lt", "cantidad": 1, "categoria": "", "stock": 0, "precio_compra": 0, "precio": 8932.0, "total": 8932.0}, {"id": 108, "descripcion": "Giaroli Tinto Bonarda 5lt", "cantidad": 2, "categoria": "", "stock":
+[19-Dec-2025 23:10:03 UTC] Datos decodificados: Array
+(
+    [fecha] => 2025-12-19T19:00:25.777986
+    [cliente] => Consumidor Final
+    [productos] => Array
+        (
+            [0] => Array
+                (
+                    [id] => 103
+                    [descripcion] => Louvres Aceite De Oliva 2 Lt
+                    [cantidad] => 1
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 15627.15
+                    [total] => 15627.15
+                )
+
+            [1] => Array
+                (
+                    [id] => 105
+                    [descripcion] => Giaroli Tinto Abocado 5lt
+                    [cantidad] => 1
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 8932
+                    [total] => 8932
+                )
+
+            [2] => Array
+                (
+                    [id] => 108
+                    [descripcion] => Giaroli Tinto Bonarda 5lt
+                    [cantidad] => 2
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 10626
+                    [total] => 21252
+                )
+
+        )
+
+    [total] => 45811.15
+    [metodo_pago] => MP
+    [sucursal] => Local
+    [creado_local] => 1
+)
+
+[19-Dec-2025 23:10:03 UTC] Lista productos formateada: [{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":15627.15,"total":15627.15},{"id":105,"descripcion":"Giaroli Tinto Abocado 5lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":8932,"total":8932},{"id":108,"descripcion":"Giaroli Tinto Bonarda 5lt","cantidad":2,"categoria":"","stock":0,"precio_compra":0,"precio":10626,"total":21252}]
+[19-Dec-2025 23:10:03 UTC] Llamando a ctrCrearVentaCaja con datos: Array
+(
+    [tokenIdTablaVentas] => offline_6945db4ba87759.58131754
+    [fechaActual] => 2025-12-19 19:00:25
+    [idVendedor] => 1
+    [sucursalVendedor] => Local
+    [nombreVendedor] => Sistema Offline
+    [seleccionarCliente] => Consumidor Final
+    [nuevaVentaCaja] => 1
+    [listaProductosCaja] => [{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":15627.15,"total":15627.15},{"id":105,"descripcion":"Giaroli Tinto Abocado 5lt","cantidad":1,"categoria":"","stock":0,"precio_compra":0,"precio":8932,"total":8932},{"id":108,"descripcion":"Giaroli Tinto Bonarda 5lt","cantidad":2,"categoria":"","stock":0,"precio_compra":0,"precio":10626,"total":21252}]
+    [listaDescuentoCaja] => 
+    [nuevoTotalVentaCaja] => 45811.15
+    [listaMetodoPagoCaja] => MP
+    [nuevoPrecioImpuestoCaja] => 0
+    [nuevoVtaCajaIva2] => 0
+    [nuevoVtaCajaIva5] => 0
+    [nuevoVtaCajaIva10] => 0
+    [nuevoVtaCajaIva21] => 0
+    [nuevoVtaCajaIva27] => 0
+    [nuevoVtaCajaBaseImp0] => 0
+    [nuevoVtaCajaBaseImp2] => 0
+    [nuevoVtaCajaBaseImp5] => 0
+    [nuevoVtaCajaBaseImp10] => 0
+    [nuevoVtaCajaBaseImp21] => 0
+    [nuevoVtaCajaBaseImp27] => 0
+    [nuevoPrecioNetoCaja] => 45811.15
+    [nuevoInteresPorcentajeCaja] => 0
+    [nuevoDescuentoPorcentajeCaja] => 0
+    [nuevotipoCbte] => 0
+    [nuevaPtoVta] => 0
+    [nuevaConcepto] => 
+    [nuevaFecDesde] => 
+    [nuevaFecHasta] => 
+    [nuevaFecVto] => 
+    [nuevotipoCbteAsociado] => 
+    [nuevaPtoVtaAsociado] => 
+    [nuevaNroCbteAsociado] => 
+    [mxMediosPagos] => [{"tipo":"MP","entrega":45811.15}]
+)
+
+[19-Dec-2025 23:10:03 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:03 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:03 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:03 UTC] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/controladores/ventas.controlador.php on line 678
+[19-Dec-2025 23:10:03 UTC] Respuesta del controlador: Array
+(
+    [estado] => ok
+    [codigoVta] => 153
+    [factura] => Array
+        (
+            [factura] => no
+        )
+
+    [msjAfip] => 
+    [datosFacturacion] => 
+)
+
+[19-Dec-2025 23:10:03 UTC] ✅ Venta creada exitosamente. ID: 185
+[19-Dec-2025 23:10:04 UTC] Permitiendo venta desde sistema offline sin sesión activa
+[19-Dec-2025 23:10:04 UTC] === INICIO CREAR VENTA OFFLINE ===
+[19-Dec-2025 23:10:04 UTC] Raw input recibido: {"fecha": "2025-12-19T19:23:56.489104", "cliente": "Consumidor Final", "productos": [{"id": 102, "descripcion": "Louvres Aceite De Oliva 1 Lt", "cantidad": 2, "categoria": "60", "stock": 2.0, "precio_compra": 5600.0, "precio": 10000.0, "total": 20000.0}, {"id": 103, "descripcion": "Louvres Aceite De Oliva 2 Lt", "cantidad": 2, "categoria": "1", "stock": -7.0, "precio_compra": 10147.5, "precio": 15627.15, "total": 31254.3}], "total": 51254.3, "metodo_pago": "Efectivo", "sucursal": "Local", "cread
+[19-Dec-2025 23:10:04 UTC] Datos decodificados: Array
+(
+    [fecha] => 2025-12-19T19:23:56.489104
+    [cliente] => Consumidor Final
+    [productos] => Array
+        (
+            [0] => Array
+                (
+                    [id] => 102
+                    [descripcion] => Louvres Aceite De Oliva 1 Lt
+                    [cantidad] => 2
+                    [categoria] => 60
+                    [stock] => 2
+                    [precio_compra] => 5600
+                    [precio] => 10000
+                    [total] => 20000
+                )
+
+            [1] => Array
+                (
+                    [id] => 103
+                    [descripcion] => Louvres Aceite De Oliva 2 Lt
+                    [cantidad] => 2
+                    [categoria] => 1
+                    [stock] => -7
+                    [precio_compra] => 10147.5
+                    [precio] => 15627.15
+                    [total] => 31254.3
+                )
+
+        )
+
+    [total] => 51254.3
+    [metodo_pago] => Efectivo
+    [sucursal] => Local
+    [creado_local] => 1
+)
+
+[19-Dec-2025 23:10:04 UTC] Lista productos formateada: [{"id":102,"descripcion":"Louvres Aceite De Oliva 1 Lt","cantidad":2,"categoria":"60","stock":2,"precio_compra":5600,"precio":10000,"total":20000},{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":2,"categoria":"1","stock":-7,"precio_compra":10147.5,"precio":15627.15,"total":31254.3}]
+[19-Dec-2025 23:10:04 UTC] Llamando a ctrCrearVentaCaja con datos: Array
+(
+    [tokenIdTablaVentas] => offline_6945db4c7a1a80.92376643
+    [fechaActual] => 2025-12-19 19:23:56
+    [idVendedor] => 1
+    [sucursalVendedor] => Local
+    [nombreVendedor] => Sistema Offline
+    [seleccionarCliente] => Consumidor Final
+    [nuevaVentaCaja] => 1
+    [listaProductosCaja] => [{"id":102,"descripcion":"Louvres Aceite De Oliva 1 Lt","cantidad":2,"categoria":"60","stock":2,"precio_compra":5600,"precio":10000,"total":20000},{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":2,"categoria":"1","stock":-7,"precio_compra":10147.5,"precio":15627.15,"total":31254.3}]
+    [listaDescuentoCaja] => 
+    [nuevoTotalVentaCaja] => 51254.3
+    [listaMetodoPagoCaja] => Efectivo
+    [nuevoPrecioImpuestoCaja] => 0
+    [nuevoVtaCajaIva2] => 0
+    [nuevoVtaCajaIva5] => 0
+    [nuevoVtaCajaIva10] => 0
+    [nuevoVtaCajaIva21] => 0
+    [nuevoVtaCajaIva27] => 0
+    [nuevoVtaCajaBaseImp0] => 0
+    [nuevoVtaCajaBaseImp2] => 0
+    [nuevoVtaCajaBaseImp5] => 0
+    [nuevoVtaCajaBaseImp10] => 0
+    [nuevoVtaCajaBaseImp21] => 0
+    [nuevoVtaCajaBaseImp27] => 0
+    [nuevoPrecioNetoCaja] => 51254.3
+    [nuevoInteresPorcentajeCaja] => 0
+    [nuevoDescuentoPorcentajeCaja] => 0
+    [nuevotipoCbte] => 0
+    [nuevaPtoVta] => 0
+    [nuevaConcepto] => 
+    [nuevaFecDesde] => 
+    [nuevaFecHasta] => 
+    [nuevaFecVto] => 
+    [nuevotipoCbteAsociado] => 
+    [nuevaPtoVtaAsociado] => 
+    [nuevaNroCbteAsociado] => 
+    [mxMediosPagos] => [{"tipo":"Efectivo","entrega":51254.3}]
+)
+
+[19-Dec-2025 23:10:04 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:04 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:04 UTC] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/controladores/ventas.controlador.php on line 678
+[19-Dec-2025 23:10:04 UTC] Respuesta del controlador: Array
+(
+    [estado] => ok
+    [codigoVta] => 154
+    [factura] => Array
+        (
+            [factura] => no
+        )
+
+    [msjAfip] => 
+    [datosFacturacion] => 
+)
+
+[19-Dec-2025 23:10:04 UTC] ✅ Venta creada exitosamente. ID: 186
+[19-Dec-2025 23:10:05 UTC] Permitiendo venta desde sistema offline sin sesión activa
+[19-Dec-2025 23:10:05 UTC] === INICIO CREAR VENTA OFFLINE ===
+[19-Dec-2025 23:10:05 UTC] Raw input recibido: {"fecha": "2025-12-19T19:36:17.584567", "cliente": "Consumidor Final", "productos": [{"id": 103, "descripcion": "Louvres Aceite De Oliva 2 Lt", "cantidad": 1, "categoria": "1", "stock": -7.0, "precio_compra": 10147.5, "precio": 15627.15, "total": 15627.15}, {"id": 104, "descripcion": "Giaroli Tinto Seco 5lt", "cantidad": 1, "categoria": "69", "stock": 4.0, "precio_compra": 5500.0, "precio": 8470.0, "total": 8470.0}, {"id": 105, "descripcion": "Giaroli Tinto Abocado 5lt", "cantidad": 1, "categori
+[19-Dec-2025 23:10:05 UTC] Datos decodificados: Array
+(
+    [fecha] => 2025-12-19T19:36:17.584567
+    [cliente] => Consumidor Final
+    [productos] => Array
+        (
+            [0] => Array
+                (
+                    [id] => 103
+                    [descripcion] => Louvres Aceite De Oliva 2 Lt
+                    [cantidad] => 1
+                    [categoria] => 1
+                    [stock] => -7
+                    [precio_compra] => 10147.5
+                    [precio] => 15627.15
+                    [total] => 15627.15
+                )
+
+            [1] => Array
+                (
+                    [id] => 104
+                    [descripcion] => Giaroli Tinto Seco 5lt
+                    [cantidad] => 1
+                    [categoria] => 69
+                    [stock] => 4
+                    [precio_compra] => 5500
+                    [precio] => 8470
+                    [total] => 8470
+                )
+
+            [2] => Array
+                (
+                    [id] => 105
+                    [descripcion] => Giaroli Tinto Abocado 5lt
+                    [cantidad] => 1
+                    [categoria] => 69
+                    [stock] => 5
+                    [precio_compra] => 5800
+                    [precio] => 8932
+                    [total] => 8932
+                )
+
+        )
+
+    [total] => 33029.15
+    [metodo_pago] => Efectivo
+    [sucursal] => Local
+    [creado_local] => 1
+)
+
+[19-Dec-2025 23:10:05 UTC] Lista productos formateada: [{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":1,"categoria":"1","stock":-7,"precio_compra":10147.5,"precio":15627.15,"total":15627.15},{"id":104,"descripcion":"Giaroli Tinto Seco 5lt","cantidad":1,"categoria":"69","stock":4,"precio_compra":5500,"precio":8470,"total":8470},{"id":105,"descripcion":"Giaroli Tinto Abocado 5lt","cantidad":1,"categoria":"69","stock":5,"precio_compra":5800,"precio":8932,"total":8932}]
+[19-Dec-2025 23:10:05 UTC] Llamando a ctrCrearVentaCaja con datos: Array
+(
+    [tokenIdTablaVentas] => offline_6945db4d7aa358.16427542
+    [fechaActual] => 2025-12-19 19:36:17
+    [idVendedor] => 1
+    [sucursalVendedor] => Local
+    [nombreVendedor] => Sistema Offline
+    [seleccionarCliente] => Consumidor Final
+    [nuevaVentaCaja] => 1
+    [listaProductosCaja] => [{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":1,"categoria":"1","stock":-7,"precio_compra":10147.5,"precio":15627.15,"total":15627.15},{"id":104,"descripcion":"Giaroli Tinto Seco 5lt","cantidad":1,"categoria":"69","stock":4,"precio_compra":5500,"precio":8470,"total":8470},{"id":105,"descripcion":"Giaroli Tinto Abocado 5lt","cantidad":1,"categoria":"69","stock":5,"precio_compra":5800,"precio":8932,"total":8932}]
+    [listaDescuentoCaja] => 
+    [nuevoTotalVentaCaja] => 33029.15
+    [listaMetodoPagoCaja] => Efectivo
+    [nuevoPrecioImpuestoCaja] => 0
+    [nuevoVtaCajaIva2] => 0
+    [nuevoVtaCajaIva5] => 0
+    [nuevoVtaCajaIva10] => 0
+    [nuevoVtaCajaIva21] => 0
+    [nuevoVtaCajaIva27] => 0
+    [nuevoVtaCajaBaseImp0] => 0
+    [nuevoVtaCajaBaseImp2] => 0
+    [nuevoVtaCajaBaseImp5] => 0
+    [nuevoVtaCajaBaseImp10] => 0
+    [nuevoVtaCajaBaseImp21] => 0
+    [nuevoVtaCajaBaseImp27] => 0
+    [nuevoPrecioNetoCaja] => 33029.15
+    [nuevoInteresPorcentajeCaja] => 0
+    [nuevoDescuentoPorcentajeCaja] => 0
+    [nuevotipoCbte] => 0
+    [nuevaPtoVta] => 0
+    [nuevaConcepto] => 
+    [nuevaFecDesde] => 
+    [nuevaFecHasta] => 
+    [nuevaFecVto] => 
+    [nuevotipoCbteAsociado] => 
+    [nuevaPtoVtaAsociado] => 
+    [nuevaNroCbteAsociado] => 
+    [mxMediosPagos] => [{"tipo":"Efectivo","entrega":33029.15}]
+)
+
+[19-Dec-2025 23:10:05 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:05 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:05 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:05 UTC] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/controladores/ventas.controlador.php on line 678
+[19-Dec-2025 23:10:05 UTC] Respuesta del controlador: Array
+(
+    [estado] => ok
+    [codigoVta] => 155
+    [factura] => Array
+        (
+            [factura] => no
+        )
+
+    [msjAfip] => 
+    [datosFacturacion] => 
+)
+
+[19-Dec-2025 23:10:05 UTC] ✅ Venta creada exitosamente. ID: 187
+[19-Dec-2025 23:10:21 UTC] Permitiendo venta desde sistema offline sin sesión activa
+[19-Dec-2025 23:10:21 UTC] === INICIO CREAR VENTA OFFLINE ===
+[19-Dec-2025 23:10:21 UTC] Raw input recibido: {"fecha": "2025-12-19T20:10:20.851792", "cliente": "Consumidor Final", "productos": [{"id": 107, "descripcion": "LECHE LA ARMONIA", "cantidad": 1, "categoria": "61", "stock": 10.0, "precio_compra": 710.84, "precio": 0.0, "total": 0.0}, {"id": 105, "descripcion": "Giaroli Tinto Abocado 5lt", "cantidad": 1, "categoria": "69", "stock": 5.0, "precio_compra": 5800.0, "precio": 8932.0, "total": 8932.0}, {"id": 104, "descripcion": "Giaroli Tinto Seco 5lt", "cantidad": 1, "categoria": "69", "stock": 4.0
+[19-Dec-2025 23:10:21 UTC] Datos decodificados: Array
+(
+    [fecha] => 2025-12-19T20:10:20.851792
+    [cliente] => Consumidor Final
+    [productos] => Array
+        (
+            [0] => Array
+                (
+                    [id] => 107
+                    [descripcion] => LECHE LA ARMONIA
+                    [cantidad] => 1
+                    [categoria] => 61
+                    [stock] => 10
+                    [precio_compra] => 710.84
+                    [precio] => 0
+                    [total] => 0
+                )
+
+            [1] => Array
+                (
+                    [id] => 105
+                    [descripcion] => Giaroli Tinto Abocado 5lt
+                    [cantidad] => 1
+                    [categoria] => 69
+                    [stock] => 5
+                    [precio_compra] => 5800
+                    [precio] => 8932
+                    [total] => 8932
+                )
+
+            [2] => Array
+                (
+                    [id] => 104
+                    [descripcion] => Giaroli Tinto Seco 5lt
+                    [cantidad] => 1
+                    [categoria] => 69
+                    [stock] => 4
+                    [precio_compra] => 5500
+                    [precio] => 8470
+                    [total] => 8470
+                )
+
+        )
+
+    [total] => 17402
+    [metodo_pago] => Efectivo
+    [sucursal] => Local
+    [creado_local] => 1
+)
+
+[19-Dec-2025 23:10:21 UTC] Lista productos formateada: [{"id":107,"descripcion":"LECHE LA ARMONIA","cantidad":1,"categoria":"61","stock":10,"precio_compra":710.84,"precio":0,"total":0},{"id":105,"descripcion":"Giaroli Tinto Abocado 5lt","cantidad":1,"categoria":"69","stock":5,"precio_compra":5800,"precio":8932,"total":8932},{"id":104,"descripcion":"Giaroli Tinto Seco 5lt","cantidad":1,"categoria":"69","stock":4,"precio_compra":5500,"precio":8470,"total":8470}]
+[19-Dec-2025 23:10:21 UTC] Llamando a ctrCrearVentaCaja con datos: Array
+(
+    [tokenIdTablaVentas] => offline_6945db5de8bca7.08343499
+    [fechaActual] => 2025-12-19 20:10:20
+    [idVendedor] => 1
+    [sucursalVendedor] => Local
+    [nombreVendedor] => Sistema Offline
+    [seleccionarCliente] => Consumidor Final
+    [nuevaVentaCaja] => 1
+    [listaProductosCaja] => [{"id":107,"descripcion":"LECHE LA ARMONIA","cantidad":1,"categoria":"61","stock":10,"precio_compra":710.84,"precio":0,"total":0},{"id":105,"descripcion":"Giaroli Tinto Abocado 5lt","cantidad":1,"categoria":"69","stock":5,"precio_compra":5800,"precio":8932,"total":8932},{"id":104,"descripcion":"Giaroli Tinto Seco 5lt","cantidad":1,"categoria":"69","stock":4,"precio_compra":5500,"precio":8470,"total":8470}]
+    [listaDescuentoCaja] => 
+    [nuevoTotalVentaCaja] => 17402
+    [listaMetodoPagoCaja] => Efectivo
+    [nuevoPrecioImpuestoCaja] => 0
+    [nuevoVtaCajaIva2] => 0
+    [nuevoVtaCajaIva5] => 0
+    [nuevoVtaCajaIva10] => 0
+    [nuevoVtaCajaIva21] => 0
+    [nuevoVtaCajaIva27] => 0
+    [nuevoVtaCajaBaseImp0] => 0
+    [nuevoVtaCajaBaseImp2] => 0
+    [nuevoVtaCajaBaseImp5] => 0
+    [nuevoVtaCajaBaseImp10] => 0
+    [nuevoVtaCajaBaseImp21] => 0
+    [nuevoVtaCajaBaseImp27] => 0
+    [nuevoPrecioNetoCaja] => 17402
+    [nuevoInteresPorcentajeCaja] => 0
+    [nuevoDescuentoPorcentajeCaja] => 0
+    [nuevotipoCbte] => 0
+    [nuevaPtoVta] => 0
+    [nuevaConcepto] => 
+    [nuevaFecDesde] => 
+    [nuevaFecHasta] => 
+    [nuevaFecVto] => 
+    [nuevotipoCbteAsociado] => 
+    [nuevaPtoVtaAsociado] => 
+    [nuevaNroCbteAsociado] => 
+    [mxMediosPagos] => [{"tipo":"Efectivo","entrega":17402}]
+)
+
+[19-Dec-2025 23:10:21 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:21 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:21 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:10:21 UTC] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/controladores/ventas.controlador.php on line 678
+[19-Dec-2025 23:10:21 UTC] Respuesta del controlador: Array
+(
+    [estado] => ok
+    [codigoVta] => 156
+    [factura] => Array
+        (
+            [factura] => no
+        )
+
+    [msjAfip] => 
+    [datosFacturacion] => 
+)
+
+[19-Dec-2025 23:10:21 UTC] ✅ Venta creada exitosamente. ID: 188
+[19-Dec-2025 23:13:21 UTC] Permitiendo venta desde sistema offline sin sesión activa
+[19-Dec-2025 23:13:21 UTC] === INICIO CREAR VENTA OFFLINE ===
+[19-Dec-2025 23:13:21 UTC] Raw input recibido: {"fecha": "2025-12-19T20:13:20.943568", "cliente": "Consumidor Final", "productos": [{"id": 102, "descripcion": "Louvres Aceite De Oliva 1 Lt", "cantidad": 1, "categoria": "60", "stock": 2.0, "precio_compra": 5600.0, "precio": 10000.0, "total": 10000.0}, {"id": 104, "descripcion": "Giaroli Tinto Seco 5lt", "cantidad": 1, "categoria": "69", "stock": 4.0, "precio_compra": 5500.0, "precio": 8470.0, "total": 8470.0}, {"id": 105, "descripcion": "Giaroli Tinto Abocado 5lt", "cantidad": 1, "categoria":
+[19-Dec-2025 23:13:21 UTC] Datos decodificados: Array
+(
+    [fecha] => 2025-12-19T20:13:20.943568
+    [cliente] => Consumidor Final
+    [productos] => Array
+        (
+            [0] => Array
+                (
+                    [id] => 102
+                    [descripcion] => Louvres Aceite De Oliva 1 Lt
+                    [cantidad] => 1
+                    [categoria] => 60
+                    [stock] => 2
+                    [precio_compra] => 5600
+                    [precio] => 10000
+                    [total] => 10000
+                )
+
+            [1] => Array
+                (
+                    [id] => 104
+                    [descripcion] => Giaroli Tinto Seco 5lt
+                    [cantidad] => 1
+                    [categoria] => 69
+                    [stock] => 4
+                    [precio_compra] => 5500
+                    [precio] => 8470
+                    [total] => 8470
+                )
+
+            [2] => Array
+                (
+                    [id] => 105
+                    [descripcion] => Giaroli Tinto Abocado 5lt
+                    [cantidad] => 1
+                    [categoria] => 69
+                    [stock] => 5
+                    [precio_compra] => 5800
+                    [precio] => 8932
+                    [total] => 8932
+                )
+
+        )
+
+    [total] => 27402
+    [metodo_pago] => Efectivo
+    [sucursal] => Local
+    [creado_local] => 1
+)
+
+[19-Dec-2025 23:13:21 UTC] Lista productos formateada: [{"id":102,"descripcion":"Louvres Aceite De Oliva 1 Lt","cantidad":1,"categoria":"60","stock":2,"precio_compra":5600,"precio":10000,"total":10000},{"id":104,"descripcion":"Giaroli Tinto Seco 5lt","cantidad":1,"categoria":"69","stock":4,"precio_compra":5500,"precio":8470,"total":8470},{"id":105,"descripcion":"Giaroli Tinto Abocado 5lt","cantidad":1,"categoria":"69","stock":5,"precio_compra":5800,"precio":8932,"total":8932}]
+[19-Dec-2025 23:13:21 UTC] Llamando a ctrCrearVentaCaja con datos: Array
+(
+    [tokenIdTablaVentas] => offline_6945dc11f1d5e4.66725977
+    [fechaActual] => 2025-12-19 20:13:20
+    [idVendedor] => 1
+    [sucursalVendedor] => Local
+    [nombreVendedor] => Sistema Offline
+    [seleccionarCliente] => Consumidor Final
+    [nuevaVentaCaja] => 1
+    [listaProductosCaja] => [{"id":102,"descripcion":"Louvres Aceite De Oliva 1 Lt","cantidad":1,"categoria":"60","stock":2,"precio_compra":5600,"precio":10000,"total":10000},{"id":104,"descripcion":"Giaroli Tinto Seco 5lt","cantidad":1,"categoria":"69","stock":4,"precio_compra":5500,"precio":8470,"total":8470},{"id":105,"descripcion":"Giaroli Tinto Abocado 5lt","cantidad":1,"categoria":"69","stock":5,"precio_compra":5800,"precio":8932,"total":8932}]
+    [listaDescuentoCaja] => 
+    [nuevoTotalVentaCaja] => 27402
+    [listaMetodoPagoCaja] => Efectivo
+    [nuevoPrecioImpuestoCaja] => 0
+    [nuevoVtaCajaIva2] => 0
+    [nuevoVtaCajaIva5] => 0
+    [nuevoVtaCajaIva10] => 0
+    [nuevoVtaCajaIva21] => 0
+    [nuevoVtaCajaIva27] => 0
+    [nuevoVtaCajaBaseImp0] => 0
+    [nuevoVtaCajaBaseImp2] => 0
+    [nuevoVtaCajaBaseImp5] => 0
+    [nuevoVtaCajaBaseImp10] => 0
+    [nuevoVtaCajaBaseImp21] => 0
+    [nuevoVtaCajaBaseImp27] => 0
+    [nuevoPrecioNetoCaja] => 27402
+    [nuevoInteresPorcentajeCaja] => 0
+    [nuevoDescuentoPorcentajeCaja] => 0
+    [nuevotipoCbte] => 0
+    [nuevaPtoVta] => 0
+    [nuevaConcepto] => 
+    [nuevaFecDesde] => 
+    [nuevaFecHasta] => 
+    [nuevaFecVto] => 
+    [nuevotipoCbteAsociado] => 
+    [nuevaPtoVtaAsociado] => 
+    [nuevaNroCbteAsociado] => 
+    [mxMediosPagos] => [{"tipo":"Efectivo","entrega":27402}]
+)
+
+[19-Dec-2025 23:13:21 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:13:21 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:13:21 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:13:22 UTC] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/controladores/ventas.controlador.php on line 678
+[19-Dec-2025 23:13:22 UTC] Respuesta del controlador: Array
+(
+    [estado] => ok
+    [codigoVta] => 157
+    [factura] => Array
+        (
+            [factura] => no
+        )
+
+    [msjAfip] => 
+    [datosFacturacion] => 
+)
+
+[19-Dec-2025 23:13:22 UTC] ✅ Venta creada exitosamente. ID: 189
+[19-Dec-2025 23:19:15 UTC] Permitiendo venta desde sistema offline sin sesión activa
+[19-Dec-2025 23:19:15 UTC] === INICIO CREAR VENTA OFFLINE ===
+[19-Dec-2025 23:19:15 UTC] Raw input recibido: {"fecha": "2025-12-19T20:18:27.925135", "cliente": "Consumidor Final", "productos": [{"id": 104, "descripcion": "Giaroli Tinto Seco 5lt", "cantidad": 1, "categoria": "69", "stock": 4.0, "precio_compra": 5500.0, "precio": 8470.0, "total": 8470.0}, {"id": 105, "descripcion": "Giaroli Tinto Abocado 5lt", "cantidad": 1, "categoria": "69", "stock": 5.0, "precio_compra": 5800.0, "precio": 8932.0, "total": 8932.0}, {"id": 107, "descripcion": "LECHE LA ARMONIA", "cantidad": 1, "categoria": "61", "stock"
+[19-Dec-2025 23:19:15 UTC] Datos decodificados: Array
+(
+    [fecha] => 2025-12-19T20:18:27.925135
+    [cliente] => Consumidor Final
+    [productos] => Array
+        (
+            [0] => Array
+                (
+                    [id] => 104
+                    [descripcion] => Giaroli Tinto Seco 5lt
+                    [cantidad] => 1
+                    [categoria] => 69
+                    [stock] => 4
+                    [precio_compra] => 5500
+                    [precio] => 8470
+                    [total] => 8470
+                )
+
+            [1] => Array
+                (
+                    [id] => 105
+                    [descripcion] => Giaroli Tinto Abocado 5lt
+                    [cantidad] => 1
+                    [categoria] => 69
+                    [stock] => 5
+                    [precio_compra] => 5800
+                    [precio] => 8932
+                    [total] => 8932
+                )
+
+            [2] => Array
+                (
+                    [id] => 107
+                    [descripcion] => LECHE LA ARMONIA
+                    [cantidad] => 1
+                    [categoria] => 61
+                    [stock] => 10
+                    [precio_compra] => 710.84
+                    [precio] => 0
+                    [total] => 0
+                )
+
+            [3] => Array
+                (
+                    [id] => 108
+                    [descripcion] => Giaroli Tinto Bonarda 5lt
+                    [cantidad] => 6
+                    [categoria] => 69
+                    [stock] => 0
+                    [precio_compra] => 6900
+                    [precio] => 10626
+                    [total] => 63756
+                )
+
+        )
+
+    [total] => 81158
+    [metodo_pago] => MP
+    [sucursal] => Local
+    [creado_local] => 1
+)
+
+[19-Dec-2025 23:19:15 UTC] Lista productos formateada: [{"id":104,"descripcion":"Giaroli Tinto Seco 5lt","cantidad":1,"categoria":"69","stock":4,"precio_compra":5500,"precio":8470,"total":8470},{"id":105,"descripcion":"Giaroli Tinto Abocado 5lt","cantidad":1,"categoria":"69","stock":5,"precio_compra":5800,"precio":8932,"total":8932},{"id":107,"descripcion":"LECHE LA ARMONIA","cantidad":1,"categoria":"61","stock":10,"precio_compra":710.84,"precio":0,"total":0},{"id":108,"descripcion":"Giaroli Tinto Bonarda 5lt","cantidad":6,"categoria":"69","stock":0,"precio_compra":6900,"precio":10626,"total":63756}]
+[19-Dec-2025 23:19:15 UTC] Llamando a ctrCrearVentaCaja con datos: Array
+(
+    [tokenIdTablaVentas] => offline_6945dd737feef1.83758095
+    [fechaActual] => 2025-12-19 20:18:27
+    [idVendedor] => 1
+    [sucursalVendedor] => Local
+    [nombreVendedor] => Sistema Offline
+    [seleccionarCliente] => Consumidor Final
+    [nuevaVentaCaja] => 1
+    [listaProductosCaja] => [{"id":104,"descripcion":"Giaroli Tinto Seco 5lt","cantidad":1,"categoria":"69","stock":4,"precio_compra":5500,"precio":8470,"total":8470},{"id":105,"descripcion":"Giaroli Tinto Abocado 5lt","cantidad":1,"categoria":"69","stock":5,"precio_compra":5800,"precio":8932,"total":8932},{"id":107,"descripcion":"LECHE LA ARMONIA","cantidad":1,"categoria":"61","stock":10,"precio_compra":710.84,"precio":0,"total":0},{"id":108,"descripcion":"Giaroli Tinto Bonarda 5lt","cantidad":6,"categoria":"69","stock":0,"precio_compra":6900,"precio":10626,"total":63756}]
+    [listaDescuentoCaja] => 
+    [nuevoTotalVentaCaja] => 81158
+    [listaMetodoPagoCaja] => MP
+    [nuevoPrecioImpuestoCaja] => 0
+    [nuevoVtaCajaIva2] => 0
+    [nuevoVtaCajaIva5] => 0
+    [nuevoVtaCajaIva10] => 0
+    [nuevoVtaCajaIva21] => 0
+    [nuevoVtaCajaIva27] => 0
+    [nuevoVtaCajaBaseImp0] => 0
+    [nuevoVtaCajaBaseImp2] => 0
+    [nuevoVtaCajaBaseImp5] => 0
+    [nuevoVtaCajaBaseImp10] => 0
+    [nuevoVtaCajaBaseImp21] => 0
+    [nuevoVtaCajaBaseImp27] => 0
+    [nuevoPrecioNetoCaja] => 81158
+    [nuevoInteresPorcentajeCaja] => 0
+    [nuevoDescuentoPorcentajeCaja] => 0
+    [nuevotipoCbte] => 0
+    [nuevaPtoVta] => 0
+    [nuevaConcepto] => 
+    [nuevaFecDesde] => 
+    [nuevaFecHasta] => 
+    [nuevaFecVto] => 
+    [nuevotipoCbteAsociado] => 
+    [nuevaPtoVtaAsociado] => 
+    [nuevaNroCbteAsociado] => 
+    [mxMediosPagos] => [{"tipo":"MP","entrega":81158}]
+)
+
+[19-Dec-2025 23:19:15 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:19:15 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:19:15 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:19:15 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:19:15 UTC] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/controladores/ventas.controlador.php on line 678
+[19-Dec-2025 23:19:15 UTC] Respuesta del controlador: Array
+(
+    [estado] => ok
+    [codigoVta] => 158
+    [factura] => Array
+        (
+            [factura] => no
+        )
+
+    [msjAfip] => 
+    [datosFacturacion] => 
+)
+
+[19-Dec-2025 23:19:15 UTC] ✅ Venta creada exitosamente. ID: 190
+[19-Dec-2025 23:30:17 UTC] Permitiendo venta desde sistema offline sin sesión activa
+[19-Dec-2025 23:30:17 UTC] === INICIO CREAR VENTA OFFLINE ===
+[19-Dec-2025 23:30:17 UTC] Raw input recibido: {"fecha": "2025-12-19T20:30:16.316051", "cliente": "Consumidor Final", "productos": [{"id": 102, "descripcion": "Louvres Aceite De Oliva 1 Lt", "cantidad": 10, "categoria": "60", "stock": 2.0, "precio_compra": 5600.0, "precio": 10000.0, "total": 100000.0}, {"id": 103, "descripcion": "Louvres Aceite De Oliva 2 Lt", "cantidad": 4, "categoria": "1", "stock": -7.0, "precio_compra": 10147.5, "precio": 15627.15, "total": 62508.6}], "total": 162508.6, "metodo_pago": "MP", "sucursal": "Local", "creado_l
+[19-Dec-2025 23:30:17 UTC] Datos decodificados: Array
+(
+    [fecha] => 2025-12-19T20:30:16.316051
+    [cliente] => Consumidor Final
+    [productos] => Array
+        (
+            [0] => Array
+                (
+                    [id] => 102
+                    [descripcion] => Louvres Aceite De Oliva 1 Lt
+                    [cantidad] => 10
+                    [categoria] => 60
+                    [stock] => 2
+                    [precio_compra] => 5600
+                    [precio] => 10000
+                    [total] => 100000
+                )
+
+            [1] => Array
+                (
+                    [id] => 103
+                    [descripcion] => Louvres Aceite De Oliva 2 Lt
+                    [cantidad] => 4
+                    [categoria] => 1
+                    [stock] => -7
+                    [precio_compra] => 10147.5
+                    [precio] => 15627.15
+                    [total] => 62508.6
+                )
+
+        )
+
+    [total] => 162508.6
+    [metodo_pago] => MP
+    [sucursal] => Local
+    [creado_local] => 1
+)
+
+[19-Dec-2025 23:30:17 UTC] Lista productos formateada: [{"id":102,"descripcion":"Louvres Aceite De Oliva 1 Lt","cantidad":10,"categoria":"60","stock":2,"precio_compra":5600,"precio":10000,"total":100000},{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":4,"categoria":"1","stock":-7,"precio_compra":10147.5,"precio":15627.15,"total":62508.6}]
+[19-Dec-2025 23:30:17 UTC] Llamando a ctrCrearVentaCaja con datos: Array
+(
+    [tokenIdTablaVentas] => offline_6945e0095820e5.53272107
+    [fechaActual] => 2025-12-19 20:30:16
+    [idVendedor] => 1
+    [sucursalVendedor] => Local
+    [nombreVendedor] => Sistema Offline
+    [seleccionarCliente] => Consumidor Final
+    [nuevaVentaCaja] => 1
+    [listaProductosCaja] => [{"id":102,"descripcion":"Louvres Aceite De Oliva 1 Lt","cantidad":10,"categoria":"60","stock":2,"precio_compra":5600,"precio":10000,"total":100000},{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":4,"categoria":"1","stock":-7,"precio_compra":10147.5,"precio":15627.15,"total":62508.6}]
+    [listaDescuentoCaja] => 
+    [nuevoTotalVentaCaja] => 162508.6
+    [listaMetodoPagoCaja] => MP
+    [nuevoPrecioImpuestoCaja] => 0
+    [nuevoVtaCajaIva2] => 0
+    [nuevoVtaCajaIva5] => 0
+    [nuevoVtaCajaIva10] => 0
+    [nuevoVtaCajaIva21] => 0
+    [nuevoVtaCajaIva27] => 0
+    [nuevoVtaCajaBaseImp0] => 0
+    [nuevoVtaCajaBaseImp2] => 0
+    [nuevoVtaCajaBaseImp5] => 0
+    [nuevoVtaCajaBaseImp10] => 0
+    [nuevoVtaCajaBaseImp21] => 0
+    [nuevoVtaCajaBaseImp27] => 0
+    [nuevoPrecioNetoCaja] => 162508.6
+    [nuevoInteresPorcentajeCaja] => 0
+    [nuevoDescuentoPorcentajeCaja] => 0
+    [nuevotipoCbte] => 0
+    [nuevaPtoVta] => 0
+    [nuevaConcepto] => 
+    [nuevaFecDesde] => 
+    [nuevaFecHasta] => 
+    [nuevaFecVto] => 
+    [nuevotipoCbteAsociado] => 
+    [nuevaPtoVtaAsociado] => 
+    [nuevaNroCbteAsociado] => 
+    [mxMediosPagos] => [{"tipo":"MP","entrega":162508.6}]
+)
+
+[19-Dec-2025 23:30:17 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:30:17 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:30:17 UTC] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/controladores/ventas.controlador.php on line 678
+[19-Dec-2025 23:30:17 UTC] Respuesta del controlador: Array
+(
+    [estado] => ok
+    [codigoVta] => 160
+    [factura] => Array
+        (
+            [factura] => no
+        )
+
+    [msjAfip] => 
+    [datosFacturacion] => 
+)
+
+[19-Dec-2025 23:30:17 UTC] ✅ Venta creada exitosamente. ID: 192
+[19-Dec-2025 23:31:25 UTC] Permitiendo venta desde sistema offline sin sesión activa
+[19-Dec-2025 23:31:25 UTC] === INICIO CREAR VENTA OFFLINE ===
+[19-Dec-2025 23:31:25 UTC] Raw input recibido: {"fecha": "2025-12-19T20:31:24.899400", "cliente": "Consumidor Final", "productos": [{"id": 101, "descripcion": "carpeta dibujo", "cantidad": 2, "categoria": "1", "stock": 0, "precio_compra": 0, "precio": 0.0, "total": 0.0}, {"id": 103, "descripcion": "Louvres Aceite De Oliva 2 Lt", "cantidad": 6, "categoria": "1", "stock": -7.0, "precio_compra": 10147.5, "precio": 15627.15, "total": 93762.9}], "total": 93762.9, "metodo_pago": "MP", "sucursal": "Local", "creado_local": true}
+[19-Dec-2025 23:31:25 UTC] Datos decodificados: Array
+(
+    [fecha] => 2025-12-19T20:31:24.899400
+    [cliente] => Consumidor Final
+    [productos] => Array
+        (
+            [0] => Array
+                (
+                    [id] => 101
+                    [descripcion] => carpeta dibujo
+                    [cantidad] => 2
+                    [categoria] => 1
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 0
+                    [total] => 0
+                )
+
+            [1] => Array
+                (
+                    [id] => 103
+                    [descripcion] => Louvres Aceite De Oliva 2 Lt
+                    [cantidad] => 6
+                    [categoria] => 1
+                    [stock] => -7
+                    [precio_compra] => 10147.5
+                    [precio] => 15627.15
+                    [total] => 93762.9
+                )
+
+        )
+
+    [total] => 93762.9
+    [metodo_pago] => MP
+    [sucursal] => Local
+    [creado_local] => 1
+)
+
+[19-Dec-2025 23:31:25 UTC] Lista productos formateada: [{"id":101,"descripcion":"carpeta dibujo","cantidad":2,"categoria":"1","stock":0,"precio_compra":0,"precio":0,"total":0},{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":6,"categoria":"1","stock":-7,"precio_compra":10147.5,"precio":15627.15,"total":93762.9}]
+[19-Dec-2025 23:31:25 UTC] Llamando a ctrCrearVentaCaja con datos: Array
+(
+    [tokenIdTablaVentas] => offline_6945e04df16f50.00530333
+    [fechaActual] => 2025-12-19 20:31:24
+    [idVendedor] => 1
+    [sucursalVendedor] => Local
+    [nombreVendedor] => Sistema Offline
+    [seleccionarCliente] => Consumidor Final
+    [nuevaVentaCaja] => 1
+    [listaProductosCaja] => [{"id":101,"descripcion":"carpeta dibujo","cantidad":2,"categoria":"1","stock":0,"precio_compra":0,"precio":0,"total":0},{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":6,"categoria":"1","stock":-7,"precio_compra":10147.5,"precio":15627.15,"total":93762.9}]
+    [listaDescuentoCaja] => 
+    [nuevoTotalVentaCaja] => 93762.9
+    [listaMetodoPagoCaja] => MP
+    [nuevoPrecioImpuestoCaja] => 0
+    [nuevoVtaCajaIva2] => 0
+    [nuevoVtaCajaIva5] => 0
+    [nuevoVtaCajaIva10] => 0
+    [nuevoVtaCajaIva21] => 0
+    [nuevoVtaCajaIva27] => 0
+    [nuevoVtaCajaBaseImp0] => 0
+    [nuevoVtaCajaBaseImp2] => 0
+    [nuevoVtaCajaBaseImp5] => 0
+    [nuevoVtaCajaBaseImp10] => 0
+    [nuevoVtaCajaBaseImp21] => 0
+    [nuevoVtaCajaBaseImp27] => 0
+    [nuevoPrecioNetoCaja] => 93762.9
+    [nuevoInteresPorcentajeCaja] => 0
+    [nuevoDescuentoPorcentajeCaja] => 0
+    [nuevotipoCbte] => 0
+    [nuevaPtoVta] => 0
+    [nuevaConcepto] => 
+    [nuevaFecDesde] => 
+    [nuevaFecHasta] => 
+    [nuevaFecVto] => 
+    [nuevotipoCbteAsociado] => 
+    [nuevaPtoVtaAsociado] => 
+    [nuevaNroCbteAsociado] => 
+    [mxMediosPagos] => [{"tipo":"MP","entrega":93762.9}]
+)
+
+[19-Dec-2025 23:31:25 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:31:26 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:31:26 UTC] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/controladores/ventas.controlador.php on line 678
+[19-Dec-2025 23:31:26 UTC] Respuesta del controlador: Array
+(
+    [estado] => ok
+    [codigoVta] => 161
+    [factura] => Array
+        (
+            [factura] => no
+        )
+
+    [msjAfip] => 
+    [datosFacturacion] => 
+)
+
+[19-Dec-2025 23:31:26 UTC] ✅ Venta creada exitosamente. ID: 193
+[19-Dec-2025 23:42:17 UTC] Permitiendo venta desde sistema offline sin sesión activa
+[19-Dec-2025 23:42:17 UTC] === INICIO CREAR VENTA OFFLINE ===
+[19-Dec-2025 23:42:17 UTC] Raw input recibido: {"fecha": "2025-12-19T20:42:16.366842", "cliente": 1, "productos": [{"id": 153, "descripcion": "PEIRANO - LORCA 60010 LAVATORIO", "cantidad": 3, "categoria": "", "stock": 0, "precio_compra": 0, "precio": 185926.95, "total": 557780.8500000001}], "total": 557780.8500000001, "metodo_pago": "CH", "sucursal": "Local", "creado_local": true}
+[19-Dec-2025 23:42:17 UTC] Datos decodificados: Array
+(
+    [fecha] => 2025-12-19T20:42:16.366842
+    [cliente] => 1
+    [productos] => Array
+        (
+            [0] => Array
+                (
+                    [id] => 153
+                    [descripcion] => PEIRANO - LORCA 60010 LAVATORIO
+                    [cantidad] => 3
+                    [categoria] => 
+                    [stock] => 0
+                    [precio_compra] => 0
+                    [precio] => 185926.95
+                    [total] => 557780.85
+                )
+
+        )
+
+    [total] => 557780.85
+    [metodo_pago] => CH
+    [sucursal] => Local
+    [creado_local] => 1
+)
+
+[19-Dec-2025 23:42:17 UTC] Lista productos formateada: [{"id":153,"descripcion":"PEIRANO - LORCA 60010 LAVATORIO","cantidad":3,"categoria":"","stock":0,"precio_compra":0,"precio":185926.95,"total":557780.8500000001}]
+[19-Dec-2025 23:42:17 UTC] Llamando a ctrCrearVentaCaja con datos: Array
+(
+    [tokenIdTablaVentas] => offline_6945e2d96e4803.23084090
+    [fechaActual] => 2025-12-19 20:42:16
+    [idVendedor] => 1
+    [sucursalVendedor] => Local
+    [nombreVendedor] => Sistema Offline
+    [seleccionarCliente] => 1
+    [nuevaVentaCaja] => 1
+    [listaProductosCaja] => [{"id":153,"descripcion":"PEIRANO - LORCA 60010 LAVATORIO","cantidad":3,"categoria":"","stock":0,"precio_compra":0,"precio":185926.95,"total":557780.8500000001}]
+    [listaDescuentoCaja] => 
+    [nuevoTotalVentaCaja] => 557780.85
+    [listaMetodoPagoCaja] => CH
+    [nuevoPrecioImpuestoCaja] => 0
+    [nuevoVtaCajaIva2] => 0
+    [nuevoVtaCajaIva5] => 0
+    [nuevoVtaCajaIva10] => 0
+    [nuevoVtaCajaIva21] => 0
+    [nuevoVtaCajaIva27] => 0
+    [nuevoVtaCajaBaseImp0] => 0
+    [nuevoVtaCajaBaseImp2] => 0
+    [nuevoVtaCajaBaseImp5] => 0
+    [nuevoVtaCajaBaseImp10] => 0
+    [nuevoVtaCajaBaseImp21] => 0
+    [nuevoVtaCajaBaseImp27] => 0
+    [nuevoPrecioNetoCaja] => 557780.85
+    [nuevoInteresPorcentajeCaja] => 0
+    [nuevoDescuentoPorcentajeCaja] => 0
+    [nuevotipoCbte] => 0
+    [nuevaPtoVta] => 0
+    [nuevaConcepto] => 
+    [nuevaFecDesde] => 
+    [nuevaFecHasta] => 
+    [nuevaFecVto] => 
+    [nuevotipoCbteAsociado] => 
+    [nuevaPtoVtaAsociado] => 
+    [nuevaNroCbteAsociado] => 
+    [mxMediosPagos] => [{"tipo":"CH","entrega":557780.8500000001}]
+)
+
+[19-Dec-2025 23:42:17 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:42:17 UTC] Respuesta del controlador: Array
+(
+    [estado] => ok
+    [codigoVta] => 162
+    [factura] => Array
+        (
+            [factura] => no
+        )
+
+    [msjAfip] => 
+    [datosFacturacion] => 
+)
+
+[19-Dec-2025 23:42:17 UTC] ✅ Venta creada exitosamente. ID: 194
+[19-Dec-2025 23:53:18 UTC] Permitiendo venta desde sistema offline sin sesión activa
+[19-Dec-2025 23:53:18 UTC] === INICIO CREAR VENTA OFFLINE ===
+[19-Dec-2025 23:53:18 UTC] Raw input recibido: {"fecha": "2025-12-19T20:53:17.578273", "cliente": 5, "productos": [{"id": 103, "descripcion": "Louvres Aceite De Oliva 2 Lt", "cantidad": 1, "categoria": "1", "stock": -7.0, "precio_compra": 10147.5, "precio": 15627.15, "total": 15627.15}, {"id": 102, "descripcion": "Louvres Aceite De Oliva 1 Lt", "cantidad": 1, "categoria": "60", "stock": 2.0, "precio_compra": 5600.0, "precio": 10000.0, "total": 10000.0}], "total": 25627.15, "metodo_pago": "TC", "sucursal": "Local", "creado_local": true}
+[19-Dec-2025 23:53:18 UTC] Datos decodificados: Array
+(
+    [fecha] => 2025-12-19T20:53:17.578273
+    [cliente] => 5
+    [productos] => Array
+        (
+            [0] => Array
+                (
+                    [id] => 103
+                    [descripcion] => Louvres Aceite De Oliva 2 Lt
+                    [cantidad] => 1
+                    [categoria] => 1
+                    [stock] => -7
+                    [precio_compra] => 10147.5
+                    [precio] => 15627.15
+                    [total] => 15627.15
+                )
+
+            [1] => Array
+                (
+                    [id] => 102
+                    [descripcion] => Louvres Aceite De Oliva 1 Lt
+                    [cantidad] => 1
+                    [categoria] => 60
+                    [stock] => 2
+                    [precio_compra] => 5600
+                    [precio] => 10000
+                    [total] => 10000
+                )
+
+        )
+
+    [total] => 25627.15
+    [metodo_pago] => TC
+    [sucursal] => Local
+    [creado_local] => 1
+)
+
+[19-Dec-2025 23:53:18 UTC] Lista productos formateada: [{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":1,"categoria":"1","stock":-7,"precio_compra":10147.5,"precio":15627.15,"total":15627.15},{"id":102,"descripcion":"Louvres Aceite De Oliva 1 Lt","cantidad":1,"categoria":"60","stock":2,"precio_compra":5600,"precio":10000,"total":10000}]
+[19-Dec-2025 23:53:18 UTC] Llamando a ctrCrearVentaCaja con datos: Array
+(
+    [tokenIdTablaVentas] => offline_6945e56eaee778.24113385
+    [fechaActual] => 2025-12-19 20:53:17
+    [idVendedor] => 1
+    [sucursalVendedor] => Local
+    [nombreVendedor] => Sistema Offline
+    [seleccionarCliente] => 5
+    [nuevaVentaCaja] => 1
+    [listaProductosCaja] => [{"id":103,"descripcion":"Louvres Aceite De Oliva 2 Lt","cantidad":1,"categoria":"1","stock":-7,"precio_compra":10147.5,"precio":15627.15,"total":15627.15},{"id":102,"descripcion":"Louvres Aceite De Oliva 1 Lt","cantidad":1,"categoria":"60","stock":2,"precio_compra":5600,"precio":10000,"total":10000}]
+    [listaDescuentoCaja] => 
+    [nuevoTotalVentaCaja] => 25627.15
+    [listaMetodoPagoCaja] => TC
+    [nuevoPrecioImpuestoCaja] => 0
+    [nuevoVtaCajaIva2] => 0
+    [nuevoVtaCajaIva5] => 0
+    [nuevoVtaCajaIva10] => 0
+    [nuevoVtaCajaIva21] => 0
+    [nuevoVtaCajaIva27] => 0
+    [nuevoVtaCajaBaseImp0] => 0
+    [nuevoVtaCajaBaseImp2] => 0
+    [nuevoVtaCajaBaseImp5] => 0
+    [nuevoVtaCajaBaseImp10] => 0
+    [nuevoVtaCajaBaseImp21] => 0
+    [nuevoVtaCajaBaseImp27] => 0
+    [nuevoPrecioNetoCaja] => 25627.15
+    [nuevoInteresPorcentajeCaja] => 0
+    [nuevoDescuentoPorcentajeCaja] => 0
+    [nuevotipoCbte] => 0
+    [nuevaPtoVta] => 0
+    [nuevaConcepto] => 
+    [nuevaFecDesde] => 
+    [nuevaFecHasta] => 
+    [nuevaFecVto] => 
+    [nuevotipoCbteAsociado] => 
+    [nuevaPtoVtaAsociado] => 
+    [nuevaNroCbteAsociado] => 
+    [mxMediosPagos] => [{"tipo":"TC","entrega":25627.15}]
+)
+
+[19-Dec-2025 23:53:18 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:53:18 UTC] PHP Warning:  Undefined array key "Local" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 652
+[19-Dec-2025 23:53:18 UTC] Respuesta del controlador: Array
+(
+    [estado] => ok
+    [codigoVta] => 163
+    [factura] => Array
+        (
+            [factura] => no
+        )
+
+    [msjAfip] => 
+    [datosFacturacion] => 
+)
+
+[19-Dec-2025 23:53:18 UTC] ✅ Venta creada exitosamente. ID: 195

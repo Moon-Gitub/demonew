@@ -1,0 +1,108 @@
+[18-Dec-2025 21:16:46 UTC] ==========================================
+[18-Dec-2025 21:16:46 UTC] INICIO comprobante.php - 2025-12-18 21:16:46
+[18-Dec-2025 21:16:46 UTC] Código recibido: 146
+[18-Dec-2025 21:16:46 UTC] ==========================================
+[18-Dec-2025 21:16:46 UTC] Ruta base calculada: /home/newmoon/public_html/extensiones
+[18-Dec-2025 21:16:46 UTC] Ruta base existe: SÍ
+[18-Dec-2025 21:16:46 UTC] Buscando autoload en: /home/newmoon/public_html/extensiones/extensiones/vendor/autoload.php
+[18-Dec-2025 21:16:46 UTC] ERROR: autoload.php no encontrado en: /home/newmoon/public_html/extensiones/extensiones/vendor/autoload.php
+[18-Dec-2025 21:18:28 UTC] ==========================================
+[18-Dec-2025 21:18:28 UTC] INICIO comprobante.php - 2025-12-18 21:18:28
+[18-Dec-2025 21:18:28 UTC] Código recibido: 146
+[18-Dec-2025 21:18:28 UTC] ==========================================
+[18-Dec-2025 21:18:28 UTC] Buscando autoload en: /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../autoload.php
+[18-Dec-2025 21:18:28 UTC] ✅ autoload.php encontrado, cargando...
+[18-Dec-2025 21:18:28 UTC] ✅ autoload.php cargado
+[18-Dec-2025 21:18:28 UTC] Ruta base calculada: /home/newmoon/public_html
+[18-Dec-2025 21:18:28 UTC] Ruta base existe: SÍ
+[18-Dec-2025 21:18:28 UTC] ✅ .env cargado correctamente desde: /home/newmoon/public_html/.env
+[18-Dec-2025 21:18:28 UTC] Verificando archivo: empresa.controlador.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../controladores/empresa.controlador.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargando: empresa.controlador.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargado: empresa.controlador.php
+[18-Dec-2025 21:18:28 UTC] Verificando archivo: empresa.modelo.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../modelos/empresa.modelo.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargando: empresa.modelo.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargado: empresa.modelo.php
+[18-Dec-2025 21:18:28 UTC] Verificando archivo: ventas.controlador.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../controladores/ventas.controlador.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargando: ventas.controlador.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargado: ventas.controlador.php
+[18-Dec-2025 21:18:28 UTC] Verificando archivo: ventas.modelo.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../modelos/ventas.modelo.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargando: ventas.modelo.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargado: ventas.modelo.php
+[18-Dec-2025 21:18:28 UTC] Verificando archivo: clientes.controlador.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../controladores/clientes.controlador.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargando: clientes.controlador.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargado: clientes.controlador.php
+[18-Dec-2025 21:18:28 UTC] Verificando archivo: clientes.modelo.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../modelos/clientes.modelo.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargando: clientes.modelo.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargado: clientes.modelo.php
+[18-Dec-2025 21:18:28 UTC] Verificando archivo: usuarios.controlador.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../controladores/usuarios.controlador.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargando: usuarios.controlador.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargado: usuarios.controlador.php
+[18-Dec-2025 21:18:28 UTC] Verificando archivo: usuarios.modelo.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../modelos/usuarios.modelo.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargando: usuarios.modelo.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargado: usuarios.modelo.php
+[18-Dec-2025 21:18:28 UTC] Verificando archivo: productos.controlador.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../controladores/productos.controlador.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargando: productos.controlador.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargado: productos.controlador.php
+[18-Dec-2025 21:18:28 UTC] Verificando archivo: productos.modelo.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../modelos/productos.modelo.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargando: productos.modelo.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargado: productos.modelo.php
+[18-Dec-2025 21:18:28 UTC] Verificando archivo: autoload.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../autoload.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargando: autoload.php
+[18-Dec-2025 21:18:28 UTC] ✅ Cargado: autoload.php
+[18-Dec-2025 21:18:28 UTC] ✅ Todos los archivos requeridos cargados correctamente
+[18-Dec-2025 21:18:28 UTC] Creando instancia de imprimirComprobante...
+[18-Dec-2025 21:18:28 UTC] Instancia creada, llamando traerImpresionComprobante()...
+[18-Dec-2025 21:18:28 UTC] Iniciando traerImpresionComprobante()
+[18-Dec-2025 21:18:28 UTC] Obteniendo datos de empresa...
+[18-Dec-2025 21:18:28 UTC] Datos de empresa obtenidos: SÍ
+[18-Dec-2025 21:18:28 UTC] ✅ PDF generado exitosamente
+[18-Dec-2025 21:19:59 UTC] ==========================================
+[18-Dec-2025 21:19:59 UTC] INICIO comprobante.php - 2025-12-18 21:19:59
+[18-Dec-2025 21:19:59 UTC] Código recibido: 146
+[18-Dec-2025 21:19:59 UTC] ==========================================
+[18-Dec-2025 21:19:59 UTC] Buscando autoload en: /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../autoload.php
+[18-Dec-2025 21:19:59 UTC] ✅ autoload.php encontrado, cargando...
+[18-Dec-2025 21:19:59 UTC] ✅ autoload.php cargado
+[18-Dec-2025 21:19:59 UTC] Ruta base calculada: /home/newmoon/public_html
+[18-Dec-2025 21:19:59 UTC] Ruta base existe: SÍ
+[18-Dec-2025 21:19:59 UTC] ✅ .env cargado correctamente desde: /home/newmoon/public_html/.env
+[18-Dec-2025 21:19:59 UTC] Verificando archivo: empresa.controlador.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../controladores/empresa.controlador.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargando: empresa.controlador.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargado: empresa.controlador.php
+[18-Dec-2025 21:19:59 UTC] Verificando archivo: empresa.modelo.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../modelos/empresa.modelo.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargando: empresa.modelo.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargado: empresa.modelo.php
+[18-Dec-2025 21:19:59 UTC] Verificando archivo: ventas.controlador.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../controladores/ventas.controlador.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargando: ventas.controlador.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargado: ventas.controlador.php
+[18-Dec-2025 21:19:59 UTC] Verificando archivo: ventas.modelo.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../modelos/ventas.modelo.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargando: ventas.modelo.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargado: ventas.modelo.php
+[18-Dec-2025 21:19:59 UTC] Verificando archivo: clientes.controlador.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../controladores/clientes.controlador.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargando: clientes.controlador.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargado: clientes.controlador.php
+[18-Dec-2025 21:19:59 UTC] Verificando archivo: clientes.modelo.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../modelos/clientes.modelo.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargando: clientes.modelo.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargado: clientes.modelo.php
+[18-Dec-2025 21:19:59 UTC] Verificando archivo: usuarios.controlador.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../controladores/usuarios.controlador.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargando: usuarios.controlador.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargado: usuarios.controlador.php
+[18-Dec-2025 21:19:59 UTC] Verificando archivo: usuarios.modelo.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../modelos/usuarios.modelo.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargando: usuarios.modelo.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargado: usuarios.modelo.php
+[18-Dec-2025 21:19:59 UTC] Verificando archivo: productos.controlador.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../controladores/productos.controlador.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargando: productos.controlador.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargado: productos.controlador.php
+[18-Dec-2025 21:19:59 UTC] Verificando archivo: productos.modelo.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../../../modelos/productos.modelo.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargando: productos.modelo.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargado: productos.modelo.php
+[18-Dec-2025 21:19:59 UTC] Verificando archivo: autoload.php en /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../autoload.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargando: autoload.php
+[18-Dec-2025 21:19:59 UTC] ✅ Cargado: autoload.php
+[18-Dec-2025 21:19:59 UTC] ✅ Todos los archivos requeridos cargados correctamente
+[18-Dec-2025 21:19:59 UTC] Creando instancia de imprimirComprobante...
+[18-Dec-2025 21:19:59 UTC] Instancia creada, llamando traerImpresionComprobante()...
+[18-Dec-2025 21:19:59 UTC] Iniciando traerImpresionComprobante()
+[18-Dec-2025 21:19:59 UTC] Obteniendo datos de empresa...
+[18-Dec-2025 21:19:59 UTC] Datos de empresa obtenidos: SÍ
+[18-Dec-2025 21:19:59 UTC] ✅ PDF generado exitosamente

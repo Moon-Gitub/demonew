@@ -1,0 +1,567 @@
+[21-Dec-2025 14:40:27 America/Argentina/Mendoza] === WEBHOOK MERCADOPAGO RECIBIDO ===
+[21-Dec-2025 14:40:27 America/Argentina/Mendoza] Método: POST
+[21-Dec-2025 14:40:27 America/Argentina/Mendoza] GET params: {"data_id":"136315713502","type":"payment"}
+[21-Dec-2025 14:40:27 America/Argentina/Mendoza] POST params: []
+[21-Dec-2025 14:40:27 America/Argentina/Mendoza] Headers: {"Host":"newmoon.posmoon.com.ar","User-Agent":"MercadoPago WebHook v1.0 payment","Content-Length":"189","Accept":"application\/json","Connection":"keep-alive","Content-Type":"application\/json","Referer":"https:\/\/mercadopago.com.ar","Traceparent":"00-000000000000000053f595f39c44ad09-b26ef4b70ce556e9-00","X-B3-Sampled":"0","X-B3-Spanid":"b26ef4b70ce556e9","X-B3-Traceid":"000000000000000053f595f39c44ad09","X-Request-Id":"69660877-6f7d-4c81-9ca5-b2df10bad096","X-Rest-Pool-Name":"pool_unknown","X-Signature":"ts=1766338826,v1=27e976b608a8cbb88efe9070f064e221aa386af654256c188536f8fdc7ae1ae0","X-Socket-Timeout":"25000","X-Trace-Digest-95":"akiX0t49Pmpx1FmcxYWNxdku6OV4JBdu04xkc\/ZfBhhy\/KYBwPR0sOQO3Ba5Pn+EeVH0Jr\/vX1Tjgh5i1jhXSldV2XlyJrUx1n6uclsZfV8zYBrTR\/552nYgK5rsk+tC","Accept-Encoding":"gzip","X-HTTPS":"1"}
+[21-Dec-2025 14:40:27 America/Argentina/Mendoza] Topic: payment
+[21-Dec-2025 14:40:27 America/Argentina/Mendoza] ID: 127497101724
+[21-Dec-2025 14:40:27 America/Argentina/Mendoza] Webhook registrado con ID: 17
+[21-Dec-2025 14:40:27 America/Argentina/Mendoza] Procesando pago con ID: 127497101724
+[21-Dec-2025 14:40:27 America/Argentina/Mendoza] Respuesta de MP (HTTP 404): {"message":"Payment not found","error":"not_found","status":404,"cause":[{"code":2000,"description":"Payment not found","data":"21-12-2025T17:40:27UTC;e34b3a95-d9eb-4a59-9b32-97521bd75aee"}]}
+[21-Dec-2025 14:40:27 America/Argentina/Mendoza] ERROR: No se pudo consultar el pago en MP
+[21-Dec-2025 14:40:27 America/Argentina/Mendoza] === FIN WEBHOOK ===
+[21-Dec-2025 15:05:03 America/Argentina/Mendoza] === WEBHOOK MERCADOPAGO RECIBIDO ===
+[21-Dec-2025 15:05:03 America/Argentina/Mendoza] Método: POST
+[21-Dec-2025 15:05:03 America/Argentina/Mendoza] GET params: {"data_id":"135700342931","type":"payment"}
+[21-Dec-2025 15:05:03 America/Argentina/Mendoza] POST params: []
+[21-Dec-2025 15:05:03 America/Argentina/Mendoza] Headers: {"Host":"newmoon.posmoon.com.ar","User-Agent":"MercadoPago WebHook v1.0 payment","Content-Length":"189","Accept":"application\/json","Connection":"keep-alive","Content-Type":"application\/json","Referer":"https:\/\/mercadopago.com.ar","Traceparent":"00-0000000000000000dcbaa6c835e3acdb-779142ba90419036-00","X-B3-Sampled":"0","X-B3-Spanid":"779142ba90419036","X-B3-Traceid":"0000000000000000dcbaa6c835e3acdb","X-Request-Id":"d440ec05-d2a5-43b8-a371-350df802adff","X-Rest-Pool-Name":"pool_unknown","X-Signature":"ts=1766340302,v1=19bfcdb62686a635aaf477149116bce868f20012b1c69fdd3c1acf8871c7d755","X-Socket-Timeout":"25000","X-Trace-Digest-95":"8AY9rV4AfV3UGhcDdB\/a3koWN7BkZFwKV0aQlvPaETfYa9AT5jM2lREdYhLcfVIar9YEKJnMRqMtC5GLfjy83Q++GR9yPvtITffCFVvOjUpS0ljAOY0S9Y6v3rQJ6i9T","Accept-Encoding":"gzip","X-HTTPS":"1"}
+[21-Dec-2025 15:05:03 America/Argentina/Mendoza] Topic: payment
+[21-Dec-2025 15:05:03 America/Argentina/Mendoza] ID: 127497101908
+[21-Dec-2025 15:05:03 America/Argentina/Mendoza] Webhook registrado con ID: 18
+[21-Dec-2025 15:05:03 America/Argentina/Mendoza] Procesando pago con ID: 127497101908
+[21-Dec-2025 15:05:03 America/Argentina/Mendoza] Respuesta de MP (HTTP 404): {"message":"Payment not found","error":"not_found","status":404,"cause":[{"code":2000,"description":"Payment not found","data":"21-12-2025T18:05:03UTC;925e6435-ad18-4a7f-b0da-370b5e48fc85"}]}
+[21-Dec-2025 15:05:03 America/Argentina/Mendoza] ERROR: No se pudo consultar el pago en MP
+[21-Dec-2025 15:05:03 America/Argentina/Mendoza] === FIN WEBHOOK ===
+[21-Dec-2025 17:28:05 America/Argentina/Mendoza] === WEBHOOK MERCADOPAGO RECIBIDO ===
+[21-Dec-2025 17:28:05 America/Argentina/Mendoza] Método: POST
+[21-Dec-2025 17:28:05 America/Argentina/Mendoza] GET params: {"data_id":"135719505967","type":"payment"}
+[21-Dec-2025 17:28:05 America/Argentina/Mendoza] POST params: []
+[21-Dec-2025 17:28:05 America/Argentina/Mendoza] Headers: {"Host":"newmoon.posmoon.com.ar","User-Agent":"MercadoPago WebHook v1.0 payment","Content-Length":"189","Accept":"application\/json","Connection":"keep-alive","Content-Type":"application\/json","Referer":"https:\/\/mercadopago.com.ar","Traceparent":"00-0000000000000000d0002688c827ad63-629f02e5ca7f6945-00","X-B3-Sampled":"0","X-B3-Spanid":"629f02e5ca7f6945","X-B3-Traceid":"0000000000000000d0002688c827ad63","X-Request-Id":"a74d76e3-689f-4365-8e59-796cfdeaeb14","X-Rest-Pool-Name":"pool_unknown","X-Signature":"ts=1766348885,v1=b1258e26c320a9bfe74571eeaa60d4291a849444d6b43ed3759aea225715e4cd","X-Socket-Timeout":"25000","X-Trace-Digest-78":"8FkbaLWElUnh8mqgHIqQxOhIqh5HCC8q3NJA+keFy2j9c9eM99wF45lrTt5syWQKdJC5VV9ZPLwpVT5O4e8RH+nK6N6JQI9gFnYBLMryPzdbLJrTIEiu5j\/PJPb7BpCU","Accept-Encoding":"gzip","X-HTTPS":"1"}
+[21-Dec-2025 17:28:05 America/Argentina/Mendoza] Topic: payment
+[21-Dec-2025 17:28:05 America/Argentina/Mendoza] ID: 127404244151
+[21-Dec-2025 17:28:05 America/Argentina/Mendoza] Webhook registrado con ID: 19
+[21-Dec-2025 17:28:05 America/Argentina/Mendoza] Procesando pago con ID: 127404244151
+[21-Dec-2025 17:28:05 America/Argentina/Mendoza] Respuesta de MP (HTTP 404): {"message":"Payment not found","error":"not_found","status":404,"cause":[{"code":2000,"description":"Payment not found","data":"21-12-2025T20:28:05UTC;1b09036f-cfe9-4114-904d-d49396726aeb"}]}
+[21-Dec-2025 17:28:05 America/Argentina/Mendoza] ERROR: No se pudo consultar el pago en MP
+[21-Dec-2025 17:28:05 America/Argentina/Mendoza] === FIN WEBHOOK ===
+[22-Dec-2025 08:33:52 America/Argentina/Mendoza] === WEBHOOK MERCADOPAGO RECIBIDO ===
+[22-Dec-2025 08:33:52 America/Argentina/Mendoza] Método: POST
+[22-Dec-2025 08:33:52 America/Argentina/Mendoza] GET params: {"data_id":"136416083690","type":"payment"}
+[22-Dec-2025 08:33:52 America/Argentina/Mendoza] POST params: []
+[22-Dec-2025 08:33:52 America/Argentina/Mendoza] Headers: {"Host":"newmoon.posmoon.com.ar","User-Agent":"MercadoPago WebHook v1.0 payment","Content-Length":"189","Accept":"application\/json","Connection":"keep-alive","Content-Type":"application\/json","Referer":"https:\/\/mercadopago.com.ar","Traceparent":"00-000000000000000086e74acbcbad2278-c18944d15bace95b-00","X-B3-Sampled":"0","X-B3-Spanid":"c18944d15bace95b","X-B3-Traceid":"000000000000000086e74acbcbad2278","X-Request-Id":"675c1890-6fc8-462e-862d-759f3e1f43e5","X-Rest-Pool-Name":"pool_unknown","X-Signature":"ts=1766403231,v1=41a4108aaf73750f022905d29b8da4c73c5d668bcab1e7f5e524c19b58796550","X-Socket-Timeout":"25000","X-Trace-Digest-95":"VJy9Lw6pIpisXnYyGkcE6D1ddEVLmBH7R1i2AfW3h1kLn\/bKPHaPqFHhFexIdr3+SG\/LuHKjP89i54sW1E7KhO+6s25\/1OyN83zYRCLf63ZGsVeyNeIdpyzLwB5FND1K","Accept-Encoding":"gzip","X-HTTPS":"1"}
+[22-Dec-2025 08:33:52 America/Argentina/Mendoza] Topic: payment
+[22-Dec-2025 08:33:52 America/Argentina/Mendoza] ID: 127517275654
+[22-Dec-2025 08:33:52 America/Argentina/Mendoza] Webhook registrado con ID: 20
+[22-Dec-2025 08:33:52 America/Argentina/Mendoza] Procesando pago con ID: 127517275654
+[22-Dec-2025 08:33:52 America/Argentina/Mendoza] Respuesta de MP (HTTP 404): {"message":"Payment not found","error":"not_found","status":404,"cause":[{"code":2000,"description":"Payment not found","data":"22-12-2025T11:33:52UTC;45e9e47c-bc70-4921-80a2-800899625514"}]}
+[22-Dec-2025 08:33:52 America/Argentina/Mendoza] ERROR: No se pudo consultar el pago en MP
+[22-Dec-2025 08:33:52 America/Argentina/Mendoza] === FIN WEBHOOK ===
+[22-Dec-2025 09:05:39 America/Argentina/Mendoza] === WEBHOOK MERCADOPAGO RECIBIDO ===
+[22-Dec-2025 09:05:39 America/Argentina/Mendoza] Método: POST
+[22-Dec-2025 09:05:39 America/Argentina/Mendoza] GET params: {"data_id":"136420727980","type":"payment"}
+[22-Dec-2025 09:05:39 America/Argentina/Mendoza] POST params: []
+[22-Dec-2025 09:05:39 America/Argentina/Mendoza] Headers: {"Host":"newmoon.posmoon.com.ar","User-Agent":"MercadoPago WebHook v1.0 payment","Content-Length":"189","Accept":"application\/json","Connection":"keep-alive","Content-Type":"application\/json","Referer":"https:\/\/mercadopago.com.ar","Traceparent":"00-00000000000000002f760268550a854b-c5d074d55dbbc6af-00","X-B3-Sampled":"0","X-B3-Spanid":"c5d074d55dbbc6af","X-B3-Traceid":"00000000000000002f760268550a854b","X-Request-Id":"cc4d46eb-062e-4d66-94d8-518ad0896797","X-Rest-Pool-Name":"pool_unknown","X-Signature":"ts=1766405139,v1=7db312f99a02dd5f99cff04faced30fcd2d51fe44b836733d263b2053ec0f5e4","X-Socket-Timeout":"25000","X-Trace-Digest-31":"Ua55j5mZyRGyPhai+0B\/VkWQKLTMioYZGYwb4mVhVILrIfLENVICPLoOuhh65AZFzFW52X2BsORCdApAwpP3A7MuqB4FWf8AfIkkGN4DNIFVEFs+kzvjSQCrlCxC6KHL","Accept-Encoding":"gzip","X-HTTPS":"1"}
+[22-Dec-2025 09:05:39 America/Argentina/Mendoza] Topic: payment
+[22-Dec-2025 09:05:39 America/Argentina/Mendoza] ID: 127525332284
+[22-Dec-2025 09:05:39 America/Argentina/Mendoza] Webhook registrado con ID: 21
+[22-Dec-2025 09:05:39 America/Argentina/Mendoza] Procesando pago con ID: 127525332284
+[22-Dec-2025 09:05:39 America/Argentina/Mendoza] Respuesta de MP (HTTP 404): {"message":"Payment not found","error":"not_found","status":404,"cause":[{"code":2000,"description":"Payment not found","data":"22-12-2025T12:05:39UTC;8f9da9e3-aaab-4f61-a0c9-8a5bfa889197"}]}
+[22-Dec-2025 09:05:39 America/Argentina/Mendoza] ERROR: No se pudo consultar el pago en MP
+[22-Dec-2025 09:05:39 America/Argentina/Mendoza] === FIN WEBHOOK ===
+[22-Dec-2025 09:17:21 America/Argentina/Mendoza] === WEBHOOK MERCADOPAGO RECIBIDO ===
+[22-Dec-2025 09:17:21 America/Argentina/Mendoza] Método: POST
+[22-Dec-2025 09:17:21 America/Argentina/Mendoza] GET params: {"data_id":"135800273283","type":"payment"}
+[22-Dec-2025 09:17:21 America/Argentina/Mendoza] POST params: []
+[22-Dec-2025 09:17:21 America/Argentina/Mendoza] Headers: {"Host":"newmoon.posmoon.com.ar","User-Agent":"MercadoPago WebHook v1.0 payment","Content-Length":"189","Accept":"application\/json","Connection":"keep-alive","Content-Type":"application\/json","Referer":"https:\/\/mercadopago.com.ar","Traceparent":"00-00000000000000004938eb10617fa19c-4e5d7d0ced1d28d6-00","X-B3-Sampled":"0","X-B3-Spanid":"4e5d7d0ced1d28d6","X-B3-Traceid":"00000000000000004938eb10617fa19c","X-Request-Id":"9cb7d083-30bd-405f-820e-a9fcf0ddda6a","X-Rest-Pool-Name":"pool_unknown","X-Signature":"ts=1766405841,v1=182c846a0e8938fcd0be67ce5ae1280ad0019d4a6dc3dd56ba74508394bbb061","X-Socket-Timeout":"25000","X-Trace-Digest-31":"WwaGXtG41cgQDbuQcaxRo93sN1h\/DmP2Z+af+ARgbV11TOAAyzo3Uu1beihOBmIGhpuQTbWGGYkigVDQvQpoxjmfjb8cG2qab53VjUx86+RV9dnv0hCZWa\/iGhbJFGOQ","Accept-Encoding":"gzip","X-HTTPS":"1"}
+[22-Dec-2025 09:17:21 America/Argentina/Mendoza] Topic: payment
+[22-Dec-2025 09:17:21 America/Argentina/Mendoza] ID: 127525332398
+[22-Dec-2025 09:17:21 America/Argentina/Mendoza] Webhook registrado con ID: 22
+[22-Dec-2025 09:17:21 America/Argentina/Mendoza] Procesando pago con ID: 127525332398
+[22-Dec-2025 09:17:21 America/Argentina/Mendoza] Respuesta de MP (HTTP 404): {"message":"Payment not found","error":"not_found","status":404,"cause":[{"code":2000,"description":"Payment not found","data":"22-12-2025T12:17:21UTC;471784ae-2437-4ee8-ae8f-e48b02cfb3d8"}]}
+[22-Dec-2025 09:17:21 America/Argentina/Mendoza] ERROR: No se pudo consultar el pago en MP
+[22-Dec-2025 09:17:21 America/Argentina/Mendoza] === FIN WEBHOOK ===
+[22-Dec-2025 10:35:12 America/Argentina/Mendoza] === WEBHOOK MERCADOPAGO RECIBIDO ===
+[22-Dec-2025 10:35:12 America/Argentina/Mendoza] Método: POST
+[22-Dec-2025 10:35:12 America/Argentina/Mendoza] GET params: {"data_id":"136432930864","type":"payment"}
+[22-Dec-2025 10:35:12 America/Argentina/Mendoza] POST params: []
+[22-Dec-2025 10:35:12 America/Argentina/Mendoza] Headers: {"Host":"newmoon.posmoon.com.ar","User-Agent":"MercadoPago WebHook v1.0 payment","Content-Length":"189","Accept":"application\/json","Connection":"keep-alive","Content-Type":"application\/json","Referer":"https:\/\/mercadopago.com.ar","Traceparent":"00-000000000000000055ea02239068302c-b34c88c5ecb4f5dd-00","X-B3-Sampled":"0","X-B3-Spanid":"b34c88c5ecb4f5dd","X-B3-Traceid":"000000000000000055ea02239068302c","X-Request-Id":"c97f8659-c84e-472e-b805-1c6a075ec36a","X-Rest-Pool-Name":"pool_unknown","X-Signature":"ts=1766410512,v1=a8d90b7dea8655d264f726640bc37c02da8c878a672071d267b3eb0d7a3a547e","X-Socket-Timeout":"25000","X-Trace-Digest-32":"4tv5DdMWOZqGXA4+VRK+z0r6O\/FDTj4Zg\/XxX4a4fVwVlupRPt9rrAh\/LARz7URAiRKk3NwQjswOmICL1P7SL+\/oOTqiYMAk8FB2BqLjDFN1oo+Z4eYUYxkkf4LWWca8","Accept-Encoding":"gzip","X-HTTPS":"1"}
+[22-Dec-2025 10:35:12 America/Argentina/Mendoza] Topic: payment
+[22-Dec-2025 10:35:12 America/Argentina/Mendoza] ID: 127424118477
+[22-Dec-2025 10:35:12 America/Argentina/Mendoza] Webhook registrado con ID: 23
+[22-Dec-2025 10:35:12 America/Argentina/Mendoza] Procesando pago con ID: 127424118477
+[22-Dec-2025 10:35:12 America/Argentina/Mendoza] Respuesta de MP (HTTP 404): {"message":"Payment not found","error":"not_found","status":404,"cause":[{"code":2000,"description":"Payment not found","data":"22-12-2025T13:35:12UTC;bc72ab57-1621-478f-bab2-6149adcea707"}]}
+[22-Dec-2025 10:35:12 America/Argentina/Mendoza] ERROR: No se pudo consultar el pago en MP
+[22-Dec-2025 10:35:12 America/Argentina/Mendoza] === FIN WEBHOOK ===
+[22-Dec-2025 13:36:28 America/Argentina/Mendoza] === WEBHOOK MERCADOPAGO RECIBIDO ===
+[22-Dec-2025 13:36:28 America/Argentina/Mendoza] Método: POST
+[22-Dec-2025 13:36:28 America/Argentina/Mendoza] GET params: {"id":"36635115111","topic":"merchant_order"}
+[22-Dec-2025 13:36:28 America/Argentina/Mendoza] POST params: []
+[22-Dec-2025 13:36:28 America/Argentina/Mendoza] Headers: {"Host":"newmoon.posmoon.com.ar","User-Agent":"MercadoPago Feed v2.0 merchant_order","Content-Length":"96","Accept":"application\/json","Authx-Agt-Sub":"urn:auth:member:application:7101882075144875","Authx-Dir-Sub":"urn:auth:member:user:1188183100","Connection":"keep-alive","Content-Type":"application\/json","Referer":"https:\/\/mercadopago.com.ar","Traceparent":"00-00000000000000006b35274803fa6b1a-6e4a1c086dc0982a-00","X-B3-Parentspanid":"7ad0738a6e29aaeb","X-B3-Sampled":"0","X-B3-Spanid":"6e4a1c086dc0982a","X-B3-Traceid":"00000000000000006b35274803fa6b1a","X-It-Payload":"eyJhY2kiOiIxMTg4MTgzMTAwIiwiYWNsIjoiNzEwMTg4MjA3NTE0NDg3NSIsImNudC5zdWIiOiJ1cm46YXV0aDpjb250cmFjdDpvYXV0aDpjbGllbnQtY3JlZGVudGlhbHM6YXQ6RU5DQVBQX1VTUi03MTAxODgyMDc1MTQ0ODc1LTEwMjMwMC1zVkZmT3Mzd1VYNE80ZE41VTY4TE9udmNIam1UNHlzcEllekVzejVldzcwZjYtMTE4ODE4MzEwMCIsImlhdCI6IjE3NjY0MjEzODciLCJpdGgiOiIxIiwib3JzIjoid3JpdGUuaW5zdG9yZS1hcGktb3JkZXJzIiwicm9wIjoiMSJ9","X-Request-Id":"70110479-a602-4ac4-9580-bca0a15f8c24","X-Rest-Pool-Name":"pool_unknown","X-Signature":"ts=1766421387,v1=ac55415a59d3261789dde866f5586549d264b26715df162bcfdce9de8738f589","X-Socket-Timeout":"25000","X-Source-Ip":"107.161.23.11","X-Trace-Digest-43":"8bnPtiEO2pmm5uVgF2gBesHBWnO2KfWl3r56DH3vFO9ljLjTc5N+DfOXoAfd3RryJTorhJwlzfaMKLgiy7hXzvECpYqXbymabnRVPDq0BB884i5\/2Wm2URKdx8mWcoOHH+sFkPHrDASGbm7EKR34AfueZG21QlTKZkElfc\/qHFuW3fixywK2ZoAgzru3tf\/OGCZWhUTC8GW\/euTIaCJRPIuWxosBuG3A4try728oEg7X7+QYtZgbIQGCvYOxiHeO","Accept-Encoding":"gzip","X-HTTPS":"1"}
+[22-Dec-2025 13:36:28 America/Argentina/Mendoza] Topic: merchant_order
+[22-Dec-2025 13:36:28 America/Argentina/Mendoza] ID: 36635115111
+[22-Dec-2025 13:36:28 America/Argentina/Mendoza] Webhook registrado con ID: 24
+[22-Dec-2025 13:36:28 America/Argentina/Mendoza] Topic no es payment, se ignora
+[22-Dec-2025 13:36:28 America/Argentina/Mendoza] === FIN WEBHOOK ===
+[22-Dec-2025 14:25:57 America/Argentina/Mendoza] === WEBHOOK MERCADOPAGO RECIBIDO ===
+[22-Dec-2025 14:25:57 America/Argentina/Mendoza] Método: POST
+[22-Dec-2025 14:25:57 America/Argentina/Mendoza] GET params: {"id":"36636655971","topic":"merchant_order"}
+[22-Dec-2025 14:25:57 America/Argentina/Mendoza] POST params: []
+[22-Dec-2025 14:25:57 America/Argentina/Mendoza] Headers: {"Host":"newmoon.posmoon.com.ar","User-Agent":"MercadoPago Feed v2.0 merchant_order","Content-Length":"96","Accept":"application\/json","Authx-Agt-Sub":"urn:auth:member:application:7101882075144875","Authx-Dir-Sub":"urn:auth:member:user:1188183100","Connection":"keep-alive","Content-Type":"application\/json","Referer":"https:\/\/mercadopago.com.ar","Traceparent":"00-00000000000000000996c3a2bfd5cc08-14ff6171a267ce63-00","X-B3-Parentspanid":"63c30175e3ba9682","X-B3-Sampled":"0","X-B3-Spanid":"14ff6171a267ce63","X-B3-Traceid":"00000000000000000996c3a2bfd5cc08","X-It-Payload":"eyJhY2kiOiIxMTg4MTgzMTAwIiwiYWNsIjoiNzEwMTg4MjA3NTE0NDg3NSIsImNudC5zdWIiOiJ1cm46YXV0aDpjb250cmFjdDpvYXV0aDpjbGllbnQtY3JlZGVudGlhbHM6YXQ6RU5DQVBQX1VTUi03MTAxODgyMDc1MTQ0ODc1LTEwMjMwMC1zVkZmT3Mzd1VYNE80ZE41VTY4TE9udmNIam1UNHlzcEllekVzejVldzcwZjYtMTE4ODE4MzEwMCIsImlhdCI6IjE3NjY0MjQzNTciLCJpdGgiOiIxIiwib3JzIjoid3JpdGUuaW5zdG9yZS1hcGktb3JkZXJzIiwicm9wIjoiMSJ9","X-Request-Id":"75a53bc4-5555-47d1-b134-8a9cd1aec436","X-Rest-Pool-Name":"pool_unknown","X-Signature":"ts=1766424357,v1=788c8b73f64b1b131199913b4a5acda3f9c89cd42f3f143d27980716f69491da","X-Socket-Timeout":"25000","X-Source-Ip":"107.161.23.11","X-Trace-Digest-64":"nU\/F1ZBjFD4KPAFcZ69h2krybHF2qngkkycsCuk6MAGnNyERxV5o\/YCpjMEXk6zFMLCfgMLh1ZSUlbrfZDF0oOZKwwOfoPQUJa1BTgbsbaWsyTYhVT12Yo2B+dq5t+54Qvklo5l6Y+KzjKMzb+oNkbXD1zLHJqiLQsOMFkNhFW8ubha47HHfKq+uWuCut0dJKNi0rEpOgALYysSyzc4M89LkL7FJJ5eEE5mEbf\/gCgkakH2OlIzmbj7Jl1jFbCLO","Accept-Encoding":"gzip","X-HTTPS":"1"}
+[22-Dec-2025 14:25:57 America/Argentina/Mendoza] Topic: merchant_order
+[22-Dec-2025 14:25:57 America/Argentina/Mendoza] ID: 36636655971
+[22-Dec-2025 14:25:57 America/Argentina/Mendoza] Webhook registrado con ID: 25
+[22-Dec-2025 14:25:57 America/Argentina/Mendoza] Procesando pago con ID: 36636655971
+[22-Dec-2025 14:25:58 America/Argentina/Mendoza] Respuesta de MP (HTTP 404): {"message":"Payment not found","error":"not_found","status":404,"cause":[{"code":2000,"description":"Payment not found","data":"22-12-2025T17:25:58UTC;7a623e90-e56c-4a5a-ba23-af06bb8d381e"}]}
+[22-Dec-2025 14:25:58 America/Argentina/Mendoza] ERROR: No se pudo consultar el pago en MP
+[22-Dec-2025 14:25:58 America/Argentina/Mendoza] === FIN WEBHOOK ===
+[23-Dec-2025 00:10:22 America/Argentina/Mendoza] === WEBHOOK MERCADOPAGO RECIBIDO ===
+[23-Dec-2025 00:10:22 America/Argentina/Mendoza] Método: POST
+[23-Dec-2025 00:10:22 America/Argentina/Mendoza] GET params: {"data_id":"123456","type":"payment"}
+[23-Dec-2025 00:10:22 America/Argentina/Mendoza] POST params: []
+[23-Dec-2025 00:10:22 America/Argentina/Mendoza] Headers: {"Accept":"*\/*","Content-Type":"application\/json","User-Agent":"restclient-node\/4.17.2","Accept-Encoding":"*","X-Signature":"ts=1766459422536,v1=14160408dd33f6939c95a448be3743c3547116ad95a592545b2e85e3db256835","X-Request-Id":"eb5bee4e-eea4-44f1-bdfb-19d1836d4f5c","X-Rest-Pool-Name":"\/services\/webhooks.js","x-socket-timeout":"22000","x-retry":"0","Content-Length":"178","traceparent":"00-7ac92766bdf112ab68c2dbf91e677ddd-04f68ed2f25bfa01-00","tracestate":"1709707@nr=0-0-989586-960636094-04f68ed2f25bfa01-a8902f58cba11e8a-0-0.785674-1766459422537","newrelic":"eyJ2IjpbMCwxXSwiZCI6eyJ0eSI6IkFwcCIsImFjIjoiOTg5NTg2IiwiYXAiOiI5NjA2MzYwOTQiLCJ0eCI6ImE4OTAyZjU4Y2JhMTFlOGEiLCJ0ciI6IjdhYzkyNzY2YmRmMTEyYWI2OGMyZGJmOTFlNjc3ZGRkIiwicHIiOjAuNzg1Njc0LCJzYSI6ZmFsc2UsInRpIjoxNzY2NDU5NDIyNTM3LCJ0ayI6IjE3MDk3MDcifX0=","Host":"newmoon.posmoon.com.ar","Connection":"keep-alive","X-HTTPS":"1"}
+[23-Dec-2025 00:10:22 America/Argentina/Mendoza] Topic: payment
+[23-Dec-2025 00:10:22 America/Argentina/Mendoza] ID: 123456
+[23-Dec-2025 00:10:22 America/Argentina/Mendoza] Webhook registrado con ID: 26
+[23-Dec-2025 00:10:22 America/Argentina/Mendoza] Procesando pago con ID: 123456
+[23-Dec-2025 00:10:22 America/Argentina/Mendoza] Respuesta de MP (HTTP 404): {"message":"Payment not found","error":"not_found","status":404,"cause":[{"code":2000,"description":"Payment not found","data":"23-12-2025T03:10:22UTC;ef6db453-389e-4de8-8500-83e329c086d1"}]}
+[23-Dec-2025 00:10:22 America/Argentina/Mendoza] ERROR: No se pudo consultar el pago en MP
+[23-Dec-2025 00:10:22 America/Argentina/Mendoza] === FIN WEBHOOK ===
+[23-Dec-2025 00:13:46 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: PDOStatement::bindParam(): Argument #2 ($var) cannot be passed by reference in /home/newmoon/public_html/modelos/empresa.modelo.php:59
+Stack trace:
+#0 /home/newmoon/public_html/controladores/empresa.controlador.php(115): ModeloEmpresa::mdlEditarEmpresa()
+#1 /home/newmoon/public_html/vistas/modulos/empresa.php(1005): ControladorEmpresa::ctrEditarEmpresa()
+#2 /home/newmoon/public_html/vistas/plantilla.php(241): include('/home/newmoon/p...')
+#3 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#4 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#5 {main}
+  thrown in /home/newmoon/public_html/modelos/empresa.modelo.php on line 59
+[23-Dec-2025 00:19:51 America/Argentina/Buenos_Aires] Guardando credenciales MP - Public Key recibido: SÍ (44 caracteres)
+[23-Dec-2025 00:19:51 America/Argentina/Buenos_Aires] Guardando credenciales MP - Access Token recibido: SÍ (75 caracteres)
+[23-Dec-2025 00:19:51 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: PDOStatement::bindParam(): Argument #2 ($var) cannot be passed by reference in /home/newmoon/public_html/modelos/empresa.modelo.php:59
+Stack trace:
+#0 /home/newmoon/public_html/controladores/empresa.controlador.php(119): ModeloEmpresa::mdlEditarEmpresa()
+#1 /home/newmoon/public_html/vistas/modulos/empresa.php(1005): ControladorEmpresa::ctrEditarEmpresa()
+#2 /home/newmoon/public_html/vistas/plantilla.php(241): include('/home/newmoon/p...')
+#3 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#4 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#5 {main}
+  thrown in /home/newmoon/public_html/modelos/empresa.modelo.php on line 59
+[23-Dec-2025 00:20:14 America/Argentina/Buenos_Aires] Guardando credenciales MP - Public Key recibido: SÍ (44 caracteres)
+[23-Dec-2025 00:20:14 America/Argentina/Buenos_Aires] Guardando credenciales MP - Access Token recibido: SÍ (75 caracteres)
+[23-Dec-2025 00:20:14 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: PDOStatement::bindParam(): Argument #2 ($var) cannot be passed by reference in /home/newmoon/public_html/modelos/empresa.modelo.php:59
+Stack trace:
+#0 /home/newmoon/public_html/controladores/empresa.controlador.php(119): ModeloEmpresa::mdlEditarEmpresa()
+#1 /home/newmoon/public_html/vistas/modulos/empresa.php(1005): ControladorEmpresa::ctrEditarEmpresa()
+#2 /home/newmoon/public_html/vistas/plantilla.php(241): include('/home/newmoon/p...')
+#3 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#4 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#5 {main}
+  thrown in /home/newmoon/public_html/modelos/empresa.modelo.php on line 59
+[23-Dec-2025 03:27:56 UTC] Usando credenciales MP desde .env
+[23-Dec-2025 00:27:56 America/Argentina/Buenos_Aires] === DEBUG GUARDAR CREDENCIALES MP ===
+[23-Dec-2025 00:27:56 America/Argentina/Buenos_Aires] POST completo (sin valores sensibles): ["empRazonSocial","idEmpresa","empTitular","empCuit","empDomicilio","empLocalidad","empCodPostal","empMail","empTelefono","empPtosVta","empStock","empPtoVtaDefecto","empCondicionIva","empCondicionIIBB","empNumeroIIBB","empInicioActividades","empConceptoDefecto","empNumeroEstablecimiento","empNumeroCBU","empNumeroCBUAlias","empMPPublicKey","empMPAccessToken","empTipoCbtes","entornoFacturacion","empTipoPadron","hayCSR","hayPhrase","hayPEM","empLoginFondo","hayLoginLogo","empLoginFondoForm","empLoginColorBoton","empLoginFuente","empLoginColorTextoTitulo"]
+[23-Dec-2025 00:27:56 America/Argentina/Buenos_Aires] empMPPublicKey presente en POST: SÍ
+[23-Dec-2025 00:27:56 America/Argentina/Buenos_Aires] empMPAccessToken presente en POST: SÍ
+[23-Dec-2025 00:27:56 America/Argentina/Buenos_Aires] empMPPublicKey valor: SÍ (44 caracteres) - Primeros 10: APP_USR-54...
+[23-Dec-2025 00:27:56 America/Argentina/Buenos_Aires] empMPAccessToken valor: SÍ (75 caracteres) - Primeros 10: APP_USR-83...
+[23-Dec-2025 00:27:56 America/Argentina/Buenos_Aires] Datos que se enviarán al modelo - mp_public_key: SÍ (44 caracteres)
+[23-Dec-2025 00:27:56 America/Argentina/Buenos_Aires] Datos que se enviarán al modelo - mp_access_token: SÍ (75 caracteres)
+[23-Dec-2025 00:27:56 America/Argentina/Buenos_Aires] =======================================
+[23-Dec-2025 00:27:56 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: PDOStatement::bindParam(): Argument #2 ($var) cannot be passed by reference in /home/newmoon/public_html/modelos/empresa.modelo.php:59
+Stack trace:
+#0 /home/newmoon/public_html/controladores/empresa.controlador.php(126): ModeloEmpresa::mdlEditarEmpresa()
+#1 /home/newmoon/public_html/vistas/modulos/empresa.php(1005): ControladorEmpresa::ctrEditarEmpresa()
+#2 /home/newmoon/public_html/vistas/plantilla.php(241): include('/home/newmoon/p...')
+#3 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#4 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#5 {main}
+  thrown in /home/newmoon/public_html/modelos/empresa.modelo.php on line 59
+[23-Dec-2025 03:28:20 UTC] Usando credenciales MP desde .env
+[23-Dec-2025 00:28:20 America/Argentina/Buenos_Aires] === DEBUG GUARDAR CREDENCIALES MP ===
+[23-Dec-2025 00:28:20 America/Argentina/Buenos_Aires] POST completo (sin valores sensibles): ["empRazonSocial","idEmpresa","empTitular","empCuit","empDomicilio","empLocalidad","empCodPostal","empMail","empTelefono","empPtosVta","empStock","empPtoVtaDefecto","empCondicionIva","empCondicionIIBB","empNumeroIIBB","empInicioActividades","empConceptoDefecto","empNumeroEstablecimiento","empNumeroCBU","empNumeroCBUAlias","empMPPublicKey","empMPAccessToken","empTipoCbtes","entornoFacturacion","empTipoPadron","hayCSR","hayPhrase","hayPEM","empLoginFondo","hayLoginLogo","empLoginFondoForm","empLoginColorBoton","empLoginFuente","empLoginColorTextoTitulo"]
+[23-Dec-2025 00:28:20 America/Argentina/Buenos_Aires] empMPPublicKey presente en POST: SÍ
+[23-Dec-2025 00:28:20 America/Argentina/Buenos_Aires] empMPAccessToken presente en POST: SÍ
+[23-Dec-2025 00:28:20 America/Argentina/Buenos_Aires] empMPPublicKey valor: SÍ (44 caracteres) - Primeros 10: APP_USR-54...
+[23-Dec-2025 00:28:20 America/Argentina/Buenos_Aires] empMPAccessToken valor: SÍ (75 caracteres) - Primeros 10: APP_USR-83...
+[23-Dec-2025 00:28:20 America/Argentina/Buenos_Aires] Datos que se enviarán al modelo - mp_public_key: SÍ (44 caracteres)
+[23-Dec-2025 00:28:20 America/Argentina/Buenos_Aires] Datos que se enviarán al modelo - mp_access_token: SÍ (75 caracteres)
+[23-Dec-2025 00:28:20 America/Argentina/Buenos_Aires] =======================================
+[23-Dec-2025 00:28:20 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: PDOStatement::bindParam(): Argument #2 ($var) cannot be passed by reference in /home/newmoon/public_html/modelos/empresa.modelo.php:59
+Stack trace:
+#0 /home/newmoon/public_html/controladores/empresa.controlador.php(126): ModeloEmpresa::mdlEditarEmpresa()
+#1 /home/newmoon/public_html/vistas/modulos/empresa.php(1005): ControladorEmpresa::ctrEditarEmpresa()
+#2 /home/newmoon/public_html/vistas/plantilla.php(241): include('/home/newmoon/p...')
+#3 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#4 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#5 {main}
+  thrown in /home/newmoon/public_html/modelos/empresa.modelo.php on line 59
+[23-Dec-2025 03:28:47 UTC] Usando credenciales MP desde .env
+[23-Dec-2025 00:28:47 America/Argentina/Buenos_Aires] === DEBUG GUARDAR CREDENCIALES MP ===
+[23-Dec-2025 00:28:47 America/Argentina/Buenos_Aires] POST completo (sin valores sensibles): ["empRazonSocial","idEmpresa","empTitular","empCuit","empDomicilio","empLocalidad","empCodPostal","empMail","empTelefono","empPtosVta","empStock","empPtoVtaDefecto","empCondicionIva","empCondicionIIBB","empNumeroIIBB","empInicioActividades","empConceptoDefecto","empNumeroEstablecimiento","empNumeroCBU","empNumeroCBUAlias","empMPPublicKey","empMPAccessToken","empTipoCbtes","entornoFacturacion","empTipoPadron","hayCSR","hayPhrase","hayPEM","empLoginFondo","hayLoginLogo","empLoginFondoForm","empLoginColorBoton","empLoginFuente","empLoginColorTextoTitulo"]
+[23-Dec-2025 00:28:47 America/Argentina/Buenos_Aires] empMPPublicKey presente en POST: SÍ
+[23-Dec-2025 00:28:47 America/Argentina/Buenos_Aires] empMPAccessToken presente en POST: SÍ
+[23-Dec-2025 00:28:47 America/Argentina/Buenos_Aires] empMPPublicKey valor: SÍ (44 caracteres) - Primeros 10: APP_USR-54...
+[23-Dec-2025 00:28:47 America/Argentina/Buenos_Aires] empMPAccessToken valor: SÍ (75 caracteres) - Primeros 10: APP_USR-83...
+[23-Dec-2025 00:28:47 America/Argentina/Buenos_Aires] Datos que se enviarán al modelo - mp_public_key: SÍ (44 caracteres)
+[23-Dec-2025 00:28:47 America/Argentina/Buenos_Aires] Datos que se enviarán al modelo - mp_access_token: SÍ (75 caracteres)
+[23-Dec-2025 00:28:47 America/Argentina/Buenos_Aires] =======================================
+[23-Dec-2025 00:28:47 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: PDOStatement::bindParam(): Argument #2 ($var) cannot be passed by reference in /home/newmoon/public_html/modelos/empresa.modelo.php:59
+Stack trace:
+#0 /home/newmoon/public_html/controladores/empresa.controlador.php(126): ModeloEmpresa::mdlEditarEmpresa()
+#1 /home/newmoon/public_html/vistas/modulos/empresa.php(1005): ControladorEmpresa::ctrEditarEmpresa()
+#2 /home/newmoon/public_html/vistas/plantilla.php(241): include('/home/newmoon/p...')
+#3 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#4 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#5 {main}
+  thrown in /home/newmoon/public_html/modelos/empresa.modelo.php on line 59
+[23-Dec-2025 03:28:54 UTC] Usando credenciales MP desde .env
+[23-Dec-2025 00:28:54 America/Argentina/Buenos_Aires] === DEBUG GUARDAR CREDENCIALES MP ===
+[23-Dec-2025 00:28:54 America/Argentina/Buenos_Aires] POST completo (sin valores sensibles): ["empRazonSocial","idEmpresa","empTitular","empCuit","empDomicilio","empLocalidad","empCodPostal","empMail","empTelefono","empPtosVta","empStock","empPtoVtaDefecto","empCondicionIva","empCondicionIIBB","empNumeroIIBB","empInicioActividades","empConceptoDefecto","empNumeroEstablecimiento","empNumeroCBU","empNumeroCBUAlias","empMPPublicKey","empMPAccessToken","empTipoCbtes","entornoFacturacion","empTipoPadron","hayCSR","hayPhrase","hayPEM","empLoginFondo","hayLoginLogo","empLoginFondoForm","empLoginColorBoton","empLoginFuente","empLoginColorTextoTitulo"]
+[23-Dec-2025 00:28:54 America/Argentina/Buenos_Aires] empMPPublicKey presente en POST: SÍ
+[23-Dec-2025 00:28:54 America/Argentina/Buenos_Aires] empMPAccessToken presente en POST: SÍ
+[23-Dec-2025 00:28:54 America/Argentina/Buenos_Aires] empMPPublicKey valor: SÍ (44 caracteres) - Primeros 10: APP_USR-54...
+[23-Dec-2025 00:28:54 America/Argentina/Buenos_Aires] empMPAccessToken valor: SÍ (75 caracteres) - Primeros 10: APP_USR-83...
+[23-Dec-2025 00:28:54 America/Argentina/Buenos_Aires] Datos que se enviarán al modelo - mp_public_key: SÍ (44 caracteres)
+[23-Dec-2025 00:28:54 America/Argentina/Buenos_Aires] Datos que se enviarán al modelo - mp_access_token: SÍ (75 caracteres)
+[23-Dec-2025 00:28:54 America/Argentina/Buenos_Aires] =======================================
+[23-Dec-2025 00:28:54 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: PDOStatement::bindParam(): Argument #2 ($var) cannot be passed by reference in /home/newmoon/public_html/modelos/empresa.modelo.php:59
+Stack trace:
+#0 /home/newmoon/public_html/controladores/empresa.controlador.php(126): ModeloEmpresa::mdlEditarEmpresa()
+#1 /home/newmoon/public_html/vistas/modulos/empresa.php(1005): ControladorEmpresa::ctrEditarEmpresa()
+#2 /home/newmoon/public_html/vistas/plantilla.php(241): include('/home/newmoon/p...')
+#3 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#4 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#5 {main}
+  thrown in /home/newmoon/public_html/modelos/empresa.modelo.php on line 59
+[23-Dec-2025 03:34:24 UTC] Usando credenciales MP desde .env
+[23-Dec-2025 00:34:24 America/Argentina/Buenos_Aires] === DEBUG GUARDAR CREDENCIALES MP ===
+[23-Dec-2025 00:34:24 America/Argentina/Buenos_Aires] POST completo (sin valores sensibles): ["empRazonSocial","idEmpresa","empTitular","empCuit","empDomicilio","empLocalidad","empCodPostal","empMail","empTelefono","empPtosVta","empStock","empPtoVtaDefecto","empCondicionIva","empCondicionIIBB","empNumeroIIBB","empInicioActividades","empConceptoDefecto","empNumeroEstablecimiento","empNumeroCBU","empNumeroCBUAlias","empMPPublicKey","empMPAccessToken","empTipoCbtes","entornoFacturacion","empTipoPadron","hayCSR","hayPhrase","hayPEM","empLoginFondo","hayLoginLogo","empLoginFondoForm","empLoginColorBoton","empLoginFuente","empLoginColorTextoTitulo"]
+[23-Dec-2025 00:34:24 America/Argentina/Buenos_Aires] empMPPublicKey presente en POST: SÍ
+[23-Dec-2025 00:34:24 America/Argentina/Buenos_Aires] empMPAccessToken presente en POST: SÍ
+[23-Dec-2025 00:34:24 America/Argentina/Buenos_Aires] empMPPublicKey valor: SÍ (44 caracteres) - Primeros 10: APP_USR-54...
+[23-Dec-2025 00:34:24 America/Argentina/Buenos_Aires] empMPAccessToken valor: SÍ (75 caracteres) - Primeros 10: APP_USR-83...
+[23-Dec-2025 00:34:24 America/Argentina/Buenos_Aires] Datos que se enviarán al modelo - mp_public_key: SÍ (44 caracteres)
+[23-Dec-2025 00:34:24 America/Argentina/Buenos_Aires] Datos que se enviarán al modelo - mp_access_token: SÍ (75 caracteres)
+[23-Dec-2025 00:34:24 America/Argentina/Buenos_Aires] =======================================
+[23-Dec-2025 00:34:24 America/Argentina/Buenos_Aires] Empresa actualizada correctamente. mp_public_key: SÍ (44 caracteres), mp_access_token: SÍ (75 caracteres)
+[23-Dec-2025 03:34:28 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 03:35:01 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 03:37:05 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 03:37:22 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 03:53:52 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:00:17 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:01:16 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:01:22 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:02:50 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:03:15 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 01:03:15 America/Argentina/Buenos_Aires] === DEBUG GUARDAR CREDENCIALES MP ===
+[23-Dec-2025 01:03:15 America/Argentina/Buenos_Aires] POST completo (sin valores sensibles): ["empRazonSocial","idEmpresa","empTitular","empCuit","empDomicilio","empLocalidad","empCodPostal","empMail","empTelefono","empPtosVta","empStock","empPtoVtaDefecto","empCondicionIva","empCondicionIIBB","empNumeroIIBB","empInicioActividades","empConceptoDefecto","empNumeroEstablecimiento","empNumeroCBU","empNumeroCBUAlias","empMPPublicKey","empMPAccessToken","empMPPosExternalId","empTipoCbtes","entornoFacturacion","empTipoPadron","hayCSR","hayPhrase","hayPEM","empLoginFondo","hayLoginLogo","empLoginFondoForm","empLoginColorBoton","empLoginFuente","empLoginColorTextoTitulo"]
+[23-Dec-2025 01:03:15 America/Argentina/Buenos_Aires] empMPPublicKey presente en POST: SÍ
+[23-Dec-2025 01:03:15 America/Argentina/Buenos_Aires] empMPAccessToken presente en POST: SÍ
+[23-Dec-2025 01:03:15 America/Argentina/Buenos_Aires] empMPPublicKey valor: SÍ (44 caracteres) - Primeros 10: APP_USR-54...
+[23-Dec-2025 01:03:15 America/Argentina/Buenos_Aires] empMPAccessToken valor: SÍ (75 caracteres) - Primeros 10: APP_USR-83...
+[23-Dec-2025 01:03:15 America/Argentina/Buenos_Aires] Datos que se enviarán al modelo - mp_public_key: SÍ (44 caracteres)
+[23-Dec-2025 01:03:15 America/Argentina/Buenos_Aires] Datos que se enviarán al modelo - mp_access_token: SÍ (75 caracteres)
+[23-Dec-2025 01:03:15 America/Argentina/Buenos_Aires] =======================================
+[23-Dec-2025 01:03:15 America/Argentina/Buenos_Aires] Empresa actualizada correctamente. mp_public_key: SÍ (44 caracteres), mp_access_token: SÍ (75 caracteres)
+[23-Dec-2025 04:03:17 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:03:35 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:03:38 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:03:43 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:04:57 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:32:28 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:33:45 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:33:57 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 01:33:58 America/Argentina/Buenos_Aires] === DEBUG GUARDAR CREDENCIALES MP ===
+[23-Dec-2025 01:33:58 America/Argentina/Buenos_Aires] POST completo (sin valores sensibles): ["empRazonSocial","idEmpresa","empTitular","empCuit","empDomicilio","empLocalidad","empCodPostal","empMail","empTelefono","empPtosVta","empStock","empPtoVtaDefecto","empCondicionIva","empCondicionIIBB","empNumeroIIBB","empInicioActividades","empConceptoDefecto","empNumeroEstablecimiento","empNumeroCBU","empNumeroCBUAlias","empMPPublicKey","empMPAccessToken","empMPPosExternalId","empTipoCbtes","entornoFacturacion","empTipoPadron","hayCSR","hayPhrase","hayPEM","empLoginFondo","hayLoginLogo","empLoginFondoForm","empLoginColorBoton","empLoginFuente","empLoginColorTextoTitulo"]
+[23-Dec-2025 01:33:58 America/Argentina/Buenos_Aires] empMPPublicKey presente en POST: SÍ
+[23-Dec-2025 01:33:58 America/Argentina/Buenos_Aires] empMPAccessToken presente en POST: SÍ
+[23-Dec-2025 01:33:58 America/Argentina/Buenos_Aires] empMPPublicKey valor: SÍ (44 caracteres) - Primeros 10: APP_USR-54...
+[23-Dec-2025 01:33:58 America/Argentina/Buenos_Aires] empMPAccessToken valor: SÍ (75 caracteres) - Primeros 10: APP_USR-83...
+[23-Dec-2025 01:33:58 America/Argentina/Buenos_Aires] Datos que se enviarán al modelo - mp_public_key: SÍ (44 caracteres)
+[23-Dec-2025 01:33:58 America/Argentina/Buenos_Aires] Datos que se enviarán al modelo - mp_access_token: SÍ (75 caracteres)
+[23-Dec-2025 01:33:58 America/Argentina/Buenos_Aires] =======================================
+[23-Dec-2025 01:33:58 America/Argentina/Buenos_Aires] Empresa actualizada correctamente. mp_public_key: SÍ (44 caracteres), mp_access_token: SÍ (75 caracteres)
+[23-Dec-2025 04:34:01 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:34:06 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:34:46 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:35:06 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:52:31 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:52:41 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:53:15 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:57:03 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:57:10 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 01:57:10 America/Argentina/Mendoza] PHP Fatal error:  Uncaught TypeError: Unsupported operand types: string * string in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php:226
+Stack trace:
+#0 /home/newmoon/public_html/vistas/plantilla.php(241): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+  thrown in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php on line 226
+[23-Dec-2025 04:57:24 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 01:57:24 America/Argentina/Mendoza] PHP Fatal error:  Uncaught TypeError: Unsupported operand types: string * string in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php:226
+Stack trace:
+#0 /home/newmoon/public_html/vistas/plantilla.php(241): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+  thrown in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php on line 226
+[23-Dec-2025 04:57:32 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 01:57:32 America/Argentina/Mendoza] PHP Fatal error:  Uncaught TypeError: Unsupported operand types: string * string in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php:226
+Stack trace:
+#0 /home/newmoon/public_html/vistas/plantilla.php(241): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+  thrown in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php on line 226
+[23-Dec-2025 04:57:35 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:57:40 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 04:59:25 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:01:30 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:01:36 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:03:02 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:06:59 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:10:26 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:18:54 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:19:00 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:19:39 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:22:53 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:23:01 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 02:23:01 America/Argentina/Mendoza] PHP Fatal error:  Uncaught TypeError: Unsupported operand types: string * string in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php:226
+Stack trace:
+#0 /home/newmoon/public_html/vistas/plantilla.php(241): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+  thrown in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php on line 226
+[23-Dec-2025 05:23:16 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:23:20 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:23:27 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:23:31 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:23:38 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 02:23:38 America/Argentina/Buenos_Aires] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/ventas-categoria-proveedor-informe.php on line 42
+[23-Dec-2025 02:23:38 America/Argentina/Buenos_Aires] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/ventas-categoria-proveedor-informe.php on line 42
+[23-Dec-2025 02:23:38 America/Argentina/Buenos_Aires] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/ventas-categoria-proveedor-informe.php on line 42
+[23-Dec-2025 02:23:38 America/Argentina/Buenos_Aires] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/ventas-categoria-proveedor-informe.php on line 42
+[23-Dec-2025 02:23:38 America/Argentina/Buenos_Aires] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/ventas-categoria-proveedor-informe.php on line 42
+[23-Dec-2025 02:23:38 America/Argentina/Buenos_Aires] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/ventas-categoria-proveedor-informe.php on line 42
+[23-Dec-2025 02:23:38 America/Argentina/Buenos_Aires] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/ventas-categoria-proveedor-informe.php on line 42
+[23-Dec-2025 02:23:38 America/Argentina/Buenos_Aires] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/ventas-categoria-proveedor-informe.php on line 42
+[23-Dec-2025 02:23:38 America/Argentina/Buenos_Aires] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/ventas-categoria-proveedor-informe.php on line 42
+[23-Dec-2025 05:23:59 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:24:13 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 02:24:13 America/Argentina/Mendoza] PHP Fatal error:  Uncaught TypeError: Unsupported operand types: string * string in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php:226
+Stack trace:
+#0 /home/newmoon/public_html/vistas/plantilla.php(241): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+  thrown in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php on line 226
+[23-Dec-2025 05:27:48 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 02:27:48 America/Argentina/Mendoza] PHP Fatal error:  Uncaught TypeError: Unsupported operand types: string * string in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php:226
+Stack trace:
+#0 /home/newmoon/public_html/vistas/plantilla.php(241): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+  thrown in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php on line 226
+[23-Dec-2025 05:27:55 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:28:13 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:28:19 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 02:28:19 America/Argentina/Mendoza] PHP Fatal error:  Uncaught TypeError: Unsupported operand types: string * string in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php:226
+Stack trace:
+#0 /home/newmoon/public_html/vistas/plantilla.php(241): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+  thrown in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php on line 226
+[23-Dec-2025 05:32:11 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 02:32:12 America/Argentina/Mendoza] PHP Fatal error:  Uncaught TypeError: Unsupported operand types: string * string in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php:226
+Stack trace:
+#0 /home/newmoon/public_html/vistas/plantilla.php(241): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+  thrown in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php on line 226
+[23-Dec-2025 05:32:18 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:32:25 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 05:32:33 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 02:32:34 America/Argentina/Mendoza] PHP Fatal error:  Uncaught TypeError: Unsupported operand types: string * string in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php:226
+Stack trace:
+#0 /home/newmoon/public_html/vistas/plantilla.php(241): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+  thrown in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php on line 226
+[23-Dec-2025 13:37:47 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 13:38:00 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 13:38:04 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 10:38:04 America/Argentina/Mendoza] PHP Fatal error:  Uncaught TypeError: Unsupported operand types: string * string in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php:226
+Stack trace:
+#0 /home/newmoon/public_html/vistas/plantilla.php(241): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+  thrown in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php on line 226
+[23-Dec-2025 13:40:26 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 14:31:11 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 14:31:27 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 14:31:46 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 14:32:38 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 14:32:42 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 14:32:51 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 14:32:53 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 14:32:57 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 15:42:28 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 15:42:35 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 15:44:35 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 16:15:59 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 16:16:04 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 18:52:39 UTC] PHP Warning:  Undefined array key "empresa" in /home/newmoon/public_html/controladores/usuarios.controlador.php on line 82
+[23-Dec-2025 18:52:40 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 18:52:44 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 15:52:44 America/Argentina/Buenos_Aires] PHP Warning:  Undefined array key "empresa" in /home/newmoon/public_html/vistas/modulos/usuarios.php on line 100
+[23-Dec-2025 15:52:44 America/Argentina/Buenos_Aires] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/usuarios.php on line 101
+[23-Dec-2025 15:52:44 America/Argentina/Buenos_Aires] PHP Warning:  Undefined array key "empresa" in /home/newmoon/public_html/vistas/modulos/usuarios.php on line 100
+[23-Dec-2025 15:52:44 America/Argentina/Buenos_Aires] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/usuarios.php on line 101
+[23-Dec-2025 15:52:44 America/Argentina/Buenos_Aires] PHP Warning:  Undefined array key "empresa" in /home/newmoon/public_html/vistas/modulos/usuarios.php on line 100
+[23-Dec-2025 15:52:44 America/Argentina/Buenos_Aires] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/usuarios.php on line 101
+[23-Dec-2025 15:52:44 America/Argentina/Buenos_Aires] PHP Warning:  Undefined array key "empresa" in /home/newmoon/public_html/vistas/modulos/usuarios.php on line 100
+[23-Dec-2025 15:52:44 America/Argentina/Buenos_Aires] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/usuarios.php on line 101
+[23-Dec-2025 15:52:44 America/Argentina/Buenos_Aires] PHP Warning:  Undefined array key "empresa" in /home/newmoon/public_html/vistas/modulos/usuarios.php on line 100
+[23-Dec-2025 15:52:44 America/Argentina/Buenos_Aires] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/usuarios.php on line 101
+[23-Dec-2025 15:52:44 America/Argentina/Buenos_Aires] PHP Warning:  Undefined array key "empresa" in /home/newmoon/public_html/vistas/modulos/usuarios.php on line 100
+[23-Dec-2025 15:52:44 America/Argentina/Buenos_Aires] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/usuarios.php on line 101
+[23-Dec-2025 15:52:44 America/Argentina/Buenos_Aires] PHP Warning:  Undefined array key "empresa" in /home/newmoon/public_html/vistas/modulos/usuarios.php on line 100
+[23-Dec-2025 15:52:44 America/Argentina/Buenos_Aires] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/usuarios.php on line 101
+[23-Dec-2025 15:52:44 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '= :' at line 1 in /home/newmoon/public_html/modelos/empresa.modelo.php:11
+Stack trace:
+#0 /home/newmoon/public_html/modelos/empresa.modelo.php(11): PDO->prepare()
+#1 /home/newmoon/public_html/controladores/empresa.controlador.php(9): ModeloEmpresa::mdlMostrarEmpresa()
+#2 /home/newmoon/public_html/vistas/modulos/usuarios.php(204): ControladorEmpresa::ctrMostrarempresa()
+#3 /home/newmoon/public_html/vistas/plantilla.php(241): include('/home/newmoon/p...')
+#4 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#5 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#6 {main}
+  thrown in /home/newmoon/public_html/modelos/empresa.modelo.php on line 11
+[23-Dec-2025 18:56:08 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 15:56:08 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '= :' at line 1 in /home/newmoon/public_html/modelos/empresa.modelo.php:11
+Stack trace:
+#0 /home/newmoon/public_html/modelos/empresa.modelo.php(11): PDO->prepare()
+#1 /home/newmoon/public_html/controladores/empresa.controlador.php(9): ModeloEmpresa::mdlMostrarEmpresa()
+#2 /home/newmoon/public_html/vistas/modulos/usuarios.php(204): ControladorEmpresa::ctrMostrarempresa()
+#3 /home/newmoon/public_html/vistas/plantilla.php(241): include('/home/newmoon/p...')
+#4 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#5 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#6 {main}
+  thrown in /home/newmoon/public_html/modelos/empresa.modelo.php on line 11
+[23-Dec-2025 18:56:12 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 18:56:23 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 15:56:24 America/Argentina/Buenos_Aires] === DEBUG GUARDAR CREDENCIALES MP ===
+[23-Dec-2025 15:56:24 America/Argentina/Buenos_Aires] POST completo (sin valores sensibles): ["empRazonSocial","idEmpresa","empTitular","empCuit","empDomicilio","empLocalidad","empCodPostal","empMail","empTelefono","empPtosVta","empStock","empPtoVtaDefecto","empCondicionIva","empCondicionIIBB","empNumeroIIBB","empInicioActividades","empConceptoDefecto","empNumeroEstablecimiento","empNumeroCBU","empNumeroCBUAlias","empMPPublicKey","empMPAccessToken","empMPPosExternalId","empTipoCbtes","entornoFacturacion","empTipoPadron","hayCSR","hayPhrase","hayPEM","empLoginFondo","hayLoginLogo","empLoginFondoForm","empLoginColorBoton","empLoginFuente","empLoginColorTextoTitulo"]
+[23-Dec-2025 15:56:24 America/Argentina/Buenos_Aires] empMPPublicKey presente en POST: SÍ
+[23-Dec-2025 15:56:24 America/Argentina/Buenos_Aires] empMPAccessToken presente en POST: SÍ
+[23-Dec-2025 15:56:24 America/Argentina/Buenos_Aires] empMPPublicKey valor: SÍ (44 caracteres) - Primeros 10: APP_USR-54...
+[23-Dec-2025 15:56:24 America/Argentina/Buenos_Aires] empMPAccessToken valor: SÍ (75 caracteres) - Primeros 10: APP_USR-83...
+[23-Dec-2025 15:56:24 America/Argentina/Buenos_Aires] Datos que se enviarán al modelo - mp_public_key: SÍ (44 caracteres)
+[23-Dec-2025 15:56:24 America/Argentina/Buenos_Aires] Datos que se enviarán al modelo - mp_access_token: SÍ (75 caracteres)
+[23-Dec-2025 15:56:24 America/Argentina/Buenos_Aires] =======================================
+[23-Dec-2025 15:56:24 America/Argentina/Buenos_Aires] Empresa actualizada correctamente. mp_public_key: SÍ (44 caracteres), mp_access_token: SÍ (75 caracteres)
+[23-Dec-2025 18:56:26 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 18:56:29 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 15:56:30 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '= :' at line 1 in /home/newmoon/public_html/modelos/empresa.modelo.php:11
+Stack trace:
+#0 /home/newmoon/public_html/modelos/empresa.modelo.php(11): PDO->prepare()
+#1 /home/newmoon/public_html/controladores/empresa.controlador.php(9): ModeloEmpresa::mdlMostrarEmpresa()
+#2 /home/newmoon/public_html/vistas/modulos/usuarios.php(204): ControladorEmpresa::ctrMostrarempresa()
+#3 /home/newmoon/public_html/vistas/plantilla.php(241): include('/home/newmoon/p...')
+#4 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#5 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#6 {main}
+  thrown in /home/newmoon/public_html/modelos/empresa.modelo.php on line 11
+[23-Dec-2025 19:01:04 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:06:31 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:06:49 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:09:52 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:10:14 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:10:41 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 16:10:41 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '= :' at line 1 in /home/newmoon/public_html/modelos/empresa.modelo.php:11
+Stack trace:
+#0 /home/newmoon/public_html/modelos/empresa.modelo.php(11): PDO->prepare()
+#1 /home/newmoon/public_html/controladores/empresa.controlador.php(9): ModeloEmpresa::mdlMostrarEmpresa()
+#2 /home/newmoon/public_html/vistas/modulos/usuarios.php(204): ControladorEmpresa::ctrMostrarempresa()
+#3 /home/newmoon/public_html/vistas/plantilla.php(241): include('/home/newmoon/p...')
+#4 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#5 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#6 {main}
+  thrown in /home/newmoon/public_html/modelos/empresa.modelo.php on line 11
+[23-Dec-2025 19:11:01 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 16:11:02 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '= :' at line 1 in /home/newmoon/public_html/modelos/empresa.modelo.php:11
+Stack trace:
+#0 /home/newmoon/public_html/modelos/empresa.modelo.php(11): PDO->prepare()
+#1 /home/newmoon/public_html/controladores/empresa.controlador.php(9): ModeloEmpresa::mdlMostrarEmpresa()
+#2 /home/newmoon/public_html/vistas/modulos/usuarios.php(204): ControladorEmpresa::ctrMostrarempresa()
+#3 /home/newmoon/public_html/vistas/plantilla.php(241): include('/home/newmoon/p...')
+#4 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#5 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#6 {main}
+  thrown in /home/newmoon/public_html/modelos/empresa.modelo.php on line 11
+[23-Dec-2025 19:15:23 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 16:15:24 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '= :' at line 1 in /home/newmoon/public_html/modelos/empresa.modelo.php:11
+Stack trace:
+#0 /home/newmoon/public_html/modelos/empresa.modelo.php(11): PDO->prepare()
+#1 /home/newmoon/public_html/controladores/empresa.controlador.php(9): ModeloEmpresa::mdlMostrarEmpresa()
+#2 /home/newmoon/public_html/vistas/modulos/usuarios.php(204): ControladorEmpresa::ctrMostrarempresa()
+#3 /home/newmoon/public_html/vistas/plantilla.php(241): include('/home/newmoon/p...')
+#4 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#5 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#6 {main}
+  thrown in /home/newmoon/public_html/modelos/empresa.modelo.php on line 11
+[23-Dec-2025 19:18:35 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 16:18:36 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '= ?' at line 1 in /home/newmoon/public_html/modelos/empresa.modelo.php:11
+Stack trace:
+#0 /home/newmoon/public_html/modelos/empresa.modelo.php(11): PDO->prepare()
+#1 /home/newmoon/public_html/controladores/empresa.controlador.php(9): ModeloEmpresa::mdlMostrarEmpresa()
+#2 /home/newmoon/public_html/vistas/modulos/usuarios.php(204): ControladorEmpresa::ctrMostrarempresa()
+#3 /home/newmoon/public_html/vistas/plantilla.php(241): include('/home/newmoon/p...')
+#4 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#5 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#6 {main}
+  thrown in /home/newmoon/public_html/modelos/empresa.modelo.php on line 11
+[23-Dec-2025 19:19:18 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 16:19:18 America/Argentina/Buenos_Aires] PHP Warning:  foreach() argument must be of type array|object, bool given in /home/newmoon/public_html/vistas/modulos/usuarios.php on line 205
+[23-Dec-2025 16:19:18 America/Argentina/Buenos_Aires] PHP Warning:  foreach() argument must be of type array|object, bool given in /home/newmoon/public_html/vistas/modulos/usuarios.php on line 343
+[23-Dec-2025 19:21:57 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:22:21 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:22:23 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:22:37 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:22:49 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:22:53 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:23:07 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:23:09 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:23:12 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:23:17 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:23:27 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:24:02 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:24:13 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:24:23 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:24:27 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:24:31 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:24:35 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:24:38 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:27:39 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:27:42 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:28:04 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:28:07 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:31:01 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:31:23 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:43:55 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:44:13 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:44:15 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:45:41 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:45:54 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:45:56 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 16:45:56 America/Argentina/Mendoza] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/vistas/modulos/ventas.php on line 440
+[23-Dec-2025 19:47:43 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:49:03 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:49:05 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:49:06 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:49:06 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:49:07 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:49:07 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:49:07 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:49:07 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:49:07 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:49:08 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:49:27 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 19:49:29 UTC] Usando credenciales MP desde BD (empresa)

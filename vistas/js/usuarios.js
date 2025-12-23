@@ -122,6 +122,7 @@ $(".tablas").on("click", ".btnEditarUsuario", function(e){
 			$("#editarUsuario").val(respuesta["usuario"] || "");
 			$("#editarPerfil").html(respuesta["perfil"] || "");
 			$("#editarPerfil").val(respuesta["perfil"] || "");
+		    $("#editarRazonSocial").val(respuesta["empresa"]);
 		
 			$("#editarSucursal").html(respuesta["sucursal"] || "");
 			$("#editarSucursal").val(respuesta["sucursal"] || "");

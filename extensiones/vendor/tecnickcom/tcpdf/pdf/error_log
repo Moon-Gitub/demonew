@@ -1,0 +1,666 @@
+[15-Dec-2025 19:14:22 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 3
+[15-Dec-2025 19:14:22 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 3
+[15-Dec-2025 19:14:27 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php on line 3
+[15-Dec-2025 19:14:27 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php on line 3
+[15-Dec-2025 19:14:34 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php on line 3
+[15-Dec-2025 19:14:34 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php on line 3
+[15-Dec-2025 19:14:40 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php on line 3
+[15-Dec-2025 19:14:40 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php on line 3
+[15-Dec-2025 19:15:35 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php on line 3
+[15-Dec-2025 19:15:35 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php on line 3
+[15-Dec-2025 19:15:40 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 3
+[15-Dec-2025 19:15:40 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 3
+[15-Dec-2025 19:15:41 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 3
+[15-Dec-2025 19:15:41 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 3
+[15-Dec-2025 19:15:43 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 3
+[15-Dec-2025 19:15:43 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 3
+[15-Dec-2025 19:15:43 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 3
+[15-Dec-2025 19:15:43 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 3
+[15-Dec-2025 19:15:44 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 3
+[15-Dec-2025 19:15:44 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 3
+[15-Dec-2025 19:15:46 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 3
+[15-Dec-2025 19:15:46 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 3
+[15-Dec-2025 19:17:18 UTC] PHP Warning:  require_once(/home/newmoon/public_html/extensiones/vendor/vendor/autoload.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 4
+[15-Dec-2025 19:17:18 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/newmoon/public_html/extensiones/vendor/vendor/autoload.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:4
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 4
+[15-Dec-2025 19:17:21 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php on line 3
+[15-Dec-2025 19:17:21 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php on line 3
+[15-Dec-2025 19:17:24 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php on line 3
+[15-Dec-2025 19:17:24 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php on line 3
+[15-Dec-2025 19:17:27 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php on line 3
+[15-Dec-2025 19:17:27 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php on line 3
+[15-Dec-2025 19:17:39 UTC] PHP Warning:  require_once(/home/newmoon/public_html/extensiones/vendor/vendor/autoload.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 4
+[15-Dec-2025 19:17:39 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/newmoon/public_html/extensiones/vendor/vendor/autoload.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:4
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 4
+[15-Dec-2025 19:24:50 UTC] PHP Warning:  require_once(/home/newmoon/public_html/extensiones/vendor/vendor/autoload.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 4
+[15-Dec-2025 19:24:50 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/newmoon/public_html/extensiones/vendor/vendor/autoload.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:4
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 4
+[15-Dec-2025 19:24:55 UTC] PHP Warning:  require_once(/home/newmoon/public_html/extensiones/vendor/vendor/autoload.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php on line 4
+[15-Dec-2025 19:24:55 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/newmoon/public_html/extensiones/vendor/vendor/autoload.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php:4
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php on line 4
+[15-Dec-2025 19:24:59 UTC] PHP Warning:  require_once(/home/newmoon/public_html/extensiones/vendor/vendor/autoload.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php on line 4
+[15-Dec-2025 19:24:59 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/newmoon/public_html/extensiones/vendor/vendor/autoload.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php:4
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php on line 4
+[15-Dec-2025 19:25:02 UTC] PHP Warning:  require_once(/home/newmoon/public_html/extensiones/vendor/vendor/autoload.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php on line 4
+[15-Dec-2025 19:25:02 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/newmoon/public_html/extensiones/vendor/vendor/autoload.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php:4
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php on line 4
+[15-Dec-2025 19:29:30 UTC] PHP Warning:  require_once(/home/newmoon/public_html/extensiones/vendor/vendor/autoload.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 4
+[15-Dec-2025 19:29:30 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/newmoon/public_html/extensiones/vendor/vendor/autoload.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:4
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 4
+[15-Dec-2025 19:44:16 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php on line 13
+[15-Dec-2025 19:44:16 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php:13
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php on line 13
+[15-Dec-2025 19:44:51 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php on line 13
+[15-Dec-2025 19:44:51 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php:13
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php on line 13
+[15-Dec-2025 19:45:58 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 19:45:58 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 19:46:43 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php on line 13
+[15-Dec-2025 19:46:43 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php:13
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php on line 13
+[15-Dec-2025 20:03:09 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 20:03:09 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 20:08:50 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 20:08:50 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 20:09:13 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 20:09:13 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:41:25 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:41:25 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:41:36 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php on line 13
+[15-Dec-2025 21:41:36 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php:13
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php on line 13
+[15-Dec-2025 21:42:08 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:42:08 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:45:52 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:45:52 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:46:18 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php on line 13
+[15-Dec-2025 21:46:18 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php:13
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php on line 13
+[15-Dec-2025 21:46:29 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:46:29 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:46:30 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:46:30 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:46:32 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:46:32 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:46:33 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:46:33 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:46:34 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:46:34 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:46:36 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:46:36 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:48:44 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:48:44 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:51:39 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:51:39 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:51:40 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:51:40 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:51:41 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:51:41 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:51:42 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:51:42 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:51:42 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:51:42 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:51:43 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:51:43 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:51:45 UTC] PHP Warning:  require_once(../../../controladores/productos.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:51:45 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/productos.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 15
+[15-Dec-2025 21:54:05 UTC] Error: No se encuentra productos.controlador.php en: /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../controladores/productos.controlador.php
+[15-Dec-2025 21:54:39 UTC] Error: No se encuentra productos.controlador.php en: /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/../../../controladores/productos.controlador.php
+[15-Dec-2025 21:56:30 UTC] Productos para imprimir: 3 productos
+[15-Dec-2025 21:56:30 UTC] PHP Warning:  require_once(tcpdf_include.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php on line 64
+[15-Dec-2025 21:56:30 UTC] Error fatal en imprimirCodigoBarra: Failed opening required 'tcpdf_include.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php')
+[15-Dec-2025 21:56:30 UTC] Stack trace: #0 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php(201): imprimirPreciosProductos->traerImpresionPrecios()
+#1 {main}
+[15-Dec-2025 21:56:45 UTC] PHP Warning:  require_once(tcpdf_include.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php on line 28
+[15-Dec-2025 21:56:45 UTC] PHP Fatal error:  Uncaught Error: Failed opening required 'tcpdf_include.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php:28
+Stack trace:
+#0 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php(606): imprimirPreciosProductos->traerImpresionPrecios()
+#1 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php on line 28
+[15-Dec-2025 21:57:04 UTC] PHP Warning:  require_once(tcpdf_include.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php on line 27
+[15-Dec-2025 21:57:04 UTC] PHP Fatal error:  Uncaught Error: Failed opening required 'tcpdf_include.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php:27
+Stack trace:
+#0 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php(201): imprimirPreciosProductos->traerImpresionPrecios()
+#1 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php on line 27
+[15-Dec-2025 21:57:10 UTC] PHP Warning:  require_once(tcpdf_include.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php on line 26
+[15-Dec-2025 21:57:10 UTC] PHP Fatal error:  Uncaught Error: Failed opening required 'tcpdf_include.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php:26
+Stack trace:
+#0 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php(400): imprimirPreciosProductos->traerImpresionPrecios()
+#1 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresion-precios.php on line 26
+[15-Dec-2025 21:58:43 UTC] Productos para imprimir: 3 productos
+[15-Dec-2025 21:58:43 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[15-Dec-2025 21:58:43 UTC] Error en imprimirCodigoBarra: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional)
+[15-Dec-2025 21:58:43 UTC] Stack trace: #0 /home/newmoon/public_html/modelos/productos.modelo.php(12): Conexion::conectar()
+#1 /home/newmoon/public_html/controladores/productos.controlador.php(13): ModeloProductos::mdlMostrarProductos()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php(110): ControladorProductos::ctrMostrarProductos()
+#3 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirCodigoBarra.php(211): imprimirPreciosProductos->traerImpresionPrecios()
+#4 {main}
+[15-Dec-2025 22:00:31 UTC] ✅ .env cargado desde: /home/newmoon/public_html/.env
+[15-Dec-2025 22:00:31 UTC] Productos para imprimir: 3 productos
+[15-Dec-2025 22:00:56 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[15-Dec-2025 22:00:56 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/empresa.modelo.php(11): Conexion::conectar()
+#1 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php(56): ModeloEmpresa::mdlMostrarEmpresa()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/imprimirQR.php(606): imprimirPreciosProductos->traerImpresionPrecios()
+#3 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[15-Dec-2025 22:03:17 UTC] ✅ .env cargado desde: /home/newmoon/public_html/.env
+[15-Dec-2025 22:03:17 UTC] Productos para imprimir: 5 productos
+[15-Dec-2025 22:09:09 UTC] Error fatal en impresionPreciosOfertas: Unsupported operand types: string | bool
+[15-Dec-2025 22:09:09 UTC] Stack trace: #0 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php(197): TCPDF->writeHTML()
+#1 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php(273): imprimirPreciosProductos->traerImpresionPrecios()
+#2 {main}
+[15-Dec-2025 22:09:34 UTC] Error fatal en impresionPreciosOfertas: Unsupported operand types: string | bool
+[15-Dec-2025 22:09:34 UTC] Stack trace: #0 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php(197): TCPDF->writeHTML()
+#1 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php(273): imprimirPreciosProductos->traerImpresionPrecios()
+#2 {main}
+[15-Dec-2025 22:11:41 UTC] ✅ .env cargado desde: /home/newmoon/public_html/.env
+[15-Dec-2025 22:11:41 UTC] Productos para imprimir: 4 productos
+[15-Dec-2025 22:15:34 UTC] Error fatal en impresionPreciosOfertas: Unsupported operand types: string | bool
+[15-Dec-2025 22:15:34 UTC] Stack trace: #0 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php(197): TCPDF->writeHTML()
+#1 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php(273): imprimirPreciosProductos->traerImpresionPrecios()
+#2 {main}
+[15-Dec-2025 22:15:44 UTC] ✅ .env cargado desde: /home/newmoon/public_html/.env
+[15-Dec-2025 22:15:44 UTC] Productos para imprimir: 4 productos
+[15-Dec-2025 22:15:54 UTC] Error fatal en impresionPreciosOfertas: Unsupported operand types: string | bool
+[15-Dec-2025 22:15:54 UTC] Stack trace: #0 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php(197): TCPDF->writeHTML()
+#1 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php(273): imprimirPreciosProductos->traerImpresionPrecios()
+#2 {main}
+[15-Dec-2025 22:18:53 UTC] Error fatal en impresionPreciosOfertas: Unsupported operand types: string | bool
+[15-Dec-2025 22:18:53 UTC] Stack trace: #0 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php(226): TCPDF->writeHTML()
+#1 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php(302): imprimirPreciosProductos->traerImpresionPrecios()
+#2 {main}
+[15-Dec-2025 22:18:57 UTC] ✅ .env cargado desde: /home/newmoon/public_html/.env
+[15-Dec-2025 22:18:57 UTC] Productos para imprimir: 4 productos
+[15-Dec-2025 22:24:38 UTC] Error fatal en impresionPreciosOfertas: Unsupported operand types: string | bool
+[15-Dec-2025 22:24:38 UTC] Stack trace: #0 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php(226): TCPDF->writeHTML()
+#1 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php(302): imprimirPreciosProductos->traerImpresionPrecios()
+#2 {main}
+[15-Dec-2025 22:24:43 UTC] ✅ .env cargado desde: /home/newmoon/public_html/.env
+[15-Dec-2025 22:24:43 UTC] Productos para imprimir: 4 productos
+[15-Dec-2025 22:26:51 UTC] ✅ .env cargado desde: /home/newmoon/public_html/.env
+[15-Dec-2025 22:26:51 UTC] Productos para imprimir: 4 productos
+[15-Dec-2025 22:27:09 UTC] Error fatal en impresionPreciosOfertas: Unsupported operand types: string | bool
+[15-Dec-2025 22:27:09 UTC] Stack trace: #0 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php(226): TCPDF->writeHTML()
+#1 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/impresionPreciosOfertas.php(302): imprimirPreciosProductos->traerImpresionPrecios()
+#2 {main}
+[18-Dec-2025 14:55:07 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 14:55:07 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/empresa.modelo.php(11): Conexion::conectar()
+#1 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php(20): ModeloEmpresa::mdlMostrarEmpresa()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php(976): imprimirComprobante->traerImpresionComprobante()
+#3 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[18-Dec-2025 15:15:12 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 15:15:12 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/empresa.modelo.php(11): Conexion::conectar()
+#1 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php(20): ModeloEmpresa::mdlMostrarEmpresa()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php(976): imprimirComprobante->traerImpresionComprobante()
+#3 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[18-Dec-2025 20:55:28 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 20:55:28 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/empresa.modelo.php(11): Conexion::conectar()
+#1 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php(20): ModeloEmpresa::mdlMostrarEmpresa()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php(976): imprimirComprobante->traerImpresionComprobante()
+#3 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[18-Dec-2025 21:02:42 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 21:02:42 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/empresa.modelo.php(11): Conexion::conectar()
+#1 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php(20): ModeloEmpresa::mdlMostrarEmpresa()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php(976): imprimirComprobante->traerImpresionComprobante()
+#3 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[18-Dec-2025 21:04:54 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 21:04:54 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/empresa.modelo.php(11): Conexion::conectar()
+#1 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php(20): ModeloEmpresa::mdlMostrarEmpresa()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php(976): imprimirComprobante->traerImpresionComprobante()
+#3 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[18-Dec-2025 21:05:26 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 21:05:26 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/empresa.modelo.php(11): Conexion::conectar()
+#1 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php(20): ModeloEmpresa::mdlMostrarEmpresa()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php(976): imprimirComprobante->traerImpresionComprobante()
+#3 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[18-Dec-2025 21:06:40 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 21:06:40 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/empresa.modelo.php(11): Conexion::conectar()
+#1 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php(20): ModeloEmpresa::mdlMostrarEmpresa()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php(976): imprimirComprobante->traerImpresionComprobante()
+#3 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[18-Dec-2025 21:07:10 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 21:07:10 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/empresa.modelo.php(11): Conexion::conectar()
+#1 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php(20): ModeloEmpresa::mdlMostrarEmpresa()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php(976): imprimirComprobante->traerImpresionComprobante()
+#3 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[18-Dec-2025 21:10:31 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 21:10:31 UTC] Error comprobante.php en inicialización: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional)
+[18-Dec-2025 21:10:46 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 21:10:46 UTC] Error comprobante.php en inicialización: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional)
+[18-Dec-2025 21:13:11 UTC] PHP Warning:  require_once(/home/newmoon/public_html/extensiones/extensiones/vendor/autoload.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php on line 24
+[18-Dec-2025 21:13:11 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/newmoon/public_html/extensiones/extensiones/vendor/autoload.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php on line 24
+[18-Dec-2025 21:13:27 UTC] PHP Warning:  require_once(/home/newmoon/public_html/extensiones/extensiones/vendor/autoload.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php on line 24
+[18-Dec-2025 21:13:27 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/newmoon/public_html/extensiones/extensiones/vendor/autoload.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php on line 24
+[18-Dec-2025 21:14:20 UTC] PHP Warning:  require_once(/home/newmoon/public_html/extensiones/extensiones/vendor/autoload.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php on line 24
+[18-Dec-2025 21:14:20 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/newmoon/public_html/extensiones/extensiones/vendor/autoload.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php on line 24
+[18-Dec-2025 21:17:14 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 21:17:14 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/clientes_cta_cte.modelo.php(43): Conexion::conectar()
+#1 /home/newmoon/public_html/controladores/clientes_cta_cte.controlador.php(24): ModeloClientesCtaCte::mdlMostrarCtaCteClienteId()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php(23): ControladorClientesCtaCte::ctrMostrarCtaCteClienteId()
+#3 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php(153): imprimirFactura->traerImpresionFactura()
+#4 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[18-Dec-2025 21:18:35 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 21:18:35 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/clientes_cta_cte.modelo.php(43): Conexion::conectar()
+#1 /home/newmoon/public_html/controladores/clientes_cta_cte.controlador.php(24): ModeloClientesCtaCte::mdlMostrarCtaCteClienteId()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php(23): ControladorClientesCtaCte::ctrMostrarCtaCteClienteId()
+#3 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php(153): imprimirFactura->traerImpresionFactura()
+#4 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[18-Dec-2025 21:20:14 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 21:20:14 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/clientes_cta_cte.modelo.php(43): Conexion::conectar()
+#1 /home/newmoon/public_html/controladores/clientes_cta_cte.controlador.php(24): ModeloClientesCtaCte::mdlMostrarCtaCteClienteId()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php(23): ControladorClientesCtaCte::ctrMostrarCtaCteClienteId()
+#3 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php(153): imprimirFactura->traerImpresionFactura()
+#4 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[18-Dec-2025 21:20:15 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 21:20:15 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/clientes_cta_cte.modelo.php(43): Conexion::conectar()
+#1 /home/newmoon/public_html/controladores/clientes_cta_cte.controlador.php(24): ModeloClientesCtaCte::mdlMostrarCtaCteClienteId()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php(23): ControladorClientesCtaCte::ctrMostrarCtaCteClienteId()
+#3 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php(153): imprimirFactura->traerImpresionFactura()
+#4 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[18-Dec-2025 21:20:17 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 21:20:17 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/clientes_cta_cte.modelo.php(43): Conexion::conectar()
+#1 /home/newmoon/public_html/controladores/clientes_cta_cte.controlador.php(24): ModeloClientesCtaCte::mdlMostrarCtaCteClienteId()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php(23): ControladorClientesCtaCte::ctrMostrarCtaCteClienteId()
+#3 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php(153): imprimirFactura->traerImpresionFactura()
+#4 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[18-Dec-2025 21:20:17 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 21:20:17 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/clientes_cta_cte.modelo.php(43): Conexion::conectar()
+#1 /home/newmoon/public_html/controladores/clientes_cta_cte.controlador.php(24): ModeloClientesCtaCte::mdlMostrarCtaCteClienteId()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php(23): ControladorClientesCtaCte::ctrMostrarCtaCteClienteId()
+#3 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php(153): imprimirFactura->traerImpresionFactura()
+#4 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[18-Dec-2025 21:20:19 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 21:20:19 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/clientes_cta_cte.modelo.php(43): Conexion::conectar()
+#1 /home/newmoon/public_html/controladores/clientes_cta_cte.controlador.php(24): ModeloClientesCtaCte::mdlMostrarCtaCteClienteId()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php(23): ControladorClientesCtaCte::ctrMostrarCtaCteClienteId()
+#3 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php(153): imprimirFactura->traerImpresionFactura()
+#4 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[18-Dec-2025 21:20:21 UTC] ERROR CRÍTICO: Variables de entorno no configuradas. DB_HOST=NO DEFINIDO, DB_NAME=NO DEFINIDO, DB_USER=NO DEFINIDO
+[18-Dec-2025 21:20:21 UTC] PHP Fatal error:  Uncaught Exception: Error de configuración: Archivo .env incompleto. Por favor, crea o completa el archivo .env en la raíz del proyecto con las siguientes variables:
+DB_HOST=tu_host
+DB_NAME=tu_base_de_datos
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña
+DB_CHARSET=UTF8MB4 (opcional) in /home/newmoon/public_html/modelos/conexion.php:93
+Stack trace:
+#0 /home/newmoon/public_html/modelos/clientes_cta_cte.modelo.php(43): Conexion::conectar()
+#1 /home/newmoon/public_html/controladores/clientes_cta_cte.controlador.php(24): ModeloClientesCtaCte::mdlMostrarCtaCteClienteId()
+#2 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php(23): ControladorClientesCtaCte::ctrMostrarCtaCteClienteId()
+#3 /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php(153): imprimirFactura->traerImpresionFactura()
+#4 {main}
+  thrown in /home/newmoon/public_html/modelos/conexion.php on line 93
+[18-Dec-2025 22:57:32 UTC] PHP Warning:  require_once(../../../controladores/empresa.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 22:57:32 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/empresa.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 22:58:47 UTC] PHP Warning:  require_once(../../../controladores/empresa.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 22:58:47 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/empresa.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 22:58:48 UTC] PHP Warning:  require_once(../../../controladores/empresa.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 22:58:48 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/empresa.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 22:58:50 UTC] PHP Warning:  require_once(../../../controladores/empresa.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 22:58:50 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/empresa.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 22:58:50 UTC] PHP Warning:  require_once(../../../controladores/empresa.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 22:58:50 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/empresa.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 22:58:51 UTC] PHP Warning:  require_once(../../../controladores/empresa.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 22:58:51 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/empresa.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 22:58:53 UTC] PHP Warning:  require_once(../../../controladores/empresa.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 22:58:53 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/empresa.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 23:03:42 UTC] PHP Warning:  require_once(../../../controladores/compras.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php on line 3
+[18-Dec-2025 23:03:42 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/compras.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php on line 3
+[18-Dec-2025 23:04:30 UTC] PHP Warning:  require_once(../../../controladores/compras.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php on line 3
+[18-Dec-2025 23:04:30 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/compras.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php on line 3
+[18-Dec-2025 23:04:31 UTC] PHP Warning:  require_once(../../../controladores/compras.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php on line 3
+[18-Dec-2025 23:04:31 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/compras.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php on line 3
+[18-Dec-2025 23:04:33 UTC] PHP Warning:  require_once(../../../controladores/compras.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php on line 3
+[18-Dec-2025 23:04:33 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/compras.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php on line 3
+[18-Dec-2025 23:04:33 UTC] PHP Warning:  require_once(../../../controladores/compras.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php on line 3
+[18-Dec-2025 23:04:33 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/compras.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php on line 3
+[18-Dec-2025 23:04:34 UTC] PHP Warning:  require_once(../../../controladores/compras.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php on line 3
+[18-Dec-2025 23:04:34 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/compras.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php on line 3
+[18-Dec-2025 23:04:36 UTC] PHP Warning:  require_once(../../../controladores/compras.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php on line 3
+[18-Dec-2025 23:04:36 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/compras.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php on line 3
+[18-Dec-2025 23:06:14 UTC] PHP Warning:  require_once(../../../controladores/empresa.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 23:06:14 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/empresa.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 23:06:17 UTC] PHP Warning:  require_once(../../../controladores/empresa.controlador.php): Failed to open stream: No such file or directory in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 23:06:17 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../controladores/empresa.controlador.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 3
+[18-Dec-2025 23:06:26 UTC] PHP Parse error:  syntax error, unexpected token "try", expecting "function" or "const" in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 609
+[18-Dec-2025 23:06:29 UTC] PHP Parse error:  syntax error, unexpected token "try", expecting "function" or "const" in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 609
+[18-Dec-2025 23:06:30 UTC] PHP Parse error:  syntax error, unexpected token "try", expecting "function" or "const" in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 609
+[18-Dec-2025 23:06:31 UTC] PHP Parse error:  syntax error, unexpected token "try", expecting "function" or "const" in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 609
+[18-Dec-2025 23:06:31 UTC] PHP Parse error:  syntax error, unexpected token "try", expecting "function" or "const" in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 609
+[18-Dec-2025 23:06:32 UTC] PHP Parse error:  syntax error, unexpected token "try", expecting "function" or "const" in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 609
+[18-Dec-2025 23:06:32 UTC] PHP Parse error:  syntax error, unexpected token "try", expecting "function" or "const" in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 609
+[18-Dec-2025 23:06:33 UTC] PHP Parse error:  syntax error, unexpected token "try", expecting "function" or "const" in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 609
+[18-Dec-2025 23:06:33 UTC] PHP Parse error:  syntax error, unexpected token "try", expecting "function" or "const" in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 609
+[18-Dec-2025 23:06:34 UTC] PHP Parse error:  syntax error, unexpected token "try", expecting "function" or "const" in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 609
+[18-Dec-2025 23:06:34 UTC] PHP Parse error:  syntax error, unexpected token "try", expecting "function" or "const" in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 609
+[18-Dec-2025 23:06:34 UTC] PHP Parse error:  syntax error, unexpected token "try", expecting "function" or "const" in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 609
+[18-Dec-2025 23:07:39 UTC] PHP Parse error:  syntax error, unexpected token "try", expecting "function" or "const" in /home/newmoon/public_html/extensiones/vendor/tecnickcom/tcpdf/pdf/presupuesto.php on line 609

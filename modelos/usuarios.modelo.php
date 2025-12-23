@@ -46,7 +46,7 @@ class ModeloUsuarios{
 	=============================================*/
 	static public function mdlIngresarUsuario($tabla, $datos){
 
-		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(nombre, usuario, password, perfil, sucursal, puntos_venta, listas_precio, foto) VALUES (:nombre, :usuario, :password, :perfil, :sucursal, :puntos_venta, :listas_precio, :foto)");
+		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(nombre, usuario, password, perfil, sucursal, puntos_venta, listas_precio, empresa, foto) VALUES (:nombre, :usuario, :password, :perfil, :sucursal, :puntos_venta, :listas_precio, :empresa, :foto)");
 
 		$stmt->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
 		$stmt->bindParam(":usuario", $datos["usuario"], PDO::PARAM_STR);
@@ -55,6 +55,7 @@ class ModeloUsuarios{
 		$stmt->bindParam(":sucursal", $datos["sucursal"], PDO::PARAM_STR);
 		$stmt->bindParam(":puntos_venta", $datos["puntos_venta"], PDO::PARAM_STR);
 		$stmt->bindParam(":listas_precio", $datos["listas_precio"], PDO::PARAM_STR);
+		$stmt->bindParam(":empresa", $datos["empresa"], PDO::PARAM_INT);
 		$stmt->bindParam(":foto", $datos["foto"], PDO::PARAM_STR);
 
 		if($stmt->execute()){
@@ -78,7 +79,7 @@ class ModeloUsuarios{
 	=============================================*/
 	static public function mdlEditarUsuario($tabla, $datos){
 	
-		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET nombre = :nombre, password = :password, perfil = :perfil, sucursal = :sucursal, puntos_venta = :puntos_venta, listas_precio = :listas_precio, foto = :foto WHERE usuario = :usuario");
+		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET nombre = :nombre, password = :password, perfil = :perfil, sucursal = :sucursal, puntos_venta = :puntos_venta, listas_precio = :listas_precio, empresa = :empresa, foto = :foto WHERE usuario = :usuario");
 
 		$stmt->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
 		$stmt->bindParam(":password", $datos["password"], PDO::PARAM_STR);
@@ -87,6 +88,7 @@ class ModeloUsuarios{
 		$stmt->bindParam(":puntos_venta", $datos["puntos_venta"], PDO::PARAM_STR);
 		$stmt->bindParam(":listas_precio", $datos["listas_precio"], PDO::PARAM_STR);
 		$stmt->bindParam(":foto", $datos["foto"], PDO::PARAM_STR);
+		$stmt->bindParam(":empresa", $datos["empresa"], PDO::PARAM_INT);
 		$stmt->bindParam(":usuario", $datos["usuario"], PDO::PARAM_STR);
 
 		if($stmt->execute()){

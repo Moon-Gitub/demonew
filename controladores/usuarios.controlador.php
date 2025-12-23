@@ -79,6 +79,7 @@ class ControladorUsuarios{
 							$_SESSION["puntos_venta"] = $respuesta["puntos_venta"];
 							$_SESSION["listas_precio"] = $respuesta["listas_precio"];
 							$_SESSION['token'] = session_create_id();
+							$_SESSION["empresa"] = $respuesta["empresa"];
 							
 							// Token CSRF
 							$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -203,6 +204,7 @@ class ControladorUsuarios{
 					           "sucursal" => $_POST["nuevaSucursal"],
 					           "puntos_venta" => $_POST["nuevoPuntoVenta"],
 					           "listas_precio" => $listasPrecio,
+							   "empresa" => $_POST["nuevoRazonSocial"],
 					           "foto"=>$ruta);
 				$respuesta = ModeloUsuarios::mdlIngresarUsuario($tabla, $datos);
     			if($respuesta == "ok"){
@@ -325,6 +327,7 @@ class ControladorUsuarios{
 							   "sucursal" => $_POST["editarSucursal"],
 					           "puntos_venta" => $_POST["editarPuntoVenta"],
 					           "listas_precio" => $listasPrecio,
+							   "empresa" => $_POST["editarRazonSocial"],
 							   "foto" => $ruta);
 
 				$respuesta = ModeloUsuarios::mdlEditarUsuario($tabla, $datos);

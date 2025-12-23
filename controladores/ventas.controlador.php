@@ -153,6 +153,7 @@ class ControladorVentas{
     
     			$datos = array(
     			    "uuid" => $_POST["tokenIdTablaVentas"],
+    			    "id_empresa" => $_POST["idEmpresa"],
     			    "id_vendedor"=>$_POST["idVendedor"],
     				"id_cliente"=>$_POST["seleccionarCliente"],
     				"codigo"=>$codigo,
@@ -277,6 +278,7 @@ class ControladorVentas{
     			=============================================*/
     			$facturar = false;
     			$datosFactura = array('factura' => 'no');
+    			$arrEmpresa = ModeloEmpresa::mdlMostrarEmpresa("empresa", "id", $postVentaCaja["idEmpresa"]);
     
     			//Si hay descuento a la venta tengo que aplicarlo a cada iva y cada base imponible
     			$descGeneral = (isset($postVentaCaja["nuevoDescuentoPorcentajeCaja"])) ? floatval($postVentaCaja["nuevoDescuentoPorcentajeCaja"]) : 0;
@@ -307,66 +309,87 @@ class ControladorVentas{
     
     			//Armo array impuesto_detalle y acumulado de impuesto
     			$impuestoDetalle = '[';
-    
-    			if($bimp0 > 0){ //Hay productos con IVA 0% 
-    				$bimp0 = $bimp0 - ($bimp0 * $descGeneral / 100);
-    				$bimp0 = round($bimp0,2);
-    				$netoGravado = $netoGravado + $bimp0;
-    				$impuestoDetalle = $impuestoDetalle . '{"id":3,"descripcion":"IVA 0%","baseImponible":"'.$bimp0.'","iva":"0"},';
+    			
+    			/*
+    			 "1" => "IVA Responsable Inscripto ",
+                 "6" => "Responsable Monotributo ",
+                 "4" => "IVA Sujeto Exento",
+                 "7" => "Sujeto no Categorizado",
+                 "10" => "IVA Liberado – Ley Nº 19.640 ",
+                 "13" => "Monotributista Social ",
+                 "15" => "IVA No Alcanzado",
+                 "16" => "Monotributo Trabajador Independiente Promovido"
+                */
+    			if($arrEmpresa["condicion_iva"] == 1){
+    			    
+        			if($bimp0 > 0){ //Hay productos con IVA 0% 
+        				$bimp0 = $bimp0 - ($bimp0 * $descGeneral / 100);
+        				$bimp0 = round($bimp0,2);
+        				$netoGravado = $netoGravado + $bimp0;
+        				$impuestoDetalle = $impuestoDetalle . '{"id":3,"descripcion":"IVA 0%","baseImponible":"'.$bimp0.'","iva":"0"},';
+        			}
+        
+        			if($bimp2 > 0){ //Hay productos con IVA 2,5% 
+        				$bimp2 = $bimp2 - ($bimp2 * $descGeneral / 100);
+        				$bimp2 = round($bimp2,2);
+        				$iva2 = $iva2 - ($iva2 * $descGeneral / 100);
+        				$iva2 = round($iva2,2);
+        				$netoGravado = $netoGravado + $bimp2;
+        				$impuestoDetalle = $impuestoDetalle . '{"id":9,"descripcion":"IVA 2,5%","baseImponible":"'.$bimp2.'","iva":"'.$iva2.'"},';
+        				$impuesto = $impuesto + $iva2;
+        			}
+        
+        			if($bimp5 > 0){ //Hay productos con IVA 5% 
+        				$bimp5 = $bimp5 - ($bimp5 * $descGeneral / 100);
+        				$bimp5 = round($bimp5,2);
+        				$iva5 = $iva5 - ($iva5 * $descGeneral / 100);
+        				$iva5 = round($iva5,2);
+        				$netoGravado = $netoGravado + $bimp5;
+        				$impuestoDetalle = $impuestoDetalle . '{"id":8,"descripcion":"IVA 5%","baseImponible":"'.$bimp5.'","iva":"'.$iva5.'"},';
+        				$impuesto = $impuesto + $iva5;
+        			}
+        
+        			if($bimp10 > 0){ //Hay productos con IVA 10,5% 
+        				$bimp10 = $bimp10 - ($bimp10 * $descGeneral / 100);
+        				$bimp10 = round($bimp10,2);
+        				$iva10 = $iva10 - ($iva10 * $descGeneral / 100);
+        				$iva10 = round($iva10,2);
+        				$netoGravado = $netoGravado + $bimp10;
+        				$impuestoDetalle = $impuestoDetalle . '{"id":4,"descripcion":"IVA 10,5%","baseImponible":"'.$bimp10.'","iva":"'.$iva10.'"},';
+        				$impuesto = $impuesto + $iva10;
+        			}
+        
+        			if($bimp21 > 0){ //Hay productos con IVA 21% 
+        				$bimp21 = $bimp21 - ($bimp21 * $descGeneral / 100);
+        				$bimp21 = round($bimp21,2);
+        				$iva21 = $iva21 - ($iva21 * $descGeneral / 100);
+        				$iva21 = round($iva21,2);
+        				$netoGravado = $netoGravado + $bimp21;
+        				$impuestoDetalle = $impuestoDetalle . '{"id":5,"descripcion":"IVA 21%","baseImponible":"'.$bimp21.'","iva":"'.$iva21.'"},';
+        				$impuesto = $impuesto + $iva21;
+        			}
+        
+        			if($bimp27 > 0){ //Hay productos con IVA 27% 
+        				$bimp27 = $bimp27 - ($bimp27 * $descGeneral / 100);
+        				$bimp27 = round($bimp27,2);
+        				$iva27 = $iva27 - ($iva27 * $descGeneral / 100);
+        				$iva27 = round($iva27,2);
+        				$netoGravado = $netoGravado + $bimp27;
+        				$impuestoDetalle = $impuestoDetalle . '{"id":6,"descripcion":"IVA 27%","baseImponible":"'.$bimp27.'","iva":"'.$iva27.'"},';
+        				$impuesto = $impuesto + $iva27;
+        			}
+        
+        			$netoGravado = round($netoGravado,2);
+        			$impuesto = round($impuesto,2);
+
+    			} elseif ($arrEmpresa["condicion_iva"] == 6) {
+			    	$baseMono = $postVentaCaja["nuevoTotalVentaCaja"] - ($postVentaCaja["nuevoTotalVentaCaja"] * $descGeneral / 100);
+    				$baseMono = round($baseMono,2);
+    				$netoGravado = $baseMono;
+    				$impuestoDetalle = $impuestoDetalle . '{"id":3,"descripcion":"IVA 0%","baseImponible":"'.$baseMono.'","iva":"0"},';
+    			   
     			}
-    
-    			if($bimp2 > 0){ //Hay productos con IVA 2,5% 
-    				$bimp2 = $bimp2 - ($bimp2 * $descGeneral / 100);
-    				$bimp2 = round($bimp2,2);
-    				$iva2 = $iva2 - ($iva2 * $descGeneral / 100);
-    				$iva2 = round($iva2,2);
-    				$netoGravado = $netoGravado + $bimp2;
-    				$impuestoDetalle = $impuestoDetalle . '{"id":9,"descripcion":"IVA 2,5%","baseImponible":"'.$bimp2.'","iva":"'.$iva2.'"},';
-    				$impuesto = $impuesto + $iva2;
-    			}
-    
-    			if($bimp5 > 0){ //Hay productos con IVA 5% 
-    				$bimp5 = $bimp5 - ($bimp5 * $descGeneral / 100);
-    				$bimp5 = round($bimp5,2);
-    				$iva5 = $iva5 - ($iva5 * $descGeneral / 100);
-    				$iva5 = round($iva5,2);
-    				$netoGravado = $netoGravado + $bimp5;
-    				$impuestoDetalle = $impuestoDetalle . '{"id":8,"descripcion":"IVA 5%","baseImponible":"'.$bimp5.'","iva":"'.$iva5.'"},';
-    				$impuesto = $impuesto + $iva5;
-    			}
-    
-    			if($bimp10 > 0){ //Hay productos con IVA 10,5% 
-    				$bimp10 = $bimp10 - ($bimp10 * $descGeneral / 100);
-    				$bimp10 = round($bimp10,2);
-    				$iva10 = $iva10 - ($iva10 * $descGeneral / 100);
-    				$iva10 = round($iva10,2);
-    				$netoGravado = $netoGravado + $bimp10;
-    				$impuestoDetalle = $impuestoDetalle . '{"id":4,"descripcion":"IVA 10,5%","baseImponible":"'.$bimp10.'","iva":"'.$iva10.'"},';
-    				$impuesto = $impuesto + $iva10;
-    			}
-    
-    			if($bimp21 > 0){ //Hay productos con IVA 21% 
-    				$bimp21 = $bimp21 - ($bimp21 * $descGeneral / 100);
-    				$bimp21 = round($bimp21,2);
-    				$iva21 = $iva21 - ($iva21 * $descGeneral / 100);
-    				$iva21 = round($iva21,2);
-    				$netoGravado = $netoGravado + $bimp21;
-    				$impuestoDetalle = $impuestoDetalle . '{"id":5,"descripcion":"IVA 21%","baseImponible":"'.$bimp21.'","iva":"'.$iva21.'"},';
-    				$impuesto = $impuesto + $iva21;
-    			}
-    
-    			if($bimp27 > 0){ //Hay productos con IVA 27% 
-    				$bimp27 = $bimp27 - ($bimp27 * $descGeneral / 100);
-    				$bimp27 = round($bimp27,2);
-    				$iva27 = $iva27 - ($iva27 * $descGeneral / 100);
-    				$iva27 = round($iva27,2);
-    				$netoGravado = $netoGravado + $bimp27;
-    				$impuestoDetalle = $impuestoDetalle . '{"id":6,"descripcion":"IVA 27%","baseImponible":"'.$bimp27.'","iva":"'.$iva27.'"},';
-    				$impuesto = $impuesto + $iva27;
-    			}
-    
-    			$netoGravado = round($netoGravado,2);
-    			$impuesto = round($impuesto,2);
+    			
     			$impuestoDetalle = $impuestoDetalle = (strlen($impuestoDetalle)>1) ? substr($impuestoDetalle, 0, -1) : $impuestoDetalle;
     			$impuestoDetalle = $impuestoDetalle . ']';
     
@@ -378,8 +401,6 @@ class ControladorVentas{
                 $msjAfip = null;//array();
                 
     			if($tipoCbte <> 0 && $tipoCbte <> 999) { // 0: Cbte X | 999: devolucion X | NUM: autorizo a afip 
-    
-    				$arrEmpresa = ModeloEmpresa::mdlMostrarEmpresa("empresa", "id", 1);
     
     				$datosFactura = array(
     								"fec_factura" => $fec_hor,
@@ -502,8 +523,7 @@ class ControladorVentas{
     							$indice = 0;
     
     							foreach ($arrDetImpuestos as $key => $value) {
-    
-    								$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"]["Iva"]["AlicIva"] += array($indice => array(
+        								$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"]["Iva"]["AlicIva"] += array($indice => array(
     										'Id' => (int)$value["id"],
     										'BaseImp' => $value["baseImponible"],
     										'Importe' => $value["iva"]));
@@ -762,6 +782,7 @@ class ControladorVentas{
     			$tabla = "ventas";
     			$datos = array(
     			    "uuid" => $postVentaCaja["tokenIdTablaVentas"],
+    			    "id_empresa" =>$postVentaCaja["idEmpresa"],
     				"id_vendedor"=>$postVentaCaja["idVendedor"],
     			   	"id_cliente"=>$postVentaCaja["seleccionarCliente"],
     			   	"codigo"=>$codigoSiguiente, //$postVentaCaja["nuevaVentaCaja"],

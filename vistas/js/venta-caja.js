@@ -1868,6 +1868,7 @@ FUNCIÓN PARA GUARDAR VENTA (EXTRAÍDA PARA REUTILIZAR)
 function guardarVentaCaja(){
 	var datosVentaCaja = new FormData();
 	datosVentaCaja.append("fechaActual", $("#fechaActual").val());
+	datosVentaCaja.append("idEmpresa", $("#idEmpresa").val());
 	datosVentaCaja.append("idVendedor", $("#idVendedor").val());
 	datosVentaCaja.append("sucursalVendedor", $("#sucursalVendedor").val());
 	datosVentaCaja.append("nombreVendedor", $("#nuevoVendedor").val());
