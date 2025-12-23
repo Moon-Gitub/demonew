@@ -664,13 +664,21 @@ class ControladorMercadoPago {
 		try {
 			$credenciales = self::ctrObtenerCredenciales();
 			
-			// Obtener POS ID desde la empresa
+			// Obtener POS ID y External ID desde la empresa
 			$posId = null;
 			$posExternalId = null;
 			try {
 				if (class_exists('ControladorEmpresa')) {
 					$empresa = ControladorEmpresa::ctrMostrarempresa('id', 1);
-					if ($empresa && isset($empresa['mp_pos_id']) && !empty($empresa['mp_pos_id'])) {
+					
+					// PRIORIDAD 1: Si hay external_id guardado manualmente, usarlo directamente
+					if ($empresa && isset($empresa['mp_pos_external_id']) && !empty($empresa['mp_pos_external_id'])) {
+						$posExternalId = $empresa['mp_pos_external_id'];
+						error_log("Usando External ID guardado manualmente: $posExternalId");
+					}
+					
+					// PRIORIDAD 2: Si hay pos_id, intentar obtener el external_id desde la API
+					if (!$posExternalId && $empresa && isset($empresa['mp_pos_id']) && !empty($empresa['mp_pos_id'])) {
 						$posId = $empresa['mp_pos_id'];
 						
 						// Obtener el POS completo para obtener su external_id
@@ -686,27 +694,37 @@ class ControladorMercadoPago {
 						$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 						curl_close($ch);
 						
-			if ($httpCode == 200) {
-				$pos = json_decode($response, true);
-				$posExternalId = isset($pos['external_id']) ? $pos['external_id'] : null;
-				error_log("POS obtenido - ID: $posId, External ID: $posExternalId, Respuesta completa: " . json_encode($pos));
-				
-				if (!$posExternalId) {
-					error_log("ERROR: El POS no tiene external_id. Respuesta: " . json_encode($pos));
-				}
-			} else {
-				error_log("Error obteniendo POS $posId: HTTP $httpCode - $response");
-			}
+						if ($httpCode == 200) {
+							$pos = json_decode($response, true);
+							$posExternalId = isset($pos['external_id']) ? $pos['external_id'] : null;
+							error_log("POS obtenido desde API - ID: $posId, External ID: $posExternalId");
+							
+							if (!$posExternalId) {
+								error_log("ERROR: El POS no tiene external_id. Respuesta: " . json_encode($pos));
+							}
+						} else {
+							error_log("Error obteniendo POS $posId: HTTP $httpCode - $response");
+						}
 					}
 				}
 			} catch (Exception $e) {
 				error_log("Error obteniendo POS ID: " . $e->getMessage());
 			}
 			
-			if (!$posId || !$posExternalId) {
-				// Si no hay POS, crear uno primero
+			// PRIORIDAD 3: Si no hay external_id, intentar obtenerlo desde ctrObtenerOcrearPOSEstatico
+			if (!$posExternalId) {
+				// Si no hay POS, intentar crear/obtener uno
 				$posResult = self::ctrObtenerOcrearPOSEstatico();
 				if ($posResult['error']) {
+					// Si falla por permisos (403), dar instrucciones claras
+					if (strpos($posResult['mensaje'], '403') !== false || strpos($posResult['mensaje'], 'permisos') !== false) {
+						return array(
+							'error' => true,
+							'mensaje' => 'No se pudo obtener el POS automáticamente debido a permisos insuficientes. ' .
+								'Por favor, ingrese el External ID del POS manualmente en la configuración de empresa. ' .
+								'Puede obtenerlo desde la aplicación móvil de Mercado Pago o desde el panel de desarrolladores.'
+						);
+					}
 					return $posResult;
 				}
 				$posId = $posResult['pos_id'];
@@ -732,7 +750,7 @@ class ControladorMercadoPago {
 					if ($httpCode == 200) {
 						$pos = json_decode($response, true);
 						$posExternalId = isset($pos['external_id']) ? $pos['external_id'] : null;
-						error_log("POS recién creado - ID: $posId, External ID: $posExternalId, Respuesta completa: " . json_encode($pos));
+						error_log("POS recién creado - ID: $posId, External ID: $posExternalId");
 						
 						if (!$posExternalId) {
 							error_log("ERROR: El POS recién creado no tiene external_id. Respuesta: " . json_encode($pos));
@@ -746,7 +764,9 @@ class ControladorMercadoPago {
 			if (!$posExternalId) {
 				return array(
 					'error' => true,
-					'mensaje' => 'No se pudo obtener el external_id del POS'
+					'mensaje' => 'No se pudo obtener el external_id del POS. ' .
+						'Por favor, ingrese el External ID del POS manualmente en la configuración de empresa. ' .
+						'Puede obtenerlo desde la aplicación móvil de Mercado Pago o desde el panel de desarrolladores de Mercado Pago.'
 				);
 			}
 			

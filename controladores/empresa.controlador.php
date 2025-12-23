@@ -109,7 +109,8 @@ class ControladorEmpresa{
 					"login_color_texto_titulo" => isset($_POST["empLoginColorTextoTitulo"]) ? $_POST["empLoginColorTextoTitulo"] : '#ffffff',
 					"mp_public_key" => isset($_POST["empMPPublicKey"]) ? $_POST["empMPPublicKey"] : '',
 					"mp_access_token" => isset($_POST["empMPAccessToken"]) ? $_POST["empMPAccessToken"] : '',
-					"mp_pos_id" => isset($_POST["empMPPosId"]) ? $_POST["empMPPosId"] : null
+					"mp_pos_id" => isset($_POST["empMPPosId"]) ? $_POST["empMPPosId"] : null,
+					"mp_pos_external_id" => isset($_POST["empMPPosExternalId"]) ? $_POST["empMPPosExternalId"] : null
 				);
 				
 				// Log para debug - Detallado

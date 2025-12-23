@@ -614,6 +614,23 @@ input[type="file"]:disabled {
         </div>
       </div>
 
+      <div class="row">
+        <div class="col-md-12">
+          <!-- ENTRADA PARA POS EXTERNAL ID DE MERCADO PAGO-->
+          <div class="form-group">
+            <label class="control-label">External ID del POS (Opcional - Solo si no puede acceder a tiendas)</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-qrcode"></i></span>
+              <?php
+                $mpPosExternalId = isset($arrayEmpresa['mp_pos_external_id']) ? $arrayEmpresa['mp_pos_external_id'] : '';
+                echo '<input type="text" class="form-control" name="empMPPosExternalId" id="empMPPosExternalId" placeholder="External ID del POS (ej: POS123456)" value="'. htmlspecialchars($mpPosExternalId) . '">';
+              ?>
+            </div>
+            <span class="help-block">Si tiene problemas con permisos (error 403), puede obtener el External ID del POS desde la aplicación móvil de Mercado Pago y guardarlo aquí manualmente. Esto permitirá usar el QR sin necesidad de acceder a las tiendas.</span>
+          </div>
+        </div>
+      </div>
+
       <!-- ENTRADA TIPOS DE COMPROBANTES-->
       <div class="row">
         <div class="col-md-12">

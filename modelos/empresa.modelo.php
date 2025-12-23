@@ -59,6 +59,9 @@ class ModeloEmpresa{
 		// bindValue en lugar de bindParam para mp_pos_id porque puede ser null (operador ternario)
 		$mp_pos_id = isset($datos["mp_pos_id"]) && !empty($datos["mp_pos_id"]) ? $datos["mp_pos_id"] : null;
 		$stmt -> bindValue(":mp_pos_id", $mp_pos_id, PDO::PARAM_STR);
+		// bindValue para mp_pos_external_id también
+		$mp_pos_external_id = isset($datos["mp_pos_external_id"]) && !empty($datos["mp_pos_external_id"]) ? $datos["mp_pos_external_id"] : null;
+		$stmt -> bindValue(":mp_pos_external_id", $mp_pos_external_id, PDO::PARAM_STR);
 		$stmt -> bindParam(":id", $datos["id"], PDO::PARAM_INT);
 
 		try {

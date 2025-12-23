@@ -3274,9 +3274,10 @@ $("#modalPagoQR").on('hidden.bs.modal', function(){
 		clearInterval(intervaloVerificacionQR);
 		intervaloVerificacionQR = null;
 	}
-	// No limpiar externalReferenceActual ni paymentIdConfirmado si el pago ya fue confirmado
+	// No limpiar externalReferenceActual, orderIdActual ni paymentIdConfirmado si el pago ya fue confirmado
 	// Solo limpiar si se cierra sin confirmar
 	if(!paymentIdConfirmado){
 		externalReferenceActual = null;
+		orderIdActual = null;
 	}
 });
