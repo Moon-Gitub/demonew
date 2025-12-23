@@ -626,7 +626,11 @@ input[type="file"]:disabled {
                 echo '<input type="text" class="form-control" name="empMPPosExternalId" id="empMPPosExternalId" placeholder="External ID del POS (ej: POS123456)" value="'. htmlspecialchars($mpPosExternalId) . '">';
               ?>
             </div>
-            <span class="help-block">Si tiene problemas con permisos (error 403), puede obtener el External ID del POS desde la aplicación móvil de Mercado Pago y guardarlo aquí manualmente. Esto permitirá usar el QR sin necesidad de acceder a las tiendas.</span>
+            <span class="help-block">
+              <strong>IMPORTANTE:</strong> Este NO es el User ID. El External ID del POS es un identificador que tú defines al crear el POS (ej: "QRCOBRO", "POS001"). 
+              <br>Si no tienes un POS creado, créalo desde la app móvil de Mercado Pago y usa un external_id simple como "QRCOBRO" o "POS001".
+              <br>Si ya tienes un POS, revisa en la app móvil cuál external_id usaste al crearlo.
+            </span>
           </div>
         </div>
       </div>
