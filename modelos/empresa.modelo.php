@@ -56,7 +56,9 @@ class ModeloEmpresa{
 		$stmt -> bindParam(":login_color_texto_titulo", $datos["login_color_texto_titulo"], PDO::PARAM_STR);
 		$stmt -> bindParam(":mp_public_key", $datos["mp_public_key"], PDO::PARAM_STR);
 		$stmt -> bindParam(":mp_access_token", $datos["mp_access_token"], PDO::PARAM_STR);
-		$stmt -> bindParam(":mp_pos_id", isset($datos["mp_pos_id"]) ? $datos["mp_pos_id"] : null, PDO::PARAM_STR);
+		// bindValue en lugar de bindParam para mp_pos_id porque puede ser null (operador ternario)
+		$mp_pos_id = isset($datos["mp_pos_id"]) && !empty($datos["mp_pos_id"]) ? $datos["mp_pos_id"] : null;
+		$stmt -> bindValue(":mp_pos_id", $mp_pos_id, PDO::PARAM_STR);
 		$stmt -> bindParam(":id", $datos["id"], PDO::PARAM_INT);
 
 		try {
