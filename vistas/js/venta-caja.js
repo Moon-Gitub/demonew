@@ -3281,3 +3281,414 @@ $("#modalPagoQR").on('hidden.bs.modal', function(){
 		orderIdActual = null;
 	}
 });
+
+/*=============================================
+SISTEMA COMPLETO DE ATAJOS DE TECLADO PARA POS
+Permite manejar todo el panel de ventas con el teclado
+=============================================*/
+
+// Variable para rastrear el producto seleccionado en la lista
+var productoSeleccionadoIndex = -1;
+var productosEnLista = [];
+
+// Función para actualizar la lista de productos disponibles
+function actualizarListaProductos() {
+	productosEnLista = $(".nuevoProductoCaja .nuevaCantidadProductoCaja").toArray();
+}
+
+// Función para seleccionar un producto en la lista
+function seleccionarProducto(index) {
+	if (index < 0) index = 0;
+	if (index >= productosEnLista.length) index = productosEnLista.length - 1;
+	if (index < 0) return;
+	
+	productoSeleccionadoIndex = index;
+	var $producto = $(productosEnLista[index]);
+	
+	// Remover selección anterior
+	$(".nuevoProductoCaja .producto-seleccionado").removeClass("producto-seleccionado");
+	
+	// Agregar clase de selección al producto actual
+	$producto.closest(".nuevoProductoCaja").addClass("producto-seleccionado");
+	
+	// Scroll al producto seleccionado
+	$producto[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// Agregar estilos para producto seleccionado
+if (!$('#estilos-atajos-teclado').length) {
+	$('head').append('<style id="estilos-atajos-teclado">' +
+		'.nuevoProductoCaja.producto-seleccionado { ' +
+		'  background-color: #e3f2fd !important; ' +
+		'  border: 2px solid #2196F3 !important; ' +
+		'  border-radius: 4px !important; ' +
+		'  padding: 5px !important; ' +
+		'  margin: 2px 0 !important; ' +
+		'}' +
+		'</style>');
+}
+
+// Actualizar lista cuando se agregan o quitan productos
+$(document).on('DOMNodeInserted DOMNodeRemoved', function() {
+	setTimeout(actualizarListaProductos, 100);
+});
+
+// Inicializar lista al cargar
+$(document).ready(function() {
+	actualizarListaProductos();
+	
+	// Actualizar cuando cambia el contenido de la lista
+	var observer = new MutationObserver(function(mutations) {
+		actualizarListaProductos();
+	});
+	
+	var listaProductos = document.getElementById('nuevoProductoCaja');
+	if (listaProductos) {
+		observer.observe(listaProductos, { childList: true, subtree: true });
+	}
+});
+
+// Sistema completo de atajos de teclado
+$(document).on('keydown', function(e) {
+	// Solo procesar si no estamos en un modal o input de texto activo
+	var $target = $(e.target);
+	var esInput = $target.is('input, textarea, select');
+	var esModal = $target.closest('.modal').length > 0;
+	
+	// Si estamos en un modal, no procesar atajos globales (excepto los ya existentes)
+	if (esModal && !$('#modalCobrarVenta').hasClass('in') && !$('#modalImprimirTicketCaja').hasClass('in')) {
+		return;
+	}
+	
+	// Si estamos escribiendo en un input, solo procesar atajos específicos
+	if (esInput && !esModal) {
+		// Permitir Tab y Shift+Tab siempre
+		if (e.keyCode === 9) return;
+		
+		// Permitir Enter en campos específicos (ya manejado por código existente)
+		if (e.keyCode === 13) {
+			// Si es el campo de búsqueda de producto, ya está manejado
+			if ($target.attr('id') === 'ventaCajaDetalle' || $target.attr('id') === 'ventaCajaCantidad') {
+				return;
+			}
+		}
+		
+		// Procesar atajos específicos incluso en inputs
+		// F1: Focus en búsqueda de producto
+		if (e.keyCode === 112) { // F1
+			e.preventDefault();
+			$("#ventaCajaDetalle").focus();
+			return false;
+		}
+		
+		// F2: Focus en cantidad
+		if (e.keyCode === 113) { // F2
+			e.preventDefault();
+			$("#ventaCajaCantidad").focus();
+			return false;
+		}
+		
+		// F7: Cobrar (ya existe, pero asegurarse de que funcione)
+		if (e.keyCode === 118) { // F7
+			e.preventDefault();
+			$("#btnGuardarVentaCaja").click();
+			return false;
+		}
+		
+		// Ctrl+Q: Focus en cantidad del producto seleccionado
+		if (e.ctrlKey && e.keyCode === 81) { // Ctrl+Q
+			e.preventDefault();
+			if (productoSeleccionadoIndex >= 0 && productosEnLista.length > 0) {
+				$(productosEnLista[productoSeleccionadoIndex]).focus().select();
+			}
+			return false;
+		}
+		
+		// Ctrl+Delete o Shift+Delete: Eliminar producto seleccionado
+		if ((e.ctrlKey || e.shiftKey) && (e.keyCode === 46 || e.keyCode === 8)) { // Ctrl+Del o Shift+Del
+			e.preventDefault();
+			if (productoSeleccionadoIndex >= 0 && productosEnLista.length > 0) {
+				var $producto = $(productosEnLista[productoSeleccionadoIndex]);
+				var $botonEliminar = $producto.closest(".nuevoProductoCaja").find("button.quitarProductoCaja");
+				if ($botonEliminar.length) {
+					$botonEliminar.click();
+					actualizarListaProductos();
+					// Seleccionar el siguiente producto o el anterior si era el último
+					if (productoSeleccionadoIndex >= productosEnLista.length) {
+						productoSeleccionadoIndex = productosEnLista.length - 1;
+					}
+					if (productoSeleccionadoIndex >= 0) {
+						seleccionarProducto(productoSeleccionadoIndex);
+					}
+				}
+			}
+			return false;
+		}
+		
+		// Flechas arriba/abajo: Navegar por lista de productos (solo si no estamos en un input de cantidad)
+		if (($target.attr('id') !== 'ventaCajaDetalle' && $target.attr('id') !== 'ventaCajaCantidad') || 
+		    $target.closest('.nuevoProductoCaja').length === 0) {
+			if (e.keyCode === 38) { // Flecha arriba
+				e.preventDefault();
+				actualizarListaProductos();
+				if (productosEnLista.length > 0) {
+					if (productoSeleccionadoIndex <= 0) {
+						productoSeleccionadoIndex = productosEnLista.length - 1;
+					} else {
+						productoSeleccionadoIndex--;
+					}
+					seleccionarProducto(productoSeleccionadoIndex);
+				}
+				return false;
+			}
+			
+			if (e.keyCode === 40) { // Flecha abajo
+				e.preventDefault();
+				actualizarListaProductos();
+				if (productosEnLista.length > 0) {
+					if (productoSeleccionadoIndex >= productosEnLista.length - 1) {
+						productoSeleccionadoIndex = 0;
+					} else {
+						productoSeleccionadoIndex++;
+					}
+					seleccionarProducto(productoSeleccionadoIndex);
+				}
+				return false;
+			}
+		}
+		
+		return; // No procesar otros atajos si estamos en un input
+	}
+	
+	// ATAJOS GLOBALES (cuando no estamos en un input)
+	
+	// F1: Focus en búsqueda de producto (Cod. artículo)
+	if (e.keyCode === 112) { // F1
+		e.preventDefault();
+		$("#ventaCajaDetalle").focus();
+		return false;
+	}
+	
+	// F2: Focus en cantidad
+	if (e.keyCode === 113) { // F2
+		e.preventDefault();
+		$("#ventaCajaCantidad").focus();
+		return false;
+	}
+	
+	// Alt+D: Focus en campo Día (fecha)
+	if (e.altKey && e.keyCode === 68) { // Alt+D
+		e.preventDefault();
+		$("#fechaEmision").focus();
+		return false;
+	}
+	
+	// Alt+H: Focus en campo Hora
+	if (e.altKey && e.keyCode === 72) { // Alt+H
+		e.preventDefault();
+		$("#horaEmision").focus();
+		return false;
+	}
+	
+	// Alt+L: Abrir dropdown de Listas de precio
+	if (e.altKey && e.keyCode === 76) { // Alt+L
+		e.preventDefault();
+		var $select = $("#radioPrecio");
+		$select.focus();
+		// Abrir el dropdown (trigger click en el select)
+		if ($select.length) {
+			$select[0].size = $select[0].options.length;
+			setTimeout(function() {
+				$select[0].size = 1;
+			}, 100);
+		}
+		return false;
+	}
+	
+	// Alt+A: Abrir modal de Agregar cliente
+	if (e.altKey && e.keyCode === 65) { // Alt+A
+		e.preventDefault();
+		// Buscar el botón que abre el modal
+		var $btnAgregarCliente = $('button[data-target="#modalAgregarCliente"], button[data-toggle="modal"][data-target="#modalAgregarCliente"]');
+		if ($btnAgregarCliente.length) {
+			$btnAgregarCliente.click();
+		} else {
+			$("#modalAgregarCliente").modal('show');
+		}
+		return false;
+	}
+	
+	// F7: Cobrar (ya existe, pero asegurarse de que funcione siempre)
+	if (e.keyCode === 118) { // F7
+		e.preventDefault();
+		$("#btnGuardarVentaCaja").click();
+		return false;
+	}
+	
+	// Ctrl+Q: Focus en cantidad del producto seleccionado
+	if (e.ctrlKey && e.keyCode === 81) { // Ctrl+Q
+		e.preventDefault();
+		actualizarListaProductos();
+		if (productosEnLista.length > 0) {
+			if (productoSeleccionadoIndex < 0) {
+				productoSeleccionadoIndex = 0;
+			}
+			seleccionarProducto(productoSeleccionadoIndex);
+			$(productosEnLista[productoSeleccionadoIndex]).focus().select();
+		}
+		return false;
+	}
+	
+	// Ctrl+Delete o Shift+Delete: Eliminar producto seleccionado
+	if ((e.ctrlKey || e.shiftKey) && (e.keyCode === 46 || e.keyCode === 8)) { // Ctrl+Del o Shift+Del
+		e.preventDefault();
+		actualizarListaProductos();
+		if (productoSeleccionadoIndex >= 0 && productosEnLista.length > 0) {
+			var $producto = $(productosEnLista[productoSeleccionadoIndex]);
+			var $botonEliminar = $producto.closest(".nuevoProductoCaja").find("button.quitarProductoCaja");
+			if ($botonEliminar.length) {
+				$botonEliminar.click();
+				setTimeout(function() {
+					actualizarListaProductos();
+					// Seleccionar el siguiente producto o el anterior si era el último
+					if (productoSeleccionadoIndex >= productosEnLista.length) {
+						productoSeleccionadoIndex = productosEnLista.length - 1;
+					}
+					if (productoSeleccionadoIndex >= 0) {
+						seleccionarProducto(productoSeleccionadoIndex);
+					} else {
+						productoSeleccionadoIndex = -1;
+					}
+				}, 100);
+			}
+		}
+		return false;
+	}
+	
+	// Flechas arriba/abajo: Navegar por lista de productos
+	if (e.keyCode === 38) { // Flecha arriba
+		e.preventDefault();
+		actualizarListaProductos();
+		if (productosEnLista.length > 0) {
+			if (productoSeleccionadoIndex <= 0) {
+				productoSeleccionadoIndex = productosEnLista.length - 1;
+			} else {
+				productoSeleccionadoIndex--;
+			}
+			seleccionarProducto(productoSeleccionadoIndex);
+		}
+		return false;
+	}
+	
+	if (e.keyCode === 40) { // Flecha abajo
+		e.preventDefault();
+		actualizarListaProductos();
+		if (productosEnLista.length > 0) {
+			if (productoSeleccionadoIndex >= productosEnLista.length - 1) {
+				productoSeleccionadoIndex = 0;
+			} else {
+				productoSeleccionadoIndex++;
+			}
+			seleccionarProducto(productoSeleccionadoIndex);
+		}
+		return false;
+	}
+});
+
+// Mejorar navegación con Tab: asegurar que todos los elementos sean accesibles
+$(document).ready(function() {
+	// Asegurar que los botones sean accesibles con Tab
+	$("button.quitarProductoCaja").attr("tabindex", "0");
+	$("#btnGuardarVentaCaja").attr("tabindex", "0");
+	
+	// Asegurar que los selects sean accesibles
+	$("#radioPrecio, #nuevotipoCbte, #nuevaPtoVta, #nuevaConcepto").attr("tabindex", "0");
+	
+	// Mejorar accesibilidad de la lista de productos
+	$(".nuevoProductoCaja").on("focus", "input.nuevaCantidadProductoCaja", function() {
+		var index = $(this).closest(".nuevoProductoCaja").index();
+		productoSeleccionadoIndex = index;
+		actualizarListaProductos();
+	});
+});
+
+// Mostrar ayuda de atajos al presionar F1 dos veces rápidamente o mantenerlo
+var f1PressCount = 0;
+var f1Timer = null;
+
+$(document).on('keydown', function(e) {
+	if (e.keyCode === 112) { // F1
+		f1PressCount++;
+		if (f1PressCount === 1) {
+			f1Timer = setTimeout(function() {
+				f1PressCount = 0;
+			}, 500);
+		} else if (f1PressCount === 2) {
+			clearTimeout(f1Timer);
+			f1PressCount = 0;
+			mostrarAyudaAtajos();
+		}
+	} else {
+		f1PressCount = 0;
+		if (f1Timer) clearTimeout(f1Timer);
+	}
+});
+
+function mostrarAyudaAtajos() {
+	var ayuda = '<div class="modal fade" id="modalAyudaAtajos" tabindex="-1" role="dialog">' +
+		'<div class="modal-dialog" role="document">' +
+		'<div class="modal-content">' +
+		'<div class="modal-header bg-primary">' +
+		'<button type="button" class="close" data-dismiss="modal">&times;</button>' +
+		'<h4 class="modal-title">Atajos de Teclado - Panel de Ventas</h4>' +
+		'</div>' +
+		'<div class="modal-body">' +
+		'<h5><strong>Navegación Principal:</strong></h5>' +
+		'<ul>' +
+		'<li><kbd>F1</kbd> - Focus en búsqueda de producto (Cod. artículo)</li>' +
+		'<li><kbd>F2</kbd> - Focus en campo Cantidad</li>' +
+		'<li><kbd>F7</kbd> - Cobrar / Abrir modal de pago</li>' +
+		'<li><kbd>Tab</kbd> - Navegar entre campos</li>' +
+		'<li><kbd>Shift+Tab</kbd> - Navegar hacia atrás</li>' +
+		'</ul>' +
+		'<h5><strong>Campos Específicos:</strong></h5>' +
+		'<ul>' +
+		'<li><kbd>Alt+D</kbd> - Focus en campo Día (fecha)</li>' +
+		'<li><kbd>Alt+H</kbd> - Focus en campo Hora</li>' +
+		'<li><kbd>Alt+L</kbd> - Abrir dropdown Listas de precio</li>' +
+		'<li><kbd>Alt+A</kbd> - Abrir modal Agregar cliente</li>' +
+		'</ul>' +
+		'<h5><strong>Lista de Productos:</strong></h5>' +
+		'<ul>' +
+		'<li><kbd>↑</kbd> / <kbd>↓</kbd> - Navegar por productos en la lista</li>' +
+		'<li><kbd>Ctrl+Q</kbd> - Focus en cantidad del producto seleccionado</li>' +
+		'<li><kbd>Ctrl+Del</kbd> o <kbd>Shift+Del</kbd> - Eliminar producto seleccionado</li>' +
+		'<li><kbd>Enter</kbd> - Confirmar cantidad (en campo cantidad)</li>' +
+		'</ul>' +
+		'<h5><strong>Modal de Pago:</strong></h5>' +
+		'<ul>' +
+		'<li><kbd>F8</kbd> - Guardar venta (dentro del modal)</li>' +
+		'<li><kbd>F9</kbd> - Imprimir ticket (dentro del modal de impresión)</li>' +
+		'<li><kbd>Esc</kbd> - Cerrar modal</li>' +
+		'<li><kbd>Ctrl+M</kbd> - Cambiar método de pago (dentro del modal)</li>' +
+		'</ul>' +
+		'<h5><strong>Búsqueda de Productos:</strong></h5>' +
+		'<ul>' +
+		'<li><kbd>←</kbd> (desde búsqueda) - Ir a campo Cantidad</li>' +
+		'<li><kbd>→</kbd> (desde cantidad) - Ir a campo Búsqueda</li>' +
+		'<li><kbd>Enter</kbd> - Agregar producto a la lista</li>' +
+		'</ul>' +
+		'</div>' +
+		'<div class="modal-footer">' +
+		'<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>' +
+		'</div>' +
+		'</div>' +
+		'</div>' +
+		'</div>';
+	
+	if ($('#modalAyudaAtajos').length === 0) {
+		$('body').append(ayuda);
+	}
+	
+	$('#modalAyudaAtajos').modal('show');
+}
