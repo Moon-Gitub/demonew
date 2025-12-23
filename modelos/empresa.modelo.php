@@ -61,17 +61,21 @@ class ModeloEmpresa{
 
 		try {
 			if($stmt->execute()){
-				error_log("Empresa actualizada correctamente. mp_public_key: " . (isset($datos["mp_public_key"]) && !empty($datos["mp_public_key"]) ? "SÍ" : "NO") . ", mp_access_token: " . (isset($datos["mp_access_token"]) && !empty($datos["mp_access_token"]) ? "SÍ" : "NO"));
+				error_log("Empresa actualizada correctamente. mp_public_key: " . (isset($datos["mp_public_key"]) && !empty($datos["mp_public_key"]) ? "SÍ (" . strlen($datos["mp_public_key"]) . " caracteres)" : "NO") . ", mp_access_token: " . (isset($datos["mp_access_token"]) && !empty($datos["mp_access_token"]) ? "SÍ (" . strlen($datos["mp_access_token"]) . " caracteres)" : "NO"));
+				$stmt = null;
 				return true;
 			}else{
 				$error = $stmt->errorInfo();
 				error_log("Error ejecutando UPDATE empresa: " . json_encode($error));
+				$stmt = null;
+				return $error;
+			}
+		} catch (PDOException $e) {
+			error_log("Excepción al actualizar empresa: " . $e->getMessage());
+			error_log("Datos recibidos - mp_public_key: " . (isset($datos["mp_public_key"]) ? "presente" : "ausente") . ", mp_access_token: " . (isset($datos["mp_access_token"]) ? "presente" : "ausente"));
 			$stmt = null;
-			return $error;
-
+			return array('error' => $e->getMessage());
 		}
-
-		$stmt = null;
 
 	}
 
