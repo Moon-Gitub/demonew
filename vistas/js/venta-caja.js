@@ -3355,11 +3355,13 @@ $(document).ready(function() {
 });
 
 // Sistema completo de atajos de teclado (SOLO EN crear-venta-caja)
-$(document).on('keydown', function(e) {
-	// CRÍTICO: Solo procesar atajos si estamos en la página de crear-venta-caja
-	if (!window.location.href.includes('crear-venta-caja')) {
-		return; // Salir inmediatamente si no estamos en la página correcta
-	}
+// IMPORTANTE: Este event listener solo se registra si estamos en la página correcta
+if (window.location.href.includes('crear-venta-caja')) {
+	$(document).on('keydown', function(e) {
+		// Verificación adicional por seguridad
+		if (!window.location.href.includes('crear-venta-caja')) {
+			return; // Salir inmediatamente si no estamos en la página correcta
+		}
 	
 	// Solo procesar si no estamos en un modal o input de texto activo
 	var $target = $(e.target);
@@ -3604,7 +3606,8 @@ $(document).on('keydown', function(e) {
 		}
 		return false;
 	}
-});
+	});
+} // Cerrar el bloque condicional - solo registrar event listener en crear-venta-caja
 
 // Mejorar navegación con Tab: asegurar que todos los elementos sean accesibles (SOLO EN crear-venta-caja)
 $(document).ready(function() {
@@ -3628,31 +3631,34 @@ $(document).ready(function() {
 });
 
 // Mostrar ayuda de atajos al presionar F1 dos veces rápidamente (SOLO EN crear-venta-caja)
-var f1PressCount = 0;
-var f1Timer = null;
+// Solo registrar este event listener si estamos en la página correcta
+if (window.location.href.includes('crear-venta-caja')) {
+	var f1PressCount = 0;
+	var f1Timer = null;
 
-$(document).on('keydown', function(e) {
-	// Solo procesar si estamos en crear-venta-caja
-	if (!window.location.href.includes('crear-venta-caja')) {
-		return;
-	}
-	
-	if (e.keyCode === 112) { // F1
-		f1PressCount++;
-		if (f1PressCount === 1) {
-			f1Timer = setTimeout(function() {
-				f1PressCount = 0;
-			}, 500);
-		} else if (f1PressCount === 2) {
-			clearTimeout(f1Timer);
-			f1PressCount = 0;
-			mostrarAyudaAtajos();
+	$(document).on('keydown', function(e) {
+		// Verificación adicional por seguridad
+		if (!window.location.href.includes('crear-venta-caja')) {
+			return;
 		}
-	} else {
-		f1PressCount = 0;
-		if (f1Timer) clearTimeout(f1Timer);
-	}
-});
+		
+		if (e.keyCode === 112) { // F1
+			f1PressCount++;
+			if (f1PressCount === 1) {
+				f1Timer = setTimeout(function() {
+					f1PressCount = 0;
+				}, 500);
+			} else if (f1PressCount === 2) {
+				clearTimeout(f1Timer);
+				f1PressCount = 0;
+				mostrarAyudaAtajos();
+			}
+		} else {
+			f1PressCount = 0;
+			if (f1Timer) clearTimeout(f1Timer);
+		}
+	});
+}
 
 function mostrarAyudaAtajos() {
 	var ayuda = '<div class="modal fade" id="modalAyudaAtajos" tabindex="-1" role="dialog">' +

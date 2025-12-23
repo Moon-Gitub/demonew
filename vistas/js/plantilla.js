@@ -58,8 +58,10 @@ $(document).ready(function() {
     //plantilla
     $("#loader").fadeOut("slow");
 
-    //crear-venta-caja
-    $("#ventaCajaDetalle").focus(); 
+    //crear-venta-caja - Solo hacer focus si el elemento existe
+    if ($("#ventaCajaDetalle").length > 0) {
+        $("#ventaCajaDetalle").focus();
+    } 
 
     //compras
     listarProductosComprasValidar();
