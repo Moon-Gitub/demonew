@@ -20,6 +20,7 @@ class ControladorMercadoPago {
 		// Si hay credenciales en la BD de empresa, usarlas
 		if ($empresa && isset($empresa['mp_public_key']) && !empty($empresa['mp_public_key']) && 
 		    isset($empresa['mp_access_token']) && !empty($empresa['mp_access_token'])) {
+			error_log("Usando credenciales MP desde BD (empresa)");
 			return array(
 				'public_key' => $empresa['mp_public_key'],
 				'access_token' => $empresa['mp_access_token']
@@ -30,7 +31,16 @@ class ControladorMercadoPago {
 		$publicKey = isset($_ENV['MP_PUBLIC_KEY']) ? $_ENV['MP_PUBLIC_KEY'] : (isset($_SERVER['MP_PUBLIC_KEY']) ? $_SERVER['MP_PUBLIC_KEY'] : null);
 		$accessToken = isset($_ENV['MP_ACCESS_TOKEN']) ? $_ENV['MP_ACCESS_TOKEN'] : (isset($_SERVER['MP_ACCESS_TOKEN']) ? $_SERVER['MP_ACCESS_TOKEN'] : null);
 
+		if (!empty($publicKey) && !empty($accessToken)) {
+			error_log("Usando credenciales MP desde .env");
+			return array(
+				'public_key' => $publicKey,
+				'access_token' => $accessToken
+			);
+		}
+
 		// Si tampoco hay en .env, usar credenciales por defecto (solo para desarrollo/testing)
+		error_log("ADVERTENCIA: Usando credenciales MP por defecto (hardcodeadas). Las columnas mp_public_key y mp_access_token no existen en la BD o están vacías.");
 		if (empty($publicKey)) {
 			$publicKey = 'APP_USR-33156d44-12df-4039-8c92-1635d8d3edde';
 		}
