@@ -111,6 +111,10 @@ class ControladorEmpresa{
 					"mp_access_token" => isset($_POST["empMPAccessToken"]) ? $_POST["empMPAccessToken"] : '',
 					"mp_pos_id" => isset($_POST["empMPPosId"]) ? $_POST["empMPPosId"] : null
 				);
+				
+				// Log para debug
+				error_log("Guardando credenciales MP - Public Key recibido: " . (isset($_POST["empMPPublicKey"]) && !empty($_POST["empMPPublicKey"]) ? "SÍ (" . strlen($_POST["empMPPublicKey"]) . " caracteres)" : "NO"));
+				error_log("Guardando credenciales MP - Access Token recibido: " . (isset($_POST["empMPAccessToken"]) && !empty($_POST["empMPAccessToken"]) ? "SÍ (" . strlen($_POST["empMPAccessToken"]) . " caracteres)" : "NO"));
 
 				$respuesta = ModeloEmpresa::mdlEditarEmpresa($tabla, $datos);
 

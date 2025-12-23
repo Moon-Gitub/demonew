@@ -59,13 +59,13 @@ class ModeloEmpresa{
 		$stmt -> bindParam(":mp_pos_id", isset($datos["mp_pos_id"]) ? $datos["mp_pos_id"] : null, PDO::PARAM_STR);
 		$stmt -> bindParam(":id", $datos["id"], PDO::PARAM_INT);
 
-		if($stmt->execute()){
-
-			return true;
-
-		}else{
-
-			$error = $stmt->errorInfo();
+		try {
+			if($stmt->execute()){
+				error_log("Empresa actualizada correctamente. mp_public_key: " . (isset($datos["mp_public_key"]) && !empty($datos["mp_public_key"]) ? "SÍ" : "NO") . ", mp_access_token: " . (isset($datos["mp_access_token"]) && !empty($datos["mp_access_token"]) ? "SÍ" : "NO"));
+				return true;
+			}else{
+				$error = $stmt->errorInfo();
+				error_log("Error ejecutando UPDATE empresa: " . json_encode($error));
 			$stmt = null;
 			return $error;
 
