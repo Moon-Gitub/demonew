@@ -398,6 +398,8 @@ class ControladorMercadoPago {
 			
 			// Intentar obtener tiendas existentes primero
 			$listUrl = "https://api.mercadopago.com/users/$userId/stores";
+			error_log("Buscando tiendas - User ID: $userId, URL: $listUrl");
+			
 			$ch = curl_init($listUrl);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -409,20 +411,37 @@ class ControladorMercadoPago {
 			$listHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 			curl_close($ch);
 			
+			error_log("Respuesta de API de tiendas - HTTP Code: $listHttpCode, Response: " . substr($listResponse, 0, 500));
+			
 			if ($listHttpCode == 200) {
 				$stores = json_decode($listResponse, true);
-				if (isset($stores['results']) && count($stores['results']) > 0) {
-					$storeId = $stores['results'][0]['id'];
-					error_log("Usando tienda existente: $storeId");
+				error_log("Tiendas decodificadas: " . json_encode($stores));
+				
+				// La API puede devolver las tiendas directamente o en 'results'
+				$tiendasLista = null;
+				if (isset($stores['results']) && is_array($stores['results'])) {
+					$tiendasLista = $stores['results'];
+				} elseif (is_array($stores) && isset($stores[0])) {
+					// Si es un array directo
+					$tiendasLista = $stores;
 				}
+				
+				if ($tiendasLista && count($tiendasLista) > 0) {
+					$storeId = $tiendasLista[0]['id'];
+					error_log("Usando tienda existente: $storeId (Total encontradas: " . count($tiendasLista) . ")");
+				} else {
+					error_log("No se encontraron tiendas en la respuesta. Estructura: " . json_encode($stores));
+				}
+			} else {
+				error_log("Error obteniendo tiendas - HTTP Code: $listHttpCode, Response: $listResponse");
 			}
 			
 			// NO crear nuevas tiendas - solo usar existentes
 			if (!$storeId) {
-				error_log("No se encontraron tiendas existentes. Se requiere crear una tienda manualmente en Mercado Pago.");
+				error_log("No se encontraron tiendas existentes. User ID usado: $userId, HTTP Code: $listHttpCode");
 				return array(
 					'error' => true,
-					'mensaje' => 'No se encontraron tiendas en Mercado Pago. Por favor, cree una tienda desde la aplicación de Mercado Pago primero.'
+					'mensaje' => 'No se encontraron tiendas en Mercado Pago. Por favor, cree una tienda desde la aplicación de Mercado Pago primero. (User ID: ' . $userId . ', HTTP: ' . $listHttpCode . ')'
 				);
 			}
 			
