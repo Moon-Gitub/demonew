@@ -463,16 +463,33 @@ class ControladorMercadoPago {
 			
 			if ($posListHttpCode == 200) {
 				$posList = json_decode($posListResponse, true);
+				error_log("Lista de POS obtenida: " . json_encode($posList));
+				
+				// La API puede devolver los POS directamente o en 'results'
+				$posLista = null;
 				if (isset($posList['results']) && is_array($posList['results'])) {
+					$posLista = $posList['results'];
+				} elseif (is_array($posList) && isset($posList[0])) {
+					$posLista = $posList;
+				}
+				
+				if ($posLista) {
+					error_log("Total de POS encontrados: " . count($posLista));
 					// Buscar el POS llamado "QR-Cobro"
-					foreach ($posList['results'] as $posItem) {
+					foreach ($posLista as $posItem) {
+						error_log("Revisando POS: " . json_encode($posItem));
 						if (isset($posItem['name']) && $posItem['name'] === 'QR-Cobro') {
 							$posEncontrado = $posItem;
 							error_log("POS 'QR-Cobro' encontrado: " . json_encode($posEncontrado));
+							error_log("External ID del POS encontrado: " . (isset($posEncontrado['external_id']) ? $posEncontrado['external_id'] : 'NO TIENE'));
 							break;
 						}
 					}
+				} else {
+					error_log("No se encontraron POS en la respuesta. Estructura: " . json_encode($posList));
 				}
+			} else {
+				error_log("Error obteniendo lista de POS - HTTP Code: $posListHttpCode, Response: $posListResponse");
 			}
 			
 			// Si no se encontró el POS "QR-Cobro", mostrar error
@@ -501,6 +518,7 @@ class ControladorMercadoPago {
 			
 			if ($httpCode == 200) {
 				$pos = json_decode($response, true);
+				error_log("POS completo obtenido: " . json_encode($pos));
 				
 				// El QR puede estar en diferentes formatos según la API
 				$qrImage = null;
@@ -514,6 +532,17 @@ class ControladorMercadoPago {
 				} elseif (isset($pos['qr']['qr_code_base64'])) {
 					$qrData = $pos['qr']['qr_code_base64'];
 				}
+				
+				// Obtener external_id - puede estar en diferentes lugares
+				$posExternalId = null;
+				if (isset($pos['external_id'])) {
+					$posExternalId = $pos['external_id'];
+				} elseif (isset($posEncontrado['external_id'])) {
+					// Si no está en la respuesta completa, usar el que ya teníamos
+					$posExternalId = $posEncontrado['external_id'];
+				}
+				
+				error_log("POS External ID obtenido: " . ($posExternalId ? $posExternalId : 'NULL'));
 				
 				// Guardar POS ID en empresa
 				try {
@@ -531,7 +560,7 @@ class ControladorMercadoPago {
 				return array(
 					'error' => false,
 					'pos_id' => $pos['id'],
-					'pos_external_id' => isset($pos['external_id']) ? $pos['external_id'] : null,
+					'pos_external_id' => $posExternalId,
 					'qr_code' => $qrImage,
 					'qr_data' => $qrData,
 					'name' => isset($pos['name']) ? $pos['name'] : 'QR-Cobro'
