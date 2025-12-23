@@ -674,20 +674,7 @@ class ControladorMercadoPago {
 					// PRIORIDAD 1: Si hay external_id guardado manualmente, usarlo directamente
 					if ($empresa && isset($empresa['mp_pos_external_id']) && !empty($empresa['mp_pos_external_id'])) {
 						$posExternalId = $empresa['mp_pos_external_id'];
-						
-						// Validar que no sea el User ID (común error)
-						$userId = null;
-						$tokenParts = explode('-', $credenciales['access_token']);
-						if (count($tokenParts) >= 5) {
-							$userId = $tokenParts[count($tokenParts) - 1];
-						}
-						
-						if ($userId && $posExternalId === $userId) {
-							error_log("ADVERTENCIA: El external_id ingresado es igual al User ID. Esto es incorrecto. El external_id debe ser el identificador del POS, no el User ID.");
-							$posExternalId = null; // Invalidar para que intente otras opciones
-						} else {
-							error_log("Usando External ID guardado manualmente: $posExternalId");
-						}
+						error_log("Usando External ID guardado manualmente: $posExternalId");
 					}
 					
 					// PRIORIDAD 2: Si hay pos_id, intentar obtener el external_id desde la API
