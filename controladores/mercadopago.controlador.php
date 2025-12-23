@@ -392,67 +392,130 @@ class ControladorMercadoPago {
 			$storeId = null;
 			$tiendaCreada = false;
 			
-			// Obtener user_id para crear la tienda
+			// Obtener user_id - intentar desde la API primero (más confiable)
 			$userId = null;
-			$tokenParts = explode('-', $credenciales['access_token']);
-			if (count($tokenParts) >= 5) {
-				$userId = $tokenParts[count($tokenParts) - 1];
+			
+			// Método 1: Obtener user_id desde la API de usuarios (más confiable)
+			try {
+				$userInfoUrl = "https://api.mercadopago.com/users/me";
+				$ch = curl_init($userInfoUrl);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+					'Authorization: Bearer ' . $credenciales['access_token'],
+					'Content-Type: application/json'
+				));
+				
+				$userInfoResponse = curl_exec($ch);
+				$userInfoHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+				curl_close($ch);
+				
+				if ($userInfoHttpCode == 200) {
+					$userInfo = json_decode($userInfoResponse, true);
+					if (isset($userInfo['id'])) {
+						$userId = $userInfo['id'];
+						error_log("User ID obtenido desde API: $userId");
+					}
+				} else {
+					error_log("Error obteniendo user info - HTTP Code: $userInfoHttpCode, Response: " . substr($userInfoResponse, 0, 200));
+				}
+			} catch (Exception $e) {
+				error_log("Excepción obteniendo user_id desde API: " . $e->getMessage());
 			}
 			
+			// Método 2: Extraer user_id del token (fallback)
 			if (!$userId) {
+				$tokenParts = explode('-', $credenciales['access_token']);
+				if (count($tokenParts) >= 5) {
+					$userId = $tokenParts[count($tokenParts) - 1];
+					error_log("User ID extraído del token: $userId");
+				}
+			}
+			
+			if (!$userId || !is_numeric($userId)) {
 				return array(
 					'error' => true,
-					'mensaje' => 'No se pudo obtener el user_id de Mercado Pago. Verifique las credenciales.'
+					'mensaje' => 'No se pudo obtener el user_id de Mercado Pago. Verifique las credenciales. El Access Token debe tener el formato correcto.'
 				);
 			}
 			
-			// Intentar obtener tiendas existentes primero
-			// Endpoint correcto: /users/{user_id}/stores/search (no /stores)
-			$listUrl = "https://api.mercadopago.com/users/$userId/stores/search";
-			error_log("Buscando tiendas - User ID: $userId, URL: $listUrl");
+			// Intentar obtener tiendas existentes - probar múltiples endpoints
+			$storeId = null;
+			$endpoints = array(
+				"https://api.mercadopago.com/users/$userId/stores",  // Endpoint simple
+				"https://api.mercadopago.com/users/$userId/stores/search"  // Endpoint con search
+			);
 			
-			$ch = curl_init($listUrl);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-				'Authorization: Bearer ' . $credenciales['access_token'],
-				'Content-Type: application/json'
-			));
-			
-			$listResponse = curl_exec($ch);
-			$listHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			curl_close($ch);
-			
-			error_log("Respuesta de API de tiendas - HTTP Code: $listHttpCode, Response: " . substr($listResponse, 0, 500));
-			
-			if ($listHttpCode == 200) {
-				$stores = json_decode($listResponse, true);
-				error_log("Tiendas decodificadas: " . json_encode($stores));
+			foreach ($endpoints as $listUrl) {
+				error_log("Intentando obtener tiendas - User ID: $userId, URL: $listUrl");
 				
-				// La API puede devolver las tiendas directamente o en 'results'
-				$tiendasLista = null;
-				if (isset($stores['results']) && is_array($stores['results'])) {
-					$tiendasLista = $stores['results'];
-				} elseif (is_array($stores) && isset($stores[0])) {
-					// Si es un array directo
-					$tiendasLista = $stores;
+				$ch = curl_init($listUrl);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+					'Authorization: Bearer ' . $credenciales['access_token'],
+					'Content-Type: application/json'
+				));
+				
+				$listResponse = curl_exec($ch);
+				$listHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+				$curlError = curl_error($ch);
+				curl_close($ch);
+				
+				error_log("Respuesta de API de tiendas - HTTP Code: $listHttpCode, URL: $listUrl");
+				if ($curlError) {
+					error_log("Error cURL: $curlError");
 				}
+				error_log("Response (primeros 500 chars): " . substr($listResponse, 0, 500));
 				
-				if ($tiendasLista && count($tiendasLista) > 0) {
-					$storeId = $tiendasLista[0]['id'];
-					error_log("Usando tienda existente: $storeId (Total encontradas: " . count($tiendasLista) . ")");
+				if ($listHttpCode == 200) {
+					$stores = json_decode($listResponse, true);
+					error_log("Tiendas decodificadas: " . json_encode($stores));
+					
+					// La API puede devolver las tiendas directamente o en 'results'
+					$tiendasLista = null;
+					if (isset($stores['results']) && is_array($stores['results'])) {
+						$tiendasLista = $stores['results'];
+					} elseif (is_array($stores) && isset($stores[0])) {
+						// Si es un array directo
+						$tiendasLista = $stores;
+					}
+					
+					if ($tiendasLista && count($tiendasLista) > 0) {
+						$storeId = $tiendasLista[0]['id'];
+						error_log("Usando tienda existente: $storeId (Total encontradas: " . count($tiendasLista) . ")");
+						break; // Salir del loop si encontramos tiendas
+					} else {
+						error_log("No se encontraron tiendas en la respuesta. Estructura: " . json_encode($stores));
+					}
+				} elseif ($listHttpCode == 403) {
+					// Si es 403, el problema es de permisos - no intentar otros endpoints
+					error_log("Error 403 (Forbidden) - El Access Token no tiene permisos para acceder a las tiendas. Esto puede deberse a que la aplicación no ha completado la integración (necesita hacer 1 pago productivo).");
+					break;
 				} else {
-					error_log("No se encontraron tiendas en la respuesta. Estructura: " . json_encode($stores));
+					error_log("Error obteniendo tiendas - HTTP Code: $listHttpCode, Response: " . substr($listResponse, 0, 200));
 				}
-			} else {
-				error_log("Error obteniendo tiendas - HTTP Code: $listHttpCode, Response: $listResponse");
 			}
 			
 			// NO crear nuevas tiendas - solo usar existentes
 			if (!$storeId) {
-				error_log("No se encontraron tiendas existentes. User ID usado: $userId, HTTP Code: $listHttpCode");
+				error_log("No se encontraron tiendas existentes. User ID usado: $userId");
+				
+				// Mensaje más descriptivo según el tipo de error
+				$mensajeError = 'No se encontraron tiendas en Mercado Pago. ';
+				
+				// Si el último intento fue 403, el problema es de permisos
+				if (isset($listHttpCode) && $listHttpCode == 403) {
+					$mensajeError .= 'El Access Token no tiene permisos para acceder a las tiendas. ';
+					$mensajeError .= 'Esto puede deberse a que la aplicación de Mercado Pago no ha completado la integración. ';
+					$mensajeError .= 'Por favor, complete la integración haciendo al menos 1 pago productivo desde el panel de Mercado Pago. ';
+					$mensajeError .= 'También puede crear una tienda manualmente desde la aplicación móvil de Mercado Pago.';
+				} else {
+					$mensajeError .= 'Por favor, cree una tienda desde la aplicación de Mercado Pago primero. ';
+					$mensajeError .= '(User ID: ' . $userId . ')';
+				}
+				
 				return array(
 					'error' => true,
-					'mensaje' => 'No se encontraron tiendas en Mercado Pago. Por favor, cree una tienda desde la aplicación de Mercado Pago primero. (User ID: ' . $userId . ', HTTP: ' . $listHttpCode . ')'
+					'mensaje' => $mensajeError
 				);
 			}
 			
