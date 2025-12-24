@@ -565,3 +565,187 @@ Stack trace:
 [23-Dec-2025 19:49:08 UTC] Usando credenciales MP desde BD (empresa)
 [23-Dec-2025 19:49:27 UTC] Usando credenciales MP desde BD (empresa)
 [23-Dec-2025 19:49:29 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 20:24:35 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 20:24:39 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 20:24:48 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 20:36:15 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 20:36:20 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:33:36 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 18:33:56 America/Argentina/Mendoza] PHP Fatal error:  Uncaught TypeError: MercadoPago\Net\MPResponse::__construct(): Argument #2 ($content) must be of type array, null given, called in /home/newmoon/public_html/extensiones/vendor/mercadopago/dx-php/src/MercadoPago/Net/MPDefaultHttpClient.php on line 65 and defined in /home/newmoon/public_html/extensiones/vendor/mercadopago/dx-php/src/MercadoPago/Net/MPResponse.php:13
+Stack trace:
+#0 /home/newmoon/public_html/extensiones/vendor/mercadopago/dx-php/src/MercadoPago/Net/MPDefaultHttpClient.php(65): MercadoPago\Net\MPResponse->__construct()
+#1 /home/newmoon/public_html/extensiones/vendor/mercadopago/dx-php/src/MercadoPago/Net/MPDefaultHttpClient.php(38): MercadoPago\Net\MPDefaultHttpClient->makeRequest()
+#2 /home/newmoon/public_html/extensiones/vendor/mercadopago/dx-php/src/MercadoPago/Client/MercadoPagoClient.php(34): MercadoPago\Net\MPDefaultHttpClient->send()
+#3 /home/newmoon/public_html/extensiones/vendor/mercadopago/dx-php/src/MercadoPago/Client/Preference/PreferenceClient.php(40): MercadoPago\Client\MercadoPagoClient->send()
+#4 /home/newmoon/public_html/vistas/modulos/cabezote-mejorado.php(323): MercadoPago\Client\Preference\PreferenceClient->create()
+#5 /home/newmoon/public_html/vistas/plantilla.php(174): include('/home/newmoon/p...')
+#6 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#7 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#8 {main}
+  thrown in /home/newmoon/public_html/extensiones/vendor/mercadopago/dx-php/src/MercadoPago/Net/MPResponse.php on line 13
+[23-Dec-2025 21:35:05 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:35:09 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:35:23 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:35:29 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:37:04 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:39:09 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:41:40 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:41:43 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:42:08 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:42:29 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:42:34 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:42:59 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:43:27 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:43:31 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 18:43:31 America/Argentina/Mendoza] PHP Fatal error:  Uncaught TypeError: Unsupported operand types: string * string in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php:226
+Stack trace:
+#0 /home/newmoon/public_html/vistas/plantilla.php(241): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+  thrown in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php on line 226
+[23-Dec-2025 21:43:33 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:43:38 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 18:43:38 America/Argentina/Mendoza] PHP Fatal error:  Uncaught TypeError: Unsupported operand types: string * string in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php:226
+Stack trace:
+#0 /home/newmoon/public_html/vistas/plantilla.php(241): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+  thrown in /home/newmoon/public_html/vistas/modulos/ventas-rentabilidad.php on line 226
+[23-Dec-2025 21:43:59 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:47:11 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 21:56:58 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 23:23:32 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 23:25:21 UTC] Usando credenciales MP desde BD (empresa)
+[23-Dec-2025 23:46:59 UTC] Usando credenciales MP desde BD (empresa)
+[24-Dec-2025 12:08:39 UTC] Error conectando a BD Moon: SQLSTATE[28000] [1045] Access denied for user 'cobrosposmooncom_dbuser'@'atlshared11.ramnode.com' (using password: YES)
+[24-Dec-2025 12:08:39 UTC] === SISTEMA DE COBRO NO DISPONIBLE ===
+[24-Dec-2025 12:08:39 UTC] Error: BD Moon no disponible
+[24-Dec-2025 12:08:39 UTC] Archivo: /home/newmoon/public_html/vistas/modulos/cabezote-mejorado.php
+[24-Dec-2025 12:08:39 UTC] Línea: 69
+[24-Dec-2025 12:08:39 UTC] Trace: #0 /home/newmoon/public_html/vistas/plantilla.php(174): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+[24-Dec-2025 12:08:39 UTC] === CARGANDO CABEZOTE NORMAL ===
+[24-Dec-2025 12:08:39 UTC] PHP Warning:  fopen(cotizacion): Failed to open stream: No such file or directory in /home/newmoon/public_html/vistas/modulos/cabezote.php on line 49
+[24-Dec-2025 12:08:42 UTC] Error conectando a BD Moon: SQLSTATE[28000] [1045] Access denied for user 'cobrosposmooncom_dbuser'@'atlshared11.ramnode.com' (using password: YES)
+[24-Dec-2025 12:08:42 UTC] === SISTEMA DE COBRO NO DISPONIBLE ===
+[24-Dec-2025 12:08:42 UTC] Error: BD Moon no disponible
+[24-Dec-2025 12:08:42 UTC] Archivo: /home/newmoon/public_html/vistas/modulos/cabezote-mejorado.php
+[24-Dec-2025 12:08:42 UTC] Línea: 69
+[24-Dec-2025 12:08:42 UTC] Trace: #0 /home/newmoon/public_html/vistas/plantilla.php(174): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+[24-Dec-2025 12:08:42 UTC] === CARGANDO CABEZOTE NORMAL ===
+[24-Dec-2025 12:08:42 UTC] PHP Warning:  fopen(cotizacion): Failed to open stream: No such file or directory in /home/newmoon/public_html/vistas/modulos/cabezote.php on line 49
+[24-Dec-2025 12:08:55 UTC] Error conectando a BD Moon: SQLSTATE[28000] [1045] Access denied for user 'cobrosposmooncom_dbuser'@'atlshared11.ramnode.com' (using password: YES)
+[24-Dec-2025 12:08:55 UTC] === SISTEMA DE COBRO NO DISPONIBLE ===
+[24-Dec-2025 12:08:55 UTC] Error: BD Moon no disponible
+[24-Dec-2025 12:08:55 UTC] Archivo: /home/newmoon/public_html/vistas/modulos/cabezote-mejorado.php
+[24-Dec-2025 12:08:55 UTC] Línea: 69
+[24-Dec-2025 12:08:55 UTC] Trace: #0 /home/newmoon/public_html/vistas/plantilla.php(174): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+[24-Dec-2025 12:08:55 UTC] === CARGANDO CABEZOTE NORMAL ===
+[24-Dec-2025 12:08:55 UTC] PHP Warning:  fopen(cotizacion): Failed to open stream: No such file or directory in /home/newmoon/public_html/vistas/modulos/cabezote.php on line 49
+[24-Dec-2025 09:08:55 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1364 Field 'estado' doesn't have a default value in /home/newmoon/public_html/modelos/usuarios.modelo.php:61
+Stack trace:
+#0 /home/newmoon/public_html/modelos/usuarios.modelo.php(61): PDOStatement->execute()
+#1 /home/newmoon/public_html/controladores/usuarios.controlador.php(209): ModeloUsuarios::mdlIngresarUsuario()
+#2 /home/newmoon/public_html/vistas/modulos/usuarios.php(268): ControladorUsuarios::ctrCrearUsuario()
+#3 /home/newmoon/public_html/vistas/plantilla.php(241): include('/home/newmoon/p...')
+#4 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#5 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#6 {main}
+  thrown in /home/newmoon/public_html/modelos/usuarios.modelo.php on line 61
+[24-Dec-2025 12:09:13 UTC] Error conectando a BD Moon: SQLSTATE[28000] [1045] Access denied for user 'cobrosposmooncom_dbuser'@'atlshared11.ramnode.com' (using password: YES)
+[24-Dec-2025 12:09:13 UTC] === SISTEMA DE COBRO NO DISPONIBLE ===
+[24-Dec-2025 12:09:13 UTC] Error: BD Moon no disponible
+[24-Dec-2025 12:09:13 UTC] Archivo: /home/newmoon/public_html/vistas/modulos/cabezote-mejorado.php
+[24-Dec-2025 12:09:13 UTC] Línea: 69
+[24-Dec-2025 12:09:13 UTC] Trace: #0 /home/newmoon/public_html/vistas/plantilla.php(174): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+[24-Dec-2025 12:09:13 UTC] === CARGANDO CABEZOTE NORMAL ===
+[24-Dec-2025 12:09:13 UTC] PHP Warning:  fopen(cotizacion): Failed to open stream: No such file or directory in /home/newmoon/public_html/vistas/modulos/cabezote.php on line 49
+[24-Dec-2025 13:12:35 UTC] Error conectando a BD Moon: SQLSTATE[28000] [1045] Access denied for user 'cobrosposmooncom_dbuser'@'atlshared11.ramnode.com' (using password: YES)
+[24-Dec-2025 13:12:35 UTC] === SISTEMA DE COBRO NO DISPONIBLE ===
+[24-Dec-2025 13:12:35 UTC] Error: BD Moon no disponible
+[24-Dec-2025 13:12:35 UTC] Archivo: /home/newmoon/public_html/vistas/modulos/cabezote-mejorado.php
+[24-Dec-2025 13:12:35 UTC] Línea: 69
+[24-Dec-2025 13:12:35 UTC] Trace: #0 /home/newmoon/public_html/vistas/plantilla.php(174): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+[24-Dec-2025 13:12:35 UTC] === CARGANDO CABEZOTE NORMAL ===
+[24-Dec-2025 13:12:35 UTC] PHP Warning:  fopen(cotizacion): Failed to open stream: No such file or directory in /home/newmoon/public_html/vistas/modulos/cabezote.php on line 49
+[24-Dec-2025 13:12:41 UTC] Error conectando a BD Moon: SQLSTATE[28000] [1045] Access denied for user 'cobrosposmooncom_dbuser'@'atlshared11.ramnode.com' (using password: YES)
+[24-Dec-2025 13:12:41 UTC] === SISTEMA DE COBRO NO DISPONIBLE ===
+[24-Dec-2025 13:12:41 UTC] Error: BD Moon no disponible
+[24-Dec-2025 13:12:41 UTC] Archivo: /home/newmoon/public_html/vistas/modulos/cabezote-mejorado.php
+[24-Dec-2025 13:12:41 UTC] Línea: 69
+[24-Dec-2025 13:12:41 UTC] Trace: #0 /home/newmoon/public_html/vistas/plantilla.php(174): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+[24-Dec-2025 13:12:41 UTC] === CARGANDO CABEZOTE NORMAL ===
+[24-Dec-2025 13:12:41 UTC] PHP Warning:  fopen(cotizacion): Failed to open stream: No such file or directory in /home/newmoon/public_html/vistas/modulos/cabezote.php on line 49
+[24-Dec-2025 13:12:56 UTC] Error conectando a BD Moon: SQLSTATE[28000] [1045] Access denied for user 'cobrosposmooncom_dbuser'@'atlshared11.ramnode.com' (using password: YES)
+[24-Dec-2025 13:12:56 UTC] === SISTEMA DE COBRO NO DISPONIBLE ===
+[24-Dec-2025 13:12:56 UTC] Error: BD Moon no disponible
+[24-Dec-2025 13:12:56 UTC] Archivo: /home/newmoon/public_html/vistas/modulos/cabezote-mejorado.php
+[24-Dec-2025 13:12:56 UTC] Línea: 69
+[24-Dec-2025 13:12:56 UTC] Trace: #0 /home/newmoon/public_html/vistas/plantilla.php(174): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+[24-Dec-2025 13:12:56 UTC] === CARGANDO CABEZOTE NORMAL ===
+[24-Dec-2025 13:12:56 UTC] PHP Warning:  fopen(cotizacion): Failed to open stream: No such file or directory in /home/newmoon/public_html/vistas/modulos/cabezote.php on line 49
+[24-Dec-2025 13:13:03 UTC] Error conectando a BD Moon: SQLSTATE[28000] [1045] Access denied for user 'cobrosposmooncom_dbuser'@'atlshared11.ramnode.com' (using password: YES)
+[24-Dec-2025 13:13:03 UTC] === SISTEMA DE COBRO NO DISPONIBLE ===
+[24-Dec-2025 13:13:03 UTC] Error: BD Moon no disponible
+[24-Dec-2025 13:13:03 UTC] Archivo: /home/newmoon/public_html/vistas/modulos/cabezote-mejorado.php
+[24-Dec-2025 13:13:03 UTC] Línea: 69
+[24-Dec-2025 13:13:03 UTC] Trace: #0 /home/newmoon/public_html/vistas/plantilla.php(174): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+[24-Dec-2025 13:13:03 UTC] === CARGANDO CABEZOTE NORMAL ===
+[24-Dec-2025 13:13:03 UTC] PHP Warning:  fopen(cotizacion): Failed to open stream: No such file or directory in /home/newmoon/public_html/vistas/modulos/cabezote.php on line 49
+[24-Dec-2025 13:13:32 UTC] Error conectando a BD Moon: SQLSTATE[28000] [1045] Access denied for user 'cobrosposmooncom_dbuser'@'atlshared11.ramnode.com' (using password: YES)
+[24-Dec-2025 13:13:32 UTC] === SISTEMA DE COBRO NO DISPONIBLE ===
+[24-Dec-2025 13:13:32 UTC] Error: BD Moon no disponible
+[24-Dec-2025 13:13:32 UTC] Archivo: /home/newmoon/public_html/vistas/modulos/cabezote-mejorado.php
+[24-Dec-2025 13:13:32 UTC] Línea: 69
+[24-Dec-2025 13:13:32 UTC] Trace: #0 /home/newmoon/public_html/vistas/plantilla.php(174): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+[24-Dec-2025 13:13:32 UTC] === CARGANDO CABEZOTE NORMAL ===
+[24-Dec-2025 13:13:32 UTC] PHP Warning:  fopen(cotizacion): Failed to open stream: No such file or directory in /home/newmoon/public_html/vistas/modulos/cabezote.php on line 49
+[24-Dec-2025 10:13:32 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1364 Field 'deposito' doesn't have a default value in /home/newmoon/public_html/modelos/productos.modelo.php:137
+Stack trace:
+#0 /home/newmoon/public_html/modelos/productos.modelo.php(137): PDOStatement->execute()
+#1 /home/newmoon/public_html/controladores/productos.controlador.php(101): ModeloProductos::mdlIngresarProducto()
+#2 /home/newmoon/public_html/vistas/modulos/productos.php(656): ControladorProductos::ctrCrearProducto()
+#3 /home/newmoon/public_html/vistas/plantilla.php(241): include('/home/newmoon/p...')
+#4 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#5 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#6 {main}
+  thrown in /home/newmoon/public_html/modelos/productos.modelo.php on line 137
+[24-Dec-2025 13:13:37 UTC] Error conectando a BD Moon: SQLSTATE[28000] [1045] Access denied for user 'cobrosposmooncom_dbuser'@'atlshared11.ramnode.com' (using password: YES)
+[24-Dec-2025 13:13:37 UTC] === SISTEMA DE COBRO NO DISPONIBLE ===
+[24-Dec-2025 13:13:37 UTC] Error: BD Moon no disponible
+[24-Dec-2025 13:13:37 UTC] Archivo: /home/newmoon/public_html/vistas/modulos/cabezote-mejorado.php
+[24-Dec-2025 13:13:37 UTC] Línea: 69
+[24-Dec-2025 13:13:37 UTC] Trace: #0 /home/newmoon/public_html/vistas/plantilla.php(174): include()
+#1 /home/newmoon/public_html/controladores/plantilla.controlador.php(7): include('/home/newmoon/p...')
+#2 /home/newmoon/public_html/index.php(80): ControladorPlantilla::ctrPlantilla()
+#3 {main}
+[24-Dec-2025 13:13:37 UTC] === CARGANDO CABEZOTE NORMAL ===
+[24-Dec-2025 13:13:37 UTC] PHP Warning:  fopen(cotizacion): Failed to open stream: No such file or directory in /home/newmoon/public_html/vistas/modulos/cabezote.php on line 49

@@ -3,10 +3,14 @@
 class WSAA {
 
     const WSDL = "ws/wsaa.wsdl";          # The WSDL corresponding to WSAA
-    const TA = "xml/TA.xml";              # Archivo con el Token y Sign    
+
     const PROXY_ENABLE = false;
-    //const URL = "https://wsaahomo.afip.gov.ar/ws/services/LoginCms"; //Testing
-    //const URL = "https://wsaa.afip.gov.ar/ws/services/LoginCms"; // produccion  
+
+    private $TA_GEN = "xml/TAX.xml";
+    
+    private $ID_EMP = "";
+
+    private $URL = "https://wsaahomo.afip.gov.ar/ws/services/LoginCms"; //Testing
 
     private $CERT = "";
 
@@ -14,13 +18,10 @@ class WSAA {
 
     private $PASSPHRASE = "";
 
-    private $URL = "https://wsaahomo.afip.gov.ar/ws/services/LoginCms"; //Testing
-
-    private $TA;
-
     /*
      * el path relativo, terminado en /
      */
+
     private $path = './';
 
     /*
@@ -43,17 +44,18 @@ class WSAA {
      */
     public function __construct($arrEmpresa) {
 
-        $this->TA = null;
         $this->path = dirname(__FILE__) . '/';
         $this->service = 'wsfe';
 
         $this->PRIVATEKEY = $arrEmpresa["csr"];
         $this->PASSPHRASE = $arrEmpresa["passphrase"];
         $this->CERT = $arrEmpresa["pem"];
+        $this->TA_GEN = "xml/TA".$arrEmpresa["id"].".xml";
+        $this->ID_EMP = $arrEmpresa["id"];
 
         if($arrEmpresa["entorno_facturacion"] == "produccion") {
             $this->URL = "https://wsaa.afip.gov.ar/ws/services/LoginCms"; // produccion 
-        }        
+        }
 
         // seteos en php
         ini_set("soap.wsdl_cache_enabled", "0");
@@ -72,10 +74,9 @@ class WSAA {
 
         $this->client = new SoapClient($this->path . self::WSDL, array(
             'soap_version' => SOAP_1_2,
-            'location' =>  $this->URL,
+            'location' => $this->URL,
             'trace' => 1,
-            'exceptions' => 0,
-            'connection_timeout' => 5
+            'exceptions' => 0
             )
         );
     }
@@ -93,7 +94,7 @@ class WSAA {
         $TRA->header->addChild('generationTime', date('c', date('U') - 60));
         $TRA->header->addChild('expirationTime', date('c', date('U') + 60));
         $TRA->addChild('service', $this->service);
-        $TRA->asXML($this->path . 'xml/TRA.xml');
+        $TRA->asXML($this->path . 'xml/TRA'.$this->ID_EMP.'.xml');
     }
 
     /*
@@ -107,8 +108,8 @@ class WSAA {
     private function sign_TRA() {
         
         $STATUS = openssl_pkcs7_sign(
-            realpath($this->path . "xml/TRA.xml"),
-            $this->path . "xml/TRA.tmp",
+            realpath($this->path . "xml/TRA".$this->ID_EMP.".xml"),
+            $this->path . "xml/TRA".$this->ID_EMP.".tmp",
             "file://" . realpath($this->path . $this->CERT),
             array("file://" . realpath($this->path . $this->PRIVATEKEY), $this->PASSPHRASE),
             array(),
@@ -117,7 +118,7 @@ class WSAA {
         if (!$STATUS)
             throw new Exception("Error al generar firma PKCS#7");
 
-        $inf = fopen($this->path . "xml/TRA.tmp", "r");
+        $inf = fopen($this->path . "xml/TRA".$this->ID_EMP.".tmp", "r");
         $i = 0;
         $CMS = "";
         while (!feof($inf)) {
@@ -128,7 +129,7 @@ class WSAA {
 
         fclose($inf);
         //unlink("TRA.xml");
-        unlink($this->path . "xml/TRA.tmp");
+        unlink($this->path . "xml/TRA".$this->ID_EMP.".tmp");
 
         return $CMS;
     }
@@ -140,8 +141,8 @@ class WSAA {
         $results = $this->client->loginCms(array('in0' => $cms));
 
         // para logueo
-        file_put_contents($this->path . "xml/request-loginCms.xml", $this->client->__getLastRequest());
-        file_put_contents($this->path . "xml/response-loginCms.xml", $this->client->__getLastResponse());
+        file_put_contents($this->path . "xml/request-loginCms".$this->ID_EMP.".xml", $this->client->__getLastRequest());
+        file_put_contents($this->path . "xml/response-loginCms".$this->ID_EMP.".xml", $this->client->__getLastResponse());
 
         if (is_soap_fault($results))
             throw new Exception("Error SOAP: " . $results->faultcode . ': ' . $results->faultstring);
@@ -166,8 +167,8 @@ class WSAA {
 
         $TA = $this->call_WSAA($this->sign_TRA());
 
-        if (!file_put_contents($this->path . self::TA, $TA))
-            throw new Exception("Error al generar al archivo TA.xml");
+        if (!file_put_contents($this->path . $this->TA_GEN, $TA))
+            throw new Exception("Error al generar al archivo TA".$this->ID_EMP.".xml");
 
         $this->TA = $this->xml2Array($TA);
 
@@ -180,28 +181,26 @@ class WSAA {
      */
     public function get_expiration() {
         if (empty($this->TA)) {
-            $TA_file = file($this->path . self::TA, FILE_IGNORE_NEW_LINES);
+            $TA_file = file($this->path . $this->TA_GEN, FILE_IGNORE_NEW_LINES);
             if ($TA_file) {
-                //$TA_xml = '';
-                //for ($i = 0; $i < sizeof($TA_file); $i++)
-                //    $TA_xml.= $TA_file[$i];
-                $TA_xml = implode('', $TA_file); // Concatenar líneas del archivo
+                $TA_xml = '';
+                for ($i = 0; $i < sizeof($TA_file); $i++)
+                    $TA_xml.= $TA_file[$i];
                 $this->TA = $this->xml2Array($TA_xml);
                 $r = $this->TA['header']['expirationTime'];
             } else {
                 $r = false;
             }
         } else {
-            $r = $this->TA['header']['expirationTime'] ?? false;
+            $r = $this->TA['header']['expirationTime'];
         }
 
         return $r;
     }
 
-
     ////////////Agregada por CJC para Moon POS
     public function datosTA(){
-        $ticketAcceso = simplexml_load_file($this->path . "xml/TA.xml");
+        $ticketAcceso = simplexml_load_file($this->path . $this->TA_GEN);
 
         return array(
             'expiracion' => $ticketAcceso->header->expirationTime,
@@ -209,8 +208,6 @@ class WSAA {
             'FirmaAfip' => $ticketAcceso->credentials->sign
         );
     }
-
 }
-
 
 ?>

@@ -1,37 +1,71 @@
 <?php
 
+// FECAEAConsultar: // Consultar CAEA emitidos.
+
+// FECAEARegInformativo // Rendición de comprobantes asociados a un CAEA.
+
+// FECAEASinMovimientoConsultar // Consulta CAEA informado como sin movimientos.
+
+// FECAEASinMovimientoInformar // Informa CAEA sin movimientos.
+
+// FECAEASolicitar // Solicitud de Código de Autorización Electrónico Anticipado (CAEA)
+
+// FECAESolicitar // Solicitud de Código de Autorización Electrónico (CAE)
+
+// FECompConsultar // Consulta Comprobante emitido y su código.
+
+// FECompTotXRequest // Retorna la cantidad maxima de registros que puede tener una invocacion al metodo FECAESolicitar / FECAEARegInformativo
+
+// FECompUltimoAutorizado // Retorna el ultimo comprobante autorizado para el tipo de comprobante / cuit / punto de venta ingresado / Tipo de Emisión
+
+// FEDummy // Metodo dummy para verificacion de funcionamiento
+
+// FEParamGetCotizacion // Recupera la cotizacion de la moneda consultada y su fecha
+
+// FEParamGetPtosVenta // Recupera el listado de puntos de venta registrados y su estado
+
+// FEParamGetTiposCbte // Recupera el listado de Tipos de Comprobantes utilizables en servicio de autorización.
+
+// FEParamGetTiposConcepto // Recupera el listado de identificadores para el campo Concepto.
+
+// FEParamGetTiposDoc // Recupera el listado de Tipos de Documentos utilizables en servicio de autorización.
+
+// FEParamGetTiposIva // Recupera el listado de Tipos de Iva utilizables en servicio de autorización.
+
+// FEParamGetTiposMonedas // Recupera el listado de monedas utilizables en servicio de autorización
+
+// FEParamGetTiposOpcional // Recupera el listado de identificadores para los campos Opcionales
+
+// FEParamGetTiposPaises // Recupera el listado de los diferente paises que pueden ser utilizados en el servicio de autorizacion
+
+// FEParamGetTiposTributos // Recupera el listado de los diferente tributos que pueden ser utilizados en el servicio de autorizacion
+
 class WSFE {
 
     const WSDL = "ws/wsfe.wsdl";             # The WSDL corresponding to WSFE
-    const TA = "xml/TA.xml";                 # Archivo con el Token y Sign   
+
     const PROXY_ENABLE = false;
-    //const WSFEURL = "https://wswhomo.afip.gov.ar/wsfev1/service.asmx"; //testing
-    //const WSFEURL = "https://servicios1.afip.gov.ar/wsfev1/service.asmx"; // produccion
+
     const LOG_XMLS = false;                  # For debugging purposes
-    
-    // const CERT = "keys/cert.pem";            # The X.509 certificate in PEM format
-    // const PRIVATEKEY = "keys/qwer1234";      # The private key correspoding to CERT (PEM)
-    // const PASSPHRASE = "qwer1234";           # The passphrase (if any) to sign
-    
+
+    private $TA_GEN = "xml/TAX.xml";
+    private $ID_EMP = "";
+
+    /*
+     * ENTORNO DE FACTURACION
+     */
+    private $WSFEURL = "https://wswhomo.afip.gov.ar/wsfev1/service.asmx"; //testing
+
     /*
      * CUIT EMISOR DE FACTURAS
      */
     private $CUIT = "";
-
-    private $WSFEURL = "https://wswhomo.afip.gov.ar/wsfev1/service.asmx"; //testing
 
     /*
      * Punto de Venta - Generado desde la pagina de AFIP
      */
     //private $pto_vta;
 
-    /*
-     * Tipo de comprobantes C:
-                    Código 11 FACTURA C
-                    Código 12 NOTA DE DEBITO C
-                    Código 13 NOTA DE CREDITO C
-                    Código 15 RECIBO C
-     */
      //private $tipo_cbte = 0;
 
     /*
@@ -61,11 +95,13 @@ class WSFE {
 
       $this->path = dirname(__FILE__) . '/';
       $this->CUIT = $arrEmpresa["cuit"] + 0; //No se porque antes andaba con string y ahora debe ser int
-    // $this->CUIT = intval($arrEmpresa["cuit"]); //Antes se podia sumar 0 y lo tomaba como int, ahora al parecer hay que castear
+      $this->TA_GEN = "xml/TA".$arrEmpresa["id"].".xml";
+      $this->ID_EMP = $arrEmpresa["id"];
 
       if($arrEmpresa["entorno_facturacion"] == "produccion") {
           $this->WSFEURL = "https://servicios1.afip.gov.ar/wsfev1/service.asmx"; // produccion
       }
+
         // seteos en php
       ini_set("soap.wsdl_cache_enabled", "0");
 
@@ -79,20 +115,18 @@ class WSFE {
         throw new Exception('Error en clase WSFE. Faltan archivos necesarios para el funcionamiento');
       }
 
-      // $opts = array(
-      //   'ssl' => array('ciphers' => 'AES256-SHA')
-      // );
+      $opts = array(
+        'ssl' => array('ciphers' => 'AES256-SHA')
+      );
 
       $this->client = new SoapClient($this->path . self::WSDL, array(
-        'soap_version' => SOAP_1_2,
+        'soap_version' => '_1_2',
         'location' => $this->WSFEURL,
-        'trace' => 1,
-        'exceptions' => 0,
-        'connection_timeout' => 5
-        // 'encoding' => 'UTF-8',
-        // 'cache_wsdl' => WSDL_CACHE_BOTH,
-        // 'stream_context' => stream_context_create($opts)
-       )
+        'encoding' => 'UTF-8',
+        'cache_wsdl' => WSDL_CACHE_BOTH,
+        'exceptions' => false,
+        'stream_context' => stream_context_create($opts),
+        'trace' => true)
           //'connection_timeout' => 5) //VER SI ANDA EN 5 SEGUNDOS
       );
 
@@ -104,8 +138,8 @@ class WSFE {
      */
     private function _checkErrors($results, $method) {
       if (self::LOG_XMLS) {
-        file_put_contents("xml/request-" . $method . ".xml", $this->client->__getLastRequest());
-        file_put_contents("xml/response-" . $method . ".xml", $this->client->__getLastResponse());
+        file_put_contents("xml/request-" . $method . "-id".$this->ID_EMP.".xml", $this->client->__getLastRequest());
+        file_put_contents("xml/response-" . $method . "-id".$this->ID_EMP.".xml", $this->client->__getLastResponse());
       }
 
       if (is_soap_fault($results)) {
@@ -119,7 +153,7 @@ class WSFE {
      * si hay algun problema devuelve false
      */
     public function openTA() {
-      $this->TA = simplexml_load_file($this->path . self::TA);
+      $this->TA = simplexml_load_file($this->path . $this->TA_GEN);
 
       return $this->TA == false ? false : true;
     }
@@ -135,15 +169,18 @@ class WSFE {
     /* 
      * Solicitud de Código de Autorización Electrónico (CAE).
      */
-
     public function CAESolicitar($pto_vta, $tipo_cbte, $regfac) {
 
-            $regfac += array('Auth' => array
+      $regfac += array('Auth' => array
               ('Token' => $this->TA->credentials->token,
                'Sign' => $this->TA->credentials->sign,
                'Cuit' => $this->CUIT));
 
+     // file_put_contents('CAESOlicitar', json_encode($regfac));
+
       $results = $this->client->FECAESolicitar($regfac);
+
+     // file_put_contents('CAESOlicitarRESULT', json_encode($results));
 
       $e = $this->_checkErrors($results, 'FECAESolicitar');
 
@@ -185,7 +222,7 @@ class WSFE {
             'Sign' => $this->TA->credentials->sign,
             'Cuit' => $this->CUIT
           ),
-          'FECompConsultarResult' => array (
+          'FeCompConsReq' => array (
             'PtoVta' => $pto_vta, 
             'CbteTipo' => $tipo_cbte,
             'CbteNro' => $nrocbte
@@ -193,7 +230,7 @@ class WSFE {
         )
       );
 
-      $e = $this->_checkErrors($results, 'FECompConsultarResult');
+      $e = $this->_checkErrors($results, 'FECompConsultar');
 
       return $e == false ? $results : false;
     }
@@ -202,7 +239,7 @@ class WSFE {
      * Retorna la cantidad maxima de registros que puede tener una invocacion 
      * al metodo FECAESolicitar / FECAEARegInformativo
      */
-    public function CantidadRegistros() {
+    public function TotXRequest() {
 
       $results = $this->client->FECompTotXRequest(
         array(
@@ -217,25 +254,6 @@ class WSFE {
 
       return $e == false ? $results : false;
     }
-
-    /*
-     * Recupera el listado de los diferente paises que pueden ser utilizados en el servicio de autorizacion
-     */
-    public function TiposPaises() {
-
-      $results = $this->client->FEParamGetTiposPaises (
-        array(
-          'Auth' => array(
-            'Token' => $this->TA->credentials->token,
-            'Sign' => $this->TA->credentials->sign,
-            'Cuit' => $this->CUIT)
-        )
-      );
-
-      $e = $this->_checkErrors($results, 'FEParamGetTiposPaises');
-
-      return $e == false ? $results : false;
-    }    
     
     /*
      * Metodo dummy para verificacion de funcionamiento
@@ -255,12 +273,10 @@ class WSFE {
     public function PtosVenta() {
 
       $results = $this->client->FEParamGetPtosVenta(
-        array(
-          'Auth' => 
-            array('Token' => $this->TA->credentials->token,
-                  'Sign' => $this->TA->credentials->sign,
-                  'Cuit' => $this->CUIT
-          )
+        array('Auth' => array('Token' => $this->TA->credentials->token,
+          'Sign' => $this->TA->credentials->sign,
+          'Cuit' => $this->CUIT
+         )
         )
       );
 
@@ -379,60 +395,79 @@ class WSFE {
       return $e == false ? $results : false;
     }
 
-    /*
-    * Recuperador de valores referenciales de códigos de Tipos de datos Opcionales
-    */
-    public function Opcionales() {
+      /*
+     * Recuperador de valores referenciales de códigos de Tipos de datos Opcionales
+     */
+      public function Opcionales() {
 
-      $results = $this->client->FEParamGetTiposOpcional(
-        array('Auth' => array('Token' => $this->TA->credentials->token,
-          'Sign' => $this->TA->credentials->sign,
-          'Cuit' => $this->CUIT
+        $results = $this->client->FEParamGetTiposOpcional(
+          array('Auth' => array('Token' => $this->TA->credentials->token,
+            'Sign' => $this->TA->credentials->sign,
+            'Cuit' => $this->CUIT
+          )
         )
-      )
-      );
+        );
 
-      $e = $this->_checkErrors($results, 'FEParamGetTiposOpcional');
+        $e = $this->_checkErrors($results, 'FEParamGetTiposOpcional');
 
-      return $e == false ? $results : false;
-    }
+        return $e == false ? $results : false;
+      }
 
-    /*
+     /*
      * Recuperador de valores referenciales de códigos de Tipos de Tributos
      */
-    public function TiposTributos() {
+      public function TiposTributos() {
 
-      $results = $this->client->FEParamGetTiposTributos(
-        array('Auth' => array('Token' => $this->TA->credentials->token,
-          'Sign' => $this->TA->credentials->sign,
-          'Cuit' => $this->CUIT
-        )
-      )
-      );
+        $results = $this->client->FEParamGetTiposTributos(
+            array('Auth' => array('Token' => $this->TA->credentials->token,
+              'Sign' => $this->TA->credentials->sign,
+              'Cuit' => $this->CUIT
+            )
+          )
+        );
 
-      $e = $this->_checkErrors($results, 'FEParamGetTiposOpcional');
+          $e = $this->_checkErrors($results, 'FEParamGetTiposOpcional');
 
-      return $e == false ? $results : false;
-    }
+          return $e == false ? $results : false;
+      }
 
-    /*
-     * 
+     /*
+     * Retorna la cantidad máxima de registros que se podrá incluir en un request al método FECAESolicitar / FECAEARegInformativo.
      */
-    public function CondicionIvaReceptor() {
+      public function CantidadRegistros() {
 
-      $results = $this->client->FEParamGetCondicionIvaReceptor (
-        array(
-          'Auth' => array(
-            'Token' => $this->TA->credentials->token,
-            'Sign' => $this->TA->credentials->sign,
-            'Cuit' => $this->CUIT)
-        )
-      );
+        $results = $this->client->FECompTotXRequest(
+            array('Auth' => array(
+              'Token' => $this->TA->credentials->token,
+              'Sign' => $this->TA->credentials->sign,
+              'Cuit' => $this->CUIT
+            )
+          )
+        );
 
-      $e = $this->_checkErrors($results, 'FEParamGetCondicionIvaReceptor');
+          $e = $this->_checkErrors($results, 'FECompTotXRequest');
 
-      return $e == false ? $results : false;
-    }
+          return $e == false ? $results : false;
+      }
+
+     /*
+     * Esta operación permite consultar los códigos de países y descripción de los mismos.
+     */
+      public function TiposPaises() {
+
+        $results = $this->client->FEParamGetTiposPaises(
+            array('Auth' => array(
+              'Token' => $this->TA->credentials->token,
+              'Sign' => $this->TA->credentials->sign,
+              'Cuit' => $this->CUIT
+            )
+          )
+        );
+
+          $e = $this->_checkErrors($results, 'FEParamGetTiposPaises');
+
+          return $e == false ? $results : false;
+      }
 
 }
 

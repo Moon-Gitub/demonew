@@ -7,6 +7,11 @@ if($_SESSION["perfil"] == "Vendedor"){
   return;
 }
 
+
+$idEmpresa = $_GET["idEmpresa"] ?? 1;
+$objEmpresa = new ControladorEmpresa();
+$empArr = $objEmpresa -> ctrMostrarempresa('id', $idEmpresa);
+
 ?>
 <style>
 /* ============================================
@@ -214,9 +219,9 @@ input[type="file"]:disabled {
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-th"></i></span> 
                 <?php 
-                    echo '<input type="text" class="form-control " name="empRazonSocial" id="empRazonSocial" placeholder="Ingresar razon social" value= "'. $arrayEmpresa['razon_social'] . '" required>';
+                    echo '<input type="text" class="form-control " name="empRazonSocial" id="empRazonSocial" placeholder="Ingresar razon social" value= "'. $empArr['razon_social'] . '" required>';
                 ?>
-                <input type="hidden"  name="idEmpresa" id="idEmpresa" value="1">
+                <input type="hidden"  name="idEmpresa" id="idEmpresa" value="<?php echo $idEmpresa; ?>">
               </div>
             </div>  
           </div>
@@ -227,7 +232,7 @@ input[type="file"]:disabled {
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-th"></i></span> 
                 <?php 
-                    echo '<input type="text" class="form-control " name="empTitular" id="empTitular" placeholder="Ingresar Titular" value= "'. $arrayEmpresa['titular'] . '" required>';
+                    echo '<input type="text" class="form-control " name="empTitular" id="empTitular" placeholder="Ingresar Titular" value= "'. $empArr['titular'] . '" required>';
                 ?>
               </div>
             </div>              
@@ -239,7 +244,7 @@ input[type="file"]:disabled {
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-th"></i></span> 
                 <?php 
-                    echo '<input type="text" class="form-control " name="empCuit" id="empCuit" placeholder="Ingresar C.U.I.T." value= "'. $arrayEmpresa['cuit'] . '" required>';
+                    echo '<input type="text" class="form-control " name="empCuit" id="empCuit" placeholder="Ingresar C.U.I.T." value= "'. $empArr['cuit'] . '" required>';
                 ?>
               </div>
             </div>              
@@ -254,7 +259,7 @@ input[type="file"]:disabled {
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-th"></i></span> 
               <?php 
-                echo '<input type="text" class="form-control " name="empDomicilio" id="empDomicilio" placeholder="Ingresar domicilio" value= "'. $arrayEmpresa['domicilio'] . '">';
+                echo '<input type="text" class="form-control " name="empDomicilio" id="empDomicilio" placeholder="Ingresar domicilio" value= "'. $empArr['domicilio'] . '">';
               ?>
             </div>
           </div>
@@ -266,7 +271,7 @@ input[type="file"]:disabled {
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-th"></i></span> 
               <?php 
-                echo '<input type="text" class="form-control " name="empLocalidad" id="empLocalidad" placeholder="Ingresar localidad" value= "'. $arrayEmpresa['localidad'] . '">';
+                echo '<input type="text" class="form-control " name="empLocalidad" id="empLocalidad" placeholder="Ingresar localidad" value= "'. $empArr['localidad'] . '">';
               ?>
             </div>
           </div>
@@ -278,7 +283,7 @@ input[type="file"]:disabled {
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-th"></i></span> 
               <?php 
-                  echo '<input type="text" class="form-control " name="empCodPostal" id="empCodPostal" placeholder="Ingresar codigo postal" value= "'. $arrayEmpresa['codigo_postal'] . '">';
+                  echo '<input type="text" class="form-control " name="empCodPostal" id="empCodPostal" placeholder="Ingresar codigo postal" value= "'. $empArr['codigo_postal'] . '">';
               ?>
             </div>
           </div>
@@ -293,7 +298,7 @@ input[type="file"]:disabled {
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-th"></i></span> 
               <?php 
-                  echo '<input type="text" class="form-control " name="empMail" id="empMail" placeholder="Ingresar e-mail" value= "'. $arrayEmpresa['mail'] . '">';
+                  echo '<input type="text" class="form-control " name="empMail" id="empMail" placeholder="Ingresar e-mail" value= "'. $empArr['mail'] . '">';
               ?>
             </div>
           </div>
@@ -305,7 +310,7 @@ input[type="file"]:disabled {
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-th"></i></span> 
               <?php 
-                  echo '<input type="text" class="form-control " name="empTelefono" id="empTelefono" placeholder="Ingresar telefono" value= "'. $arrayEmpresa['telefono'] . '">';
+                  echo '<input type="text" class="form-control " name="empTelefono" id="empTelefono" placeholder="Ingresar telefono" value= "'. $empArr['telefono'] . '">';
               ?>
             </div>
           </div>
@@ -320,7 +325,7 @@ input[type="file"]:disabled {
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-th"></i></span> 
               <?php 
-              echo '<input type="text" class="form-control " name="empPtosVta" id="empPtosVta" placeholder="Ingresar  todos los puntos de venta separados por coma. Ej. 2, 3, 4" value= "'. htmlspecialchars($arrayEmpresa['ptos_venta']) . '">';
+              echo '<input type="text" class="form-control " name="empPtosVta" id="empPtosVta" placeholder="Ingresar  todos los puntos de venta separados por coma. Ej. 2, 3, 4" value= "'. htmlspecialchars($empArr['ptos_venta']) . '">';
               ?>
             </div>
           </div>    
@@ -331,7 +336,7 @@ input[type="file"]:disabled {
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-th"></i></span> 
               <?php 
-              echo '<input type="text" class="form-control " name="empStock" id="empStock" placeholder="Ingresar almacenes (según tabla productos)" value= "'. htmlspecialchars($arrayEmpresa['almacenes']) . '">';
+              echo '<input type="text" class="form-control " name="empStock" id="empStock" placeholder="Ingresar almacenes (según tabla productos)" value= "'. htmlspecialchars($empArr['almacenes']) . '">';
               ?>
             </div>
           </div>    
@@ -342,7 +347,7 @@ input[type="file"]:disabled {
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-th"></i></span> 
               <?php 
-              echo '<input type="text" class="form-control " name="empPtoVtaDefecto" id="empPtoVtaDefecto" placeholder="Ingresar punto de venta por defecto" value= "'. $arrayEmpresa['pto_venta_defecto'] . '">';
+              echo '<input type="text" class="form-control " name="empPtoVtaDefecto" id="empPtoVtaDefecto" placeholder="Ingresar punto de venta por defecto" value= "'. $empArr['pto_venta_defecto'] . '">';
               ?>
             </div>
           </div>
@@ -367,7 +372,7 @@ input[type="file"]:disabled {
 
               echo '<select class="form-control " name="empCondicionIva" id="empCondicionIva">';
               foreach ($arrCondIva as $key => $value) {
-                if ($key == $arrayEmpresa['condicion_iva']) {
+                if ($key == $empArr['condicion_iva']) {
                   echo '<option value="' . $key . '" selected>' . $value . '</option>';
                 } else {
                   echo '<option value="' . $key . '">' . $value . '</option>';
@@ -404,7 +409,7 @@ input[type="file"]:disabled {
               echo '<select class="form-control " name="empCondicionIIBB" id="empCondicionIIBB">';
               foreach ($arrCondiibb as $key => $value) {
 
-                if ($key == $arrayEmpresa['condicion_iibb']) {
+                if ($key == $empArr['condicion_iibb']) {
                   echo '<option value="' . $key . '" selected>' . $value . '</option>';
                 } else {
                   echo '<option value="' . $key . '">' . $value . '</option>';
@@ -433,7 +438,7 @@ input[type="file"]:disabled {
 
               <?php 
 
-              echo '<input type="text" class="form-control " name="empNumeroIIBB" id="empNumeroIIBB" placeholder="Ingresar número IIBB" value= "'. $arrayEmpresa['numero_iibb'] . '">';
+              echo '<input type="text" class="form-control " name="empNumeroIIBB" id="empNumeroIIBB" placeholder="Ingresar número IIBB" value= "'. $empArr['numero_iibb'] . '">';
 
               ?>
               
@@ -456,7 +461,7 @@ input[type="file"]:disabled {
 
               <?php 
 
-              echo '<input type="text" class="form-control " name="empInicioActividades" id="empInicioActividades" placeholder="Ingresar fecha inicio actividades" value= "'. $arrayEmpresa['inicio_actividades'] . '">';
+              echo '<input type="text" class="form-control " name="empInicioActividades" id="empInicioActividades" placeholder="Ingresar fecha inicio actividades" value= "'. $empArr['inicio_actividades'] . '">';
 
               ?>
               
@@ -485,7 +490,7 @@ input[type="file"]:disabled {
               echo '<select class="form-control " name="empConceptoDefecto" id="empConceptoDefecto">';
               foreach ($arrConceptos as $key => $value) {
 
-                if ($key == $arrayEmpresa['concepto_defecto']) {
+                if ($key == $empArr['concepto_defecto']) {
                   echo '<option value="' . $key . '" selected>' . $value . '</option>';
                 } else {
                   echo '<option value="' . $key . '">' . $value . '</option>';
@@ -515,7 +520,7 @@ input[type="file"]:disabled {
 
                 <?php 
 
-                  echo '<input type="text" class="form-control " name="empNumeroEstablecimiento" id="empNumeroEstablecimiento" placeholder="Ingresar número establecimiento" value= "'. $arrayEmpresa['numero_establecimiento'] . '">';
+                  echo '<input type="text" class="form-control " name="empNumeroEstablecimiento" id="empNumeroEstablecimiento" placeholder="Ingresar número establecimiento" value= "'. $empArr['numero_establecimiento'] . '">';
 
                 ?>
 
@@ -536,7 +541,7 @@ input[type="file"]:disabled {
 
               <?php 
 
-              echo '<input type="text" class="form-control " name="empNumeroCBU" id="empNumeroCBU" placeholder="Ingresar CBU" value= "'. $arrayEmpresa['cbu'] . '">';
+              echo '<input type="text" class="form-control " name="empNumeroCBU" id="empNumeroCBU" placeholder="Ingresar CBU" value= "'. $empArr['cbu'] . '">';
 
               ?>
               
@@ -559,7 +564,7 @@ input[type="file"]:disabled {
 
               <?php 
 
-              echo '<input type="text" class="form-control " name="empNumeroCBUAlias" id="empNumeroCBUAlias" placeholder="Ingresar alias CBU" value= "'. $arrayEmpresa['cbu_alias'] . '">';
+              echo '<input type="text" class="form-control " name="empNumeroCBUAlias" id="empNumeroCBUAlias" placeholder="Ingresar alias CBU" value= "'. $empArr['cbu_alias'] . '">';
 
               ?>
               
@@ -588,7 +593,7 @@ input[type="file"]:disabled {
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-key"></i></span>
               <?php
-                $mpPublicKey = isset($arrayEmpresa['mp_public_key']) ? $arrayEmpresa['mp_public_key'] : '';
+                $mpPublicKey = isset($empArr['mp_public_key']) ? $empArr['mp_public_key'] : '';
                 echo '<input type="text" class="form-control" name="empMPPublicKey" id="empMPPublicKey" placeholder="Public Key de Mercado Pago" value="'. htmlspecialchars($mpPublicKey) . '">';
               ?>
             </div>
@@ -602,7 +607,7 @@ input[type="file"]:disabled {
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-lock"></i></span>
               <?php
-                $mpAccessToken = isset($arrayEmpresa['mp_access_token']) ? $arrayEmpresa['mp_access_token'] : '';
+                $mpAccessToken = isset($empArr['mp_access_token']) ? $empArr['mp_access_token'] : '';
                 echo '<input type="password" class="form-control" name="empMPAccessToken" id="empMPAccessToken" placeholder="Access Token de Mercado Pago" value="'. htmlspecialchars($mpAccessToken) . '">';
               ?>
               <span class="input-group-addon" style="cursor: pointer;" onclick="toggleMPToken()">
@@ -622,7 +627,7 @@ input[type="file"]:disabled {
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-qrcode"></i></span>
               <?php
-                $mpPosExternalId = isset($arrayEmpresa['mp_pos_external_id']) ? $arrayEmpresa['mp_pos_external_id'] : '';
+                $mpPosExternalId = isset($empArr['mp_pos_external_id']) ? $empArr['mp_pos_external_id'] : '';
                 echo '<input type="text" class="form-control" name="empMPPosExternalId" id="empMPPosExternalId" placeholder="External ID del POS (ej: POS123456)" value="'. htmlspecialchars($mpPosExternalId) . '">';
               ?>
             </div>
@@ -687,7 +692,7 @@ input[type="file"]:disabled {
 
       );
 
-      $arrTiposCbteBd = json_decode($arrayEmpresa['tipos_cbtes']);
+      $arrTiposCbteBd = json_decode($empArr['tipos_cbtes']);
 
       $x = 0;
       foreach ($tiposCbtes as $key => $value) {
@@ -729,7 +734,7 @@ input[type="file"]:disabled {
 
       }
 
-      echo "<input type='hidden' id='empTipoCbtes' name='empTipoCbtes' value='".$arrayEmpresa['tipos_cbtes']."'>";
+      echo "<input type='hidden' id='empTipoCbtes' name='empTipoCbtes' value='".$empArr['tipos_cbtes']."'>";
 
       ?>
 
@@ -738,13 +743,13 @@ input[type="file"]:disabled {
       <p><b>Entorno de facturación</b></p>
 
       <?php 
-        if($arrayEmpresa["entorno_facturacion"] == "produccion"){
+        if($empArr["entorno_facturacion"] == "produccion"){
 
           $chkProduccion = "checked";
           $chkTesting = "";
           $chkNull = "";
 
-        } elseif($arrayEmpresa["entorno_facturacion"] == "testing"){
+        } elseif($empArr["entorno_facturacion"] == "testing"){
 
           $chkProduccion = "";
           $chkTesting = "checked";
@@ -808,7 +813,7 @@ input[type="file"]:disabled {
               ];
               echo '<select class="form-control " name="empTipoPadron" id="empTipoPadron">';
               foreach ($arrPadron as $key => $value) {
-                if ($key == $arrayEmpresa['ws_padron']) {
+                if ($key == $empArr['ws_padron']) {
                   echo '<option value="' . $key . '" selected>' . $value . '</option>';
                 } else {
                   echo '<option value="' . $key . '">' . $value . '</option>';
@@ -827,12 +832,12 @@ input[type="file"]:disabled {
             <div class="input-group">
               <div class="panel">Subir Clave Pública (Formato .KEY generado con OpenSSL)</div>
               <?php 
-              echo '<input type="hidden" id="hayCSR" name="hayCSR" value="'.$arrayEmpresa['csr'].'">';
-              echo '<input type="hidden" id="hayPhrase" name="hayPhrase" value="'.$arrayEmpresa['passphrase'].'">';
+              echo '<input type="hidden" id="hayCSR" name="hayCSR" value="'.$empArr['csr'].'">';
+              echo '<input type="hidden" id="hayPhrase" name="hayPhrase" value="'.$empArr['passphrase'].'">';
               echo '<input type="file" id="empCSR" name="empCSR">';
               echo '<p class="help-block">Solitud de certificado </p>';
-              //echo '<input type="text" disabled class="form-control " value= "'. $arrayEmpresa['csr'] . '">';
-              if($arrayEmpresa['csr'] <> ""){
+              //echo '<input type="text" disabled class="form-control " value= "'. $empArr['csr'] . '">';
+              if($empArr['csr'] <> ""){
                 echo '<img src="vistas/img/cert.png" class="img-thumbnail" width="100px">';  
               } else {
                 echo '<img src="vistas/img/nocert.png" class="img-thumbnail" width="100px">';
@@ -847,11 +852,11 @@ input[type="file"]:disabled {
             <div class="input-group">
               <div class="panel">Subir certificado x509 (formato .PEM | .CRT devuelto por AFIP)</div>
               <?php 
-              echo '<input type="hidden" id="hayPEM" name="hayPEM" value="'.$arrayEmpresa['pem'].'">';
+              echo '<input type="hidden" id="hayPEM" name="hayPEM" value="'.$empArr['pem'].'">';
               echo '<input type="file" id="empPEM" name="empPEM" >';
               echo '<p class="help-block">Certificado validado por AFIP</p>';
-              //echo '<input type="text" disabled class="form-control " value= "'. $arrayEmpresa['pem'] . '">';
-              if($arrayEmpresa['pem'] <> ""){
+              //echo '<input type="text" disabled class="form-control " value= "'. $empArr['pem'] . '">';
+              if($empArr['pem'] <> ""){
                 echo '<img src="vistas/img/certAfip.png" class="img-thumbnail" width="100px">';  
               } else {
                 echo '<img src="vistas/img/nocertAfip.png" class="img-thumbnail" width="100px">';
@@ -884,8 +889,8 @@ input[type="file"]:disabled {
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-paint-brush"></i></span>
               <?php 
-                $loginFondo = isset($arrayEmpresa['login_fondo']) && !empty($arrayEmpresa['login_fondo']) 
-                  ? $arrayEmpresa['login_fondo'] 
+                $loginFondo = isset($empArr['login_fondo']) && !empty($empArr['login_fondo']) 
+                  ? $empArr['login_fondo'] 
                   : 'linear-gradient(rgba(0,0,0,1), rgba(0,30,50,1))';
                 // Extraer color hex si existe, sino usar color por defecto
                 $loginFondoColor = (strpos($loginFondo, '#') === 0) ? $loginFondo : '#4f658a';
@@ -906,11 +911,11 @@ input[type="file"]:disabled {
             <div class="input-group">
               <div class="panel">Subir logo para el login</div>
               <?php 
-                echo '<input type="hidden" id="hayLoginLogo" name="hayLoginLogo" value="'.(isset($arrayEmpresa['login_logo']) ? $arrayEmpresa['login_logo'] : '').'">';
+                echo '<input type="hidden" id="hayLoginLogo" name="hayLoginLogo" value="'.(isset($empArr['login_logo']) ? $empArr['login_logo'] : '').'">';
                 echo '<input type="file" id="empLoginLogo" name="empLoginLogo" accept="image/*">';
                 echo '<p class="help-block">Peso máximo de la imagen 2MB</p>';
-                if(isset($arrayEmpresa['login_logo']) && !empty($arrayEmpresa['login_logo'])){
-                  echo '<img src="'.$arrayEmpresa['login_logo'].'" class="img-thumbnail" width="100px" style="margin-top: 10px;">';
+                if(isset($empArr['login_logo']) && !empty($empArr['login_logo'])){
+                  echo '<img src="'.$empArr['login_logo'].'" class="img-thumbnail" width="100px" style="margin-top: 10px;">';
                 } else {
                   echo '<img src="vistas/img/plantilla/logo-moon-desarrollos.png" class="img-thumbnail" width="100px" style="margin-top: 10px;">';
                 }
@@ -928,8 +933,8 @@ input[type="file"]:disabled {
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-square"></i></span>
               <?php 
-                $loginFondoForm = isset($arrayEmpresa['login_fondo_form']) && !empty($arrayEmpresa['login_fondo_form']) 
-                  ? $arrayEmpresa['login_fondo_form'] 
+                $loginFondoForm = isset($empArr['login_fondo_form']) && !empty($empArr['login_fondo_form']) 
+                  ? $empArr['login_fondo_form'] 
                   : 'rgba(255, 255, 255, 0.98)';
                 // Extraer color hex si existe, sino usar color por defecto
                 // Si es rgba, intentar convertir a hex aproximado, sino usar blanco
@@ -958,8 +963,8 @@ input[type="file"]:disabled {
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-tint"></i></span>
               <?php 
-                $loginColorBoton = isset($arrayEmpresa['login_color_boton']) && !empty($arrayEmpresa['login_color_boton']) 
-                  ? $arrayEmpresa['login_color_boton'] 
+                $loginColorBoton = isset($empArr['login_color_boton']) && !empty($empArr['login_color_boton']) 
+                  ? $empArr['login_color_boton'] 
                   : '#52658d';
                 echo '<input type="text" class="form-control" name="empLoginColorBoton" id="empLoginColorBoton" placeholder="#52658d" value="'.htmlspecialchars($loginColorBoton).'">';
               ?>
@@ -980,8 +985,8 @@ input[type="file"]:disabled {
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-font"></i></span>
               <?php 
-                $loginFuente = isset($arrayEmpresa['login_fuente']) && !empty($arrayEmpresa['login_fuente']) 
-                  ? $arrayEmpresa['login_fuente'] 
+                $loginFuente = isset($empArr['login_fuente']) && !empty($empArr['login_fuente']) 
+                  ? $empArr['login_fuente'] 
                   : 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
                 echo '<input type="text" class="form-control" name="empLoginFuente" id="empLoginFuente" placeholder="Ej: Arial, sans-serif" value="'.htmlspecialchars($loginFuente).'">';
               ?>
@@ -997,8 +1002,8 @@ input[type="file"]:disabled {
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-text-height"></i></span>
               <?php 
-                $loginColorTextoTitulo = isset($arrayEmpresa['login_color_texto_titulo']) && !empty($arrayEmpresa['login_color_texto_titulo']) 
-                  ? $arrayEmpresa['login_color_texto_titulo'] 
+                $loginColorTextoTitulo = isset($empArr['login_color_texto_titulo']) && !empty($empArr['login_color_texto_titulo']) 
+                  ? $empArr['login_color_texto_titulo'] 
                   : '#ffffff';
                 echo '<input type="text" class="form-control" name="empLoginColorTextoTitulo" id="empLoginColorTextoTitulo" placeholder="#ffffff" value="'.htmlspecialchars($loginColorTextoTitulo).'">';
               ?>
@@ -1018,8 +1023,8 @@ input[type="file"]:disabled {
       </button>
     </div>
     <?php
-    $editarEmpresa = new ControladorEmpresa();
-    $editarEmpresa -> ctrEditarEmpresa();
+    
+    $objEmpresa -> ctrEditarEmpresa();
     ?> 
   </form>
 </div>

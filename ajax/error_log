@@ -400,3 +400,76 @@ Stack trace:
 [23-Dec-2025 19:45:51 UTC] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/controladores/ventas.controlador.php on line 323
 [23-Dec-2025 19:45:51 UTC] PHP Warning:  Trying to access array offset on value of type bool in /home/newmoon/public_html/controladores/ventas.controlador.php on line 385
 [23-Dec-2025 19:45:51 UTC] PHP Warning:  Undefined array key "idEmpresa" in /home/newmoon/public_html/controladores/ventas.controlador.php on line 785
+[23-Dec-2025 21:35:30 UTC] Usando credenciales MP desde .env
+[23-Dec-2025 21:35:30 UTC] Usando credenciales MP desde .env
+[23-Dec-2025 21:35:30 UTC] User ID obtenido desde API: 1188183100
+[23-Dec-2025 21:35:30 UTC] Intentando obtener tiendas - User ID: 1188183100, URL: https://api.mercadopago.com/users/1188183100/stores
+[23-Dec-2025 21:35:30 UTC] Respuesta de API de tiendas - HTTP Code: 405, URL: https://api.mercadopago.com/users/1188183100/stores
+[23-Dec-2025 21:35:30 UTC] Response (primeros 500 chars): <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+<head><title>405 Method Not Allowed</title></head>
+<body bgcolor="white">
+<h1>405 Method Not Allowed</h1>
+<p>The requested method is not allowed for the URL.</body>
+</html>
+
+[23-Dec-2025 21:35:30 UTC] Error obteniendo tiendas - HTTP Code: 405, Response: <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+<head><title>405 Method Not Allowed</title></head>
+<body bgcolor="white">
+<h1>405 Method Not Allowed</h1>
+<p>The requested method is not 
+[23-Dec-2025 21:35:30 UTC] Intentando obtener tiendas - User ID: 1188183100, URL: https://api.mercadopago.com/users/1188183100/stores/search
+[23-Dec-2025 21:35:30 UTC] Respuesta de API de tiendas - HTTP Code: 200, URL: https://api.mercadopago.com/users/1188183100/stores/search
+[23-Dec-2025 21:35:30 UTC] Response (primeros 500 chars): {"paging":{"total":1,"offset":0,"limit":50},"results":[{"id":"72448517","name":"Principal","date_creation":"2025-12-20T14:35:34.452Z","business_hours":{"monday":[{"open":"00:00","close":"23:59"}],"tuesday":[{"open":"00:00","close":"23:59"}],"wednesday":[{"open":"00:00","close":"23:59"}],"thursday":[{"open":"00:00","close":"23:59"}],"friday":[{"open":"00:00","close":"23:59"}],"saturday":[{"open":"00:00","close":"23:59"}],"sunday":[{"open":"00:00","close":"23:59"}]},"location":{"address_line":"Gra
+[23-Dec-2025 21:35:30 UTC] Tiendas decodificadas: {"paging":{"total":1,"offset":0,"limit":50},"results":[{"id":"72448517","name":"Principal","date_creation":"2025-12-20T14:35:34.452Z","business_hours":{"monday":[{"open":"00:00","close":"23:59"}],"tuesday":[{"open":"00:00","close":"23:59"}],"wednesday":[{"open":"00:00","close":"23:59"}],"thursday":[{"open":"00:00","close":"23:59"}],"friday":[{"open":"00:00","close":"23:59"}],"saturday":[{"open":"00:00","close":"23:59"}],"sunday":[{"open":"00:00","close":"23:59"}]},"location":{"address_line":"Gral. Mayorga 1590, M5600, San Rafael, Mendoza, Argentina","reference":"","latitude":-34.623774499999996,"longitude":-68.358006,"id":"TUxBQ1NBTjdmNmMy","type":"city","city":"San Rafael","state_id":"AR-M","zip_code":"M5600RUW"}}]}
+[23-Dec-2025 21:35:30 UTC] Usando tienda existente: 72448517 (Total encontradas: 1)
+[23-Dec-2025 21:35:30 UTC] Lista de POS obtenida: {"paging":{"total":1,"offset":0,"limit":30},"results":[{"user_id":1188183100,"name":"QR-Cobro","fixed_amount":false,"store_id":"72448517","id":123158064,"qr":{"image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png","template_document":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.pdf","template_image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png"},"date_created":"2025-12-20T14:35:34.000-04:00","date_last_updated":"2025-12-22T17:31:10.000-04:00"}]}
+[23-Dec-2025 21:35:30 UTC] Total de POS encontrados: 1
+[23-Dec-2025 21:35:30 UTC] Revisando POS: {"user_id":1188183100,"name":"QR-Cobro","fixed_amount":false,"store_id":"72448517","id":123158064,"qr":{"image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png","template_document":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.pdf","template_image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png"},"date_created":"2025-12-20T14:35:34.000-04:00","date_last_updated":"2025-12-22T17:31:10.000-04:00"}
+[23-Dec-2025 21:35:30 UTC] POS 'QR-Cobro' encontrado: {"user_id":1188183100,"name":"QR-Cobro","fixed_amount":false,"store_id":"72448517","id":123158064,"qr":{"image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png","template_document":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.pdf","template_image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png"},"date_created":"2025-12-20T14:35:34.000-04:00","date_last_updated":"2025-12-22T17:31:10.000-04:00"}
+[23-Dec-2025 21:35:30 UTC] External ID del POS encontrado: NO TIENE
+[23-Dec-2025 21:35:30 UTC] POS completo obtenido: {"id":123158064,"qr":{"image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png","template_document":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.pdf","template_image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png"},"status":"active","date_created":"2025-12-20T14:35:34.000-04:00","date_last_updated":"2025-12-22T17:31:10.000-04:00","uuid":"5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882","user_id":1188183100,"name":"QR-Cobro","fixed_amount":false,"store_id":"72448517","site":"MLA","qr_code":"00020101021143540016com.mercadolibre0130https:\/\/mpago.la\/pos\/12315806450150011202975946495204970053030325802AR5915MoonDesarrollos6004CABA63041E20"}
+[23-Dec-2025 21:35:30 UTC] POS External ID obtenido: NULL
+[23-Dec-2025 21:35:31 UTC] POS recién creado - ID: 123158064, External ID: 
+[23-Dec-2025 21:35:31 UTC] ERROR: El POS recién creado no tiene external_id. Respuesta: {"id":123158064,"qr":{"image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png","template_document":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.pdf","template_image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png"},"status":"active","date_created":"2025-12-20T14:35:34.000-04:00","date_last_updated":"2025-12-22T17:31:10.000-04:00","uuid":"5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882","user_id":1188183100,"name":"QR-Cobro","fixed_amount":false,"store_id":"72448517","site":"MLA","qr_code":"00020101021143540016com.mercadolibre0130https:\/\/mpago.la\/pos\/12315806450150011202975946495204970053030325802AR5915MoonDesarrollos6004CABA63041E20"}
+[23-Dec-2025 21:38:46 UTC] Usando credenciales MP desde .env
+[23-Dec-2025 21:38:46 UTC] Usando credenciales MP desde .env
+[23-Dec-2025 21:38:46 UTC] User ID obtenido desde API: 1188183100
+[23-Dec-2025 21:38:46 UTC] Intentando obtener tiendas - User ID: 1188183100, URL: https://api.mercadopago.com/users/1188183100/stores
+[23-Dec-2025 21:38:46 UTC] Respuesta de API de tiendas - HTTP Code: 405, URL: https://api.mercadopago.com/users/1188183100/stores
+[23-Dec-2025 21:38:46 UTC] Response (primeros 500 chars): <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+<head><title>405 Method Not Allowed</title></head>
+<body bgcolor="white">
+<h1>405 Method Not Allowed</h1>
+<p>The requested method is not allowed for the URL.</body>
+</html>
+
+[23-Dec-2025 21:38:46 UTC] Error obteniendo tiendas - HTTP Code: 405, Response: <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+<head><title>405 Method Not Allowed</title></head>
+<body bgcolor="white">
+<h1>405 Method Not Allowed</h1>
+<p>The requested method is not 
+[23-Dec-2025 21:38:46 UTC] Intentando obtener tiendas - User ID: 1188183100, URL: https://api.mercadopago.com/users/1188183100/stores/search
+[23-Dec-2025 21:38:46 UTC] Respuesta de API de tiendas - HTTP Code: 200, URL: https://api.mercadopago.com/users/1188183100/stores/search
+[23-Dec-2025 21:38:46 UTC] Response (primeros 500 chars): {"paging":{"total":1,"offset":0,"limit":50},"results":[{"id":"72448517","name":"Principal","date_creation":"2025-12-20T14:35:34.452Z","business_hours":{"monday":[{"open":"00:00","close":"23:59"}],"tuesday":[{"open":"00:00","close":"23:59"}],"wednesday":[{"open":"00:00","close":"23:59"}],"thursday":[{"open":"00:00","close":"23:59"}],"friday":[{"open":"00:00","close":"23:59"}],"saturday":[{"open":"00:00","close":"23:59"}],"sunday":[{"open":"00:00","close":"23:59"}]},"location":{"address_line":"Gra
+[23-Dec-2025 21:38:46 UTC] Tiendas decodificadas: {"paging":{"total":1,"offset":0,"limit":50},"results":[{"id":"72448517","name":"Principal","date_creation":"2025-12-20T14:35:34.452Z","business_hours":{"monday":[{"open":"00:00","close":"23:59"}],"tuesday":[{"open":"00:00","close":"23:59"}],"wednesday":[{"open":"00:00","close":"23:59"}],"thursday":[{"open":"00:00","close":"23:59"}],"friday":[{"open":"00:00","close":"23:59"}],"saturday":[{"open":"00:00","close":"23:59"}],"sunday":[{"open":"00:00","close":"23:59"}]},"location":{"address_line":"Gral. Mayorga 1590, M5600, San Rafael, Mendoza, Argentina","reference":"","latitude":-34.623774499999996,"longitude":-68.358006,"id":"TUxBQ1NBTjdmNmMy","type":"city","city":"San Rafael","state_id":"AR-M","zip_code":"M5600RUW"}}]}
+[23-Dec-2025 21:38:46 UTC] Usando tienda existente: 72448517 (Total encontradas: 1)
+[23-Dec-2025 21:38:46 UTC] Lista de POS obtenida: {"paging":{"total":1,"offset":0,"limit":30},"results":[{"user_id":1188183100,"name":"QR-Cobro","fixed_amount":false,"store_id":"72448517","id":123158064,"qr":{"image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png","template_document":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.pdf","template_image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png"},"date_created":"2025-12-20T14:35:34.000-04:00","date_last_updated":"2025-12-22T17:31:10.000-04:00"}]}
+[23-Dec-2025 21:38:46 UTC] Total de POS encontrados: 1
+[23-Dec-2025 21:38:46 UTC] Revisando POS: {"user_id":1188183100,"name":"QR-Cobro","fixed_amount":false,"store_id":"72448517","id":123158064,"qr":{"image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png","template_document":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.pdf","template_image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png"},"date_created":"2025-12-20T14:35:34.000-04:00","date_last_updated":"2025-12-22T17:31:10.000-04:00"}
+[23-Dec-2025 21:38:46 UTC] POS 'QR-Cobro' encontrado: {"user_id":1188183100,"name":"QR-Cobro","fixed_amount":false,"store_id":"72448517","id":123158064,"qr":{"image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png","template_document":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.pdf","template_image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png"},"date_created":"2025-12-20T14:35:34.000-04:00","date_last_updated":"2025-12-22T17:31:10.000-04:00"}
+[23-Dec-2025 21:38:46 UTC] External ID del POS encontrado: NO TIENE
+[23-Dec-2025 21:38:46 UTC] POS completo obtenido: {"id":123158064,"qr":{"image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png","template_document":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.pdf","template_image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png"},"status":"active","date_created":"2025-12-20T14:35:34.000-04:00","date_last_updated":"2025-12-22T17:31:10.000-04:00","uuid":"5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882","user_id":1188183100,"name":"QR-Cobro","fixed_amount":false,"store_id":"72448517","site":"MLA","qr_code":"00020101021143540016com.mercadolibre0130https:\/\/mpago.la\/pos\/12315806450150011202975946495204970053030325802AR5915MoonDesarrollos6004CABA63041E20"}
+[23-Dec-2025 21:38:46 UTC] POS External ID obtenido: NULL
+[23-Dec-2025 21:38:46 UTC] POS recién creado - ID: 123158064, External ID: 
+[23-Dec-2025 21:38:46 UTC] ERROR: El POS recién creado no tiene external_id. Respuesta: {"id":123158064,"qr":{"image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png","template_document":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.pdf","template_image":"https:\/\/www.mercadopago.com\/instore\/merchant\/qr\/123158064\/template_5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882.png"},"status":"active","date_created":"2025-12-20T14:35:34.000-04:00","date_last_updated":"2025-12-22T17:31:10.000-04:00","uuid":"5027c9331b0c4716aaf41c0d3333c72958214f213a9941f08093ced9b7a33882","user_id":1188183100,"name":"QR-Cobro","fixed_amount":false,"store_id":"72448517","site":"MLA","qr_code":"00020101021143540016com.mercadolibre0130https:\/\/mpago.la\/pos\/12315806450150011202975946495204970053030325802AR5915MoonDesarrollos6004CABA63041E20"}
+[2025-12-24 12:08:48] ERROR: No se recibió idUsuario en POST
+[2025-12-24 12:08:48] POST completo: Array
+(
+    [validarUsuario] => b
+    [csrf_token] => 843961c6063a212d3f966b652ceb1ce6dcd3365dc2c4a8675717d8e587c6f29d
+)
+
