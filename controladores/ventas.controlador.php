@@ -1718,6 +1718,14 @@ class ControladorVentas{
 	}
 
 	/*=============================================
+	SUMAR VENTAS POR RANGO DE FECHAS (OPTIMIZADO)
+	=============================================*/
+	static public function ctrSumaVentasPorRango($fechaInicial, $fechaFinal){
+		$respuesta = ModeloVentas::mdlSumaVentasPorRango($fechaInicial, $fechaFinal);
+		return $respuesta;
+	}
+
+	/*=============================================
 	RANGO FECHAS SOLO VENTAS (EL OTRO RANGO FECHAS TRAE TODOS LOS REGISTROS DE LA TABLA VENTA)
 	=============================================*/	
 	static public function ctrRangoVentasPorMesAnio($fechaInicial, $fechaFinal){

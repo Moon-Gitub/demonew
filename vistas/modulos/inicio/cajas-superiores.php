@@ -1,55 +1,16 @@
 <?php
 
-$item = null;
-$valor = null;
-$orden = "id";
-
-//$ventas = ControladorVentas::ctrSumaTotalVentas();
-
-$categorias = ControladorCategorias::ctrMostrarCategorias($item, $valor);
-$totalCategorias = count($categorias);
-
-$clientes = ControladorClientes::ctrMostrarClientes($item, $valor);
-$totalClientes = count($clientes);
-
-$productos = ControladorProductos::ctrMostrarProductos($item, $valor, $orden);
-$totalProductos = count($productos);
-
 date_default_timezone_set('America/Argentina/Mendoza');
 
   /*=============================================
-  CAJA VENTAS MENSUALES
+  CAJA VENTAS MENSUALES - OPTIMIZADO
   =============================================*/
 
-//Ventas Hoy
-$fechaInicialHoy=date('Y-m-d');  
+//Ventas Hoy - OPTIMIZADO: usa SUM() en SQL en lugar de traer todos los registros
+$fechaInicialHoy = date('Y-m-d');  
 $fechaFinalHoy = date('Y-m-d'); 
 
-$ventasHoy = ControladorVentas::ctrRangoFechasSoloVentas($fechaInicialHoy, $fechaFinalHoy);
-
-$arrayFechas = array();
-$arrayVentas = array();
-$sumaPagosMes = array();
-$totalHoy=0;
-
-foreach ($ventasHoy as $key => $value) {
-
-  #Capturamos sólo el año y el mes
-  $fecha = substr($value["fecha"],0,7);
-
-  #Introducir las fechas en arrayFechas
-  array_push($arrayFechas, $fecha);
-
-  #Capturamos las ventas
-  $arrayVentas = array($fecha => $value["total"]);
-
-  #Sumamos los pagos que ocurrieron el mismo mes
-  foreach ($arrayVentas as $key => $value) {
-    
-    $totalHoy += $value;
-  }
-
-}
+$totalHoy = ControladorVentas::ctrSumaVentasPorRango($fechaInicialHoy, $fechaFinalHoy);
 
 ?>
 
@@ -108,39 +69,15 @@ foreach ($ventasHoy as $key => $value) {
     </div>
 
      <!--=============================================
-      CAJA VENTAS SEMANA PASADA
+      CAJA VENTAS SEMANA PASADA - OPTIMIZADO
       ============================================= -->
     <?php
 
-    //Ventas Semana Pasada
-    $fechaInicialSemanaAnterior=date('Y-m-d', strtotime('last week'));  
+    //Ventas Semana Pasada - OPTIMIZADO: usa SUM() en SQL
+    $fechaInicialSemanaAnterior = date('Y-m-d', strtotime('last week'));  
     $fechaFinalSemanaAnterior = date('Y-m-d', strtotime('last sunday')); 
 
-    $ventasSemanaAnterior = ControladorVentas::ctrRangoFechasSoloVentas($fechaInicialSemanaAnterior, $fechaFinalSemanaAnterior);
-
-    $arrayFechas = array();
-    $arrayVentas = array();
-    $sumaPagosMes = array();
-    $totalSemanaPasada = 0;
-
-    foreach ($ventasSemanaAnterior as $key => $value) {
-
-      #Capturamos sólo el año y el mes
-      $fecha = substr($value["fecha"],0,7);
-
-      #Introducir las fechas en arrayFechas
-      array_push($arrayFechas, $fecha);
-
-      #Capturamos las ventas
-      $arrayVentas = array($fecha => $value["total"]);
-
-      #Sumamos los pagos que ocurrieron el mismo mes
-      foreach ($arrayVentas as $key => $value) {
-        
-        $totalSemanaPasada += $value;
-      }
-
-    }
+    $totalSemanaPasada = ControladorVentas::ctrSumaVentasPorRango($fechaInicialSemanaAnterior, $fechaFinalSemanaAnterior);
 
     ?>
 
@@ -173,37 +110,13 @@ foreach ($ventasHoy as $key => $value) {
 
 
      <!--=============================================
-      CAJA VENTAS MES ACTUAL
+      CAJA VENTAS MES ACTUAL - OPTIMIZADO
       ============================================= -->
     <?php
-    //Mes Actual
+    //Mes Actual - OPTIMIZADO: usa SUM() en SQL
     $fechaInicialMes = date("Y-m-01");
     $fechaFinalMes = date("Y-m-t"); 
-    $ventasMesActual = ControladorVentas::ctrRangoFechasSoloVentas($fechaInicialMes, $fechaFinalMes);
-
-    $arrayFechas = array();
-    $arrayVentas = array();
-    $sumaPagosMes = array();
-    $totalMesActual = 0;
-
-    foreach ($ventasMesActual as $key => $value) {
-
-      #Capturamos sólo el año y el mes
-      $fecha = substr($value["fecha"],0,7);
-
-      #Introducir las fechas en arrayFechas
-      array_push($arrayFechas, $fecha);
-
-      #Capturamos las ventas
-      $arrayVentas = array($fecha => $value["total"]);
-
-      #Sumamos los pagos que ocurrieron el mismo mes
-      foreach ($arrayVentas as $key => $value) {
-        
-        $totalMesActual += $value;
-      }
-
-    }
+    $totalMesActual = ControladorVentas::ctrSumaVentasPorRango($fechaInicialMes, $fechaFinalMes);
 
     ?>
 
@@ -236,39 +149,15 @@ foreach ($ventasHoy as $key => $value) {
     </div>
 
      <!--=============================================
-      CAJA VENTAS MES ANTERIOR
+      CAJA VENTAS MES ANTERIOR - OPTIMIZADO
       ============================================= -->
     <?php
 
-    //Mes Anterior
-    $fechaInicialMesAnterior=date('Y-m-d', strtotime('first day of last month'));  
+    //Mes Anterior - OPTIMIZADO: usa SUM() en SQL
+    $fechaInicialMesAnterior = date('Y-m-d', strtotime('first day of last month'));  
     $fechaFinalMesAnterior = date('Y-m-d', strtotime('last day of last month')); 
 
-    $ventasMesAnterior = ControladorVentas::ctrRangoFechasSoloVentas($fechaInicialMesAnterior, $fechaFinalMesAnterior);
-
-    $arrayFechas = array();
-    $arrayVentas = array();
-    $sumaPagosMes = array();
-    $totalMesAnterior = 0;
-
-    foreach ($ventasMesAnterior as $key => $value) {
-
-      #Capturamos sólo el año y el mes
-      $fecha = substr($value["fecha"],0,7);
-
-      #Introducir las fechas en arrayFechas
-      array_push($arrayFechas, $fecha);
-
-      #Capturamos las ventas
-      $arrayVentas = array($fecha => $value["total"]);
-
-      #Sumamos los pagos que ocurrieron el mismo mes
-      foreach ($arrayVentas as $key => $value) {
-        
-        $totalMesAnterior += $value;
-      }
-
-    }
+    $totalMesAnterior = ControladorVentas::ctrSumaVentasPorRango($fechaInicialMesAnterior, $fechaFinalMesAnterior);
 
     ?>
 

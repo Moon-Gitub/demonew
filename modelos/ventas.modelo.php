@@ -185,6 +185,40 @@ class ModeloVentas{
 	}
 
 	/*=============================================
+	SUMAR VENTAS POR RANGO DE FECHAS (OPTIMIZADO)
+	=============================================*/
+	static public function mdlSumaVentasPorRango($fechaInicial, $fechaFinal){
+
+		if($fechaInicial == null){
+			$stmt = Conexion::conectar()->prepare("SELECT SUM(total) as total FROM ventas WHERE cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999)");
+		}else if($fechaInicial == $fechaFinal){
+			$stmt = Conexion::conectar()->prepare("SELECT SUM(total) as total FROM ventas WHERE cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999) AND fecha LIKE '%$fechaFinal%'");
+		}else{
+			$fechaActual = new DateTime();
+			$fechaActual ->add(new DateInterval("P1D"));
+			$fechaActualMasUno = $fechaActual->format("Y-m-d");
+
+			$fechaFinal2 = new DateTime($fechaFinal);
+			$fechaFinal2 ->add(new DateInterval("P1D"));
+			$fechaFinalMasUno = $fechaFinal2->format("Y-m-d");
+
+			if($fechaFinalMasUno == $fechaActualMasUno){
+				$stmt = Conexion::conectar()->prepare("SELECT SUM(total) as total FROM ventas WHERE cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999) AND fecha BETWEEN '$fechaInicial' AND '$fechaFinalMasUno'");
+			}else{
+				$stmt = Conexion::conectar()->prepare("SELECT SUM(total) as total FROM ventas WHERE cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999) AND fecha BETWEEN '$fechaInicial' AND '$fechaFinal'");
+			}
+		}
+		
+		$stmt -> execute();
+		$resultado = $stmt -> fetch();
+		
+		$stmt -> close();
+		$stmt = null;
+
+		return $resultado ? ($resultado["total"] ? $resultado["total"] : 0) : 0;
+	}
+
+	/*=============================================
 	ACTUALIZAR VENTA
 	=============================================*/
 

@@ -1,12 +1,9 @@
 <?php
 
-$item = null;
-$valor = null;
-$orden = "id";
+// OPTIMIZADO: Usar método paginado para solo cargar los últimos 10 productos
+$productos = ControladorProductos::ctrMostrarProductosPaginados(0, 10);
 
-$productos = ControladorProductos::ctrMostrarProductos($item, $valor, $orden);
-
-$totProductos = (count($productos) < 10) ? count($productos) : 10;
+$totProductos = count($productos);
 
  ?>
 
