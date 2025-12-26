@@ -1,4 +1,9 @@
 <?php 
+  // Habilitar reporte de errores para debugging (temporal)
+  error_reporting(E_ALL);
+  ini_set('display_errors', 0); // No mostrar en pantalla, solo en logs
+  ini_set('log_errors', 1);
+
   require_once __DIR__ . "/../../controladores/ventas.controlador.php";
   require_once __DIR__ . "/../../controladores/categorias.controlador.php";
   require_once __DIR__ . "/../../controladores/proveedores.controlador.php";
@@ -15,6 +20,14 @@
   $valor = null;
   $categorias = ControladorCategorias::ctrMostrarCategorias($item, $valor);
   $proveedores = ControladorProveedores::ctrMostrarProveedores($item, $valor);
+  
+  // Validar que categorias y proveedores sean arrays
+  if (!is_array($categorias)) {
+    $categorias = array();
+  }
+  if (!is_array($proveedores)) {
+    $proveedores = array();
+  }
 
   $categoriaSel = (isset($_POST["informeVentasCatPro"]) && $_POST["informeVentasCatPro"] == "categoria") 
     || (isset($_GET["tipo"]) && $_GET["tipo"] == "categoria");
@@ -30,28 +43,52 @@
 
   $totalVentas = ControladorVentas::ctrRangoFechasVentas($desdeFecha . ' 00:00', $hastaFecha . ' 23:59');
 
+  // Validar que $totalVentas sea un array
+  if (!is_array($totalVentas)) {
+    $totalVentas = array();
+  }
+
   $totalGeneral = 0;
   $cantidadGeneral = 0;
 
   if ($categoriaSel) {
     foreach ($totalVentas as $key => $value) {
+      // Validar que value tenga id
+      if (!isset($value["id"]) || empty($value["id"])) {
+        continue;
+      }
+      
       // Obtener productos desde tabla relacional
       $productosVta = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
       
-      if (is_array($productosVta)) {
+      if (is_array($productosVta) && !empty($productosVta)) {
         for ($i=0; $i < count($productosVta); $i++) {
+          // Validar que el producto tenga id
+          if (!isset($productosVta[$i]["id"]) || empty($productosVta[$i]["id"])) {
+            continue;
+          }
+          
           $prodIterado = ControladorProductos::ctrMostrarProductos('id', $productosVta[$i]["id"], null);
+          
+          // Validar que prodIterado sea válido
+          if (!$prodIterado || !isset($prodIterado["id_categoria"])) {
+            continue;
+          }
+          
           for ($x=0; $x < count($categorias); $x++) {
-            if ($categorias[$x]["id"] == $prodIterado["id_categoria"]) {
+            if (isset($categorias[$x]["id"]) && $categorias[$x]["id"] == $prodIterado["id_categoria"]) {
+              $montoProducto = floatval($productosVta[$i]["total"] ?? 0);
+              $cantidadProducto = floatval($productosVta[$i]["cantidad"] ?? 0);
+              
               if (array_key_exists("montoAcumulado", $categorias[$x])) {
-                $categorias[$x]["montoAcumulado"] = $categorias[$x]["montoAcumulado"] + $productosVta[$i]["total"];
-                $categorias[$x]["cantidadVendida"] = $categorias[$x]["cantidadVendida"] + $productosVta[$i]["cantidad"];
+                $categorias[$x]["montoAcumulado"] = floatval($categorias[$x]["montoAcumulado"]) + $montoProducto;
+                $categorias[$x]["cantidadVendida"] = floatval($categorias[$x]["cantidadVendida"] ?? 0) + $cantidadProducto;
               } else {
-                $categorias[$x] += ["montoAcumulado" => $productosVta[$i]["total"]];
-                $categorias[$x] += ["cantidadVendida" => $productosVta[$i]["cantidad"]];
+                $categorias[$x]["montoAcumulado"] = $montoProducto;
+                $categorias[$x]["cantidadVendida"] = $cantidadProducto;
               }
-              $totalGeneral += $productosVta[$i]["total"];
-              $cantidadGeneral += $productosVta[$i]["cantidad"];
+              $totalGeneral += $montoProducto;
+              $cantidadGeneral += $cantidadProducto;
               break 1;
             }
           }
@@ -72,23 +109,42 @@
 
   if($proveedorSel){
     foreach ($totalVentas as $key => $value) {
+      // Validar que value tenga id
+      if (!isset($value["id"]) || empty($value["id"])) {
+        continue;
+      }
+      
       // Obtener productos desde tabla relacional
       $productosVta = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
       
-      if (is_array($productosVta)) {
+      if (is_array($productosVta) && !empty($productosVta)) {
         for ($i=0; $i < count($productosVta); $i++) {
+          // Validar que el producto tenga id
+          if (!isset($productosVta[$i]["id"]) || empty($productosVta[$i]["id"])) {
+            continue;
+          }
+          
           $prodIterado = ControladorProductos::ctrMostrarProductos('id', $productosVta[$i]["id"], null);
+          
+          // Validar que prodIterado sea válido
+          if (!$prodIterado || !isset($prodIterado["id_proveedor"])) {
+            continue;
+          }
+          
           for ($x=0; $x < count($proveedores); $x++) {
-            if ($proveedores[$x]["id"] == $prodIterado["id_proveedor"]) {
+            if (isset($proveedores[$x]["id"]) && $proveedores[$x]["id"] == $prodIterado["id_proveedor"]) {
+              $montoProducto = floatval($productosVta[$i]["total"] ?? 0);
+              $cantidadProducto = floatval($productosVta[$i]["cantidad"] ?? 0);
+              
               if (array_key_exists("montoAcumulado", $proveedores[$x])) {
-                $proveedores[$x]["montoAcumulado"] = $proveedores[$x]["montoAcumulado"] + $productosVta[$i]["total"];
-                $proveedores[$x]["cantidadVendida"] = $proveedores[$x]["cantidadVendida"] + $productosVta[$i]["cantidad"];
+                $proveedores[$x]["montoAcumulado"] = floatval($proveedores[$x]["montoAcumulado"]) + $montoProducto;
+                $proveedores[$x]["cantidadVendida"] = floatval($proveedores[$x]["cantidadVendida"] ?? 0) + $cantidadProducto;
               } else {
-                $proveedores[$x] += ["montoAcumulado" => $productosVta[$i]["total"]];
-                $proveedores[$x] += ["cantidadVendida" => $productosVta[$i]["cantidad"]];
+                $proveedores[$x]["montoAcumulado"] = $montoProducto;
+                $proveedores[$x]["cantidadVendida"] = $cantidadProducto;
               }
-              $totalGeneral += $productosVta[$i]["total"];
-              $cantidadGeneral += $productosVta[$i]["cantidad"];
+              $totalGeneral += $montoProducto;
+              $cantidadGeneral += $cantidadProducto;
               break 1;
             }
           }
@@ -109,28 +165,49 @@
   
   if($productosSel){
     $arrayProductos = array();
-    foreach ($totalVentas as $key => $value) {
+    foreach ($totalVentas as $keyVenta => $value) {
+      // Validar que value tenga id
+      if (!isset($value["id"]) || empty($value["id"])) {
+        continue;
+      }
+      
       // Obtener productos desde tabla relacional
       $productosVta = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
       
-      if (is_array($productosVta)) {
+      if (is_array($productosVta) && !empty($productosVta)) {
         for ($i=0; $i < count($productosVta); $i++) {
+          // Validar que el producto tenga id
+          if (!isset($productosVta[$i]["id"]) || empty($productosVta[$i]["id"])) {
+            continue;
+          }
+          
           $prodIterado = ControladorProductos::ctrMostrarProductos('id', $productosVta[$i]["id"], null);
-          $key = $prodIterado["id"];
-          if(array_key_exists($key, $arrayProductos)){
-            $arrayProductos[$key]["cantidad"] += $productosVta[$i]["cantidad"];
-            $arrayProductos[$key]["vendido"] += $productosVta[$i]["total"];
+          
+          // Validar que prodIterado sea válido
+          if (!$prodIterado || !isset($prodIterado["id"])) {
+            continue;
+          }
+          
+          $idProducto = intval($prodIterado["id"]);
+          $montoProducto = floatval($productosVta[$i]["total"] ?? 0);
+          $cantidadProducto = floatval($productosVta[$i]["cantidad"] ?? 0);
+          
+          if(array_key_exists($idProducto, $arrayProductos)){
+            $arrayProductos[$idProducto]["cantidad"] += $cantidadProducto;
+            $arrayProductos[$idProducto]["vendido"] += $montoProducto;
           } else {
             $valor = array(
-              "codigo" => $prodIterado["codigo"],
-            "descripcion" => $prodIterado["descripcion"], 
-            "cantidad" => $productosVta[$i]["cantidad"], 
-            "vendido" => $productosVta[$i]["total"]
-          );
-          $arrayProductos[$key] = $valor;
+              "codigo" => $prodIterado["codigo"] ?? "",
+              "descripcion" => $prodIterado["descripcion"] ?? "Sin descripción", 
+              "cantidad" => $cantidadProducto, 
+              "vendido" => $montoProducto
+            );
+            $arrayProductos[$idProducto] = $valor;
+          }
+          
+          $totalGeneral += $montoProducto;
+          $cantidadGeneral += $cantidadProducto;
         }
-        $totalGeneral += $productosVta[$i]["total"];
-        $cantidadGeneral += $productosVta[$i]["cantidad"];
       }
     }
     // Ordenar por monto vendido descendente
@@ -476,53 +553,61 @@
                       }
                     }
                   } elseif ($proveedorSel) {
-                    foreach ($proveedores as $key => $value) {
-                      $monto = $value["montoAcumulado"] ?? 0;
-                      $cantidad = $value["cantidadVendida"] ?? 0;
-                      $promedio = $cantidad > 0 ? $monto / $cantidad : 0;
-                      $porcentaje = $totalGeneral > 0 ? ($monto / $totalGeneral) * 100 : 0;
-                      
-                      echo '<tr>';
-                      echo '<td><strong>' . htmlspecialchars($value["nombre"] ?? 'Sin proveedor') . '</strong></td>';
-                      echo '<td>$ ' . number_format($monto, 2, ',', '.') . '</td>';
-                      echo '<td>' . number_format($cantidad, 0, ',', '.') . '</td>';
-                      echo '<td>$ ' . number_format($promedio, 2, ',', '.') . '</td>';
-                      echo '<td style="font-weight: 600; color: #667eea;">' . number_format($porcentaje, 2, ',', '.') . '%</td>';
-                      echo '</tr>';
+                    if (empty($proveedores)) {
+                      echo '<tr><td colspan="5" class="text-center">No hay datos para el rango de fechas seleccionado.</td></tr>';
+                    } else {
+                      foreach ($proveedores as $key => $value) {
+                        $monto = floatval($value["montoAcumulado"] ?? 0);
+                        $cantidad = floatval($value["cantidadVendida"] ?? 0);
+                        $promedio = $cantidad > 0 ? $monto / $cantidad : 0;
+                        $porcentaje = $totalGeneral > 0 ? ($monto / $totalGeneral) * 100 : 0;
+                        
+                        echo '<tr>';
+                        echo '<td><strong>' . htmlspecialchars($value["nombre"] ?? 'Sin proveedor') . '</strong></td>';
+                        echo '<td>$ ' . number_format($monto, 2, ',', '.') . '</td>';
+                        echo '<td>' . number_format($cantidad, 0, ',', '.') . '</td>';
+                        echo '<td>$ ' . number_format($promedio, 2, ',', '.') . '</td>';
+                        echo '<td style="font-weight: 600; color: #667eea;">' . number_format($porcentaje, 2, ',', '.') . '%</td>';
+                        echo '</tr>';
 
-                      if ($monto > 0) {
-                        $datosGrafico[] = [
-                          "label" => substr($value["nombre"] ?? 'Sin proveedor', 0, 30),
-                          "value" => $monto,
-                          "color" => $colores[$colorIndex % count($colores)]
-                        ];
-                        $colorIndex++;
+                        if ($monto > 0) {
+                          $datosGrafico[] = [
+                            "label" => substr($value["nombre"] ?? 'Sin proveedor', 0, 30),
+                            "value" => $monto,
+                            "color" => $colores[$colorIndex % count($colores)]
+                          ];
+                          $colorIndex++;
+                        }
                       }
                     }
                   } else {
-                    $topProductos = array_slice($arrayProductos, 0, 50, true);
-                    foreach ($topProductos as $key => $value) {
-                      $monto = $value["vendido"] ?? 0;
-                      $cantidad = $value["cantidad"] ?? 0;
-                      $promedio = $cantidad > 0 ? $monto / $cantidad : 0;
-                      $porcentaje = $totalGeneral > 0 ? ($monto / $totalGeneral) * 100 : 0;
-                      
-                      echo '<tr>';
-                      echo '<td><strong>' . htmlspecialchars($value["codigo"] ?? '') . '</strong></td>';
-                      echo '<td>' . htmlspecialchars($value["descripcion"] ?? '') . '</td>';
-                      echo '<td>$ ' . number_format($monto, 2, ',', '.') . '</td>';
-                      echo '<td>' . number_format($cantidad, 0, ',', '.') . '</td>';
-                      echo '<td>$ ' . number_format($promedio, 2, ',', '.') . '</td>';
-                      echo '<td style="font-weight: 600; color: #667eea;">' . number_format($porcentaje, 2, ',', '.') . '%</td>';
-                      echo '</tr>';
+                    if (empty($arrayProductos)) {
+                      echo '<tr><td colspan="6" class="text-center">No hay datos para el rango de fechas seleccionado.</td></tr>';
+                    } else {
+                      $topProductos = array_slice($arrayProductos, 0, 50, true);
+                      foreach ($topProductos as $key => $value) {
+                        $monto = floatval($value["vendido"] ?? 0);
+                        $cantidad = floatval($value["cantidad"] ?? 0);
+                        $promedio = $cantidad > 0 ? $monto / $cantidad : 0;
+                        $porcentaje = $totalGeneral > 0 ? ($monto / $totalGeneral) * 100 : 0;
+                        
+                        echo '<tr>';
+                        echo '<td><strong>' . htmlspecialchars($value["codigo"] ?? '') . '</strong></td>';
+                        echo '<td>' . htmlspecialchars($value["descripcion"] ?? 'Sin descripción') . '</td>';
+                        echo '<td>$ ' . number_format($monto, 2, ',', '.') . '</td>';
+                        echo '<td>' . number_format($cantidad, 0, ',', '.') . '</td>';
+                        echo '<td>$ ' . number_format($promedio, 2, ',', '.') . '</td>';
+                        echo '<td style="font-weight: 600; color: #667eea;">' . number_format($porcentaje, 2, ',', '.') . '%</td>';
+                        echo '</tr>';
 
-                      if ($monto > 0 && count($datosGrafico) < 10) {
-                        $datosGrafico[] = [
-                          "label" => substr($value["descripcion"] ?? '', 0, 30),
-                          "value" => $monto,
-                          "color" => $colores[$colorIndex % count($colores)]
-                        ];
-                        $colorIndex++;
+                        if ($monto > 0 && count($datosGrafico) < 10) {
+                          $datosGrafico[] = [
+                            "label" => substr($value["descripcion"] ?? '', 0, 30),
+                            "value" => $monto,
+                            "color" => $colores[$colorIndex % count($colores)]
+                          ];
+                          $colorIndex++;
+                        }
                       }
                     }
                   }
