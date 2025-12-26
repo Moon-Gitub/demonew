@@ -215,6 +215,47 @@
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
+
+  /* Asegurar que el wrapper de la tabla permita que los dropdowns se muestren */
+  .ventas-table-wrapper {
+    overflow: visible !important;
+    position: relative;
+  }
+
+  /* Mejorar dropdown de acciones para que no se corte */
+  .acciones-dropdown {
+    position: static !important;
+  }
+
+  .acciones-dropdown .dropdown-menu {
+    position: absolute !important;
+    z-index: 9999 !important;
+    max-height: 400px;
+    overflow-y: auto;
+    min-width: 180px;
+  }
+
+  /* Asegurar que el contenedor de DataTables permita overflow visible */
+  #tablaListarVentas_wrapper {
+    overflow: visible !important;
+  }
+
+  .dataTables_wrapper {
+    overflow: visible !important;
+  }
+
+  /* Ajustar dropup para que funcione correctamente */
+  .acciones-dropdown.dropup .dropdown-menu {
+    bottom: 100% !important;
+    top: auto !important;
+    margin-bottom: 5px;
+  }
+
+  .acciones-dropdown:not(.dropup) .dropdown-menu {
+    top: 100% !important;
+    bottom: auto !important;
+    margin-top: 5px;
+  }
 </style>
 
 <div class="content-wrapper">
@@ -444,9 +485,12 @@
 
               echo '<td><a href="index.php?ruta=editar-venta&idVenta='.$value["id"].'">' . $value["codigo"] . '</a></td>';
 
-              $buscoPto = array_search($value["pto_vta"], array_column( $arrPuntos, 'pto'));
-
-              echo '<td>' .  $arrPuntos[$buscoPto]["det"] . '</td>';
+              if (is_array($arrPuntos) && !empty($arrPuntos)) {
+                $buscoPto = array_search($value["pto_vta"], array_column($arrPuntos, 'pto'));
+                echo '<td>' . ($buscoPto !== false && isset($arrPuntos[$buscoPto]["det"]) ? $arrPuntos[$buscoPto]["det"] : '') . '</td>';
+              } else {
+                echo '<td></td>';
+              }
               //echo '<td>' .  $arrPuntos[$value["pto_vta"]] . '</td>';
 
               echo '<td><center>' . $tpCbte .'<br>'. $numFact. '<c/enter></td>';
@@ -484,7 +528,7 @@
               
               <center>
 
-                <div class="btn-group dropup acciones-dropdown">
+                <div class="btn-group acciones-dropdown">
                   <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                     <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
                   </button>

@@ -1581,6 +1581,47 @@ tablaListarVtas.columns().every(function () {
       });
 });
 
+/*=============================================
+AJUSTAR DROPDOWN DE ACCIONES AUTOMÁTICAMENTE
+Detecta si el menú debe abrirse hacia arriba o abajo
+según la posición en la tabla
+=============================================*/
+function ajustarDropdownAcciones() {
+  $('#tablaListarVentas tbody').on('show.bs.dropdown', '.acciones-dropdown', function(e) {
+    var $dropdown = $(this);
+    var $menu = $dropdown.find('.dropdown-menu');
+    var $button = $dropdown.find('button');
+    
+    // Obtener posición del botón
+    var buttonOffset = $button.offset();
+    var buttonHeight = $button.outerHeight();
+    var menuHeight = $menu.outerHeight();
+    var windowHeight = $(window).height();
+    var scrollTop = $(window).scrollTop();
+    
+    // Calcular espacio disponible abajo y arriba
+    var espacioAbajo = windowHeight - (buttonOffset.top - scrollTop) - buttonHeight;
+    var espacioArriba = buttonOffset.top - scrollTop;
+    
+    // Si hay menos espacio abajo que arriba, o si el menú no cabe abajo, usar dropup
+    if (espacioAbajo < menuHeight || espacioAbajo < espacioArriba) {
+      $dropdown.addClass('dropup');
+      $dropdown.removeClass('dropdown');
+    } else {
+      $dropdown.removeClass('dropup');
+      $dropdown.addClass('dropdown');
+    }
+  });
+}
+
+// Inicializar ajuste de dropdowns
+ajustarDropdownAcciones();
+
+// Reajustar después de cada redibujado de la tabla
+tablaListarVtas.on('draw.dt', function() {
+  ajustarDropdownAcciones();
+});
+
 
 
 /*=============================================
