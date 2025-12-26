@@ -408,13 +408,16 @@
                     
                     <?php
 
-                     $clienteElegido = ($cliente["id"] == 1 ) ? $cliente["id"]."-".$cliente["nombre"] : $cliente["id"]."-".$cliente["nombre"] ." DNI: ".$cliente["documento"];
+                     $clienteElegido = "";
+                     if ($cliente && is_array($cliente) && isset($cliente["id"])) {
+                       $clienteElegido = ($cliente["id"] == 1 ) ? $cliente["id"]."-".$cliente["nombre"] : $cliente["id"]."-".$cliente["nombre"] ." DNI: ".($cliente["documento"] ?? "");
+                     }
 
                     ?>
 
-                    <input type="text" class="form-control" id="autocompletarClienteCaja" name="autocompletarCliente" required value="<?php echo $clienteElegido; ?>">
+                    <input type="text" class="form-control" id="autocompletarClienteCaja" name="autocompletarCliente" required value="<?php echo htmlspecialchars($clienteElegido); ?>">
 
-                    <input type="hidden" id="seleccionarCliente" name="seleccionarCliente" value="<?php echo $cliente["id"]; ?>">
+                    <input type="hidden" id="seleccionarCliente" name="seleccionarCliente" value="<?php echo htmlspecialchars($cliente["id"] ?? 1); ?>">
 
                     <span class="input-group-btn"><button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalAgregarCliente" data-dismiss="modal">Agregar cliente</button></span>
                   
@@ -441,10 +444,17 @@
                 <?php
 
                 // Obtener productos desde tabla relacional
-                $listaProducto = ControladorVentas::ctrObtenerProductosVentaLegacy($venta["id"]);
+                $listaProducto = array();
+                if (isset($venta["id"]) && !empty($venta["id"])) {
+                  $listaProducto = ControladorVentas::ctrObtenerProductosVentaLegacy($venta["id"]);
+                }
 
-                if (is_array($listaProducto)) {
+                if (is_array($listaProducto) && !empty($listaProducto)) {
                     foreach ($listaProducto as $key => $value) {
+                      // Validar que value tenga id
+                      if (!isset($value["id"]) || empty($value["id"])) {
+                        continue;
+                      }
 
                       // if($value["id"] != 1) {
 
@@ -453,12 +463,18 @@
                         $orden = "id";
 
                         $respuesta = ControladorProductos::ctrMostrarProductos($item, $valor, $orden);
+                        
+                        // Validar respuesta del producto
+                        if (!$respuesta || !is_array($respuesta)) {
+                          continue;
+                        }
 
-                        $stockAntiguo = $respuesta["stock"] + $value["cantidad"];
+                        $stockAntiguo = (isset($respuesta["stock"]) ? floatval($respuesta["stock"]) : 0) + (isset($value["cantidad"]) ? floatval($value["cantidad"]) : 0);
                         
                         // Obtener precio correcto (puede venir como "precio" o "precio_venta")
-                        $precioProducto = isset($value["precio"]) ? $value["precio"] : (isset($value["precio_venta"]) ? $value["precio_venta"] : 0);
-                        $totalProducto = isset($value["total"]) ? $value["total"] : ($value["cantidad"] * $precioProducto);
+                        $precioProducto = isset($value["precio"]) ? floatval($value["precio"]) : (isset($value["precio_venta"]) ? floatval($value["precio_venta"]) : 0);
+                        $cantidadProducto = isset($value["cantidad"]) ? floatval($value["cantidad"]) : 0;
+                        $totalProducto = isset($value["total"]) ? floatval($value["total"]) : ($cantidadProducto * $precioProducto);
                         
                         echo '<div class="row" style="padding:5px 15px">
                   
@@ -468,7 +484,7 @@
                       
                                   <span class="input-group-btn"><button type="button" class="btn btn-danger quitarProducto" idProducto="'.$value["id"].'"><i class="fa fa-times"></i></button></span>
 
-                                  <input type="text" class="form-control nuevaDescripcionProducto" idProducto="'.$value["id"].'" name="agregarProducto" value="'.htmlspecialchars($value["descripcion"] ?? "").'" readonly required>
+                                  <input type="text" class="form-control nuevaDescripcionProducto" idProducto="'.htmlspecialchars($value["id"]).'" name="agregarProducto" value="'.htmlspecialchars($value["descripcion"] ?? "").'" readonly required>
 
                                 </div>
 
@@ -476,7 +492,7 @@
 
                               <div class="col-xs-3">
                     
-                                <input type="number" class="form-control nuevaCantidadProducto" name="nuevaCantidadProducto" min="1" value="'.$value["cantidad"].'" stock="'.$stockAntiguo.'" nuevoStock="'.($value["stock"] ?? 0).'" required>
+                                <input type="number" class="form-control nuevaCantidadProducto" name="nuevaCantidadProducto" min="1" value="'.htmlspecialchars($cantidadProducto).'" stock="'.htmlspecialchars($stockAntiguo).'" nuevoStock="'.htmlspecialchars($value["stock"] ?? 0).'" required>
 
                               </div>
 
@@ -486,7 +502,7 @@
 
                                   <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
                          
-                                  <input type="text" class="form-control nuevoPrecioProducto" precioReal="'.$precioProducto.'" name="nuevoPrecioProducto" value="'.$totalProducto.'" readonly required>
+                                  <input type="text" class="form-control nuevoPrecioProducto" precioReal="'.htmlspecialchars($precioProducto).'" name="nuevoPrecioProducto" value="'.htmlspecialchars($totalProducto).'" readonly required>
          
                                 </div>
                      
@@ -533,16 +549,20 @@
                   //       </div>';
                   // }
 
-                }
-
-
                 ?>
+
 
                 </div>
 
                 <input type="hidden" id="listaProductos" name="listaProductos" value="<?php 
                     // Generar JSON compatible desde productos_venta
-                    $productosJson = ControladorVentas::ctrObtenerProductosVentaLegacy($venta['id']);
+                    $productosJson = array();
+                    if (isset($venta["id"]) && !empty($venta["id"])) {
+                      $productosJson = ControladorVentas::ctrObtenerProductosVentaLegacy($venta["id"]);
+                    }
+                    if (!is_array($productosJson)) {
+                      $productosJson = array();
+                    }
                     echo htmlspecialchars(json_encode($productosJson));
                 ?>">
 
