@@ -397,7 +397,227 @@
         </tfoot>
 
         <tbody>
-          <!-- Los datos se cargan dinámicamente vía AJAX con server-side processing -->
+
+        <?php
+
+          date_default_timezone_set('America/Argentina/Mendoza');
+
+          if(isset($_GET["fechaInicial"])){
+
+            $fechaInicial = $_GET["fechaInicial"];
+            $fechaFinal = $_GET["fechaFinal"];
+
+          }else{
+
+            $hoy = date('Y-m-d');
+
+             $fechaInicial = $hoy . ' 00:00';
+             $fechaFinal = $hoy . ' 23:59';
+
+          }
+
+          $tiposCbtes = array(
+            0 => 'X',
+            999 => 'Devolucion',
+            1 => 'Factura A',
+            6 => 'Factura B', 
+            11 => 'Factura C',
+            //'Factura E' => 0, 
+            51 => 'Factura M',
+            2 => 'Nota Débito A',
+            7 => 'Nota Débito B',
+            12 => 'Nota Débito C',
+            //'Nota Débito E' => 0, 
+            52 => 'Nota Débito M',
+            3 => 'Nota Crédito A',
+            8 => 'Nota Crédito B',
+            13 => 'Nota Crédito C',
+            //'Nota Crédito E' => 0,
+            53 => 'Nota Crédito M',
+            4 => 'Recibo A',
+            9 => 'Recibo B',
+            15 => 'Recibo C',
+            //'Recibo E' => 0, 
+            54 => 'Recibo M',
+            '' => 'no definido'
+          );
+
+          $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
+          if (!is_array($arrPuntos)) {
+            $arrPuntos = [];
+          }
+
+          $respuestaVta = ControladorVentas::ctrRangoFechasVentas($fechaInicial, $fechaFinal);
+
+          foreach ($respuestaVta as $key => $value) {
+
+            $facturada = ControladorVentas::ctrVentaFacturadaDatos($value['id']);
+
+            if($facturada) {
+
+              $deshAutorizarA = 'pointer-events: none; opacity: 0.4';
+              $deshAutorizarSpan = 'cursor:not-allowed; ';
+
+              $href= '#';
+              $imgAut='<i class="fa fa-check" style="color: green;"></i>';
+              $ptoVta = str_pad($value["pto_vta"], 5, "0", STR_PAD_LEFT);
+              $numCte = str_pad($facturada["nro_cbte"], 8, "0", STR_PAD_LEFT);
+
+              $numFact = $ptoVta . '-' . $numCte;
+
+            } else {
+
+              $deshAutorizarA = '';
+              $deshAutorizarSpan = '';
+
+              $href= 'index.php?ruta=ventas&idven='.$value["id"];
+              if(strlen(isset($value["observaciones"])) > 1){
+                $imgAut='<i class="fa fa-exclamation-triangle" style="color: #f39c12;"></i>';
+              } else{
+                if($value["cbte_tipo"] == 0 || $value["cbte_tipo"] == 999 ) {
+                  $imgAut = '';
+                } else {
+                  $imgAut='<i class="fa fa-times" style="color: red;"></i>';
+                }
+              }
+              // $imgAut='<i class="fa fa-times" style="color: red;"></i>';
+              // $ptoVta = str_pad($value["pto_vta"], 5, "0", STR_PAD_LEFT);
+              // $numCte = str_pad($value["codigo"], 8, "0", STR_PAD_LEFT);
+              $numFact = "";
+
+            }
+
+            $signoVta = ($value["cbte_tipo"] == 3 || $value["cbte_tipo"] == 8 || $value["cbte_tipo"] == 13 || $value["cbte_tipo"] == 999 || $value["cbte_tipo"] == 203 || $value["cbte_tipo"] == 208 || $value["cbte_tipo"] == 213) ? '-' : ''; //es nota credito o devolucion
+            $tpCbte = $imgAut . ' ' . $tiposCbtes[$value["cbte_tipo"]] ;
+
+            $lblEstado = '';
+            $botonCobro='pointer-events: none;';
+            $btnCobroLi = 'cursor:not-allowed;';
+
+            //Estado pagada - adeudada - cta. cte.
+            if($signoVta == ''){
+            
+              if($value["estado"] == 0) { //Adeudada
+
+                $lblEstado = '<span style="cursor: pointer" class="label label-danger btnCobrarVenta" data-toggle="modal" data-target="#modalCobrarVenta" data-dismiss="modal" idVenta="'.$value["id"].'">Adeudado</span>' ;
+                $botonCobro = 'cursor: pointer;';
+                $btnCobroLi = '';
+
+              } elseif($value["estado"] == 1) { //Pagada
+
+                $lblEstado='<span class="label label-success">Pagado</span>';
+                $botonCobro='pointer-events: none;';
+                $btnCobroLi = 'cursor:not-allowed;';
+
+              } elseif ($value["estado"] == 2) {
+
+                $lblEstado='<span class="label label-warning">Cta. Cte.</span>';
+                $botonCobro='pointer-events: none;';
+                $btnCobroLi = 'cursor:not-allowed;';
+               
+              }
+            } else {
+              $deshAutorizarA = 'pointer-events: none; opacity: 0.4';
+              $deshAutorizarSpan = 'cursor:not-allowed; ';
+            }
+            
+            //$botonMail = ($value["id_cliente"] == 1) ? 'pointer-events: none;' : 'cursor: pointer;' ;
+            //$botonMailLi = ($value["id_cliente"] == 1) ? 'cursor:not-allowed;' : '' ;
+
+             echo '<tr>
+
+                    <td>'.$value["fecha"].'</td>';
+                    $nomEmp = ControladorEmpresa::ctrMostrarempresa('id', $value['id_empresa']);
+                      echo '<td>'.$nomEmp['titular'].'</td>';
+
+              echo '<td><a href="index.php?ruta=editar-venta&idVenta='.$value["id"].'">' . $value["codigo"] . '</a></td>';
+
+              if (is_array($arrPuntos) && !empty($arrPuntos)) {
+                $buscoPto = array_search($value["pto_vta"], array_column($arrPuntos, 'pto'));
+                echo '<td>' . ($buscoPto !== false && isset($arrPuntos[$buscoPto]["det"]) ? $arrPuntos[$buscoPto]["det"] : '') . '</td>';
+              } else {
+                echo '<td></td>';
+              }
+              //echo '<td>' .  $arrPuntos[$value["pto_vta"]] . '</td>';
+
+              echo '<td><center>' . $tpCbte .'<br>'. $numFact. '<c/enter></td>';
+
+              $itemCliente = "id";
+              $valorCliente = $value["id_cliente"];
+
+              $respuestaCliente = ControladorClientes::ctrMostrarClientes($itemCliente, $valorCliente);
+
+              // Validar que respuestaCliente sea un array antes de acceder
+              if(!is_array($respuestaCliente) || empty($respuestaCliente)){
+                $respuestaCliente = array("nombre" => "Cliente no encontrado", "email" => "");
+              }
+
+              if($value["id_cliente"] == 1){
+                echo '<td>'.$respuestaCliente["nombre"].'</td>';
+              } else {
+                echo '<td><a href="index.php?ruta=clientes_cuenta&id_cliente='.$value["id_cliente"].'">'.$respuestaCliente["nombre"].'</a></td>';
+              }
+
+              $arrMetodoPago = json_decode($value["metodo_pago"]);
+              $metPago ="";// (count($arrMetodoPago) > 1) ? 'Mixto' : $arrMetodoPago[0]->tipo;
+
+              for ($i=0; $i < count($arrMetodoPago); $i++) { 
+                $metPago .= $arrMetodoPago[$i]->tipo . '<br>';
+              }
+
+              echo '<td>'.$metPago.'</td>';
+
+              echo '<td style="text-align: center">'.$lblEstado.'</td>
+
+              <td>'. $signoVta . round($value["total"],2).'</td>
+
+              <td class="text-center">
+              
+              <div class="acciones-ventas">';
+                      
+                      // Botón Cobrar
+                      echo '<a class="btn-accion btn-success btnCobrarVenta" title="Cobrar venta" style="' .$botonCobro. '" data-toggle="modal" data-target="#modalCobrarVenta" data-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-usd"></i></a>';
+                      
+                      // Botón Autorizar
+                      echo '<a class="btn-accion btn-primary btnAutorizarCbte" title="Autorizar comprobante" style="' . $deshAutorizarA . '" data-toggle="modal" data-target="#modalAutorizarComprobante" data-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-exchange"></i></a>';
+                      
+                      // Botón Ver/Editar
+                      echo '<a class="btn-accion btnEditarVenta" title="Ver/Editar venta" style="cursor: pointer;" idVenta="'.$value["id"].'"><i class="fa fa-pencil"></i></a>';
+                      
+                      // Botón Descargar
+                      echo '<a class="btn-accion btnDescargarFactura" title="Descargar factura" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-download"></i></a>';
+                      
+                      // Botón Imprimir
+                      echo '<a class="btn-accion btnImprimirFactura" title="Imprimir factura" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-print"></i></a>';
+                      
+                      // Botón Remito
+                      echo '<a class="btn-accion btnImprimirRemito" title="Imprimir remito" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-cubes"></i></a>';
+                      
+                      // Botón Ticket
+                      echo '<a class="btn-accion btnImprimirTicket" title="Imprimir ticket" style="cursor: pointer;" idVenta="'.$value["id"].'" data-toggle="modal" data-target="#modalImprimirTicketCajaVenta" data-dismiss="modal"><i class="fa fa-ticket"></i></a>';
+                     
+                      // Botón Email
+                      $emailCliente = isset($respuestaCliente["email"]) ? $respuestaCliente["email"] : "";
+                      echo '<a class="btn-accion btnMailComprobante" title="Enviar por email" codigoVenta="'.$value["codigo"].'" mailCliente="'.$emailCliente.'"><i class="fa fa-envelope"></i></a>';
+
+                      // Botón Eliminar (solo administradores)
+                      if($_SESSION["perfil"] == "Administrador"){
+                        if($facturada) {
+                          echo '<a class="btn-accion disabled" title="No se puede eliminar venta facturada" style="cursor: not-allowed; opacity: 0.4;"><i class="fa fa-times"></i></a>';
+                        } else {
+                          echo '<a class="btn-accion btn-danger btnEliminarVenta" title="Eliminar venta" style="cursor: pointer;" idVenta="'.$value["id"].'"><i class="fa fa-times"></i></a>';
+                        }
+                      }
+                        
+              echo '</div>
+
+                </td>
+
+              </tr>';
+            }
+
+        ?>
+               
         </tbody>
 
        </table>
