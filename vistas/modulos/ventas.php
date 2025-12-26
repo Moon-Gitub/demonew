@@ -576,36 +576,36 @@
               <div class="acciones-ventas">';
                       
                       // Botón Cobrar
-                      echo '<a class="btn-accion btn-success" title="Cobrar venta" style="' .$botonCobro. '" class="btnCobrarVenta" data-toggle="modal" data-target="#modalCobrarVenta" data-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-usd"></i></a>';
+                      echo '<a class="btn-accion btn-success btnCobrarVenta" title="Cobrar venta" style="' .$botonCobro. '" data-toggle="modal" data-target="#modalCobrarVenta" data-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-usd"></i></a>';
                       
                       // Botón Autorizar
-                      echo '<a class="btn-accion btn-primary" title="Autorizar comprobante" style="' . $deshAutorizarA . '" class="btnAutorizarCbte" data-toggle="modal" data-target="#modalAutorizarComprobante" data-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-exchange"></i></a>';
+                      echo '<a class="btn-accion btn-primary btnAutorizarCbte" title="Autorizar comprobante" style="' . $deshAutorizarA . '" data-toggle="modal" data-target="#modalAutorizarComprobante" data-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-exchange"></i></a>';
                       
                       // Botón Ver/Editar
-                      echo '<a class="btn-accion" title="Ver/Editar venta" style="cursor: pointer;" class="btnEditarVenta" idVenta="'.$value["id"].'"><i class="fa fa-pencil"></i></a>';
+                      echo '<a class="btn-accion btnEditarVenta" title="Ver/Editar venta" style="cursor: pointer;" idVenta="'.$value["id"].'"><i class="fa fa-pencil"></i></a>';
                       
                       // Botón Descargar
-                      echo '<a class="btn-accion" title="Descargar factura" class="btnDescargarFactura" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-download"></i></a>';
+                      echo '<a class="btn-accion btnDescargarFactura" title="Descargar factura" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-download"></i></a>';
                       
                       // Botón Imprimir
-                      echo '<a class="btn-accion" title="Imprimir factura" class="btnImprimirFactura" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-print"></i></a>';
+                      echo '<a class="btn-accion btnImprimirFactura" title="Imprimir factura" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-print"></i></a>';
                       
                       // Botón Remito
-                      echo '<a class="btn-accion" title="Imprimir remito" class="btnImprimirRemito" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-cubes"></i></a>';
+                      echo '<a class="btn-accion btnImprimirRemito" title="Imprimir remito" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-cubes"></i></a>';
                       
                       // Botón Ticket
-                      echo '<a class="btn-accion" title="Imprimir ticket" class="btnImprimirTicket" style="cursor: pointer;" idVenta="'.$value["id"].'" data-toggle="modal" data-target="#modalImprimirTicketCajaVenta" data-dismiss="modal"><i class="fa fa-ticket"></i></a>';
+                      echo '<a class="btn-accion btnImprimirTicket" title="Imprimir ticket" style="cursor: pointer;" idVenta="'.$value["id"].'" data-toggle="modal" data-target="#modalImprimirTicketCajaVenta" data-dismiss="modal"><i class="fa fa-ticket"></i></a>';
                      
                       // Botón Email
                       $emailCliente = isset($respuestaCliente["email"]) ? $respuestaCliente["email"] : "";
-                      echo '<a class="btn-accion" title="Enviar por email" class="btnMailComprobante" codigoVenta="'.$value["codigo"].'" mailCliente="'.$emailCliente.'"><i class="fa fa-envelope"></i></a>';
+                      echo '<a class="btn-accion btnMailComprobante" title="Enviar por email" codigoVenta="'.$value["codigo"].'" mailCliente="'.$emailCliente.'"><i class="fa fa-envelope"></i></a>';
 
                       // Botón Eliminar (solo administradores)
                       if($_SESSION["perfil"] == "Administrador"){
                         if($facturada) {
                           echo '<a class="btn-accion disabled" title="No se puede eliminar venta facturada" style="cursor: not-allowed; opacity: 0.4;"><i class="fa fa-times"></i></a>';
                         } else {
-                          echo '<a class="btn-accion btn-danger" title="Eliminar venta" class="btnEliminarVenta" style="cursor: pointer;" idVenta="'.$value["id"].'"><i class="fa fa-times"></i></a>';
+                          echo '<a class="btn-accion btn-danger btnEliminarVenta" title="Eliminar venta" style="cursor: pointer;" idVenta="'.$value["id"].'"><i class="fa fa-times"></i></a>';
                         }
                       }
                         
