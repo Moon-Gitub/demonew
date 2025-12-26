@@ -1548,20 +1548,20 @@ var tablaListarVtas = $("#tablaListarVentas").DataTable({
             };
 
             var total = api
-                .column(7)
+                .column(8)
                 .data()
                 .reduce(function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0);
 
             var totalPage = api
-                .column(7, {search:'applied'})
+                .column(8, {search:'applied'})
                 .data()
                 .reduce(function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0);
 
-            $(api.column(7).footer()).html(
+            $(api.column(8).footer()).html(
                 ` ${totalPage.toFixed(2)}`
             )
 
