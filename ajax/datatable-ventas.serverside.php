@@ -47,7 +47,7 @@ if (!$fechaInicial || !$fechaFinal) {
     $fechaFinal = $hoy . ' 23:59';
 }
 
-// Construir condición WHERE para fechas
+// Construir condición WHERE para fechas (usar alias 'temp' de la subconsulta)
 $whereFecha = "";
 if ($fechaInicial && $fechaFinal) {
     // Limpiar fechas (pueden venir con o sin hora)
@@ -63,7 +63,7 @@ if ($fechaInicial && $fechaFinal) {
     }
     
     if ($fechaInicial == $fechaFinal) {
-        $whereFecha = "v.fecha LIKE '%" . substr($fechaFinal, 0, 10) . "%'";
+        $whereFecha = "temp.fecha LIKE '%" . substr($fechaFinal, 0, 10) . "%'";
     } else {
         $fechaActual = new DateTime();
         $fechaActual->add(new DateInterval("P1D"));
@@ -73,16 +73,16 @@ if ($fechaInicial && $fechaFinal) {
         $fechaFinalMasUno = $fechaFinal2->format("Y-m-d");
         
         if ($fechaFinalMasUno == $fechaActualMasUno) {
-            $whereFecha = "v.fecha BETWEEN '" . $fechaInicial . "' AND '" . $fechaFinalMasUno . " 23:59'";
+            $whereFecha = "temp.fecha BETWEEN '" . $fechaInicial . "' AND '" . $fechaFinalMasUno . " 23:59'";
         } else {
-            $whereFecha = "v.fecha BETWEEN '" . $fechaInicial . "' AND '" . $fechaFinal . "'";
+            $whereFecha = "temp.fecha BETWEEN '" . $fechaInicial . "' AND '" . $fechaFinal . "'";
         }
     }
 } else {
     // Si no hay fechas, usar fecha de hoy
     date_default_timezone_set('America/Argentina/Mendoza');
     $hoy = date('Y-m-d');
-    $whereFecha = "v.fecha BETWEEN '" . $hoy . " 00:00' AND '" . $hoy . " 23:59'";
+    $whereFecha = "temp.fecha BETWEEN '" . $hoy . " 00:00' AND '" . $hoy . " 23:59'";
 }
 
 // Obtener datos de empresa para puntos de venta
@@ -115,7 +115,45 @@ $tiposCbtes = array(
     '' => 'no definido'
 );
 
-// Tabla con JOINs optimizados (sin WHERE aquí, se agrega después)
+// Construir WHERE para fechas ANTES de crear la subconsulta
+$whereFechaSubquery = "";
+if ($fechaInicial && $fechaFinal) {
+    // Limpiar fechas (pueden venir con o sin hora)
+    $fechaInicial = trim($fechaInicial);
+    $fechaFinal = trim($fechaFinal);
+    
+    // Si no tienen hora, agregarla
+    if (strlen($fechaInicial) == 10) {
+        $fechaInicial .= ' 00:00';
+    }
+    if (strlen($fechaFinal) == 10) {
+        $fechaFinal .= ' 23:59';
+    }
+    
+    if ($fechaInicial == $fechaFinal) {
+        $whereFechaSubquery = "WHERE v.fecha LIKE '%" . substr($fechaFinal, 0, 10) . "%'";
+    } else {
+        $fechaActual = new DateTime();
+        $fechaActual->add(new DateInterval("P1D"));
+        $fechaActualMasUno = $fechaActual->format("Y-m-d");
+        $fechaFinal2 = new DateTime($fechaFinal);
+        $fechaFinal2->add(new DateInterval("P1D"));
+        $fechaFinalMasUno = $fechaFinal2->format("Y-m-d");
+        
+        if ($fechaFinalMasUno == $fechaActualMasUno) {
+            $whereFechaSubquery = "WHERE v.fecha BETWEEN '" . $fechaInicial . "' AND '" . $fechaFinalMasUno . " 23:59'";
+        } else {
+            $whereFechaSubquery = "WHERE v.fecha BETWEEN '" . $fechaInicial . "' AND '" . $fechaFinal . "'";
+        }
+    }
+} else {
+    // Si no hay fechas, usar fecha de hoy
+    date_default_timezone_set('America/Argentina/Mendoza');
+    $hoy = date('Y-m-d');
+    $whereFechaSubquery = "WHERE v.fecha BETWEEN '" . $hoy . " 00:00' AND '" . $hoy . " 23:59'";
+}
+
+// Tabla con JOINs optimizados (con WHERE en la subconsulta)
 $table = <<<EOT
  (
     SELECT
@@ -140,6 +178,7 @@ $table = <<<EOT
     LEFT JOIN empresa e ON v.id_empresa = e.id
     LEFT JOIN clientes c ON v.id_cliente = c.id
     LEFT JOIN ventas_factura vf ON v.id = vf.id_venta
+    $whereFechaSubquery
  ) temp
 EOT;
 
@@ -351,10 +390,7 @@ $columns = array(
 
 require( '../extensiones/ssp.class.php' );
 
-// Usar SSP::complex para permitir WHERE personalizado
-// $whereAll se aplica a todas las consultas (incluyendo COUNT)
-$whereAll = $whereFecha ? $whereFecha : "1=1";
-
+// Usar SSP::complex - el WHERE ya está en la subconsulta, no necesitamos whereAll adicional
 echo json_encode(
-    SSP::complex( $_GET, $sql_details, $table, $primaryKey, $columns, null, $whereAll )
+    SSP::complex( $_GET, $sql_details, $table, $primaryKey, $columns, null, null )
 );
