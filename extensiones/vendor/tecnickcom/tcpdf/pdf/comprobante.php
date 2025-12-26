@@ -277,14 +277,9 @@ try {
         die('Error: La venta no tiene productos');
     }
     
-    // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+    // Obtener productos desde tabla relacional
     require_once "../../../controladores/ventas.controlador.php";
     $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($respuestaVenta["id"]);
-    
-    // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
-    if (empty($productos) && !empty($respuestaVenta["productos"])) {
-        $productos = json_decode($respuestaVenta["productos"], true);
-    }
     
     // Validar que se obtuvieron los productos
     if(!is_array($productos) || empty($productos)) {

@@ -392,11 +392,7 @@
                 <input type="hidden" id="listaProductosCaja" name="listaProductosCaja" value="<?php 
                     // Generar JSON compatible desde productos_venta
                     $productosJson = ControladorVentas::ctrObtenerProductosVentaLegacy($venta['id']);
-                    if (empty($productosJson) && !empty($venta['productos'])) {
-                        echo htmlspecialchars($venta['productos']);
-                    } else {
-                        echo htmlspecialchars(json_encode($productosJson));
-                    }
+                    echo htmlspecialchars(json_encode($productosJson));
                 ?>">
 
                <input type="hidden" id="listaDescuentoCaja" name="listaDescuentoCaja">

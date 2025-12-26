@@ -248,13 +248,8 @@ class ControladorCajaCierres{
 					$venta = ModeloVentas::mdlMostrarVentaConCliente($value["id_venta"]); //traigo venta
 					
 					if($venta) {
-						// Obtener productos desde tabla relacional (o JSON legacy si no existe)
+						// Obtener productos desde tabla relacional
 						$separoProd = ControladorVentas::ctrObtenerProductosVentaLegacy($venta["id"]);
-						
-						// Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
-						if (empty($separoProd) && !empty($venta["productos"])) {
-							$separoProd = json_decode($venta["productos"], true);
-						}
 						
 						if(is_array($separoProd)) {
 							foreach ($separoProd as $keyPro => $valuePro) {

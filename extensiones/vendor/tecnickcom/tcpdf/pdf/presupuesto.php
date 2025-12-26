@@ -253,14 +253,9 @@ $tipoIvaCliente = $condIva[$respuestaCliente["condicion_iva"]];
         die('Error: El presupuesto no tiene productos');
     }
     
-    // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+    // Obtener productos desde tabla relacional
     require_once "../../../controladores/ventas.controlador.php";
     $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($respuestaVenta["id"]);
-    
-    // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
-    if (empty($productos) && !empty($respuestaVenta["productos"])) {
-        $productos = json_decode($respuestaVenta["productos"], true);
-    }
     
     if(!is_array($productos) || empty($productos)) {
         error_log("ERROR: Los productos del presupuesto no son válidos");

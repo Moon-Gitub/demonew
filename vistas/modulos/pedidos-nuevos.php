@@ -76,13 +76,8 @@ if($_SESSION["perfil"] == "Vendedor"){
 			$precioCompraActual = 0;
 			$cantidadProductos = 0;
 			$detallePedido = "";
-			// Obtener productos desde tabla relacional (o JSON legacy si no existe)
+			// Obtener productos desde tabla relacional
 			$listaProducto = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
-			
-			// Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
-			if (empty($listaProducto) && !empty($value["productos"])) {
-				$listaProducto = json_decode($value["productos"], true);
-			}
 
 			if (is_array($listaProducto)) {
                 foreach ($listaProducto as $key2 => $value2) {

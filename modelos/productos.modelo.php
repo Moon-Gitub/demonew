@@ -808,15 +808,6 @@ class ModeloProductos{
 		$stmt -> execute();
 
 		$resultado = $stmt -> fetchAll();
-		
-		// Si no hay resultados en tabla relacional, intentar con JSON (compatibilidad)
-		if (empty($resultado)) {
-			$caracter = '"';
-			$stmtLegacy = Conexion::conectar()->prepare("SELECT REPLACE(REPLACE(REPLACE(REPLACE(JSON_EXTRACT(productos, '$[*].id'), '$caracter',''), '[', ''), ']',''), ' ', '') as productosA, REPLACE(REPLACE(REPLACE(REPLACE(JSON_EXTRACT(productos, '$[*].cantidad'), '$caracter',''), '[', ''), ']',''), ' ', '') as cantidadesA, REPLACE(REPLACE(REPLACE(REPLACE(JSON_EXTRACT(productos, '$[*].descripcion'), '$caracter',''), '[', ''), ']',''), ' ', '') as descripcionA  FROM ventas WHERE fecha BETWEEN '$fechaInicial%' AND '$fechaFinal'");
-			$stmtLegacy -> execute();
-			$resultado = $stmtLegacy -> fetchAll();
-			$stmtLegacy -> closeCursor();
-		}
 
 		$stmt -> closeCursor();
 		$stmt = null;

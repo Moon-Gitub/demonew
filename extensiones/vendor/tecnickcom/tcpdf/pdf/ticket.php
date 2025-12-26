@@ -89,14 +89,9 @@ $codigoVenta = $this->codigo;
 $respuestaVenta = ControladorVentas::ctrMostrarVentas($itemVenta, $codigoVenta);
 $fecha = substr($respuestaVenta["fecha"],0,-8);
 
-// Obtener productos desde tabla relacional (o JSON legacy si no existe)
+// Obtener productos desde tabla relacional
 require_once "../../../controladores/ventas.controlador.php";
 $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($respuestaVenta["id"]);
-
-// Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
-if (empty($productos) && !empty($respuestaVenta["productos"])) {
-    $productos = json_decode($respuestaVenta["productos"], true);
-}
 
 $neto = number_format($respuestaVenta["neto"],2);
 $impuesto = number_format($respuestaVenta["impuesto"],2);
