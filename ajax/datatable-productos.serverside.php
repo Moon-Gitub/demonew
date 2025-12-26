@@ -172,11 +172,15 @@ $columns = array(
                 $idProducto = $row["id"];
                 $codigo = htmlspecialchars($row["codigo"] ?? '', ENT_QUOTES, 'UTF-8');
                 
-                if($row["id"] < 10){
-                    return "<div class='btn-group dropup acciones-dropdown'><button type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown'><i class='fa fa-cog fa-fw'></i> Acciones <span class='caret'></span></button><ul class='dropdown-menu dropdown-menu-right'><li><a href='#' class='btnEditarProducto' idProducto='".$idProducto."' data-toggle='modal' data-target='#modalEditarProducto'><i class='fa fa-pencil fa-fw'></i> Editar</a></li></ul></div>";
-                } else {
-                    return "<div class='btn-group dropup acciones-dropdown'><button type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown'><i class='fa fa-cog fa-fw'></i> Acciones <span class='caret'></span></button><ul class='dropdown-menu dropdown-menu-right'><li><a href='#' class='btnEditarProducto' idProducto='".$idProducto."' data-toggle='modal' data-target='#modalEditarProducto'><i class='fa fa-pencil fa-fw'></i> Editar</a></li><li><a href='#' class='btnEliminarProducto' idProducto='".$idProducto."' codigo='".$codigo."'><i class='fa fa-times fa-fw'></i> Borrar</a></li></ul></div>";   
+                $html = "<div class='acciones-tabla'>";
+                $html .= "<a class='btn-accion btnEditarProducto' title='Editar producto' href='#' idProducto='".$idProducto."' data-toggle='modal' data-target='#modalEditarProducto'><i class='fa fa-pencil'></i></a>";
+                
+                if($row["id"] >= 10){
+                    $html .= "<a class='btn-accion btn-danger btnEliminarProducto' title='Borrar producto' href='#' idProducto='".$idProducto."' codigo='".$codigo."'><i class='fa fa-times'></i></a>";
                 }
+                
+                $html .= "</div>";
+                return $html;
         } 
     ),
     array( 'db' => 'id', 'dt' => 11 ),
