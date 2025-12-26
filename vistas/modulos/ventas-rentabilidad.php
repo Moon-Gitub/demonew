@@ -219,13 +219,8 @@
 
           foreach ($ventas as $key => $value) {
             
-            // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+            // Obtener productos desde tabla relacional
             $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
-            
-            // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
-            if (empty($productos) && !empty($value["productos"])) {
-                $productos = json_decode($value["productos"], true);
-            }
             
             $costoVenta = 0;
             

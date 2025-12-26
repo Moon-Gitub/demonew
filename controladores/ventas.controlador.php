@@ -972,13 +972,8 @@ class ControladorVentas{
 
 			if($cambioProducto){
 
-				// Obtener productos desde tabla relacional (o JSON legacy si no existe)
+				// Obtener productos desde tabla relacional
 				$productos = self::ctrObtenerProductosVentaLegacy($traerVenta["id"]);
-				
-				// Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
-				if (empty($productos) && !empty($traerVenta["productos"])) {
-					$productos = json_decode($traerVenta["productos"], true);
-				}
 
 				$totalProductosComprados = array();
 				if (is_array($productos)) {
@@ -1157,13 +1152,8 @@ class ControladorVentas{
 			/*=============================================
 			FORMATEAR TABLA DE PRODUCTOS Y LA DE CLIENTES
 			=============================================*/
-			// Obtener productos desde tabla relacional (o JSON legacy si no existe)
+			// Obtener productos desde tabla relacional
 			$productos = self::ctrObtenerProductosVentaLegacy($traerVenta["id"]);
-			
-			// Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
-			if (empty($productos) && !empty($traerVenta["productos"])) {
-				$productos = json_decode($traerVenta["productos"], true);
-			}
 			
 			$totalProductosComprados = array();
 			if (is_array($productos)) {
@@ -1741,6 +1731,11 @@ class ControladorVentas{
 	static public function ctrObtenerProductosVentaLegacy($idVenta){
 
 		$productos = ModeloVentas::mdlObtenerProductosVenta($idVenta);
+		
+		// Si no hay productos en tabla relacional, retornar array vacío (no hay fallback a JSON)
+		if (empty($productos)) {
+			return array();
+		}
 		
 		// Convertir al formato antiguo del JSON para compatibilidad
 		$productosLegacy = array();

@@ -35,13 +35,8 @@
 
   if ($categoriaSel) {
     foreach ($totalVentas as $key => $value) {
-      // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+      // Obtener productos desde tabla relacional
       $productosVta = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
-      
-      // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
-      if (empty($productosVta) && !empty($value["productos"])) {
-          $productosVta = json_decode($value["productos"], true);
-      }
       
       if (is_array($productosVta)) {
         for ($i=0; $i < count($productosVta); $i++) {
@@ -77,13 +72,8 @@
 
   if($proveedorSel){
     foreach ($totalVentas as $key => $value) {
-      // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+      // Obtener productos desde tabla relacional
       $productosVta = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
-      
-      // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
-      if (empty($productosVta) && !empty($value["productos"])) {
-          $productosVta = json_decode($value["productos"], true);
-      }
       
       if (is_array($productosVta)) {
         for ($i=0; $i < count($productosVta); $i++) {
@@ -120,13 +110,8 @@
   if($productosSel){
     $arrayProductos = array();
     foreach ($totalVentas as $key => $value) {
-      // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+      // Obtener productos desde tabla relacional
       $productosVta = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
-      
-      // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
-      if (empty($productosVta) && !empty($value["productos"])) {
-          $productosVta = json_decode($value["productos"], true);
-      }
       
       if (is_array($productosVta)) {
         for ($i=0; $i < count($productosVta); $i++) {

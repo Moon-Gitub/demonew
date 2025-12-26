@@ -27,6 +27,9 @@ class ModeloVentas{
 	=============================================*/
 	static public function mdlIngresarVenta($tabla, $datos){
 
+		// Guardar productos JSON vacío (compatibilidad con estructura, pero no se usa)
+		$productosJson = '[]';
+
 		$stmt = Conexion::conectar()->prepare("INSERT IGNORE INTO $tabla(uuid, id_empresa, fecha, codigo, cbte_tipo, id_cliente, id_vendedor, productos, impuesto, impuesto_detalle, neto, neto_gravado, base_imponible_0, base_imponible_2, base_imponible_5, base_imponible_10, base_imponible_21, base_imponible_27, iva_2, iva_5, iva_10, iva_21, iva_27, total, metodo_pago, pto_vta, concepto, fec_desde, fec_hasta, fec_vencimiento, asociado_tipo_cbte, asociado_pto_vta, asociado_nro_cbte, estado, observaciones_vta, pedido_afip, respuesta_afip) VALUES (:uuid, :id_empresa, :fecha, :codigo, :cbte_tipo, :id_cliente, :id_vendedor, :productos, :impuesto, :impuesto_detalle, :neto, :neto_gravado, :base_imponible_0, :base_imponible_2, :base_imponible_5, :base_imponible_10, :base_imponible_21, :base_imponible_27, :iva_2, :iva_5, :iva_10, :iva_21, :iva_27, :total, :metodo_pago, :pto_vta, :concepto, :fec_desde, :fec_hasta, :fec_vencimiento, :asociado_tipo_cbte, :asociado_pto_vta, :asociado_nro_cbte, :estado, :observaciones_vta, :pedido_afip, :respuesta_afip)");
 
 		$stmt->bindParam(":uuid", $datos["uuid"], PDO::PARAM_STR);
@@ -36,7 +39,7 @@ class ModeloVentas{
 		$stmt->bindParam(":cbte_tipo", $datos["cbte_tipo"], PDO::PARAM_INT);
 		$stmt->bindParam(":id_cliente", $datos["id_cliente"], PDO::PARAM_INT);
 		$stmt->bindParam(":id_vendedor", $datos["id_vendedor"], PDO::PARAM_INT);
-		$stmt->bindParam(":productos", $datos["productos"], PDO::PARAM_STR);
+		$stmt->bindParam(":productos", $productosJson, PDO::PARAM_STR);
 		$stmt->bindParam(":impuesto", $datos["impuesto"], PDO::PARAM_STR);
 		$stmt->bindParam(":impuesto_detalle", $datos["impuesto_detalle"], PDO::PARAM_STR);
 		$stmt->bindParam(":neto", $datos["neto"], PDO::PARAM_STR);
@@ -108,13 +111,16 @@ class ModeloVentas{
 		$idVenta = $venta ? $venta["id"] : null;
 		$stmtId->closeCursor();
 
+		// Guardar productos JSON vacío (compatibilidad con estructura, pero no se usa)
+		$productosJson = '[]';
+
 		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET  id_cliente = :id_cliente, cbte_tipo = :cbte_tipo, id_vendedor = :id_vendedor, productos = :productos, impuesto = :impuesto, neto = :neto, total= :total, metodo_pago = :metodo_pago, pto_vta = :pto_vta, concepto = :concepto, fec_desde = :fec_desde, fec_hasta = :fec_hasta, fec_vencimiento = :fec_vencimiento, observaciones_vta = :observaciones_vta WHERE codigo = :codigo");
 
 		$stmt->bindParam(":codigo", $datos["codigo"], PDO::PARAM_INT);
 		$stmt->bindParam(":id_cliente", $datos["id_cliente"], PDO::PARAM_INT);
 		$stmt->bindParam(":cbte_tipo", $datos["cbte_tipo"], PDO::PARAM_INT);
 		$stmt->bindParam(":id_vendedor", $datos["id_vendedor"], PDO::PARAM_INT);
-		$stmt->bindParam(":productos", $datos["productos"], PDO::PARAM_STR);
+		$stmt->bindParam(":productos", $productosJson, PDO::PARAM_STR);
 		$stmt->bindParam(":impuesto", $datos["impuesto"], PDO::PARAM_STR);
 		$stmt->bindParam(":neto", $datos["neto"], PDO::PARAM_STR);
 		$stmt->bindParam(":total", $datos["total"], PDO::PARAM_STR);

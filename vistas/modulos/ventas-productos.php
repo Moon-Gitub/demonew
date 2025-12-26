@@ -278,13 +278,8 @@
           
           if (is_array($respuestaVta)) {
             foreach ($respuestaVta as $key => $value) {
-              // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+              // Obtener productos desde tabla relacional
               $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
-              
-              // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
-              if (empty($productos) && !empty($value["productos"])) {
-                  $productos = json_decode($value["productos"], true);
-              }
               
               if (is_array($productos)) {
                 foreach ($productos as $keyPro => $valuePro) {
@@ -312,13 +307,8 @@
           $productosAgrupados = [];
           if (is_array($respuestaVta)) {
             foreach ($respuestaVta as $key => $value) {
-              // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+              // Obtener productos desde tabla relacional
               $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
-              
-              // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
-              if (empty($productos) && !empty($value["productos"])) {
-                  $productos = json_decode($value["productos"], true);
-              }
               
               if (is_array($productos)) {
                 foreach ($productos as $keyPro => $valuePro) {
@@ -443,13 +433,8 @@
           // Usar las variables ya calculadas arriba
           if (is_array($respuestaVta)) {
             foreach ($respuestaVta as $key => $value) {
-              // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+              // Obtener productos desde tabla relacional
               $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
-              
-              // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
-              if (empty($productos) && !empty($value["productos"])) {
-                  $productos = json_decode($value["productos"], true);
-              }
               
               if (is_array($productos)) {
                 foreach ($productos as $keyPro => $valuePro) {
