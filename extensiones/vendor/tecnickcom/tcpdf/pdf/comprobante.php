@@ -278,7 +278,14 @@ try {
     }
     
     // Obtener productos desde tabla relacional
-    require_once "../../../controladores/ventas.controlador.php";
+    // Construir ruta absoluta desde el directorio actual
+    $rutaControlador = __DIR__ . '/../../../../controladores/ventas.controlador.php';
+    if (!file_exists($rutaControlador)) {
+        error_log("Error comprobante.php: No se encontró el controlador en: " . $rutaControlador);
+        // Intentar con ruta alternativa
+        $rutaControlador = dirname(dirname(dirname(dirname(__DIR__)))) . '/controladores/ventas.controlador.php';
+    }
+    require_once $rutaControlador;
     $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($respuestaVenta["id"]);
     
     // Validar que se obtuvieron los productos
