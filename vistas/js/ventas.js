@@ -1528,45 +1528,73 @@ $("#tablaListarVentas tfoot th").each(function (i) {
 });
 
 /*=============================================
-TABLA LISTAR VENTAS (ventas.php)
+TABLA LISTAR VENTAS (ventas.php) - SERVER-SIDE PROCESSING
 =============================================*/
+
+// Obtener fechas de la URL o usar fecha de hoy
+function obtenerFechasVentas() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var fechaInicial = urlParams.get('fechaInicial');
+    var fechaFinal = urlParams.get('fechaFinal');
+    
+    if (!fechaInicial || !fechaFinal) {
+        var hoy = new Date();
+        var fechaHoy = hoy.getFullYear() + '-' + 
+                      String(hoy.getMonth() + 1).padStart(2, '0') + '-' + 
+                      String(hoy.getDate()).padStart(2, '0');
+        fechaInicial = fechaHoy + ' 00:00';
+        fechaFinal = fechaHoy + ' 23:59';
+    }
+    
+    return {
+        fechaInicial: fechaInicial,
+        fechaFinal: fechaFinal
+    };
+}
+
+var fechas = obtenerFechasVentas();
+
 var tablaListarVtas = $("#tablaListarVentas").DataTable({
+	"processing": true,
+	"serverSide": true,
+	"ajax": {
+		"url": "ajax/datatable-ventas.serverside.php",
+		"type": "GET",
+		"data": function(d) {
+			// Agregar fechas a los parámetros de DataTables
+			d.fechaInicial = fechas.fechaInicial;
+			d.fechaFinal = fechas.fechaFinal;
+		}
+	},
 	"order": [[ 0, "desc" ]],
 	"pageLength": 50,
 	"language": GL_DATATABLE_LENGUAJE,
 	"dom": 'Bfrtip',
 	"buttons": GL_DATATABLE_BOTONES,
+	"columnDefs": [
+		{ "targets": [10, 11, 12, 13], "visible": false, "searchable": false }
+	],
 	"footerCallback": function (row, data, start, end, display) {
-          
-            var api = this.api();
+		var api = this.api();
+		var intVal = function (i) {
+			return typeof i === 'string' ?
+				i.replace(/[\$]/g, '').replace(/,/g, '.') * 1 :
+				typeof i === 'number' ?
+					i : 0;
+		};
 
-            var intVal = function (i) {
-                return typeof i === 'string' ?
-                    i.replace(/[\$]/g, '').replace(/,/g, '.') * 1 :
-                    typeof i === 'number' ?
-                        i : 0;
-            };
+		// Con server-side, solo podemos sumar los datos de la página actual
+		var totalPage = api
+			.column(8, {search:'applied'})
+			.data()
+			.reduce(function (a, b) {
+				return intVal(a) + intVal(b);
+			}, 0);
 
-            var total = api
-                .column(8)
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-
-            var totalPage = api
-                .column(8, {search:'applied'})
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-
-            $(api.column(8).footer()).html(
-                ` ${totalPage.toFixed(2)}`
-            )
-
-        }
-
+		$(api.column(8).footer()).html(
+			` ${totalPage.toFixed(2)}`
+		);
+	}
 });
 
 tablaListarVtas.columns().every(function () {
@@ -2015,14 +2043,21 @@ $('#daterange-btn').daterangepicker(
     $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
 
     var fechaInicial = start.format('YYYY-MM-DD');
-
     var fechaFinal = end.format('YYYY-MM-DD');
 
     var capturarRango = $("#daterange-btn span").html();
    
    	localStorage.setItem("capturarRango", capturarRango);
 
-   	window.location = "index.php?ruta=ventas&fechaInicial="+fechaInicial+"&fechaFinal="+fechaFinal;
+   	// Actualizar fechas y recargar tabla
+   	if (typeof fechas !== 'undefined' && tablaListarVtas) {
+   		fechas.fechaInicial = fechaInicial + ' 00:00';
+   		fechas.fechaFinal = fechaFinal + ' 23:59';
+   		tablaListarVtas.ajax.reload();
+   	} else {
+   		// Si la tabla no está inicializada, redirigir
+   		window.location = "index.php?ruta=ventas&fechaInicial="+fechaInicial+"&fechaFinal="+fechaFinal;
+   	}
 
   }
 
