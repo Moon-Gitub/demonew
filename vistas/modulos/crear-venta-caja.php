@@ -965,6 +965,9 @@ $(document).ready(function() {
 					  <?php
 
 					  $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
+					  if (!is_array($arrPuntos)) {
+						$arrPuntos = [];
+					  }
 					  $arrPuntosHabilitados = explode(',', $_SESSION['puntos_venta']);
 
 					  echo '<select title="Seleccione el punto de venta" class="form-control input-sm" id="nuevaPtoVta" name="nuevaPtoVta">';

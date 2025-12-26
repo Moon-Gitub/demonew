@@ -355,6 +355,9 @@
           );
 
           $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
+          if (!is_array($arrPuntos)) {
+            $arrPuntos = [];
+          }
 
           $respuestaVta = ControladorVentas::ctrRangoFechasVentas($fechaInicial, $fechaFinal);
 
