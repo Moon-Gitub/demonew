@@ -205,56 +205,103 @@
     font-weight: 600;
   }
 
-  /* Mejorar botones de acciones */
-  .btn-group .btn-primary {
+  /* Botones de acciones individuales con iconos */
+  .acciones-ventas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .acciones-ventas .btn-accion {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 6px;
-    transition: all 0.3s ease;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    color: #555;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
   }
 
-  .btn-group .btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  .acciones-ventas .btn-accion:hover {
+    background-color: #f0f0f0;
+    border-color: #667eea;
+    color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.2);
   }
 
-  /* Asegurar que el wrapper de la tabla permita que los dropdowns se muestren */
-  .ventas-table-wrapper {
-    overflow: visible !important;
-    position: relative;
+  .acciones-ventas .btn-accion:active {
+    transform: translateY(0);
   }
 
-  /* Mejorar dropdown de acciones para que no se corte */
-  .acciones-dropdown {
-    position: static !important;
+  .acciones-ventas .btn-accion.disabled,
+  .acciones-ventas .btn-accion[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 
-  .acciones-dropdown .dropdown-menu {
-    position: absolute !important;
-    z-index: 9999 !important;
-    max-height: 400px;
-    overflow-y: auto;
-    min-width: 180px;
+  .acciones-ventas .btn-accion.btn-primary {
+    background-color: #667eea;
+    border-color: #667eea;
+    color: #fff;
   }
 
-  /* Asegurar que el contenedor de DataTables permita overflow visible */
-  #tablaListarVentas_wrapper {
-    overflow: visible !important;
+  .acciones-ventas .btn-accion.btn-primary:hover {
+    background-color: #5568d3;
+    border-color: #5568d3;
+    color: #fff;
   }
 
-  .dataTables_wrapper {
-    overflow: visible !important;
+  .acciones-ventas .btn-accion.btn-danger {
+    background-color: #e74c3c;
+    border-color: #e74c3c;
+    color: #fff;
   }
 
-  /* Ajustar dropup para que funcione correctamente */
-  .acciones-dropdown.dropup .dropdown-menu {
-    bottom: 100% !important;
-    top: auto !important;
-    margin-bottom: 5px;
+  .acciones-ventas .btn-accion.btn-danger:hover {
+    background-color: #c0392b;
+    border-color: #c0392b;
+    color: #fff;
   }
 
-  .acciones-dropdown:not(.dropup) .dropdown-menu {
-    top: 100% !important;
-    bottom: auto !important;
-    margin-top: 5px;
+  .acciones-ventas .btn-accion.btn-success {
+    background-color: #2ecc71;
+    border-color: #2ecc71;
+    color: #fff;
+  }
+
+  .acciones-ventas .btn-accion.btn-success:hover {
+    background-color: #27ae60;
+    border-color: #27ae60;
+    color: #fff;
+  }
+
+  /* Tooltips mejorados */
+  .acciones-ventas .btn-accion[data-toggle="tooltip"] {
+    cursor: help;
+  }
+
+  /* Responsive para móviles */
+  @media (max-width: 768px) {
+    .acciones-ventas {
+      gap: 3px;
+    }
+    
+    .acciones-ventas .btn-accion {
+      width: 32px;
+      height: 32px;
+      font-size: 12px;
+    }
   }
 </style>
 
@@ -526,52 +573,43 @@
 
               <td class="text-center">
               
-              <center>
-
-                <div class="btn-group acciones-dropdown">
-                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                    <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu dropdown-menu-right" style="background-color: #f4f4f4">
-                    <li style="'.$btnCobroLi.'"><a title="Cobrar venta" style="' .$botonCobro. '" class="btnCobrarVenta" data-toggle="modal" data-target="#modalCobrarVenta" data-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-usd fa-fw"></i> Cobrar</a></li>';
-                      echo '<li style="'.$deshAutorizarSpan.'"><a style="' . $deshAutorizarA . '" title="Autorizar comprobante." class="btnAutorizarCbte" data-toggle="modal" data-target="#modalAutorizarComprobante" data-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-exchange fa-fw"></i> Autorizar</a></li>';
-                      echo '<li><a title="Ver" style="cursor: pointer;" class="btnEditarVenta" idVenta="'.$value["id"].'"><i class="fa fa-pencil fa-fw"></i> Ver</a></li>';
+              <div class="acciones-ventas">';
                       
-                      echo '<li role="separator" class="divider"></li>';                        
-
-                      echo '<li><a class="btnDescargarFactura" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-download fa-fw"></i> Descargar</a></li>';
+                      // Botón Cobrar
+                      echo '<a class="btn-accion btn-success" title="Cobrar venta" style="' .$botonCobro. '" class="btnCobrarVenta" data-toggle="modal" data-target="#modalCobrarVenta" data-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-usd"></i></a>';
                       
-                      echo '<li role="separator" class="divider"></li>';                        
-
-                      echo '<li><a class="btnImprimirFactura" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-print fa-fw"></i> Imprimir</a></li>';
-                      echo '<li><a class="btnImprimirRemito" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-cubes fa-fw"></i> Remito</a></li>';
-                      echo '<li><a class="btnImprimirTicket" style="cursor: pointer;" idVenta="'.$value["id"].'" data-toggle="modal" data-target="#modalImprimirTicketCajaVenta" data-dismiss="modal"><i class="fa fa-ticket fa-fw"></i> Ticket</a></li>';
+                      // Botón Autorizar
+                      echo '<a class="btn-accion btn-primary" title="Autorizar comprobante" style="' . $deshAutorizarA . '" class="btnAutorizarCbte" data-toggle="modal" data-target="#modalAutorizarComprobante" data-dismiss="modal" idVenta="'.$value["id"].'"><i class="fa fa-exchange"></i></a>';
+                      
+                      // Botón Ver/Editar
+                      echo '<a class="btn-accion" title="Ver/Editar venta" style="cursor: pointer;" class="btnEditarVenta" idVenta="'.$value["id"].'"><i class="fa fa-pencil"></i></a>';
+                      
+                      // Botón Descargar
+                      echo '<a class="btn-accion" title="Descargar factura" class="btnDescargarFactura" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-download"></i></a>';
+                      
+                      // Botón Imprimir
+                      echo '<a class="btn-accion" title="Imprimir factura" class="btnImprimirFactura" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-print"></i></a>';
+                      
+                      // Botón Remito
+                      echo '<a class="btn-accion" title="Imprimir remito" class="btnImprimirRemito" style="cursor: pointer;" codigoVenta="'.$value["codigo"].'"><i class="fa fa-cubes"></i></a>';
+                      
+                      // Botón Ticket
+                      echo '<a class="btn-accion" title="Imprimir ticket" class="btnImprimirTicket" style="cursor: pointer;" idVenta="'.$value["id"].'" data-toggle="modal" data-target="#modalImprimirTicketCajaVenta" data-dismiss="modal"><i class="fa fa-ticket"></i></a>';
                      
-                     echo '<li role="separator" class="divider"></li>';
-                     $emailCliente = isset($respuestaCliente["email"]) ? $respuestaCliente["email"] : "";
-                     echo '<li><a class="btnMailComprobante" codigoVenta="'.$value["codigo"].'" mailCliente="'.$emailCliente.'"><i class="fa fa-envelope fa-fw"></i> Email</a></li>';
+                      // Botón Email
+                      $emailCliente = isset($respuestaCliente["email"]) ? $respuestaCliente["email"] : "";
+                      echo '<a class="btn-accion" title="Enviar por email" class="btnMailComprobante" codigoVenta="'.$value["codigo"].'" mailCliente="'.$emailCliente.'"><i class="fa fa-envelope"></i></a>';
 
-                     if($_SESSION["perfil"] == "Administrador"){
-
-                        echo '<li role="separator" class="divider"></li>';
-
+                      // Botón Eliminar (solo administradores)
+                      if($_SESSION["perfil"] == "Administrador"){
                         if($facturada) {
-
-                          echo '<li><a style="cursor: not-allowed;" ><i class="fa fa-times fa-fw"></i> Eliminar</a></li>';
-
+                          echo '<a class="btn-accion disabled" title="No se puede eliminar venta facturada" style="cursor: not-allowed; opacity: 0.4;"><i class="fa fa-times"></i></a>';
                         } else {
-
-                          echo '<li><a class="btnEliminarVenta" style="cursor: pointer;" idVenta="'.$value["id"].'"><i class="fa fa-times fa-fw"></i> Eliminar</a></li>';
-
+                          echo '<a class="btn-accion btn-danger" title="Eliminar venta" class="btnEliminarVenta" style="cursor: pointer;" idVenta="'.$value["id"].'"><i class="fa fa-times"></i></a>';
                         }
-
-                    }
+                      }
                         
-                     echo '</ul>
-
-                    </div>
-
-                    </center>
+              echo '</div>
 
                 </td>
 
