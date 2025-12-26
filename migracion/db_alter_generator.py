@@ -425,25 +425,43 @@ def validar_sintaxis_sql(sql: str) -> Dict[str, any]:
     errores = []
     advertencias = []
     
-    # Validar paréntesis balanceados (ignorando strings)
+    # Eliminar comentarios antes de validar (pueden tener paréntesis en el texto)
+    # Eliminar líneas que empiezan con --
+    sql_sin_comentarios = "\n".join([
+        linea for linea in sql.split("\n")
+        if not linea.strip().startswith("--")
+    ])
+    
+    # Validar paréntesis balanceados (ignorando strings y backticks)
     paren_count = 0
-    dentro_string = False
+    dentro_string_simple = False
+    dentro_string_doble = False
+    dentro_backtick = False
     escape_next = False
     
-    for i, char in enumerate(sql):
+    for i, char in enumerate(sql_sin_comentarios):
         if escape_next:
             escape_next = False
             continue
         
-        if char == '\\' and dentro_string:
+        if char == '\\' and (dentro_string_simple or dentro_string_doble):
             escape_next = True
             continue
         
-        if char == "'" and not escape_next:
-            dentro_string = not dentro_string
+        if char == "'" and not dentro_string_doble and not dentro_backtick:
+            dentro_string_simple = not dentro_string_simple
             continue
         
-        if not dentro_string:
+        if char == '"' and not dentro_string_simple and not dentro_backtick:
+            dentro_string_doble = not dentro_string_doble
+            continue
+        
+        if char == '`' and not dentro_string_simple and not dentro_string_doble:
+            dentro_backtick = not dentro_backtick
+            continue
+        
+        # Solo contar paréntesis si no estamos dentro de un string o backtick
+        if not dentro_string_simple and not dentro_string_doble and not dentro_backtick:
             if char == '(':
                 paren_count += 1
             elif char == ')':
@@ -456,13 +474,6 @@ def validar_sintaxis_sql(sql: str) -> Dict[str, any]:
         errores.append(f"Paréntesis desbalanceados: {paren_count} paréntesis abiertos sin cerrar")
     elif paren_count < 0:
         errores.append(f"Paréntesis desbalanceados: {abs(paren_count)} paréntesis de cierre sin apertura")
-    
-    # Método simple de conteo (para comparación)
-    paren_abrir_simple = sql.count('(')
-    paren_cerrar_simple = sql.count(')')
-    if paren_abrir_simple != paren_cerrar_simple and paren_count == 0:
-        # Si el conteo simple difiere pero el balanceado está bien, puede ser por strings
-        advertencias.append(f"Conteo simple de paréntesis difiere ({paren_abrir_simple} vs {paren_cerrar_simple}), pero validación balanceada pasó")
     
     # Contar comillas simples (deben ser pares)
     comillas = sql.count("'")
@@ -755,9 +766,12 @@ def generar_sql(cambios: List[Dict], destino: Dict, archivo_destino: str, archiv
     lineas.append("SET FOREIGN_KEY_CHECKS = 1;")
     lineas.append("")
 
+    # Generar SQL completo
+    sql_completo = "\n".join(lineas)
+    
     # Validar sintaxis SQL antes de continuar
-    sql_temp = "\n".join(lineas)
-    validacion = validar_sintaxis_sql(sql_temp)
+    # Excluir comentarios de la validación de paréntesis (pueden tener paréntesis en el texto)
+    validacion = validar_sintaxis_sql(sql_completo)
     
     lineas.append("-- ================================================================")
     lineas.append("-- RESUMEN")
