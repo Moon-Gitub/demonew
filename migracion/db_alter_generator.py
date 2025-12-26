@@ -715,8 +715,15 @@ def generar_sql(cambios: List[Dict], destino: Dict, archivo_destino: str, archiv
             else:
                 default_str = ""
             
+            # Construir el ALTER TABLE statement
+            alter_stmt = f"ALTER TABLE `{tabla}` ADD COLUMN `{campo}` {tipo} {null_str}{default_str}"
+            
+            # Escapar comillas simples dentro del string SQL para PREPARE
+            # Las comillas simples dentro de un string SQL deben duplicarse
+            alter_stmt_escaped = alter_stmt.replace("'", "''")
+            mensaje_escaped = f"Columna `{campo}` ya existe en `{tabla}`, se omite".replace("'", "''")
+            
             # Generar comando idempotente que verifica si la columna existe antes de agregarla
-            # Usamos un procedimiento almacenado temporal para hacer la verificación
             lineas.append(f"-- Agregar columna '{campo}' (solo si no existe)")
             lineas.append(f"SET @col_exists = (")
             lineas.append(f"  SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS")
@@ -725,8 +732,8 @@ def generar_sql(cambios: List[Dict], destino: Dict, archivo_destino: str, archiv
             lineas.append(f"    AND COLUMN_NAME = '{campo}'")
             lineas.append(f");")
             lineas.append(f"SET @sql = IF(@col_exists = 0,")
-            lineas.append(f"  'ALTER TABLE `{tabla}` ADD COLUMN `{campo}` {tipo} {null_str}{default_str}',")
-            lineas.append(f"  'SELECT ''Columna `{campo}` ya existe en `{tabla}`, se omite'' AS mensaje'")
+            lineas.append(f"  '{alter_stmt_escaped}',")
+            lineas.append(f"  'SELECT ''{mensaje_escaped}'' AS mensaje'")
             lineas.append(f");")
             lineas.append(f"PREPARE stmt FROM @sql;")
             lineas.append(f"EXECUTE stmt;")
