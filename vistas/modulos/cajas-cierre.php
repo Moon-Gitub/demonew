@@ -93,14 +93,9 @@
                     <td >'.$value["total_egresos"].'</td>
                     <td >'.$value["detalle"].'</td>
                     <td class="text-center">
-                        <div class="btn-group dropup acciones-dropdown">
-                          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                            <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#" class="btnCierreCaja" idCierreCaja="'.$value["id"].'"><i class="fa fa-search"></i> Ver detalle</a></li>
-                            <li><a href="#" class="btnListadoCierreCaja" idCierreCaja="'.$value["id"].'"><i class="fa fa-list-ul"></i> Listado movimientos</a></li>
-                          </ul>
+                        <div class="acciones-tabla">
+                          <a class="btn-accion btn-info btnCierreCaja" title="Ver detalle" href="#" idCierreCaja="'.$value["id"].'"><i class="fa fa-search"></i></a>
+                          <a class="btn-accion btnListadoCierreCaja" title="Listado movimientos" href="#" idCierreCaja="'.$value["id"].'"><i class="fa fa-list-ul"></i></a>
                         </div>
                     </td>
 

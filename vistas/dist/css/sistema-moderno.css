@@ -698,6 +698,155 @@ table.dt-responsive {
     padding: 6px 10px !important;
 }
 
+/* ============================================
+   BOTONES DE ACCIONES - ICONOS INDIVIDUALES
+   Sistema global para reemplazar dropdowns
+   ============================================ */
+
+/* Contenedor de acciones */
+.acciones-ventas,
+.acciones-tabla {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Botones de acción individuales */
+.acciones-ventas .btn-accion,
+.acciones-tabla .btn-accion {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    color: #555;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.acciones-ventas .btn-accion:hover,
+.acciones-tabla .btn-accion:hover {
+    background-color: #f0f0f0;
+    border-color: #667eea;
+    color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.2);
+}
+
+.acciones-ventas .btn-accion:active,
+.acciones-tabla .btn-accion:active {
+    transform: translateY(0);
+}
+
+.acciones-ventas .btn-accion.disabled,
+.acciones-ventas .btn-accion[disabled],
+.acciones-tabla .btn-accion.disabled,
+.acciones-tabla .btn-accion[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Colores de botones */
+.acciones-ventas .btn-accion.btn-primary,
+.acciones-tabla .btn-accion.btn-primary {
+    background-color: #667eea;
+    border-color: #667eea;
+    color: #fff;
+}
+
+.acciones-ventas .btn-accion.btn-primary:hover,
+.acciones-tabla .btn-accion.btn-primary:hover {
+    background-color: #5568d3;
+    border-color: #5568d3;
+    color: #fff;
+}
+
+.acciones-ventas .btn-accion.btn-danger,
+.acciones-tabla .btn-accion.btn-danger {
+    background-color: #e74c3c;
+    border-color: #e74c3c;
+    color: #fff;
+}
+
+.acciones-ventas .btn-accion.btn-danger:hover,
+.acciones-tabla .btn-accion.btn-danger:hover {
+    background-color: #c0392b;
+    border-color: #c0392b;
+    color: #fff;
+}
+
+.acciones-ventas .btn-accion.btn-success,
+.acciones-tabla .btn-accion.btn-success {
+    background-color: #2ecc71;
+    border-color: #2ecc71;
+    color: #fff;
+}
+
+.acciones-ventas .btn-accion.btn-success:hover,
+.acciones-tabla .btn-accion.btn-success:hover {
+    background-color: #27ae60;
+    border-color: #27ae60;
+    color: #fff;
+}
+
+.acciones-ventas .btn-accion.btn-warning,
+.acciones-tabla .btn-accion.btn-warning {
+    background-color: #f39c12;
+    border-color: #f39c12;
+    color: #fff;
+}
+
+.acciones-ventas .btn-accion.btn-warning:hover,
+.acciones-tabla .btn-accion.btn-warning:hover {
+    background-color: #e67e22;
+    border-color: #e67e22;
+    color: #fff;
+}
+
+.acciones-ventas .btn-accion.btn-info,
+.acciones-tabla .btn-accion.btn-info {
+    background-color: #3498db;
+    border-color: #3498db;
+    color: #fff;
+}
+
+.acciones-ventas .btn-accion.btn-info:hover,
+.acciones-tabla .btn-accion.btn-info:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+    color: #fff;
+}
+
+/* Tooltips mejorados */
+.acciones-ventas .btn-accion[data-toggle="tooltip"],
+.acciones-tabla .btn-accion[data-toggle="tooltip"] {
+    cursor: help;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .acciones-ventas,
+    .acciones-tabla {
+        gap: 3px;
+    }
+    
+    .acciones-ventas .btn-accion,
+    .acciones-tabla .btn-accion {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+    }
+}
+
 .dataTables_wrapper .dataTables_paginate .paginate_button {
     border-radius: 6px !important;
     margin: 0 2px !important;

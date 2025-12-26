@@ -53,21 +53,14 @@
                     <td>'.$value["direccion"].'</td>
                     <td>'.$value["email"].'</td>
                     <td class="text-center">
-                    <center>
-                      <div class="btn-group dropup acciones-dropdown">
-                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                          <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-right">
-                          <li><a href="index.php?ruta=proveedores_cuenta&id_proveedor='.$value["id"].'" title="Cuenta corriente"><i class="fa fa-book fa-fw"></i> Cuenta Cte.</a></li>
-                          <li><a class="btnEditarProveedor" data-toggle="modal" data-target="#modalEditarProveedor" idProveedor="'.$value["id"].'"><i class="fa fa-pencil fa-fw"></i> Editar</a></li>
-                          <li><a class="btnModificarPrecioProveedor" data-toggle="modal" data-target="#modalModificarPrecioProveedor" idProveedor="'.$value["id"].'" nombreProveedor="'.$value["nombre"].'"><i class="fa fa-sort fa-fw"></i> +/- $ Productos</a></li>';
+                      <div class="acciones-tabla">
+                        <a class="btn-accion btn-info" title="Cuenta corriente" href="index.php?ruta=proveedores_cuenta&id_proveedor='.$value["id"].'"><i class="fa fa-book"></i></a>
+                        <a class="btn-accion btnEditarProveedor" title="Editar proveedor" data-toggle="modal" data-target="#modalEditarProveedor" idProveedor="'.$value["id"].'"><i class="fa fa-pencil"></i></a>
+                        <a class="btn-accion btn-warning btnModificarPrecioProveedor" title="Modificar precio productos" data-toggle="modal" data-target="#modalModificarPrecioProveedor" idProveedor="'.$value["id"].'" nombreProveedor="'.$value["nombre"].'"><i class="fa fa-sort"></i></a>';
                        if($_SESSION["perfil"] == "Administrador"){
-                          echo '<li><a class="btnEliminarProveedor" idProveedor="'.$value["id"].'" href="#"><i class="fa fa-times fa-fw"></i> Borrar</a></li>';
+                          echo '<a class="btn-accion btn-danger btnEliminarProveedor" title="Borrar proveedor" idProveedor="'.$value["id"].'" href="#"><i class="fa fa-times"></i></a>';
                       }
-                       echo '</ul>
-                      </div>
-                      </center>
+                       echo '</div>
                     </td>
                   </tr>';
             }

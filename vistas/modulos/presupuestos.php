@@ -157,20 +157,11 @@
 
                 <td class="text-center">
                 
-                  <center>
-
-                    <div class="btn-group dropup acciones-dropdown">
-                      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#" class="btnPresupuestoAVenta" idPresupuesto="'.$value["id"].'"><i class="fa fa-check"></i> Pasar a venta</a></li>
-                        <li><a href="#" class="btnImprimirPresupuesto" idPresupuesto="'.$value["id"].'"><i class="fa fa-print"></i> Imprimir</a></li>
-                        <li><a href="#" class="btnEliminarPresupuesto" idPresupuesto="'.$value["id"].'"><i class="fa fa-times"></i> Borrar</a></li>
-                      </ul>
-                    </div>
-
-                  </center>
+                  <div class="acciones-tabla">
+                    <a class="btn-accion btn-success btnPresupuestoAVenta" title="Pasar a venta" href="#" idPresupuesto="'.$value["id"].'"><i class="fa fa-check"></i></a>
+                    <a class="btn-accion btnImprimirPresupuesto" title="Imprimir presupuesto" href="#" idPresupuesto="'.$value["id"].'"><i class="fa fa-print"></i></a>
+                    <a class="btn-accion btn-danger btnEliminarPresupuesto" title="Borrar presupuesto" href="#" idPresupuesto="'.$value["id"].'"><i class="fa fa-times"></i></a>
+                  </div>
 
                 </td>
 

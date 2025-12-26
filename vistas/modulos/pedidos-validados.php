@@ -120,16 +120,9 @@ if($_SESSION["perfil"] == "Vendedor"){
 					<td><center>'.$value["fecha"].'</center></td>
 					
 					<td class="text-center">
-
-                     		<div class="btn-group dropup acciones-dropdown">
-                          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                            <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#" class="btnImprimirPedido" codigoPedido="'.$value["id"].'"><i class="fa fa-print"></i> Imprimir</a></li>
-                          </ul>
-                        </div>
-		
+                      <div class="acciones-tabla">
+                        <a class="btn-accion btnImprimirPedido" title="Imprimir pedido" href="#" codigoPedido="'.$value["id"].'"><i class="fa fa-print"></i></a>
+                      </div>
                     </td>
 
                   </tr>';

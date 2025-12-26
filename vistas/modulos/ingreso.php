@@ -121,24 +121,13 @@ if($_SESSION["perfil"] == "Especial"){
                   <td><center>'.$value["usuarioPedido"].'</center></td>
 
                   <td class="text-center">
-                    <center>
-                      <div class="btn-group dropup acciones-dropdown">
-                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                          <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-right">
-                          <li><a href="#" class="btnImprimirCompraParcial" codigoCompra="'.$value["id"].'"><i class="fa fa-print"></i> Imprimir</a></li>
-                          <li><a href="#" class="btn btn-warning btnEditarIngreso" idCompra="'.$value["id"].'"><i class="fa fa-pencil"></i> Editar</a></li>';
+                    <div class="acciones-tabla">
+                      <a class="btn-accion btnImprimirCompraParcial" title="Imprimir compra" href="#" codigoCompra="'.$value["id"].'"><i class="fa fa-print"></i></a>
+                      <a class="btn-accion btn-warning btnEditarIngreso" title="Editar ingreso" href="#" idCompra="'.$value["id"].'"><i class="fa fa-pencil"></i></a>';
                           if($_SESSION["perfil"] == "Administrador"){
-
-                              echo '<li><a href="#" class="btnEliminarCompra" idCompra="'.$value["id"].'"><i class="fa fa-times"></i> Borrar</a></li>';
-
+                              echo '<a class="btn-accion btn-danger btnEliminarCompra" title="Borrar compra" href="#" idCompra="'.$value["id"].'"><i class="fa fa-times"></i></a>';
                           }
-
-                        echo '</ul>
-                      </div>
-                    </center>
-
+                    echo '</div>
                   </td>
 
                 </tr>';

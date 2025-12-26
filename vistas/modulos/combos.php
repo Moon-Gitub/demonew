@@ -107,18 +107,11 @@ if(!class_exists('ControladorCombos') || !class_exists('ModeloCombos')){
                       <td>'.$estado.'</td>
 
                       <td class="text-center">
-
-                        <div class="btn-group dropup acciones-dropdown">
-                          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                            <i class="fa fa-cog"></i> Acciones <span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#" class="btnEditarCombo" idCombo="'.$value["id"].'" data-toggle="modal" data-target="#modalEditarCombo"><i class="fa fa-pencil"></i> Editar</a></li>
-                            <li><a href="#" class="btnVerProductosCombo" idCombo="'.$value["id"].'" data-toggle="modal" data-target="#modalVerProductosCombo"><i class="fa fa-eye"></i> Ver Productos</a></li>
-                            <li><a href="#" class="btnEliminarCombo" idCombo="'.$value["id"].'"><i class="fa fa-times"></i> Borrar</a></li>
-                          </ul>
-                        </div>  
-
+                        <div class="acciones-tabla">
+                          <a class="btn-accion btnEditarCombo" title="Editar combo" href="#" idCombo="'.$value["id"].'" data-toggle="modal" data-target="#modalEditarCombo"><i class="fa fa-pencil"></i></a>
+                          <a class="btn-accion btn-info btnVerProductosCombo" title="Ver productos del combo" href="#" idCombo="'.$value["id"].'" data-toggle="modal" data-target="#modalVerProductosCombo"><i class="fa fa-eye"></i></a>
+                          <a class="btn-accion btn-danger btnEliminarCombo" title="Borrar combo" href="#" idCombo="'.$value["id"].'"><i class="fa fa-times"></i></a>
+                        </div>
                       </td>
 
                     </tr>';

@@ -412,32 +412,19 @@
               echo '<td style="text-align: center">$ '.number_format($saldoCliente, 2, ',', '.').'</td>';
 
               echo '<td class="text-center">
-
-                    <div class="btn-group dropup acciones-dropdown">
-                      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-right">';
+                    <div class="acciones-tabla">';
 
                   if($value["tipo"]==1)    {
-
                     if(isset($value["numero_recibo"])) {
-                      echo '<li><a href="recibo/'.$value["id"].'" target="_blank"><i class="fa fa-print"></i> Imprimir recibo</a></li>';
+                      echo '<a class="btn-accion" title="Imprimir recibo" href="recibo/'.$value["id"].'" target="_blank"><i class="fa fa-print"></i></a>';
                     }
-
                   } else {
-
                     if(isset($value["id_venta"])) {
-
-                      echo '<li><a href="comprobante/'.$venta["codigo"].'" target="_blank"><i class="fa fa-print"></i> Imprimir comprobante</a></li>';
-
+                      echo '<a class="btn-accion" title="Imprimir comprobante" href="comprobante/'.$venta["codigo"].'" target="_blank"><i class="fa fa-print"></i></a>';
                     }
-
                   }
 
-                  echo '</ul>
-                    </div>
-
+                  echo '</div>
                   </td>
 
               </tr>';

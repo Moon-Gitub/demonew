@@ -115,19 +115,12 @@
     
                       echo '<td>'.$value["ultimo_login"].'</td>
                         <td class="text-center">
-                          <!-- Usamos dropup para que el menú se abra hacia arriba
-                               y no quede oculto detrás de la paginación en el último registro -->
-                          <div class="btn-group dropup acciones-dropdown">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                              <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-right">
-                              <li><a class="btnEditarUsuario" idUsuario="'.$value["id"].'" href="#"><i class="fa fa-pencil fa-fw"></i> Editar</a></li>';
+                          <div class="acciones-tabla">
+                            <a class="btn-accion btnEditarUsuario" title="Editar usuario" idUsuario="'.$value["id"].'" href="#"><i class="fa fa-pencil"></i></a>';
                             if($_SESSION["perfil"] == "Administrador"){
-                              echo '<li><a class="btnEliminarUsuario" idProveedor="'.$value["id"].'" idUsuario="'.$value["id"].'" fotoUsuario="'.$value["foto"].'" usuario="'.$value["usuario"].'" href="#"><i class="fa fa-times fa-fw"></i> Borrar</a></li>';
+                              echo '<a class="btn-accion btn-danger btnEliminarUsuario" title="Borrar usuario" idProveedor="'.$value["id"].'" idUsuario="'.$value["id"].'" fotoUsuario="'.$value["foto"].'" usuario="'.$value["usuario"].'" href="#"><i class="fa fa-times"></i></a>';
                             }
-                           echo '</ul>
-                          </div>
+                           echo '</div>
                         </td>
                     </tr>';
                 }

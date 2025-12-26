@@ -51,18 +51,13 @@
                     <td>'.$value["telefono"].'</td>
                     <td>'.$value["direccion"].'</td>';
                     echo '<td class="text-center">
-                      <div class="btn-group dropup acciones-dropdown">
-                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                          <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-right">
-                          <li><a href="index.php?ruta=clientes_cuenta&id_cliente='.$value["id"].'"><i class="fa fa-book fa-fw"></i> Cuenta Cte.</a></li>
-                          <li><a class="btnEditarCliente" data-toggle="modal" data-target="#modalEditarCliente" idCliente="'.$value["id"].'"><i class="fa fa-pencil fa-fw"></i> Editar</a></li>';
+                      <div class="acciones-tabla">
+                        <a class="btn-accion btn-info" title="Cuenta corriente" href="index.php?ruta=clientes_cuenta&id_cliente='.$value["id"].'"><i class="fa fa-book"></i></a>
+                        <a class="btn-accion btnEditarCliente" title="Editar cliente" data-toggle="modal" data-target="#modalEditarCliente" idCliente="'.$value["id"].'"><i class="fa fa-pencil"></i></a>';
                        if($_SESSION["perfil"] == "Administrador"){
-                          echo '<li><a class="btnEliminarCliente" idCliente="'.$value["id"].'" href="#"><i class="fa fa-times fa-fw"></i> Borrar</a></li>';
+                          echo '<a class="btn-accion btn-danger btnEliminarCliente" title="Borrar cliente" idCliente="'.$value["id"].'" href="#"><i class="fa fa-times"></i></a>';
                       }
-                       echo '</ul>
-                      </div>
+                       echo '</div>
                     </td>';
                   echo '</tr>';
                 }

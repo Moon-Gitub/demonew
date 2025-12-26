@@ -59,19 +59,12 @@ if($_SESSION["perfil"] == "Vendedor"){
                     <td>'.$estado.'</td>
                     <td>'.$fecha.'</td>
                     <td class="text-center">
-                    <center>
-                      <div class="btn-group dropup acciones-dropdown">
-                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                          <i class="fa fa-cog fa-fw"></i> Acciones <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-right">
-                          <li><a class="btnEditarIntegracion" data-toggle="modal" data-target="#modalEditarIntegracion" idIntegracion="'.$value["id"].'"><i class="fa fa-pencil fa-fw"></i> Editar</a></li>';
+                      <div class="acciones-tabla">
+                        <a class="btn-accion btnEditarIntegracion" title="Editar integración" data-toggle="modal" data-target="#modalEditarIntegracion" idIntegracion="'.$value["id"].'"><i class="fa fa-pencil"></i></a>';
               if($_SESSION["perfil"] == "Administrador"){
-                echo '<li><a class="btnEliminarIntegracion" idIntegracion="'.$value["id"].'" href="#"><i class="fa fa-times fa-fw"></i> Borrar</a></li>';
+                echo '<a class="btn-accion btn-danger btnEliminarIntegracion" title="Borrar integración" idIntegracion="'.$value["id"].'" href="#"><i class="fa fa-times"></i></a>';
               }
-              echo '</ul>
-                      </div>
-                      </center>
+              echo '</div>
                     </td>
                   </tr>';
             }

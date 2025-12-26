@@ -525,3 +525,31 @@ function obtenerCUITs(dni) {
   });
   return cuits;
 }
+
+/*=============================================
+INICIALIZAR TOOLTIPS PARA BOTONES DE ACCIONES
+Sistema global para todas las tablas
+=============================================*/
+function inicializarTooltipsAcciones() {
+  // Inicializar tooltips de Bootstrap para todos los botones de acciones
+  $('.acciones-ventas .btn-accion, .acciones-tabla .btn-accion').each(function() {
+    var $btn = $(this);
+    if (!$btn.attr('data-toggle')) {
+      $btn.attr('data-toggle', 'tooltip');
+      $btn.tooltip({
+        placement: 'top',
+        container: 'body'
+      });
+    }
+  });
+}
+
+// Inicializar tooltips cuando el documento esté listo
+$(document).ready(function() {
+  inicializarTooltipsAcciones();
+});
+
+// Reinicializar después de eventos de DataTables
+$(document).on('draw.dt', 'table', function() {
+  inicializarTooltipsAcciones();
+});
