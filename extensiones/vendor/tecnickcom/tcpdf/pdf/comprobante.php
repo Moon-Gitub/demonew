@@ -279,11 +279,21 @@ try {
     
     // Obtener productos desde tabla relacional
     // Construir ruta absoluta desde el directorio actual
-    $rutaControlador = __DIR__ . '/../../../../controladores/ventas.controlador.php';
+    // Desde: extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php
+    // Subir 5 niveles para llegar a la raíz del proyecto
+    $rutaBase = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
+    $rutaControlador = $rutaBase . '/controladores/ventas.controlador.php';
+    
     if (!file_exists($rutaControlador)) {
         error_log("Error comprobante.php: No se encontró el controlador en: " . $rutaControlador);
-        // Intentar con ruta alternativa
-        $rutaControlador = dirname(dirname(dirname(dirname(__DIR__)))) . '/controladores/ventas.controlador.php';
+        error_log("Ruta base calculada: " . $rutaBase);
+        error_log("__DIR__ es: " . __DIR__);
+        // Intentar con ruta relativa como fallback
+        $rutaControlador = __DIR__ . '/../../../../controladores/ventas.controlador.php';
+        if (!file_exists($rutaControlador)) {
+            http_response_code(500);
+            die('Error: No se encontró el controlador de ventas');
+        }
     }
     require_once $rutaControlador;
     $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($respuestaVenta["id"]);
