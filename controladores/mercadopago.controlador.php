@@ -7,38 +7,7 @@ class ControladorMercadoPago {
 	=============================================*/
 	static public function ctrObtenerCredenciales() {
 
-		// Intentar leer desde la configuración de empresa (BD)
-		$empresa = null;
-		$columnasExisten = false;
-		try {
-			if (class_exists('ControladorEmpresa')) {
-				$empresa = ControladorEmpresa::ctrMostrarempresa('id', 1);
-				
-				// Verificar si las columnas existen en la BD
-				if ($empresa) {
-					$columnasExisten = (array_key_exists('mp_public_key', $empresa) && array_key_exists('mp_access_token', $empresa));
-				}
-			}
-		} catch (Exception $e) {
-			error_log("Error obteniendo empresa para credenciales MP: " . $e->getMessage());
-		}
-
-		// Si hay credenciales en la BD de empresa, usarlas
-		if ($empresa && $columnasExisten && isset($empresa['mp_public_key']) && !empty($empresa['mp_public_key']) && 
-		    isset($empresa['mp_access_token']) && !empty($empresa['mp_access_token'])) {
-			error_log("Usando credenciales MP desde BD (empresa)");
-			return array(
-				'public_key' => $empresa['mp_public_key'],
-				'access_token' => $empresa['mp_access_token']
-			);
-		}
-		
-		// Si las columnas no existen, loguear información útil
-		if ($empresa && !$columnasExisten) {
-			error_log("ADVERTENCIA: Las columnas mp_public_key y mp_access_token no existen en la tabla empresa. Ejecute el script SQL: db/agregar-campos-mercadopago-empresa.sql");
-		}
-
-		// Si no hay en BD, intentar leer de .env
+		// Leer desde .env (prioridad única)
 		$publicKey = isset($_ENV['MP_PUBLIC_KEY']) ? $_ENV['MP_PUBLIC_KEY'] : (isset($_SERVER['MP_PUBLIC_KEY']) ? $_SERVER['MP_PUBLIC_KEY'] : null);
 		$accessToken = isset($_ENV['MP_ACCESS_TOKEN']) ? $_ENV['MP_ACCESS_TOKEN'] : (isset($_SERVER['MP_ACCESS_TOKEN']) ? $_SERVER['MP_ACCESS_TOKEN'] : null);
 
@@ -50,8 +19,8 @@ class ControladorMercadoPago {
 			);
 		}
 
-		// Si tampoco hay en .env, usar credenciales por defecto (solo para desarrollo/testing)
-		error_log("ADVERTENCIA: Usando credenciales MP por defecto (hardcodeadas). Las columnas mp_public_key y mp_access_token no existen en la BD o están vacías.");
+		// Si no hay en .env, usar credenciales por defecto (solo para desarrollo/testing)
+		error_log("ADVERTENCIA: Usando credenciales MP por defecto (hardcodeadas). Configure MP_PUBLIC_KEY y MP_ACCESS_TOKEN en el archivo .env");
 		if (empty($publicKey)) {
 			$publicKey = 'APP_USR-33156d44-12df-4039-8c92-1635d8d3edde';
 		}
