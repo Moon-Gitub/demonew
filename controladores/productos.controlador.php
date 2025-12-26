@@ -652,39 +652,28 @@ class ControladorProductos{
 	}
 
 	/*=============================================
-	PRODUCTOS MAS VENDIDOS
+	PRODUCTOS MAS VENDIDOS - ULTRA OPTIMIZADO
 	=============================================*/
 	static public function ctrMostrarProductosMasVendidos($fechaInicial, $fechaFinal){
 
+		// OPTIMIZADO: La consulta SQL ya retorna los productos agregados y ordenados
 		$respuesta = ModeloProductos::mdlMostrarProductosMasVendidos($fechaInicial, $fechaFinal);
 
+		// La consulta ya retorna el formato correcto, solo formatear
 		$productosVendidos = array();
-		foreach ($respuesta as $key => $value) {
-
-			$separoProd = explode(",", $value["productosA"]);
-			$separoCant = explode(",", $value["cantidadesA"]);
-			$separoDesc = explode(",", $value["descripcionA"]);
-
-			$indiceArray = 0;
-			for ($i = 0; $i < count($separoProd); $i++){
-
-				if(array_key_exists($separoProd[$i], $productosVendidos)){
-
-					$valorNuevo = $productosVendidos[$separoProd[$i]]["cantidad"] + $separoCant[$i];
-					$productosVendidos[$separoProd[$i]]["cantidad"] = $valorNuevo;
-
-				} else {
-
-					$productosVendidos[$separoProd[$i]] = array('cantidad' => floatval($separoCant[$i]), 'descripcion' => $separoDesc[$i]);
-
-				}
-
+		if (is_array($respuesta)) {
+			foreach ($respuesta as $row) {
+				$idProducto = intval($row["id_producto"] ?? 0);
+				$productosVendidos[$idProducto] = array(
+					'cantidad' => floatval($row["cantidad"] ?? 0),
+					'descripcion' => $row["descripcion"] ?? "Sin descripción"
+				);
 			}
-
 		}
 
-		arsort($productosVendidos); //ordeno array(clave=>valor) por VALOR Descendente
-		return array_slice($productosVendidos, 0, 10, true); //Devulevo array con los primeros 10 elementos del array
+		// Ya viene ordenado de la consulta SQL, pero mantenemos arsort por compatibilidad
+		arsort($productosVendidos);
+		return array_slice($productosVendidos, 0, 10, true);
 
 	}
 	
