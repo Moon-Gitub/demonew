@@ -126,7 +126,8 @@ class SimpleSQLParser:
                     }
                     continue
 
-            create_stmt = self._extraer_create_completo(nombre_tabla)
+            # Reconstruir CREATE TABLE desde los datos parseados (más confiable que extraer del SQL original)
+            create_stmt = self._reconstruir_create_table(nombre_tabla, campos, primary_key, indices, engine, charset)
             self.tables[nombre_tabla] = {
                 "campos": campos,
                 "primary_key": primary_key,
@@ -186,6 +187,71 @@ class SimpleSQLParser:
         
         return None
 
+    def _reconstruir_create_table(self, nombre_tabla: str, campos: Dict, primary_key: List[str], 
+                                   indices: Dict, engine: str, charset: str) -> str:
+        """
+        Reconstruye un CREATE TABLE válido desde los datos parseados.
+        Esto es más confiable que extraer del SQL original que puede tener errores.
+        """
+        def _formatear_default(valor_default: Optional[str]) -> str:
+            """Formatea un valor DEFAULT para SQL."""
+            if valor_default is None:
+                return ""
+            valor = valor_default.strip()
+            if valor.upper() == "NULL":
+                return "NULL"
+            if valor.upper() in ['CURRENT_TIMESTAMP', 'NOW()', 'CURRENT_DATE', 'CURRENT_TIME']:
+                return valor
+            if re.match(r'^[+-]?\d+(?:\.\d+)?$', valor):
+                return valor
+            # String: escapar comillas
+            if valor.startswith("'") and valor.endswith("'"):
+                contenido = valor[1:-1]
+            else:
+                contenido = valor
+            contenido_escapado = contenido.replace("'", "''")
+            return f"'{contenido_escapado}'"
+        
+        lineas = []
+        lineas.append(f"CREATE TABLE IF NOT EXISTS `{nombre_tabla}` (")
+        
+        # Agregar campos en orden
+        campos_ordenados = sorted(campos.items(), key=lambda x: x[1].get("posicion", 0))
+        definiciones_campo = []
+        
+        for campo_nombre, campo_info in campos_ordenados:
+            tipo = campo_info["tipo"]
+            null_str = "NULL" if campo_info["null"] else "NOT NULL"
+            
+            # Formatear DEFAULT correctamente
+            default_str = ""
+            if campo_info["default"] is not None:
+                default_formateado = _formatear_default(campo_info["default"])
+                default_str = f" DEFAULT {default_formateado}"
+            
+            ai_str = " AUTO_INCREMENT" if campo_info.get("auto_increment", False) else ""
+            
+            definiciones_campo.append(f"  `{campo_nombre}` {tipo} {null_str}{default_str}{ai_str}")
+        
+        # Agregar PRIMARY KEY si existe
+        if primary_key:
+            cols_pk = ", ".join(f"`{col}`" for col in primary_key)
+            definiciones_campo.append(f"  PRIMARY KEY ({cols_pk})")
+        
+        # Agregar índices
+        for idx_nombre, idx_info in indices.items():
+            cols = ", ".join(f"`{col}`" for col in idx_info["campos"])
+            if idx_info["unique"]:
+                definiciones_campo.append(f"  UNIQUE KEY `{idx_nombre}` ({cols})")
+            else:
+                definiciones_campo.append(f"  KEY `{idx_nombre}` ({cols})")
+        
+        # Unir todas las definiciones
+        lineas.append(",\n".join(definiciones_campo))
+        lineas.append(f") ENGINE={engine} DEFAULT CHARSET={charset};")
+        
+        return "\n".join(lineas)
+    
     def _extraer_create_completo(self, nombre_tabla: str) -> str:
         """
         Extrae el CREATE TABLE completo, manejando correctamente paréntesis anidados.
@@ -559,62 +625,22 @@ def generar_sql(cambios: List[Dict], destino: Dict, archivo_destino: str, archiv
             create_stmt = c["definicion"]["create_statement"].rstrip(";").strip()
             tabla_nombre = c["tabla"]
             
-            # Validar que el statement no esté vacío
+            # El CREATE TABLE ya fue reconstruido desde los datos parseados, así que debería estar válido
+            # Solo validar que no esté vacío
             if not create_stmt:
-                lineas.append(f"-- ⚠️ ERROR: No se pudo extraer CREATE TABLE para '{tabla_nombre}'")
+                lineas.append(f"-- ⚠️ ERROR: No se pudo reconstruir CREATE TABLE para '{tabla_nombre}'")
                 lineas.append("")
                 continue
             
-            # Validar que el statement tenga paréntesis balanceados antes de modificar
-            # Usar validación balanceada (ignorando strings)
-            paren_count = 0
-            dentro_string = False
-            dentro_backtick = False
-            escape_next = False
+            # Validar paréntesis balanceados (debería estar bien, pero verificamos por seguridad)
+            paren_abrir = create_stmt.count('(')
+            paren_cerrar = create_stmt.count(')')
+            if paren_abrir != paren_cerrar:
+                lineas.append(f"-- ⚠️ ADVERTENCIA: CREATE TABLE para '{tabla_nombre}' tiene paréntesis desbalanceados ({paren_abrir} vs {paren_cerrar})")
+                lineas.append(f"-- Esto no debería pasar con la reconstrucción, pero se reporta por seguridad")
             
-            for char in create_stmt:
-                if escape_next:
-                    escape_next = False
-                    continue
-                if char == '\\' and dentro_string:
-                    escape_next = True
-                    continue
-                if char == "'" and not dentro_backtick:
-                    dentro_string = not dentro_string
-                    continue
-                if char == '`':
-                    dentro_backtick = not dentro_backtick
-                    continue
-                if not dentro_string and not dentro_backtick:
-                    if char == '(':
-                        paren_count += 1
-                    elif char == ')':
-                        paren_count -= 1
-            
-            if paren_count != 0:
-                advertencia = f"-- ⚠️ ADVERTENCIA: CREATE TABLE para '{tabla_nombre}' tiene paréntesis desbalanceados ({paren_count} sin cerrar)"
-                lineas.append(advertencia)
-                lineas.append(f"-- El statement original puede tener errores de sintaxis")
-                lineas.append(f"-- Se intentará usar de todas formas, pero puede fallar al ejecutar")
-            
-            # Validar que tenga ENGINE= (indica que está completo)
-            if 'ENGINE' not in create_stmt.upper():
-                lineas.append(f"-- ⚠️ ADVERTENCIA: CREATE TABLE para '{tabla_nombre}' parece estar incompleto (falta ENGINE=...)")
-            
-            # Agregar IF NOT EXISTS si no está presente
-            if "IF NOT EXISTS" not in create_stmt.upper():
-                # Reemplazar CREATE TABLE `nombre` por CREATE TABLE IF NOT EXISTS `nombre`
-                # Usar un patrón más específico para evitar romper la estructura
-                create_stmt = re.sub(
-                    r'^(CREATE\s+TABLE)\s+(?:IF\s+NOT\s+EXISTS\s+)?`',
-                    r'\1 IF NOT EXISTS `',
-                    create_stmt,
-                    count=1,  # Solo reemplazar la primera ocurrencia
-                    flags=re.IGNORECASE | re.MULTILINE
-                )
-                lineas.append(f"-- Creación de tabla con protección IF NOT EXISTS")
-            else:
-                lineas.append(f"-- Tabla {tabla_nombre} (ya incluye IF NOT EXISTS)")
+            # El CREATE TABLE reconstruido ya incluye IF NOT EXISTS y ENGINE=
+            lineas.append(f"-- Creación de tabla '{tabla_nombre}' (reconstruida desde datos parseados)")
             
             # Asegurar que termine con punto y coma
             if not create_stmt.rstrip().endswith(';'):
