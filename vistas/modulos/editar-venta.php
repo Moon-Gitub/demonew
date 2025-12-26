@@ -1,24 +1,47 @@
  <?php
+      // Habilitar reporte de errores para debugging
+      error_reporting(E_ALL);
+      ini_set('display_errors', 0);
+      ini_set('log_errors', 1);
+
+      // Validar que idVenta esté presente
+      if (!isset($_GET["idVenta"]) || empty($_GET["idVenta"])) {
+        die('<div class="content-wrapper"><div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> Error: No se especificó el ID de la venta.</div></div>');
+      }
 
       $item = "id";
       $valor = $_GET["idVenta"];
       $venta = ControladorVentas::ctrMostrarVentas($item, $valor);
 
+      // Validar que la venta exista
+      if (!$venta || !is_array($venta) || !isset($venta["id"])) {
+        die('<div class="content-wrapper"><div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> Error: La venta con ID ' . htmlspecialchars($valor) . ' no existe.</div></div>');
+      }
+
       $facturada = ControladorVentas::ctrVentaFacturadaDatos($_GET["idVenta"]);
 
       $itemUsuario = "id";
-      $valorUsuario = $venta["id_vendedor"];
-      $vendedor = ControladorUsuarios::ctrMostrarUsuarios($itemUsuario, $valorUsuario);
+      $valorUsuario = isset($venta["id_vendedor"]) ? $venta["id_vendedor"] : null;
+      $vendedor = $valorUsuario ? ControladorUsuarios::ctrMostrarUsuarios($itemUsuario, $valorUsuario) : null;
 
       $itemCliente = "id";
-      $valorCliente = $venta["id_cliente"];
-      $cliente = ControladorClientes::ctrMostrarClientes($itemCliente, $valorCliente);
+      $valorCliente = isset($venta["id_cliente"]) ? $venta["id_cliente"] : null;
+      $cliente = $valorCliente ? ControladorClientes::ctrMostrarClientes($itemCliente, $valorCliente) : null;
 
-      $porcentajeImpuesto = $venta["impuesto"] * 100 / $venta["neto"];
+      // Validar cliente
+      if (!$cliente || !is_array($cliente)) {
+        $cliente = array("id" => 1, "nombre" => "Consumidor Final", "documento" => "");
+      }
 
-      $boxDisabled = ($venta["estado"] == 0 || $facturada == false) ? '' : 'style="pointer-events: none;"';
+      // Calcular porcentaje de impuesto con validación
+      $porcentajeImpuesto = 0;
+      if (isset($venta["neto"]) && floatval($venta["neto"]) > 0 && isset($venta["impuesto"])) {
+        $porcentajeImpuesto = floatval($venta["impuesto"]) * 100 / floatval($venta["neto"]);
+      }
 
-      if($venta["estado"] == 1 || $venta["estado"] == 2 || $facturada) {
+      $boxDisabled = (isset($venta["estado"]) && $venta["estado"] == 0 && $facturada == false) ? '' : 'style="pointer-events: none;"';
+
+      if((isset($venta["estado"]) && ($venta["estado"] == 1 || $venta["estado"] == 2)) || $facturada) {
 
         $boxDisabled = 'style="pointer-events: none;"';
 
@@ -37,7 +60,7 @@
 
       <h1>
 
-        Ver-Editar venta N°: <b><?php echo $venta["codigo"] . '</b> | <a href="comprobante/'.$venta["codigo"].'"><i class="fa fa-print fa-fw"></i> </a> | <a href="extensiones/vendor/tecnickcom/tcpdf/pdf/comprobanteMail.php?codigo='.$venta["codigo"].'"><i class="fa fa-envelope fa-fw"></i> </a>'; ?>
+        Ver-Editar venta N°: <b><?php echo htmlspecialchars($venta["codigo"] ?? "N/A") . '</b> | <a href="comprobante/'.htmlspecialchars($venta["codigo"] ?? "").'"><i class="fa fa-print fa-fw"></i> </a> | <a href="extensiones/vendor/tecnickcom/tcpdf/pdf/comprobanteMail.php?codigo='.htmlspecialchars($venta["codigo"] ?? "").'"><i class="fa fa-envelope fa-fw"></i> </a>'; ?>
 
       </h1>
 
