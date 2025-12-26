@@ -30,7 +30,8 @@ class ModeloVentas{
 		// Guardar productos JSON vacío (compatibilidad con estructura, pero no se usa)
 		$productosJson = '[]';
 
-		$stmt = Conexion::conectar()->prepare("INSERT IGNORE INTO $tabla(uuid, id_empresa, fecha, codigo, cbte_tipo, id_cliente, id_vendedor, productos, impuesto, impuesto_detalle, neto, neto_gravado, base_imponible_0, base_imponible_2, base_imponible_5, base_imponible_10, base_imponible_21, base_imponible_27, iva_2, iva_5, iva_10, iva_21, iva_27, total, metodo_pago, pto_vta, concepto, fec_desde, fec_hasta, fec_vencimiento, asociado_tipo_cbte, asociado_pto_vta, asociado_nro_cbte, estado, observaciones_vta, pedido_afip, respuesta_afip) VALUES (:uuid, :id_empresa, :fecha, :codigo, :cbte_tipo, :id_cliente, :id_vendedor, :productos, :impuesto, :impuesto_detalle, :neto, :neto_gravado, :base_imponible_0, :base_imponible_2, :base_imponible_5, :base_imponible_10, :base_imponible_21, :base_imponible_27, :iva_2, :iva_5, :iva_10, :iva_21, :iva_27, :total, :metodo_pago, :pto_vta, :concepto, :fec_desde, :fec_hasta, :fec_vencimiento, :asociado_tipo_cbte, :asociado_pto_vta, :asociado_nro_cbte, :estado, :observaciones_vta, :pedido_afip, :respuesta_afip)");
+		$conexion = Conexion::conectar();
+		$stmt = $conexion->prepare("INSERT IGNORE INTO $tabla(uuid, id_empresa, fecha, codigo, cbte_tipo, id_cliente, id_vendedor, productos, impuesto, impuesto_detalle, neto, neto_gravado, base_imponible_0, base_imponible_2, base_imponible_5, base_imponible_10, base_imponible_21, base_imponible_27, iva_2, iva_5, iva_10, iva_21, iva_27, total, metodo_pago, pto_vta, concepto, fec_desde, fec_hasta, fec_vencimiento, asociado_tipo_cbte, asociado_pto_vta, asociado_nro_cbte, estado, observaciones_vta, pedido_afip, respuesta_afip) VALUES (:uuid, :id_empresa, :fecha, :codigo, :cbte_tipo, :id_cliente, :id_vendedor, :productos, :impuesto, :impuesto_detalle, :neto, :neto_gravado, :base_imponible_0, :base_imponible_2, :base_imponible_5, :base_imponible_10, :base_imponible_21, :base_imponible_27, :iva_2, :iva_5, :iva_10, :iva_21, :iva_27, :total, :metodo_pago, :pto_vta, :concepto, :fec_desde, :fec_hasta, :fec_vencimiento, :asociado_tipo_cbte, :asociado_pto_vta, :asociado_nro_cbte, :estado, :observaciones_vta, :pedido_afip, :respuesta_afip)");
 
 		$stmt->bindParam(":uuid", $datos["uuid"], PDO::PARAM_STR);
 		$stmt->bindParam(":id_empresa", $datos["id_empresa"], PDO::PARAM_INT);
@@ -73,14 +74,44 @@ class ModeloVentas{
 		if($stmt->execute()){
 
 			// Obtener el ID de la venta insertada
-			$idVenta = Conexion::conectar()->lastInsertId();
+			// Con INSERT IGNORE, lastInsertId puede retornar 0 si la venta ya existe
+			// Por eso obtenemos el ID usando el UUID o el código
+			$idVenta = $conexion->lastInsertId();
 			
-			// Si se pasó productos, insertarlos en productos_venta
-			if (isset($datos["productos"]) && !empty($datos["productos"])) {
+			// Si lastInsertId retorna 0, obtener el ID por UUID o código
+			if ($idVenta == 0 || empty($idVenta)) {
+				if (isset($datos["uuid"]) && !empty($datos["uuid"])) {
+					$stmtId = $conexion->prepare("SELECT id FROM $tabla WHERE uuid = :uuid LIMIT 1");
+					$stmtId->bindParam(":uuid", $datos["uuid"], PDO::PARAM_STR);
+					$stmtId->execute();
+					$venta = $stmtId->fetch();
+					$idVenta = $venta ? intval($venta["id"]) : 0;
+					$stmtId->closeCursor();
+				} elseif (isset($datos["codigo"]) && !empty($datos["codigo"])) {
+					$stmtId = $conexion->prepare("SELECT id FROM $tabla WHERE codigo = :codigo LIMIT 1");
+					$stmtId->bindParam(":codigo", $datos["codigo"], PDO::PARAM_INT);
+					$stmtId->execute();
+					$venta = $stmtId->fetch();
+					$idVenta = $venta ? intval($venta["id"]) : 0;
+					$stmtId->closeCursor();
+				}
+			}
+			
+			// Si se pasó productos y tenemos un ID válido, insertarlos en productos_venta
+			if ($idVenta > 0 && isset($datos["productos"]) && !empty($datos["productos"])) {
 				$resultadoProductos = self::mdlIngresarProductosVenta($idVenta, $datos["productos"]);
 				if ($resultadoProductos != "ok") {
 					// Log error pero no fallar la inserción de venta
 					error_log("Error al insertar productos_venta para venta $idVenta: $resultadoProductos");
+				} else {
+					error_log("Productos insertados correctamente en productos_venta para venta $idVenta");
+				}
+			} else {
+				if ($idVenta == 0) {
+					error_log("Error: No se pudo obtener el ID de la venta insertada. UUID: " . ($datos["uuid"] ?? "N/A") . ", Código: " . ($datos["codigo"] ?? "N/A"));
+				}
+				if (!isset($datos["productos"]) || empty($datos["productos"])) {
+					error_log("Advertencia: No se pasaron productos para la venta. ID: $idVenta");
 				}
 			}
 
