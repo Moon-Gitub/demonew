@@ -30,6 +30,17 @@ CREATE TABLE IF NOT EXISTS `productos_venta` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- ================================================================
+-- OPCIONAL: Deshabilitar temporalmente la FK para migración
+-- ================================================================
+-- Si necesitas migrar datos con productos inexistentes, puedes
+-- deshabilitar temporalmente la restricción:
+-- 
+-- SET FOREIGN_KEY_CHECKS = 0;
+-- -- Ejecutar migración aquí
+-- SET FOREIGN_KEY_CHECKS = 1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+-- ================================================================
 -- COMENTARIOS
 -- ================================================================
 -- id: ID único del registro

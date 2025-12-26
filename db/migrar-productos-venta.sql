@@ -68,17 +68,26 @@ BEGIN
                 SET v_precio_venta = CAST(JSON_UNQUOTE(JSON_EXTRACT(v_productos_json, CONCAT('$[', i, '].precio_venta'))) AS DECIMAL(10,2));
             END IF;
             
-            -- Validar que tenemos datos mínimos
+            -- Validar que tenemos datos mínimos Y que el producto existe
             IF v_producto_id IS NOT NULL AND v_producto_id > 0 AND v_cantidad > 0 THEN
-                -- Insertar en productos_venta
-                INSERT INTO productos_venta (id_venta, id_producto, cantidad, precio_compra, precio_venta)
-                VALUES (v_id_venta, v_producto_id, v_cantidad, 
-                        IFNULL(v_precio_compra, 0), 
-                        IFNULL(v_precio_venta, 0))
-                ON DUPLICATE KEY UPDATE
-                    cantidad = v_cantidad,
-                    precio_compra = IFNULL(v_precio_compra, 0),
-                    precio_venta = IFNULL(v_precio_venta, 0);
+                -- Verificar que el producto existe en la tabla productos
+                SET @producto_existe = (SELECT COUNT(*) FROM productos WHERE id = v_producto_id);
+                
+                IF @producto_existe > 0 THEN
+                    -- Insertar en productos_venta solo si el producto existe
+                    INSERT INTO productos_venta (id_venta, id_producto, cantidad, precio_compra, precio_venta)
+                    VALUES (v_id_venta, v_producto_id, v_cantidad, 
+                            IFNULL(v_precio_compra, 0), 
+                            IFNULL(v_precio_venta, 0))
+                    ON DUPLICATE KEY UPDATE
+                        cantidad = v_cantidad,
+                        precio_compra = IFNULL(v_precio_compra, 0),
+                        precio_venta = IFNULL(v_precio_venta, 0);
+                ELSE
+                    -- Registrar producto inexistente (opcional: puedes loguear esto)
+                    -- INSERT INTO productos_venta_errores (id_venta, id_producto, error) VALUES (v_id_venta, v_producto_id, 'Producto no existe');
+                    -- Por ahora solo continuamos sin insertar
+                END IF;
             END IF;
             
             SET i = i + 1;
@@ -91,7 +100,11 @@ BEGIN
     -- Confirmar transacción
     COMMIT;
     
-    SELECT CONCAT('Migración completada. Revisar productos_venta para verificar.') AS resultado;
+    -- Mostrar resumen
+    SELECT 
+        CONCAT('Migración completada. ') AS mensaje,
+        (SELECT COUNT(*) FROM productos_venta) AS productos_migrados,
+        (SELECT COUNT(DISTINCT id_venta) FROM productos_venta) AS ventas_migradas;
     
 END$$
 
