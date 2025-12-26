@@ -8,12 +8,15 @@
   $objCierreCaja = new ControladorCajaCierres();
 
   $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
+  if (!is_array($arrPuntos)) {
+    $arrPuntos = [];
+  }
   $arrPuntosHabilitados = explode(',', $_SESSION['puntos_venta']);
 
   if($_SESSION["perfil"] != "Administrador"){
     $numeroCaja = (isset($_GET["numCaja"]) ) ? $_GET['numCaja'] : $arrPuntosHabilitados[0];
   } else {
-    $cajaDefecto = (count($arrPuntos) > 1) ? 0 : $arrPuntosHabilitados[0];
+    $cajaDefecto = (is_array($arrPuntos) && count($arrPuntos) > 1) ? 0 : (isset($arrPuntosHabilitados[0]) ? $arrPuntosHabilitados[0] : 0);
     $numeroCaja = (isset($_GET["numCaja"]) ) ? $_GET['numCaja'] : $cajaDefecto;
   }
 
