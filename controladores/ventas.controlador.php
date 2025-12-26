@@ -1732,7 +1732,36 @@ class ControladorVentas{
 
 		$productos = ModeloVentas::mdlObtenerProductosVenta($idVenta);
 		
-		// Si no hay productos en tabla relacional, retornar array vacío (no hay fallback a JSON)
+		// Si no hay productos en tabla relacional, intentar migrar desde JSON automáticamente
+		if (empty($productos)) {
+			// Obtener la venta para verificar si tiene productos en JSON
+			$venta = ModeloVentas::mdlMostrarVentas("ventas", "id", $idVenta);
+			
+			if ($venta && isset($venta["productos"]) && !empty($venta["productos"])) {
+				$productosJson = $venta["productos"];
+				
+				// Verificar que el JSON no esté vacío y sea válido
+				if ($productosJson !== '[]' && $productosJson !== 'null' && $productosJson !== '' && json_decode($productosJson) !== null) {
+					// Intentar migrar automáticamente desde JSON
+					$productosArray = json_decode($productosJson, true);
+					
+					if (is_array($productosArray) && !empty($productosArray)) {
+						// Migrar productos desde JSON a tabla relacional
+						$resultado = ModeloVentas::mdlIngresarProductosVenta($idVenta, $productosArray);
+						
+						if ($resultado == "ok") {
+							// Reintentar obtener productos desde tabla relacional
+							$productos = ModeloVentas::mdlObtenerProductosVenta($idVenta);
+							error_log("Venta $idVenta migrada automáticamente desde JSON: " . count($productos) . " productos");
+						} else {
+							error_log("Error al migrar automáticamente venta $idVenta: $resultado");
+						}
+					}
+				}
+			}
+		}
+		
+		// Si aún no hay productos, retornar array vacío
 		if (empty($productos)) {
 			return array();
 		}
