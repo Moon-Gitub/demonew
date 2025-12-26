@@ -1292,6 +1292,15 @@ class ControladorVentas{
 
 		if(isset($_POST["autorizarCbteIdVenta"])) {
 
+			// Validar token CSRF
+			if(!isset($_POST["csrf_token"]) || !isset($_SESSION['csrf_token']) || $_POST["csrf_token"] !== $_SESSION['csrf_token']){
+				echo json_encode([
+					'error' => true,
+					'mensaje' => 'Token CSRF inválido'
+				]);
+				return;
+			}
+
 			if(ModeloVentas::mdlVentaFacturada($_POST["autorizarCbteIdVenta"])){
 				echo'<script>
 

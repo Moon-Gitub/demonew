@@ -830,6 +830,8 @@ MODAL AUTOTIZAR COMPROBANTE
 
             <!-- ENTRADA PARA ID VENTA  -->
             <input type="hidden" name="autorizarCbteIdVenta" id="autorizarCbteIdVenta">
+            <!-- Token CSRF -->
+            <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : ''; ?>">
 
             <div class="row">
 
