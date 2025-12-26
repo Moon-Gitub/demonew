@@ -889,7 +889,7 @@ MODAL AUTOTIZAR COMPROBANTE
 
                 <span class="input-group-addon"><i class="fa fa-user"></i></span> 
 
-                 <input type="text" class="form-control" id="autocompletarClienteCaja" placeholder="1-Consumidor Final" required>
+                 <input type="text" class="form-control" id="autocompletarClienteCaja" placeholder="1-Consumidor Final">
                  <input type="hidden" id="seleccionarCliente" name="autorizarCbteCliente" value="1">
 
               </div> 
