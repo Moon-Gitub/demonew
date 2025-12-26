@@ -39,52 +39,6 @@ $sql_details = array(
 $fechaInicial = isset($_GET['fechaInicial']) ? $_GET['fechaInicial'] : (isset($_POST['fechaInicial']) ? $_POST['fechaInicial'] : null);
 $fechaFinal = isset($_GET['fechaFinal']) ? $_GET['fechaFinal'] : (isset($_POST['fechaFinal']) ? $_POST['fechaFinal'] : null);
 
-// Si no hay fechas, usar fecha de hoy
-if (!$fechaInicial || !$fechaFinal) {
-    date_default_timezone_set('America/Argentina/Mendoza');
-    $hoy = date('Y-m-d');
-    $fechaInicial = $hoy . ' 00:00';
-    $fechaFinal = $hoy . ' 23:59';
-}
-
-// Construir condición WHERE para fechas (usar alias 'temp' de la subconsulta)
-$whereFecha = "";
-if ($fechaInicial && $fechaFinal) {
-    // Limpiar fechas (pueden venir con o sin hora)
-    $fechaInicial = trim($fechaInicial);
-    $fechaFinal = trim($fechaFinal);
-    
-    // Si no tienen hora, agregarla
-    if (strlen($fechaInicial) == 10) {
-        $fechaInicial .= ' 00:00';
-    }
-    if (strlen($fechaFinal) == 10) {
-        $fechaFinal .= ' 23:59';
-    }
-    
-    if ($fechaInicial == $fechaFinal) {
-        $whereFecha = "temp.fecha LIKE '%" . substr($fechaFinal, 0, 10) . "%'";
-    } else {
-        $fechaActual = new DateTime();
-        $fechaActual->add(new DateInterval("P1D"));
-        $fechaActualMasUno = $fechaActual->format("Y-m-d");
-        $fechaFinal2 = new DateTime($fechaFinal);
-        $fechaFinal2->add(new DateInterval("P1D"));
-        $fechaFinalMasUno = $fechaFinal2->format("Y-m-d");
-        
-        if ($fechaFinalMasUno == $fechaActualMasUno) {
-            $whereFecha = "temp.fecha BETWEEN '" . $fechaInicial . "' AND '" . $fechaFinalMasUno . " 23:59'";
-        } else {
-            $whereFecha = "temp.fecha BETWEEN '" . $fechaInicial . "' AND '" . $fechaFinal . "'";
-        }
-    }
-} else {
-    // Si no hay fechas, usar fecha de hoy
-    date_default_timezone_set('America/Argentina/Mendoza');
-    $hoy = date('Y-m-d');
-    $whereFecha = "temp.fecha BETWEEN '" . $hoy . " 00:00' AND '" . $hoy . " 23:59'";
-}
-
 // Obtener datos de empresa para puntos de venta
 $arrayEmpresa = ControladorEmpresa::ctrMostrarempresa('id', 1);
 $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
