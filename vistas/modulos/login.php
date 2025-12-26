@@ -268,8 +268,8 @@ body.login-page .login-box-body,
 }
 
 .btn-login {
-    background: transparent !important;
-    border: 1px solid #87ceeb !important;
+    background: <?php echo $loginColorBoton; ?> !important;
+    border: 1px solid <?php echo $loginColorBoton; ?> !important;
     border-radius: 10px;
     height: 48px;
     font-size: 14px;
@@ -289,13 +289,16 @@ body.login-page .login-box-body,
 }
 
 .btn-login:hover {
-    background: rgba(135, 206, 235, 0.1) !important;
-    border-color: #87ceeb !important;
+    background: rgba(<?php echo $loginColorBotonRgb; ?>, 0.9) !important;
+    border-color: <?php echo $loginColorBoton; ?> !important;
     color: #ffffff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(<?php echo $loginColorBotonRgb; ?>, 0.3);
 }
 
 .btn-login:active {
-    background: rgba(135, 206, 235, 0.15) !important;
+    background: rgba(<?php echo $loginColorBotonRgb; ?>, 0.8) !important;
+    transform: translateY(0);
 }
 
 .btn-login:disabled {
