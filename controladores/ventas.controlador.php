@@ -972,16 +972,24 @@ class ControladorVentas{
 
 			if($cambioProducto){
 
-				$productos =  json_decode($traerVenta["productos"], true);
+				// Obtener productos desde tabla relacional (o JSON legacy si no existe)
+				$productos = self::ctrObtenerProductosVentaLegacy($traerVenta["id"]);
+				
+				// Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
+				if (empty($productos) && !empty($traerVenta["productos"])) {
+					$productos = json_decode($traerVenta["productos"], true);
+				}
 
 				$totalProductosComprados = array();
-				foreach ($productos as $key => $value) {
+				if (is_array($productos)) {
+					foreach ($productos as $key => $value) {
 
-					array_push($totalProductosComprados, $value["cantidad"]);
-					
-					// Devolver stock (editar venta - productos antiguos)
-					self::procesarProductoVenta($value["id"], $value["cantidad"], $traerVenta["codigo"], "stock", null, true);
+						array_push($totalProductosComprados, $value["cantidad"]);
+						
+						// Devolver stock (editar venta - productos antiguos)
+						self::procesarProductoVenta($value["id"], $value["cantidad"], $traerVenta["codigo"], "stock", null, true);
 
+					}
 				}
 
 				$tablaClientes = "clientes";
@@ -1149,12 +1157,21 @@ class ControladorVentas{
 			/*=============================================
 			FORMATEAR TABLA DE PRODUCTOS Y LA DE CLIENTES
 			=============================================*/
-			$productos =  json_decode($traerVenta["productos"], true);
+			// Obtener productos desde tabla relacional (o JSON legacy si no existe)
+			$productos = self::ctrObtenerProductosVentaLegacy($traerVenta["id"]);
+			
+			// Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
+			if (empty($productos) && !empty($traerVenta["productos"])) {
+				$productos = json_decode($traerVenta["productos"], true);
+			}
+			
 			$totalProductosComprados = array();
-			foreach ($productos as $key => $value) {
-				array_push($totalProductosComprados, $value["cantidad"]);
-				// Devolver stock al eliminar venta
-				self::procesarProductoVenta($value["id"], $value["cantidad"], $traerVenta["codigo"], "stock", null, true);
+			if (is_array($productos)) {
+				foreach ($productos as $key => $value) {
+					array_push($totalProductosComprados, $value["cantidad"]);
+					// Devolver stock al eliminar venta
+					self::procesarProductoVenta($value["id"], $value["cantidad"], $traerVenta["codigo"], "stock", null, true);
+				}
 			}
 
 			/*
@@ -1698,6 +1715,50 @@ class ControladorVentas{
 		$respuesta = ModeloVentas::mdlMostrarVentaConCliente($idVenta);
 
 		return $respuesta;
+		
+	}
+
+	/*=============================================
+	OBTENER PRODUCTOS DE VENTA (HELPER - FORMATO COMPATIBLE)
+	=============================================*/
+	static public function ctrObtenerProductosVenta($idVenta, $formatoJson = false){
+
+		$productos = ModeloVentas::mdlObtenerProductosVenta($idVenta);
+
+		if ($formatoJson) {
+			// Retornar como JSON string (compatible con código antiguo)
+			return json_encode($productos);
+		}
+
+		// Retornar como array (formato nuevo)
+		return $productos;
+		
+	}
+
+	/*=============================================
+	OBTENER PRODUCTOS DE VENTA (FORMATO LEGACY - COMPATIBILIDAD)
+	=============================================*/
+	static public function ctrObtenerProductosVentaLegacy($idVenta){
+
+		$productos = ModeloVentas::mdlObtenerProductosVenta($idVenta);
+		
+		// Convertir al formato antiguo del JSON para compatibilidad
+		$productosLegacy = array();
+		foreach ($productos as $prod) {
+			$productosLegacy[] = array(
+				"id" => $prod["id_producto"],
+				"descripcion" => $prod["descripcion"] ?? "",
+				"cantidad" => $prod["cantidad"],
+				"categoria" => $prod["categoria"] ?? "",
+				"stock" => 0, // No guardamos stock histórico
+				"precio_compra" => $prod["precio_compra"],
+				"precio" => $prod["precio_venta"],
+				"precio_venta" => $prod["precio_venta"],
+				"total" => $prod["total"]
+			);
+		}
+		
+		return $productosLegacy;
 		
 	}	
 

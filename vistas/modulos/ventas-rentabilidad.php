@@ -219,26 +219,35 @@
 
           foreach ($ventas as $key => $value) {
             
-            $productos = json_decode($value["productos"], true);
+            // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+            $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
+            
+            // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
+            if (empty($productos) && !empty($value["productos"])) {
+                $productos = json_decode($value["productos"], true);
+            }
+            
             $costoVenta = 0;
             
-            foreach ($productos as $keyp => $valuep) {
-              $costoProducto = $valuep["cantidad"] * ($valuep["precio_compra"] ?? 0);
-              $ventaProducto = $valuep["total"] ?? 0;
-              $costoVenta += $costoProducto;
+            if (is_array($productos)) {
+              foreach ($productos as $keyp => $valuep) {
+                $costoProducto = $valuep["cantidad"] * ($valuep["precio_compra"] ?? 0);
+                $ventaProducto = $valuep["total"] ?? 0;
+                $costoVenta += $costoProducto;
 
-              // Agrupar por producto
-              $descProducto = $valuep["descripcion"] ?? "Sin descripción";
-              if (!isset($productosRentabilidad[$descProducto])) {
-                $productosRentabilidad[$descProducto] = [
-                  "venta" => 0,
-                  "costo" => 0,
-                  "cantidad" => 0
-                ];
+                // Agrupar por producto
+                $descProducto = $valuep["descripcion"] ?? "Sin descripción";
+                if (!isset($productosRentabilidad[$descProducto])) {
+                  $productosRentabilidad[$descProducto] = [
+                    "venta" => 0,
+                    "costo" => 0,
+                    "cantidad" => 0
+                  ];
+                }
+                $productosRentabilidad[$descProducto]["venta"] += $ventaProducto;
+                $productosRentabilidad[$descProducto]["costo"] += $costoProducto;
+                $productosRentabilidad[$descProducto]["cantidad"] += $valuep["cantidad"] ?? 0;
               }
-              $productosRentabilidad[$descProducto]["venta"] += $ventaProducto;
-              $productosRentabilidad[$descProducto]["costo"] += $costoProducto;
-              $productosRentabilidad[$descProducto]["cantidad"] += $valuep["cantidad"] ?? 0;
             }
             
             $costoTotal += $costoVenta;

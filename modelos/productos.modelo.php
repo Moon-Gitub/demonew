@@ -791,17 +791,37 @@ class ModeloProductos{
 	=============================================*/
 	static public function mdlMostrarProductosMasVendidos($fechaInicial, $fechaFinal){
 
-		$caracter = '"';
-		
-		$stmt = Conexion::conectar()->prepare("SELECT REPLACE(REPLACE(REPLACE(REPLACE(JSON_EXTRACT(productos, '$[*].id'), '$caracter',''), '[', ''), ']',''), ' ', '') as productosA, REPLACE(REPLACE(REPLACE(REPLACE(JSON_EXTRACT(productos, '$[*].cantidad'), '$caracter',''), '[', ''), ']',''), ' ', '') as cantidadesA, REPLACE(REPLACE(REPLACE(REPLACE(JSON_EXTRACT(productos, '$[*].descripcion'), '$caracter',''), '[', ''), ']',''), ' ', '') as descripcionA  FROM ventas WHERE fecha BETWEEN '$fechaInicial%' AND '$fechaFinal'");
+		// Usar tabla relacional productos_venta en lugar de JSON_EXTRACT
+		$stmt = Conexion::conectar()->prepare("SELECT 
+			GROUP_CONCAT(DISTINCT CAST(pv.id_producto AS CHAR) ORDER BY pv.id_producto SEPARATOR ',') as productosA,
+			GROUP_CONCAT(CAST(pv.cantidad AS CHAR) ORDER BY pv.id_producto SEPARATOR ',') as cantidadesA,
+			GROUP_CONCAT(DISTINCT COALESCE(p.descripcion, '') ORDER BY pv.id_producto SEPARATOR ',') as descripcionA
+		FROM ventas v
+		INNER JOIN productos_venta pv ON v.id = pv.id_venta
+		LEFT JOIN productos p ON pv.id_producto = p.id
+		WHERE v.fecha BETWEEN :fechaInicial AND :fechaFinal
+		GROUP BY DATE(v.fecha)
+		ORDER BY v.fecha ASC");
 
+		$stmt -> bindParam(":fechaInicial", $fechaInicial, PDO::PARAM_STR);
+		$stmt -> bindParam(":fechaFinal", $fechaFinal, PDO::PARAM_STR);
 		$stmt -> execute();
 
-		return $stmt -> fetchAll();
+		$resultado = $stmt -> fetchAll();
+		
+		// Si no hay resultados en tabla relacional, intentar con JSON (compatibilidad)
+		if (empty($resultado)) {
+			$caracter = '"';
+			$stmtLegacy = Conexion::conectar()->prepare("SELECT REPLACE(REPLACE(REPLACE(REPLACE(JSON_EXTRACT(productos, '$[*].id'), '$caracter',''), '[', ''), ']',''), ' ', '') as productosA, REPLACE(REPLACE(REPLACE(REPLACE(JSON_EXTRACT(productos, '$[*].cantidad'), '$caracter',''), '[', ''), ']',''), ' ', '') as cantidadesA, REPLACE(REPLACE(REPLACE(REPLACE(JSON_EXTRACT(productos, '$[*].descripcion'), '$caracter',''), '[', ''), ']',''), ' ', '') as descripcionA  FROM ventas WHERE fecha BETWEEN '$fechaInicial%' AND '$fechaFinal'");
+			$stmtLegacy -> execute();
+			$resultado = $stmtLegacy -> fetchAll();
+			$stmtLegacy -> closeCursor();
+		}
 
-		$stmt -> close();
-
+		$stmt -> closeCursor();
 		$stmt = null;
+
+		return $resultado;
 	}
 
 	/*=============================================

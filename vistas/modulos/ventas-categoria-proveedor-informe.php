@@ -35,21 +35,30 @@
 
   if ($categoriaSel) {
     foreach ($totalVentas as $key => $value) {
-      $productosVta = json_decode($value["productos"], true);
-      for ($i=0; $i < count($productosVta); $i++) {
-        $prodIterado = ControladorProductos::ctrMostrarProductos('id', $productosVta[$i]["id"], null);
-        for ($x=0; $x < count($categorias); $x++) {
-          if ($categorias[$x]["id"] == $prodIterado["id_categoria"]) {
-            if (array_key_exists("montoAcumulado", $categorias[$x])) {
-              $categorias[$x]["montoAcumulado"] = $categorias[$x]["montoAcumulado"] + $productosVta[$i]["total"];
-              $categorias[$x]["cantidadVendida"] = $categorias[$x]["cantidadVendida"] + $productosVta[$i]["cantidad"];
-            } else {
-              $categorias[$x] += ["montoAcumulado" => $productosVta[$i]["total"]];
-              $categorias[$x] += ["cantidadVendida" => $productosVta[$i]["cantidad"]];
+      // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+      $productosVta = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
+      
+      // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
+      if (empty($productosVta) && !empty($value["productos"])) {
+          $productosVta = json_decode($value["productos"], true);
+      }
+      
+      if (is_array($productosVta)) {
+        for ($i=0; $i < count($productosVta); $i++) {
+          $prodIterado = ControladorProductos::ctrMostrarProductos('id', $productosVta[$i]["id"], null);
+          for ($x=0; $x < count($categorias); $x++) {
+            if ($categorias[$x]["id"] == $prodIterado["id_categoria"]) {
+              if (array_key_exists("montoAcumulado", $categorias[$x])) {
+                $categorias[$x]["montoAcumulado"] = $categorias[$x]["montoAcumulado"] + $productosVta[$i]["total"];
+                $categorias[$x]["cantidadVendida"] = $categorias[$x]["cantidadVendida"] + $productosVta[$i]["cantidad"];
+              } else {
+                $categorias[$x] += ["montoAcumulado" => $productosVta[$i]["total"]];
+                $categorias[$x] += ["cantidadVendida" => $productosVta[$i]["cantidad"]];
+              }
+              $totalGeneral += $productosVta[$i]["total"];
+              $cantidadGeneral += $productosVta[$i]["cantidad"];
+              break 1;
             }
-            $totalGeneral += $productosVta[$i]["total"];
-            $cantidadGeneral += $productosVta[$i]["cantidad"];
-            break 1;
           }
         }
       }
@@ -68,21 +77,30 @@
 
   if($proveedorSel){
     foreach ($totalVentas as $key => $value) {
-      $productosVta = json_decode($value["productos"], true);
-      for ($i=0; $i < count($productosVta); $i++) {
-        $prodIterado = ControladorProductos::ctrMostrarProductos('id', $productosVta[$i]["id"], null);
-        for ($x=0; $x < count($proveedores); $x++) {
-          if ($proveedores[$x]["id"] == $prodIterado["id_proveedor"]) {
-            if (array_key_exists("montoAcumulado", $proveedores[$x])) {
-              $proveedores[$x]["montoAcumulado"] = $proveedores[$x]["montoAcumulado"] + $productosVta[$i]["total"];
-              $proveedores[$x]["cantidadVendida"] = $proveedores[$x]["cantidadVendida"] + $productosVta[$i]["cantidad"];
-            } else {
-              $proveedores[$x] += ["montoAcumulado" => $productosVta[$i]["total"]];
-              $proveedores[$x] += ["cantidadVendida" => $productosVta[$i]["cantidad"]];
+      // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+      $productosVta = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
+      
+      // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
+      if (empty($productosVta) && !empty($value["productos"])) {
+          $productosVta = json_decode($value["productos"], true);
+      }
+      
+      if (is_array($productosVta)) {
+        for ($i=0; $i < count($productosVta); $i++) {
+          $prodIterado = ControladorProductos::ctrMostrarProductos('id', $productosVta[$i]["id"], null);
+          for ($x=0; $x < count($proveedores); $x++) {
+            if ($proveedores[$x]["id"] == $prodIterado["id_proveedor"]) {
+              if (array_key_exists("montoAcumulado", $proveedores[$x])) {
+                $proveedores[$x]["montoAcumulado"] = $proveedores[$x]["montoAcumulado"] + $productosVta[$i]["total"];
+                $proveedores[$x]["cantidadVendida"] = $proveedores[$x]["cantidadVendida"] + $productosVta[$i]["cantidad"];
+              } else {
+                $proveedores[$x] += ["montoAcumulado" => $productosVta[$i]["total"]];
+                $proveedores[$x] += ["cantidadVendida" => $productosVta[$i]["cantidad"]];
+              }
+              $totalGeneral += $productosVta[$i]["total"];
+              $cantidadGeneral += $productosVta[$i]["cantidad"];
+              break 1;
             }
-            $totalGeneral += $productosVta[$i]["total"];
-            $cantidadGeneral += $productosVta[$i]["cantidad"];
-            break 1;
           }
         }
       }
@@ -102,16 +120,24 @@
   if($productosSel){
     $arrayProductos = array();
     foreach ($totalVentas as $key => $value) {
-      $productosVta = json_decode($value["productos"], true);
-      for ($i=0; $i < count($productosVta); $i++) {
-        $prodIterado = ControladorProductos::ctrMostrarProductos('id', $productosVta[$i]["id"], null);
-        $key = $prodIterado["id"];
-        if(array_key_exists($key, $arrayProductos)){
-          $arrayProductos[$key]["cantidad"] += $productosVta[$i]["cantidad"];
-          $arrayProductos[$key]["vendido"] += $productosVta[$i]["total"];
-        } else {
-          $valor = array(
-            "codigo" => $prodIterado["codigo"], 
+      // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+      $productosVta = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
+      
+      // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
+      if (empty($productosVta) && !empty($value["productos"])) {
+          $productosVta = json_decode($value["productos"], true);
+      }
+      
+      if (is_array($productosVta)) {
+        for ($i=0; $i < count($productosVta); $i++) {
+          $prodIterado = ControladorProductos::ctrMostrarProductos('id', $productosVta[$i]["id"], null);
+          $key = $prodIterado["id"];
+          if(array_key_exists($key, $arrayProductos)){
+            $arrayProductos[$key]["cantidad"] += $productosVta[$i]["cantidad"];
+            $arrayProductos[$key]["vendido"] += $productosVta[$i]["total"];
+          } else {
+            $valor = array(
+              "codigo" => $prodIterado["codigo"],
             "descripcion" => $prodIterado["descripcion"], 
             "cantidad" => $productosVta[$i]["cantidad"], 
             "vendido" => $productosVta[$i]["total"]

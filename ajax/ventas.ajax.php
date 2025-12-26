@@ -73,6 +73,15 @@ class AjaxVentas{
 			}
 		}
 
+		// Reemplazar productos JSON con productos desde tabla relacional (formato compatible)
+		if ($respuesta && isset($respuesta["id"])) {
+			$productosLegacy = ControladorVentas::ctrObtenerProductosVentaLegacy($respuesta["id"]);
+			if (!empty($productosLegacy)) {
+				$respuesta["productos"] = json_encode($productosLegacy);
+			}
+			// Si no hay en tabla relacional, mantener el JSON original (compatibilidad)
+		}
+
 		echo json_encode($respuesta);
 
 	}

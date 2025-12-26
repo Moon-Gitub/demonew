@@ -263,9 +263,16 @@
 
                 <?php
 
-                $listaProducto = json_decode($venta["productos"], true);
+                // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+                $listaProducto = ControladorVentas::ctrObtenerProductosVentaLegacy($venta["id"]);
+                
+                // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
+                if (empty($listaProducto) && !empty($venta["productos"])) {
+                    $listaProducto = json_decode($venta["productos"], true);
+                }
 
-                foreach ($listaProducto as $key => $value) {
+                if (is_array($listaProducto)) {
+                    foreach ($listaProducto as $key => $value) {
 
                   if($value["id"] != 1) {
 
@@ -377,6 +384,7 @@
                           </div>
 
                         </div>';
+                    }
                   }
 
                 }
@@ -386,7 +394,15 @@
 
                 </div>
 
-                <input type="hidden" id="listaProductosCaja" name="listaProductosCaja" value="<?php echo htmlspecialchars($venta['productos']); ?>">
+                <input type="hidden" id="listaProductosCaja" name="listaProductosCaja" value="<?php 
+                    // Generar JSON compatible desde productos_venta
+                    $productosJson = ControladorVentas::ctrObtenerProductosVentaLegacy($venta['id']);
+                    if (empty($productosJson) && !empty($venta['productos'])) {
+                        echo htmlspecialchars($venta['productos']);
+                    } else {
+                        echo htmlspecialchars(json_encode($productosJson));
+                    }
+                ?>">
 
                <input type="hidden" id="listaDescuentoCaja" name="listaDescuentoCaja">
 

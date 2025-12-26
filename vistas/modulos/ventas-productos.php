@@ -278,7 +278,14 @@
           
           if (is_array($respuestaVta)) {
             foreach ($respuestaVta as $key => $value) {
-              $productos = json_decode($value["productos"], true);
+              // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+              $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
+              
+              // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
+              if (empty($productos) && !empty($value["productos"])) {
+                  $productos = json_decode($value["productos"], true);
+              }
+              
               if (is_array($productos)) {
                 foreach ($productos as $keyPro => $valuePro) {
                   $totalUnidades += isset($valuePro["cantidad"]) ? intval($valuePro["cantidad"]) : 0;
@@ -305,7 +312,14 @@
           $productosAgrupados = [];
           if (is_array($respuestaVta)) {
             foreach ($respuestaVta as $key => $value) {
-              $productos = json_decode($value["productos"], true);
+              // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+              $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
+              
+              // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
+              if (empty($productos) && !empty($value["productos"])) {
+                  $productos = json_decode($value["productos"], true);
+              }
+              
               if (is_array($productos)) {
                 foreach ($productos as $keyPro => $valuePro) {
                   $desc = $valuePro["descripcion"] ?? "Sin descripción";
@@ -429,18 +443,25 @@
           // Usar las variables ya calculadas arriba
           if (is_array($respuestaVta)) {
             foreach ($respuestaVta as $key => $value) {
-              $productos = json_decode($value["productos"], true);
+              // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+              $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
+              
+              // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
+              if (empty($productos) && !empty($value["productos"])) {
+                  $productos = json_decode($value["productos"], true);
+              }
+              
               if (is_array($productos)) {
                 foreach ($productos as $keyPro => $valuePro) {
                   echo '<tr>';
                   echo '<td>'.($value["fecha"] ?? '').'</td>';
                   echo '<td><a href="#" class="verDetalleVenta" data-id-venta="'.($value["id"] ?? '').'" data-codigo-venta="'.($value["codigo"] ?? '').'" style="cursor: pointer; color: #3498db; font-weight: 600;">' . ($value["codigo"] ?? '') . '</a></td>';
                   echo '<td>'.(isset($valuePro["cantidad"]) ? $valuePro["cantidad"] : 0).'</td>';
-                  echo '<td>'.(isset($valuePro["descripcion"]) ? $valuePro["descripcion"] : '').'</td>';
+                  echo '<td>'.(isset($valuePro["descripcion"]) ? htmlspecialchars($valuePro["descripcion"]) : '').'</td>';
                   $precioCompra = isset($valuePro["precio_compra"]) ? floatval($valuePro["precio_compra"]) : 0;
                   $cantidad = isset($valuePro["cantidad"]) ? intval($valuePro["cantidad"]) : 0;
                   echo '<td>'.number_format($precioCompra, 2, ',', '.').' ('.number_format($precioCompra * $cantidad, 2, ',', '.').')</td>';
-                  $precioVenta = isset($valuePro["precio"]) ? floatval($valuePro["precio"]) : 0;
+                  $precioVenta = isset($valuePro["precio"]) ? floatval($valuePro["precio"]) : (isset($valuePro["precio_venta"]) ? floatval($valuePro["precio_venta"]) : 0);
                   $total = isset($valuePro["total"]) ? floatval($valuePro["total"]) : 0;
                   echo '<td>'.number_format($precioVenta, 2, ',', '.').' ('.number_format($total, 2, ',', '.').')</td>';
                   echo '</tr>';

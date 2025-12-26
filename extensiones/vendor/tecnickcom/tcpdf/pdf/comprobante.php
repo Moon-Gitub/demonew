@@ -277,11 +277,18 @@ try {
         die('Error: La venta no tiene productos');
     }
     
-    $productos = json_decode($respuestaVenta["productos"], true);
+    // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+    require_once "../../../controladores/ventas.controlador.php";
+    $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($respuestaVenta["id"]);
+    
+    // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
+    if (empty($productos) && !empty($respuestaVenta["productos"])) {
+        $productos = json_decode($respuestaVenta["productos"], true);
+    }
     
     // Validar que se obtuvieron los productos
     if(!is_array($productos) || empty($productos)) {
-        error_log("Error comprobante.php: No se pudieron decodificar los productos de la venta");
+        error_log("Error comprobante.php: No se pudieron obtener los productos de la venta ID: " . $respuestaVenta["id"]);
         http_response_code(500);
         die('Error: No se encontraron productos en la venta');
     }
@@ -481,10 +488,13 @@ $formatCantidad     = number_format($value["cantidad"],2,',','.');
 $formatTotal        = '$ ' . number_format($value["total"],2,',','.');
 $subTotalPorPagina += $value["total"];
 
+// Obtener precio (puede venir como "precio" o "precio_venta")
+$precioProducto = isset($value["precio"]) ? $value["precio"] : (isset($value["precio_venta"]) ? $value["precio_venta"] : 0);
+
 //DISEÑO DETALLE DEPENDIENDO DEL TIPO DE COMPROBANTE
 if ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4) {
 
-$formatPrecioUnit   = $value["precio"] / (1 + ($getProducto["tipo_iva"] / 100));
+$formatPrecioUnit   = $precioProducto / (1 + ($getProducto["tipo_iva"] / 100));
 $formatSubtotal     = $formatPrecioUnit * $value["cantidad"];
 $formatPrecioUnit   = '$ ' . number_format($formatPrecioUnit,2,',','.');
 $formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
@@ -548,7 +558,7 @@ $pdf->writeHTML($bloqueDetalle, false, false, false, false, '');
 
 } else {
 
-$formatPrecioUnit   = $value["precio"];
+$formatPrecioUnit   = $precioProducto;
 $formatSubtotal     = $formatPrecioUnit * $value["cantidad"];
 $formatPrecioUnit   = '$ ' . number_format($formatPrecioUnit,2,',','.');
 $formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
@@ -870,10 +880,13 @@ $formatCantidad     = number_format($value["cantidad"],2,',','.');
 $formatTotal        = '$ ' . number_format($value["total"],2,',','.');
 $subTotalPorPagina += $value["total"];
 
+// Obtener precio (puede venir como "precio" o "precio_venta")
+$precioProducto = isset($value["precio"]) ? $value["precio"] : (isset($value["precio_venta"]) ? $value["precio_venta"] : 0);
+
 //DISEÑO DETALLE DEPENDIENDO DEL TIPO DE COMPROBANTE
 if ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4) {
 
-$formatPrecioUnit   = $value["precio"] / (1 + ($getProducto["tipo_iva"] / 100));
+$formatPrecioUnit   = $precioProducto / (1 + ($getProducto["tipo_iva"] / 100));
 $formatSubtotal     = $formatPrecioUnit * $value["cantidad"];
 $formatPrecioUnit   = '$ ' . number_format($formatPrecioUnit,2,',','.');
 $formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
@@ -937,7 +950,7 @@ $pdf->writeHTML($bloqueDetalle, false, false, false, false, '');
 
 } else {
     
-$formatPrecioUnit   = $value["precio"];
+$formatPrecioUnit   = $precioProducto;
 $formatSubtotal     = $formatPrecioUnit * $value["cantidad"];
 $formatPrecioUnit   = '$ ' . number_format($formatPrecioUnit,2,',','.');
 $formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');

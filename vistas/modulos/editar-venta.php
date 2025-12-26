@@ -417,53 +417,66 @@
 
                 <?php
 
-                $listaProducto = json_decode($venta["productos"], true);
-
-                foreach ($listaProducto as $key => $value) {
-
-                  // if($value["id"] != 1) {
-
-                    $item = "id";
-                    $valor = $value["id"];
-                    $orden = "id";
-
-                    $respuesta = ControladorProductos::ctrMostrarProductos($item, $valor, $orden);
-
-                    $stockAntiguo = $respuesta["stock"] + $value["cantidad"];
-                    
-                    echo '<div class="row" style="padding:5px 15px">
-              
-                          <div class="col-xs-6" style="padding-right:0px">
-              
-                            <div class="input-group">
-                  
-                              <span class="input-group-btn"><button type="button" class="btn btn-danger quitarProducto" idProducto="'.$value["id"].'"><i class="fa fa-times"></i></button></span>
-
-                              <input type="text" class="form-control nuevaDescripcionProducto" idProducto="'.$value["id"].'" name="agregarProducto" value="'.$value["descripcion"].'" readonly required>
-
-                            </div>
-
-                          </div>
-
-                          <div class="col-xs-3">
+                // Obtener productos desde tabla relacional (o JSON legacy si no existe)
+                $listaProducto = ControladorVentas::ctrObtenerProductosVentaLegacy($venta["id"]);
                 
-                            <input type="number" class="form-control nuevaCantidadProducto" name="nuevaCantidadProducto" min="1" value="'.$value["cantidad"].'" stock="'.$stockAntiguo.'" nuevoStock="'.$value["stock"].'" required>
+                // Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
+                if (empty($listaProducto) && !empty($venta["productos"])) {
+                    $listaProducto = json_decode($venta["productos"], true);
+                }
 
-                          </div>
+                if (is_array($listaProducto)) {
+                    foreach ($listaProducto as $key => $value) {
 
-                          <div class="col-xs-3 ingresoPrecio" style="padding-left:0px">
+                      // if($value["id"] != 1) {
 
-                            <div class="input-group">
+                        $item = "id";
+                        $valor = $value["id"];
+                        $orden = "id";
 
-                              <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                        $respuesta = ControladorProductos::ctrMostrarProductos($item, $valor, $orden);
+
+                        $stockAntiguo = $respuesta["stock"] + $value["cantidad"];
+                        
+                        // Obtener precio correcto (puede venir como "precio" o "precio_venta")
+                        $precioProducto = isset($value["precio"]) ? $value["precio"] : (isset($value["precio_venta"]) ? $value["precio_venta"] : 0);
+                        $totalProducto = isset($value["total"]) ? $value["total"] : ($value["cantidad"] * $precioProducto);
+                        
+                        echo '<div class="row" style="padding:5px 15px">
+                  
+                              <div class="col-xs-6" style="padding-right:0px">
+                  
+                                <div class="input-group">
+                      
+                                  <span class="input-group-btn"><button type="button" class="btn btn-danger quitarProducto" idProducto="'.$value["id"].'"><i class="fa fa-times"></i></button></span>
+
+                                  <input type="text" class="form-control nuevaDescripcionProducto" idProducto="'.$value["id"].'" name="agregarProducto" value="'.htmlspecialchars($value["descripcion"] ?? "").'" readonly required>
+
+                                </div>
+
+                              </div>
+
+                              <div class="col-xs-3">
+                    
+                                <input type="number" class="form-control nuevaCantidadProducto" name="nuevaCantidadProducto" min="1" value="'.$value["cantidad"].'" stock="'.$stockAntiguo.'" nuevoStock="'.($value["stock"] ?? 0).'" required>
+
+                              </div>
+
+                              <div class="col-xs-3 ingresoPrecio" style="padding-left:0px">
+
+                                <div class="input-group">
+
+                                  <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                         
+                                  <input type="text" class="form-control nuevoPrecioProducto" precioReal="'.$precioProducto.'" name="nuevoPrecioProducto" value="'.$totalProducto.'" readonly required>
+         
+                                </div>
                      
-                              <input type="text" class="form-control nuevoPrecioProducto" precioReal="'.$value["precio"].'" name="nuevoPrecioProducto" value="'.$value["total"].'" readonly required>
-     
-                            </div>
-                 
-                          </div>
+                              </div>
 
-                        </div>';
+                            </div>';
+                    }
+                }
 
                   // } else {
 
@@ -509,7 +522,15 @@
 
                 </div>
 
-                <input type="hidden" id="listaProductos" name="listaProductos" value="<?php echo htmlspecialchars($venta['productos']); ?>">
+                <input type="hidden" id="listaProductos" name="listaProductos" value="<?php 
+                    // Generar JSON compatible desde productos_venta
+                    $productosJson = ControladorVentas::ctrObtenerProductosVentaLegacy($venta['id']);
+                    if (empty($productosJson) && !empty($venta['productos'])) {
+                        echo htmlspecialchars($venta['productos']);
+                    } else {
+                        echo htmlspecialchars(json_encode($productosJson));
+                    }
+                ?>">
 
                 <!--=====================================
                 BOTÓN PARA AGREGAR PRODUCTO

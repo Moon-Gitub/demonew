@@ -168,7 +168,14 @@ $ptoVta = str_pad($respuestaVenta["pto_vta"], 5, "0", STR_PAD_LEFT);
 
 $fecEmi = date('d/m/Y', strtotime($respuestaVenta["fecha"]));
 
-$productos = json_decode($respuestaVenta["productos"], true);
+// Obtener productos desde tabla relacional (o JSON legacy si no existe)
+require_once "../../../controladores/ventas.controlador.php";
+$productos = ControladorVentas::ctrObtenerProductosVentaLegacy($respuestaVenta["id"]);
+
+// Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
+if (empty($productos) && !empty($respuestaVenta["productos"])) {
+    $productos = json_decode($respuestaVenta["productos"], true);
+}
 
 //REQUERIMOS LA CLASE TCPDF
 require_once('tcpdf_include.php');
@@ -441,7 +448,9 @@ for ($i = 0; $i <= 19; $i++) {
 	if($i < $tamanioProd){
 		$datosFact[$i]["cantidad"] = $productos[$i]["cantidad"];
 		$datosFact[$i]["descripcion"] = $productos[$i]["descripcion"];
-		$datosFact[$i]["unitario"] = '$ ' . number_format($productos[$i]["precio"],2,',','.');
+		// Obtener precio (puede venir como "precio" o "precio_venta")
+		$precioProducto = isset($productos[$i]["precio"]) ? $productos[$i]["precio"] : (isset($productos[$i]["precio_venta"]) ? $productos[$i]["precio_venta"] : 0);
+		$datosFact[$i]["unitario"] = '$ ' . number_format($precioProducto,2,',','.');
 		$datosFact[$i]["total"] = '$ ' . number_format($productos[$i]["total"],2,',','.');
 	} else {
 

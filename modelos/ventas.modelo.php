@@ -69,6 +69,18 @@ class ModeloVentas{
 
 		if($stmt->execute()){
 
+			// Obtener el ID de la venta insertada
+			$idVenta = Conexion::conectar()->lastInsertId();
+			
+			// Si se pasó productos, insertarlos en productos_venta
+			if (isset($datos["productos"]) && !empty($datos["productos"])) {
+				$resultadoProductos = self::mdlIngresarProductosVenta($idVenta, $datos["productos"]);
+				if ($resultadoProductos != "ok") {
+					// Log error pero no fallar la inserción de venta
+					error_log("Error al insertar productos_venta para venta $idVenta: $resultadoProductos");
+				}
+			}
+
 			return "ok";
 
 		}else{
@@ -77,7 +89,7 @@ class ModeloVentas{
 		
 		}
 
-		$stmt->close();
+		$stmt->closeCursor();
 		$stmt = null;
 
 	}
@@ -87,6 +99,14 @@ class ModeloVentas{
 	=============================================*/
 
 	static public function mdlEditarVenta($tabla, $datos){
+
+		// Primero obtener el id de la venta desde el codigo
+		$stmtId = Conexion::conectar()->prepare("SELECT id FROM $tabla WHERE codigo = :codigo");
+		$stmtId->bindParam(":codigo", $datos["codigo"], PDO::PARAM_INT);
+		$stmtId->execute();
+		$venta = $stmtId->fetch();
+		$idVenta = $venta ? $venta["id"] : null;
+		$stmtId->closeCursor();
 
 		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET  id_cliente = :id_cliente, cbte_tipo = :cbte_tipo, id_vendedor = :id_vendedor, productos = :productos, impuesto = :impuesto, neto = :neto, total= :total, metodo_pago = :metodo_pago, pto_vta = :pto_vta, concepto = :concepto, fec_desde = :fec_desde, fec_hasta = :fec_hasta, fec_vencimiento = :fec_vencimiento, observaciones_vta = :observaciones_vta WHERE codigo = :codigo");
 
@@ -108,6 +128,17 @@ class ModeloVentas{
 
 		if($stmt->execute()){
 
+			// Si se pasó productos y tenemos id_venta, actualizar productos_venta
+			if ($idVenta && isset($datos["productos"]) && !empty($datos["productos"])) {
+				// Eliminar productos existentes
+				self::mdlEliminarProductosVenta($idVenta);
+				// Insertar nuevos productos
+				$resultadoProductos = self::mdlIngresarProductosVenta($idVenta, $datos["productos"]);
+				if ($resultadoProductos != "ok") {
+					error_log("Error al actualizar productos_venta para venta $idVenta: $resultadoProductos");
+				}
+			}
+
 			return "ok";
 
 		}else{
@@ -116,7 +147,7 @@ class ModeloVentas{
 		
 		}
 
-		$stmt->close();
+		$stmt->closeCursor();
 		$stmt = null;
 
 	}
@@ -178,7 +209,7 @@ class ModeloVentas{
 
 		return $stmt -> fetch();
 
-		$stmt -> close();
+		$stmt -> closeCursor();
 
 		$stmt = null;
 
@@ -236,7 +267,7 @@ class ModeloVentas{
 
 		}
 
-		$stmt -> close();
+		$stmt -> closeCursor();
 
 		$stmt = null;
 
@@ -262,7 +293,7 @@ class ModeloVentas{
 
 		}
 
-		$stmt -> close();
+		$stmt -> closeCursor();
 
 		$stmt = null;
 
@@ -288,7 +319,7 @@ class ModeloVentas{
 
 		}
 
-		$stmt -> close();
+		$stmt -> closeCursor();
 
 		$stmt = null;
 
@@ -318,7 +349,7 @@ class ModeloVentas{
 
 		}
 
-		$stmt -> close();
+		$stmt -> closeCursor();
 
 		$stmt = null;
 
@@ -338,7 +369,7 @@ class ModeloVentas{
 
 		return $stmt -> fetch();
 
-		$stmt -> close();
+		$stmt -> closeCursor();
 
 		$stmt = null;
 
@@ -356,7 +387,7 @@ class ModeloVentas{
 
 		return $stmt -> fetch();
 
-		$stmt -> close();
+		$stmt -> closeCursor();
 
 		$stmt = null;
 
@@ -374,7 +405,7 @@ class ModeloVentas{
 
 		return $stmt -> fetch();
 
-		$stmt -> close();
+		$stmt -> closeCursor();
 
 		$stmt = null;
 
@@ -492,7 +523,120 @@ class ModeloVentas{
 
 		return $stmt -> fetch();
 		
-		$stmt -> close();
+		$stmt -> closeCursor();
+
+		$stmt = null;
+
+	}
+
+	/*=============================================
+	OBTENER PRODUCTOS DE UNA VENTA (TABLA RELACIONAL)
+	=============================================*/
+	static public function mdlObtenerProductosVenta($idVenta){
+
+		$stmt = Conexion::conectar()->prepare("SELECT 
+			pv.id,
+			pv.id_venta,
+			pv.id_producto,
+			pv.cantidad,
+			pv.precio_compra,
+			pv.precio_venta,
+			p.id as producto_id,
+			p.descripcion,
+			p.codigo,
+			p.id_categoria,
+			c.categoria,
+			(pv.cantidad * pv.precio_venta) as total
+		FROM productos_venta pv
+		LEFT JOIN productos p ON pv.id_producto = p.id
+		LEFT JOIN categorias c ON p.id_categoria = c.id
+		WHERE pv.id_venta = :id_venta
+		ORDER BY pv.id ASC");
+
+		$stmt -> bindParam(":id_venta", $idVenta, PDO::PARAM_INT);
+
+		$stmt -> execute();
+
+		return $stmt -> fetchAll();
+		
+		$stmt -> closeCursor();
+
+		$stmt = null;
+
+	}
+
+	/*=============================================
+	INSERTAR PRODUCTOS DE VENTA (TABLA RELACIONAL)
+	=============================================*/
+	static public function mdlIngresarProductosVenta($idVenta, $productos){
+
+		// Si productos viene como JSON string, decodificarlo
+		if (is_string($productos)) {
+			$productos = json_decode($productos, true);
+		}
+
+		if (!is_array($productos) || empty($productos)) {
+			return "ok"; // No hay productos, no es error
+		}
+
+		$conexion = Conexion::conectar();
+		$conexion->beginTransaction();
+
+		try {
+			foreach ($productos as $producto) {
+				$idProducto = isset($producto["id"]) ? intval($producto["id"]) : 0;
+				$cantidad = isset($producto["cantidad"]) ? floatval($producto["cantidad"]) : 0;
+				$precioCompra = isset($producto["precio_compra"]) ? floatval($producto["precio_compra"]) : 0;
+				$precioVenta = isset($producto["precio"]) ? floatval($producto["precio"]) : (isset($producto["precio_venta"]) ? floatval($producto["precio_venta"]) : 0);
+
+				if ($idProducto > 0 && $cantidad > 0) {
+					$stmt = $conexion->prepare("INSERT INTO productos_venta (id_venta, id_producto, cantidad, precio_compra, precio_venta) 
+						VALUES (:id_venta, :id_producto, :cantidad, :precio_compra, :precio_venta)");
+
+					$stmt->bindParam(":id_venta", $idVenta, PDO::PARAM_INT);
+					$stmt->bindParam(":id_producto", $idProducto, PDO::PARAM_INT);
+					$stmt->bindParam(":cantidad", $cantidad, PDO::PARAM_STR);
+					$stmt->bindParam(":precio_compra", $precioCompra, PDO::PARAM_STR);
+					$stmt->bindParam(":precio_venta", $precioVenta, PDO::PARAM_STR);
+
+					$stmt->execute();
+					$stmt->closeCursor();
+				}
+			}
+
+			$conexion->commit();
+			return "ok";
+
+		} catch (Exception $e) {
+			$conexion->rollBack();
+			return "error: " . $e->getMessage();
+		}
+
+		$stmt = null;
+		$conexion = null;
+
+	}
+
+	/*=============================================
+	ELIMINAR PRODUCTOS DE VENTA (TABLA RELACIONAL)
+	=============================================*/
+	static public function mdlEliminarProductosVenta($idVenta){
+
+		$stmt = Conexion::conectar()->prepare("DELETE FROM productos_venta WHERE id_venta = :id_venta");
+
+		$stmt -> bindParam(":id_venta", $idVenta, PDO::PARAM_INT);
+
+		if($stmt -> execute()){
+
+			return "ok";
+		
+		}else{
+
+			return $stmt->errorInfo();	
+		
+		}
+
+		$stmt -> closeCursor();
 
 		$stmt = null;
 

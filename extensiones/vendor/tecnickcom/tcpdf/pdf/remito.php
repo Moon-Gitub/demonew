@@ -99,8 +99,17 @@ $tipoIva = $condIva[$respEmpresa["condicion_iva"]];
 $tipoIvaCliente = $condIva[$respuestaCliente["condicion_iva"]];
 $fecha = substr($respuestaVenta["fecha"],0,-8);
 $fecha = date("d-m-Y",strtotime($fecha));
-$productos = json_decode($respuestaVenta["productos"], true);
-$tamanioProd = count($productos);
+
+// Obtener productos desde tabla relacional (o JSON legacy si no existe)
+require_once "../../../controladores/ventas.controlador.php";
+$productos = ControladorVentas::ctrObtenerProductosVentaLegacy($respuestaVenta["id"]);
+
+// Si no hay productos en tabla relacional, intentar desde JSON (compatibilidad)
+if (empty($productos) && !empty($respuestaVenta["productos"])) {
+    $productos = json_decode($respuestaVenta["productos"], true);
+}
+
+$tamanioProd = is_array($productos) ? count($productos) : 0;
 $observaciones = $respuestaVenta["observaciones"];
 
 $tipoVtaLetra = "X";
