@@ -212,7 +212,7 @@ class ModeloVentas{
 		$stmt -> execute();
 		$resultado = $stmt -> fetch();
 		
-		$stmt -> close();
+		$stmt -> closeCursor();
 		$stmt = null;
 
 		return $resultado ? ($resultado["total"] ? $resultado["total"] : 0) : 0;
