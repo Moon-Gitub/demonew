@@ -973,14 +973,16 @@ $(document).ready(function() {
 					  echo '<select title="Seleccione el punto de venta" class="form-control input-sm" id="nuevaPtoVta" name="nuevaPtoVta">';
 					  echo '<option value="0">Seleccione punto de venta</option>';
 
-					  foreach ($arrPuntos as $key => $value) {
-
-						if (in_array($value["pto"], $arrPuntosHabilitados)) {
-						  echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
-						} else {
-						  echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+					  if (is_array($arrPuntos) && !empty($arrPuntos)) {
+						foreach ($arrPuntos as $key => $value) {
+						  if (isset($value["pto"]) && isset($value["det"])) {
+							if (in_array($value["pto"], $arrPuntosHabilitados)) {
+							  echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+							} else {
+							  echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+							}
+						  }
 						}
-
 					  }
 
 					  echo '</select>';
@@ -1091,19 +1093,24 @@ $(document).ready(function() {
 						<?php
 
 							  $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
+							  if (!is_array($arrPuntos)) {
+								$arrPuntos = [];
+							  }
 							  $arrPuntosHabilitados = explode(',', $_SESSION['puntos_venta']);
 
 							  echo '<select title="Seleccione el punto de venta" class="form-control input-sm nuevaCbteAsociado" id="nuevaPtoVtaAsociado" name="nuevaPtoVtaAsociado">';
 							  echo '<option value="0">Seleccione punto de venta asociado</option>';
 
-							  foreach ($arrPuntos as $key => $value) {
-
-								if (in_array($value["pto"], $arrPuntosHabilitados)) {
-								  echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
-								} else {
-								  echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+							  if (is_array($arrPuntos) && !empty($arrPuntos)) {
+								foreach ($arrPuntos as $key => $value) {
+								  if (isset($value["pto"]) && isset($value["det"])) {
+									if (in_array($value["pto"], $arrPuntosHabilitados)) {
+									  echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+									} else {
+									  echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+									}
+								  }
 								}
-
 							  }
 
 							  echo '</select>';
