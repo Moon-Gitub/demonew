@@ -715,10 +715,12 @@ def generar_sql(cambios: List[Dict], destino: Dict, archivo_destino: str, archiv
             else:
                 default_str = ""
             
-            # Agregar comentario si se aplicó validación
-            if default is not None and default_formateado != default:
-                lineas.append(f"-- Valores DEFAULT correctamente escapados")
-            
+            # MySQL no soporta IF NOT EXISTS para ADD COLUMN directamente
+            # Si la columna ya existe, este comando fallará con error #1060
+            # Esto puede pasar si el parser no detectó la columna en el SQL origen
+            lineas.append(
+                f"-- ⚠️ Agregar columna '{campo}' (si ya existe, este comando fallará - verificar manualmente)"
+            )
             lineas.append(
                 f"ALTER TABLE `{tabla}` ADD COLUMN `{campo}` {tipo} {null_str}{default_str};"
             )
