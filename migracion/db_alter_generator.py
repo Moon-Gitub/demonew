@@ -700,7 +700,7 @@ def generar_sql(cambios: List[Dict], destino: Dict, archivo_destino: str, archiv
         lineas.append("-- ================================================================")
         lineas.append("")
 
-        # ADD COLUMN
+        # ADD COLUMN con verificación de existencia (idempotente)
         for c in adds:
             campo = c["campo"]
             d = c["definicion"]
@@ -715,15 +715,23 @@ def generar_sql(cambios: List[Dict], destino: Dict, archivo_destino: str, archiv
             else:
                 default_str = ""
             
-            # MySQL no soporta IF NOT EXISTS para ADD COLUMN directamente
-            # Si la columna ya existe, este comando fallará con error #1060
-            # Esto puede pasar si el parser no detectó la columna en el SQL origen
-            lineas.append(
-                f"-- ⚠️ Agregar columna '{campo}' (si ya existe, este comando fallará - verificar manualmente)"
-            )
-            lineas.append(
-                f"ALTER TABLE `{tabla}` ADD COLUMN `{campo}` {tipo} {null_str}{default_str};"
-            )
+            # Generar comando idempotente que verifica si la columna existe antes de agregarla
+            # Usamos un procedimiento almacenado temporal para hacer la verificación
+            lineas.append(f"-- Agregar columna '{campo}' (solo si no existe)")
+            lineas.append(f"SET @col_exists = (")
+            lineas.append(f"  SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS")
+            lineas.append(f"  WHERE TABLE_SCHEMA = DATABASE()")
+            lineas.append(f"    AND TABLE_NAME = '{tabla}'")
+            lineas.append(f"    AND COLUMN_NAME = '{campo}'")
+            lineas.append(f");")
+            lineas.append(f"SET @sql = IF(@col_exists = 0,")
+            lineas.append(f"  'ALTER TABLE `{tabla}` ADD COLUMN `{campo}` {tipo} {null_str}{default_str}',")
+            lineas.append(f"  'SELECT ''Columna `{campo}` ya existe en `{tabla}`, se omite'' AS mensaje'")
+            lineas.append(f");")
+            lineas.append(f"PREPARE stmt FROM @sql;")
+            lineas.append(f"EXECUTE stmt;")
+            lineas.append(f"DEALLOCATE PREPARE stmt;")
+            lineas.append("")
             total_add += 1
 
         if adds:
