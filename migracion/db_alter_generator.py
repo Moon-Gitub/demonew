@@ -556,10 +556,17 @@ def comparar_estructuras(destino: Dict, origen: Dict) -> List[Dict]:
         tabla_origen = origen[tabla_nombre]
         campos_dest = tabla_destino["campos"]
         campos_ori = tabla_origen["campos"]
+        
+        # Crear un diccionario case-insensitive para comparación
+        # MySQL es case-insensitive para nombres de columnas (depende de la configuración)
+        campos_ori_lower = {k.lower(): (k, v) for k, v in campos_ori.items()}
 
         # Campos
         for campo_nombre, campo_dest in campos_dest.items():
-            if campo_nombre not in campos_ori:
+            campo_nombre_lower = campo_nombre.lower()
+            
+            # Buscar en el diccionario case-insensitive
+            if campo_nombre_lower not in campos_ori_lower:
                 cambios.append({
                     "tipo": "ADD_COLUMN",
                     "tabla": tabla_nombre,
@@ -567,7 +574,8 @@ def comparar_estructuras(destino: Dict, origen: Dict) -> List[Dict]:
                     "definicion": campo_dest,
                 })
             else:
-                campo_ori = campos_ori[campo_nombre]
+                # Usar el nombre real del campo en origen (puede tener diferente case)
+                campo_nombre_real, campo_ori = campos_ori_lower[campo_nombre_lower]
                 if necesita_modificacion(campo_ori, campo_dest):
                     cambios.append({
                         "tipo": "MODIFY_COLUMN",
