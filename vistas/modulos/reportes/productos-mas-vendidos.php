@@ -36,10 +36,12 @@ PRODUCTOS MÁS VENDIDOS
                 <?php
                     $totalVentas = 0;
                     $i=0;
-                    foreach ($idsProductos as $key => $value) {
-                        echo ' <li><i class="fa fa-circle-o text-'.$colores[$i].'"></i> '.$value["descripcion"].'</li>';
-                        $totalVentas += $value["cantidad"]; 
-                        $i++;
+                    if (is_array($idsProductos)) {
+                        foreach ($idsProductos as $key => $value) {
+                            echo ' <li><i class="fa fa-circle-o text-'.$colores[$i].'"></i> '.htmlspecialchars($value["descripcion"] ?? "Sin descripción").'</li>';
+                            $totalVentas += floatval($value["cantidad"] ?? 0); 
+                            $i++;
+                        }
                     }
                 ?>
                 </ul>
@@ -51,17 +53,19 @@ PRODUCTOS MÁS VENDIDOS
     	<ul class="nav nav-pills nav-stacked">
         <?php
         $i=0;
-        foreach ($idsProductos as $key => $value) {
-            echo '<li>
-                <a>'.$value["descripcion"].'
-                    <span class="pull-right text-'.$colores[$i].'">   
-                    '.ceil($value["cantidad"]*100/$totalVentas).'%
-                    </span>
-                </a>
-          </li>';
-          $i++;
+        if (is_array($idsProductos) && $totalVentas > 0) {
+            foreach ($idsProductos as $key => $value) {
+                $porcentaje = $totalVentas > 0 ? ceil((floatval($value["cantidad"] ?? 0) * 100) / $totalVentas) : 0;
+                echo '<li>
+                    <a>'.htmlspecialchars($value["descripcion"] ?? "Sin descripción").'
+                        <span class="pull-right text-'.$colores[$i].'">   
+                        '.$porcentaje.'%
+                        </span>
+                    </a>
+              </li>';
+              $i++;
+            }
         }
-
 		?>
 		</ul>
     </div>
@@ -80,16 +84,19 @@ PRODUCTOS MÁS VENDIDOS
 
     $totalVentas = 0;
     $i=0;
-    foreach ($idsProductos as $key => $value) {
-
-      echo "{
-        value    : ".$value["cantidad"].",
-        color    : '".$colores[$i]."',
-        highlight: '".$colores[$i]."',
-        label    : '".$value["descripcion"]."'
-      },";
-
-      $i++;
+    if (is_array($idsProductos)) {
+        foreach ($idsProductos as $key => $value) {
+            $cantidad = floatval($value["cantidad"] ?? 0);
+            $descripcion = addslashes($value["descripcion"] ?? "Sin descripción");
+            echo "{
+              value    : ".$cantidad.",
+              color    : '".$colores[$i]."',
+              highlight: '".$colores[$i]."',
+              label    : '".$descripcion."'
+            },";
+            $totalVentas += $cantidad;
+            $i++;
+        }
     }
     
    ?>

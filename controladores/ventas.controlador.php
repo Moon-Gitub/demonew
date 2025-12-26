@@ -1782,6 +1782,14 @@ class ControladorVentas{
 	}
 
 	/*=============================================
+	OBTENER ESTADÍSTICAS DEL DASHBOARD (ULTRA OPTIMIZADO)
+	=============================================*/
+	static public function ctrEstadisticasDashboard($fechaHoy, $fechaSemanaInicio, $fechaSemanaFin, $fechaMesInicio, $fechaMesFin, $fechaMesAnteriorInicio, $fechaMesAnteriorFin){
+		$respuesta = ModeloVentas::mdlEstadisticasDashboard($fechaHoy, $fechaSemanaInicio, $fechaSemanaFin, $fechaMesInicio, $fechaMesFin, $fechaMesAnteriorInicio, $fechaMesAnteriorFin);
+		return $respuesta;
+	}
+
+	/*=============================================
 	RANGO FECHAS SOLO VENTAS (EL OTRO RANGO FECHAS TRAE TODOS LOS REGISTROS DE LA TABLA VENTA)
 	=============================================*/	
 	static public function ctrRangoVentasPorMesAnio($fechaInicial, $fechaFinal){

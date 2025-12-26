@@ -3,14 +3,34 @@
 date_default_timezone_set('America/Argentina/Mendoza');
 
   /*=============================================
-  CAJA VENTAS MENSUALES - OPTIMIZADO
+  CAJA VENTAS MENSUALES - ULTRA OPTIMIZADO
   =============================================*/
 
-//Ventas Hoy - OPTIMIZADO: usa SUM() en SQL en lugar de traer todos los registros
+// ULTRA OPTIMIZADO: Una sola consulta para todas las estadísticas
 $fechaInicialHoy = date('Y-m-d');  
 $fechaFinalHoy = date('Y-m-d'); 
+$fechaInicialSemanaAnterior = date('Y-m-d', strtotime('last week'));  
+$fechaFinalSemanaAnterior = date('Y-m-d', strtotime('last sunday')); 
+$fechaInicialMes = date("Y-m-01");
+$fechaFinalMes = date("Y-m-t"); 
+$fechaInicialMesAnterior = date('Y-m-d', strtotime('first day of last month'));  
+$fechaFinalMesAnterior = date('Y-m-d', strtotime('last day of last month')); 
 
-$totalHoy = ControladorVentas::ctrSumaVentasPorRango($fechaInicialHoy, $fechaFinalHoy);
+// Una sola consulta para todas las estadísticas
+$estadisticas = ControladorVentas::ctrEstadisticasDashboard(
+	$fechaInicialHoy, 
+	$fechaInicialSemanaAnterior, 
+	$fechaFinalSemanaAnterior, 
+	$fechaInicialMes, 
+	$fechaFinalMes, 
+	$fechaInicialMesAnterior, 
+	$fechaFinalMesAnterior
+);
+
+$totalHoy = isset($estadisticas['hoy']) ? $estadisticas['hoy'] : 0;
+$totalSemanaPasada = isset($estadisticas['semana']) ? $estadisticas['semana'] : 0;
+$totalMesActual = isset($estadisticas['mes_actual']) ? $estadisticas['mes_actual'] : 0;
+$totalMesAnterior = isset($estadisticas['mes_anterior']) ? $estadisticas['mes_anterior'] : 0;
 
 ?>
 
@@ -69,17 +89,8 @@ $totalHoy = ControladorVentas::ctrSumaVentasPorRango($fechaInicialHoy, $fechaFin
     </div>
 
      <!--=============================================
-      CAJA VENTAS SEMANA PASADA - OPTIMIZADO
+      CAJA VENTAS SEMANA PASADA - ULTRA OPTIMIZADO
       ============================================= -->
-    <?php
-
-    //Ventas Semana Pasada - OPTIMIZADO: usa SUM() en SQL
-    $fechaInicialSemanaAnterior = date('Y-m-d', strtotime('last week'));  
-    $fechaFinalSemanaAnterior = date('Y-m-d', strtotime('last sunday')); 
-
-    $totalSemanaPasada = ControladorVentas::ctrSumaVentasPorRango($fechaInicialSemanaAnterior, $fechaFinalSemanaAnterior);
-
-    ?>
 
     <div class="col-lg-3 col-xs-6">
 
@@ -110,15 +121,8 @@ $totalHoy = ControladorVentas::ctrSumaVentasPorRango($fechaInicialHoy, $fechaFin
 
 
      <!--=============================================
-      CAJA VENTAS MES ACTUAL - OPTIMIZADO
+      CAJA VENTAS MES ACTUAL - ULTRA OPTIMIZADO
       ============================================= -->
-    <?php
-    //Mes Actual - OPTIMIZADO: usa SUM() en SQL
-    $fechaInicialMes = date("Y-m-01");
-    $fechaFinalMes = date("Y-m-t"); 
-    $totalMesActual = ControladorVentas::ctrSumaVentasPorRango($fechaInicialMes, $fechaFinalMes);
-
-    ?>
 
     <div class="col-lg-3 col-xs-6">
 
@@ -149,17 +153,8 @@ $totalHoy = ControladorVentas::ctrSumaVentasPorRango($fechaInicialHoy, $fechaFin
     </div>
 
      <!--=============================================
-      CAJA VENTAS MES ANTERIOR - OPTIMIZADO
+      CAJA VENTAS MES ANTERIOR - ULTRA OPTIMIZADO
       ============================================= -->
-    <?php
-
-    //Mes Anterior - OPTIMIZADO: usa SUM() en SQL
-    $fechaInicialMesAnterior = date('Y-m-d', strtotime('first day of last month'));  
-    $fechaFinalMesAnterior = date('Y-m-d', strtotime('last day of last month')); 
-
-    $totalMesAnterior = ControladorVentas::ctrSumaVentasPorRango($fechaInicialMesAnterior, $fechaFinalMesAnterior);
-
-    ?>
 
     <div class="col-lg-3 col-xs-6">
 
