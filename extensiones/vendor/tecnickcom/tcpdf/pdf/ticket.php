@@ -90,7 +90,12 @@ $respuestaVenta = ControladorVentas::ctrMostrarVentas($itemVenta, $codigoVenta);
 $fecha = substr($respuestaVenta["fecha"],0,-8);
 
 // Obtener productos desde tabla relacional
-require_once "../../../controladores/ventas.controlador.php";
+$rutaBase = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
+$rutaControlador = $rutaBase . '/controladores/ventas.controlador.php';
+if (!file_exists($rutaControlador)) {
+    $rutaControlador = __DIR__ . '/../../../../controladores/ventas.controlador.php';
+}
+require_once $rutaControlador;
 $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($respuestaVenta["id"]);
 
 $neto = number_format($respuestaVenta["neto"],2);

@@ -254,7 +254,12 @@ $tipoIvaCliente = $condIva[$respuestaCliente["condicion_iva"]];
     }
     
     // Obtener productos desde tabla relacional
-    require_once "../../../controladores/ventas.controlador.php";
+    $rutaBase = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
+    $rutaControlador = $rutaBase . '/controladores/ventas.controlador.php';
+    if (!file_exists($rutaControlador)) {
+        $rutaControlador = __DIR__ . '/../../../../controladores/ventas.controlador.php';
+    }
+    require_once $rutaControlador;
     $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($respuestaVenta["id"]);
     
     if(!is_array($productos) || empty($productos)) {
