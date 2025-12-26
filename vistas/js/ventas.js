@@ -1632,13 +1632,8 @@ function inicializarTooltipsAcciones() {
   });
 }
 
-// Inicializar tooltips al cargar
+// Inicializar tooltips al cargar (se reinicializan automáticamente en drawCallback)
 inicializarTooltipsAcciones();
-
-// Reinicializar después de cada redibujado de la tabla
-tablaListarVtas.on('draw.dt', function() {
-  inicializarTooltipsAcciones();
-});
 
 
 
