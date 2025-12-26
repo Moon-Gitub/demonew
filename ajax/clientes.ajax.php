@@ -5,9 +5,13 @@ require_once "seguridad.ajax.php";
 // Verificación básica: si viene id_cliente como parámetro GET, permitir sin sesión (para sistema offline)
 $id_cliente_moon = isset($_GET['id_cliente']) ? intval($_GET['id_cliente']) : null;
 
+// Si es una petición GET de solo lectura (autocomplete), no requerir CSRF
+$esPeticionLectura = isset($_GET['listadoCliente']) || isset($_GET['listarClientes']);
+
 if (!$id_cliente_moon) {
     // Si no viene id_cliente, requerir sesión normal
-    SeguridadAjax::inicializar();
+    // Para peticiones GET de solo lectura (autocomplete), no validar CSRF
+    SeguridadAjax::inicializar(!$esPeticionLectura);
 } else {
     // Para sistema offline, solo inicializar sesión sin verificar CSRF
     if (session_status() === PHP_SESSION_NONE) {
