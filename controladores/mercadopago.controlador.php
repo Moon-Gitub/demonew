@@ -9,22 +9,33 @@ class ControladorMercadoPago {
 
 		// Intentar leer desde la configuración de empresa (BD)
 		$empresa = null;
+		$columnasExisten = false;
 		try {
 			if (class_exists('ControladorEmpresa')) {
 				$empresa = ControladorEmpresa::ctrMostrarempresa('id', 1);
+				
+				// Verificar si las columnas existen en la BD
+				if ($empresa) {
+					$columnasExisten = (array_key_exists('mp_public_key', $empresa) && array_key_exists('mp_access_token', $empresa));
+				}
 			}
 		} catch (Exception $e) {
 			error_log("Error obteniendo empresa para credenciales MP: " . $e->getMessage());
 		}
 
 		// Si hay credenciales en la BD de empresa, usarlas
-		if ($empresa && isset($empresa['mp_public_key']) && !empty($empresa['mp_public_key']) && 
+		if ($empresa && $columnasExisten && isset($empresa['mp_public_key']) && !empty($empresa['mp_public_key']) && 
 		    isset($empresa['mp_access_token']) && !empty($empresa['mp_access_token'])) {
 			error_log("Usando credenciales MP desde BD (empresa)");
 			return array(
 				'public_key' => $empresa['mp_public_key'],
 				'access_token' => $empresa['mp_access_token']
 			);
+		}
+		
+		// Si las columnas no existen, loguear información útil
+		if ($empresa && !$columnasExisten) {
+			error_log("ADVERTENCIA: Las columnas mp_public_key y mp_access_token no existen en la tabla empresa. Ejecute el script SQL: db/agregar-campos-mercadopago-empresa.sql");
 		}
 
 		// Si no hay en BD, intentar leer de .env
