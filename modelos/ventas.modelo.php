@@ -849,4 +849,36 @@ class ModeloVentas{
 		
 		return $estadisticas;
 	}
+
+	/*=============================================
+	OBTENER PRODUCTOS DE UNA VENTA DESDE TABLA RELACIONAL
+	=============================================*/
+	static public function mdlObtenerProductosVenta($idVenta){
+		
+		$stmt = Conexion::conectar()->prepare("
+			SELECT 
+				pv.id,
+				pv.id_venta,
+				pv.id_producto,
+				pv.cantidad,
+				pv.precio_compra,
+				pv.precio_venta,
+				(pv.cantidad * pv.precio_venta) as total,
+				p.descripcion,
+				c.categoria
+			FROM productos_venta pv
+			INNER JOIN productos p ON pv.id_producto = p.id
+			LEFT JOIN categorias c ON p.id_categoria = c.id
+			WHERE pv.id_venta = :id_venta
+			ORDER BY pv.id ASC
+		");
+		
+		$stmt->bindParam(":id_venta", $idVenta, PDO::PARAM_INT);
+		$stmt->execute();
+		$resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$stmt->closeCursor();
+		$stmt = null;
+		
+		return $resultado;
+	}
 }
