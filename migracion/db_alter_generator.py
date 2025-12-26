@@ -190,9 +190,9 @@ class SimpleSQLParser:
         """
         Extrae el CREATE TABLE completo, manejando correctamente paréntesis anidados.
         """
-        # Buscar el inicio del CREATE TABLE
+        # Buscar el inicio del CREATE TABLE (puede tener IF NOT EXISTS o no)
         inicio_pattern = re.compile(
-            rf"CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?`{nombre_tabla}`",
+            rf"CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?`{re.escape(nombre_tabla)}`",
             re.IGNORECASE | re.DOTALL,
         )
         inicio_match = inicio_pattern.search(self.sql_content)
@@ -204,50 +204,96 @@ class SimpleSQLParser:
         
         # Buscar el paréntesis de apertura después del nombre de la tabla
         pos = inicio_match.end()
-        while pos < len(self.sql_content) and self.sql_content[pos] in ' \t\n':
+        while pos < len(self.sql_content) and self.sql_content[pos] in ' \t\n\r':
             pos += 1
         
         if pos >= len(self.sql_content) or self.sql_content[pos] != '(':
             return ""
         
         # Contar paréntesis para encontrar el cierre correcto
+        # Manejar correctamente strings, comentarios y backticks
         paren_count = 1
         pos += 1
+        dentro_string_simple = False
+        dentro_string_doble = False
+        dentro_backtick = False
+        escape_next = False
+        
         while pos < len(self.sql_content) and paren_count > 0:
             char = self.sql_content[pos]
-            if char == '(':
-                paren_count += 1
-            elif char == ')':
-                paren_count -= 1
-            elif char == "'":
-                # Saltar strings entre comillas
+            
+            if escape_next:
+                escape_next = False
                 pos += 1
-                while pos < len(self.sql_content) and self.sql_content[pos] != "'":
-                    if self.sql_content[pos] == '\\':
-                        pos += 1  # Escapar siguiente carácter
-                    pos += 1
+                continue
+            
+            # Manejar escapes
+            if char == '\\' and (dentro_string_simple or dentro_string_doble):
+                escape_next = True
+                pos += 1
+                continue
+            
+            # Manejar strings simples
+            if char == "'" and not dentro_string_doble and not dentro_backtick:
+                dentro_string_simple = not dentro_string_simple
+                pos += 1
+                continue
+            
+            # Manejar strings dobles
+            if char == '"' and not dentro_string_simple and not dentro_backtick:
+                dentro_string_doble = not dentro_string_doble
+                pos += 1
+                continue
+            
+            # Manejar backticks (nombres de columnas/tablas)
+            if char == '`' and not dentro_string_simple and not dentro_string_doble:
+                dentro_backtick = not dentro_backtick
+                pos += 1
+                continue
+            
+            # Solo contar paréntesis si no estamos dentro de un string
+            if not dentro_string_simple and not dentro_string_doble and not dentro_backtick:
+                if char == '(':
+                    paren_count += 1
+                elif char == ')':
+                    paren_count -= 1
+            
             pos += 1
         
         if paren_count != 0:
-            # No se encontró el cierre correcto, usar método fallback
-            patt = re.compile(
-                rf"CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?`{nombre_tabla}`\s*\(.*?\)\s*ENGINE=.*?;",
-                re.IGNORECASE | re.DOTALL,
-            )
-            m = patt.search(self.sql_content)
-            if m:
-                return m.group(0)
+            # No se encontró el cierre correcto, intentar método alternativo
+            # Buscar hasta encontrar ENGINE=... y luego el ;
+            pos_alt = inicio_match.end()
+            # Buscar ENGINE= después del cierre de paréntesis
+            engine_match = re.search(r'ENGINE\s*=', self.sql_content[pos_alt:], re.IGNORECASE)
+            if engine_match:
+                # Buscar el ; después de ENGINE=...
+                semicolon_pos = self.sql_content.find(';', pos_alt + engine_match.end())
+                if semicolon_pos != -1:
+                    return self.sql_content[start_pos:semicolon_pos + 1]
             return ""
         
         # Encontrar el final del statement (ENGINE=... hasta el ;)
+        # Buscar ENGINE= después del cierre de paréntesis
         end_pos = pos
         while end_pos < len(self.sql_content):
-            if self.sql_content[end_pos] == ';':
-                end_pos += 1
-                break
+            # Buscar ENGINE= para asegurar que tenemos el statement completo
+            if end_pos + 6 < len(self.sql_content):
+                substr = self.sql_content[end_pos:end_pos + 6].upper()
+                if substr == 'ENGINE':
+                    # Buscar el ; después de ENGINE=...
+                    semicolon_pos = self.sql_content.find(';', end_pos)
+                    if semicolon_pos != -1:
+                        return self.sql_content[start_pos:semicolon_pos + 1]
+                    break
             end_pos += 1
         
-        return self.sql_content[start_pos:end_pos]
+        # Si no encontramos ENGINE=, buscar el siguiente ; como fallback
+        semicolon_pos = self.sql_content.find(';', pos)
+        if semicolon_pos != -1:
+            return self.sql_content[start_pos:semicolon_pos + 1]
+        
+        return ""
 
 
 # ----------------------------------------------------------------------
@@ -510,27 +556,61 @@ def generar_sql(cambios: List[Dict], destino: Dict, archivo_destino: str, archiv
         lineas.append("-- Se usa CREATE TABLE IF NOT EXISTS para evitar errores si la tabla ya existe")
         lineas.append("")
         for c in tablas_crear:
-            create_stmt = c["definicion"]["create_statement"].rstrip(";")
+            create_stmt = c["definicion"]["create_statement"].rstrip(";").strip()
             tabla_nombre = c["tabla"]
             
+            # Validar que el statement no esté vacío
+            if not create_stmt:
+                lineas.append(f"-- ⚠️ ERROR: No se pudo extraer CREATE TABLE para '{tabla_nombre}'")
+                lineas.append("")
+                continue
+            
             # Validar que el statement tenga paréntesis balanceados antes de modificar
-            paren_abrir = create_stmt.count('(')
-            paren_cerrar = create_stmt.count(')')
-            if paren_abrir != paren_cerrar:
-                advertencia = f"-- ⚠️ ADVERTENCIA: CREATE TABLE para '{tabla_nombre}' tiene paréntesis desbalanceados ({paren_abrir} vs {paren_cerrar})"
+            # Usar validación balanceada (ignorando strings)
+            paren_count = 0
+            dentro_string = False
+            dentro_backtick = False
+            escape_next = False
+            
+            for char in create_stmt:
+                if escape_next:
+                    escape_next = False
+                    continue
+                if char == '\\' and dentro_string:
+                    escape_next = True
+                    continue
+                if char == "'" and not dentro_backtick:
+                    dentro_string = not dentro_string
+                    continue
+                if char == '`':
+                    dentro_backtick = not dentro_backtick
+                    continue
+                if not dentro_string and not dentro_backtick:
+                    if char == '(':
+                        paren_count += 1
+                    elif char == ')':
+                        paren_count -= 1
+            
+            if paren_count != 0:
+                advertencia = f"-- ⚠️ ADVERTENCIA: CREATE TABLE para '{tabla_nombre}' tiene paréntesis desbalanceados ({paren_count} sin cerrar)"
                 lineas.append(advertencia)
-                lineas.append(f"-- Statement original puede tener errores de sintaxis")
+                lineas.append(f"-- El statement original puede tener errores de sintaxis")
+                lineas.append(f"-- Se intentará usar de todas formas, pero puede fallar al ejecutar")
+            
+            # Validar que tenga ENGINE= (indica que está completo)
+            if 'ENGINE' not in create_stmt.upper():
+                lineas.append(f"-- ⚠️ ADVERTENCIA: CREATE TABLE para '{tabla_nombre}' parece estar incompleto (falta ENGINE=...)")
             
             # Agregar IF NOT EXISTS si no está presente
             if "IF NOT EXISTS" not in create_stmt.upper():
                 # Reemplazar CREATE TABLE `nombre` por CREATE TABLE IF NOT EXISTS `nombre`
                 # Usar un patrón más específico para evitar romper la estructura
                 create_stmt = re.sub(
-                    r'CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?`',
-                    'CREATE TABLE IF NOT EXISTS `',
+                    r'^(CREATE\s+TABLE)\s+(?:IF\s+NOT\s+EXISTS\s+)?`',
+                    r'\1 IF NOT EXISTS `',
                     create_stmt,
                     count=1,  # Solo reemplazar la primera ocurrencia
-                    flags=re.IGNORECASE
+                    flags=re.IGNORECASE | re.MULTILINE
                 )
                 lineas.append(f"-- Creación de tabla con protección IF NOT EXISTS")
             else:
