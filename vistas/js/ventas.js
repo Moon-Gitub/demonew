@@ -1946,11 +1946,52 @@ $("#tablaListarVentas").on("click", ".btnAutorizarCbte", function(){
 	       $("#autorizarCbteFecha").val(respuesta["fecha"]);
 
 	       var datosCliente = respuesta["id_cliente"] + "-" +respuesta["nombre"] + " " + respuesta["documento"];
-	       $("#autocompletarCliente").val(datosCliente);
+	       $("#autocompletarClienteCaja").val(datosCliente);
+	       $("#seleccionarCliente").val(respuesta["id_cliente"]);
 
 	  }
 
   	})
+
+});
+
+/*=============================================
+AUTOCOMPLETAR CLIENTES EN MODAL AUTORIZAR COMPROBANTE
+=============================================*/
+$( "#autocompletarClienteCaja" ).autocomplete({
+  source: function( request, response ) {
+    $.ajax({
+      url:"ajax/clientes.ajax.php",
+      dataType: "json",
+      data: {
+        listadoCliente: request.term
+      },
+      success: function( data ) {
+    	response( data );
+      }, 
+      error: function(e){
+      	console.log(e.responseText)
+      }
+    });
+  },
+  minLength: 3,
+  focus: function (event, ui) {
+        event.preventDefault();
+  },
+  select: function( event, ui ) {
+  	event.preventDefault();
+	var idSeleccionado = ui.item.value.id;
+	if(idSeleccionado[0]!=""){
+		$(this).val(ui.item.value.nombre + ' - ' + ui.item.value.tipo_documento + ': ' + ui.item.value.documento );
+		$("#seleccionarCliente").val(idSeleccionado);
+	} 
+   },
+    change: function (event, ui) {
+        if (ui.item === null) {
+            $(this).val('');
+            $('#seleccionarCliente').val(1);
+        }
+    }
 
 });
 
