@@ -1,4 +1,4 @@
-# Índice: Migración JSON a Tabla Relacional
+# Índice: Migración JSON a Tabla Relacional + Optimización Dashboard
 
 ## 📂 Archivos en este Directorio
 
@@ -30,30 +30,63 @@
    - Guía paso a paso
    - Solución de problemas
 
-6. **`INDICE.md`** (este archivo)
+6. **`PASOS-APLICACION-COMPLETA.md`** ⭐ **NUEVO**
+   - Guía completa paso a paso para aplicar TODOS los cambios
+   - Incluye migración + optimización dashboard
+   - Verificación y solución de problemas
+
+7. **`CHECKLIST-MIGRACION.md`** ⭐ **NUEVO**
+   - Checklist detallado para seguir durante la migración
+   - Verificaciones paso a paso
+   - Métricas de éxito
+
+8. **`INDICE.md`** (este archivo)
    - Índice de archivos
    - Referencias rápidas
 
-## 🔄 Orden de Ejecución Recomendado
+9. **`IMPLEMENTACION-PRODUCTOS-VENTA.md`**
+   - Documentación técnica de la implementación
+   - Cambios realizados en el código
+
+## 🔄 Orden de Ejecución Completo
 
 ```
-1. diagnosticar-productos-inexistentes.sql  (Opcional - para diagnóstico)
-2. crear-tabla-productos-venta.sql          (Obligatorio - crear tabla)
-3. migrar-productos-venta.sql               (Obligatorio - migrar datos)
-   O migrar-productos-venta-sin-fk.sql      (Alternativa si hay problemas)
+PASO 1: Backup
+  - Backup de BD
+  - Backup de código (git tag)
+
+PASO 2: Crear Tabla
+  - crear-tabla-productos-venta.sql
+
+PASO 3: Migrar Datos
+  - diagnosticar-productos-inexistentes.sql  (Opcional)
+  - migrar-productos-venta.sql               (Recomendado)
+    O migrar-productos-venta-sin-fk.sql      (Alternativa)
+
+PASO 4: Optimizar Índices
+  - db/optimizar-indices-dashboard.sql
+
+PASO 5: Actualizar Código
+  - git pull origin main
+
+PASO 6: Probar y Verificar
+  - Seguir CHECKLIST-MIGRACION.md
 ```
 
-## 📋 Checklist de Migración
+## 📋 Guías de Referencia Rápida
 
-- [ ] Ejecutar diagnóstico (opcional)
-- [ ] Crear tabla `productos_venta`
-- [ ] Ejecutar migración
-- [ ] Verificar resultados
-- [ ] Probar funcionalidad del sistema
-- [ ] Verificar reportes y PDFs
+### Para Aplicar la Migración Completa
+👉 **Lee primero**: `PASOS-APLICACION-COMPLETA.md`
+
+### Para Seguir Durante la Migración
+👉 **Usa**: `CHECKLIST-MIGRACION.md`
+
+### Para Entender los Cambios
+👉 **Consulta**: `README.md` y `IMPLEMENTACION-PRODUCTOS-VENTA.md`
 
 ## 🔗 Enlaces Rápidos
 
+- **Guía Completa**: `PASOS-APLICACION-COMPLETA.md` ⭐
+- **Checklist**: `CHECKLIST-MIGRACION.md` ⭐
 - **Documentación Principal**: `README.md`
-- **Análisis Inicial**: `../ANALISIS-OPCIONES-PRODUCTOS-VENTA.md` (si existe)
-- **Implementación**: `../../IMPLEMENTACION-PRODUCTOS-VENTA.md`
+- **Implementación Técnica**: `IMPLEMENTACION-PRODUCTOS-VENTA.md`
