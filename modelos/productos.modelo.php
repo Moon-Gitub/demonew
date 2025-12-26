@@ -791,17 +791,20 @@ class ModeloProductos{
 	=============================================*/
 	static public function mdlMostrarProductosMasVendidos($fechaInicial, $fechaFinal){
 
-		// Usar tabla relacional productos_venta en lugar de JSON_EXTRACT
+		// OPTIMIZADO: Consulta directa con agregación SQL - Top 10 productos más vendidos
 		$stmt = Conexion::conectar()->prepare("SELECT 
-			GROUP_CONCAT(DISTINCT CAST(pv.id_producto AS CHAR) ORDER BY pv.id_producto SEPARATOR ',') as productosA,
-			GROUP_CONCAT(CAST(pv.cantidad AS CHAR) ORDER BY pv.id_producto SEPARATOR ',') as cantidadesA,
-			GROUP_CONCAT(DISTINCT COALESCE(p.descripcion, '') ORDER BY pv.id_producto SEPARATOR ',') as descripcionA
+			pv.id_producto,
+			p.descripcion,
+			SUM(pv.cantidad) as cantidad,
+			SUM(pv.cantidad * pv.precio_venta) as total_venta
 		FROM ventas v
 		INNER JOIN productos_venta pv ON v.id = pv.id_venta
-		LEFT JOIN productos p ON pv.id_producto = p.id
+		INNER JOIN productos p ON pv.id_producto = p.id
 		WHERE v.fecha BETWEEN :fechaInicial AND :fechaFinal
-		GROUP BY DATE(v.fecha)
-		ORDER BY v.fecha ASC");
+		AND v.cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999)
+		GROUP BY pv.id_producto, p.descripcion
+		ORDER BY cantidad DESC
+		LIMIT 10");
 
 		$stmt -> bindParam(":fechaInicial", $fechaInicial, PDO::PARAM_STR);
 		$stmt -> bindParam(":fechaFinal", $fechaFinal, PDO::PARAM_STR);
