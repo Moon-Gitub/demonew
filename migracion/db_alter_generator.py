@@ -200,8 +200,11 @@ class SimpleSQLParser:
             valor = valor_default.strip()
             if valor.upper() == "NULL":
                 return "NULL"
-            if valor.upper() in ['CURRENT_TIMESTAMP', 'NOW()', 'CURRENT_DATE', 'CURRENT_TIME']:
+            # Funciones SQL (sin comillas) - incluye funciones con paréntesis como current_timestamp()
+            funciones_sql = ['CURRENT_TIMESTAMP', 'NOW()', 'CURRENT_DATE', 'CURRENT_TIME']
+            if valor.upper() in funciones_sql or re.match(r'^[a-z_]+\([^)]*\)$', valor, re.IGNORECASE):
                 return valor
+            # Números (sin comillas)
             if re.match(r'^[+-]?\d+(?:\.\d+)?$', valor):
                 return valor
             # String: escapar comillas
