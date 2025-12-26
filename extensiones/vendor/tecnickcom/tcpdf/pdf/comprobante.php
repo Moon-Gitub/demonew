@@ -275,30 +275,14 @@ try {
     // El controlador ya está cargado arriba, solo necesitamos obtener los productos
     $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($respuestaVenta["id"]);
     
-    // Fallback temporal para ventas antiguas que aún tienen productos en JSON
-    // Solo si no hay productos en la tabla relacional Y el JSON no está vacío
-    if((!is_array($productos) || empty($productos)) && isset($respuestaVenta["productos"])) {
-        $productosJson = $respuestaVenta["productos"];
-        // Verificar que el JSON no sea '[]' o vacío
-        if(!empty($productosJson) && $productosJson !== '[]' && $productosJson !== 'null') {
-            error_log("comprobante.php: No hay productos en tabla relacional, intentando leer desde JSON (venta antigua)");
-            $productos = json_decode($productosJson, true);
-            if(!is_array($productos) || empty($productos)) {
-                $productos = array();
-            } else {
-                error_log("comprobante.php: Productos obtenidos desde JSON: " . count($productos) . " productos");
-            }
-        }
-    }
-    
     // Validar que se obtuvieron los productos
     if(!is_array($productos) || empty($productos)) {
         error_log("Error comprobante.php: No se pudieron obtener los productos de la venta ID: " . $respuestaVenta["id"]);
         error_log("Código de venta: " . $codigoVenta);
         error_log("Respuesta de ctrObtenerProductosVentaLegacy: " . (is_array($productos) ? 'Array con ' . count($productos) . ' elementos' : gettype($productos)));
-        error_log("Campo productos JSON: " . (isset($respuestaVenta["productos"]) ? substr($respuestaVenta["productos"], 0, 100) : 'NO DEFINIDO'));
+        error_log("IMPORTANTE: Esta venta necesita ser migrada. Ejecutar: db/migrar-venta-especifica.sql con id_venta = " . $respuestaVenta["id"]);
         http_response_code(500);
-        die('Error: No se encontraron productos en la venta. ID venta: ' . $respuestaVenta["id"] . ', Código: ' . $codigoVenta);
+        die('Error: No se encontraron productos en la venta. ID venta: ' . $respuestaVenta["id"] . ', Código: ' . $codigoVenta . '. Esta venta necesita ser migrada a la tabla productos_venta.');
     }
     
     $tamanioProd = count($productos);
