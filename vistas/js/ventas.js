@@ -1594,6 +1594,10 @@ var tablaListarVtas = $("#tablaListarVentas").DataTable({
 		$(api.column(8).footer()).html(
 			` ${totalPage.toFixed(2)}`
 		);
+	},
+	"drawCallback": function(settings) {
+		// Reinicializar tooltips después de cada redibujado
+		inicializarTooltipsAcciones();
 	}
 });
 
