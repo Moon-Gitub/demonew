@@ -1,17 +1,28 @@
 <?php
 
-//error_reporting(0);
+// Habilitar reporte de errores para debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
 
-require_once "../../../controladores/empresa.controlador.php";
-require_once "../../../modelos/empresa.modelo.php";
-require_once "../../../controladores/ventas.controlador.php";
-require_once "../../../modelos/ventas.modelo.php";
-require_once "../../../controladores/clientes.controlador.php";
-require_once "../../../modelos/clientes.modelo.php";
-require_once "../../../controladores/usuarios.controlador.php";
-require_once "../../../modelos/usuarios.modelo.php";
-require_once "../../../controladores/productos.controlador.php";
-require_once "../../../modelos/productos.modelo.php";
+// Construir rutas absolutas desde el directorio actual
+// Desde: extensiones/vendor/tecnickcom/tcpdf/pdf/remito.php
+// Subir 5 niveles para llegar a la raíz del proyecto
+$rutaBase = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
+$rutaControladores = $rutaBase . '/controladores/';
+$rutaModelos = $rutaBase . '/modelos/';
+
+// Cargar archivos necesarios
+require_once $rutaControladores . 'empresa.controlador.php';
+require_once $rutaModelos . 'empresa.modelo.php';
+require_once $rutaControladores . 'ventas.controlador.php';
+require_once $rutaModelos . 'ventas.modelo.php';
+require_once $rutaControladores . 'clientes.controlador.php';
+require_once $rutaModelos . 'clientes.modelo.php';
+require_once $rutaControladores . 'usuarios.controlador.php';
+require_once $rutaModelos . 'usuarios.modelo.php';
+require_once $rutaControladores . 'productos.controlador.php';
+require_once $rutaModelos . 'productos.modelo.php';
 
 class imprimirComprobante{
 
