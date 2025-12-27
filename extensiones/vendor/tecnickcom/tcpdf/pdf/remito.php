@@ -271,6 +271,7 @@ $imprimoCabeceraDetalle = false;
 
 }
 
+$descripcionProducto = htmlspecialchars($value["descripcion"] ?? "Sin descripción");
 $bloqueDetalle = <<<EOF
 	<table style=" padding: 2px; ">
 	    <tr>
@@ -278,7 +279,7 @@ $bloqueDetalle = <<<EOF
 				<span>$formatCantidad</span> 
 			</td>			
 			<td style="width:510px; font-size:8px; text-align: left;">
-				<span>" . htmlspecialchars($value["descripcion"] ?? "Sin descripción") . "</span> 
+				<span>$descripcionProducto</span> 
 			</td>
 		</tr>
 	</table>
