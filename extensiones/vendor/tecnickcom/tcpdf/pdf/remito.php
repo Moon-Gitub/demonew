@@ -15,40 +15,95 @@ error_log("INICIO remito.php - " . date('Y-m-d H:i:s'));
 error_log("Código recibido: " . (isset($_GET['codigo']) ? $_GET['codigo'] : 'NO DEFINIDO'));
 error_log("==========================================");
 
-// Construir rutas absolutas desde el directorio actual
+// Iniciar sesión si no está iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Cargar autoload primero (usar ruta relativa como en recibo.php)
+$autoloadPath = '../../../autoload.php';
+error_log("Buscando autoload en: " . __DIR__ . '/' . $autoloadPath);
+if(!file_exists(__DIR__ . '/' . $autoloadPath)) {
+    error_log("ERROR: autoload.php no encontrado en ruta relativa");
+    die('Error: No se encuentra autoload.php');
+}
+error_log("✅ autoload.php encontrado, cargando...");
+require_once $autoloadPath;
+error_log("✅ autoload.php cargado");
+
+// Obtener la ruta base del proyecto (raíz donde está .env)
 // Desde: extensiones/vendor/tecnickcom/tcpdf/pdf/remito.php
-// Subir 5 niveles para llegar a la raíz del proyecto
-$rutaBase = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
+// Hacia: raíz del proyecto (6 niveles arriba)
+$rutaBase = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
 error_log("Ruta base calculada: " . $rutaBase);
 error_log("Ruta base existe: " . (is_dir($rutaBase) ? 'SÍ' : 'NO'));
 
-$rutaControladores = $rutaBase . '/controladores/';
-$rutaModelos = $rutaBase . '/modelos/';
+// Cargar variables de entorno desde .env PRIMERO (si existe y si Dotenv está instalado)
+$envPath = $rutaBase . '/.env';
+if (file_exists($envPath)) {
+    if (class_exists('Dotenv\Dotenv')) {
+        try {
+            $dotenv = Dotenv\Dotenv::createImmutable($rutaBase);
+            $dotenv->load();
+            error_log("✅ .env cargado correctamente desde: " . $envPath);
+        } catch (Exception $e) {
+            error_log("❌ Error al cargar .env en remito.php: " . $e->getMessage());
+        }
+    } else {
+        error_log("⚠️ Dotenv no está disponible, intentando leer .env manualmente");
+        $envLines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($envLines as $line) {
+            if (strpos(trim($line), '#') === 0) continue;
+            if (strpos($line, '=') !== false) {
+                list($key, $value) = explode('=', $line, 2);
+                $key = trim($key);
+                $value = trim($value);
+                if (!empty($key)) {
+                    $_ENV[$key] = $value;
+                    $_SERVER[$key] = $value;
+                    putenv("$key=$value");
+                }
+            }
+        }
+    }
+} else {
+    error_log("⚠️ Archivo .env no encontrado en: " . $envPath);
+}
 
-// Cargar archivos necesarios con validación
+// Cargar helpers (incluye función env() para leer variables)
+$helpersPath = $rutaBase . '/helpers.php';
+if (file_exists($helpersPath)) {
+    require_once $helpersPath;
+} else {
+    error_log("⚠️ helpers.php no encontrado en: " . $helpersPath);
+}
+
+// Usar rutas relativas como en recibo.php que funciona
 $archivos = [
-    $rutaControladores . 'empresa.controlador.php',
-    $rutaModelos . 'empresa.modelo.php',
-    $rutaControladores . 'ventas.controlador.php',
-    $rutaModelos . 'ventas.modelo.php',
-    $rutaControladores . 'clientes.controlador.php',
-    $rutaModelos . 'clientes.modelo.php',
-    $rutaControladores . 'usuarios.controlador.php',
-    $rutaModelos . 'usuarios.modelo.php',
-    $rutaControladores . 'productos.controlador.php',
-    $rutaModelos . 'productos.modelo.php'
+    "../../../../../controladores/empresa.controlador.php",
+    "../../../../../modelos/empresa.modelo.php",
+    "../../../../../controladores/ventas.controlador.php",
+    "../../../../../modelos/ventas.modelo.php",
+    "../../../../../controladores/clientes.controlador.php",
+    "../../../../../modelos/clientes.modelo.php",
+    "../../../../../controladores/usuarios.controlador.php",
+    "../../../../../modelos/usuarios.modelo.php",
+    "../../../../../controladores/productos.controlador.php",
+    "../../../../../modelos/productos.modelo.php"
 ];
 
 foreach ($archivos as $archivo) {
-    if (!file_exists($archivo)) {
-        error_log("ERROR: Archivo no encontrado: " . $archivo);
-        http_response_code(500);
-        die('Error: Archivo requerido no encontrado: ' . basename($archivo));
+    $rutaCompleta = __DIR__ . '/' . $archivo;
+    error_log("Verificando archivo: " . basename($archivo) . " en " . $rutaCompleta);
+    if (!file_exists($rutaCompleta)) {
+        error_log("❌ Archivo no encontrado: " . $rutaCompleta);
+        die('Error: Archivo requerido no encontrado: ' . basename($archivo) . ' en ' . $rutaCompleta);
     }
-    error_log("Cargando: " . basename($archivo));
+    error_log("✅ Cargando: " . basename($archivo));
     require_once $archivo;
+    error_log("✅ Cargado: " . basename($archivo));
 }
-error_log("Todos los archivos cargados correctamente");
+error_log("✅ Todos los archivos requeridos cargados correctamente");
 
 class imprimirComprobante{
 
