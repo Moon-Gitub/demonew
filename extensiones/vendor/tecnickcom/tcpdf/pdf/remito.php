@@ -92,25 +92,41 @@ $condIva = array(
 
 
 //TRAEMOS LA INFORMACIÓN DE LA VENTA
+if (!isset($_GET['codigo']) || empty($_GET['codigo'])) {
+    die('Error: No se proporcionó el código del remito');
+}
+
 $respuestaVenta = ControladorVentas::ctrMostrarVentas('codigo', $_GET['codigo']);
+
+if (!$respuestaVenta || !is_array($respuestaVenta) || !isset($respuestaVenta["id"])) {
+    die('Error: No se encontró la venta con código ' . $_GET['codigo']);
+}
+
 $respuestaCliente = ControladorClientes::ctrMostrarClientes('id', $respuestaVenta["id_cliente"]);
-$tipoDocumento = $arrTipoDocumento[$respuestaCliente["tipo_documento"]];
-$tipoIva = $condIva[$respEmpresa["condicion_iva"]];
-$tipoIvaCliente = $condIva[$respuestaCliente["condicion_iva"]];
-$fecha = substr($respuestaVenta["fecha"],0,-8);
+
+if (!$respuestaCliente || !is_array($respuestaCliente)) {
+    die('Error: No se encontró el cliente de la venta');
+}
+
+$tipoDocumento = isset($arrTipoDocumento[$respuestaCliente["tipo_documento"]]) ? $arrTipoDocumento[$respuestaCliente["tipo_documento"]] : "(no definido)";
+$tipoIva = isset($condIva[$respEmpresa["condicion_iva"]]) ? $condIva[$respEmpresa["condicion_iva"]] : "(no definido)";
+$tipoIvaCliente = isset($condIva[$respuestaCliente["condicion_iva"]]) ? $condIva[$respuestaCliente["condicion_iva"]] : "(no definido)";
+$fecha = isset($respuestaVenta["fecha"]) ? substr($respuestaVenta["fecha"],0,-8) : date("Y-m-d");
 $fecha = date("d-m-Y",strtotime($fecha));
 
 // Obtener productos desde tabla relacional
-$rutaBase = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
-$rutaControlador = $rutaBase . '/controladores/ventas.controlador.php';
-if (!file_exists($rutaControlador)) {
-    $rutaControlador = __DIR__ . '/../../../../controladores/ventas.controlador.php';
-}
-require_once $rutaControlador;
+// El controlador ya está cargado arriba
 $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($respuestaVenta["id"]);
 
-$tamanioProd = is_array($productos) ? count($productos) : 0;
-$observaciones = $respuestaVenta["observaciones"];
+// Validar que se obtuvieron los productos
+if (!is_array($productos) || empty($productos)) {
+    error_log("Error remito.php: No se pudieron obtener los productos de la venta ID: " . $respuestaVenta["id"]);
+    error_log("Código de venta: " . $_GET['codigo']);
+    die('Error: No se encontraron productos en la venta. ID venta: ' . $respuestaVenta["id"] . ', Código: ' . $_GET['codigo'] . '. Esta venta necesita ser migrada a la tabla productos_venta.');
+}
+
+$tamanioProd = count($productos);
+$observaciones = isset($respuestaVenta["observaciones_vta"]) ? $respuestaVenta["observaciones_vta"] : (isset($respuestaVenta["observaciones"]) ? $respuestaVenta["observaciones"] : "");
 
 $tipoVtaLetra = "X";
 $tipoCodigo = "";
@@ -227,8 +243,14 @@ $imprimoCabeceraDetalle = true;
 }
 
 ///////////////DETALLES
-$getProducto        = ControladorProductos::ctrMostrarProductoXId($value["id"]);
-$formatCantidad     = number_format($value["cantidad"],2,',','.');
+// Validar que el producto tenga id
+$idProducto = isset($value["id"]) ? intval($value["id"]) : 0;
+if ($idProducto > 0) {
+    $getProducto = ControladorProductos::ctrMostrarProductoXId($idProducto);
+} else {
+    $getProducto = null;
+}
+$formatCantidad = isset($value["cantidad"]) ? number_format(floatval($value["cantidad"]), 2, ',', '.') : '0,00';
 
 if($imprimoCabeceraDetalle){
 //--------------------- CABECERA DETALLE B | C | X
@@ -256,7 +278,7 @@ $bloqueDetalle = <<<EOF
 				<span>$formatCantidad</span> 
 			</td>			
 			<td style="width:510px; font-size:8px; text-align: left;">
-				<span>$value[descripcion]</span> 
+				<span>" . htmlspecialchars($value["descripcion"] ?? "Sin descripción") . "</span> 
 			</td>
 		</tr>
 	</table>
