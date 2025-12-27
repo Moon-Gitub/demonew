@@ -937,10 +937,11 @@ class ControladorVentas{
     			/*=============================================
     					INSERTO REGISTRO EN VENTA FACTURA
     			=============================================*/
-    			if($facturar){
+    			$respuestaFact = null; // Inicializar variable
+    			if($facturar && $idVenta > 0){
     
     				$datosFactura = array(
-    					"id_venta"=> $ultimoidVta["ultimo"],
+    					"id_venta"=> $idVenta,
     					"fec_factura" => $respAfip->FECAESolicitarResult->FeDetResp->FECAEDetResponse->CbteFch,
     					"nro_cbte" => $respAfip->FECAESolicitarResult->FeDetResp->FECAEDetResponse->CbteDesde,
     					"pto_vta" => ($postVentaCaja["nuevaPtoVta"] == '') ? 0 : $postVentaCaja["nuevaPtoVta"] + 0,
@@ -958,10 +959,18 @@ class ControladorVentas{
     			/*=============================================
     			EVALUACION DE RESPUESTAS DE VENTA, CAJA Y FACTURACION
     			=============================================*/
-    		   	if ($respuesta == "ok" && $respuestaDos == "ok") {
+    			// Validar respuesta de venta (puede ser "ok" o array con estado)
+    			$respuestaOk = false;
+    			if (is_array($respuesta) && isset($respuesta["estado"])) {
+    				$respuestaOk = ($respuesta["estado"] == "ok");
+    			} else {
+    				$respuestaOk = ($respuesta == "ok");
+    			}
+    			
+    		   	if ($respuestaOk && $respuestaDos == "ok") {
     		   		$devuelvo = array('estado' => 'ok',
     		   						  'codigoVta' => $codigoSiguiente,
-    		   						  'factura' => $datosFactura,
+    		   						  'factura' => (isset($datosFactura)) ? $datosFactura : false,
     		   						  'msjAfip' => $msjAfip, 
     		   						  'datosFacturacion' => (isset($datosFacturacion)) ? $datosFacturacion : false );
     

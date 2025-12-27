@@ -14,6 +14,11 @@
   $valorCliente = $venta["id_cliente"];
   $cliente = ControladorClientes::ctrMostrarClientes($itemCliente, $valorCliente);
 
+  // Obtener datos de empresa para tipos_cbtes
+  $itemEmpresa = "id";
+  $valorEmpresa = $venta["id_empresa"] ?? 1;
+  $arrayEmpresa = ControladorEmpresa::ctrMostrarEmpresa($itemEmpresa, $valorEmpresa);
+
 ?>
 
 <div class="content-wrapper">
@@ -94,15 +99,22 @@
                   <span title="Tipos de comprobante" class="input-group-addon" style="background-color: #ddd"><i class="fa fa-bullseye"></i></span>
                   <?php
 
-                  $arrCbtes = json_decode($respuesta['tipos_cbtes']);
+                  $arrCbtes = array();
+                  if (isset($arrayEmpresa['tipos_cbtes']) && !empty($arrayEmpresa['tipos_cbtes'])) {
+                    $arrCbtes = json_decode($arrayEmpresa['tipos_cbtes'], true);
+                  }
 
                   echo '<select title="Seleccione el tipo de comprobante" class="form-control input-sm selectTipoCbte" id="nuevotipoCbte" name="nuevotipoCbte" >';
                   echo '<option value="">Seleccione comprobante</option>';
                   echo '<option value="0" selected>X</option>';
-                  foreach ($arrCbtes as $key => $value) {
-
-                    echo '<option value="' . $value->codigo . '">' . $value->descripcion . '</option>';
-
+                  if (is_array($arrCbtes)) {
+                    foreach ($arrCbtes as $key => $value) {
+                      $codigo = is_array($value) ? ($value['codigo'] ?? $value['Codigo'] ?? '') : ($value->codigo ?? $value->Codigo ?? '');
+                      $descripcion = is_array($value) ? ($value['descripcion'] ?? $value['Desc'] ?? '') : ($value->descripcion ?? $value->Desc ?? '');
+                      if (!empty($codigo) && !empty($descripcion)) {
+                        echo '<option value="' . htmlspecialchars($codigo) . '">' . htmlspecialchars($descripcion) . '</option>';
+                      }
+                    }
                   }
 
                   echo '</select>';
@@ -153,9 +165,10 @@
                   ];
 
                   echo '<select class="form-control input-sm selectConcepto" name="nuevaConcepto" id="nuevaConcepto">';
+                  $conceptoDefecto = isset($arrayEmpresa['concepto_defecto']) ? $arrayEmpresa['concepto_defecto'] : '0';
                   foreach ($arrConceptos as $key => $value) {
 
-                    if ($key == $respuesta['concepto_defecto']) {
+                    if ($key == $conceptoDefecto) {
                       echo '<option value="' . $key . '" selected>' . $value . '</option>';
                     } else {
                       echo '<option value="' . $key . '">' . $value . '</option>';
@@ -277,7 +290,7 @@
 
                     $respuesta = ControladorProductos::ctrMostrarProductos($item, $valor, $orden);
 
-                    $stockAntiguo = $respuesta["stock"] + $value["cantidad"];
+                    $stockAntiguo = (isset($respuesta["stock"]) && is_numeric($respuesta["stock"])) ? ($respuesta["stock"] + $value["cantidad"]) : $value["cantidad"];
                     
                     echo '<div class="row" style="padding-left:25px;padding-bottom:5px;">
 					
@@ -640,7 +653,7 @@ MODAL AGREGAR CLIENTE
 
       <form role="form" method="post">
 
-        <input type="hidden" name="agregarClienteDesde" value="index.php?ruta=editar-venta&idVenta=<?php echo $_GET["idVenta"]; ?>">
+        <input type="hidden" name="agregarClienteDesde" value="index.php?ruta=presupuesto-venta&idPresupuesto=<?php echo isset($_GET["idPresupuesto"]) ? $_GET["idPresupuesto"] : ""; ?>">
 
         <!--=====================================
         CABEZA DEL MODAL

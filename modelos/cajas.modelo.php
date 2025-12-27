@@ -25,7 +25,9 @@ class ModeloCajas{
 			return array("error" => "Monto inválido");
 		}
 
-		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(fecha, id_usuario, punto_venta, tipo, descripcion, monto, medio_pago, codigo_venta, id_venta, id_cliente_proveedor, observaciones) VALUES (:fecha, :id_usuario, :punto_venta, :tipo, :descripcion, :monto, :medio_pago, :codigo_venta, :id_venta, :id_cliente_proveedor, :observaciones)");
+		// Usar la misma conexión para INSERT y lastInsertId()
+		$conexion = Conexion::conectar();
+		$stmt = $conexion->prepare("INSERT INTO $tabla(fecha, id_usuario, punto_venta, tipo, descripcion, monto, medio_pago, codigo_venta, id_venta, id_cliente_proveedor, observaciones) VALUES (:fecha, :id_usuario, :punto_venta, :tipo, :descripcion, :monto, :medio_pago, :codigo_venta, :id_venta, :id_cliente_proveedor, :observaciones)");
 
 		$stmt->bindParam(":fecha", $datos["fecha"], PDO::PARAM_STR);
 		$stmt->bindParam(":id_usuario", $datos["id_usuario"], PDO::PARAM_INT);
@@ -50,7 +52,7 @@ class ModeloCajas{
 
 		if($stmt->execute()){
 
-			$idCaja = Conexion::conectar()->lastInsertId();
+			$idCaja = $conexion->lastInsertId();
 			error_log("✅ Movimiento de caja insertado correctamente. ID caja: $idCaja, ID venta: $idVenta, Código venta: $codigoVenta, Monto: $monto");
 			return "ok";
 
