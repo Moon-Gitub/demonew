@@ -9,31 +9,61 @@ class ModeloCajas{
 	=============================================*/
 	static public function mdlIngresarCaja($tabla, $datos){
 
-		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(fecha, id_usuario, punto_venta, tipo, descripcion, monto, medio_pago, codigo_venta, id_venta, id_cliente_proveedor,  observaciones) VALUES (:fecha, :id_usuario, :punto_venta, :tipo, :descripcion, :monto, :medio_pago, :codigo_venta, :id_venta, :id_cliente_proveedor, :observaciones)");
+		// Validar datos requeridos
+		if (!isset($datos["fecha"]) || empty($datos["fecha"])) {
+			error_log("Error mdlIngresarCaja: Fecha no proporcionada");
+			return array("error" => "Fecha no proporcionada");
+		}
+		
+		if (!isset($datos["id_usuario"]) || empty($datos["id_usuario"])) {
+			error_log("Error mdlIngresarCaja: ID usuario no proporcionado");
+			return array("error" => "ID usuario no proporcionado");
+		}
+		
+		if (!isset($datos["monto"]) || floatval($datos["monto"]) <= 0) {
+			error_log("Error mdlIngresarCaja: Monto inválido: " . ($datos["monto"] ?? "N/A"));
+			return array("error" => "Monto inválido");
+		}
+
+		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(fecha, id_usuario, punto_venta, tipo, descripcion, monto, medio_pago, codigo_venta, id_venta, id_cliente_proveedor, observaciones) VALUES (:fecha, :id_usuario, :punto_venta, :tipo, :descripcion, :monto, :medio_pago, :codigo_venta, :id_venta, :id_cliente_proveedor, :observaciones)");
 
 		$stmt->bindParam(":fecha", $datos["fecha"], PDO::PARAM_STR);
 		$stmt->bindParam(":id_usuario", $datos["id_usuario"], PDO::PARAM_INT);
-		$stmt->bindParam(":punto_venta", $datos["punto_venta"], PDO::PARAM_INT);
-		$stmt->bindParam(":tipo", $datos["tipo"], PDO::PARAM_INT);
-		$stmt->bindParam(":descripcion", $datos["descripcion"], PDO::PARAM_STR);
-		$stmt->bindParam(":monto", $datos["monto"], PDO::PARAM_STR);
-		$stmt->bindParam(":medio_pago", $datos["medio_pago"], PDO::PARAM_STR);
-		$stmt->bindParam(":codigo_venta", $datos["codigo_venta"], PDO::PARAM_STR);
-		$stmt->bindParam(":id_venta", $datos["id_venta"], PDO::PARAM_INT);
-		$stmt->bindParam(":id_cliente_proveedor", $datos["id_cliente_proveedor"], PDO::PARAM_INT);
-		$stmt->bindParam(":observaciones", $datos["observaciones"], PDO::PARAM_STR);
+		$puntoVta = isset($datos["punto_venta"]) ? intval($datos["punto_venta"]) : 1;
+		$stmt->bindParam(":punto_venta", $puntoVta, PDO::PARAM_INT);
+		$tipo = isset($datos["tipo"]) ? intval($datos["tipo"]) : 1;
+		$stmt->bindParam(":tipo", $tipo, PDO::PARAM_INT);
+		$descripcion = isset($datos["descripcion"]) ? $datos["descripcion"] : "";
+		$stmt->bindParam(":descripcion", $descripcion, PDO::PARAM_STR);
+		$monto = isset($datos["monto"]) ? floatval($datos["monto"]) : 0;
+		$stmt->bindParam(":monto", $monto, PDO::PARAM_STR);
+		$medioPago = isset($datos["medio_pago"]) ? $datos["medio_pago"] : "Efectivo";
+		$stmt->bindParam(":medio_pago", $medioPago, PDO::PARAM_STR);
+		$codigoVenta = isset($datos["codigo_venta"]) ? $datos["codigo_venta"] : null;
+		$stmt->bindParam(":codigo_venta", $codigoVenta, PDO::PARAM_STR);
+		$idVenta = isset($datos["id_venta"]) ? intval($datos["id_venta"]) : null;
+		$stmt->bindParam(":id_venta", $idVenta, PDO::PARAM_INT);
+		$idClienteProveedor = isset($datos["id_cliente_proveedor"]) ? intval($datos["id_cliente_proveedor"]) : null;
+		$stmt->bindParam(":id_cliente_proveedor", $idClienteProveedor, PDO::PARAM_INT);
+		$observaciones = isset($datos["observaciones"]) ? $datos["observaciones"] : null;
+		$stmt->bindParam(":observaciones", $observaciones, PDO::PARAM_STR);
 
 		if($stmt->execute()){
 
+			$idCaja = Conexion::conectar()->lastInsertId();
+			error_log("✅ Movimiento de caja insertado correctamente. ID caja: $idCaja, ID venta: $idVenta, Código venta: $codigoVenta, Monto: $monto");
 			return "ok";
 
 		} else {
 
-			return $stmt -> errorInfo();
+			$errorInfo = $stmt->errorInfo();
+			error_log("ERROR al insertar en caja: " . print_r($errorInfo, true));
+			error_log("Datos intentados: " . print_r($datos, true));
+			return $errorInfo;
 		
 		}
 
-		$stmt->close();
+		$stmt->closeCursor();
 		$stmt = null;
 
 	}

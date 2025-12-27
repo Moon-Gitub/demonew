@@ -115,11 +115,12 @@ class ModeloVentas{
 				}
 			}
 
-			return "ok";
+			// Retornar array con estado y el ID de la venta insertada
+			return array("estado" => "ok", "id_venta" => $idVenta, "codigo" => isset($datos["codigo"]) ? $datos["codigo"] : null);
 
 		}else{
 
-			return $stmt->errorInfo();
+			return array("estado" => "error", "error" => $stmt->errorInfo(), "id_venta" => 0);
 		
 		}
 

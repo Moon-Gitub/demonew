@@ -822,25 +822,54 @@ class ControladorVentas{
     				);
     
     			$respuesta = ModeloVentas::mdlIngresarVenta($tabla, $datos);
-				//ultimo id de venta
-    			$ultimoidVta = ModeloVentas::mdlUltimoId($tabla);
+    			
+    			// Validar respuesta de inserción
+    			if (is_array($respuesta) && isset($respuesta["estado"]) && $respuesta["estado"] == "ok") {
+    				$idVenta = isset($respuesta["id_venta"]) ? intval($respuesta["id_venta"]) : 0;
+    				$codigoVenta = isset($respuesta["codigo"]) ? intval($respuesta["codigo"]) : $codigoSiguiente;
+    			} else {
+    				// Fallback: si la respuesta no es el formato esperado, usar métodos antiguos
+    				error_log("Advertencia: mdlIngresarVenta no retornó formato esperado, usando métodos antiguos");
+    				$ultimoidVta = ModeloVentas::mdlUltimoId($tabla);
+    				$ultimocodigo = ModeloVentas::mdlMostrarUltimoCodigo($tabla);
+    				$idVenta = isset($ultimoidVta["ultimo"]) ? intval($ultimoidVta["ultimo"]) : 0;
+    				$codigoVenta = isset($ultimocodigo["ultimo"]) ? intval($ultimocodigo["ultimo"]) : $codigoSiguiente;
+    			}
+    			
+    			// Validar que tenemos un ID válido
+    			if ($idVenta == 0 || $codigoVenta == 0) {
+    				error_log("ERROR CRÍTICO: No se pudo obtener ID o código de venta después de insertar. ID: $idVenta, Código: $codigoVenta");
+    				error_log("Respuesta de mdlIngresarVenta: " . print_r($respuesta, true));
+    				// Intentar obtener por código como último recurso
+    				if ($codigoSiguiente > 0) {
+    					$stmtId = Conexion::conectar()->prepare("SELECT id, codigo FROM $tabla WHERE codigo = :codigo LIMIT 1");
+    					$stmtId->bindParam(":codigo", $codigoSiguiente, PDO::PARAM_INT);
+    					$stmtId->execute();
+    					$venta = $stmtId->fetch();
+    					if ($venta) {
+    						$idVenta = intval($venta["id"]);
+    						$codigoVenta = intval($venta["codigo"]);
+    						error_log("ID obtenido por código como fallback: ID=$idVenta, Código=$codigoVenta");
+    					}
+    					$stmtId->closeCursor();
+    				}
+    			}
 
     			/********************************************
     			*	INGRESO REGISTRO A CAJA O CUENTA CORRIENTE
     			********************************************/
-    			$ultimocodigo = ModeloVentas::mdlMostrarUltimoCodigo($tabla);
     
     			//SELECCIONO SI LA OPERACION VA A SUMAR O RESTAR CAJA / CTA. CTE 
     			if(in_array($tipoCbte, $tipoCbteDevuelveStock)) {
     				$tipoCtaCte = 1;
     				$tipoCaja = 0;
     				$descripcionCtaCte = 'Devolucion - Cbte. N°: ' . $codigoSiguiente;
-    				$descripcionCaja = 'Egreso por devolucion - N° ' . $ultimocodigo["ultimo"];
+    				$descripcionCaja = 'Egreso por devolucion - N° ' . $codigoVenta;
     			} else {
     				$tipoCtaCte = 0;
     				$tipoCaja = 1;
     				$descripcionCtaCte = 'Venta - Cbte. N°: ' . $codigoSiguiente;
-    				$descripcionCaja = "Ingreso por venta - N° ".$ultimocodigo["ultimo"];
+    				$descripcionCaja = "Ingreso por venta - N° " . $codigoVenta;
     			}
     
     			if($estado == 2) { //si es cuenta corriente
@@ -851,34 +880,49 @@ class ControladorVentas{
     						'id_cliente' => $postVentaCaja["seleccionarCliente"],
     						'tipo' => $tipoCtaCte,
     						'descripcion' => $descripcionCtaCte, 
-    						'id_venta' => $ultimoidVta["ultimo"], 
+    						'id_venta' => $idVenta, 
     						'importe' => $postVentaCaja["nuevoTotalVentaCaja"],
     						'metodo_pago' => json_encode($lstMetodoPago));
     
     				$respuestaDos = ModeloClientesCtaCte::mdlIngresarCtaCte($tablaCtaCte, $datosCtaCte);
+    				
+    				if ($respuestaDos != "ok") {
+    					error_log("Error al insertar en cuenta corriente para venta ID: $idVenta - " . print_r($respuestaDos, true));
+    				}
     
     			} else { //sino es cta cte, inserto en caja
     
-    				//$medioP = (isset($postVentaCaja["listaMetodoPagoCaja"])) ? $postVentaCaja["listaMetodoPagoCaja"] : 'Efectivo';
+    				// Validar que tenemos ID y código válidos antes de insertar en caja
+    				if ($idVenta > 0 && $codigoVenta > 0) {
+    					$tablaCaja = "cajas";
     
-    			    $tablaCaja = "cajas";
+    					foreach($lstMetodoPago as $llave => $valor) {
+    						$datosCaja = array(
+    							"tipo" => $tipoCaja, //ingreso 1 - egreso 0
+    							"id_usuario" => $postVentaCaja["idVendedor"],
+    							"punto_venta" => ($postVentaCaja["nuevaPtoVta"] == '') ? 1 : $postVentaCaja["nuevaPtoVta"] + 0,
+    							"monto" => $valor["entrega"],
+    							"medio_pago" => $valor["tipo"],
+    							"descripcion" => $descripcionCaja,
+    							"codigo_venta" => $codigoVenta,
+    							"id_venta" => $idVenta,
+    							"id_cliente_proveedor" => $postVentaCaja["seleccionarCliente"],
+    							"fecha" => $fec_hor,
+    							"observaciones" => null
+    						);
     
-    			   	foreach($lstMetodoPago as $llave => $valor) {
-    				   	$datosCaja = array(
-    				   					"tipo" => $tipoCaja, //ingreso 1 - egreso 0
-    				   					"id_usuario" => $postVentaCaja["idVendedor"],
-    				   					"punto_venta" => ($postVentaCaja["nuevaPtoVta"] == '') ? 1 : $postVentaCaja["nuevaPtoVta"] + 0,
-    					            	"monto" => $valor["entrega"],
-    					            	"medio_pago" => $valor["tipo"],
-    					                "descripcion"=>$descripcionCaja,
-    					                "codigo_venta"=>$ultimocodigo["ultimo"],
-    					   				"id_venta" => $ultimoidVta["ultimo"],
-    				   					"id_cliente_proveedor" => $postVentaCaja["seleccionarCliente"],
-    					                "fecha"=>$fec_hor);
-    
-    				   	$respuestaDos = ModeloCajas::mdlIngresarCaja($tablaCaja, $datosCaja);
-    
-    			   }
+    						$respuestaDos = ModeloCajas::mdlIngresarCaja($tablaCaja, $datosCaja);
+    						
+    						if ($respuestaDos != "ok") {
+    							error_log("ERROR al insertar en caja para venta ID: $idVenta, Código: $codigoVenta - " . print_r($respuestaDos, true));
+    							error_log("Datos caja: " . print_r($datosCaja, true));
+    						} else {
+    							error_log("✅ Movimiento de caja insertado correctamente: Venta ID=$idVenta, Código=$codigoVenta, Monto=" . $valor["entrega"] . ", Medio=" . $valor["tipo"]);
+    						}
+    					}
+    				} else {
+    					error_log("ERROR CRÍTICO: No se puede insertar en caja porque ID o código de venta no son válidos. ID: $idVenta, Código: $codigoVenta");
+    				}
     
     			}
     
