@@ -276,10 +276,19 @@
 
                 <?php
 
-                // Obtener productos desde tabla relacional
-                $listaProducto = ControladorVentas::ctrObtenerProductosVentaLegacy($venta["id"]);
+                // Los presupuestos almacenan productos en JSON, no en tabla relacional
+                $listaProducto = array();
+                if(isset($venta["productos"]) && !empty($venta["productos"])) {
+                    $productosJson = $venta["productos"];
+                    if ($productosJson !== '[]' && $productosJson !== 'null' && $productosJson !== '' && json_decode($productosJson) !== null) {
+                        $listaProducto = json_decode($productosJson, true);
+                        if (!is_array($listaProducto)) {
+                            $listaProducto = array();
+                        }
+                    }
+                }
 
-                if (is_array($listaProducto)) {
+                if (is_array($listaProducto) && !empty($listaProducto)) {
                     foreach ($listaProducto as $key => $value) {
 
                   if($value["id"] != 1) {
@@ -403,8 +412,17 @@
                 </div>
 
                 <input type="hidden" id="listaProductosCaja" name="listaProductosCaja" value="<?php 
-                    // Generar JSON compatible desde productos_venta
-                    $productosJson = ControladorVentas::ctrObtenerProductosVentaLegacy($venta['id']);
+                    // Los presupuestos almacenan productos en JSON
+                    $productosJson = array();
+                    if(isset($venta["productos"]) && !empty($venta["productos"])) {
+                        $productosJsonRaw = $venta["productos"];
+                        if ($productosJsonRaw !== '[]' && $productosJsonRaw !== 'null' && $productosJsonRaw !== '' && json_decode($productosJsonRaw) !== null) {
+                            $productosJson = json_decode($productosJsonRaw, true);
+                            if (!is_array($productosJson)) {
+                                $productosJson = array();
+                            }
+                        }
+                    }
                     echo htmlspecialchars(json_encode($productosJson));
                 ?>">
 

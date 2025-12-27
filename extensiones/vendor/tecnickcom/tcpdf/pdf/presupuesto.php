@@ -247,27 +247,25 @@ $tipoIvaCliente = $condIva[$respuestaCliente["condicion_iva"]];
     $fecha = substr($respuestaVenta["fecha"],0,-8);
     $fecha = date("d-m-Y",strtotime($fecha));
     
-    if(!isset($respuestaVenta["productos"]) || empty($respuestaVenta["productos"])) {
-        error_log("ERROR: El presupuesto no tiene productos");
-        http_response_code(500);
-        die('Error: El presupuesto no tiene productos');
+    // Los presupuestos almacenan productos en JSON, no en tabla relacional
+    $productos = array();
+    if(isset($respuestaVenta["productos"]) && !empty($respuestaVenta["productos"])) {
+        $productosJson = $respuestaVenta["productos"];
+        if ($productosJson !== '[]' && $productosJson !== 'null' && $productosJson !== '' && json_decode($productosJson) !== null) {
+            $productos = json_decode($productosJson, true);
+            if (!is_array($productos)) {
+                $productos = array();
+            }
+        }
     }
     
-    // Obtener productos desde tabla relacional
-    $rutaBase = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
-    $rutaControlador = $rutaBase . '/controladores/ventas.controlador.php';
-    if (!file_exists($rutaControlador)) {
-        $rutaControlador = __DIR__ . '/../../../../controladores/ventas.controlador.php';
-    }
-    require_once $rutaControlador;
-    $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($respuestaVenta["id"]);
-    
-    if(!is_array($productos) || empty($productos)) {
-        error_log("ERROR: Los productos del presupuesto no son válidos");
+    if(empty($productos)) {
+        error_log("ERROR: El presupuesto no tiene productos válidos");
+        error_log("Productos JSON: " . ($respuestaVenta["productos"] ?? "NO DEFINIDO"));
         http_response_code(500);
-        die('Error: Los productos del presupuesto no son válidos');
+        die('Error: El presupuesto no tiene productos válidos');
     }
-    error_log("✅ Productos obtenidos: " . count($productos) . " items");
+    error_log("✅ Productos obtenidos desde JSON: " . count($productos) . " items");
     
     $total = isset($respuestaVenta["total"]) ? number_format($respuestaVenta["total"],2, ',', '.') : '0,00';
     $observaciones = isset($respuestaVenta["observaciones"]) ? $respuestaVenta["observaciones"] : '';
@@ -473,9 +471,19 @@ $tamanioProd = count($productos);
 for ($i = 0; $i <= 19; $i++) {
 
 	if($i < $tamanioProd){
-		$datosFact[$i]["cantidad"] = $productos[$i]["cantidad"];
-		$datosFact[$i]["descripcion"] = $productos[$i]["descripcion"];
-		$datosFact[$i]["total"] = '$ ' . number_format($productos[$i]["total"],2,',','.');
+		$prod = $productos[$i];
+		$datosFact[$i]["cantidad"] = isset($prod["cantidad"]) ? $prod["cantidad"] : "0";
+		$datosFact[$i]["descripcion"] = isset($prod["descripcion"]) ? htmlspecialchars($prod["descripcion"]) : "";
+		// El total puede venir como "total" o calcularse desde precio y cantidad
+		$total = 0;
+		if (isset($prod["total"])) {
+			$total = floatval($prod["total"]);
+		} elseif (isset($prod["precio"]) && isset($prod["cantidad"])) {
+			$total = floatval($prod["precio"]) * floatval($prod["cantidad"]);
+		} elseif (isset($prod["precio_venta"]) && isset($prod["cantidad"])) {
+			$total = floatval($prod["precio_venta"]) * floatval($prod["cantidad"]);
+		}
+		$datosFact[$i]["total"] = '$ ' . number_format($total, 2, ',', '.');
 	} else {
 
 		$datosFact[$i]["cantidad"] = "";
