@@ -5,24 +5,50 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
+// Crear log específico para este archivo
+$logFile = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/error_log_remito.txt';
+ini_set('error_log', $logFile);
+
+// Registrar inicio de ejecución
+error_log("==========================================");
+error_log("INICIO remito.php - " . date('Y-m-d H:i:s'));
+error_log("Código recibido: " . (isset($_GET['codigo']) ? $_GET['codigo'] : 'NO DEFINIDO'));
+error_log("==========================================");
+
 // Construir rutas absolutas desde el directorio actual
 // Desde: extensiones/vendor/tecnickcom/tcpdf/pdf/remito.php
 // Subir 5 niveles para llegar a la raíz del proyecto
 $rutaBase = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
+error_log("Ruta base calculada: " . $rutaBase);
+error_log("Ruta base existe: " . (is_dir($rutaBase) ? 'SÍ' : 'NO'));
+
 $rutaControladores = $rutaBase . '/controladores/';
 $rutaModelos = $rutaBase . '/modelos/';
 
-// Cargar archivos necesarios
-require_once $rutaControladores . 'empresa.controlador.php';
-require_once $rutaModelos . 'empresa.modelo.php';
-require_once $rutaControladores . 'ventas.controlador.php';
-require_once $rutaModelos . 'ventas.modelo.php';
-require_once $rutaControladores . 'clientes.controlador.php';
-require_once $rutaModelos . 'clientes.modelo.php';
-require_once $rutaControladores . 'usuarios.controlador.php';
-require_once $rutaModelos . 'usuarios.modelo.php';
-require_once $rutaControladores . 'productos.controlador.php';
-require_once $rutaModelos . 'productos.modelo.php';
+// Cargar archivos necesarios con validación
+$archivos = [
+    $rutaControladores . 'empresa.controlador.php',
+    $rutaModelos . 'empresa.modelo.php',
+    $rutaControladores . 'ventas.controlador.php',
+    $rutaModelos . 'ventas.modelo.php',
+    $rutaControladores . 'clientes.controlador.php',
+    $rutaModelos . 'clientes.modelo.php',
+    $rutaControladores . 'usuarios.controlador.php',
+    $rutaModelos . 'usuarios.modelo.php',
+    $rutaControladores . 'productos.controlador.php',
+    $rutaModelos . 'productos.modelo.php'
+];
+
+foreach ($archivos as $archivo) {
+    if (!file_exists($archivo)) {
+        error_log("ERROR: Archivo no encontrado: " . $archivo);
+        http_response_code(500);
+        die('Error: Archivo requerido no encontrado: ' . basename($archivo));
+    }
+    error_log("Cargando: " . basename($archivo));
+    require_once $archivo;
+}
+error_log("Todos los archivos cargados correctamente");
 
 class imprimirComprobante{
 
