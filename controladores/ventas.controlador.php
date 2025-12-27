@@ -174,6 +174,14 @@ class ControladorVentas{
     			);
     
     			$respuesta = ModeloVentas::mdlIngresarVenta($tabla, $datos);
+    			
+    			// Validar respuesta (puede ser "ok" o array con estado)
+    			$respuestaOk = false;
+    			if (is_array($respuesta) && isset($respuesta["estado"])) {
+    				$respuestaOk = ($respuesta["estado"] == "ok");
+    			} else {
+    				$respuestaOk = ($respuesta == "ok");
+    			}
 				
 							
     			/************************************
@@ -188,7 +196,7 @@ class ControladorVentas{
     
     			}
     
-    			if($respuesta == "ok"){
+    			if($respuestaOk){
     
     				echo'<script>
     
