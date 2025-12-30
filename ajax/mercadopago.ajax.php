@@ -220,10 +220,9 @@ if(isset($_POST["registrarPagoDesdeFrontend"]) || isset($_GET["registrarPagoDesd
 		$resultadoPago = ControladorMercadoPago::ctrRegistrarPagoConfirmado($datosPago);
 		
 		if($resultadoPago === "ok"){
-			// Actualizar estado del intento si hay preference_id
-			if(isset($datosPago['preference_id']) && !empty($datosPago['preference_id'])){
-				ModeloMercadoPago::mdlActualizarEstadoIntento($datosPago['preference_id'], 'aprobado');
-			}
+			// Actualizar estado del intento (puede ser por preference_id o order_id)
+			$preferenceId = isset($datosPago['preference_id']) && !empty($datosPago['preference_id']) ? $datosPago['preference_id'] : null;
+			ModeloMercadoPago::mdlActualizarEstadoIntento($preferenceId, 'aprobado', $orderId);
 			
 			// Registrar en cuenta corriente si el pago está aprobado y hay cliente válido
 			if($idClienteMoon > 0 && isset($payment['status']) && $payment['status'] === 'approved'){

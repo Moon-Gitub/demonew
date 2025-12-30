@@ -3039,16 +3039,25 @@ function crearPreferenciaPagoQR(){
 	}
 	
 	// Mostrar modal y loading
-	// Bloquear cierre del modal (backdrop static, keyboard false)
+	// BLOQUEO TOTAL: No se puede cerrar de ninguna forma
 	$("#modalPagoQR").modal({
 		backdrop: 'static',
 		keyboard: false,
 		show: true
 	});
 	
-	// Ocultar botones de cierre
-	$("#btnCerrarModalQR").hide();
-	$("#btnCerrarModalQRFooter").hide();
+	// Ocultar botones de cierre completamente
+	$("#btnCerrarModalQR").hide().prop('disabled', true);
+	$("#btnCerrarModalQRFooter").hide().prop('disabled', true);
+	
+	// Prevenir cierre con ESC
+	$(document).off('keydown.modal').on('keydown.modal', function(e) {
+		if (e.keyCode === 27 && $('#modalPagoQR').hasClass('in')) {
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		}
+	});
 	
 	$("#qrLoading").show();
 	$("#qrContent").hide();

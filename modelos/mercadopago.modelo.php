@@ -10,29 +10,84 @@ class ModeloMercadoPago {
 	static public function mdlRegistrarIntentoPago($datos) {
 
 		try {
-			$stmt = Conexion::conectarMoon()->prepare("INSERT INTO mercadopago_intentos
+			$conexion = Conexion::conectarMoon();
+			
+			if (!$conexion) {
+				error_log("ERROR mdlRegistrarIntentoPago: No se pudo conectar a BD Moon");
+				return "error";
+			}
+
+			// PREVENIR DUPLICADOS: Verificar si ya existe un intento pendiente para este cliente con el mismo preference_id
+			if (isset($datos["preference_id"]) && !empty($datos["preference_id"])) {
+				$stmtCheck = $conexion->prepare("SELECT id FROM mercadopago_intentos 
+					WHERE preference_id = :preference_id 
+					AND estado = 'pendiente' 
+					LIMIT 1");
+				$stmtCheck->bindParam(":preference_id", $datos["preference_id"], PDO::PARAM_STR);
+				$stmtCheck->execute();
+				$intentoExistente = $stmtCheck->fetch();
+				$stmtCheck->closeCursor();
+				
+				if ($intentoExistente) {
+					error_log("⚠️ Intento ya existe para preference_id: " . $datos["preference_id"] . " (ID: " . $intentoExistente['id'] . ")");
+					return "ok"; // Retornar ok porque el intento ya existe
+				}
+			}
+
+			// PREVENIR MÚLTIPLES INTENTOS PENDIENTES: Verificar si hay un intento pendiente reciente (últimos 5 minutos) para el mismo cliente y monto
+			if (isset($datos["id_cliente_moon"]) && isset($datos["monto"])) {
+				$stmtCheckCliente = $conexion->prepare("SELECT id FROM mercadopago_intentos 
+					WHERE id_cliente_moon = :id_cliente 
+					AND monto = :monto 
+					AND estado = 'pendiente' 
+					AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+					LIMIT 1");
+				$stmtCheckCliente->bindParam(":id_cliente", $datos["id_cliente_moon"], PDO::PARAM_INT);
+				$monto = floatval($datos["monto"]);
+				$stmtCheckCliente->bindParam(":monto", $monto, PDO::PARAM_STR);
+				$stmtCheckCliente->execute();
+				$intentoReciente = $stmtCheckCliente->fetch();
+				$stmtCheckCliente->closeCursor();
+				
+				if ($intentoReciente) {
+					error_log("⚠️ Ya existe un intento pendiente reciente para cliente " . $datos["id_cliente_moon"] . " con monto $monto (ID: " . $intentoReciente['id'] . ")");
+					return "ok"; // Retornar ok para evitar duplicados
+				}
+			}
+
+			$stmt = $conexion->prepare("INSERT INTO mercadopago_intentos
 				(id_cliente_moon, preference_id, monto, descripcion, fecha_creacion, estado)
 				VALUES (:id_cliente, :preference_id, :monto, :descripcion, :fecha_creacion, :estado)");
 
 			$stmt->bindParam(":id_cliente", $datos["id_cliente_moon"], PDO::PARAM_INT);
-			$stmt->bindParam(":preference_id", $datos["preference_id"], PDO::PARAM_STR);
-			$stmt->bindParam(":monto", $datos["monto"], PDO::PARAM_STR);
-			$stmt->bindParam(":descripcion", $datos["descripcion"], PDO::PARAM_STR);
-			$stmt->bindParam(":fecha_creacion", $datos["fecha_creacion"], PDO::PARAM_STR);
-			$stmt->bindParam(":estado", $datos["estado"], PDO::PARAM_STR);
+			$preferenceId = isset($datos["preference_id"]) ? $datos["preference_id"] : null;
+			$stmt->bindParam(":preference_id", $preferenceId, PDO::PARAM_STR);
+			$monto = isset($datos["monto"]) ? floatval($datos["monto"]) : 0;
+			$stmt->bindParam(":monto", $monto, PDO::PARAM_STR);
+			$descripcion = isset($datos["descripcion"]) ? $datos["descripcion"] : 'Pago';
+			$stmt->bindParam(":descripcion", $descripcion, PDO::PARAM_STR);
+			$fechaCreacion = isset($datos["fecha_creacion"]) ? $datos["fecha_creacion"] : date('Y-m-d H:i:s');
+			$stmt->bindParam(":fecha_creacion", $fechaCreacion, PDO::PARAM_STR);
+			$estado = isset($datos["estado"]) ? $datos["estado"] : 'pendiente';
+			$stmt->bindParam(":estado", $estado, PDO::PARAM_STR);
 
 			if ($stmt->execute()) {
+				$idIntento = $conexion->lastInsertId();
+				error_log("✅ Intento de pago registrado. ID: $idIntento, Cliente: " . $datos["id_cliente_moon"] . ", Preference ID: " . ($preferenceId ?: 'N/A'));
 				return "ok";
 			} else {
-				return $stmt->errorInfo();
+				$errorInfo = $stmt->errorInfo();
+				error_log("ERROR al ejecutar INSERT en mercadopago_intentos: " . print_r($errorInfo, true));
+				return $errorInfo;
 			}
 
 		} catch (PDOException $e) {
-			error_log("Error al registrar intento de pago: " . $e->getMessage());
+			error_log("EXCEPCIÓN al registrar intento de pago: " . $e->getMessage());
+			error_log("Stack trace: " . $e->getTraceAsString());
 			return "error";
 		}
 
-		$stmt->close();
+		$stmt->closeCursor();
 		$stmt = null;
 	}
 
@@ -263,30 +318,79 @@ class ModeloMercadoPago {
 	/*=============================================
 	ACTUALIZAR ESTADO DE INTENTO DE PAGO
 	=============================================*/
-	static public function mdlActualizarEstadoIntento($preferenceId, $estado) {
+	/*=============================================
+	ACTUALIZAR ESTADO DE INTENTO
+	Puede actualizar por preference_id o por order_id (para modelo atendido)
+	=============================================*/
+	static public function mdlActualizarEstadoIntento($preferenceId, $estado, $orderId = null) {
 
 		try {
-			$stmt = Conexion::conectarMoon()->prepare("UPDATE mercadopago_intentos
-				SET estado = :estado, fecha_actualizacion = :fecha_actualizacion
-				WHERE preference_id = :preference_id");
-
-			$fechaActualizacion = date('Y-m-d H:i:s');
-			$stmt->bindParam(":estado", $estado, PDO::PARAM_STR);
-			$stmt->bindParam(":fecha_actualizacion", $fechaActualizacion, PDO::PARAM_STR);
-			$stmt->bindParam(":preference_id", $preferenceId, PDO::PARAM_STR);
-
-			if ($stmt->execute()) {
-				return "ok";
-			} else {
+			$conexion = Conexion::conectarMoon();
+			
+			if (!$conexion) {
+				error_log("ERROR mdlActualizarEstadoIntento: No se pudo conectar a BD Moon");
 				return "error";
 			}
 
+			$fechaActualizacion = date('Y-m-d H:i:s');
+			$filasAfectadas = 0;
+
+			// Método 1: Actualizar por preference_id (si existe)
+			if ($preferenceId && !empty($preferenceId)) {
+				$stmt = $conexion->prepare("UPDATE mercadopago_intentos
+					SET estado = :estado, fecha_actualizacion = :fecha_actualizacion
+					WHERE preference_id = :preference_id AND estado = 'pendiente'");
+
+				$stmt->bindParam(":estado", $estado, PDO::PARAM_STR);
+				$stmt->bindParam(":fecha_actualizacion", $fechaActualizacion, PDO::PARAM_STR);
+				$stmt->bindParam(":preference_id", $preferenceId, PDO::PARAM_STR);
+
+				if ($stmt->execute()) {
+					$filasAfectadas = $stmt->rowCount();
+					if ($filasAfectadas > 0) {
+						error_log("✅ Estado de intento actualizado por preference_id: $preferenceId -> $estado");
+					}
+				}
+				$stmt->closeCursor();
+			}
+
+			// Método 2: Si no se actualizó y hay order_id, buscar intentos pendientes recientes del mismo cliente
+			// Esto es para el modelo atendido (QR estático) donde no hay preference_id
+			if ($filasAfectadas == 0 && $orderId && !empty($orderId)) {
+				// Obtener datos de la orden para buscar el intento
+				// Nota: En el modelo atendido, el external_reference puede contener info del cliente
+				// Por ahora, actualizamos todos los intentos pendientes recientes (últimos 10 minutos)
+				// Esto es un fallback para cuando no hay preference_id
+				$stmt = $conexion->prepare("UPDATE mercadopago_intentos
+					SET estado = :estado, fecha_actualizacion = :fecha_actualizacion
+					WHERE estado = 'pendiente' 
+					AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 10 MINUTE)
+					ORDER BY fecha_creacion DESC
+					LIMIT 1");
+
+				$stmt->bindParam(":estado", $estado, PDO::PARAM_STR);
+				$stmt->bindParam(":fecha_actualizacion", $fechaActualizacion, PDO::PARAM_STR);
+
+				if ($stmt->execute()) {
+					$filasAfectadas = $stmt->rowCount();
+					if ($filasAfectadas > 0) {
+						error_log("✅ Estado de intento actualizado por order_id (fallback): $orderId -> $estado");
+					}
+				}
+				$stmt->closeCursor();
+			}
+
+			if ($filasAfectadas > 0) {
+				return "ok";
+			} else {
+				error_log("⚠️ No se encontró intento pendiente para actualizar. Preference ID: " . ($preferenceId ?: 'N/A') . ", Order ID: " . ($orderId ?: 'N/A'));
+				return "ok"; // Retornar ok aunque no se actualizó (puede que ya esté actualizado)
+			}
+
 		} catch (PDOException $e) {
-			error_log("Error al actualizar estado de intento: " . $e->getMessage());
+			error_log("EXCEPCIÓN al actualizar estado de intento: " . $e->getMessage());
+			error_log("Stack trace: " . $e->getTraceAsString());
 			return "error";
 		}
-
-		$stmt->close();
-		$stmt = null;
 	}
 }
