@@ -3220,6 +3220,12 @@ function verificarPagoQR(){
 				
 				$("#qrEstado").removeClass("alert-info alert-danger alert-warning").addClass("alert-success").html('<i class="fa fa-check-circle"></i> ¡Pago confirmado en Mercado Pago! Payment ID: ' + (respuesta.payment_id || 'N/A'));
 				
+				// REGISTRAR PAGO EN SISTEMA DE COBRO (TABLA mercadopago_pagos)
+				// Esto es crítico porque el webhook puede no estar funcionando
+				if(respuesta.payment_id){
+					registrarPagoConfirmadoDesdeFrontend(respuesta.payment_id, orderIdActual);
+				}
+				
 				// Habilitar cierre del modal ahora que el pago está confirmado
 				$("#btnCerrarModalQR").show();
 				$("#btnCerrarModalQRFooter").show();
@@ -3237,6 +3243,45 @@ function verificarPagoQR(){
 		},
 		error: function(xhr, status, error){
 			console.error("Error verificando orden:", error);
+		}
+	});
+}
+
+/*=============================================
+REGISTRAR PAGO CONFIRMADO DESDE FRONTEND
+=============================================*/
+function registrarPagoConfirmadoDesdeFrontend(paymentId, orderId){
+	// Este método registra el pago en mercadopago_pagos cuando se detecta desde el frontend
+	// Es necesario porque el webhook puede no estar funcionando o no estar configurado
+	
+	if(!paymentId || !orderId){
+		console.error("No se puede registrar pago: paymentId o orderId faltante");
+		return;
+	}
+	
+	var token = $('meta[name="csrf-token"]').attr('content') || '';
+	
+	$.ajax({
+		url: "ajax/mercadopago.ajax.php",
+		method: "POST",
+		data: {
+			registrarPagoDesdeFrontend: "1",
+			payment_id: paymentId,
+			order_id: orderId
+		},
+		headers: {
+			'X-CSRF-TOKEN': token
+		},
+		dataType: "json",
+		success: function(respuesta){
+			if(respuesta.error){
+				console.error("Error registrando pago desde frontend:", respuesta.mensaje);
+			} else {
+				console.log("✅ Pago registrado correctamente en sistema de cobro:", respuesta);
+			}
+		},
+		error: function(xhr, status, error){
+			console.error("Error en AJAX al registrar pago:", error);
 		}
 	});
 }
