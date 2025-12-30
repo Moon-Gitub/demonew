@@ -918,12 +918,31 @@ class ControladorMercadoPago {
 				$status = isset($order['status']) ? $order['status'] : 'unknown';
 				$closed = ($status === 'closed');
 				
+				// Verificar también el estado del pago dentro de la orden
+				$paymentApproved = false;
+				$paymentId = null;
+				
+				if (isset($order['payments']) && is_array($order['payments']) && count($order['payments']) > 0) {
+					$payment = $order['payments'][0];
+					$paymentId = isset($payment['id']) ? $payment['id'] : null;
+					$paymentStatus = isset($payment['status']) ? $payment['status'] : null;
+					
+					// El pago está aprobado si el status es 'approved'
+					$paymentApproved = ($paymentStatus === 'approved');
+					
+					error_log("Verificación orden $orderId: status=$status, closed=$closed, payment_status=$paymentStatus, payment_approved=$paymentApproved");
+				}
+				
+				// La orden está aprobada si está cerrada Y el pago está aprobado
+				$aprobado = $closed && $paymentApproved;
+				
 				return array(
 					'error' => false,
-					'aprobado' => $closed,
+					'aprobado' => $aprobado,
 					'status' => $status,
+					'payment_status' => isset($paymentStatus) ? $paymentStatus : null,
 					'order_id' => $orderId,
-					'payment_id' => isset($order['payments']) && count($order['payments']) > 0 ? $order['payments'][0]['id'] : null
+					'payment_id' => $paymentId
 				);
 			} else {
 				error_log("Error consultando orden $orderId: HTTP $httpCode - $response");

@@ -3039,7 +3039,17 @@ function crearPreferenciaPagoQR(){
 	}
 	
 	// Mostrar modal y loading
-	$("#modalPagoQR").modal('show');
+	// Bloquear cierre del modal (backdrop static, keyboard false)
+	$("#modalPagoQR").modal({
+		backdrop: 'static',
+		keyboard: false,
+		show: true
+	});
+	
+	// Ocultar botones de cierre
+	$("#btnCerrarModalQR").hide();
+	$("#btnCerrarModalQRFooter").hide();
+	
 	$("#qrLoading").show();
 	$("#qrContent").hide();
 	$("#qrError").hide();
@@ -3208,16 +3218,21 @@ function verificarPagoQR(){
 				clearInterval(intervaloVerificacionQR);
 				intervaloVerificacionQR = null;
 				
-				$("#qrEstado").removeClass("alert-info alert-danger").addClass("alert-success").html('<i class="fa fa-check-circle"></i> ¡Pago confirmado en Mercado Pago! Payment ID: ' + (respuesta.payment_id || 'N/A'));
+				$("#qrEstado").removeClass("alert-info alert-danger alert-warning").addClass("alert-success").html('<i class="fa fa-check-circle"></i> ¡Pago confirmado en Mercado Pago! Payment ID: ' + (respuesta.payment_id || 'N/A'));
 				
-				// Preparar método de pago (NO completar venta automáticamente)
+				// Habilitar cierre del modal ahora que el pago está confirmado
+				$("#btnCerrarModalQR").show();
+				$("#btnCerrarModalQRFooter").show();
+				$("#modalPagoQR").data('bs.modal', null).removeData('backdrop').removeData('keyboard');
+				
+				// Completar venta automáticamente después de mostrar confirmación
 				setTimeout(function(){
 					completarVentaConQR(respuesta.payment_id);
-				}, 1500);
+				}, 2000);
 			} else if(respuesta.status === 'pending'){
-				$("#qrEstado").removeClass("alert-success alert-danger").addClass("alert-warning").html('<i class="fa fa-clock-o"></i> Pago pendiente de confirmación en Mercado Pago...');
+				$("#qrEstado").removeClass("alert-success alert-danger alert-info").addClass("alert-warning").html('<i class="fa fa-clock-o"></i> Pago pendiente de confirmación en Mercado Pago...');
 			} else {
-				$("#qrEstado").removeClass("alert-success alert-danger").addClass("alert-info").html('<i class="fa fa-clock-o"></i> Esperando pago de $' + $("#qrMonto").text() + '...');
+				$("#qrEstado").removeClass("alert-success alert-danger alert-warning").addClass("alert-info").html('<i class="fa fa-clock-o"></i> Esperando pago de $' + $("#qrMonto").text() + '...');
 			}
 		},
 		error: function(xhr, status, error){
@@ -3238,6 +3253,10 @@ function completarVentaConQR(paymentId){
 			type: "error",
 			confirmButtonText: "Cerrar"
 		});
+		// Permitir cerrar el modal en caso de error
+		$("#btnCerrarModalQR").show();
+		$("#btnCerrarModalQRFooter").show();
+		$("#modalPagoQR").data('bs.modal', null).removeData('backdrop').removeData('keyboard');
 		return;
 	}
 	
@@ -3248,7 +3267,7 @@ function completarVentaConQR(paymentId){
 	$("#listaMetodoPagoCaja").val("MPQR-" + externalReferenceActual + "-" + paymentId);
 	listarMetodosCaja();
 	
-	// Cerrar modal
+	// Cerrar modal automáticamente
 	$("#modalPagoQR").modal('hide');
 	
 	// Mostrar mensaje de éxito
@@ -3268,6 +3287,18 @@ $(document).on('click', '#btnVerificarPagoQR', function(){
 });
 
 /*=============================================
+PREVENIR CIERRE DEL MODAL DURANTE VERIFICACIÓN
+=============================================*/
+$("#modalPagoQR").on('hide.bs.modal', function(e){
+	// Si el pago no está confirmado y se está verificando, prevenir cierre
+	if(!paymentIdConfirmado && intervaloVerificacionQR){
+		e.preventDefault();
+		e.stopPropagation();
+		return false;
+	}
+});
+
+/*=============================================
 LIMPIAR AL CERRAR MODAL
 =============================================*/
 $("#modalPagoQR").on('hidden.bs.modal', function(){
@@ -3281,6 +3312,9 @@ $("#modalPagoQR").on('hidden.bs.modal', function(){
 		externalReferenceActual = null;
 		orderIdActual = null;
 	}
+	// Restablecer configuración del modal para próxima vez
+	$("#btnCerrarModalQR").hide();
+	$("#btnCerrarModalQRFooter").hide();
 });
 
 /*=============================================
