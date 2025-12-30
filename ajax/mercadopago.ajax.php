@@ -113,3 +113,145 @@ if(isset($_GET["verificarPagoPorReference"]) || isset($_POST["verificarPagoPorRe
 	echo json_encode($respuesta);
 	exit;
 }
+
+/*=============================================
+REGISTRAR PAGO CONFIRMADO DESDE FRONTEND
+=============================================*/
+if(isset($_POST["registrarPagoDesdeFrontend"]) || isset($_GET["registrarPagoDesdeFrontend"])){
+	$paymentId = isset($_POST["payment_id"]) ? $_POST["payment_id"] : (isset($_GET["payment_id"]) ? $_GET["payment_id"] : null);
+	$orderId = isset($_POST["order_id"]) ? $_POST["order_id"] : (isset($_GET["order_id"]) ? $_GET["order_id"] : null);
+	
+	if(!$paymentId || !$orderId){
+		http_response_code(400);
+		echo json_encode(array("error" => true, "mensaje" => "Payment ID y Order ID requeridos"));
+		exit;
+	}
+	
+	// Obtener datos del pago desde Mercado Pago
+	$credenciales = ControladorMercadoPago::ctrObtenerCredenciales();
+	$url = "https://api.mercadopago.com/v1/payments/$paymentId";
+	
+	$ch = curl_init($url);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+		'Authorization: Bearer ' . $credenciales['access_token'],
+		'Content-Type: application/json'
+	));
+	
+	$response = curl_exec($ch);
+	$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	curl_close($ch);
+	
+	if($httpCode == 200){
+		$payment = json_decode($response, true);
+		
+		// Obtener id_cliente_moon desde external_reference
+		// NOTA: Para ventas POS, el external_reference puede no contener el ID del cliente
+		// En ese caso, intentamos obtenerlo desde la orden o usamos 0 (venta sin cliente del sistema de cobro)
+		$idClienteMoon = null;
+		
+		// Método 1: Desde external_reference (puede ser numérico o formato "ID-otro")
+		if(isset($payment['external_reference']) && !empty($payment['external_reference'])){
+			$externalRef = $payment['external_reference'];
+			if(is_numeric($externalRef)){
+				$idClienteMoon = intval($externalRef);
+			} elseif(preg_match('/^(\d+)/', $externalRef, $matches)){
+				$idClienteMoon = intval($matches[1]);
+			} elseif(preg_match('/cliente[_\s]*(\d+)/i', $externalRef, $matches)){
+				$idClienteMoon = intval($matches[1]);
+			}
+		}
+		
+		// Método 2: Desde metadata
+		if(!$idClienteMoon && isset($payment['metadata']['id_cliente_moon'])){
+			$idClienteMoon = intval($payment['metadata']['id_cliente_moon']);
+		}
+		
+		// Método 3: Intentar desde la orden (merchant_order)
+		if(!$idClienteMoon && $orderId){
+			$orderUrl = "https://api.mercadopago.com/merchant_orders/$orderId";
+			$chOrder = curl_init($orderUrl);
+			curl_setopt($chOrder, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($chOrder, CURLOPT_HTTPHEADER, array(
+				'Authorization: Bearer ' . $credenciales['access_token'],
+				'Content-Type: application/json'
+			));
+			$orderResponse = curl_exec($chOrder);
+			$orderHttpCode = curl_getinfo($chOrder, CURLINFO_HTTP_CODE);
+			curl_close($chOrder);
+			
+			if($orderHttpCode == 200){
+				$order = json_decode($orderResponse, true);
+				if(isset($order['external_reference']) && is_numeric($order['external_reference'])){
+					$idClienteMoon = intval($order['external_reference']);
+				}
+			}
+		}
+		
+		// Si aún no se encuentra, usar 0 para auditoría
+		// Esto es válido para ventas POS que no están asociadas al sistema de cobro
+		if(!$idClienteMoon){
+			$idClienteMoon = 0;
+			error_log("ℹ️ No se encontró id_cliente_moon para payment $paymentId (puede ser venta POS sin cliente del sistema de cobro). Registrando con id=0");
+		}
+		
+		// Preparar datos del pago
+		$fechaPago = date('Y-m-d H:i:s');
+		if(isset($payment['date_approved']) && !empty($payment['date_approved'])){
+			$fechaAprobada = strtotime($payment['date_approved']);
+			if($fechaAprobada !== false){
+				$fechaPago = date('Y-m-d H:i:s', $fechaAprobada);
+			}
+		}
+		
+		$datosPago = array(
+			'id_cliente_moon' => $idClienteMoon,
+			'payment_id' => $paymentId,
+			'preference_id' => isset($payment['preference_id']) ? $payment['preference_id'] : null,
+			'monto' => isset($payment['transaction_amount']) ? $payment['transaction_amount'] : 0,
+			'estado' => isset($payment['status']) ? $payment['status'] : 'approved',
+			'fecha_pago' => $fechaPago,
+			'payment_type' => isset($payment['payment_type_id']) ? $payment['payment_type_id'] : null,
+			'payment_method_id' => isset($payment['payment_method_id']) ? $payment['payment_method_id'] : null,
+			'datos_json' => json_encode($payment)
+		);
+		
+		// Registrar en mercadopago_pagos
+		$resultadoPago = ControladorMercadoPago::ctrRegistrarPagoConfirmado($datosPago);
+		
+		if($resultadoPago === "ok"){
+			// Actualizar estado del intento si hay preference_id
+			if(isset($datosPago['preference_id']) && !empty($datosPago['preference_id'])){
+				ModeloMercadoPago::mdlActualizarEstadoIntento($datosPago['preference_id'], 'aprobado');
+			}
+			
+			// Registrar en cuenta corriente si el pago está aprobado y hay cliente válido
+			if($idClienteMoon > 0 && isset($payment['status']) && $payment['status'] === 'approved'){
+				$monto = floatval($payment['transaction_amount']);
+				ControladorSistemaCobro::ctrRegistrarMovimientoCuentaCorriente($idClienteMoon, $monto);
+				ControladorSistemaCobro::ctrActualizarClientesCobro($idClienteMoon, 0); // Desbloquear
+			}
+			
+			echo json_encode(array(
+				"error" => false,
+				"mensaje" => "Pago registrado correctamente en sistema de cobro",
+				"id_cliente_moon" => $idClienteMoon,
+				"payment_id" => $paymentId
+			));
+		} else {
+			http_response_code(500);
+			echo json_encode(array(
+				"error" => true,
+				"mensaje" => "Error al registrar pago: " . (is_array($resultadoPago) ? json_encode($resultadoPago) : $resultadoPago)
+			));
+		}
+	} else {
+		http_response_code($httpCode);
+		echo json_encode(array(
+			"error" => true,
+			"mensaje" => "Error al obtener datos del pago desde Mercado Pago"
+		));
+	}
+	
+	exit;
+}
