@@ -61,19 +61,34 @@ $porcentajeRecargo = $datosCobro['porcentaje_recargo'];
                     // Solo aplicar a cuenta corriente si está APPROVED
                     if ($estado == 'approved') {
                         // 3. Registrar interés si corresponde (recargo por mora)
-                        if ($tieneRecargo) {
+                        if ($tieneRecargo && $porcentajeRecargo > 0) {
                             $montoInteres = $abonoMensual - $abonoBase;
                             if ($montoInteres > 0) {
-                                ControladorSistemaCobro::ctrRegistrarInteresCuentaCorriente($idCliente, $montoInteres);
+                                $resultadoInteres = ControladorSistemaCobro::ctrRegistrarInteresCuentaCorriente($idCliente, $montoInteres);
+                                if ($resultadoInteres === "ok") {
+                                    error_log("✅ Interés por mora registrado: Cliente $idCliente, Monto: $montoInteres, Porcentaje: $porcentajeRecargo%");
+                                } else {
+                                    error_log("❌ ERROR al registrar interés: " . (is_array($resultadoInteres) ? json_encode($resultadoInteres) : $resultadoInteres));
+                                }
                             }
                         }
 
                         // 4. Registrar el pago en cuenta corriente
-                        ControladorSistemaCobro::ctrRegistrarMovimientoCuentaCorriente($idCliente, $abonoMensual);
+                        $resultadoCtaCte = ControladorSistemaCobro::ctrRegistrarMovimientoCuentaCorriente($idCliente, $abonoMensual);
+                        if ($resultadoCtaCte === "ok") {
+                            error_log("✅ Pago registrado en cuenta corriente: Cliente $idCliente, Monto: $abonoMensual");
+                        } else {
+                            error_log("❌ ERROR al registrar en cuenta corriente: " . (is_array($resultadoCtaCte) ? json_encode($resultadoCtaCte) : $resultadoCtaCte));
+                        }
 
                         // 5. Desbloquear cliente si estaba bloqueado
-                        if ($clienteMoon["estado_bloqueo"] == "1") {
-                            ControladorSistemaCobro::ctrActualizarClientesCobro($idCliente, 0);
+                        if (isset($clienteMoon["estado_bloqueo"]) && $clienteMoon["estado_bloqueo"] == "1") {
+                            $resultadoDesbloqueo = ControladorSistemaCobro::ctrActualizarClientesCobro($idCliente, 0);
+                            if ($resultadoDesbloqueo !== false) {
+                                error_log("✅ Cliente $idCliente desbloqueado después del pago");
+                            } else {
+                                error_log("⚠️ No se pudo desbloquear cliente $idCliente");
+                            }
                         }
 
                         echo '<script>

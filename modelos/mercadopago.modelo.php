@@ -41,33 +41,66 @@ class ModeloMercadoPago {
 	=============================================*/
 	static public function mdlRegistrarPagoConfirmado($datos) {
 
+		// Validar datos requeridos
+		if (!isset($datos["id_cliente_moon"]) || empty($datos["id_cliente_moon"])) {
+			error_log("ERROR mdlRegistrarPagoConfirmado: id_cliente_moon no proporcionado");
+			error_log("Datos recibidos: " . print_r($datos, true));
+			return array("error" => "id_cliente_moon requerido");
+		}
+
+		if (!isset($datos["payment_id"]) || empty($datos["payment_id"])) {
+			error_log("ERROR mdlRegistrarPagoConfirmado: payment_id no proporcionado");
+			return array("error" => "payment_id requerido");
+		}
+
 		try {
-			$stmt = Conexion::conectarMoon()->prepare("INSERT INTO mercadopago_pagos
+			$conexion = Conexion::conectarMoon();
+			
+			if (!$conexion) {
+				error_log("ERROR CRÍTICO mdlRegistrarPagoConfirmado: No se pudo conectar a BD Moon");
+				return array("error" => "Error de conexión a BD Moon");
+			}
+
+			$stmt = $conexion->prepare("INSERT INTO mercadopago_pagos
 				(id_cliente_moon, payment_id, preference_id, monto, estado, fecha_pago, payment_type, payment_method_id, datos_json)
 				VALUES (:id_cliente, :payment_id, :preference_id, :monto, :estado, :fecha_pago, :payment_type, :payment_method_id, :datos_json)");
 
 			$stmt->bindParam(":id_cliente", $datos["id_cliente_moon"], PDO::PARAM_INT);
 			$stmt->bindParam(":payment_id", $datos["payment_id"], PDO::PARAM_STR);
-			$stmt->bindParam(":preference_id", $datos["preference_id"], PDO::PARAM_STR);
-			$stmt->bindParam(":monto", $datos["monto"], PDO::PARAM_STR);
-			$stmt->bindParam(":estado", $datos["estado"], PDO::PARAM_STR);
-			$stmt->bindParam(":fecha_pago", $datos["fecha_pago"], PDO::PARAM_STR);
-			$stmt->bindParam(":payment_type", $datos["payment_type"], PDO::PARAM_STR);
-			$stmt->bindParam(":payment_method_id", $datos["payment_method_id"], PDO::PARAM_STR);
-			$stmt->bindParam(":datos_json", $datos["datos_json"], PDO::PARAM_STR);
+			$preferenceId = isset($datos["preference_id"]) ? $datos["preference_id"] : null;
+			$stmt->bindParam(":preference_id", $preferenceId, PDO::PARAM_STR);
+			$monto = isset($datos["monto"]) ? floatval($datos["monto"]) : 0;
+			$stmt->bindParam(":monto", $monto, PDO::PARAM_STR);
+			$estado = isset($datos["estado"]) ? $datos["estado"] : 'approved';
+			$stmt->bindParam(":estado", $estado, PDO::PARAM_STR);
+			$fechaPago = isset($datos["fecha_pago"]) ? $datos["fecha_pago"] : date('Y-m-d H:i:s');
+			$stmt->bindParam(":fecha_pago", $fechaPago, PDO::PARAM_STR);
+			$paymentType = isset($datos["payment_type"]) ? $datos["payment_type"] : null;
+			$stmt->bindParam(":payment_type", $paymentType, PDO::PARAM_STR);
+			$paymentMethodId = isset($datos["payment_method_id"]) ? $datos["payment_method_id"] : null;
+			$stmt->bindParam(":payment_method_id", $paymentMethodId, PDO::PARAM_STR);
+			$datosJson = isset($datos["datos_json"]) ? $datos["datos_json"] : null;
+			$stmt->bindParam(":datos_json", $datosJson, PDO::PARAM_STR);
 
 			if ($stmt->execute()) {
+				$idPago = $conexion->lastInsertId();
+				error_log("✅ Pago registrado exitosamente en mercadopago_pagos. ID: $idPago, Cliente: " . $datos["id_cliente_moon"] . ", Payment ID: " . $datos["payment_id"] . ", Monto: $monto");
 				return "ok";
 			} else {
-				return $stmt->errorInfo();
+				$errorInfo = $stmt->errorInfo();
+				error_log("ERROR al ejecutar INSERT en mercadopago_pagos: " . print_r($errorInfo, true));
+				error_log("Datos intentados: " . print_r($datos, true));
+				return $errorInfo;
 			}
 
 		} catch (PDOException $e) {
-			error_log("Error al registrar pago confirmado: " . $e->getMessage());
-			return "error";
+			error_log("EXCEPCIÓN al registrar pago confirmado: " . $e->getMessage());
+			error_log("Stack trace: " . $e->getTraceAsString());
+			error_log("Datos: " . print_r($datos, true));
+			return array("error" => $e->getMessage());
 		}
 
-		$stmt->close();
+		$stmt->closeCursor();
 		$stmt = null;
 	}
 

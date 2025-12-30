@@ -56,12 +56,17 @@ try {
 // Configurar zona horaria
 date_default_timezone_set('America/Argentina/Mendoza');
 
-// Log para debugging
+// Log para debugging con timestamp
+$timestamp = date('Y-m-d H:i:s');
+error_log("==========================================");
 error_log("=== WEBHOOK MERCADOPAGO RECIBIDO ===");
+error_log("Timestamp: $timestamp");
 error_log("Método: " . $_SERVER['REQUEST_METHOD']);
 error_log("GET params: " . json_encode($_GET));
 error_log("POST params: " . json_encode($_POST));
+error_log("Body raw: " . file_get_contents('php://input'));
 error_log("Headers: " . json_encode(getallheaders()));
+error_log("==========================================");
 
 // Responder OK inmediatamente
 header('HTTP/1.1 200 OK');
@@ -255,19 +260,53 @@ try {
             if (isset($payment['status']) && $payment['status'] === 'approved') {
 
                 error_log("Pago aprobado, procesando...");
+                error_log("Datos completos del pago: " . json_encode($payment));
 
                 // Obtener ID del cliente desde los metadatos o external_reference
                 $idClienteMoon = null;
 
-                if (isset($payment['external_reference']) && is_numeric($payment['external_reference'])) {
-                    $idClienteMoon = intval($payment['external_reference']);
-                } elseif (isset($payment['metadata']['id_cliente_moon'])) {
+                // Método 1: external_reference (puede ser numérico o string con formato "ID-otro")
+                if (isset($payment['external_reference']) && !empty($payment['external_reference'])) {
+                    $externalRef = $payment['external_reference'];
+                    // Si es numérico directo
+                    if (is_numeric($externalRef)) {
+                        $idClienteMoon = intval($externalRef);
+                    } 
+                    // Si tiene formato "ID-otro", extraer el ID
+                    elseif (preg_match('/^(\d+)/', $externalRef, $matches)) {
+                        $idClienteMoon = intval($matches[1]);
+                    }
+                    error_log("ID Cliente desde external_reference: $idClienteMoon (original: $externalRef)");
+                }
+                
+                // Método 2: metadata
+                if (!$idClienteMoon && isset($payment['metadata']['id_cliente_moon'])) {
                     $idClienteMoon = intval($payment['metadata']['id_cliente_moon']);
+                    error_log("ID Cliente desde metadata: $idClienteMoon");
+                }
+                
+                // Método 3: Si es merchant_order, buscar en la orden
+                if (!$idClienteMoon && $topic === 'merchant_order' && isset($order)) {
+                    if (isset($order['external_reference']) && is_numeric($order['external_reference'])) {
+                        $idClienteMoon = intval($order['external_reference']);
+                        error_log("ID Cliente desde merchant_order external_reference: $idClienteMoon");
+                    }
                 }
 
-                error_log("ID Cliente Moon: $idClienteMoon");
+                // Método 4: Fallback - buscar en description o title
+                if (!$idClienteMoon) {
+                    // Intentar extraer ID de description si tiene formato conocido
+                    if (isset($payment['description'])) {
+                        if (preg_match('/cliente[_\s]*(\d+)/i', $payment['description'], $matches)) {
+                            $idClienteMoon = intval($matches[1]);
+                            error_log("ID Cliente desde description: $idClienteMoon");
+                        }
+                    }
+                }
 
-                if ($idClienteMoon) {
+                error_log("ID Cliente Moon FINAL: " . ($idClienteMoon ?: 'NO ENCONTRADO'));
+
+                if ($idClienteMoon && $idClienteMoon > 0) {
 
                     // Registrar el pago en nuestra base de datos
                     $datosPago = array(
@@ -283,18 +322,36 @@ try {
                     );
 
                     $resultadoPago = ControladorMercadoPago::ctrRegistrarPagoConfirmado($datosPago);
-                    error_log("Resultado registro pago: $resultadoPago");
+                    error_log("Resultado registro pago: " . (is_array($resultadoPago) ? json_encode($resultadoPago) : $resultadoPago));
 
-                    // Registrar el pago en la cuenta corriente del cliente
-                    $resultadoCtaCte = ControladorSistemaCobro::ctrRegistrarMovimientoCuentaCorriente(
-                        $idClienteMoon,
-                        $payment['transaction_amount']
-                    );
-                    error_log("Resultado cuenta corriente: $resultadoCtaCte");
+                    // Validar que el registro fue exitoso
+                    if ($resultadoPago === "ok") {
+                        error_log("✅ Pago registrado correctamente en mercadopago_pagos");
 
-                    // Desbloquear cliente si estaba bloqueado
-                    ControladorSistemaCobro::ctrActualizarClientesCobro($idClienteMoon, 0);
-                    error_log("Cliente desbloqueado");
+                        // Registrar el pago en la cuenta corriente del cliente
+                        $resultadoCtaCte = ControladorSistemaCobro::ctrRegistrarMovimientoCuentaCorriente(
+                            $idClienteMoon,
+                            $payment['transaction_amount']
+                        );
+                        error_log("Resultado cuenta corriente: " . (is_array($resultadoCtaCte) ? json_encode($resultadoCtaCte) : $resultadoCtaCte));
+
+                        if ($resultadoCtaCte === "ok") {
+                            error_log("✅ Movimiento de cuenta corriente registrado correctamente");
+
+                            // Desbloquear cliente si estaba bloqueado
+                            $resultadoDesbloqueo = ControladorSistemaCobro::ctrActualizarClientesCobro($idClienteMoon, 0);
+                            if ($resultadoDesbloqueo !== false) {
+                                error_log("✅ Cliente desbloqueado correctamente");
+                            } else {
+                                error_log("⚠️ No se pudo desbloquear cliente (puede que no estuviera bloqueado)");
+                            }
+                        } else {
+                            error_log("❌ ERROR al registrar en cuenta corriente: " . (is_array($resultadoCtaCte) ? json_encode($resultadoCtaCte) : $resultadoCtaCte));
+                        }
+                    } else {
+                        error_log("❌ ERROR al registrar pago en mercadopago_pagos: " . (is_array($resultadoPago) ? json_encode($resultadoPago) : $resultadoPago));
+                        // Continuar de todos modos para intentar actualizar cuenta corriente
+                    }
 
                     // Actualizar estado del intento si existe
                     if (isset($payment['preference_id'])) {
@@ -310,8 +367,32 @@ try {
                     echo json_encode(['error' => false, 'message' => 'Pago procesado exitosamente']);
 
                 } else {
-                    error_log("ERROR: No se pudo obtener ID del cliente");
-                    echo json_encode(['error' => true, 'message' => 'No se pudo obtener ID del cliente']);
+                    error_log("❌ ERROR CRÍTICO: No se pudo obtener ID del cliente Moon");
+                    error_log("Payment data: " . json_encode($payment));
+                    error_log("External reference: " . (isset($payment['external_reference']) ? $payment['external_reference'] : 'NO DEFINIDO'));
+                    error_log("Metadata: " . (isset($payment['metadata']) ? json_encode($payment['metadata']) : 'NO DEFINIDO'));
+                    
+                    // Intentar registrar el pago sin cliente (para auditoría)
+                    // Esto permite ver qué pagos no se pudieron asociar
+                    try {
+                        $datosPagoSinCliente = array(
+                            'id_cliente_moon' => 0, // 0 = cliente desconocido
+                            'payment_id' => $payment['id'],
+                            'preference_id' => isset($payment['preference_id']) ? $payment['preference_id'] : null,
+                            'monto' => $payment['transaction_amount'],
+                            'estado' => $payment['status'],
+                            'fecha_pago' => date('Y-m-d H:i:s', strtotime($payment['date_approved'])),
+                            'payment_type' => $payment['payment_type_id'],
+                            'payment_method_id' => $payment['payment_method_id'],
+                            'datos_json' => json_encode($payment)
+                        );
+                        $resultadoAuditoria = ControladorMercadoPago::ctrRegistrarPagoConfirmado($datosPagoSinCliente);
+                        error_log("Pago registrado para auditoría (cliente 0): " . (is_array($resultadoAuditoria) ? json_encode($resultadoAuditoria) : $resultadoAuditoria));
+                    } catch (Exception $e) {
+                        error_log("Error al registrar pago para auditoría: " . $e->getMessage());
+                    }
+                    
+                    echo json_encode(['error' => true, 'message' => 'No se pudo obtener ID del cliente. Pago registrado para auditoría.']);
                 }
 
             } else {

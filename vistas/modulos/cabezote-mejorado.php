@@ -248,7 +248,13 @@ if($ctaCteCliente["saldo"] <= 0) {
             $badgeNavbar = '<span class="label label-warning">' . number_format($abonoMensual, 0) . '</span>';
 
         } elseif ($diaActual > 26) {
-            ControladorSistemaCobro::ctrActualizarClientesCobro($idCliente, 1);
+            // Bloquear cliente automáticamente si pasa del día 26
+            $resultadoBloqueo = ControladorSistemaCobro::ctrActualizarClientesCobro($idCliente, 1);
+            if ($resultadoBloqueo !== false) {
+                error_log("✅ Cliente $idCliente bloqueado automáticamente (día $diaActual > 26)");
+            } else {
+                error_log("⚠️ No se pudo bloquear cliente $idCliente (día $diaActual > 26)");
+            }
             $estadoClienteBarra = 'style="background-color: #dc3545;"';
             $muestroModal = true;
             $fijoModal = true;
