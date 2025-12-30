@@ -333,15 +333,24 @@ try {
                 if ($idClienteMoon && $idClienteMoon > 0) {
 
                     // Registrar el pago en nuestra base de datos
+                    // Manejar fecha_approved: si existe y es válida, usarla; sino, usar fecha actual
+                    $fechaPago = date('Y-m-d H:i:s');
+                    if (isset($payment['date_approved']) && !empty($payment['date_approved'])) {
+                        $fechaAprobada = strtotime($payment['date_approved']);
+                        if ($fechaAprobada !== false) {
+                            $fechaPago = date('Y-m-d H:i:s', $fechaAprobada);
+                        }
+                    }
+                    
                     $datosPago = array(
                         'id_cliente_moon' => $idClienteMoon,
                         'payment_id' => $payment['id'],
                         'preference_id' => isset($payment['preference_id']) ? $payment['preference_id'] : null,
                         'monto' => $payment['transaction_amount'],
                         'estado' => $payment['status'],
-                        'fecha_pago' => date('Y-m-d H:i:s', strtotime($payment['date_approved'])),
-                        'payment_type' => $payment['payment_type_id'],
-                        'payment_method_id' => $payment['payment_method_id'],
+                        'fecha_pago' => $fechaPago,
+                        'payment_type' => isset($payment['payment_type_id']) ? $payment['payment_type_id'] : null,
+                        'payment_method_id' => isset($payment['payment_method_id']) ? $payment['payment_method_id'] : null,
                         'datos_json' => json_encode($payment)
                     );
 
