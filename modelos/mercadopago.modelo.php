@@ -61,6 +61,20 @@ class ModeloMercadoPago {
 				return array("error" => "Error de conexión a BD Moon");
 			}
 
+			// Usar INSERT IGNORE para evitar duplicados si hay race condition
+			// Pero primero verificar explícitamente para mejor logging
+			$stmtCheck = $conexion->prepare("SELECT id FROM mercadopago_pagos WHERE payment_id = :payment_id LIMIT 1");
+			$stmtCheck->bindParam(":payment_id", $datos["payment_id"], PDO::PARAM_STR);
+			$stmtCheck->execute();
+			$pagoExistente = $stmtCheck->fetch();
+			$stmtCheck->closeCursor();
+			
+			if ($pagoExistente) {
+				error_log("⚠️ ADVERTENCIA: Payment ID " . $datos["payment_id"] . " ya existe en mercadopago_pagos (ID: " . $pagoExistente['id'] . ")");
+				error_log("   Esto no debería pasar si se verificó antes. Puede ser race condition.");
+				return array("error" => "Pago ya existe", "id_existente" => $pagoExistente['id']);
+			}
+
 			$stmt = $conexion->prepare("INSERT INTO mercadopago_pagos
 				(id_cliente_moon, payment_id, preference_id, monto, estado, fecha_pago, payment_type, payment_method_id, datos_json)
 				VALUES (:id_cliente, :payment_id, :preference_id, :monto, :estado, :fecha_pago, :payment_type, :payment_method_id, :datos_json)");
@@ -109,22 +123,49 @@ class ModeloMercadoPago {
 	=============================================*/
 	static public function mdlVerificarPagoProcesado($paymentId) {
 
+		if (empty($paymentId)) {
+			error_log("ADVERTENCIA mdlVerificarPagoProcesado: payment_id vacío");
+			return false;
+		}
+
 		try {
-			$stmt = Conexion::conectarMoon()->prepare("SELECT COUNT(*) as total FROM mercadopago_pagos WHERE payment_id = :payment_id");
+			$conexion = Conexion::conectarMoon();
+			
+			if (!$conexion) {
+				error_log("ERROR mdlVerificarPagoProcesado: No se pudo conectar a BD Moon");
+				return false; // Si no hay conexión, asumir que no está procesado para intentar procesarlo
+			}
+
+			$stmt = $conexion->prepare("SELECT COUNT(*) as total FROM mercadopago_pagos WHERE payment_id = :payment_id");
 
 			$stmt->bindParam(":payment_id", $paymentId, PDO::PARAM_STR);
 			$stmt->execute();
 
 			$resultado = $stmt->fetch();
+			$total = isset($resultado["total"]) ? intval($resultado["total"]) : 0;
+			
+			if ($total > 0) {
+				error_log("⚠️ Pago $paymentId ya existe en mercadopago_pagos (total: $total)");
+				// Obtener detalles del pago existente para logging
+				$stmtDetalle = $conexion->prepare("SELECT id, id_cliente_moon, monto, estado, fecha_pago FROM mercadopago_pagos WHERE payment_id = :payment_id LIMIT 1");
+				$stmtDetalle->bindParam(":payment_id", $paymentId, PDO::PARAM_STR);
+				$stmtDetalle->execute();
+				$pagoExistente = $stmtDetalle->fetch();
+				if ($pagoExistente) {
+					error_log("   Detalles del pago existente: ID=" . $pagoExistente['id'] . ", Cliente=" . $pagoExistente['id_cliente_moon'] . ", Monto=" . $pagoExistente['monto'] . ", Estado=" . $pagoExistente['estado'] . ", Fecha=" . $pagoExistente['fecha_pago']);
+				}
+				$stmtDetalle->closeCursor();
+			}
 
-			return ($resultado["total"] > 0);
+			return ($total > 0);
 
 		} catch (PDOException $e) {
-			error_log("Error al verificar pago procesado: " . $e->getMessage());
-			return false;
+			error_log("EXCEPCIÓN al verificar pago procesado: " . $e->getMessage());
+			error_log("Stack trace: " . $e->getTraceAsString());
+			return false; // En caso de error, asumir que no está procesado
 		}
 
-		$stmt->close();
+		$stmt->closeCursor();
 		$stmt = null;
 	}
 

@@ -150,16 +150,27 @@ try {
         error_log("Procesando pago con ID: $id");
 
         // Verificar si ya fue procesado (solo si las clases están disponibles)
-        if (class_exists('ControladorMercadoPago') && ControladorMercadoPago::ctrVerificarPagoProcesado($id)) {
-            error_log("Pago $id ya fue procesado anteriormente");
+        // IMPORTANTE: Verificar por payment_id, no por order_id
+        $paymentIdParaVerificar = $id; // Por defecto usar el ID recibido
+        
+        if (class_exists('ControladorMercadoPago')) {
+            // Si es merchant_order, necesitamos obtener el payment_id primero
+            if ($topic === 'merchant_order') {
+                // La verificación se hará después de obtener el payment_id de la orden
+            } else {
+                // Para payment, verificar directamente
+                if (ControladorMercadoPago::ctrVerificarPagoProcesado($id)) {
+                    error_log("⚠️ Pago $id ya fue procesado anteriormente");
 
-            // Marcar webhook como procesado
-            if ($webhookId) {
-                ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
+                    // Marcar webhook como procesado
+                    if ($webhookId) {
+                        ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
+                    }
+
+                    echo json_encode(['error' => false, 'message' => 'Pago ya procesado']);
+                    exit;
+                }
             }
-
-            echo json_encode(['error' => false, 'message' => 'Pago ya procesado']);
-            exit;
         }
 
         // Obtener credenciales
@@ -234,6 +245,19 @@ try {
                             if ($paymentHttpCode == 200) {
                                 $payment = json_decode($paymentResponse, true);
                                 error_log("Pago obtenido de la orden: " . json_encode($payment));
+                                
+                                // Verificar si este payment_id ya fue procesado
+                                if (class_exists('ControladorMercadoPago') && ControladorMercadoPago::ctrVerificarPagoProcesado($paymentId)) {
+                                    error_log("⚠️ Payment $paymentId ya fue procesado anteriormente");
+                                    
+                                    // Marcar webhook como procesado
+                                    if ($webhookId) {
+                                        ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
+                                    }
+                                    
+                                    echo json_encode(['error' => false, 'message' => 'Pago ya procesado']);
+                                    exit;
+                                }
                             } else {
                                 error_log("ERROR: No se pudo obtener el pago de la orden (HTTP $paymentHttpCode)");
                                 echo json_encode(['error' => false, 'message' => 'Orden procesada pero no se pudo obtener el pago']);
@@ -321,14 +345,31 @@ try {
                         'datos_json' => json_encode($payment)
                     );
 
+                    // PASO 1: Registrar el pago en mercadopago_pagos (TABLA DE COBROS)
+                    error_log("═══════════════════════════════════════");
+                    error_log("PASO 1: REGISTRANDO PAGO EN mercadopago_pagos");
+                    error_log("Payment ID: " . $payment['id']);
+                    error_log("Cliente Moon: $idClienteMoon");
+                    error_log("Monto: " . $payment['transaction_amount']);
+                    error_log("Estado: " . $payment['status']);
+                    error_log("═══════════════════════════════════════");
+                    
                     $resultadoPago = ControladorMercadoPago::ctrRegistrarPagoConfirmado($datosPago);
-                    error_log("Resultado registro pago: " . (is_array($resultadoPago) ? json_encode($resultadoPago) : $resultadoPago));
+                    error_log("Resultado registro en mercadopago_pagos: " . (is_array($resultadoPago) ? json_encode($resultadoPago) : $resultadoPago));
 
                     // Validar que el registro fue exitoso
                     if ($resultadoPago === "ok") {
-                        error_log("✅ Pago registrado correctamente en mercadopago_pagos");
+                        error_log("✅✅✅ PAGO REGISTRADO CORRECTAMENTE EN mercadopago_pagos ✅✅✅");
+                        error_log("   - Payment ID: " . $payment['id']);
+                        error_log("   - Cliente: $idClienteMoon");
+                        error_log("   - Monto: " . $payment['transaction_amount']);
+                        error_log("   - Fecha: " . $datosPago['fecha_pago']);
 
-                        // Registrar el pago en la cuenta corriente del cliente
+                        // PASO 2: Registrar el pago en la cuenta corriente del cliente
+                        error_log("═══════════════════════════════════════");
+                        error_log("PASO 2: REGISTRANDO EN CUENTA CORRIENTE");
+                        error_log("═══════════════════════════════════════");
+                        
                         $resultadoCtaCte = ControladorSistemaCobro::ctrRegistrarMovimientoCuentaCorriente(
                             $idClienteMoon,
                             $payment['transaction_amount']
@@ -336,21 +377,66 @@ try {
                         error_log("Resultado cuenta corriente: " . (is_array($resultadoCtaCte) ? json_encode($resultadoCtaCte) : $resultadoCtaCte));
 
                         if ($resultadoCtaCte === "ok") {
-                            error_log("✅ Movimiento de cuenta corriente registrado correctamente");
+                            error_log("✅✅✅ MOVIMIENTO DE CUENTA CORRIENTE REGISTRADO ✅✅✅");
+                            error_log("   - Cliente: $idClienteMoon");
+                            error_log("   - Monto: " . $payment['transaction_amount']);
+                            error_log("   - Tipo: PAGO (1)");
 
-                            // Desbloquear cliente si estaba bloqueado
-                            $resultadoDesbloqueo = ControladorSistemaCobro::ctrActualizarClientesCobro($idClienteMoon, 0);
-                            if ($resultadoDesbloqueo !== false) {
-                                error_log("✅ Cliente desbloqueado correctamente");
+                            // PASO 3: Desbloquear cliente si estaba bloqueado
+                            error_log("═══════════════════════════════════════");
+                            error_log("PASO 3: VERIFICANDO BLOQUEO DE CLIENTE");
+                            error_log("═══════════════════════════════════════");
+                            
+                            // Obtener estado actual del cliente
+                            $clienteActual = ControladorSistemaCobro::ctrMostrarClientesCobro($idClienteMoon);
+                            $estadoBloqueoActual = isset($clienteActual['estado_bloqueo']) ? intval($clienteActual['estado_bloqueo']) : 0;
+                            
+                            if ($estadoBloqueoActual == 1) {
+                                $resultadoDesbloqueo = ControladorSistemaCobro::ctrActualizarClientesCobro($idClienteMoon, 0);
+                                if ($resultadoDesbloqueo !== false) {
+                                    error_log("✅✅✅ CLIENTE DESBLOQUEADO CORRECTAMENTE ✅✅✅");
+                                    error_log("   - Cliente: $idClienteMoon");
+                                    error_log("   - Estado anterior: BLOQUEADO (1)");
+                                    error_log("   - Estado nuevo: DESBLOQUEADO (0)");
+                                } else {
+                                    error_log("❌ ERROR al desbloquear cliente $idClienteMoon");
+                                }
                             } else {
-                                error_log("⚠️ No se pudo desbloquear cliente (puede que no estuviera bloqueado)");
+                                error_log("ℹ️ Cliente $idClienteMoon no estaba bloqueado (estado: $estadoBloqueoActual)");
                             }
+                            
+                            // PASO 4: Actualizar estado del intento si existe
+                            if (isset($payment['preference_id']) && !empty($payment['preference_id'])) {
+                                error_log("═══════════════════════════════════════");
+                                error_log("PASO 4: ACTUALIZANDO ESTADO DE INTENTO");
+                                error_log("═══════════════════════════════════════");
+                                
+                                $resultadoIntento = ModeloMercadoPago::mdlActualizarEstadoIntento($payment['preference_id'], 'aprobado');
+                                if ($resultadoIntento === "ok") {
+                                    error_log("✅ Estado de intento actualizado a 'aprobado'");
+                                } else {
+                                    error_log("⚠️ No se pudo actualizar estado de intento (puede que no exista)");
+                                }
+                            }
+                            
+                            error_log("═══════════════════════════════════════");
+                            error_log("✅✅✅ PROCESO COMPLETO EXITOSO ✅✅✅");
+                            error_log("═══════════════════════════════════════");
+                            
                         } else {
-                            error_log("❌ ERROR al registrar en cuenta corriente: " . (is_array($resultadoCtaCte) ? json_encode($resultadoCtaCte) : $resultadoCtaCte));
+                            error_log("❌❌❌ ERROR CRÍTICO al registrar en cuenta corriente ❌❌❌");
+                            error_log("   - Cliente: $idClienteMoon");
+                            error_log("   - Monto: " . $payment['transaction_amount']);
+                            error_log("   - Error: " . (is_array($resultadoCtaCte) ? json_encode($resultadoCtaCte) : $resultadoCtaCte));
+                            error_log("   ⚠️ El pago SÍ se registró en mercadopago_pagos, pero NO en cuenta corriente");
                         }
                     } else {
-                        error_log("❌ ERROR al registrar pago en mercadopago_pagos: " . (is_array($resultadoPago) ? json_encode($resultadoPago) : $resultadoPago));
-                        // Continuar de todos modos para intentar actualizar cuenta corriente
+                        error_log("❌❌❌ ERROR CRÍTICO al registrar pago en mercadopago_pagos ❌❌❌");
+                        error_log("   - Payment ID: " . $payment['id']);
+                        error_log("   - Cliente: $idClienteMoon");
+                        error_log("   - Error: " . (is_array($resultadoPago) ? json_encode($resultadoPago) : $resultadoPago));
+                        error_log("   ⚠️ El pago NO se registró. Revisar conexión a BD Moon o datos del pago");
+                        // NO continuar si no se pudo registrar en mercadopago_pagos
                     }
 
                     // Actualizar estado del intento si existe
