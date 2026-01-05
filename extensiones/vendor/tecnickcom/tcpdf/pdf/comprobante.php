@@ -332,7 +332,7 @@ if($respuestaVenta["cbte_tipo"] == "0") {
 
 $tipoVtaLetra = "X";
 $tipoCodigo = "";
-$tipoVta = '<div style="font-size: 12px; font-weight: bold; color: #dc3545; text-align: center; padding: 5px;">Documento no válido como factura</div>';
+$tipoVta = "Documento no válido como factura";
 $numCte = str_pad($respuestaVenta["codigo"], 8, "0", STR_PAD_LEFT);
 $vtoCae ="-";
 $cae ="-";
@@ -410,42 +410,50 @@ if($respuestaVenta["estado"] == 2){
 }
 
 
+// Determinar estilo del tipo de venta
+$tipoVtaStyle = '';
+if($respuestaVenta["cbte_tipo"] == "0") {
+    $tipoVtaStyle = 'style="font-size: 11px; font-weight: bold; color: #dc3545; text-align: center;"';
+} else {
+    $tipoVtaStyle = 'style="font-size: 14px; font-weight: bold; text-align: center;"';
+}
+
 $bloqueCabeceraOriginal = <<<EOF
-	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000; border-collapse: collapse;">
+	<table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse;">
 		<tr>
-			<td colspan="3" style="text-align: center; padding: 12px; font-size: 18px; font-weight: bold; background-color: #e9ecef; border: 2px solid #000; border-bottom: 2px solid #000;">
+			<td colspan="3" style="text-align: center; padding: 10px; font-size: 16px; font-weight: bold; background-color: #e9ecef;">
 				ORIGINAL
 			</td>
 		</tr>
 		<tr>
-			<td style="width:45%; text-align: center; padding: 18px; border: 2px solid #000; border-top: none; vertical-align: middle; background-color: #ffffff;">
-				<div style="font-size: 20px; font-weight: bold; color: #212529; line-height: 1.3;">$respEmpresa[razon_social]</div>
+			<td style="width:45%; text-align: center; padding: 15px; vertical-align: middle;">
+				<div style="font-size: 18px; font-weight: bold;">$respEmpresa[razon_social]</div>
 			</td>
-			<td style="width:10%; text-align: center; padding: 15px; border: 2px solid #000; border-top: none; vertical-align: middle; background-color: #f8f9fa;">
-				<div style="font-size: 48px; font-weight: bold; line-height: 1; color: #212529; letter-spacing: -2px;">$tipoVtaLetra</div>
-				<div style="font-size: 9px; margin-top: 5px; color: #6c757d;">$tipoCodigo</div>
+			<td style="width:10%; text-align: center; padding: 12px; vertical-align: middle; background-color: #f8f9fa;">
+				<div style="font-size: 42px; font-weight: bold; line-height: 1;">$tipoVtaLetra</div>
+				<div style="font-size: 8px; margin-top: 3px; color: #6c757d;">$tipoCodigo</div>
 			</td>
-			<td style="width:45%; text-align: center; padding: 18px; border: 2px solid #000; border-top: none; vertical-align: middle; background-color: #ffffff;">
-				$tipoVta
+			<td style="width:45%; text-align: center; padding: 15px; vertical-align: middle;">
+				<div $tipoVtaStyle>$tipoVta</div>
 			</td>
 		</tr>
 		<tr>
-			<td style="width:50%; font-size: 10px; padding: 14px; border: 2px solid #000; border-top: none; vertical-align: top; background-color: #ffffff;">
-				<div style="line-height: 1.9;">
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">Dirección:</span> <span style="color: #212529;">$respEmpresa[domicilio]</span></div>
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">Teléfono:</span> <span style="color: #212529;">$respEmpresa[telefono]</span></div>
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">Localidad:</span> <span style="color: #212529;">$respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</span></div>
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">Cond. I.V.A.:</span> <span style="color: #212529;">$tipoIva</span></div>
-					<div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #dee2e6;"><span style="font-weight: bold; color: #495057; font-size: 9px;">Defensa al Consumidor Mza. 08002226678</span></div>
+			<td style="width:50%; font-size: 10px; padding: 12px; vertical-align: top;">
+				<div style="line-height: 1.8;">
+					<div style="margin-bottom: 4px;"><b>Dirección:</b> $respEmpresa[domicilio]</div>
+					<div style="margin-bottom: 4px;"><b>Teléfono:</b> $respEmpresa[telefono]</div>
+					<div style="margin-bottom: 4px;"><b>Localidad:</b> $respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</div>
+					<div style="margin-bottom: 4px;"><b>Cond. I.V.A.:</b> $tipoIva</div>
+					<div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #dee2e6; font-size: 9px;"><b>Defensa al Consumidor Mza. 08002226678</b></div>
 				</div>
 			</td>
-			<td colspan="2" style="width:50%; font-size: 10px; padding: 14px; border: 2px solid #000; border-top: none; vertical-align: top; background-color: #ffffff;">
-				<div style="line-height: 1.9;">
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">N° Cbte:</span> <span style="color: #212529; font-weight: bold; font-size: 11px;">$ptoVta - $numCte</span></div>
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">Fecha Emisión:</span> <span style="color: #212529;">$fecEmi</span></div>
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">CUIT:</span> <span style="color: #212529;">$respEmpresa[cuit]</span></div>
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">II.BB.:</span> <span style="color: #212529;">$respEmpresa[numero_iibb]</span></div>
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">Inic. Actividad:</span> <span style="color: #212529;">$respEmpresa[inicio_actividades]</span></div>
+			<td colspan="2" style="width:50%; font-size: 10px; padding: 12px; vertical-align: top;">
+				<div style="line-height: 1.8;">
+					<div style="margin-bottom: 4px;"><b>N° Cbte:</b> <span style="font-size: 11px; font-weight: bold;">$ptoVta - $numCte</span></div>
+					<div style="margin-bottom: 4px;"><b>Fecha Emisión:</b> $fecEmi</div>
+					<div style="margin-bottom: 4px;"><b>CUIT:</b> $respEmpresa[cuit]</div>
+					<div style="margin-bottom: 4px;"><b>II.BB.:</b> $respEmpresa[numero_iibb]</div>
+					<div style="margin-bottom: 4px;"><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades]</div>
 				</div>
 			</td>
 		</tr>
@@ -453,12 +461,12 @@ $bloqueCabeceraOriginal = <<<EOF
 	
 	$tieneServicio
     
-	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000; border-collapse: collapse; margin-top: 8px;">
+	<table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse; margin-top: 5px;">
 		<tr>
-			<td style="font-size: 10px; padding: 14px; line-height: 1.9; background-color: #f8f9fa; border: 2px solid #000;">
-				<div style="margin-bottom: 6px;"><span style="font-weight: bold; color: #495057;">Tipo Doc.:</span> <span style="color: #212529;">$tipoDocumento: <b>$respuestaCliente[documento]</b></span> | <span style="font-weight: bold; color: #495057;">Nombre / Razón Social:</span> <span style="color: #212529;">$respuestaCliente[nombre]</span></div>
-				<div style="margin-bottom: 6px;"><span style="font-weight: bold; color: #495057;">Domicilio:</span> <span style="color: #212529;">$respuestaCliente[direccion]</span> | <span style="font-weight: bold; color: #495057;">Condición I.V.A.:</span> <span style="color: #212529;">$tipoIvaCliente</span></div>
-				<div><span style="font-weight: bold; color: #495057;">Condición de Venta:</span> <span style="color: #212529; font-weight: bold;">$condicionVenta</span></div>
+			<td style="font-size: 10px; padding: 12px; line-height: 1.8; background-color: #f8f9fa;">
+				<div style="margin-bottom: 5px;"><b>Tipo Doc.:</b> $tipoDocumento: <b>$respuestaCliente[documento]</b> | <b>Nombre / Razón Social:</b> $respuestaCliente[nombre]</div>
+				<div style="margin-bottom: 5px;"><b>Domicilio:</b> $respuestaCliente[direccion] | <b>Condición I.V.A.:</b> $tipoIvaCliente</div>
+				<div><b>Condición de Venta:</b> <span style="font-weight: bold;">$condicionVenta</span></div>
 			</td>
 		</tr>
 	</table>
