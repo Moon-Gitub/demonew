@@ -774,7 +774,13 @@ EOF;
 }
 $pdf->writeHTML($bloqueDatosFact, false, false, false, false, '');
 
-$nuevaPagina = true;
+//SALIDA DEL ARCHIVO
+$nomArchivo = 'CBTE_'.$tipoVtaLetra.'_'.$ptoVta.'-'.$numCte.'.pdf';
+if(isset($_GET["descargarFactura"])){
+$pdf->Output($nomArchivo, 'D');
+} else {
+$pdf->Output($nomArchivo);
+}
 
 }
 
