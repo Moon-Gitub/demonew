@@ -38,8 +38,7 @@ SELECT
         ELSE '⚠️ Tabla NO tiene PRIMARY KEY, corrigiendo...'
     END AS estado_pk;
 
--- Si la tabla existe pero no tiene PRIMARY KEY, corregir
--- Usar procedimiento almacenado temporal para lógica condicional
+-- Crear procedimiento para corregir PRIMARY KEY
 DELIMITER $$
 
 DROP PROCEDURE IF EXISTS fix_primary_key_productos_venta$$
@@ -71,68 +70,82 @@ BEGIN
     );
     
     IF v_tabla_existe > 0 AND v_tiene_pk = 0 THEN
-    -- Verificar si hay datos con id = 0
-    SET @hay_ceros = (
-        SELECT COUNT(*) 
-        FROM productos_venta 
-        WHERE id = 0
-    );
-    
-    SELECT 
-        CASE 
-            WHEN @hay_ceros > 0 THEN CONCAT('⚠️ Encontrados ', @hay_ceros, ' registros con id = 0. Se actualizarán.')
-            ELSE '✅ No hay registros con id = 0'
-        END AS estado_ceros;
-    
-    -- Si hay registros con id = 0, actualizarlos temporalmente
-    -- Primero, crear una columna temporal para guardar el orden
-    ALTER TABLE productos_venta ADD COLUMN IF NOT EXISTS temp_id INT(11) NULL;
-    
-    -- Asignar valores temporales únicos basados en el orden
-    SET @counter = 0;
-    UPDATE productos_venta 
-    SET temp_id = (@counter := @counter + 1)
-    WHERE id = 0
-    ORDER BY id_venta, id_producto, created_at;
-    
-    -- Eliminar registros duplicados si los hay (mantener solo el primero)
-    DELETE pv1 FROM productos_venta pv1
-    INNER JOIN productos_venta pv2 
-    WHERE pv1.id = 0 
-    AND pv2.id = 0
-    AND pv1.temp_id > pv2.temp_id
-    AND pv1.id_venta = pv2.id_venta
-    AND pv1.id_producto = pv2.id_producto;
-    
-    -- Modificar la columna id para que sea AUTO_INCREMENT y PRIMARY KEY
-    ALTER TABLE productos_venta 
-    MODIFY COLUMN id INT(11) NOT NULL AUTO_INCREMENT,
-    ADD PRIMARY KEY (id);
-    
-    -- Actualizar los registros con id = 0 usando los valores temporales
-    -- Pero primero necesitamos obtener el máximo id actual
-    SET @max_id = COALESCE((SELECT MAX(id) FROM productos_venta WHERE id > 0), 0);
-    
-    -- Actualizar los id = 0 con valores incrementales
-    UPDATE productos_venta 
-    SET id = (@max_id := @max_id + 1)
-    WHERE id = 0
-    ORDER BY temp_id;
-    
-    -- Eliminar columna temporal
-    ALTER TABLE productos_venta DROP COLUMN temp_id;
-    
-    -- Resetear AUTO_INCREMENT al siguiente valor correcto
-    SET @next_id = (SELECT MAX(id) + 1 FROM productos_venta);
-    SET @sql_reset = CONCAT('ALTER TABLE productos_venta AUTO_INCREMENT = ', @next_id);
-    PREPARE stmt_reset FROM @sql_reset;
-    EXECUTE stmt_reset;
-    DEALLOCATE PREPARE stmt_reset;
-    
-    SELECT '✅ PRIMARY KEY agregado y registros corregidos' AS resultado;
-ELSE
-    SELECT 'ℹ️ No se requiere corrección' AS resultado;
-END IF;
+        -- Verificar si hay datos con id = 0
+        SET v_hay_ceros = (
+            SELECT COUNT(*) 
+            FROM productos_venta 
+            WHERE id = 0
+        );
+        
+        SELECT 
+            CASE 
+                WHEN v_hay_ceros > 0 THEN CONCAT('⚠️ Encontrados ', v_hay_ceros, ' registros con id = 0. Se actualizarán.')
+                ELSE '✅ No hay registros con id = 0'
+            END AS estado_ceros;
+        
+        -- Si hay registros con id = 0, corregirlos
+        IF v_hay_ceros > 0 THEN
+            -- Crear columna temporal si no existe
+            SET @sql_add_temp = 'ALTER TABLE productos_venta ADD COLUMN temp_id INT(11) NULL';
+            SET @sql_check_temp = (
+                SELECT COUNT(*) 
+                FROM information_schema.columns 
+                WHERE table_schema = DATABASE() 
+                AND table_name = 'productos_venta'
+                AND column_name = 'temp_id'
+            );
+            
+            IF @sql_check_temp = 0 THEN
+                PREPARE stmt_add_temp FROM @sql_add_temp;
+                EXECUTE stmt_add_temp;
+                DEALLOCATE PREPARE stmt_add_temp;
+            END IF;
+            
+            -- Obtener el máximo id actual (excluyendo 0)
+            SET @max_id = COALESCE((SELECT MAX(id) FROM productos_venta WHERE id > 0), 0);
+            
+            -- Actualizar los id = 0 con valores incrementales únicos
+            UPDATE productos_venta 
+            SET id = (@max_id := @max_id + 1)
+            WHERE id = 0
+            ORDER BY id_venta, id_producto, created_at;
+            
+            -- Eliminar columna temporal
+            ALTER TABLE productos_venta DROP COLUMN IF EXISTS temp_id;
+        END IF;
+        
+        -- Modificar la columna id para que sea AUTO_INCREMENT y PRIMARY KEY
+        ALTER TABLE productos_venta 
+        MODIFY COLUMN id INT(11) NOT NULL AUTO_INCREMENT,
+        ADD PRIMARY KEY (id);
+        
+        -- Resetear AUTO_INCREMENT al siguiente valor correcto
+        SET v_next_id = (SELECT MAX(id) + 1 FROM productos_venta);
+        SET @sql_reset = CONCAT('ALTER TABLE productos_venta AUTO_INCREMENT = ', v_next_id);
+        PREPARE stmt_reset FROM @sql_reset;
+        EXECUTE stmt_reset;
+        DEALLOCATE PREPARE stmt_reset;
+        
+        SELECT '✅ PRIMARY KEY agregado y registros corregidos' AS resultado;
+    ELSE
+        SELECT 'ℹ️ No se requiere corrección' AS resultado;
+    END IF;
+END$$
+
+DELIMITER ;
+
+-- Ejecutar el procedimiento solo si la tabla existe y no tiene PRIMARY KEY
+SET @sql_call = IF(@tabla_existe > 0 AND @tiene_pk = 0,
+    'CALL fix_primary_key_productos_venta()',
+    'SELECT ''No se requiere corrección'' AS mensaje'
+);
+
+PREPARE stmt_call FROM @sql_call;
+EXECUTE stmt_call;
+DEALLOCATE PREPARE stmt_call;
+
+-- Limpiar procedimiento
+DROP PROCEDURE IF EXISTS fix_primary_key_productos_venta;
 
 -- Verificación final
 SELECT 
