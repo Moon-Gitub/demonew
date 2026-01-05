@@ -42,6 +42,7 @@ mysql -u tu_usuario -p tu_base_datos < 02-EJECUTAR-MIGRACION.sql
 2. **Ir a la pestaña "SQL"**
 3. **PASO 1:** Copiar y pegar todo el contenido de `01-CREAR-ESTRUCTURA.sql` y ejecutar
 4. **PASO 2:** Copiar y pegar todo el contenido de `02-EJECUTAR-MIGRACION.sql` y ejecutar
+5. **PASO 3 (SOLO si la tabla ya existía sin PRIMARY KEY):** Ejecutar `03-FIX-PRIMARY-KEY.sql`
 
 ---
 
@@ -51,6 +52,7 @@ mysql -u tu_usuario -p tu_base_datos < 02-EJECUTAR-MIGRACION.sql
 |---------|-------------|
 | `01-CREAR-ESTRUCTURA.sql` | Crea la tabla, índices, foreign keys y el procedimiento de migración |
 | `02-EJECUTAR-MIGRACION.sql` | Ejecuta la migración de datos y limpia el procedimiento |
+| `03-FIX-PRIMARY-KEY.sql` | **SOLO si la tabla ya existe sin PRIMARY KEY**: Corrige el PRIMARY KEY y asigna ids únicos |
 | `LEEME.md` | Este archivo con las instrucciones |
 
 ---
@@ -81,6 +83,14 @@ AND NOT EXISTS (
 ---
 
 ## ❓ Problemas Comunes
+
+### Problema: Tabla `productos_venta` sin PRIMARY KEY o con `id = 0`
+- **Causa:** La tabla fue creada anteriormente sin PRIMARY KEY o el AUTO_INCREMENT no funcionó
+- **Solución:** Ejecutar `03-FIX-PRIMARY-KEY.sql` que:
+  - Detecta registros con `id = 0`
+  - Asigna ids únicos incrementales
+  - Agrega PRIMARY KEY si falta
+  - Configura AUTO_INCREMENT correctamente
 
 ### Error: "Table 'ventas' doesn't exist"
 - **Causa:** La tabla `ventas` no existe en tu base de datos
