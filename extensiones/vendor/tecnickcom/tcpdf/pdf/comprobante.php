@@ -786,17 +786,6 @@ $pdf->Output($nomArchivo);
 
 }
 
-
-//SALIDA DEL ARCHIVO
-$nomArchivo = 'CBTE_'.$tipoVtaLetra.'_'.$ptoVta.'-'.$numCte.'.pdf';
-if(isset($_GET["descargarFactura"])){
-$pdf->Output($nomArchivo, 'D');
-} else {
-$pdf->Output($nomArchivo);
-}
-
-}
-
 error_log("Creando instancia de imprimirComprobante...");
 try {
     $comprobante = new imprimirComprobante();
