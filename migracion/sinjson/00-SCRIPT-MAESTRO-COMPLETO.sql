@@ -103,7 +103,7 @@ AND CONSTRAINT_NAME = 'fk_productos_venta_venta'
 LIMIT 1;
 
 SET @sql_drop_fk1 = IF(@fk_venta_name IS NOT NULL,
-    CONCAT('ALTER TABLE productos_venta DROP FOREIGN KEY ', QUOTE(@fk_venta_name)),
+    CONCAT('ALTER TABLE productos_venta DROP FOREIGN KEY `', @fk_venta_name, '`'),
     'SELECT 1'
 );
 
