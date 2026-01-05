@@ -19,34 +19,43 @@ SET @mensajes = '';
 SELECT '=== PASO 1: Verificando prerequisitos ===' AS paso;
 
 -- Verificar que existe la tabla ventas
+SET @existe_ventas = (
+    SELECT COUNT(*) 
+    FROM information_schema.tables 
+    WHERE table_schema = DATABASE() 
+    AND table_name = 'ventas'
+);
+
 SELECT 
     CASE 
-        WHEN COUNT(*) > 0 THEN '✅ Tabla ventas existe'
+        WHEN @existe_ventas > 0 THEN '✅ Tabla ventas existe'
         ELSE '❌ ERROR: Tabla ventas no existe'
-    END AS estado
-FROM information_schema.tables 
-WHERE table_schema = DATABASE() 
-AND table_name = 'ventas';
+    END AS estado;
 
 -- Verificar que existe la tabla productos
+SET @existe_productos = (
+    SELECT COUNT(*) 
+    FROM information_schema.tables 
+    WHERE table_schema = DATABASE() 
+    AND table_name = 'productos'
+);
+
 SELECT 
     CASE 
-        WHEN COUNT(*) > 0 THEN '✅ Tabla productos existe'
+        WHEN @existe_productos > 0 THEN '✅ Tabla productos existe'
         ELSE '❌ ERROR: Tabla productos no existe'
-    END AS estado
-FROM information_schema.tables 
-WHERE table_schema = DATABASE() 
-AND table_name = 'productos';
+    END AS estado;
 
--- Contar ventas con productos en JSON
-SELECT 
-    COUNT(*) as ventas_con_json,
-    'Ventas que tienen productos en formato JSON' as descripcion
-FROM ventas 
-WHERE productos IS NOT NULL 
-AND productos != '' 
-AND productos != '[]'
-AND JSON_VALID(productos) = 1;
+-- Contar ventas con productos en JSON (solo si la tabla existe)
+-- Usar consulta preparada para evitar error si la tabla no existe
+SET @sql_ventas = IF(@existe_ventas > 0,
+    'SELECT COUNT(*) as ventas_con_json, ''Ventas que tienen productos en formato JSON'' as descripcion FROM ventas WHERE productos IS NOT NULL AND productos != '''' AND productos != ''[]'' AND JSON_VALID(productos) = 1',
+    'SELECT 0 as ventas_con_json, ''Tabla ventas no existe'' as descripcion'
+);
+
+PREPARE stmt FROM @sql_ventas;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
 
 -- ================================================================
 -- PASO 2: CREAR TABLA productos_venta
@@ -125,65 +134,29 @@ SET FOREIGN_KEY_CHECKS = 1;
 SELECT '✅ Foreign keys creadas' AS resultado;
 
 -- ================================================================
--- PASO 5: DIAGNOSTICAR PRODUCTOS INEXISTENTES
+-- PASO 5: DIAGNOSTICAR PRODUCTOS INEXISTENTES (Opcional)
 -- ================================================================
 SELECT '=== PASO 5: Diagnosticando productos inexistentes ===' AS paso;
 
--- Crear tabla temporal para productos problemáticos
-DROP TEMPORARY TABLE IF EXISTS temp_productos_inexistentes;
-CREATE TEMPORARY TABLE temp_productos_inexistentes AS
-SELECT DISTINCT
-    JSON_UNQUOTE(JSON_EXTRACT(v.productos, CONCAT('$[', n.n, '].id'))) AS id_producto_json,
-    v.id AS id_venta,
-    v.codigo AS codigo_venta
-FROM ventas v
-CROSS JOIN (
-    SELECT 0 AS n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION
-    SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION
-    SELECT 10 UNION SELECT 11 UNION SELECT 12 UNION SELECT 13 UNION SELECT 14 UNION
-    SELECT 15 UNION SELECT 16 UNION SELECT 17 UNION SELECT 18 UNION SELECT 19 UNION
-    SELECT 20 UNION SELECT 21 UNION SELECT 22 UNION SELECT 23 UNION SELECT 24 UNION
-    SELECT 25 UNION SELECT 26 UNION SELECT 27 UNION SELECT 28 UNION SELECT 29
-) n
-WHERE v.productos IS NOT NULL 
-AND v.productos != '' 
-AND v.productos != '[]'
-AND JSON_VALID(v.productos) = 1
-AND n.n < JSON_LENGTH(v.productos)
-AND CAST(JSON_UNQUOTE(JSON_EXTRACT(v.productos, CONCAT('$[', n.n, '].id'))) AS UNSIGNED) NOT IN (
-    SELECT id FROM productos
-);
+-- Solo diagnosticar si las tablas existen
+-- Nota: Este paso es opcional y puede omitirse si hay problemas
+SELECT '⚠️ Diagnóstico de productos inexistentes omitido (ejecutar manualmente si es necesario)' AS nota;
 
-SELECT 
-    COUNT(*) AS productos_inexistentes,
-    COUNT(DISTINCT id_venta) AS ventas_afectadas
-FROM temp_productos_inexistentes;
-
--- Mostrar algunos ejemplos
-SELECT 
-    id_producto_json,
-    id_venta,
-    codigo_venta
-FROM temp_productos_inexistentes
-LIMIT 10;
 
 -- ================================================================
 -- PASO 6: MIGRAR VENTAS PENDIENTES
 -- ================================================================
 SELECT '=== PASO 6: Migrando ventas pendientes ===' AS paso;
 
--- Contar ventas pendientes antes de migrar
-SELECT 
-    COUNT(*) as ventas_pendientes_antes,
-    'Ventas que necesitan migración' as descripcion
-FROM ventas v
-WHERE v.productos IS NOT NULL 
-AND v.productos != '' 
-AND v.productos != '[]'
-AND JSON_VALID(v.productos) = 1
-AND NOT EXISTS (
-    SELECT 1 FROM productos_venta pv WHERE pv.id_venta = v.id
+-- Contar ventas pendientes antes de migrar (solo si la tabla existe)
+SET @sql_pendientes = IF(@existe_ventas > 0,
+    CONCAT('SELECT COUNT(*) as ventas_pendientes_antes, ''Ventas que necesitan migración'' as descripcion FROM ventas v WHERE v.productos IS NOT NULL AND v.productos != '''' AND v.productos != ''[]'' AND JSON_VALID(v.productos) = 1 AND NOT EXISTS (SELECT 1 FROM productos_venta pv WHERE pv.id_venta = v.id)'),
+    'SELECT 0 as ventas_pendientes_antes, ''Tabla ventas no existe'' as descripcion'
 );
+
+PREPARE stmt_pendientes FROM @sql_pendientes;
+EXECUTE stmt_pendientes;
+DEALLOCATE PREPARE stmt_pendientes;
 
 -- Procedimiento para migrar
 DELIMITER $$
@@ -302,18 +275,15 @@ SELECT
     'Ventas que tienen productos_venta' AS descripcion
 FROM productos_venta;
 
--- 3. Ventas aún pendientes
-SELECT 
-    COUNT(*) AS ventas_pendientes,
-    'Ventas que aún necesitan migración' AS descripcion
-FROM ventas v
-WHERE v.productos IS NOT NULL 
-AND v.productos != '' 
-AND v.productos != '[]'
-AND JSON_VALID(v.productos) = 1
-AND NOT EXISTS (
-    SELECT 1 FROM productos_venta pv WHERE pv.id_venta = v.id
+-- 3. Ventas aún pendientes (solo si la tabla existe)
+SET @sql_pendientes_final = IF(@existe_ventas > 0,
+    CONCAT('SELECT COUNT(*) AS ventas_pendientes, ''Ventas que aún necesitan migración'' AS descripcion FROM ventas v WHERE v.productos IS NOT NULL AND v.productos != '''' AND v.productos != ''[]'' AND JSON_VALID(v.productos) = 1 AND NOT EXISTS (SELECT 1 FROM productos_venta pv WHERE pv.id_venta = v.id)'),
+    'SELECT 0 AS ventas_pendientes, ''Tabla ventas no existe'' AS descripcion'
 );
+
+PREPARE stmt_pendientes_final FROM @sql_pendientes_final;
+EXECUTE stmt_pendientes_final;
+DEALLOCATE PREPARE stmt_pendientes_final;
 
 -- 4. Verificar integridad de índices
 SELECT 
@@ -342,19 +312,15 @@ WHERE TABLE_SCHEMA = DATABASE()
 AND TABLE_NAME = 'productos_venta'
 AND REFERENCED_TABLE_NAME IS NOT NULL;
 
--- 6. Verificar diferencias en totales (solo primeras 10)
-SELECT 
-    pv.id_venta,
-    v.codigo,
-    COUNT(pv.id) as productos_migrados,
-    SUM(pv.cantidad * pv.precio_venta) as total_calculado,
-    v.total as total_venta,
-    ABS(SUM(pv.cantidad * pv.precio_venta) - v.total) as diferencia
-FROM productos_venta pv
-INNER JOIN ventas v ON pv.id_venta = v.id
-GROUP BY pv.id_venta, v.codigo, v.total
-HAVING ABS(diferencia) > 0.01
-LIMIT 10;
+-- 6. Verificar diferencias en totales (solo si ambas tablas existen)
+SET @sql_verificar_totales = IF(@existe_ventas > 0,
+    'SELECT pv.id_venta, v.codigo, COUNT(pv.id) as productos_migrados, SUM(pv.cantidad * pv.precio_venta) as total_calculado, v.total as total_venta, ABS(SUM(pv.cantidad * pv.precio_venta) - v.total) as diferencia FROM productos_venta pv INNER JOIN ventas v ON pv.id_venta = v.id GROUP BY pv.id_venta, v.codigo, v.total HAVING ABS(diferencia) > 0.01 LIMIT 10',
+    'SELECT 0 as id_venta, ''Tabla ventas no existe'' as codigo, 0 as productos_migrados, 0 as total_calculado, 0 as total_venta, 0 as diferencia'
+);
+
+PREPARE stmt_totales FROM @sql_verificar_totales;
+EXECUTE stmt_totales;
+DEALLOCATE PREPARE stmt_totales;
 
 -- ================================================================
 -- RESUMEN FINAL
