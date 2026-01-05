@@ -413,10 +413,10 @@ if($respuestaVenta["estado"] == 2){
 $bloqueCabeceraOriginal = <<<EOF
 	<table style="border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000;">
 		<tr>
-			<td style="width:560px; text-align: center; padding: 5px; border-top: none;"> ORIGINAL</td>
+			<td style="width:560px; text-align: center; padding: 8px; font-size: 12px; font-weight: bold;"> ORIGINAL</td>
 		</tr>
 	</table>
-	<table border="1" >
+	<table style="border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000;">
 		<tr style="padding: 0px;">
 			<td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> 
 				<h2>$respEmpresa[razon_social]</h2>
@@ -803,12 +803,12 @@ $numPaginaActual = 0;
 $ultimoProducto = count($productos);
 
 $bloqueCabeceraDuplicado = <<<EOF
-	<table border="1">
+	<table style="border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000;">
 		<tr>
-			<td style="width:560px; text-align: center;"> DUPLICADO</td>
+			<td style="width:560px; text-align: center; padding: 8px; font-size: 12px; font-weight: bold;"> DUPLICADO</td>
 		</tr>
 	</table>
-	<table border="1" >
+	<table style="border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000;">
 		<tr style="padding: 0px;">
 			<td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> 
 				<h2>$respEmpresa[razon_social]</h2>
