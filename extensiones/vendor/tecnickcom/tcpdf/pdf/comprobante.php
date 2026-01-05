@@ -789,11 +789,6 @@ $pdf->Output($nomArchivo, 'D');
 $pdf->Output($nomArchivo);
 }
 
-
-}
-
-}
-
 error_log("Creando instancia de imprimirComprobante...");
 try {
     $comprobante = new imprimirComprobante();
