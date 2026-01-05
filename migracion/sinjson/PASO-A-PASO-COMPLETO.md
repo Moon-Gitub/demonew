@@ -21,18 +21,29 @@ Esta guía te lleva paso a paso por todo el proceso de migración desde el campo
 
 ## 🚀 Opción 1: Script Automático (Recomendado)
 
-### Ejecutar el script maestro completo
+### IMPORTANTE: Ejecutar en DOS pasos
 
+**PASO 1:** Ejecutar el script maestro (crea estructura y procedimiento):
 ```bash
 mysql -u tu_usuario -p tu_base_datos < migracion/sinjson/00-SCRIPT-MAESTRO-COMPLETO.sql
 ```
 
-Este script ejecuta **TODO** automáticamente:
+**PASO 2:** Ejecutar la migración (ejecuta el procedimiento):
+```bash
+mysql -u tu_usuario -p tu_base_datos < migracion/sinjson/EJECUTAR-MIGRACION.sql
+```
+
+**O desde phpMyAdmin:**
+1. Ejecutar `00-SCRIPT-MAESTRO-COMPLETO.sql` completo
+2. Luego ejecutar: `CALL migrar_ventas_pendientes_completo();`
+3. Finalmente: `DROP PROCEDURE IF EXISTS migrar_ventas_pendientes_completo;`
+
+Este proceso ejecuta:
 - ✅ Crea la tabla `productos_venta`
 - ✅ Crea todos los índices
 - ✅ Crea las foreign keys
-- ✅ Diagnostica productos inexistentes
-- ✅ Migra todas las ventas pendientes
+- ✅ Crea el procedimiento de migración
+- ✅ Migra todas las ventas pendientes (PASO 2)
 - ✅ Verifica resultados
 
 ## 📝 Opción 2: Ejecución Manual Paso a Paso
