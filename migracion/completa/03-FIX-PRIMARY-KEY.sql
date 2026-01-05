@@ -1,0 +1,120 @@
+-- ================================================================
+-- FIX: Corregir PRIMARY KEY en productos_venta
+-- ================================================================
+-- Este script corrige el problema de la tabla productos_venta
+-- que fue creada sin PRIMARY KEY o con id = 0
+-- ================================================================
+-- IMPORTANTE: Ejecutar SOLO si la tabla ya existe sin PRIMARY KEY
+-- ================================================================
+
+SELECT '=== Corrigiendo PRIMARY KEY en productos_venta ===' AS paso;
+
+-- Verificar si la tabla existe
+SET @tabla_existe = (
+    SELECT COUNT(*) 
+    FROM information_schema.tables 
+    WHERE table_schema = DATABASE() 
+    AND table_name = 'productos_venta'
+);
+
+SELECT 
+    CASE 
+        WHEN @tabla_existe > 0 THEN '✅ Tabla productos_venta existe'
+        ELSE '❌ ERROR: Tabla productos_venta no existe. Ejecuta primero 01-CREAR-ESTRUCTURA.sql'
+    END AS estado_tabla;
+
+-- Verificar si tiene PRIMARY KEY
+SET @tiene_pk = (
+    SELECT COUNT(*) 
+    FROM information_schema.table_constraints 
+    WHERE table_schema = DATABASE() 
+    AND table_name = 'productos_venta'
+    AND constraint_type = 'PRIMARY KEY'
+);
+
+SELECT 
+    CASE 
+        WHEN @tiene_pk > 0 THEN '✅ Tabla ya tiene PRIMARY KEY'
+        ELSE '⚠️ Tabla NO tiene PRIMARY KEY, corrigiendo...'
+    END AS estado_pk;
+
+-- Si la tabla existe pero no tiene PRIMARY KEY, corregir
+IF @tabla_existe > 0 AND @tiene_pk = 0 THEN
+    -- Verificar si hay datos con id = 0
+    SET @hay_ceros = (
+        SELECT COUNT(*) 
+        FROM productos_venta 
+        WHERE id = 0
+    );
+    
+    SELECT 
+        CASE 
+            WHEN @hay_ceros > 0 THEN CONCAT('⚠️ Encontrados ', @hay_ceros, ' registros con id = 0. Se actualizarán.')
+            ELSE '✅ No hay registros con id = 0'
+        END AS estado_ceros;
+    
+    -- Si hay registros con id = 0, actualizarlos temporalmente
+    -- Primero, crear una columna temporal para guardar el orden
+    ALTER TABLE productos_venta ADD COLUMN IF NOT EXISTS temp_id INT(11) NULL;
+    
+    -- Asignar valores temporales únicos basados en el orden
+    SET @counter = 0;
+    UPDATE productos_venta 
+    SET temp_id = (@counter := @counter + 1)
+    WHERE id = 0
+    ORDER BY id_venta, id_producto, created_at;
+    
+    -- Eliminar registros duplicados si los hay (mantener solo el primero)
+    DELETE pv1 FROM productos_venta pv1
+    INNER JOIN productos_venta pv2 
+    WHERE pv1.id = 0 
+    AND pv2.id = 0
+    AND pv1.temp_id > pv2.temp_id
+    AND pv1.id_venta = pv2.id_venta
+    AND pv1.id_producto = pv2.id_producto;
+    
+    -- Modificar la columna id para que sea AUTO_INCREMENT y PRIMARY KEY
+    ALTER TABLE productos_venta 
+    MODIFY COLUMN id INT(11) NOT NULL AUTO_INCREMENT,
+    ADD PRIMARY KEY (id);
+    
+    -- Actualizar los registros con id = 0 usando los valores temporales
+    -- Pero primero necesitamos obtener el máximo id actual
+    SET @max_id = COALESCE((SELECT MAX(id) FROM productos_venta WHERE id > 0), 0);
+    
+    -- Actualizar los id = 0 con valores incrementales
+    UPDATE productos_venta 
+    SET id = (@max_id := @max_id + 1)
+    WHERE id = 0
+    ORDER BY temp_id;
+    
+    -- Eliminar columna temporal
+    ALTER TABLE productos_venta DROP COLUMN temp_id;
+    
+    -- Resetear AUTO_INCREMENT al siguiente valor correcto
+    SET @next_id = (SELECT MAX(id) + 1 FROM productos_venta);
+    SET @sql_reset = CONCAT('ALTER TABLE productos_venta AUTO_INCREMENT = ', @next_id);
+    PREPARE stmt_reset FROM @sql_reset;
+    EXECUTE stmt_reset;
+    DEALLOCATE PREPARE stmt_reset;
+    
+    SELECT '✅ PRIMARY KEY agregado y registros corregidos' AS resultado;
+ELSE
+    SELECT 'ℹ️ No se requiere corrección' AS resultado;
+END IF;
+
+-- Verificación final
+SELECT 
+    '=== VERIFICACIÓN FINAL ===' AS titulo,
+    COUNT(*) AS total_registros,
+    COUNT(DISTINCT id) AS ids_unicos,
+    MIN(id) AS id_minimo,
+    MAX(id) AS id_maximo,
+    SUM(CASE WHEN id = 0 THEN 1 ELSE 0 END) AS registros_con_id_cero
+FROM productos_venta;
+
+SELECT 
+    CASE 
+        WHEN SUM(CASE WHEN id = 0 THEN 1 ELSE 0 END) = 0 THEN '✅ Todos los registros tienen id único'
+        ELSE '⚠️ Aún hay registros con id = 0'
+    END AS estado_final;

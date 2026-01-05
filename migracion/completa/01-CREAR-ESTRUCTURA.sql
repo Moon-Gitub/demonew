@@ -52,6 +52,33 @@ SELECT
 -- ================================================================
 SELECT '=== PASO 2: Creando tabla productos_venta ===' AS paso;
 
+-- Verificar si la tabla existe y tiene PRIMARY KEY
+SET @tabla_existe = (
+    SELECT COUNT(*) 
+    FROM information_schema.tables 
+    WHERE table_schema = DATABASE() 
+    AND table_name = 'productos_venta'
+);
+
+SET @tiene_pk = (
+    SELECT COUNT(*) 
+    FROM information_schema.table_constraints 
+    WHERE table_schema = DATABASE() 
+    AND table_name = 'productos_venta'
+    AND constraint_type = 'PRIMARY KEY'
+);
+
+-- Si la tabla existe pero no tiene PRIMARY KEY, agregarlo
+SET @sql_fix_pk = IF(@tabla_existe > 0 AND @tiene_pk = 0,
+    'ALTER TABLE productos_venta MODIFY COLUMN id INT(11) NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (id)',
+    'SELECT 1'
+);
+
+PREPARE stmt_fix_pk FROM @sql_fix_pk;
+EXECUTE stmt_fix_pk;
+DEALLOCATE PREPARE stmt_fix_pk;
+
+-- Crear tabla si no existe
 CREATE TABLE IF NOT EXISTS `productos_venta` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `id_venta` INT(11) NOT NULL,
@@ -63,7 +90,17 @@ CREATE TABLE IF NOT EXISTS `productos_venta` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
-SELECT '✅ Tabla productos_venta creada' AS resultado;
+-- Verificar que el AUTO_INCREMENT esté configurado correctamente
+SET @sql_fix_auto = IF(@tabla_existe > 0,
+    'ALTER TABLE productos_venta AUTO_INCREMENT = 1',
+    'SELECT 1'
+);
+
+PREPARE stmt_fix_auto FROM @sql_fix_auto;
+EXECUTE stmt_fix_auto;
+DEALLOCATE PREPARE stmt_fix_auto;
+
+SELECT '✅ Tabla productos_venta creada/verificada con PRIMARY KEY' AS resultado;
 
 -- ================================================================
 -- PASO 3: CREAR ÍNDICES
