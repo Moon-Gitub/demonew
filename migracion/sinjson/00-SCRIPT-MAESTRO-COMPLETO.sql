@@ -121,7 +121,7 @@ AND CONSTRAINT_NAME = 'fk_productos_venta_producto'
 LIMIT 1;
 
 SET @sql_drop_fk2 = IF(@fk_producto_name IS NOT NULL,
-    CONCAT('ALTER TABLE productos_venta DROP FOREIGN KEY ', QUOTE(@fk_producto_name)),
+    CONCAT('ALTER TABLE productos_venta DROP FOREIGN KEY `', @fk_producto_name, '`'),
     'SELECT 1'
 );
 
@@ -130,20 +130,24 @@ EXECUTE stmt_drop2;
 DEALLOCATE PREPARE stmt_drop2;
 
 -- Crear FK a ventas (solo si la tabla existe)
-IF @existe_ventas > 0 THEN
-    SET @sql_fk_venta = 'ALTER TABLE productos_venta ADD CONSTRAINT fk_productos_venta_venta FOREIGN KEY (id_venta) REFERENCES ventas (id) ON DELETE CASCADE ON UPDATE CASCADE';
-    PREPARE stmt_fk_venta FROM @sql_fk_venta;
-    EXECUTE stmt_fk_venta;
-    DEALLOCATE PREPARE stmt_fk_venta;
-END IF;
+SET @sql_fk_venta = IF(@existe_ventas > 0,
+    'ALTER TABLE productos_venta ADD CONSTRAINT fk_productos_venta_venta FOREIGN KEY (id_venta) REFERENCES ventas (id) ON DELETE CASCADE ON UPDATE CASCADE',
+    'SELECT ''Tabla ventas no existe, omitiendo FK'' AS mensaje'
+);
+
+PREPARE stmt_fk_venta FROM @sql_fk_venta;
+EXECUTE stmt_fk_venta;
+DEALLOCATE PREPARE stmt_fk_venta;
 
 -- Crear FK a productos (solo si la tabla existe)
-IF @existe_productos > 0 THEN
-    SET @sql_fk_producto = 'ALTER TABLE productos_venta ADD CONSTRAINT fk_productos_venta_producto FOREIGN KEY (id_producto) REFERENCES productos (id) ON DELETE RESTRICT ON UPDATE CASCADE';
-    PREPARE stmt_fk_producto FROM @sql_fk_producto;
-    EXECUTE stmt_fk_producto;
-    DEALLOCATE PREPARE stmt_fk_producto;
-END IF;
+SET @sql_fk_producto = IF(@existe_productos > 0,
+    'ALTER TABLE productos_venta ADD CONSTRAINT fk_productos_venta_producto FOREIGN KEY (id_producto) REFERENCES productos (id) ON DELETE RESTRICT ON UPDATE CASCADE',
+    'SELECT ''Tabla productos no existe, omitiendo FK'' AS mensaje'
+);
+
+PREPARE stmt_fk_producto FROM @sql_fk_producto;
+EXECUTE stmt_fk_producto;
+DEALLOCATE PREPARE stmt_fk_producto;
 
 -- Rehabilitar FK checks ANTES de ejecutar el procedimiento
 SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS;
