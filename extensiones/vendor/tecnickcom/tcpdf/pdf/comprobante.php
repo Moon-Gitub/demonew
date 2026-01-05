@@ -517,22 +517,22 @@ if($imprimoCabeceraDetalle){
 $bloqueDetalleCab = <<<EOF
 	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000; margin-top: 8px;">
 		<tr style="background-color: #343a40;">
-			<td style="width:30px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
+			<td style="width:35px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Cant.
 			</td>
-			<td style="width:295px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
+			<td style="width:280px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Detalle
 			</td>
-			<td style="width:65px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
+			<td style="width:70px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Unit.
 			</td>
-			<td style="width:65px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
+			<td style="width:70px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Subtotal
 			</td>
-			<td style="width:35px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
+			<td style="width:40px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				IVA %
 			</td>
-			<td style="width:70px; font-size: 9px; text-align: center; padding: 8px; font-weight: bold; color: #ffffff;">
+			<td style="width:65px; font-size: 9px; text-align: center; padding: 8px; font-weight: bold; color: #ffffff;">
 				Total
 			</td>
 		</tr>
@@ -903,22 +903,22 @@ if($imprimoCabeceraDetalle){
 $bloqueDetalleCab = <<<EOF
 	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000; margin-top: 8px;">
 		<tr style="background-color: #343a40;">
-			<td style="width:30px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
+			<td style="width:35px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Cant.
 			</td>
-			<td style="width:295px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
+			<td style="width:280px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Detalle
 			</td>
-			<td style="width:65px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
+			<td style="width:70px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Unit.
 			</td>
-			<td style="width:65px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
+			<td style="width:70px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Subtotal
 			</td>
-			<td style="width:35px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
+			<td style="width:40px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				IVA %
 			</td>
-			<td style="width:70px; font-size: 9px; text-align: center; padding: 8px; font-weight: bold; color: #ffffff;">
+			<td style="width:65px; font-size: 9px; text-align: center; padding: 8px; font-weight: bold; color: #ffffff;">
 				Total
 			</td>
 		</tr>
