@@ -3342,10 +3342,21 @@ $(document).on('click', '#btnVerificarPagoQR', function(){
 
 /*=============================================
 PREVENIR CIERRE DEL MODAL DURANTE VERIFICACIÓN
+BLOQUEO TOTAL: No se puede cerrar hasta que el pago esté confirmado
 =============================================*/
 $("#modalPagoQR").on('hide.bs.modal', function(e){
-	// Si el pago no está confirmado y se está verificando, prevenir cierre
-	if(!paymentIdConfirmado && intervaloVerificacionQR){
+	// BLOQUEO TOTAL: Si el pago no está confirmado, prevenir cierre de CUALQUIER forma
+	if(!paymentIdConfirmado){
+		e.preventDefault();
+		e.stopPropagation();
+		e.stopImmediatePropagation();
+		return false;
+	}
+});
+
+// Prevenir cierre con click fuera del modal
+$("#modalPagoQR").on('click', function(e){
+	if(!paymentIdConfirmado && $(e.target).hasClass('modal')){
 		e.preventDefault();
 		e.stopPropagation();
 		return false;
