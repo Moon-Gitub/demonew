@@ -411,27 +411,25 @@ if($respuestaVenta["estado"] == 2){
 
 
 $bloqueCabeceraOriginal = <<<EOF
-	<table style="width:100%; border: 1px solid #000; border-collapse: collapse;">
+	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000;">
 		<tr>
-			<td style="width:560px; text-align: center; padding: 10px; font-size: 14px; font-weight: bold; border-bottom: 1px solid #000; background-color: #f8f9fa;">
+			<td style="text-align: center; padding: 12px; font-size: 16px; font-weight: bold; background-color: #e9ecef; border-bottom: 2px solid #000;">
 				ORIGINAL
 			</td>
 		</tr>
 		<tr>
 			<td style="padding: 0;">
-				<table style="width:100%; border-collapse: collapse;">
+				<table cellpadding="0" cellspacing="0" style="width:100%;">
 					<tr>
-						<td style="width:260px; text-align: center; padding: 12px; border-right: 1px solid #000; border-bottom: 1px solid #000; vertical-align: middle;">
-							<div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">$respEmpresa[razon_social]</div>
+						<td style="width:45%; text-align: center; padding: 15px; border-right: 2px solid #000; border-bottom: 2px solid #000; vertical-align: middle;">
+							<div style="font-size: 18px; font-weight: bold; color: #212529;">$respEmpresa[razon_social]</div>
 						</td>
-						<td style="width:40px; text-align: center; padding: 8px; border-right: 1px solid #000; border-bottom: 1px solid #000; vertical-align: middle;">
-							<div style="line-height: 1.2;">
-								<span style="font-size: 32px; font-weight: bold;">$tipoVtaLetra</span><br>
-								<span style="font-size: 10px;">$tipoCodigo</span>
-							</div>
+						<td style="width:10%; text-align: center; padding: 10px; border-right: 2px solid #000; border-bottom: 2px solid #000; vertical-align: middle; background-color: #f8f9fa;">
+							<div style="font-size: 36px; font-weight: bold; line-height: 1;">$tipoVtaLetra</div>
+							<div style="font-size: 11px; margin-top: 2px;">$tipoCodigo</div>
 						</td>
-						<td style="width:260px; text-align: center; padding: 12px; border-bottom: 1px solid #000; vertical-align: middle;">
-							<div style="font-size: 12px; font-weight: bold;">$tipoVta</div>
+						<td style="width:45%; text-align: center; padding: 15px; border-bottom: 2px solid #000; vertical-align: middle;">
+							<div style="font-size: 14px; font-weight: bold; color: #495057;">$tipoVta</div>
 						</td>
 					</tr>
 				</table>
@@ -439,24 +437,24 @@ $bloqueCabeceraOriginal = <<<EOF
 		</tr>
 		<tr>
 			<td style="padding: 0;">
-				<table style="width:100%; border-collapse: collapse;">
+				<table cellpadding="0" cellspacing="0" style="width:100%;">
 					<tr>
-						<td style="width:280px; font-size: 9px; text-align: left; padding: 10px; border-right: 1px solid #000; vertical-align: top;">
-							<div style="line-height: 1.6;">
-								<div><b>Dirección:</b> $respEmpresa[domicilio]</div>
-								<div><b>Teléfono:</b> $respEmpresa[telefono]</div>
-								<div><b>Localidad:</b> $respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</div>
-								<div><b>Cond. I.V.A.:</b> $tipoIva</div>
-								<div style="margin-top: 5px;"><b>Defensa al Consumidor Mza. 08002226678</b></div>
+						<td style="width:50%; font-size: 10px; padding: 12px; border-right: 2px solid #000; vertical-align: top; background-color: #ffffff;">
+							<div style="line-height: 1.8;">
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">Dirección:</span> <span style="color: #212529;">$respEmpresa[domicilio]</span></div>
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">Teléfono:</span> <span style="color: #212529;">$respEmpresa[telefono]</span></div>
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">Localidad:</span> <span style="color: #212529;">$respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</span></div>
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">Cond. I.V.A.:</span> <span style="color: #212529;">$tipoIva</span></div>
+								<div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #dee2e6;"><span style="font-weight: bold; color: #495057; font-size: 9px;">Defensa al Consumidor Mza. 08002226678</span></div>
 							</div>
 						</td>
-						<td style="width:280px; font-size: 9px; text-align: left; padding: 10px; vertical-align: top;">
-							<div style="line-height: 1.6;">
-								<div><b>N° Cbte:</b> $ptoVta - $numCte</div>
-								<div><b>Fecha Emisión:</b> $fecEmi</div>
-								<div><b>CUIT:</b> $respEmpresa[cuit]</div>
-								<div><b>II.BB.:</b> $respEmpresa[numero_iibb]</div>
-								<div><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades]</div>
+						<td style="width:50%; font-size: 10px; padding: 12px; vertical-align: top; background-color: #ffffff;">
+							<div style="line-height: 1.8;">
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">N° Cbte:</span> <span style="color: #212529; font-weight: bold;">$ptoVta - $numCte</span></div>
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">Fecha Emisión:</span> <span style="color: #212529;">$fecEmi</span></div>
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">CUIT:</span> <span style="color: #212529;">$respEmpresa[cuit]</span></div>
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">II.BB.:</span> <span style="color: #212529;">$respEmpresa[numero_iibb]</span></div>
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">Inic. Actividad:</span> <span style="color: #212529;">$respEmpresa[inicio_actividades]</span></div>
 							</div>
 						</td>
 					</tr>
@@ -467,12 +465,12 @@ $bloqueCabeceraOriginal = <<<EOF
 	
 	$tieneServicio
     
-	<table style="width:100%; border: 1px solid #000; border-collapse: collapse;">
+	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000; margin-top: 5px;">
 		<tr>
-			<td style="width:560px; font-size: 9px; text-align: left; padding: 10px; line-height: 1.6;">
-				<div><b>Tipo Doc.:</b> $tipoDocumento: <b>$respuestaCliente[documento]</b> - <b>Nombre / Razón Social:</b> $respuestaCliente[nombre]</div>
-				<div><b>Domicilio:</b> $respuestaCliente[direccion] - <b>Condición I.V.A.:</b> $tipoIvaCliente</div>
-				<div><b>Condición de Venta:</b> $condicionVenta</div>
+			<td style="font-size: 10px; padding: 12px; line-height: 1.8; background-color: #f8f9fa;">
+				<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">Tipo Doc.:</span> <span style="color: #212529;">$tipoDocumento: <b>$respuestaCliente[documento]</b></span> | <span style="font-weight: bold; color: #495057;">Nombre / Razón Social:</span> <span style="color: #212529;">$respuestaCliente[nombre]</span></div>
+				<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">Domicilio:</span> <span style="color: #212529;">$respuestaCliente[direccion]</span> | <span style="font-weight: bold; color: #495057;">Condición I.V.A.:</span> <span style="color: #212529;">$tipoIvaCliente</span></div>
+				<div><span style="font-weight: bold; color: #495057;">Condición de Venta:</span> <span style="color: #212529; font-weight: bold;">$condicionVenta</span></div>
 			</td>
 		</tr>
 	</table>
@@ -529,24 +527,24 @@ $formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
 if($imprimoCabeceraDetalle){
 //---------------------CABECERA DETALLE A
 $bloqueDetalleCab = <<<EOF
-	<table style="width:100%; border: 1px solid #000; border-collapse: collapse;">
-		<tr style="background-color: #e9ecef;">
-			<td style="width:30px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000; margin-top: 8px;">
+		<tr style="background-color: #343a40;">
+			<td style="width:30px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Cant.
 			</td>
-			<td style="width:295px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+			<td style="width:295px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Detalle
 			</td>
-			<td style="width:65px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+			<td style="width:65px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Unit.
 			</td>
-			<td style="width:65px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+			<td style="width:65px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Subtotal
 			</td>
-			<td style="width:35px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+			<td style="width:35px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				IVA %
 			</td>
-			<td style="width:70px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+			<td style="width:70px; font-size: 9px; text-align: center; padding: 8px; font-weight: bold; color: #ffffff;">
 				Total
 			</td>
 		</tr>
@@ -558,24 +556,24 @@ $imprimoCabeceraDetalle = false;
 
 //--------------------- DETALLE COMPROBANTE A
 $bloqueDetalle = <<<EOF
-	<table style="width:100%; border-collapse: collapse;">
-	    <tr>
-			<td style="width:30px; font-size: 8px; text-align: center; padding: 5px; border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+	<table cellpadding="0" cellspacing="0" style="width:100%;">
+	    <tr style="background-color: #ffffff;">
+			<td style="width:30px; font-size: 9px; text-align: center; padding: 7px; border-left: 2px solid #000; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle;">
 				$formatCantidad
 			</td>			
-			<td style="width:295px; font-size: 8px; text-align: left; padding: 5px; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+			<td style="width:295px; font-size: 9px; text-align: left; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle;">
 				$value[descripcion]
 			</td>
-			<td style="width:65px; font-size: 8px; text-align: right; padding: 5px; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+			<td style="width:65px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: 500;">
 				$formatPrecioUnit
 			</td>
-			<td style="width:65px; font-size: 8px; text-align: right; padding: 5px; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+			<td style="width:65px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: 500;">
 				$formatSubtotal
 			</td>
-			<td style="width:35px; font-size: 8px; text-align: center; padding: 5px; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+			<td style="width:35px; font-size: 9px; text-align: center; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle;">
 				$getProducto[tipo_iva]
 			</td>
-			<td style="width:70px; font-size: 8px; text-align: right; padding: 5px; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+			<td style="width:70px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: bold;">
 				$formatTotal
 			</td>
 		</tr>
@@ -593,18 +591,18 @@ $formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
 if($imprimoCabeceraDetalle){
 //--------------------- CABECERA DETALLE B | C | X
 $bloqueDetalleCab = <<<EOF
-	<table style="width:100%; border: 1px solid #000; border-collapse: collapse;">
-		<tr style="background-color: #e9ecef;">
-			<td style="width:50px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000; margin-top: 8px;">
+		<tr style="background-color: #343a40;">
+			<td style="width:50px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Cant.
 			</td>			
-			<td style="width:350px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+			<td style="width:350px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Detalle
 			</td>
-			<td style="width:80px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+			<td style="width:80px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Unit.
 			</td>
-			<td style="width:80px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+			<td style="width:80px; font-size: 9px; text-align: center; padding: 8px; font-weight: bold; color: #ffffff;">
 				Total
 			</td>
 		</tr>
@@ -616,18 +614,18 @@ $imprimoCabeceraDetalle = false;
 }
 
 $bloqueDetalle = <<<EOF
-	<table style="width:100%; border-collapse: collapse;">
-	    <tr>
-			<td style="width:50px; font-size: 8px; text-align: center; padding: 5px; border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+	<table cellpadding="0" cellspacing="0" style="width:100%;">
+	    <tr style="background-color: #ffffff;">
+			<td style="width:50px; font-size: 9px; text-align: center; padding: 7px; border-left: 2px solid #000; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle;">
 				$formatCantidad
 			</td>			
-			<td style="width:350px; font-size: 8px; text-align: left; padding: 5px; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+			<td style="width:350px; font-size: 9px; text-align: left; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle;">
 				$value[descripcion]
 			</td>
-			<td style="width:80px; font-size: 8px; text-align: right; padding: 5px; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+			<td style="width:80px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: 500;">
 				$formatPrecioUnit
 			</td>
-			<td style="width:80px; font-size: 8px; text-align: right; padding: 5px; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+			<td style="width:80px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: bold;">
 				$formatTotal
 			</td>
 		</tr>
@@ -811,27 +809,25 @@ $numPaginaActual = 0;
 $ultimoProducto = count($productos);
 
 $bloqueCabeceraDuplicado = <<<EOF
-	<table style="width:100%; border: 1px solid #000; border-collapse: collapse;">
+	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000;">
 		<tr>
-			<td style="width:560px; text-align: center; padding: 10px; font-size: 14px; font-weight: bold; border-bottom: 1px solid #000; background-color: #f8f9fa;">
+			<td style="text-align: center; padding: 12px; font-size: 16px; font-weight: bold; background-color: #e9ecef; border-bottom: 2px solid #000;">
 				DUPLICADO
 			</td>
 		</tr>
 		<tr>
 			<td style="padding: 0;">
-				<table style="width:100%; border-collapse: collapse;">
+				<table cellpadding="0" cellspacing="0" style="width:100%;">
 					<tr>
-						<td style="width:260px; text-align: center; padding: 12px; border-right: 1px solid #000; border-bottom: 1px solid #000; vertical-align: middle;">
-							<div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">$respEmpresa[razon_social]</div>
+						<td style="width:45%; text-align: center; padding: 15px; border-right: 2px solid #000; border-bottom: 2px solid #000; vertical-align: middle;">
+							<div style="font-size: 18px; font-weight: bold; color: #212529;">$respEmpresa[razon_social]</div>
 						</td>
-						<td style="width:40px; text-align: center; padding: 8px; border-right: 1px solid #000; border-bottom: 1px solid #000; vertical-align: middle;">
-							<div style="line-height: 1.2;">
-								<span style="font-size: 32px; font-weight: bold;">$tipoVtaLetra</span><br>
-								<span style="font-size: 10px;">$tipoCodigo</span>
-							</div>
+						<td style="width:10%; text-align: center; padding: 10px; border-right: 2px solid #000; border-bottom: 2px solid #000; vertical-align: middle; background-color: #f8f9fa;">
+							<div style="font-size: 36px; font-weight: bold; line-height: 1;">$tipoVtaLetra</div>
+							<div style="font-size: 11px; margin-top: 2px;">$tipoCodigo</div>
 						</td>
-						<td style="width:260px; text-align: center; padding: 12px; border-bottom: 1px solid #000; vertical-align: middle;">
-							<div style="font-size: 12px; font-weight: bold;">$tipoVta</div>
+						<td style="width:45%; text-align: center; padding: 15px; border-bottom: 2px solid #000; vertical-align: middle;">
+							<div style="font-size: 14px; font-weight: bold; color: #495057;">$tipoVta</div>
 						</td>
 					</tr>
 				</table>
@@ -839,24 +835,24 @@ $bloqueCabeceraDuplicado = <<<EOF
 		</tr>
 		<tr>
 			<td style="padding: 0;">
-				<table style="width:100%; border-collapse: collapse;">
+				<table cellpadding="0" cellspacing="0" style="width:100%;">
 					<tr>
-						<td style="width:280px; font-size: 9px; text-align: left; padding: 10px; border-right: 1px solid #000; vertical-align: top;">
-							<div style="line-height: 1.6;">
-								<div><b>Dirección:</b> $respEmpresa[domicilio]</div>
-								<div><b>Teléfono:</b> $respEmpresa[telefono]</div>
-								<div><b>Localidad:</b> $respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</div>
-								<div><b>Cond. I.V.A.:</b> $tipoIva</div>
-								<div style="margin-top: 5px;"><b>Defensa al Consumidor Mza. 08002226678</b></div>
+						<td style="width:50%; font-size: 10px; padding: 12px; border-right: 2px solid #000; vertical-align: top; background-color: #ffffff;">
+							<div style="line-height: 1.8;">
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">Dirección:</span> <span style="color: #212529;">$respEmpresa[domicilio]</span></div>
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">Teléfono:</span> <span style="color: #212529;">$respEmpresa[telefono]</span></div>
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">Localidad:</span> <span style="color: #212529;">$respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</span></div>
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">Cond. I.V.A.:</span> <span style="color: #212529;">$tipoIva</span></div>
+								<div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #dee2e6;"><span style="font-weight: bold; color: #495057; font-size: 9px;">Defensa al Consumidor Mza. 08002226678</span></div>
 							</div>
 						</td>
-						<td style="width:280px; font-size: 9px; text-align: left; padding: 10px; vertical-align: top;">
-							<div style="line-height: 1.6;">
-								<div><b>N° Cbte:</b> $ptoVta - $numCte</div>
-								<div><b>Fecha Emisión:</b> $fecEmi</div>
-								<div><b>CUIT:</b> $respEmpresa[cuit]</div>
-								<div><b>II.BB.:</b> $respEmpresa[numero_iibb]</div>
-								<div><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades]</div>
+						<td style="width:50%; font-size: 10px; padding: 12px; vertical-align: top; background-color: #ffffff;">
+							<div style="line-height: 1.8;">
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">N° Cbte:</span> <span style="color: #212529; font-weight: bold;">$ptoVta - $numCte</span></div>
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">Fecha Emisión:</span> <span style="color: #212529;">$fecEmi</span></div>
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">CUIT:</span> <span style="color: #212529;">$respEmpresa[cuit]</span></div>
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">II.BB.:</span> <span style="color: #212529;">$respEmpresa[numero_iibb]</span></div>
+								<div style="margin-bottom: 4px;"><span style="font-weight: bold; color: #495057;">Inic. Actividad:</span> <span style="color: #212529;">$respEmpresa[inicio_actividades]</span></div>
 							</div>
 						</td>
 					</tr>
@@ -867,12 +863,12 @@ $bloqueCabeceraDuplicado = <<<EOF
 
 	$tieneServicio
 
-	<table style="width:100%; border: 1px solid #000; border-collapse: collapse;">
+	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000; margin-top: 5px;">
 		<tr>
-			<td style="width:560px; font-size: 9px; text-align: left; padding: 10px; line-height: 1.6;">
-				<div><b>Tipo Doc.:</b> $tipoDocumento: <b>$respuestaCliente[documento]</b> - <b>Nombre / Razón Social:</b> $respuestaCliente[nombre]</div>
-				<div><b>Domicilio:</b> $respuestaCliente[direccion] - <b>Condición I.V.A.:</b> $tipoIvaCliente</div>
-				<div><b>Condición de Venta:</b> $condicionVenta</div>
+			<td style="font-size: 10px; padding: 12px; line-height: 1.8; background-color: #f8f9fa;">
+				<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">Tipo Doc.:</span> <span style="color: #212529;">$tipoDocumento: <b>$respuestaCliente[documento]</b></span> | <span style="font-weight: bold; color: #495057;">Nombre / Razón Social:</span> <span style="color: #212529;">$respuestaCliente[nombre]</span></div>
+				<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">Domicilio:</span> <span style="color: #212529;">$respuestaCliente[direccion]</span> | <span style="font-weight: bold; color: #495057;">Condición I.V.A.:</span> <span style="color: #212529;">$tipoIvaCliente</span></div>
+				<div><span style="font-weight: bold; color: #495057;">Condición de Venta:</span> <span style="color: #212529; font-weight: bold;">$condicionVenta</span></div>
 			</td>
 		</tr>
 	</table>
@@ -929,24 +925,24 @@ $formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
 if($imprimoCabeceraDetalle){
 //---------------------CABECERA DETALLE A
 $bloqueDetalleCab = <<<EOF
-	<table style="width:100%; border: 1px solid #000; border-collapse: collapse;">
-		<tr style="background-color: #e9ecef;">
-			<td style="width:30px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000; margin-top: 8px;">
+		<tr style="background-color: #343a40;">
+			<td style="width:30px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Cant.
 			</td>
-			<td style="width:295px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+			<td style="width:295px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Detalle
 			</td>
-			<td style="width:65px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+			<td style="width:65px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Unit.
 			</td>
-			<td style="width:65px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+			<td style="width:65px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Subtotal
 			</td>
-			<td style="width:35px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+			<td style="width:35px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				IVA %
 			</td>
-			<td style="width:70px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+			<td style="width:70px; font-size: 9px; text-align: center; padding: 8px; font-weight: bold; color: #ffffff;">
 				Total
 			</td>
 		</tr>
@@ -958,24 +954,24 @@ $imprimoCabeceraDetalle = false;
 
 //--------------------- DETALLE COMPROBANTE A
 $bloqueDetalle = <<<EOF
-	<table style="width:100%; border-collapse: collapse;">
-	    <tr>
-			<td style="width:30px; font-size: 8px; text-align: center; padding: 5px; border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+	<table cellpadding="0" cellspacing="0" style="width:100%;">
+	    <tr style="background-color: #ffffff;">
+			<td style="width:30px; font-size: 9px; text-align: center; padding: 7px; border-left: 2px solid #000; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle;">
 				$formatCantidad
 			</td>			
-			<td style="width:295px; font-size: 8px; text-align: left; padding: 5px; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+			<td style="width:295px; font-size: 9px; text-align: left; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle;">
 				$value[descripcion]
 			</td>
-			<td style="width:65px; font-size: 8px; text-align: right; padding: 5px; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+			<td style="width:65px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: 500;">
 				$formatPrecioUnit
 			</td>
-			<td style="width:65px; font-size: 8px; text-align: right; padding: 5px; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+			<td style="width:65px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: 500;">
 				$formatSubtotal
 			</td>
-			<td style="width:35px; font-size: 8px; text-align: center; padding: 5px; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+			<td style="width:35px; font-size: 9px; text-align: center; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle;">
 				$getProducto[tipo_iva]
 			</td>
-			<td style="width:70px; font-size: 8px; text-align: right; padding: 5px; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+			<td style="width:70px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: bold;">
 				$formatTotal
 			</td>
 		</tr>
@@ -993,18 +989,18 @@ $formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
 if($imprimoCabeceraDetalle){
 //--------------------- CABECERA DETALLE B | C | X
 $bloqueDetalleCab = <<<EOF
-	<table style="width:100%; border: 1px solid #000; border-collapse: collapse;">
-		<tr style="background-color: #e9ecef;">
-			<td style="width:50px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000; margin-top: 8px;">
+		<tr style="background-color: #343a40;">
+			<td style="width:50px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Cant.
 			</td>			
-			<td style="width:350px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+			<td style="width:350px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Detalle
 			</td>
-			<td style="width:80px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+			<td style="width:80px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
 				Unit.
 			</td>
-			<td style="width:80px; font-size: 8px; text-align: center; padding: 6px; border: 1px solid #000; font-weight: bold;">
+			<td style="width:80px; font-size: 9px; text-align: center; padding: 8px; font-weight: bold; color: #ffffff;">
 				Total
 			</td>
 		</tr>
@@ -1016,18 +1012,18 @@ $imprimoCabeceraDetalle = false;
 }
 
 $bloqueDetalle = <<<EOF
-	<table style="width:100%; border-collapse: collapse;">
-	    <tr>
-			<td style="width:50px; font-size: 8px; text-align: center; padding: 5px; border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+	<table cellpadding="0" cellspacing="0" style="width:100%;">
+	    <tr style="background-color: #ffffff;">
+			<td style="width:50px; font-size: 9px; text-align: center; padding: 7px; border-left: 2px solid #000; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle;">
 				$formatCantidad
 			</td>			
-			<td style="width:350px; font-size: 8px; text-align: left; padding: 5px; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+			<td style="width:350px; font-size: 9px; text-align: left; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle;">
 				$value[descripcion]
 			</td>
-			<td style="width:80px; font-size: 8px; text-align: right; padding: 5px; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+			<td style="width:80px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: 500;">
 				$formatPrecioUnit
 			</td>
-			<td style="width:80px; font-size: 8px; text-align: right; padding: 5px; border-right: 1px solid #000; border-bottom: 1px solid #000;">
+			<td style="width:80px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: bold;">
 				$formatTotal
 			</td>
 		</tr>
