@@ -9,9 +9,10 @@
 -- ================================================================
 -- IMPORTANTE: Hacer backup antes de ejecutar
 -- ================================================================
+-- NOTA: Si ejecutas desde phpMyAdmin, ejecuta cada sección por separado
+-- ================================================================
 
 SET @inicio = NOW();
-SET @mensajes = '';
 
 -- ================================================================
 -- PASO 1: VERIFICAR PREREQUISITOS
@@ -30,7 +31,7 @@ SELECT
     CASE 
         WHEN @existe_ventas > 0 THEN '✅ Tabla ventas existe'
         ELSE '❌ ERROR: Tabla ventas no existe'
-    END AS estado;
+    END AS estado_ventas;
 
 -- Verificar que existe la tabla productos
 SET @existe_productos = (
@@ -44,10 +45,9 @@ SELECT
     CASE 
         WHEN @existe_productos > 0 THEN '✅ Tabla productos existe'
         ELSE '❌ ERROR: Tabla productos no existe'
-    END AS estado;
+    END AS estado_productos;
 
 -- Contar ventas con productos en JSON (solo si la tabla existe)
--- Usar consulta preparada para evitar error si la tabla no existe
 SET @sql_ventas = IF(@existe_ventas > 0,
     'SELECT COUNT(*) as ventas_con_json, ''Ventas que tienen productos en formato JSON'' as descripcion FROM ventas WHERE productos IS NOT NULL AND productos != '''' AND productos != ''[]'' AND JSON_VALID(productos) = 1',
     'SELECT 0 as ventas_con_json, ''Tabla ventas no existe'' as descripcion'
@@ -61,9 +61,6 @@ DEALLOCATE PREPARE stmt;
 -- PASO 2: CREAR TABLA productos_venta
 -- ================================================================
 SELECT '=== PASO 2: Creando tabla productos_venta ===' AS paso;
-
--- Eliminar tabla si existe (CUIDADO: solo si quieres empezar de cero)
--- DROP TABLE IF EXISTS productos_venta;
 
 CREATE TABLE IF NOT EXISTS `productos_venta` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -102,53 +99,80 @@ SELECT '✅ Índices creados' AS resultado;
 -- ================================================================
 SELECT '=== PASO 4: Creando foreign keys ===' AS paso;
 
--- Deshabilitar temporalmente FK checks para evitar problemas durante migración
+-- Guardar estado actual de FK checks
+SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS;
 SET FOREIGN_KEY_CHECKS = 0;
 
--- Eliminar FK si existen (para recrearlas)
-ALTER TABLE `productos_venta` 
-DROP FOREIGN KEY IF EXISTS `fk_productos_venta_venta`;
+-- Verificar si existen las FK antes de intentar eliminarlas
+SET @fk_venta_name = (
+    SELECT CONSTRAINT_NAME
+    FROM information_schema.KEY_COLUMN_USAGE
+    WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'productos_venta'
+    AND CONSTRAINT_NAME = 'fk_productos_venta_venta'
+    LIMIT 1
+);
 
-ALTER TABLE `productos_venta` 
-DROP FOREIGN KEY IF EXISTS `fk_productos_venta_producto`;
+SET @fk_producto_name = (
+    SELECT CONSTRAINT_NAME
+    FROM information_schema.KEY_COLUMN_USAGE
+    WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'productos_venta'
+    AND CONSTRAINT_NAME = 'fk_productos_venta_producto'
+    LIMIT 1
+);
 
--- Crear FK a ventas
-ALTER TABLE `productos_venta`
-ADD CONSTRAINT `fk_productos_venta_venta` 
-FOREIGN KEY (`id_venta`) 
-REFERENCES `ventas` (`id`) 
-ON DELETE CASCADE 
-ON UPDATE CASCADE;
+-- Eliminar FK a ventas si existe
+SET @sql_drop_fk1 = IF(@fk_venta_name IS NOT NULL,
+    CONCAT('ALTER TABLE productos_venta DROP FOREIGN KEY ', @fk_venta_name),
+    'SELECT ''FK venta no existe'' AS mensaje'
+);
 
--- Crear FK a productos
-ALTER TABLE `productos_venta`
-ADD CONSTRAINT `fk_productos_venta_producto` 
-FOREIGN KEY (`id_producto`) 
-REFERENCES `productos` (`id`) 
-ON DELETE RESTRICT 
-ON UPDATE CASCADE;
+PREPARE stmt_drop1 FROM @sql_drop_fk1;
+EXECUTE stmt_drop1;
+DEALLOCATE PREPARE stmt_drop1;
+
+-- Eliminar FK a productos si existe
+SET @sql_drop_fk2 = IF(@fk_producto_name IS NOT NULL,
+    CONCAT('ALTER TABLE productos_venta DROP FOREIGN KEY ', @fk_producto_name),
+    'SELECT ''FK producto no existe'' AS mensaje'
+);
+
+PREPARE stmt_drop2 FROM @sql_drop_fk2;
+EXECUTE stmt_drop2;
+DEALLOCATE PREPARE stmt_drop2;
+
+-- Crear FK a ventas (solo si la tabla existe)
+SET @sql_fk_venta = IF(@existe_ventas > 0,
+    'ALTER TABLE productos_venta ADD CONSTRAINT fk_productos_venta_venta FOREIGN KEY (id_venta) REFERENCES ventas (id) ON DELETE CASCADE ON UPDATE CASCADE',
+    'SELECT ''Tabla ventas no existe, omitiendo FK'' AS mensaje'
+);
+
+PREPARE stmt_fk_venta FROM @sql_fk_venta;
+EXECUTE stmt_fk_venta;
+DEALLOCATE PREPARE stmt_fk_venta;
+
+-- Crear FK a productos (solo si la tabla existe)
+SET @sql_fk_producto = IF(@existe_productos > 0,
+    'ALTER TABLE productos_venta ADD CONSTRAINT fk_productos_venta_producto FOREIGN KEY (id_producto) REFERENCES productos (id) ON DELETE RESTRICT ON UPDATE CASCADE',
+    'SELECT ''Tabla productos no existe, omitiendo FK'' AS mensaje'
+);
+
+PREPARE stmt_fk_producto FROM @sql_fk_producto;
+EXECUTE stmt_fk_producto;
+DEALLOCATE PREPARE stmt_fk_producto;
 
 -- Rehabilitar FK checks
-SET FOREIGN_KEY_CHECKS = 1;
+SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS;
 
 SELECT '✅ Foreign keys creadas' AS resultado;
 
 -- ================================================================
--- PASO 5: DIAGNOSTICAR PRODUCTOS INEXISTENTES (Opcional)
+-- PASO 5: MIGRAR VENTAS PENDIENTES
 -- ================================================================
-SELECT '=== PASO 5: Diagnosticando productos inexistentes ===' AS paso;
+SELECT '=== PASO 5: Migrando ventas pendientes ===' AS paso;
 
--- Solo diagnosticar si las tablas existen
--- Nota: Este paso es opcional y puede omitirse si hay problemas
-SELECT '⚠️ Diagnóstico de productos inexistentes omitido (ejecutar manualmente si es necesario)' AS nota;
-
-
--- ================================================================
--- PASO 6: MIGRAR VENTAS PENDIENTES
--- ================================================================
-SELECT '=== PASO 6: Migrando ventas pendientes ===' AS paso;
-
--- Contar ventas pendientes antes de migrar (solo si la tabla existe)
+-- Contar ventas pendientes antes de migrar
 SET @sql_pendientes = IF(@existe_ventas > 0,
     CONCAT('SELECT COUNT(*) as ventas_pendientes_antes, ''Ventas que necesitan migración'' as descripcion FROM ventas v WHERE v.productos IS NOT NULL AND v.productos != '''' AND v.productos != ''[]'' AND JSON_VALID(v.productos) = 1 AND NOT EXISTS (SELECT 1 FROM productos_venta pv WHERE pv.id_venta = v.id)'),
     'SELECT 0 as ventas_pendientes_antes, ''Tabla ventas no existe'' as descripcion'
@@ -252,16 +276,23 @@ END$$
 
 DELIMITER ;
 
--- Ejecutar migración
-CALL migrar_ventas_pendientes_completo();
+-- Ejecutar migración (solo si la tabla ventas existe)
+SET @sql_call = IF(@existe_ventas > 0,
+    'CALL migrar_ventas_pendientes_completo()',
+    'SELECT ''Tabla ventas no existe, omitiendo migración'' AS mensaje'
+);
+
+PREPARE stmt_call FROM @sql_call;
+EXECUTE stmt_call;
+DEALLOCATE PREPARE stmt_call;
 
 -- Limpiar procedimiento
 DROP PROCEDURE IF EXISTS migrar_ventas_pendientes_completo;
 
 -- ================================================================
--- PASO 7: VERIFICACIÓN FINAL
+-- PASO 6: VERIFICACIÓN FINAL
 -- ================================================================
-SELECT '=== PASO 7: Verificación final ===' AS paso;
+SELECT '=== PASO 6: Verificación final ===' AS paso;
 
 -- 1. Total de registros en productos_venta
 SELECT 
@@ -287,9 +318,6 @@ DEALLOCATE PREPARE stmt_pendientes_final;
 
 -- 4. Verificar integridad de índices
 SELECT 
-    'Verificando índices...' AS verificacion;
-    
-SELECT 
     INDEX_NAME,
     COLUMN_NAME,
     SEQ_IN_INDEX
@@ -299,9 +327,6 @@ AND TABLE_NAME = 'productos_venta'
 ORDER BY INDEX_NAME, SEQ_IN_INDEX;
 
 -- 5. Verificar foreign keys
-SELECT 
-    'Verificando foreign keys...' AS verificacion;
-    
 SELECT 
     CONSTRAINT_NAME,
     TABLE_NAME,
@@ -329,6 +354,3 @@ SELECT
     '=== MIGRACIÓN COMPLETADA ===' AS titulo,
     TIMESTAMPDIFF(SECOND, @inicio, NOW()) AS segundos_transcurridos,
     NOW() AS fecha_finalizacion;
-
--- Limpiar tabla temporal
-DROP TEMPORARY TABLE IF EXISTS temp_productos_inexistentes;
