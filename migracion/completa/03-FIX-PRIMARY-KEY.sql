@@ -39,7 +39,38 @@ SELECT
     END AS estado_pk;
 
 -- Si la tabla existe pero no tiene PRIMARY KEY, corregir
-IF @tabla_existe > 0 AND @tiene_pk = 0 THEN
+-- Usar procedimiento almacenado temporal para lógica condicional
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS fix_primary_key_productos_venta$$
+
+CREATE PROCEDURE fix_primary_key_productos_venta()
+BEGIN
+    DECLARE v_tabla_existe INT;
+    DECLARE v_tiene_pk INT;
+    DECLARE v_hay_ceros INT;
+    DECLARE v_max_id INT;
+    DECLARE v_next_id INT;
+    DECLARE v_counter INT DEFAULT 0;
+    
+    -- Verificar si la tabla existe
+    SET v_tabla_existe = (
+        SELECT COUNT(*) 
+        FROM information_schema.tables 
+        WHERE table_schema = DATABASE() 
+        AND table_name = 'productos_venta'
+    );
+    
+    -- Verificar si tiene PRIMARY KEY
+    SET v_tiene_pk = (
+        SELECT COUNT(*) 
+        FROM information_schema.table_constraints 
+        WHERE table_schema = DATABASE() 
+        AND table_name = 'productos_venta'
+        AND constraint_type = 'PRIMARY KEY'
+    );
+    
+    IF v_tabla_existe > 0 AND v_tiene_pk = 0 THEN
     -- Verificar si hay datos con id = 0
     SET @hay_ceros = (
         SELECT COUNT(*) 
