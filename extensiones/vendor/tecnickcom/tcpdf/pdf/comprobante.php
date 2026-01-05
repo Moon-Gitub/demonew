@@ -472,200 +472,79 @@ $bloqueCabeceraOriginal = <<<EOF
 	</table>
 EOF;
 
-//RECORRO TODOS LOS PRODUCTOS PARA ARMAR DETALLE
+// CONSTRUIR TABLA DE PRODUCTOS COMPLETA
+$tablaProductos = '';
+$filasProductos = '';
+
+// Determinar columnas según tipo de comprobante
+$esTipoA = ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4);
+
+// Construir encabezado de tabla
+if($esTipoA) {
+    $tablaProductos = '<table border="1" cellpadding="4" cellspacing="0" style="width:100%; margin-top: 10px;">
+        <tr style="background-color: #343a40; color: #ffffff;">
+            <td style="width:40px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Cant.</td>
+            <td style="width:250px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Detalle</td>
+            <td style="width:70px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Unit.</td>
+            <td style="width:70px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Subtotal</td>
+            <td style="width:40px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">IVA %</td>
+            <td style="width:70px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Total</td>
+        </tr>';
+} else {
+    $tablaProductos = '<table border="1" cellpadding="4" cellspacing="0" style="width:100%; margin-top: 10px;">
+        <tr style="background-color: #343a40; color: #ffffff;">
+            <td style="width:50px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Cant.</td>
+            <td style="width:350px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Detalle</td>
+            <td style="width:80px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Unit.</td>
+            <td style="width:80px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Total</td>
+        </tr>';
+}
+
+// Construir filas de productos
 foreach ($productos as $key => $value) {
-
-if($nuevaPagina){
-$pdf->AddPage('P', 'A4');
-$numPaginaActual++;
-$pdf->SetY($ubicacionDetalle);
-$nuevaPagina = false;
-if($transportePorPagina != 0){
-$bloqueTransporte = <<<EOF
-    <table>
-		<tr style="font-weight: bold">
-			<td style="width:380px;">
-			</td>
-			<td style="width:90px; font-size:10px; text-align: rigth;">
-				TRANSPORTE: $
-			</td>
-			<td style="width:90px; font-size:10px; text-align: left;">
-				$transportePorPagina
-			</td>
-		</tr>
-	</table>
-EOF;
-$pdf->writeHTML($bloqueTransporte, false, false, false, false, '');
-$transportePorPagina = 0;
-$pdf->SetY($ubicacionDetalle + 7);
+    $getProducto = ControladorProductos::ctrMostrarProductoXId($value["id"]);
+    $formatCantidad = number_format($value["cantidad"], 2, ',', '.');
+    $formatTotal = '$ ' . number_format($value["total"], 2, ',', '.');
+    $precioProducto = isset($value["precio"]) ? $value["precio"] : (isset($value["precio_venta"]) ? $value["precio_venta"] : 0);
     
-}
-$imprimoCabeceraDetalle = true;
-}
-
-///////////////DETALLES
-$getProducto        = ControladorProductos::ctrMostrarProductoXId($value["id"]);
-$formatCantidad     = number_format($value["cantidad"],2,',','.');
-$formatTotal        = '$ ' . number_format($value["total"],2,',','.');
-$subTotalPorPagina += $value["total"];
-
-// Obtener precio (puede venir como "precio" o "precio_venta")
-$precioProducto = isset($value["precio"]) ? $value["precio"] : (isset($value["precio_venta"]) ? $value["precio_venta"] : 0);
-
-//DISEÑO DETALLE DEPENDIENDO DEL TIPO DE COMPROBANTE
-if ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4) {
-
-$formatPrecioUnit   = $precioProducto / (1 + ($getProducto["tipo_iva"] / 100));
-$formatSubtotal     = $formatPrecioUnit * $value["cantidad"];
-$formatPrecioUnit   = '$ ' . number_format($formatPrecioUnit,2,',','.');
-$formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
-
-if($imprimoCabeceraDetalle){
-//---------------------CABECERA DETALLE A
-$bloqueDetalleCab = <<<EOF
-	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000; margin-top: 8px;">
-		<tr style="background-color: #343a40;">
-			<td style="width:35px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
-				Cant.
-			</td>
-			<td style="width:280px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
-				Detalle
-			</td>
-			<td style="width:70px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
-				Unit.
-			</td>
-			<td style="width:70px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
-				Subtotal
-			</td>
-			<td style="width:40px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
-				IVA %
-			</td>
-			<td style="width:65px; font-size: 9px; text-align: center; padding: 8px; font-weight: bold; color: #ffffff;">
-				Total
-			</td>
-		</tr>
-	</table>
-EOF;
-$pdf->writeHTML($bloqueDetalleCab, false, false, false, false, '');
-$imprimoCabeceraDetalle = false;
+    if($esTipoA) {
+        $formatPrecioUnit = $precioProducto / (1 + ($getProducto["tipo_iva"] / 100));
+        $formatSubtotal = $formatPrecioUnit * $value["cantidad"];
+        $formatPrecioUnit = '$ ' . number_format($formatPrecioUnit, 2, ',', '.');
+        $formatSubtotal = '$ ' . number_format($formatSubtotal, 2, ',', '.');
+        
+        $filasProductos .= '<tr>
+            <td style="font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . $formatCantidad . '</td>
+            <td style="font-size: 9px; text-align: left; padding: 6px; vertical-align: middle;">' . htmlspecialchars($value["descripcion"]) . '</td>
+            <td style="font-size: 9px; text-align: right; padding: 6px; vertical-align: middle;">' . $formatPrecioUnit . '</td>
+            <td style="font-size: 9px; text-align: right; padding: 6px; vertical-align: middle;">' . $formatSubtotal . '</td>
+            <td style="font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . $getProducto["tipo_iva"] . '</td>
+            <td style="font-size: 9px; text-align: right; padding: 6px; vertical-align: middle; font-weight: bold;">' . $formatTotal . '</td>
+        </tr>';
+    } else {
+        $formatPrecioUnit = '$ ' . number_format($precioProducto, 2, ',', '.');
+        
+        $filasProductos .= '<tr>
+            <td style="font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . $formatCantidad . '</td>
+            <td style="font-size: 9px; text-align: left; padding: 6px; vertical-align: middle;">' . htmlspecialchars($value["descripcion"]) . '</td>
+            <td style="font-size: 9px; text-align: right; padding: 6px; vertical-align: middle;">' . $formatPrecioUnit . '</td>
+            <td style="font-size: 9px; text-align: right; padding: 6px; vertical-align: middle; font-weight: bold;">' . $formatTotal . '</td>
+        </tr>';
+    }
 }
 
-//--------------------- DETALLE COMPROBANTE A
-$bloqueDetalle = <<<EOF
-	<table cellpadding="0" cellspacing="0" style="width:100%;">
-	    <tr style="background-color: #ffffff;">
-			<td style="width:35px; font-size: 9px; text-align: center; padding: 7px; border-left: 2px solid #000; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle;">
-				$formatCantidad
-			</td>			
-			<td style="width:280px; font-size: 9px; text-align: left; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; word-wrap: break-word;">
-				$value[descripcion]
-			</td>
-			<td style="width:70px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: 500;">
-				$formatPrecioUnit
-			</td>
-			<td style="width:70px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: 500;">
-				$formatSubtotal
-			</td>
-			<td style="width:40px; font-size: 9px; text-align: center; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle;">
-				$getProducto[tipo_iva]
-			</td>
-			<td style="width:65px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: bold;">
-				$formatTotal
-			</td>
-		</tr>
-	</table>
-EOF;
-$pdf->writeHTML($bloqueDetalle, false, false, false, false, '');
+// Cerrar tabla de productos
+$tablaProductos .= $filasProductos . '</table>';
 
-} else {
-
-$formatPrecioUnit   = $precioProducto;
-$formatSubtotal     = $formatPrecioUnit * $value["cantidad"];
-$formatPrecioUnit   = '$ ' . number_format($formatPrecioUnit,2,',','.');
-$formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
-
-if($imprimoCabeceraDetalle){
-//--------------------- CABECERA DETALLE B | C | X
-$bloqueDetalleCab = <<<EOF
-	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000; margin-top: 8px;">
-		<tr style="background-color: #343a40;">
-			<td style="width:50px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
-				Cant.
-			</td>			
-			<td style="width:350px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
-				Detalle
-			</td>
-			<td style="width:80px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
-				Unit.
-			</td>
-			<td style="width:80px; font-size: 9px; text-align: center; padding: 8px; font-weight: bold; color: #ffffff;">
-				Total
-			</td>
-		</tr>
-	</table>
-EOF;
-$pdf->writeHTML($bloqueDetalleCab, false, false, false, false, '');
-$imprimoCabeceraDetalle = false;
-
-}
-
-$bloqueDetalle = <<<EOF
-	<table cellpadding="0" cellspacing="0" style="width:100%;">
-	    <tr style="background-color: #ffffff;">
-			<td style="width:50px; font-size: 9px; text-align: center; padding: 7px; border-left: 2px solid #000; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle;">
-				$formatCantidad
-			</td>			
-			<td style="width:360px; font-size: 9px; text-align: left; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; word-wrap: break-word;">
-				$value[descripcion]
-			</td>
-			<td style="width:75px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: 500;">
-				$formatPrecioUnit
-			</td>
-			<td style="width:75px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: bold;">
-				$formatTotal
-			</td>
-		</tr>
-	</table>
-EOF;
-$pdf->writeHTML($bloqueDetalle, false, false, false, false, '');
-
-}
-
-$valorY = $pdf->GetY();
-
-if($valorY < ($ubicacionFooter - 15) && ($key+1) != $ultimoProducto){
-//Todavia tengo lugar para incluir productos
-} else {
-
-if(isset($productos[$key+1])) {
-$subTotalPorPagina = number_format($subTotalPorPagina,2,',','.');
-$transportePorPagina = $subTotalPorPagina;
-$bloqueSubtotal = <<<EOF
-	<table>
-		<tr style="font-weight: bold">
-			<td style="width:380px;">
-			</td>
-			<td style="width:90px; font-size:10px; text-align: rigth;">
-				SUBTOTAL: $
-			</td>
-			<td style="width:90px; font-size:10px; text-align: left;">
-				$subTotalPorPagina
-			</td>
-		</tr>
-	</table>
-EOF;
-$pdf->writeHTML($bloqueSubtotal, false, false, false, false, '');
-$subTotalPorPagina = 0;
-}
-
-//INCLUYO CABECERA
+// INCLUIR CABECERA
 $pdf->SetY($ubicacionCabecera);
 $pdf->writeHTML($bloqueCabeceraOriginal, false, false, false, false, '');
 
-//$pdf->SetFont('helvetica', '', 8);
-//$pdf->Text(50, 273, 'Pagina 1/2');
+// INCLUIR TABLA DE PRODUCTOS (separada claramente)
+$pdf->SetY($ubicacionDetalle);
+$pdf->writeHTML($tablaProductos, false, false, false, false, '');
 
-//INCLUYO FOOTER
+// INCLUIR FOOTER
 $pdf->SetY($ubicacionFooter);
 
 $ivas = json_decode($respuestaVenta["impuesto_detalle"], true);
@@ -791,267 +670,15 @@ $nuevaPagina = true;
 /*=============================================================================
 -----------------------------------DUPLICADO----------------------------------
 ==============================================================================*/
-$ubicacionCabecera  = 7;
-$ubicacionDetalle   = 80;
-$ubicacionFooter    = 250;
-$datosFact = []; //Array de datos a imprimir
-$detalleEnTabla = ""; //filas en tabla para armar detalle
-$subTotalPorPagina = 0;
-$transportePorPagina = 0;
-$valorY = 0;
-$nuevaPagina = true;
-$imprimoCabeceraDetalle = true;
-$numPaginaActual = 0;
-$ultimoProducto = count($productos);
-
-$bloqueCabeceraDuplicado = <<<EOF
-	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000; border-collapse: collapse;">
-		<tr>
-			<td colspan="3" style="text-align: center; padding: 12px; font-size: 18px; font-weight: bold; background-color: #e9ecef; border: 2px solid #000; border-bottom: 2px solid #000;">
-				DUPLICADO
-			</td>
-		</tr>
-		<tr>
-			<td style="width:45%; text-align: center; padding: 18px; border: 2px solid #000; border-top: none; vertical-align: middle; background-color: #ffffff;">
-				<div style="font-size: 20px; font-weight: bold; color: #212529; line-height: 1.3;">$respEmpresa[razon_social]</div>
-			</td>
-			<td style="width:10%; text-align: center; padding: 15px; border: 2px solid #000; border-top: none; vertical-align: middle; background-color: #f8f9fa;">
-				<div style="font-size: 48px; font-weight: bold; line-height: 1; color: #212529; letter-spacing: -2px;">$tipoVtaLetra</div>
-				<div style="font-size: 9px; margin-top: 5px; color: #6c757d;">$tipoCodigo</div>
-			</td>
-			<td style="width:45%; text-align: center; padding: 18px; border: 2px solid #000; border-top: none; vertical-align: middle; background-color: #ffffff;">
-				$tipoVta
-			</td>
-		</tr>
-		<tr>
-			<td style="width:50%; font-size: 10px; padding: 14px; border: 2px solid #000; border-top: none; vertical-align: top; background-color: #ffffff;">
-				<div style="line-height: 1.9;">
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">Dirección:</span> <span style="color: #212529;">$respEmpresa[domicilio]</span></div>
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">Teléfono:</span> <span style="color: #212529;">$respEmpresa[telefono]</span></div>
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">Localidad:</span> <span style="color: #212529;">$respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</span></div>
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">Cond. I.V.A.:</span> <span style="color: #212529;">$tipoIva</span></div>
-					<div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #dee2e6;"><span style="font-weight: bold; color: #495057; font-size: 9px;">Defensa al Consumidor Mza. 08002226678</span></div>
-				</div>
-			</td>
-			<td colspan="2" style="width:50%; font-size: 10px; padding: 14px; border: 2px solid #000; border-top: none; vertical-align: top; background-color: #ffffff;">
-				<div style="line-height: 1.9;">
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">N° Cbte:</span> <span style="color: #212529; font-weight: bold; font-size: 11px;">$ptoVta - $numCte</span></div>
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">Fecha Emisión:</span> <span style="color: #212529;">$fecEmi</span></div>
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">CUIT:</span> <span style="color: #212529;">$respEmpresa[cuit]</span></div>
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">II.BB.:</span> <span style="color: #212529;">$respEmpresa[numero_iibb]</span></div>
-					<div style="margin-bottom: 5px;"><span style="font-weight: bold; color: #495057;">Inic. Actividad:</span> <span style="color: #212529;">$respEmpresa[inicio_actividades]</span></div>
-				</div>
-			</td>
-		</tr>
-	</table>
-
-	$tieneServicio
-
-	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000; border-collapse: collapse; margin-top: 8px;">
-		<tr>
-			<td style="font-size: 10px; padding: 14px; line-height: 1.9; background-color: #f8f9fa; border: 2px solid #000;">
-				<div style="margin-bottom: 6px;"><span style="font-weight: bold; color: #495057;">Tipo Doc.:</span> <span style="color: #212529;">$tipoDocumento: <b>$respuestaCliente[documento]</b></span> | <span style="font-weight: bold; color: #495057;">Nombre / Razón Social:</span> <span style="color: #212529;">$respuestaCliente[nombre]</span></div>
-				<div style="margin-bottom: 6px;"><span style="font-weight: bold; color: #495057;">Domicilio:</span> <span style="color: #212529;">$respuestaCliente[direccion]</span> | <span style="font-weight: bold; color: #495057;">Condición I.V.A.:</span> <span style="color: #212529;">$tipoIvaCliente</span></div>
-				<div><span style="font-weight: bold; color: #495057;">Condición de Venta:</span> <span style="color: #212529; font-weight: bold;">$condicionVenta</span></div>
-			</td>
-		</tr>
-	</table>
-EOF;
-
-//RECORRO TODOS LOS PRODUCTOS PARA ARMAR DETALLE
-foreach ($productos as $key => $value) {
-
-if($nuevaPagina){
-$pdf->AddPage('P', 'A4');
-$numPaginaActual++;
-$pdf->SetY($ubicacionDetalle);
-$nuevaPagina = false;
-if($transportePorPagina != 0){
-$bloqueTransporte = <<<EOF
-    <table>
-		<tr style="font-weight: bold">
-			<td style="width:380px;">
-			</td>
-			<td style="width:90px; font-size:10px; text-align: rigth;">
-				TRANSPORTE: $
-			</td>
-			<td style="width:90px; font-size:10px; text-align: left;">
-				$transportePorPagina
-			</td>
-		</tr>
-	</table>
-EOF;
-$pdf->writeHTML($bloqueTransporte, false, false, false, false, '');
-$transportePorPagina = 0;
-$pdf->SetY($ubicacionDetalle + 7);
-    
-}
-$imprimoCabeceraDetalle = true;
-}
-
-///////////////DETALLES
-$getProducto        = ControladorProductos::ctrMostrarProductoXId($value["id"]);
-$formatCantidad     = number_format($value["cantidad"],2,',','.');
-$formatTotal        = '$ ' . number_format($value["total"],2,',','.');
-$subTotalPorPagina += $value["total"];
-
-// Obtener precio (puede venir como "precio" o "precio_venta")
-$precioProducto = isset($value["precio"]) ? $value["precio"] : (isset($value["precio_venta"]) ? $value["precio_venta"] : 0);
-
-//DISEÑO DETALLE DEPENDIENDO DEL TIPO DE COMPROBANTE
-if ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4) {
-
-$formatPrecioUnit   = $precioProducto / (1 + ($getProducto["tipo_iva"] / 100));
-$formatSubtotal     = $formatPrecioUnit * $value["cantidad"];
-$formatPrecioUnit   = '$ ' . number_format($formatPrecioUnit,2,',','.');
-$formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
-
-if($imprimoCabeceraDetalle){
-//---------------------CABECERA DETALLE A
-$bloqueDetalleCab = <<<EOF
-	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000; margin-top: 8px;">
-		<tr style="background-color: #343a40;">
-			<td style="width:35px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
-				Cant.
-			</td>
-			<td style="width:280px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
-				Detalle
-			</td>
-			<td style="width:70px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
-				Unit.
-			</td>
-			<td style="width:70px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
-				Subtotal
-			</td>
-			<td style="width:40px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
-				IVA %
-			</td>
-			<td style="width:65px; font-size: 9px; text-align: center; padding: 8px; font-weight: bold; color: #ffffff;">
-				Total
-			</td>
-		</tr>
-	</table>
-EOF;
-$pdf->writeHTML($bloqueDetalleCab, false, false, false, false, '');
-$imprimoCabeceraDetalle = false;
-}
-
-//--------------------- DETALLE COMPROBANTE A
-$bloqueDetalle = <<<EOF
-	<table cellpadding="0" cellspacing="0" style="width:100%;">
-	    <tr style="background-color: #ffffff;">
-			<td style="width:35px; font-size: 9px; text-align: center; padding: 7px; border-left: 2px solid #000; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle;">
-				$formatCantidad
-			</td>			
-			<td style="width:280px; font-size: 9px; text-align: left; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; word-wrap: break-word;">
-				$value[descripcion]
-			</td>
-			<td style="width:70px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: 500;">
-				$formatPrecioUnit
-			</td>
-			<td style="width:70px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: 500;">
-				$formatSubtotal
-			</td>
-			<td style="width:40px; font-size: 9px; text-align: center; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle;">
-				$getProducto[tipo_iva]
-			</td>
-			<td style="width:65px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: bold;">
-				$formatTotal
-			</td>
-		</tr>
-	</table>
-EOF;
-$pdf->writeHTML($bloqueDetalle, false, false, false, false, '');
-
-} else {
-    
-$formatPrecioUnit   = $precioProducto;
-$formatSubtotal     = $formatPrecioUnit * $value["cantidad"];
-$formatPrecioUnit   = '$ ' . number_format($formatPrecioUnit,2,',','.');
-$formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
-
-if($imprimoCabeceraDetalle){
-//--------------------- CABECERA DETALLE B | C | X
-$bloqueDetalleCab = <<<EOF
-	<table cellpadding="0" cellspacing="0" style="width:100%; border: 2px solid #000; margin-top: 8px;">
-		<tr style="background-color: #343a40;">
-			<td style="width:50px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
-				Cant.
-			</td>			
-			<td style="width:350px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
-				Detalle
-			</td>
-			<td style="width:80px; font-size: 9px; text-align: center; padding: 8px; border-right: 2px solid #000; font-weight: bold; color: #ffffff;">
-				Unit.
-			</td>
-			<td style="width:80px; font-size: 9px; text-align: center; padding: 8px; font-weight: bold; color: #ffffff;">
-				Total
-			</td>
-		</tr>
-	</table>
-EOF;
-$pdf->writeHTML($bloqueDetalleCab, false, false, false, false, '');
-$imprimoCabeceraDetalle = false;
-
-}
-
-$bloqueDetalle = <<<EOF
-	<table cellpadding="0" cellspacing="0" style="width:100%;">
-	    <tr style="background-color: #ffffff;">
-			<td style="width:50px; font-size: 9px; text-align: center; padding: 7px; border-left: 2px solid #000; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle;">
-				$formatCantidad
-			</td>			
-			<td style="width:360px; font-size: 9px; text-align: left; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; word-wrap: break-word;">
-				$value[descripcion]
-			</td>
-			<td style="width:75px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: 500;">
-				$formatPrecioUnit
-			</td>
-			<td style="width:75px; font-size: 9px; text-align: right; padding: 7px; border-right: 2px solid #000; border-bottom: 1px solid #dee2e6; vertical-align: middle; font-weight: bold;">
-				$formatTotal
-			</td>
-		</tr>
-	</table>
-EOF;
-$pdf->writeHTML($bloqueDetalle, false, false, false, false, '');
-
-}
-
-$valorY = $pdf->GetY();
-
-if($valorY < ($ubicacionFooter - 15) && ($key+1) != $ultimoProducto){
-//Todavia tengo lugar para incluir productos
-} else {
-
-if(isset($productos[$key+1])) {
-$subTotalPorPagina = number_format($subTotalPorPagina,2,',','.');
-$transportePorPagina = $subTotalPorPagina;
-$bloqueSubtotal = <<<EOF
-	<table>
-		<tr style="font-weight: bold">
-			<td style="width:380px;">
-			</td>
-			<td style="width:90px; font-size:10px; text-align: rigth;">
-				SUBTOTAL: $
-			</td>
-			<td style="width:90px; font-size:10px; text-align: left;">
-				$subTotalPorPagina
-			</td>
-		</tr>
-	</table>
-EOF;
-$pdf->writeHTML($bloqueSubtotal, false, false, false, false, '');
-$subTotalPorPagina = 0;
-}
-
-//INCLUYO CABECERA
+// INCLUIR CABECERA DUPLICADO
 $pdf->SetY($ubicacionCabecera);
 $pdf->writeHTML($bloqueCabeceraDuplicado, false, false, false, false, '');
 
-//$pdf->SetFont('helvetica', '', 8);
-//$pdf->Text(50, 273, 'Pagina 1/2');
+// INCLUIR TABLA DE PRODUCTOS (reutilizar la misma tabla construida)
+$pdf->SetY($ubicacionDetalle);
+$pdf->writeHTML($tablaProductos, false, false, false, false, '');
 
-//INCLUYO FOOTER
+// INCLUIR FOOTER
 $pdf->SetY($ubicacionFooter);
 
 $ivas = json_decode($respuestaVenta["impuesto_detalle"], true);
