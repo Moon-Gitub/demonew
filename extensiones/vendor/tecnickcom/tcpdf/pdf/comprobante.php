@@ -411,9 +411,9 @@ if($respuestaVenta["estado"] == 2){
 
 
 $bloqueCabeceraOriginal = <<<EOF
-	<table border="1">
+	<table style="border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000;">
 		<tr>
-			<td style="width:560px; text-align: center;"> ORIGINAL</td>
+			<td style="width:560px; text-align: center; padding: 5px; border-top: none;"> ORIGINAL</td>
 		</tr>
 	</table>
 	<table border="1" >
