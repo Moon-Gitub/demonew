@@ -122,38 +122,6 @@ public function traerImpresionComprobante(){
 
 error_log("Iniciando traerImpresionComprobante()");
 
-try {
-    error_log("Obteniendo datos de empresa...");
-    $respEmpresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', 1);
-    error_log("Datos de empresa obtenidos: " . (is_array($respEmpresa) ? 'SÍ' : 'NO'));
-    
-    // Validar que se obtuvo la empresa
-    if(!$respEmpresa || empty($respEmpresa)) {
-        error_log("Error comprobante.php: No se pudo obtener la información de la empresa");
-        http_response_code(500);
-        die('Error: No se pudo obtener la información de la empresa');
-    }
-    
-    //REQUERIMOS LA CLASE TCPDF
-    if(!class_exists('TCPDF')) {
-        error_log("Error comprobante.php: La clase TCPDF no está disponible");
-        http_response_code(500);
-        die('Error: La clase TCPDF no está disponible');
-    }
-    
-    $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-} catch(Exception $e) {
-    error_log("Error comprobante.php en inicialización: " . $e->getMessage());
-    http_response_code(500);
-    die('Error al inicializar el PDF: ' . $e->getMessage());
-}
-// Configuración del documento
-$pdf->SetCreator('Posmoon');
-$pdf->SetTitle($respEmpresa["razon_social"]);
-
-$pdf->setPrintHeader(false);
-$pdf->setPrintFooter(false);
-
 $tiposCbtes = array(
 0 => 'X',
 1 => 'Factura A',
@@ -264,9 +232,68 @@ try {
     die('Error al obtener los datos de la venta: ' . $e->getMessage());
 }
 
+
+
+
+
+try {
+
+    error_log("Obteniendo datos de empresa...");
+
+    $respEmpresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', $respuestaVenta["id_empresa"]);
+
+    error_log("Datos de empresa obtenidos: " . (is_array($respEmpresa) ? 'SÍ' : 'NO'));
+
+    
+
+    // Validar que se obtuvo la empresa
+
+    if(!$respEmpresa || empty($respEmpresa)) {
+
+        error_log("Error comprobante.php: No se pudo obtener la información de la empresa");
+
+        http_response_code(500);
+
+        die('Error: No se pudo obtener la información de la empresa');
+
+    }
+
+    
+
+    //REQUERIMOS LA CLASE TCPDF
+
+    if(!class_exists('TCPDF')) {
+
+        error_log("Error comprobante.php: La clase TCPDF no está disponible");
+
+        http_response_code(500);
+
+        die('Error: La clase TCPDF no está disponible');
+
+    }
+
+    
+
+    $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+} catch(Exception $e) {
+
+    error_log("Error comprobante.php en inicialización: " . $e->getMessage());
+
+    http_response_code(500);
+
+    die('Error al inicializar el PDF: ' . $e->getMessage());
+
+}
+
+
+
 $tipoDocumento = isset($arrTipoDocumento[$respuestaCliente["tipo_documento"]]) ? $arrTipoDocumento[$respuestaCliente["tipo_documento"]] : "(no definido)";
+
 $tipoIva = isset($condIva[$respEmpresa["condicion_iva"]]) ? $condIva[$respEmpresa["condicion_iva"]] : "(no definido)";
+
 $tipoIvaCliente = isset($condIva[$respuestaCliente["condicion_iva"]]) ? $condIva[$respuestaCliente["condicion_iva"]] : "(no definido)";
+
 try {
     $fecha = isset($respuestaVenta["fecha"]) ? substr($respuestaVenta["fecha"],0,-8) : date("Y-m-d");
     $fecha = date("d-m-Y",strtotime($fecha));
