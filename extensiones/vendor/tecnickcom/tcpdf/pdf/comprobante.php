@@ -275,6 +275,15 @@ try {
     
 
     $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+    
+    // Configuración del documento
+    $pdf->SetCreator('Posmoon');
+    $pdf->SetTitle($respEmpresa["razon_social"]);
+    $pdf->setPrintHeader(false);
+    $pdf->setPrintFooter(false);
+    
+    // Agregar primera página
+    $pdf->AddPage('P', 'A4');
 
 } catch(Exception $e) {
 
