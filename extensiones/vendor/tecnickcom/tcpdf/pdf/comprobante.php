@@ -284,6 +284,15 @@ try {
     
     // Agregar primera página
     $pdf->AddPage('P', 'A4');
+    
+    // Configurar márgenes para el borde
+    $pdf->SetMargins(5, 5, 5);
+    $pdf->SetAutoPageBreak(false, 0);
+    
+    // Dibujar borde alrededor de toda la página
+    $pdf->SetLineWidth(2);
+    $pdf->SetDrawColor(255, 20, 147); // Color rosa/magenta
+    $pdf->Rect(5, 5, 200, 287, 'D'); // Borde alrededor de toda la página A4
 
 } catch(Exception $e) {
 
@@ -392,9 +401,9 @@ if(isset($respEmpresa["logo"]) && $respEmpresa["logo"] != ""){
 	$razonSocial = $respEmpresa["razon_social"];
 }*/
 
-$ubicacionCabecera  = 7;
-$ubicacionDetalle   = 80;
-$ubicacionFooter    = 250;
+$ubicacionCabecera  = 10;
+$ubicacionDetalle   = 85;
+$ubicacionFooter    = 240;
 $datosFact = []; //Array de datos a imprimir
 $detalleEnTabla = ""; //filas en tabla para armar detalle
 $subTotalPorPagina = 0;
@@ -595,11 +604,23 @@ $pdf->writeHTML($bloqueCabeceraOriginal, false, false, false, false, '');
 $pdf->SetY($ubicacionDetalle);
 $pdf->writeHTML($tablaProductos, false, false, false, false, '');
 
-// Verificar que no se haya excedido el límite de la página antes de agregar footer
+// Obtener posición Y después de la tabla de productos
 $currentY = $pdf->GetY();
-if($currentY > 250) {
+
+// Calcular posición del footer: después de la tabla + espacio adicional
+$espacioEntreTablaYFooter = 15; // Espacio adicional entre tabla y footer
+$ubicacionFooterCalculada = $currentY + $espacioEntreTablaYFooter;
+
+// Verificar que no se haya excedido el límite de la página antes de agregar footer
+if($ubicacionFooterCalculada > 280) {
     $pdf->AddPage('P', 'A4');
-    $ubicacionFooter = 7;
+    // Dibujar borde en nueva página
+    $pdf->SetLineWidth(2);
+    $pdf->SetDrawColor(255, 20, 147);
+    $pdf->Rect(5, 5, 200, 287, 'D');
+    $ubicacionFooter = 10;
+} else {
+    $ubicacionFooter = $ubicacionFooterCalculada;
 }
 
 // INCLUIR FOOTER
@@ -720,9 +741,13 @@ $pdf->writeHTML($bloqueDatosFact, false, false, false, false, '');
 ==============================================================================*/
 // Agregar nueva página para duplicado
 $pdf->AddPage('P', 'A4');
-$ubicacionCabecera = 7;
-$ubicacionDetalle = 80;
-$ubicacionFooter = 250;
+// Dibujar borde en nueva página
+$pdf->SetLineWidth(2);
+$pdf->SetDrawColor(255, 20, 147);
+$pdf->Rect(5, 5, 200, 287, 'D');
+$ubicacionCabecera = 10;
+$ubicacionDetalle = 85;
+$ubicacionFooter = 240;
 
 // INCLUIR CABECERA DUPLICADO
 $pdf->SetY($ubicacionCabecera);
@@ -732,11 +757,23 @@ $pdf->writeHTML($bloqueCabeceraDuplicado, false, false, false, false, '');
 $pdf->SetY($ubicacionDetalle);
 $pdf->writeHTML($tablaProductos, false, false, false, false, '');
 
-// Verificar que no se haya excedido el límite de la página antes de agregar footer
+// Obtener posición Y después de la tabla de productos
 $currentY = $pdf->GetY();
-if($currentY > 250) {
+
+// Calcular posición del footer: después de la tabla + espacio adicional
+$espacioEntreTablaYFooter = 15; // Espacio adicional entre tabla y footer
+$ubicacionFooterCalculada = $currentY + $espacioEntreTablaYFooter;
+
+// Verificar que no se haya excedido el límite de la página antes de agregar footer
+if($ubicacionFooterCalculada > 280) {
     $pdf->AddPage('P', 'A4');
-    $ubicacionFooter = 7;
+    // Dibujar borde en nueva página
+    $pdf->SetLineWidth(2);
+    $pdf->SetDrawColor(255, 20, 147);
+    $pdf->Rect(5, 5, 200, 287, 'D');
+    $ubicacionFooter = 10;
+} else {
+    $ubicacionFooter = $ubicacionFooterCalculada;
 }
 
 // INCLUIR FOOTER DUPLICADO (mismo formato que original)
