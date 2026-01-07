@@ -707,22 +707,22 @@ if ($facturada && isset($jsonQRBase64) && !empty($jsonQRBase64)) {
 $bloqueDatosFact = <<<EOF
 	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
 		<tr>
-			<td style="width:80px; vertical-align: top;">
+			<td style="width:15%; vertical-align: top;">
 				 <!--ACA VA CODIGO QR -->
 			</td>
-			<td style="width:300px; font-size:9px; text-align: left; padding: 8px; vertical-align: top;">
+			<td style="width:40%; font-size:9px; text-align: left; padding: 8px; vertical-align: top;">
 				$cbteBoCAutorizado
 				<div style="font-size: 9px; font-style:italic; text-align:right; margin-top: 5px;">
 					PAGINA 1
 				</div>
 			</td>
-			<td style="width:110px; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
+			<td style="width:22%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
 				$leyendaArcaB
 				SUBTOTAL: $<br>
 				DESCUENTO: $<br>
                 TOTAL: $<br>
 			</td>
-			<td style="width:70px; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
+			<td style="width:23%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
 				$ivasAcumuladosB
 				$subTotal<br>
 				$descuentos<br>
@@ -861,22 +861,22 @@ if ($facturada && isset($jsonQRBase64) && !empty($jsonQRBase64)) {
 $bloqueDatosFact = <<<EOF
 	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
 		<tr>
-			<td style="width:80px; vertical-align: top;">
+			<td style="width:15%; vertical-align: top;">
 				 <!--ACA VA CODIGO QR -->
 			</td>
-			<td style="width:300px; font-size:9px; text-align: left; padding: 8px; vertical-align: top;">
+			<td style="width:40%; font-size:9px; text-align: left; padding: 8px; vertical-align: top;">
 				$cbteBoCAutorizado
 				<div style="font-size: 9px; font-style:italic; text-align:right; margin-top: 5px;">
 					PAGINA 1
 				</div>
 			</td>
-			<td style="width:110px; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
+			<td style="width:22%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
 				$leyendaArcaB
 				SUBTOTAL: $<br>
 				DESCUENTO: $<br>
                 TOTAL: $<br>
 			</td>
-			<td style="width:70px; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
+			<td style="width:23%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
 				$ivasAcumuladosB
 				$subTotal<br>
 				$descuentos<br>
