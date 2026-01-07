@@ -327,10 +327,10 @@ try {
     http_response_code(500);
     die('Error al procesar los productos: ' . $e->getMessage());
 }
-$total = number_format($respuestaVenta["total"],2, ',', '.');
-$observaciones = isset($respuestaVenta["observaciones"]) ? $respuestaVenta["observaciones"] : '';
-$subTotal = number_format($respuestaVenta["neto"],2, ',', '.');
-$neto_grav = number_format($respuestaVenta["neto_gravado"],2, ',', '.');
+$total = number_format(isset($respuestaVenta["total"]) ? $respuestaVenta["total"] : 0, 2, ',', '.');
+$observaciones = isset($respuestaVenta["observaciones"]) ? htmlspecialchars($respuestaVenta["observaciones"], ENT_QUOTES, 'UTF-8') : '';
+$subTotal = number_format(isset($respuestaVenta["neto"]) ? $respuestaVenta["neto"] : 0, 2, ',', '.');
+$neto_grav = number_format(isset($respuestaVenta["neto_gravado"]) ? $respuestaVenta["neto_gravado"] : 0, 2, ',', '.');
 $jsnPago = json_decode($respuestaVenta["metodo_pago"], true);
 if(!is_array($jsnPago)) {
     $jsnPago = array();
@@ -352,16 +352,19 @@ $cae ="-";
 } else {
 
 $factura = ControladorVentas::ctrVentaFacturadaDatos($respuestaVenta["id"]);
-$jsonQR = '{"ver":1,"fecha":"'.date('Y-m-d', strtotime($respuestaVenta["fecha"])).'","cuit":'.$respEmpresa["cuit"].',"ptoVta":'.$respuestaVenta["pto_vta"].',"tipoCmp":'.$respuestaVenta["cbte_tipo"].',"nroCmp":'.$factura["nro_cbte"].',"importe":'.$respuestaVenta["total"].',"moneda":"PES","ctz":1,"tipoDocRec":'.$respuestaCliente["tipo_documento"].',"nroDocRec":'.$respuestaCliente["documento"].',"tipoCodAut":"E","codAut":'.$factura["cae"].'}';
+$nroCbte = isset($factura["nro_cbte"]) ? $factura["nro_cbte"] : 0;
+$caeFactura = isset($factura["cae"]) ? $factura["cae"] : '';
+$fecVtoCae = isset($factura["fec_vto_cae"]) ? $factura["fec_vto_cae"] : '';
+$jsonQR = '{"ver":1,"fecha":"'.date('Y-m-d', strtotime($respuestaVenta["fecha"])).'","cuit":'.$respEmpresa["cuit"].',"ptoVta":'.$respuestaVenta["pto_vta"].',"tipoCmp":'.$respuestaVenta["cbte_tipo"].',"nroCmp":'.$nroCbte.',"importe":'.$respuestaVenta["total"].',"moneda":"PES","ctz":1,"tipoDocRec":'.$respuestaCliente["tipo_documento"].',"nroDocRec":'.$respuestaCliente["documento"].',"tipoCodAut":"E","codAut":'.$caeFactura.'}';
 $jsonQRBase64 = 'https://www.afip.gob.ar/fe/qr/?p=' . base64_encode($jsonQR);
-$tipoVta = $tiposCbtes[$respuestaVenta["cbte_tipo"]];
+$tipoVta = isset($tiposCbtes[$respuestaVenta["cbte_tipo"]]) ? $tiposCbtes[$respuestaVenta["cbte_tipo"]] : 'No definido';
 $tipoCodigo = "Cod. ". $respuestaVenta["cbte_tipo"];
-$tipoVtaLetra = $tiposCbtesLetras[$respuestaVenta["cbte_tipo"]];
-$numCte = str_pad($factura["nro_cbte"], 8, "0", STR_PAD_LEFT);
-$cuit = $respEmpresa["cuit"];
+$tipoVtaLetra = isset($tiposCbtesLetras[$respuestaVenta["cbte_tipo"]]) ? $tiposCbtesLetras[$respuestaVenta["cbte_tipo"]] : 'X';
+$numCte = str_pad($nroCbte, 8, "0", STR_PAD_LEFT);
+$cuit = isset($respEmpresa["cuit"]) ? $respEmpresa["cuit"] : '';
 $tipoComprobante = str_pad($respuestaVenta["cbte_tipo"], 3, "0", STR_PAD_LEFT);
-$cae = $factura["cae"];
-$vtoCae = $factura["fec_vto_cae"];
+$cae = $caeFactura;
+$vtoCae = $fecVtoCae;
 
 }
 
@@ -454,7 +457,7 @@ if($respuestaVenta["cbte_tipo"] == "0") {
 }
 
 $bloqueCabeceraOriginal = <<<EOF
-	<table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse;">
+	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
 		<tr>
 			<td colspan="3" style="text-align: center; padding: 10px; font-size: 16px; font-weight: bold; background-color: #e9ecef;">
 				ORIGINAL
@@ -496,7 +499,7 @@ $bloqueCabeceraOriginal = <<<EOF
 	
 	$tieneServicio
     
-	<table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse; margin-top: 5px;">
+	<table border="1" cellpadding="5" cellspacing="0" style="width:100%; margin-top: 5px;">
 		<tr>
 			<td style="font-size: 10px; padding: 12px; line-height: 1.8; background-color: #f8f9fa;">
 				<div style="margin-bottom: 5px;"><b>Tipo Doc.:</b> $tipoDocumento: <b>$documentoCliente</b> | <b>Nombre / Razón Social:</b> $nombreCliente</div>
@@ -540,23 +543,33 @@ if($esTipoA) {
 
 // Construir filas de productos
 foreach ($productos as $key => $value) {
+    if(!isset($value["id"]) || !isset($value["cantidad"]) || !isset($value["total"])) {
+        continue; // Saltar productos con datos incompletos
+    }
+    
     $getProducto = ControladorProductos::ctrMostrarProductoXId($value["id"]);
+    if(!$getProducto || !is_array($getProducto)) {
+        continue; // Saltar si no se puede obtener el producto
+    }
+    
     $formatCantidad = number_format($value["cantidad"], 2, ',', '.');
     $formatTotal = '$ ' . number_format($value["total"], 2, ',', '.');
-    $precioProducto = isset($value["precio"]) ? $value["precio"] : (isset($value["precio_venta"]) ? $value["precio_venta"] : 0);
+    $precioProducto = isset($value["precio"]) ? floatval($value["precio"]) : (isset($value["precio_venta"]) ? floatval($value["precio_venta"]) : 0);
+    $descripcion = isset($value["descripcion"]) ? htmlspecialchars($value["descripcion"], ENT_QUOTES, 'UTF-8') : '';
+    $tipoIvaProducto = isset($getProducto["tipo_iva"]) ? floatval($getProducto["tipo_iva"]) : 0;
     
     if($esTipoA) {
-        $formatPrecioUnit = $precioProducto / (1 + ($getProducto["tipo_iva"] / 100));
-        $formatSubtotal = $formatPrecioUnit * $value["cantidad"];
+        $formatPrecioUnit = $precioProducto / (1 + ($tipoIvaProducto / 100));
+        $formatSubtotal = $formatPrecioUnit * floatval($value["cantidad"]);
         $formatPrecioUnit = '$ ' . number_format($formatPrecioUnit, 2, ',', '.');
         $formatSubtotal = '$ ' . number_format($formatSubtotal, 2, ',', '.');
         
         $filasProductos .= '<tr>
             <td style="font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . $formatCantidad . '</td>
-            <td style="font-size: 9px; text-align: left; padding: 6px; vertical-align: middle;">' . htmlspecialchars($value["descripcion"]) . '</td>
+            <td style="font-size: 9px; text-align: left; padding: 6px; vertical-align: middle;">' . $descripcion . '</td>
             <td style="font-size: 9px; text-align: right; padding: 6px; vertical-align: middle;">' . $formatPrecioUnit . '</td>
             <td style="font-size: 9px; text-align: right; padding: 6px; vertical-align: middle;">' . $formatSubtotal . '</td>
-            <td style="font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . $getProducto["tipo_iva"] . '</td>
+            <td style="font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . number_format($tipoIvaProducto, 0, ',', '.') . '</td>
             <td style="font-size: 9px; text-align: right; padding: 6px; vertical-align: middle; font-weight: bold;">' . $formatTotal . '</td>
         </tr>';
     } else {
@@ -564,7 +577,7 @@ foreach ($productos as $key => $value) {
         
         $filasProductos .= '<tr>
             <td style="font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . $formatCantidad . '</td>
-            <td style="font-size: 9px; text-align: left; padding: 6px; vertical-align: middle;">' . htmlspecialchars($value["descripcion"]) . '</td>
+            <td style="font-size: 9px; text-align: left; padding: 6px; vertical-align: middle;">' . $descripcion . '</td>
             <td style="font-size: 9px; text-align: right; padding: 6px; vertical-align: middle;">' . $formatPrecioUnit . '</td>
             <td style="font-size: 9px; text-align: right; padding: 6px; vertical-align: middle; font-weight: bold;">' . $formatTotal . '</td>
         </tr>';
