@@ -507,6 +507,9 @@ $bloqueCabeceraOriginal = <<<EOF
 	</table>
 EOF;
 
+// Crear bloque cabecera duplicado (igual que original pero con "DUPLICADO")
+$bloqueCabeceraDuplicado = str_replace('ORIGINAL', 'DUPLICADO', $bloqueCabeceraOriginal);
+
 // CONSTRUIR TABLA DE PRODUCTOS COMPLETA
 $tablaProductos = '';
 $filasProductos = '';
