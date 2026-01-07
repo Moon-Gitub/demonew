@@ -331,10 +331,13 @@ try {
     http_response_code(500);
     die('Error al procesar los productos: ' . $e->getMessage());
 }
-$total = number_format(isset($respuestaVenta["total"]) ? $respuestaVenta["total"] : 0, 2, ',', '.');
+$totalNumero = isset($respuestaVenta["total"]) ? floatval($respuestaVenta["total"]) : 0;
+$total = '$ ' . number_format($totalNumero, 2, ',', '.');
 $observaciones = isset($respuestaVenta["observaciones"]) ? htmlspecialchars($respuestaVenta["observaciones"], ENT_QUOTES, 'UTF-8') : '';
-$subTotal = number_format(isset($respuestaVenta["neto"]) ? $respuestaVenta["neto"] : 0, 2, ',', '.');
-$neto_grav = number_format(isset($respuestaVenta["neto_gravado"]) ? $respuestaVenta["neto_gravado"] : 0, 2, ',', '.');
+$subTotalNumero = isset($respuestaVenta["neto"]) ? floatval($respuestaVenta["neto"]) : 0;
+$subTotal = '$ ' . number_format($subTotalNumero, 2, ',', '.');
+$netoGravNumero = isset($respuestaVenta["neto_gravado"]) ? floatval($respuestaVenta["neto_gravado"]) : 0;
+$neto_grav = '$ ' . number_format($netoGravNumero, 2, ',', '.');
 $jsnPago = json_decode($respuestaVenta["metodo_pago"], true);
 if(!is_array($jsnPago)) {
     $jsnPago = array();
@@ -342,7 +345,8 @@ if(!is_array($jsnPago)) {
 
 //$descuentos = $jsnPago[0]["descuento"] * $respuestaVenta["neto"] / 100;
 //$descuentos = $respuestaVenta["descuento"] * $respuestaVenta["neto"] / 100;
-$descuentos = number_format(isset($respuestaVenta["descuento"]) ? $respuestaVenta["descuento"] : 0, 2, ',','.');
+$descuentosNumero = isset($respuestaVenta["descuento"]) ? floatval($respuestaVenta["descuento"]) : 0;
+$descuentos = '$ ' . number_format($descuentosNumero, 2, ',','.');
 
 if($respuestaVenta["cbte_tipo"] == "0") {
 
@@ -403,6 +407,8 @@ $datosFact = []; //Array de datos a imprimir
 $detalleEnTabla = ""; //filas en tabla para armar detalle
 $subTotalPorPagina = 0;
 $transportePorPagina = 0;
+$transporteAcumulado = 0; // Suma acumulada de totales de páginas anteriores
+$totalPorPagina = []; // Array para almacenar totales por página
 $valorY = 0;
 $nuevaPagina = true;
 $imprimoCabeceraDetalle = true;
@@ -598,6 +604,30 @@ $yDespuesCabecera = $pdf->GetY();
 $espacioEntreCabeceraYTabla = 10; // Espacio entre cabecera y tabla
 $ubicacionDetalle = $yDespuesCabecera + $espacioEntreCabeceraYTabla;
 
+// Obtener número de página actual
+$numPaginaActual = $pdf->getPage();
+
+// Mostrar transporte acumulado solo desde página 2 en adelante
+if($numPaginaActual > 1) {
+    // Calcular transporte acumulado (suma de totales de páginas anteriores)
+    $transporteAcumulado = 0;
+    foreach($totalPorPagina as $pagNum => $totalPag) {
+        if($pagNum < $numPaginaActual) {
+            $transporteAcumulado += $totalPag;
+        }
+    }
+    
+    if($transporteAcumulado > 0) {
+        $transporteFormateado = '$ ' . number_format($transporteAcumulado, 2, ',', '.');
+        $bloqueTransporte = '<div style="font-size: 12px; font-weight: bold; text-align: right; margin-bottom: 10px; color: #000;">
+            Transporte: ' . $transporteFormateado . '
+        </div>';
+        $pdf->SetY($ubicacionDetalle);
+        $pdf->writeHTML($bloqueTransporte, false, false, false, false, '');
+        $ubicacionDetalle = $pdf->GetY() + 5; // Ajustar posición después del transporte
+    }
+}
+
 // INCLUIR TABLA DE PRODUCTOS (separada claramente)
 $pdf->SetY($ubicacionDetalle);
 $pdf->writeHTML($tablaProductos, false, false, false, false, '');
@@ -663,7 +693,7 @@ $bloqueDatosFact = <<<EOF
 					Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación
 				</div>
 				<div style="font-size: 9px; font-style:italic; text-align:right; margin-top: 5px;">
-					PAGINA 1
+					PAGINA ' . $pdf->getPage() . '
 				</div>
 			</td>
 			<td style="width:22%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
@@ -674,11 +704,11 @@ $bloqueDatosFact = <<<EOF
                 TOTAL: $<br>
 			</td>
 			<td style="width:23%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
-				$subTotal<br>
-				$descuentos<br>
-				$neto_grav<br>
-				$ivasDiscriminadosValor
-                $total<br>
+				' . $subTotal . '<br>
+				' . $descuentos . '<br>
+				' . $neto_grav . '<br>
+				' . $ivasDiscriminadosValor . '
+                ' . $total . '<br>
 			</td>
 		</tr>
 	</table>
@@ -713,7 +743,7 @@ $bloqueDatosFact = <<<EOF
 			<td style="width:40%; font-size:9px; text-align: left; padding: 8px; vertical-align: top;">
 				$cbteBoCAutorizado
 				<div style="font-size: 9px; font-style:italic; text-align:right; margin-top: 5px;">
-					PAGINA 1
+					PAGINA ' . $pdf->getPage() . '
 				</div>
 			</td>
 			<td style="width:22%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
@@ -723,10 +753,10 @@ $bloqueDatosFact = <<<EOF
                 TOTAL: $<br>
 			</td>
 			<td style="width:23%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
-				$ivasAcumuladosB
-				$subTotal<br>
-				$descuentos<br>
-                $total<br>
+				' . $ivasAcumuladosB . '
+				' . $subTotal . '<br>
+				' . $descuentos . '<br>
+                ' . $total . '<br>
 			</td>
 		</tr>
 	</table>
@@ -754,6 +784,30 @@ $yDespuesCabecera = $pdf->GetY();
 $espacioEntreCabeceraYTabla = 10; // Espacio entre cabecera y tabla
 $ubicacionDetalle = $yDespuesCabecera + $espacioEntreCabeceraYTabla;
 
+// Obtener número de página actual
+$numPaginaActual = $pdf->getPage();
+
+// Mostrar transporte acumulado solo desde página 2 en adelante
+if($numPaginaActual > 1) {
+    // Calcular transporte acumulado (suma de totales de páginas anteriores)
+    $transporteAcumulado = 0;
+    foreach($totalPorPagina as $pagNum => $totalPag) {
+        if($pagNum < $numPaginaActual) {
+            $transporteAcumulado += $totalPag;
+        }
+    }
+    
+    if($transporteAcumulado > 0) {
+        $transporteFormateado = '$ ' . number_format($transporteAcumulado, 2, ',', '.');
+        $bloqueTransporte = '<div style="font-size: 12px; font-weight: bold; text-align: right; margin-bottom: 10px; color: #000;">
+            Transporte: ' . $transporteFormateado . '
+        </div>';
+        $pdf->SetY($ubicacionDetalle);
+        $pdf->writeHTML($bloqueTransporte, false, false, false, false, '');
+        $ubicacionDetalle = $pdf->GetY() + 5; // Ajustar posición después del transporte
+    }
+}
+
 // INCLUIR TABLA DE PRODUCTOS (reutilizar la misma tabla construida)
 $pdf->SetY($ubicacionDetalle);
 $pdf->writeHTML($tablaProductos, false, false, false, false, '');
@@ -770,6 +824,9 @@ $ubicacionFooterCalculada = $currentY + $espacioEntreTablaYFooter;
 $alturaMaximaPagina = 287; // Altura máxima de página A4 en mm
 $alturaFooter = 30; // Altura estimada del footer
 $ubicacionFooterFinal = $alturaMaximaPagina - $alturaFooter - 10; // 10mm de margen inferior
+
+// Guardar total de esta página (número sin formato) antes de verificar si necesita nueva página
+$totalPorPagina[$pdf->getPage()] = $totalNumero;
 
 if($ubicacionFooterCalculada > $ubicacionFooterFinal) {
     $pdf->AddPage('P', 'A4');
@@ -817,7 +874,7 @@ $bloqueDatosFact = <<<EOF
 					Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación
 				</div>
 				<div style="font-size: 9px; font-style:italic; text-align:right; margin-top: 5px;">
-					PAGINA 1
+					PAGINA ' . $pdf->getPage() . '
 				</div>
 			</td>
 			<td style="width:22%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
@@ -828,11 +885,11 @@ $bloqueDatosFact = <<<EOF
                 TOTAL: $<br>
 			</td>
 			<td style="width:23%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
-				$subTotal<br>
-				$descuentos<br>
-				$neto_grav<br>
-				$ivasDiscriminadosValor
-                $total<br>
+				' . $subTotal . '<br>
+				' . $descuentos . '<br>
+				' . $neto_grav . '<br>
+				' . $ivasDiscriminadosValor . '
+                ' . $total . '<br>
 			</td>
 		</tr>
 	</table>
@@ -867,7 +924,7 @@ $bloqueDatosFact = <<<EOF
 			<td style="width:40%; font-size:9px; text-align: left; padding: 8px; vertical-align: top;">
 				$cbteBoCAutorizado
 				<div style="font-size: 9px; font-style:italic; text-align:right; margin-top: 5px;">
-					PAGINA 1
+					PAGINA ' . $pdf->getPage() . '
 				</div>
 			</td>
 			<td style="width:22%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
@@ -877,10 +934,10 @@ $bloqueDatosFact = <<<EOF
                 TOTAL: $<br>
 			</td>
 			<td style="width:23%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
-				$ivasAcumuladosB
-				$subTotal<br>
-				$descuentos<br>
-                $total<br>
+				' . $ivasAcumuladosB . '
+				' . $subTotal . '<br>
+				' . $descuentos . '<br>
+                ' . $total . '<br>
 			</td>
 		</tr>
 	</table>
