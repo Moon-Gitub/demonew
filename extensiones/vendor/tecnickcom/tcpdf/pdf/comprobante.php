@@ -480,7 +480,7 @@ $bloqueCabeceraOriginal = <<<EOF
 			</td>
 		</tr>
 		<tr>
-			<td style="width:50%; font-size: 10px; padding: 12px; vertical-align: top;">
+			<td style="width:50%; font-size: 10px; padding: 12px; vertical-align: top; border-right: 1px solid #000;">
 				<div style="line-height: 1.8;">
 					<div style="margin-bottom: 4px;"><b>Dirección:</b> $domicilio</div>
 					<div style="margin-bottom: 4px;"><b>Teléfono:</b> $telefono</div>
@@ -524,24 +524,23 @@ $filasProductos = '';
 // Determinar columnas según tipo de comprobante
 $esTipoA = ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4);
 
-// Construir encabezado de tabla
+// Construir encabezado de tabla (alineado con cabecera - ancho total 100%)
 if($esTipoA) {
     $tablaProductos = '<table border="1" cellpadding="4" cellspacing="0" style="width:100%; margin-top: 10px;">
         <tr style="background-color: #343a40; color: #ffffff;">
-            <td style="width:40px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Cant.</td>
-            <td style="width:250px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Detalle</td>
-            <td style="width:70px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Unit.</td>
-            <td style="width:70px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Subtotal</td>
-            <td style="width:40px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">IVA %</td>
-            <td style="width:70px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Total</td>
+            <td style="width:8%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Cant.</td>
+            <td style="width:50%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Detalle</td>
+            <td style="width:14%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Subtotal</td>
+            <td style="width:8%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">IVA %</td>
+            <td style="width:20%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Total</td>
         </tr>';
 } else {
     $tablaProductos = '<table border="1" cellpadding="4" cellspacing="0" style="width:100%; margin-top: 10px;">
         <tr style="background-color: #343a40; color: #ffffff;">
-            <td style="width:50px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Cant.</td>
-            <td style="width:350px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Detalle</td>
-            <td style="width:80px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Unit.</td>
-            <td style="width:80px; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Total</td>
+            <td style="width:10%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Cant.</td>
+            <td style="width:60%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Detalle</td>
+            <td style="width:15%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Unit.</td>
+            <td style="width:15%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Total</td>
         </tr>';
 }
 
@@ -569,21 +568,20 @@ foreach ($productos as $key => $value) {
         $formatSubtotal = '$ ' . number_format($formatSubtotal, 2, ',', '.');
         
         $filasProductos .= '<tr>
-            <td style="font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . $formatCantidad . '</td>
-            <td style="font-size: 9px; text-align: left; padding: 6px; vertical-align: middle;">' . $descripcion . '</td>
-            <td style="font-size: 9px; text-align: right; padding: 6px; vertical-align: middle;">' . $formatPrecioUnit . '</td>
-            <td style="font-size: 9px; text-align: right; padding: 6px; vertical-align: middle;">' . $formatSubtotal . '</td>
-            <td style="font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . number_format($tipoIvaProducto, 0, ',', '.') . '</td>
-            <td style="font-size: 9px; text-align: right; padding: 6px; vertical-align: middle; font-weight: bold;">' . $formatTotal . '</td>
+            <td style="width:8%; font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . $formatCantidad . '</td>
+            <td style="width:50%; font-size: 9px; text-align: left; padding: 6px; vertical-align: middle;">' . $descripcion . '</td>
+            <td style="width:14%; font-size: 9px; text-align: right; padding: 6px; vertical-align: middle;">' . $formatSubtotal . '</td>
+            <td style="width:8%; font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . number_format($tipoIvaProducto, 0, ',', '.') . '</td>
+            <td style="width:20%; font-size: 9px; text-align: right; padding: 6px; vertical-align: middle; font-weight: bold;">' . $formatTotal . '</td>
         </tr>';
     } else {
         $formatPrecioUnit = '$ ' . number_format($precioProducto, 2, ',', '.');
         
         $filasProductos .= '<tr>
-            <td style="font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . $formatCantidad . '</td>
-            <td style="font-size: 9px; text-align: left; padding: 6px; vertical-align: middle;">' . $descripcion . '</td>
-            <td style="font-size: 9px; text-align: right; padding: 6px; vertical-align: middle;">' . $formatPrecioUnit . '</td>
-            <td style="font-size: 9px; text-align: right; padding: 6px; vertical-align: middle; font-weight: bold;">' . $formatTotal . '</td>
+            <td style="width:10%; font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . $formatCantidad . '</td>
+            <td style="width:60%; font-size: 9px; text-align: left; padding: 6px; vertical-align: middle;">' . $descripcion . '</td>
+            <td style="width:15%; font-size: 9px; text-align: right; padding: 6px; vertical-align: middle;">' . $formatPrecioUnit . '</td>
+            <td style="width:15%; font-size: 9px; text-align: right; padding: 6px; vertical-align: middle; font-weight: bold;">' . $formatTotal . '</td>
         </tr>';
     }
 }
@@ -612,11 +610,17 @@ $espacioEntreTablaYFooter = 20; // Espacio adicional entre tabla y footer
 $ubicacionFooterCalculada = $currentY + $espacioEntreTablaYFooter;
 
 // Verificar que no se haya excedido el límite de la página antes de agregar footer
-if($ubicacionFooterCalculada > 270) {
+// Mover footer al fondo de la página (cerca del final)
+$alturaMaximaPagina = 287; // Altura máxima de página A4 en mm
+$alturaFooter = 30; // Altura estimada del footer
+$ubicacionFooterFinal = $alturaMaximaPagina - $alturaFooter - 10; // 10mm de margen inferior
+
+if($ubicacionFooterCalculada > $ubicacionFooterFinal) {
     $pdf->AddPage('P', 'A4');
-    $ubicacionFooter = 5;
+    $ubicacionFooter = $alturaMaximaPagina - $alturaFooter - 10;
 } else {
-    $ubicacionFooter = $ubicacionFooterCalculada;
+    // Usar posición calculada pero asegurar que esté cerca del fondo
+    $ubicacionFooter = max($ubicacionFooterCalculada, $ubicacionFooterFinal);
 }
 
 // INCLUIR FOOTER
@@ -762,11 +766,17 @@ $espacioEntreTablaYFooter = 20; // Espacio adicional entre tabla y footer
 $ubicacionFooterCalculada = $currentY + $espacioEntreTablaYFooter;
 
 // Verificar que no se haya excedido el límite de la página antes de agregar footer
-if($ubicacionFooterCalculada > 270) {
+// Mover footer al fondo de la página (cerca del final)
+$alturaMaximaPagina = 287; // Altura máxima de página A4 en mm
+$alturaFooter = 30; // Altura estimada del footer
+$ubicacionFooterFinal = $alturaMaximaPagina - $alturaFooter - 10; // 10mm de margen inferior
+
+if($ubicacionFooterCalculada > $ubicacionFooterFinal) {
     $pdf->AddPage('P', 'A4');
-    $ubicacionFooter = 5;
+    $ubicacionFooter = $alturaMaximaPagina - $alturaFooter - 10;
 } else {
-    $ubicacionFooter = $ubicacionFooterCalculada;
+    // Usar posición calculada pero asegurar que esté cerca del fondo
+    $ubicacionFooter = max($ubicacionFooterCalculada, $ubicacionFooterFinal);
 }
 
 // INCLUIR FOOTER DUPLICADO (mismo formato que original)
