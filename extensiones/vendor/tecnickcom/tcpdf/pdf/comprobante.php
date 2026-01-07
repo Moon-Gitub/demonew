@@ -328,14 +328,17 @@ try {
     die('Error al procesar los productos: ' . $e->getMessage());
 }
 $total = number_format($respuestaVenta["total"],2, ',', '.');
-$observaciones = $respuestaVenta["observaciones"];
+$observaciones = isset($respuestaVenta["observaciones"]) ? $respuestaVenta["observaciones"] : '';
 $subTotal = number_format($respuestaVenta["neto"],2, ',', '.');
 $neto_grav = number_format($respuestaVenta["neto_gravado"],2, ',', '.');
 $jsnPago = json_decode($respuestaVenta["metodo_pago"], true);
+if(!is_array($jsnPago)) {
+    $jsnPago = array();
+}
 
 //$descuentos = $jsnPago[0]["descuento"] * $respuestaVenta["neto"] / 100;
 //$descuentos = $respuestaVenta["descuento"] * $respuestaVenta["neto"] / 100;
-$descuentos = number_format(0, 2, ',','.');
+$descuentos = number_format(isset($respuestaVenta["descuento"]) ? $respuestaVenta["descuento"] : 0, 2, ',','.');
 
 if($respuestaVenta["cbte_tipo"] == "0") {
 
@@ -412,10 +415,19 @@ if($respuestaVenta["estado"] == 2){
     $condicionVenta = 'Cuenta Corriente';
 } else {
     //[{"tipo":"Efectivo","entrega":"1000"},{"tipo":"MP-","entrega":"300"}]
-    foreach ($jsnPago as $clave => $valor) {
-        $condicionVenta .= $valor["tipo"] . ' | ';
+    if(is_array($jsnPago) && !empty($jsnPago)) {
+        foreach ($jsnPago as $clave => $valor) {
+            if(isset($valor["tipo"])) {
+                $condicionVenta .= $valor["tipo"] . ' | ';
+            }
+        }
+        if(!empty($condicionVenta)) {
+            $condicionVenta = substr($condicionVenta, 0, -2);
+        }
     }
-    $condicionVenta = substr($condicionVenta, 0, -2);
+    if(empty($condicionVenta)) {
+        $condicionVenta = 'Efectivo';
+    }
 }
 
 
@@ -553,6 +565,13 @@ $pdf->writeHTML($bloqueCabeceraOriginal, false, false, false, false, '');
 $pdf->SetY($ubicacionDetalle);
 $pdf->writeHTML($tablaProductos, false, false, false, false, '');
 
+// Verificar que no se haya excedido el límite de la página antes de agregar footer
+$currentY = $pdf->GetY();
+if($currentY > 250) {
+    $pdf->AddPage('P', 'A4');
+    $ubicacionFooter = 7;
+}
+
 // INCLUIR FOOTER
 $pdf->SetY($ubicacionFooter);
 
@@ -560,9 +579,13 @@ $ivas = json_decode($respuestaVenta["impuesto_detalle"], true);
 $ivasDiscriminadosNombre = "";
 $ivasDiscriminadosValor = "";
 $ivasAcumuladosB = 0;
-foreach ($ivas as $key => $value) {
-	$ivasDiscriminadosNombre .= $value["descripcion"] . ': $<br>';
-	$ivasDiscriminadosValor .= '<b>' . number_format($value["iva"],2, ',', '.') . '</b><br>';
+if(is_array($ivas) && !empty($ivas)) {
+    foreach ($ivas as $key => $value) {
+        if(isset($value["descripcion"]) && isset($value["iva"])) {
+            $ivasDiscriminadosNombre .= $value["descripcion"] . ': $<br>';
+            $ivasDiscriminadosValor .= '<b>' . number_format($value["iva"],2, ',', '.') . '</b><br>';
+        }
+    }
 }
 
 //---------------------Datos Factura neto, totales, iva, descuento (ORIGINAL)
@@ -665,6 +688,12 @@ $pdf->writeHTML($bloqueDatosFact, false, false, false, false, '');
 /*=============================================================================
 -----------------------------------DUPLICADO----------------------------------
 ==============================================================================*/
+// Agregar nueva página para duplicado
+$pdf->AddPage('P', 'A4');
+$ubicacionCabecera = 7;
+$ubicacionDetalle = 80;
+$ubicacionFooter = 250;
+
 // INCLUIR CABECERA DUPLICADO
 $pdf->SetY($ubicacionCabecera);
 $pdf->writeHTML($bloqueCabeceraDuplicado, false, false, false, false, '');
@@ -672,6 +701,13 @@ $pdf->writeHTML($bloqueCabeceraDuplicado, false, false, false, false, '');
 // INCLUIR TABLA DE PRODUCTOS (reutilizar la misma tabla construida)
 $pdf->SetY($ubicacionDetalle);
 $pdf->writeHTML($tablaProductos, false, false, false, false, '');
+
+// Verificar que no se haya excedido el límite de la página antes de agregar footer
+$currentY = $pdf->GetY();
+if($currentY > 250) {
+    $pdf->AddPage('P', 'A4');
+    $ubicacionFooter = 7;
+}
 
 // INCLUIR FOOTER DUPLICADO (mismo formato que original)
 $pdf->SetY($ubicacionFooter);
