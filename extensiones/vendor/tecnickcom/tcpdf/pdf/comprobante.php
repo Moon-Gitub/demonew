@@ -661,7 +661,46 @@ if($ubicacionFooterCalculada > $ubicacionFooterFinal) {
     $totalPorPagina[$numPaginaAntesNueva] = $totalNumero;
     
     $pdf->AddPage('P', 'A4');
-    $ubicacionFooter = $alturaMaximaPagina - $alturaFooter - 10;
+    
+    // REPETIR CABECERA EN NUEVA PÁGINA
+    $pdf->SetY($ubicacionCabecera);
+    $pdf->writeHTML($bloqueCabeceraOriginal, false, false, false, false, '');
+    
+    // Recalcular posición después de cabecera
+    $yDespuesCabeceraNueva = $pdf->GetY();
+    $ubicacionDetalleNueva = $yDespuesCabeceraNueva + $espacioEntreCabeceraYTabla;
+    
+    // Obtener número de página actual después de AddPage
+    $numPaginaNueva = $pdf->getPage();
+    
+    // Mostrar transporte acumulado si es página 2 o superior
+    if($numPaginaNueva > 1) {
+        $transporteAcumulado = 0;
+        foreach($totalPorPagina as $pagNum => $totalPag) {
+            if($pagNum < $numPaginaNueva) {
+                $transporteAcumulado += $totalPag;
+            }
+        }
+        
+        if($transporteAcumulado > 0) {
+            $transporteFormateado = formatearNumeroSinCeros($transporteAcumulado);
+            $bloqueTransporte = '<div style="font-size: 12px; font-weight: bold; text-align: right; margin-bottom: 10px; color: #000;">
+                Transporte: ' . $transporteFormateado . '
+            </div>';
+            $pdf->SetY($ubicacionDetalleNueva);
+            $pdf->writeHTML($bloqueTransporte, false, false, false, false, '');
+            $ubicacionDetalleNueva = $pdf->GetY() + 5;
+        }
+    }
+    
+    // Continuar con tabla de productos en nueva página
+    $pdf->SetY($ubicacionDetalleNueva);
+    $pdf->writeHTML($tablaProductos, false, false, false, false, '');
+    
+    // Recalcular posición del footer en nueva página
+    $currentY = $pdf->GetY();
+    $ubicacionFooterCalculada = $currentY + $espacioEntreTablaYFooter;
+    $ubicacionFooter = max($ubicacionFooterCalculada, $ubicacionFooterFinal);
 } else {
     // Usar posición calculada pero asegurar que esté cerca del fondo
     $ubicacionFooter = max($ubicacionFooterCalculada, $ubicacionFooterFinal);
@@ -693,7 +732,8 @@ if(isset($jsonQRBase64) && !empty($jsonQRBase64)) {
     $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
 }
 $pdf->SetY($ubicacionFooter);
-$numPaginaFooter = $pdf->getPage(); // Recalcular número de página después de AddPage() si hubo
+// SIEMPRE recalcular número de página para asegurar que aparezca en todas las páginas
+$numPaginaFooter = $pdf->getPage();
 $bloqueDatosFact = <<<EOF
 	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
 		<tr>
@@ -850,7 +890,46 @@ if($ubicacionFooterCalculada > $ubicacionFooterFinal) {
     $totalPorPagina[$numPaginaAntesNuevaDuplicado] = $totalNumero;
     
     $pdf->AddPage('P', 'A4');
-    $ubicacionFooter = $alturaMaximaPagina - $alturaFooter - 10;
+    
+    // REPETIR CABECERA EN NUEVA PÁGINA (DUPLICADO)
+    $pdf->SetY($ubicacionCabecera);
+    $pdf->writeHTML($bloqueCabeceraDuplicado, false, false, false, false, '');
+    
+    // Recalcular posición después de cabecera
+    $yDespuesCabeceraNuevaDuplicado = $pdf->GetY();
+    $ubicacionDetalleNuevaDuplicado = $yDespuesCabeceraNuevaDuplicado + $espacioEntreCabeceraYTabla;
+    
+    // Obtener número de página actual después de AddPage
+    $numPaginaNuevaDuplicado = $pdf->getPage();
+    
+    // Mostrar transporte acumulado si es página 2 o superior
+    if($numPaginaNuevaDuplicado > 1) {
+        $transporteAcumulado = 0;
+        foreach($totalPorPagina as $pagNum => $totalPag) {
+            if($pagNum < $numPaginaNuevaDuplicado) {
+                $transporteAcumulado += $totalPag;
+            }
+        }
+        
+        if($transporteAcumulado > 0) {
+            $transporteFormateado = formatearNumeroSinCeros($transporteAcumulado);
+            $bloqueTransporte = '<div style="font-size: 12px; font-weight: bold; text-align: right; margin-bottom: 10px; color: #000;">
+                Transporte: ' . $transporteFormateado . '
+            </div>';
+            $pdf->SetY($ubicacionDetalleNuevaDuplicado);
+            $pdf->writeHTML($bloqueTransporte, false, false, false, false, '');
+            $ubicacionDetalleNuevaDuplicado = $pdf->GetY() + 5;
+        }
+    }
+    
+    // Continuar con tabla de productos en nueva página
+    $pdf->SetY($ubicacionDetalleNuevaDuplicado);
+    $pdf->writeHTML($tablaProductos, false, false, false, false, '');
+    
+    // Recalcular posición del footer en nueva página
+    $currentY = $pdf->GetY();
+    $ubicacionFooterCalculada = $currentY + $espacioEntreTablaYFooter;
+    $ubicacionFooter = max($ubicacionFooterCalculada, $ubicacionFooterFinal);
 } else {
     // Usar posición calculada pero asegurar que esté cerca del fondo
     $ubicacionFooter = max($ubicacionFooterCalculada, $ubicacionFooterFinal);
