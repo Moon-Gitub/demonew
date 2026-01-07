@@ -676,6 +676,7 @@ if(isset($jsonQRBase64) && !empty($jsonQRBase64)) {
     $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
 }
 $pdf->SetY($ubicacionFooter);
+$numPaginaFooter = $pdf->getPage(); // Calcular número de página antes del heredoc
 $bloqueDatosFact = <<<EOF
 	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
 		<tr>
@@ -693,7 +694,7 @@ $bloqueDatosFact = <<<EOF
 					Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación
 				</div>
 				<div style="font-size: 9px; font-style:italic; text-align:right; margin-top: 5px;">
-					PAGINA ' . $pdf->getPage() . '
+					PAGINA $numPaginaFooter
 				</div>
 			</td>
 			<td style="width:22%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
