@@ -331,13 +331,23 @@ try {
     http_response_code(500);
     die('Error al procesar los productos: ' . $e->getMessage());
 }
+
+// Función para formatear números sin ceros innecesarios
+function formatearNumeroSinCeros($numero) {
+    $formateado = number_format($numero, 2, ',', '.');
+    // Eliminar ceros innecesarios al final: 180.000,00 -> 180.000
+    $formateado = rtrim($formateado, '0');
+    $formateado = rtrim($formateado, ',');
+    return '$ ' . $formateado;
+}
+
 $totalNumero = isset($respuestaVenta["total"]) ? floatval($respuestaVenta["total"]) : 0;
-$total = '$ ' . number_format($totalNumero, 2, ',', '.');
+$total = formatearNumeroSinCeros($totalNumero);
 $observaciones = isset($respuestaVenta["observaciones"]) ? htmlspecialchars($respuestaVenta["observaciones"], ENT_QUOTES, 'UTF-8') : '';
 $subTotalNumero = isset($respuestaVenta["neto"]) ? floatval($respuestaVenta["neto"]) : 0;
-$subTotal = '$ ' . number_format($subTotalNumero, 2, ',', '.');
+$subTotal = formatearNumeroSinCeros($subTotalNumero);
 $netoGravNumero = isset($respuestaVenta["neto_gravado"]) ? floatval($respuestaVenta["neto_gravado"]) : 0;
-$neto_grav = '$ ' . number_format($netoGravNumero, 2, ',', '.');
+$neto_grav = formatearNumeroSinCeros($netoGravNumero);
 $jsnPago = json_decode($respuestaVenta["metodo_pago"], true);
 if(!is_array($jsnPago)) {
     $jsnPago = array();
@@ -346,7 +356,7 @@ if(!is_array($jsnPago)) {
 //$descuentos = $jsnPago[0]["descuento"] * $respuestaVenta["neto"] / 100;
 //$descuentos = $respuestaVenta["descuento"] * $respuestaVenta["neto"] / 100;
 $descuentosNumero = isset($respuestaVenta["descuento"]) ? floatval($respuestaVenta["descuento"]) : 0;
-$descuentos = '$ ' . number_format($descuentosNumero, 2, ',','.');
+$descuentos = formatearNumeroSinCeros($descuentosNumero);
 
 if($respuestaVenta["cbte_tipo"] == "0") {
 
@@ -562,7 +572,7 @@ foreach ($productos as $key => $value) {
     }
     
     $formatCantidad = number_format($value["cantidad"], 2, ',', '.');
-    $formatTotal = '$ ' . number_format($value["total"], 2, ',', '.');
+    $formatTotal = formatearNumeroSinCeros($value["total"]);
     $precioProducto = isset($value["precio"]) ? floatval($value["precio"]) : (isset($value["precio_venta"]) ? floatval($value["precio_venta"]) : 0);
     $descripcion = isset($value["descripcion"]) ? htmlspecialchars($value["descripcion"], ENT_QUOTES, 'UTF-8') : '';
     $tipoIvaProducto = isset($getProducto["tipo_iva"]) ? floatval($getProducto["tipo_iva"]) : 0;
@@ -570,8 +580,8 @@ foreach ($productos as $key => $value) {
     if($esTipoA) {
         $formatPrecioUnit = $precioProducto / (1 + ($tipoIvaProducto / 100));
         $formatSubtotal = $formatPrecioUnit * floatval($value["cantidad"]);
-        $formatPrecioUnit = '$ ' . number_format($formatPrecioUnit, 2, ',', '.');
-        $formatSubtotal = '$ ' . number_format($formatSubtotal, 2, ',', '.');
+        $formatPrecioUnit = formatearNumeroSinCeros($formatPrecioUnit);
+        $formatSubtotal = formatearNumeroSinCeros($formatSubtotal);
         
         $filasProductos .= '<tr>
             <td style="width:8%; font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . $formatCantidad . '</td>
@@ -581,7 +591,7 @@ foreach ($productos as $key => $value) {
             <td style="width:20%; font-size: 9px; text-align: right; padding: 6px; vertical-align: middle; font-weight: bold;">' . $formatTotal . '</td>
         </tr>';
     } else {
-        $formatPrecioUnit = '$ ' . number_format($precioProducto, 2, ',', '.');
+        $formatPrecioUnit = formatearNumeroSinCeros($precioProducto);
         
         $filasProductos .= '<tr>
             <td style="width:10%; font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . $formatCantidad . '</td>
@@ -618,7 +628,7 @@ if($numPaginaActual > 1) {
     }
     
     if($transporteAcumulado > 0) {
-        $transporteFormateado = '$ ' . number_format($transporteAcumulado, 2, ',', '.');
+        $transporteFormateado = formatearNumeroSinCeros($transporteAcumulado);
         $bloqueTransporte = '<div style="font-size: 12px; font-weight: bold; text-align: right; margin-bottom: 10px; color: #000;">
             Transporte: ' . $transporteFormateado . '
         </div>';
@@ -646,11 +656,18 @@ $alturaFooter = 30; // Altura estimada del footer
 $ubicacionFooterFinal = $alturaMaximaPagina - $alturaFooter - 10; // 10mm de margen inferior
 
 if($ubicacionFooterCalculada > $ubicacionFooterFinal) {
+    // Guardar total de la página actual antes de agregar nueva página
+    $numPaginaAntesNueva = $pdf->getPage();
+    $totalPorPagina[$numPaginaAntesNueva] = $totalNumero;
+    
     $pdf->AddPage('P', 'A4');
     $ubicacionFooter = $alturaMaximaPagina - $alturaFooter - 10;
 } else {
     // Usar posición calculada pero asegurar que esté cerca del fondo
     $ubicacionFooter = max($ubicacionFooterCalculada, $ubicacionFooterFinal);
+    // Guardar total de esta página
+    $numPaginaActualFooter = $pdf->getPage();
+    $totalPorPagina[$numPaginaActualFooter] = $totalNumero;
 }
 
 // INCLUIR FOOTER
@@ -676,7 +693,7 @@ if(isset($jsonQRBase64) && !empty($jsonQRBase64)) {
     $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
 }
 $pdf->SetY($ubicacionFooter);
-$numPaginaFooter = $pdf->getPage(); // Calcular número de página antes del heredoc
+$numPaginaFooter = $pdf->getPage(); // Recalcular número de página después de AddPage() si hubo
 $bloqueDatosFact = <<<EOF
 	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
 		<tr>
@@ -800,7 +817,7 @@ if($numPaginaActual > 1) {
     }
     
     if($transporteAcumulado > 0) {
-        $transporteFormateado = '$ ' . number_format($transporteAcumulado, 2, ',', '.');
+        $transporteFormateado = formatearNumeroSinCeros($transporteAcumulado);
         $bloqueTransporte = '<div style="font-size: 12px; font-weight: bold; text-align: right; margin-bottom: 10px; color: #000;">
             Transporte: ' . $transporteFormateado . '
         </div>';
@@ -827,15 +844,19 @@ $alturaMaximaPagina = 287; // Altura máxima de página A4 en mm
 $alturaFooter = 30; // Altura estimada del footer
 $ubicacionFooterFinal = $alturaMaximaPagina - $alturaFooter - 10; // 10mm de margen inferior
 
-// Guardar total de esta página (número sin formato) antes de verificar si necesita nueva página
-$totalPorPagina[$pdf->getPage()] = $totalNumero;
-
 if($ubicacionFooterCalculada > $ubicacionFooterFinal) {
+    // Guardar total de la página actual antes de agregar nueva página
+    $numPaginaAntesNuevaDuplicado = $pdf->getPage();
+    $totalPorPagina[$numPaginaAntesNuevaDuplicado] = $totalNumero;
+    
     $pdf->AddPage('P', 'A4');
     $ubicacionFooter = $alturaMaximaPagina - $alturaFooter - 10;
 } else {
     // Usar posición calculada pero asegurar que esté cerca del fondo
     $ubicacionFooter = max($ubicacionFooterCalculada, $ubicacionFooterFinal);
+    // Guardar total de esta página
+    $numPaginaActualFooterDuplicado = $pdf->getPage();
+    $totalPorPagina[$numPaginaActualFooterDuplicado] = $totalNumero;
 }
 
 // INCLUIR FOOTER DUPLICADO (mismo formato que original)
