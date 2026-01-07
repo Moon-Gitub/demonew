@@ -705,11 +705,11 @@ $bloqueDatosFact = <<<EOF
                 TOTAL: $<br>
 			</td>
 			<td style="width:23%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
-				' . $subTotal . '<br>
-				' . $descuentos . '<br>
-				' . $neto_grav . '<br>
-				' . $ivasDiscriminadosValor . '
-                ' . $total . '<br>
+				$subTotal<br>
+				$descuentos<br>
+				$neto_grav<br>
+				$ivasDiscriminadosValor
+                $total<br>
 			</td>
 		</tr>
 	</table>
@@ -888,11 +888,11 @@ $bloqueDatosFact = <<<EOF
                 TOTAL: $<br>
 			</td>
 			<td style="width:23%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
-				' . $subTotal . '<br>
-				' . $descuentos . '<br>
-				' . $neto_grav . '<br>
-				' . $ivasDiscriminadosValor . '
-                ' . $total . '<br>
+				$subTotal<br>
+				$descuentos<br>
+				$neto_grav<br>
+				$ivasDiscriminadosValor
+                $total<br>
 			</td>
 		</tr>
 	</table>
