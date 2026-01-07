@@ -649,10 +649,10 @@ $pdf->SetY($ubicacionFooter);
 $bloqueDatosFact = <<<EOF
 	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
 		<tr>
-			<td style="width:80px; vertical-align: top;">
+			<td style="width:15%; vertical-align: top;">
 				 <!--ACA VA CODIGO QR -->
 			</td>
-			<td style="width:300px; font-size:9px; text-align: left; padding: 8px; vertical-align: top;">
+			<td style="width:40%; font-size:9px; text-align: left; padding: 8px; vertical-align: top;">
 				<div style="color: #242C4F; font-size:11px; font-weight: bold;">
 					ARCA - Comprobante autorizado
 				</div>
@@ -666,14 +666,14 @@ $bloqueDatosFact = <<<EOF
 					PAGINA 1
 				</div>
 			</td>
-			<td style="width:90px; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
+			<td style="width:22%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
 				SUBTOTAL: $<br>
 				DESCUENTO: $<br>
 				NETO GRAVADO: $<br>
 				$ivasDiscriminadosNombre
                 TOTAL: $<br>
 			</td>
-			<td style="width:90px; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
+			<td style="width:23%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
 				$subTotal<br>
 				$descuentos<br>
 				$neto_grav<br>
@@ -803,10 +803,10 @@ $pdf->SetY($ubicacionFooter);
 $bloqueDatosFact = <<<EOF
 	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
 		<tr>
-			<td style="width:80px; vertical-align: top;">
+			<td style="width:15%; vertical-align: top;">
 				 <!--ACA VA CODIGO QR -->
 			</td>
-			<td style="width:300px; font-size:9px; text-align: left; padding: 8px; vertical-align: top;">
+			<td style="width:40%; font-size:9px; text-align: left; padding: 8px; vertical-align: top;">
 				<div style="color: #242C4F; font-size:11px; font-weight: bold;">
 					ARCA - Comprobante autorizado
 				</div>
@@ -820,14 +820,14 @@ $bloqueDatosFact = <<<EOF
 					PAGINA 1
 				</div>
 			</td>
-			<td style="width:90px; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
+			<td style="width:22%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
 				SUBTOTAL: $<br>
 				DESCUENTO: $<br>
 				NETO GRAVADO: $<br>
 				$ivasDiscriminadosNombre
                 TOTAL: $<br>
 			</td>
-			<td style="width:90px; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
+			<td style="width:23%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
 				$subTotal<br>
 				$descuentos<br>
 				$neto_grav<br>
