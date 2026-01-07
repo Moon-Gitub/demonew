@@ -365,8 +365,22 @@ $vtoCae = $factura["fec_vto_cae"];
 
 }
 
-$ptoVta = str_pad($respuestaVenta["pto_vta"], 5, "0", STR_PAD_LEFT);
-$fecEmi = date('d/m/Y', strtotime($respuestaVenta["fecha"]));
+$ptoVta = str_pad(isset($respuestaVenta["pto_vta"]) ? $respuestaVenta["pto_vta"] : 0, 5, "0", STR_PAD_LEFT);
+$fecEmi = date('d/m/Y', strtotime(isset($respuestaVenta["fecha"]) ? $respuestaVenta["fecha"] : date('Y-m-d')));
+
+// Asegurar que todas las variables usadas en HTML estén inicializadas
+$razonSocial = isset($respEmpresa["razon_social"]) ? htmlspecialchars($respEmpresa["razon_social"], ENT_QUOTES, 'UTF-8') : '';
+$domicilio = isset($respEmpresa["domicilio"]) ? htmlspecialchars($respEmpresa["domicilio"], ENT_QUOTES, 'UTF-8') : '';
+$telefono = isset($respEmpresa["telefono"]) ? htmlspecialchars($respEmpresa["telefono"], ENT_QUOTES, 'UTF-8') : '';
+$localidad = isset($respEmpresa["localidad"]) ? htmlspecialchars($respEmpresa["localidad"], ENT_QUOTES, 'UTF-8') : '';
+$codigoPostal = isset($respEmpresa["codigo_postal"]) ? htmlspecialchars($respEmpresa["codigo_postal"], ENT_QUOTES, 'UTF-8') : '';
+$cuit = isset($respEmpresa["cuit"]) ? htmlspecialchars($respEmpresa["cuit"], ENT_QUOTES, 'UTF-8') : '';
+$numeroIibb = isset($respEmpresa["numero_iibb"]) ? htmlspecialchars($respEmpresa["numero_iibb"], ENT_QUOTES, 'UTF-8') : '';
+$inicioActividades = isset($respEmpresa["inicio_actividades"]) ? htmlspecialchars($respEmpresa["inicio_actividades"], ENT_QUOTES, 'UTF-8') : '';
+$nombreCliente = isset($respuestaCliente["nombre"]) ? htmlspecialchars($respuestaCliente["nombre"], ENT_QUOTES, 'UTF-8') : '';
+$documentoCliente = isset($respuestaCliente["documento"]) ? htmlspecialchars($respuestaCliente["documento"], ENT_QUOTES, 'UTF-8') : '';
+$direccionCliente = isset($respuestaCliente["direccion"]) ? htmlspecialchars($respuestaCliente["direccion"], ENT_QUOTES, 'UTF-8') : '';
+$tieneServicio = isset($tieneServicio) ? $tieneServicio : '';
 
 /*
 if(isset($respEmpresa["logo"]) && $respEmpresa["logo"] != ""){
@@ -448,7 +462,7 @@ $bloqueCabeceraOriginal = <<<EOF
 		</tr>
 		<tr>
 			<td style="width:45%; text-align: center; padding: 15px; vertical-align: middle;">
-				<div style="font-size: 18px; font-weight: bold;">$respEmpresa[razon_social]</div>
+				<div style="font-size: 18px; font-weight: bold;">$razonSocial</div>
 			</td>
 			<td style="width:10%; text-align: center; padding: 12px; vertical-align: middle; background-color: #f8f9fa;">
 				<div style="font-size: 42px; font-weight: bold; line-height: 1;">$tipoVtaLetra</div>
@@ -461,9 +475,9 @@ $bloqueCabeceraOriginal = <<<EOF
 		<tr>
 			<td style="width:50%; font-size: 10px; padding: 12px; vertical-align: top;">
 				<div style="line-height: 1.8;">
-					<div style="margin-bottom: 4px;"><b>Dirección:</b> $respEmpresa[domicilio]</div>
-					<div style="margin-bottom: 4px;"><b>Teléfono:</b> $respEmpresa[telefono]</div>
-					<div style="margin-bottom: 4px;"><b>Localidad:</b> $respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</div>
+					<div style="margin-bottom: 4px;"><b>Dirección:</b> $domicilio</div>
+					<div style="margin-bottom: 4px;"><b>Teléfono:</b> $telefono</div>
+					<div style="margin-bottom: 4px;"><b>Localidad:</b> $localidad - C.P.: $codigoPostal</div>
 					<div style="margin-bottom: 4px;"><b>Cond. I.V.A.:</b> $tipoIva</div>
 					<div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #dee2e6; font-size: 9px;"><b>Defensa al Consumidor Mza. 08002226678</b></div>
 				</div>
@@ -472,9 +486,9 @@ $bloqueCabeceraOriginal = <<<EOF
 				<div style="line-height: 1.8;">
 					<div style="margin-bottom: 4px;"><b>N° Cbte:</b> <span style="font-size: 11px; font-weight: bold;">$ptoVta - $numCte</span></div>
 					<div style="margin-bottom: 4px;"><b>Fecha Emisión:</b> $fecEmi</div>
-					<div style="margin-bottom: 4px;"><b>CUIT:</b> $respEmpresa[cuit]</div>
-					<div style="margin-bottom: 4px;"><b>II.BB.:</b> $respEmpresa[numero_iibb]</div>
-					<div style="margin-bottom: 4px;"><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades]</div>
+					<div style="margin-bottom: 4px;"><b>CUIT:</b> $cuit</div>
+					<div style="margin-bottom: 4px;"><b>II.BB.:</b> $numeroIibb</div>
+					<div style="margin-bottom: 4px;"><b>Inic. Actividad:</b> $inicioActividades</div>
 				</div>
 			</td>
 		</tr>
@@ -485,8 +499,8 @@ $bloqueCabeceraOriginal = <<<EOF
 	<table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse; margin-top: 5px;">
 		<tr>
 			<td style="font-size: 10px; padding: 12px; line-height: 1.8; background-color: #f8f9fa;">
-				<div style="margin-bottom: 5px;"><b>Tipo Doc.:</b> $tipoDocumento: <b>$respuestaCliente[documento]</b> | <b>Nombre / Razón Social:</b> $respuestaCliente[nombre]</div>
-				<div style="margin-bottom: 5px;"><b>Domicilio:</b> $respuestaCliente[direccion] | <b>Condición I.V.A.:</b> $tipoIvaCliente</div>
+				<div style="margin-bottom: 5px;"><b>Tipo Doc.:</b> $tipoDocumento: <b>$documentoCliente</b> | <b>Nombre / Razón Social:</b> $nombreCliente</div>
+				<div style="margin-bottom: 5px;"><b>Domicilio:</b> $direccionCliente | <b>Condición I.V.A.:</b> $tipoIvaCliente</div>
 				<div><b>Condición de Venta:</b> <span style="font-weight: bold;">$condicionVenta</span></div>
 			</td>
 		</tr>
