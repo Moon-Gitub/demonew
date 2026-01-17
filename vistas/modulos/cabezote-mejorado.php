@@ -289,65 +289,99 @@ if($ctaCteCliente["saldo"] <= 0) {
     
     if(!isset($_GET["preference_id"])) {
         try {
-            require_once 'extensiones/vendor/autoload.php';
-
-            // SDK de MercadoPago v3.x (usando nombres completos de clase)
-            \MercadoPago\MercadoPagoConfig::setAccessToken($accesTokenMercadoPago);
-
-            // Construir items dinámicamente
-            $items = [];
-
-            // Agregar servicios mensuales
-            foreach ($serviciosMensuales as $servicio) {
-                $items[] = [
-                    "title" => isset($servicio['descripcion']) ? $servicio['descripcion'] : 'Servicio Mensual',
-                    "quantity" => 1,
-                    "unit_price" => floatval($servicio['importe'])
-                ];
+            // CRÍTICO: Verificar si ya existe una preferencia pendiente reciente antes de crear una nueva
+            // Esto previene la creación de múltiples preferencias cuando se recarga la página
+            $intentoExistente = ControladorMercadoPago::ctrObtenerIntentoPendienteReciente($idCliente, $abonoMensual);
+            
+            if ($intentoExistente && isset($intentoExistente['preference_id']) && !empty($intentoExistente['preference_id'])) {
+                error_log("ℹ️ Ya existe un intento pendiente reciente para cliente $idCliente con monto $abonoMensual (Preference ID: " . $intentoExistente['preference_id'] . ")");
+                error_log("   NO se creará una nueva preferencia para evitar duplicados");
+                
+                // Intentar obtener la preferencia existente desde MercadoPago
+                try {
+                    require_once 'extensiones/vendor/autoload.php';
+                    \MercadoPago\MercadoPagoConfig::setAccessToken($accesTokenMercadoPago);
+                    
+                    $client = new \MercadoPago\Client\Preference\PreferenceClient();
+                    $preference = $client->get($intentoExistente['preference_id']);
+                    
+                    if ($preference && isset($preference->id)) {
+                        error_log("✅ Preferencia existente recuperada: " . $preference->id);
+                    } else {
+                        error_log("⚠️ No se pudo recuperar la preferencia existente, se creará una nueva");
+                        $intentoExistente = null; // Forzar creación de nueva preferencia
+                    }
+                } catch (Exception $e) {
+                    error_log("⚠️ Error al recuperar preferencia existente: " . $e->getMessage() . " - Se creará una nueva");
+                    $intentoExistente = null; // Forzar creación de nueva preferencia
+                }
             }
+            
+            // Solo crear nueva preferencia si no existe una pendiente
+            if (!$intentoExistente || !$preference) {
+                require_once 'extensiones/vendor/autoload.php';
 
-            // Agregar otros cargos
-            foreach ($otrosCargos as $cargo) {
-                $items[] = [
-                    "title" => isset($cargo['descripcion']) ? $cargo['descripcion'] : 'Otro Cargo',
-                    "quantity" => 1,
-                    "unit_price" => floatval($cargo['importe'])
-                ];
-            }
+                // SDK de MercadoPago v3.x (usando nombres completos de clase)
+                \MercadoPago\MercadoPagoConfig::setAccessToken($accesTokenMercadoPago);
 
-            // Agregar recargo como item separado si aplica
-            if ($tieneRecargo && $subtotalMensuales > 0) {
-                $montoRecargoItems = $subtotalMensuales * ($porcentajeRecargo / 100);
-                $items[] = [
-                    "title" => "Recargo por mora sobre servicios mensuales (" . $porcentajeRecargo . "%)",
-                    "quantity" => 1,
-                    "unit_price" => $montoRecargoItems
-                ];
-            }
+                // Construir items dinámicamente
+                $items = [];
 
-            $client = new \MercadoPago\Client\Preference\PreferenceClient();
-            $preference = $client->create([
-                "items" => $items,
-                "external_reference" => strval($idCliente),
-                "back_urls" => [
-                    "success" => $rutaRespuesta,
-                    "failure" => $rutaRespuesta
-                ],
-                "auto_return" => "approved",
-                "binary_mode" => true
-            ]);
+                // Agregar servicios mensuales
+                foreach ($serviciosMensuales as $servicio) {
+                    $items[] = [
+                        "title" => isset($servicio['descripcion']) ? $servicio['descripcion'] : 'Servicio Mensual',
+                        "quantity" => 1,
+                        "unit_price" => floatval($servicio['importe'])
+                    ];
+                }
 
-            // Registrar intento de pago
-            if ($preference && isset($preference->id)) {
-                $datosIntento = array(
-                    'id_cliente_moon' => $idCliente,
-                    'preference_id' => $preference->id,
-                    'monto' => $abonoMensual,
-                    'descripcion' => 'Pago mensual - ' . date('m/Y'),
-                    'fecha_creacion' => date('Y-m-d H:i:s'),
-                    'estado' => 'pendiente'
-                );
-                ControladorMercadoPago::ctrRegistrarIntentoPago($datosIntento);
+                // Agregar otros cargos
+                foreach ($otrosCargos as $cargo) {
+                    $items[] = [
+                        "title" => isset($cargo['descripcion']) ? $cargo['descripcion'] : 'Otro Cargo',
+                        "quantity" => 1,
+                        "unit_price" => floatval($cargo['importe'])
+                    ];
+                }
+
+                // Agregar recargo como item separado si aplica
+                if ($tieneRecargo && $subtotalMensuales > 0) {
+                    $montoRecargoItems = $subtotalMensuales * ($porcentajeRecargo / 100);
+                    $items[] = [
+                        "title" => "Recargo por mora sobre servicios mensuales (" . $porcentajeRecargo . "%)",
+                        "quantity" => 1,
+                        "unit_price" => $montoRecargoItems
+                    ];
+                }
+
+                $client = new \MercadoPago\Client\Preference\PreferenceClient();
+                $preference = $client->create([
+                    "items" => $items,
+                    "external_reference" => strval($idCliente),
+                    "back_urls" => [
+                        "success" => $rutaRespuesta,
+                        "failure" => $rutaRespuesta
+                    ],
+                    "auto_return" => "approved",
+                    "binary_mode" => true
+                ]);
+
+                // Registrar intento de pago SOLO si se creó una nueva preferencia
+                if ($preference && isset($preference->id)) {
+                    $datosIntento = array(
+                        'id_cliente_moon' => $idCliente,
+                        'preference_id' => $preference->id,
+                        'monto' => $abonoMensual,
+                        'descripcion' => 'Pago mensual - ' . date('m/Y'),
+                        'fecha_creacion' => date('Y-m-d H:i:s'),
+                        'estado' => 'pendiente'
+                    );
+                    $resultadoRegistro = ControladorMercadoPago::ctrRegistrarIntentoPago($datosIntento);
+                    if ($resultadoRegistro !== "ok") {
+                        error_log("⚠️ Advertencia: No se pudo registrar el intento (puede ser duplicado): " . (is_array($resultadoRegistro) ? json_encode($resultadoRegistro) : $resultadoRegistro));
+                    }
+                }
             }
 
         } catch (Exception $e) {

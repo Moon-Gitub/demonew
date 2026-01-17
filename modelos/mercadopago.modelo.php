@@ -209,6 +209,54 @@ class ModeloMercadoPago {
 	}
 
 	/*=============================================
+	OBTENER INTENTO PENDIENTE RECIENTE PARA UN CLIENTE
+	=============================================*/
+	static public function mdlObtenerIntentoPendienteReciente($idCliente, $monto = null) {
+		
+		try {
+			$conexion = Conexion::conectarMoon();
+			
+			if (!$conexion) {
+				error_log("ERROR mdlObtenerIntentoPendienteReciente: No se pudo conectar a BD Moon");
+				return null;
+			}
+
+			// Buscar intentos pendientes recientes (últimos 30 minutos) para este cliente
+			$sql = "SELECT id, preference_id, monto, descripcion, fecha_creacion 
+				FROM mercadopago_intentos 
+				WHERE id_cliente_moon = :id_cliente 
+				AND estado = 'pendiente' 
+				AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 30 MINUTE)";
+			
+			$params = [":id_cliente" => $idCliente];
+			
+			// Si se especifica monto, filtrar por monto también
+			if ($monto !== null) {
+				$montoFloat = floatval($monto);
+				$sql .= " AND ABS(monto - :monto) < 0.01";
+				$params[":monto"] = $montoFloat;
+			}
+			
+			$sql .= " ORDER BY fecha_creacion DESC LIMIT 1";
+			
+			$stmt = $conexion->prepare($sql);
+			foreach ($params as $key => $value) {
+				$stmt->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+			}
+			$stmt->execute();
+			
+			$intento = $stmt->fetch(PDO::FETCH_ASSOC);
+			$stmt->closeCursor();
+			
+			return $intento ? $intento : null;
+			
+		} catch (PDOException $e) {
+			error_log("EXCEPCIÓN al obtener intento pendiente: " . $e->getMessage());
+			return null;
+		}
+	}
+
+	/*=============================================
 	VERIFICAR SI UN PAGO YA FUE PROCESADO
 	=============================================*/
 	static public function mdlVerificarPagoProcesado($paymentId) {

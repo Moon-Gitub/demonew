@@ -160,6 +160,16 @@ class ControladorMercadoPago {
 	}
 
 	/*=============================================
+	OBTENER INTENTO PENDIENTE RECIENTE
+	=============================================*/
+	static public function ctrObtenerIntentoPendienteReciente($idCliente, $monto = null) {
+
+		$respuesta = ModeloMercadoPago::mdlObtenerIntentoPendienteReciente($idCliente, $monto);
+
+		return $respuesta;
+	}
+
+	/*=============================================
 	REGISTRAR PAGO CONFIRMADO
 	=============================================*/
 	static public function ctrRegistrarPagoConfirmado($datos) {

@@ -533,44 +533,33 @@ EOF;
 // Crear bloque cabecera duplicado (igual que original pero con "DUPLICADO")
 $bloqueCabeceraDuplicado = str_replace('ORIGINAL', 'DUPLICADO', $bloqueCabeceraOriginal);
 
-// CONSTRUIR TABLA DE PRODUCTOS COMPLETA
-$tablaProductos = '';
-$filasProductos = '';
-
 // Determinar columnas según tipo de comprobante
 $esTipoA = ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4);
 
-// Construir encabezado de tabla (alineado con cabecera - ancho total 100%)
-if($esTipoA) {
-    $tablaProductos = '<table border="1" cellpadding="4" cellspacing="0" style="width:100%; margin-top: 10px;">
-        <tr style="background-color: #343a40; color: #ffffff;">
-            <td style="width:8%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Cant.</td>
-            <td style="width:50%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Detalle</td>
-            <td style="width:14%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Subtotal</td>
-            <td style="width:8%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">IVA %</td>
-            <td style="width:20%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Total</td>
-        </tr>';
-} else {
-    $tablaProductos = '<table border="1" cellpadding="4" cellspacing="0" style="width:100%; margin-top: 10px;">
-        <tr style="background-color: #343a40; color: #ffffff;">
-            <td style="width:10%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Cant.</td>
-            <td style="width:60%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Detalle</td>
-            <td style="width:15%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Unit.</td>
-            <td style="width:15%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Total</td>
-        </tr>';
+// Función para obtener encabezado de tabla
+function obtenerEncabezadoTabla($esTipoA) {
+    if($esTipoA) {
+        return '<table border="1" cellpadding="4" cellspacing="0" style="width:100%; margin-top: 10px;">
+            <tr style="background-color: #343a40; color: #ffffff;">
+                <td style="width:8%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Cant.</td>
+                <td style="width:50%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Detalle</td>
+                <td style="width:14%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Subtotal</td>
+                <td style="width:8%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">IVA %</td>
+                <td style="width:20%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Total</td>
+            </tr>';
+    } else {
+        return '<table border="1" cellpadding="4" cellspacing="0" style="width:100%; margin-top: 10px;">
+            <tr style="background-color: #343a40; color: #ffffff;">
+                <td style="width:10%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Cant.</td>
+                <td style="width:60%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Detalle</td>
+                <td style="width:15%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Unit.</td>
+                <td style="width:15%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Total</td>
+            </tr>';
+    }
 }
 
-// Construir filas de productos
-foreach ($productos as $key => $value) {
-    if(!isset($value["id"]) || !isset($value["cantidad"]) || !isset($value["total"])) {
-        continue; // Saltar productos con datos incompletos
-    }
-    
-    $getProducto = ControladorProductos::ctrMostrarProductoXId($value["id"]);
-    if(!$getProducto || !is_array($getProducto)) {
-        continue; // Saltar si no se puede obtener el producto
-    }
-    
+// Función para renderizar una fila de producto
+function renderizarFilaProducto($value, $getProducto, $esTipoA) {
     $formatCantidad = number_format($value["cantidad"], 2, ',', '.');
     $formatTotal = formatearNumeroSinCeros($value["total"]);
     $precioProducto = isset($value["precio"]) ? floatval($value["precio"]) : (isset($value["precio_venta"]) ? floatval($value["precio_venta"]) : 0);
@@ -583,7 +572,7 @@ foreach ($productos as $key => $value) {
         $formatPrecioUnit = formatearNumeroSinCeros($formatPrecioUnit);
         $formatSubtotal = formatearNumeroSinCeros($formatSubtotal);
         
-        $filasProductos .= '<tr>
+        return '<tr>
             <td style="width:8%; font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . $formatCantidad . '</td>
             <td style="width:50%; font-size: 9px; text-align: left; padding: 6px; vertical-align: middle;">' . $descripcion . '</td>
             <td style="width:14%; font-size: 9px; text-align: right; padding: 6px; vertical-align: middle;">' . $formatSubtotal . '</td>
@@ -593,7 +582,7 @@ foreach ($productos as $key => $value) {
     } else {
         $formatPrecioUnit = formatearNumeroSinCeros($precioProducto);
         
-        $filasProductos .= '<tr>
+        return '<tr>
             <td style="width:10%; font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . $formatCantidad . '</td>
             <td style="width:60%; font-size: 9px; text-align: left; padding: 6px; vertical-align: middle;">' . $descripcion . '</td>
             <td style="width:15%; font-size: 9px; text-align: right; padding: 6px; vertical-align: middle;">' . $formatPrecioUnit . '</td>
@@ -602,139 +591,164 @@ foreach ($productos as $key => $value) {
     }
 }
 
-// Cerrar tabla de productos
-$tablaProductos .= $filasProductos . '</table>';
-
-// INCLUIR CABECERA
+// INCLUIR CABECERA PRIMERA PÁGINA
 $pdf->SetY($ubicacionCabecera);
 $pdf->writeHTML($bloqueCabeceraOriginal, false, false, false, false, '');
 
-// Obtener posición Y después de la cabecera para calcular posición de tabla
+// Obtener posición Y después de la cabecera
 $yDespuesCabecera = $pdf->GetY();
-$espacioEntreCabeceraYTabla = 10; // Espacio entre cabecera y tabla
+$espacioEntreCabeceraYTabla = 10;
 $ubicacionDetalle = $yDespuesCabecera + $espacioEntreCabeceraYTabla;
 
-// Obtener número de página actual
-$numPaginaActual = $pdf->getPage();
-
-// Mostrar transporte acumulado solo desde página 2 en adelante
-if($numPaginaActual > 1) {
-    // Calcular transporte acumulado (suma de totales de páginas anteriores)
-    $transporteAcumulado = 0;
-    foreach($totalPorPagina as $pagNum => $totalPag) {
-        if($pagNum < $numPaginaActual) {
-            $transporteAcumulado += $totalPag;
-        }
-    }
-    
-    if($transporteAcumulado > 0) {
-        $transporteFormateado = formatearNumeroSinCeros($transporteAcumulado);
-        $bloqueTransporte = '<div style="font-size: 12px; font-weight: bold; text-align: right; margin-bottom: 10px; color: #000;">
-            Transporte: ' . $transporteFormateado . '
-        </div>';
-        $pdf->SetY($ubicacionDetalle);
-        $pdf->writeHTML($bloqueTransporte, false, false, false, false, '');
-        $ubicacionDetalle = $pdf->GetY() + 5; // Ajustar posición después del transporte
-    }
-}
-
-// INCLUIR TABLA DE PRODUCTOS (separada claramente)
-$pdf->SetY($ubicacionDetalle);
-$pdf->writeHTML($tablaProductos, false, false, false, false, '');
-
-// Obtener posición Y después de la tabla de productos
-$currentY = $pdf->GetY();
-
-// Calcular posición del footer: después de la tabla + espacio adicional
-$espacioEntreTablaYFooter = 20; // Espacio adicional entre tabla y footer
-$ubicacionFooterCalculada = $currentY + $espacioEntreTablaYFooter;
-
-// Verificar que no se haya excedido el límite de la página antes de agregar footer
-// Mover footer al fondo de la página (cerca del final)
+// Variables para control de paginación
 $alturaMaximaPagina = 287; // Altura máxima de página A4 en mm
-$alturaFooter = 30; // Altura estimada del footer
-$ubicacionFooterFinal = $alturaMaximaPagina - $alturaFooter - 10; // 10mm de margen inferior
+$alturaFooter = 30;
+$alturaCabecera = 80; // Altura estimada de cabecera
+$alturaFilaProducto = 8; // Altura estimada por fila de producto
+$espacioEntreTablaYFooter = 20;
+$productosProcesados = 0;
+$totalProductos = count($productos);
+$tablaAbierta = false;
+$filasEnPaginaActual = 0;
+$maxFilasPorPagina = floor(($alturaMaximaPagina - $alturaCabecera - $alturaFooter - $espacioEntreTablaYFooter - 20) / $alturaFilaProducto);
 
-if($ubicacionFooterCalculada > $ubicacionFooterFinal) {
-    // Guardar total de la página actual antes de agregar nueva página
-    $numPaginaAntesNueva = $pdf->getPage();
-    $totalPorPagina[$numPaginaAntesNueva] = $totalNumero;
+// Procesar productos uno por uno
+foreach ($productos as $key => $value) {
+    if(!isset($value["id"]) || !isset($value["cantidad"]) || !isset($value["total"])) {
+        continue;
+    }
     
-    $pdf->AddPage('P', 'A4');
+    $getProducto = ControladorProductos::ctrMostrarProductoXId($value["id"]);
+    if(!$getProducto || !is_array($getProducto)) {
+        continue;
+    }
     
-    // REPETIR CABECERA EN NUEVA PÁGINA
-    $pdf->SetY($ubicacionCabecera);
-    $pdf->writeHTML($bloqueCabeceraOriginal, false, false, false, false, '');
+    // Verificar si necesitamos nueva página
+    $numPaginaActual = $pdf->getPage();
+    $currentY = $pdf->GetY();
+    $espacioDisponible = $alturaMaximaPagina - $currentY - $alturaFooter - $espacioEntreTablaYFooter;
     
-    // Recalcular posición después de cabecera
-    $yDespuesCabeceraNueva = $pdf->GetY();
-    $ubicacionDetalleNueva = $yDespuesCabeceraNueva + $espacioEntreCabeceraYTabla;
-    
-    // Obtener número de página actual después de AddPage
-    $numPaginaNueva = $pdf->getPage();
-    
-    // Mostrar transporte acumulado si es página 2 o superior
-    if($numPaginaNueva > 1) {
-        $transporteAcumulado = 0;
-        foreach($totalPorPagina as $pagNum => $totalPag) {
-            if($pagNum < $numPaginaNueva) {
-                $transporteAcumulado += $totalPag;
+    // Si no hay espacio o es inicio de página, cerrar tabla anterior y abrir nueva
+    if($espacioDisponible < ($alturaFilaProducto * 2) || ($productosProcesados > 0 && $filasEnPaginaActual == 0)) {
+        // Cerrar tabla anterior si estaba abierta
+        if($tablaAbierta) {
+            $pdf->writeHTML('</table>', false, false, false, false, '');
+            $tablaAbierta = false;
+        }
+        
+        // Guardar total de página anterior antes de agregar nueva
+        if($numPaginaActual > 1) {
+            $totalPorPagina[$numPaginaActual - 1] = $totalNumero;
+        }
+        
+        // Agregar nueva página
+        $pdf->AddPage('P', 'A4');
+        
+        // REPETIR CABECERA EN NUEVA PÁGINA
+        $pdf->SetY($ubicacionCabecera);
+        $pdf->writeHTML($bloqueCabeceraOriginal, false, false, false, false, '');
+        
+        // Recalcular posición después de cabecera
+        $yDespuesCabecera = $pdf->GetY();
+        $ubicacionDetalle = $yDespuesCabecera + $espacioEntreCabeceraYTabla;
+        
+        // Obtener número de página actual
+        $numPaginaActual = $pdf->getPage();
+        
+        // Mostrar transporte acumulado desde página 2
+        if($numPaginaActual > 1) {
+            $transporteAcumulado = 0;
+            foreach($totalPorPagina as $pagNum => $totalPag) {
+                if($pagNum < $numPaginaActual) {
+                    $transporteAcumulado += $totalPag;
+                }
+            }
+            
+            if($transporteAcumulado > 0) {
+                $transporteFormateado = formatearNumeroSinCeros($transporteAcumulado);
+                $bloqueTransporte = '<div style="font-size: 12px; font-weight: bold; text-align: right; margin-bottom: 10px; color: #000;">
+                    Transporte: ' . $transporteFormateado . '
+                </div>';
+                $pdf->SetY($ubicacionDetalle);
+                $pdf->writeHTML($bloqueTransporte, false, false, false, false, '');
+                $ubicacionDetalle = $pdf->GetY() + 5;
             }
         }
         
-        if($transporteAcumulado > 0) {
-            $transporteFormateado = formatearNumeroSinCeros($transporteAcumulado);
-            $bloqueTransporte = '<div style="font-size: 12px; font-weight: bold; text-align: right; margin-bottom: 10px; color: #000;">
-                Transporte: ' . $transporteFormateado . '
-            </div>';
-            $pdf->SetY($ubicacionDetalleNueva);
-            $pdf->writeHTML($bloqueTransporte, false, false, false, false, '');
-            $ubicacionDetalleNueva = $pdf->GetY() + 5;
-        }
+        // Abrir nueva tabla
+        $pdf->SetY($ubicacionDetalle);
+        $encabezadoTabla = obtenerEncabezadoTabla($esTipoA);
+        $pdf->writeHTML($encabezadoTabla, false, false, false, false, '');
+        $tablaAbierta = true;
+        $filasEnPaginaActual = 0;
     }
     
-    // Continuar con tabla de productos en nueva página
-    $pdf->SetY($ubicacionDetalleNueva);
-    $pdf->writeHTML($tablaProductos, false, false, false, false, '');
+    // Si es el primer producto de la primera página, abrir tabla
+    if(!$tablaAbierta && $productosProcesados == 0) {
+        $pdf->SetY($ubicacionDetalle);
+        $encabezadoTabla = obtenerEncabezadoTabla($esTipoA);
+        $pdf->writeHTML($encabezadoTabla, false, false, false, false, '');
+        $tablaAbierta = true;
+    }
     
-    // Recalcular posición del footer en nueva página
+    // Renderizar fila de producto
+    $filaProducto = renderizarFilaProducto($value, $getProducto, $esTipoA);
+    $pdf->writeHTML($filaProducto, false, false, false, false, '');
+    
+    $productosProcesados++;
+    $filasEnPaginaActual++;
+}
+
+// Cerrar tabla si está abierta
+if($tablaAbierta) {
+    $pdf->writeHTML('</table>', false, false, false, false, '');
+}
+
+// Procesar footer para cada página del ORIGINAL
+// Necesitamos renderizar footer en cada página que tenga contenido
+$totalPaginasOriginal = $pdf->getPage();
+for($pag = 1; $pag <= $totalPaginasOriginal; $pag++) {
+    $pdf->setPage($pag);
+    
+    // Obtener posición Y actual en esta página
     $currentY = $pdf->GetY();
+    
+    // Calcular posición del footer
     $ubicacionFooterCalculada = $currentY + $espacioEntreTablaYFooter;
+    $ubicacionFooterFinal = $alturaMaximaPagina - $alturaFooter - 10;
     $ubicacionFooter = max($ubicacionFooterCalculada, $ubicacionFooterFinal);
-} else {
-    // Usar posición calculada pero asegurar que esté cerca del fondo
-    $ubicacionFooter = max($ubicacionFooterCalculada, $ubicacionFooterFinal);
-    // Guardar total de esta página
-    $numPaginaActualFooter = $pdf->getPage();
-    $totalPorPagina[$numPaginaActualFooter] = $totalNumero;
-}
-
-// INCLUIR FOOTER
-$pdf->SetY($ubicacionFooter);
-
-$ivas = json_decode($respuestaVenta["impuesto_detalle"], true);
-$ivasDiscriminadosNombre = "";
-$ivasDiscriminadosValor = "";
-$ivasAcumuladosB = 0;
-if(is_array($ivas) && !empty($ivas)) {
-    foreach ($ivas as $key => $value) {
-        if(isset($value["descripcion"]) && isset($value["iva"])) {
-            $ivasDiscriminadosNombre .= $value["descripcion"] . ': $<br>';
-            $ivasDiscriminadosValor .= '<b>' . number_format($value["iva"],2, ',', '.') . '</b><br>';
+    
+    // Guardar total de esta página si no está guardado
+    if(!isset($totalPorPagina[$pag])) {
+        $totalPorPagina[$pag] = $totalNumero;
+    }
+    
+    // Renderizar footer en esta página
+    $pdf->SetY($ubicacionFooter);
+    
+    $ivas = json_decode($respuestaVenta["impuesto_detalle"], true);
+    $ivasDiscriminadosNombre = "";
+    $ivasDiscriminadosValor = "";
+    $ivasAcumuladosB = 0;
+    if(is_array($ivas) && !empty($ivas)) {
+        foreach ($ivas as $key => $value) {
+            if(isset($value["descripcion"]) && isset($value["iva"])) {
+                $ivasDiscriminadosNombre .= $value["descripcion"] . ': $<br>';
+                $ivasDiscriminadosValor .= '<b>' . number_format($value["iva"],2, ',', '.') . '</b><br>';
+            }
         }
     }
-}
-
-//---------------------Datos Factura neto, totales, iva, descuento (ORIGINAL)
-if ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4) {
-if(isset($jsonQRBase64) && !empty($jsonQRBase64)) {
-    $style = array('border' => false, 'fgcolor' => array(0,0,0), 'bgcolor' => false);
-    $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
-}
-$pdf->SetY($ubicacionFooter);
-// SIEMPRE recalcular número de página para asegurar que aparezca en todas las páginas
-$numPaginaFooter = $pdf->getPage();
-$bloqueDatosFact = <<<EOF
+    
+    //---------------------Datos Factura neto, totales, iva, descuento (ORIGINAL)
+    if ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4) {
+    if(isset($jsonQRBase64) && !empty($jsonQRBase64) && $pag == 1) {
+        $style = array('border' => false, 'fgcolor' => array(0,0,0), 'bgcolor' => false);
+        $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
+    }
+    $pdf->SetY($ubicacionFooter);
+    // SIEMPRE usar el número de página actual
+    $numPaginaFooter = $pag;
+    $bloqueDatosFact = <<<EOF
 	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
 		<tr>
 			<td style="width:15%; vertical-align: top;">
@@ -771,29 +785,28 @@ $bloqueDatosFact = <<<EOF
 		</tr>
 	</table>
 EOF;
-
-} else {
-
-$cbteBoCAutorizado = "";
-$leyendaArcaB = "";
-if ($facturada && isset($jsonQRBase64) && !empty($jsonQRBase64)) {
-    $style = array('border' => false, 'fgcolor' => array(0,0,0), 'bgcolor' => false);
-    $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
-    $pdf->SetY($ubicacionFooter);
-    $cbteBoCAutorizado = '<div style="color: #242C4F; font-size:11px; font-weight: bold;">
-						ARCA - Comprobante Autorizado
-					 </div>
-					<div style="font-size:8px; margin-top: 3px;">
-						<b>CAE:</b> ' . $cae . ' - <b>Vto. CAE:</b> ' . $vtoCae . '
-					</div>
-					<div style="font-size: 7px; font-style:italic; margin-top: 5px;">
-						Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación
-					</div>';
+    } else {
+    
+    $cbteBoCAutorizado = "";
+    $leyendaArcaB = "";
+    if ($facturada && isset($jsonQRBase64) && !empty($jsonQRBase64) && $pag == 1) {
+        $style = array('border' => false, 'fgcolor' => array(0,0,0), 'bgcolor' => false);
+        $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
+        $pdf->SetY($ubicacionFooter);
+        $cbteBoCAutorizado = '<div style="color: #242C4F; font-size:11px; font-weight: bold;">
+							ARCA - Comprobante Autorizado
+						 </div>
+						<div style="font-size:8px; margin-top: 3px;">
+							<b>CAE:</b> ' . $cae . ' - <b>Vto. CAE:</b> ' . $vtoCae . '
+						</div>
+						<div style="font-size: 7px; font-style:italic; margin-top: 5px;">
+							Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación
+						</div>';
+    }
     $leyendaArcaB = ($respuestaVenta["cbte_tipo"] == 6 || $respuestaVenta["cbte_tipo"] == 7 || $respuestaVenta["cbte_tipo"] == 8 || $respuestaVenta["cbte_tipo"] == 9) ? "IVA contenido (Ley 27.743) $<br><br>" : "";
     $ivasAcumuladosB = ($respuestaVenta["cbte_tipo"] == 6 || $respuestaVenta["cbte_tipo"] == 7 || $respuestaVenta["cbte_tipo"] == 8 || $respuestaVenta["cbte_tipo"] == 9) ? "<b>" . $respuestaVenta["impuesto"] . "</b><br><br>" : "";
-}
-$numPaginaFooterB = $pdf->getPage(); // Calcular número de página antes del heredoc
-$bloqueDatosFact = <<<EOF
+    $numPaginaFooterB = $pag;
+    $bloqueDatosFact = <<<EOF
 	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
 		<tr>
 			<td style="width:15%; vertical-align: top;">
@@ -821,145 +834,166 @@ $bloqueDatosFact = <<<EOF
 	</table>
 EOF;
 
+    }
+    $pdf->writeHTML($bloqueDatosFact, false, false, false, false, '');
 }
-$pdf->writeHTML($bloqueDatosFact, false, false, false, false, '');
 
 
 /*=============================================================================
 -----------------------------------DUPLICADO----------------------------------
 ==============================================================================*/
+// Reiniciar variables para duplicado
+$productosProcesados = 0;
+$tablaAbierta = false;
+$filasEnPaginaActual = 0;
+
 // Agregar nueva página para duplicado
 $pdf->AddPage('P', 'A4');
 $ubicacionCabecera = 5;
-$ubicacionDetalle = 0; // Se calculará dinámicamente
-$ubicacionFooter = 0; // Se calculará dinámicamente
 
-// INCLUIR CABECERA DUPLICADO
+// INCLUIR CABECERA DUPLICADO PRIMERA PÁGINA
 $pdf->SetY($ubicacionCabecera);
 $pdf->writeHTML($bloqueCabeceraDuplicado, false, false, false, false, '');
 
-// Obtener posición Y después de la cabecera para calcular posición de tabla
+// Obtener posición Y después de la cabecera
 $yDespuesCabecera = $pdf->GetY();
-$espacioEntreCabeceraYTabla = 10; // Espacio entre cabecera y tabla
 $ubicacionDetalle = $yDespuesCabecera + $espacioEntreCabeceraYTabla;
 
-// Obtener número de página actual
-$numPaginaActual = $pdf->getPage();
-
-// Mostrar transporte acumulado solo desde página 2 en adelante
-if($numPaginaActual > 1) {
-    // Calcular transporte acumulado (suma de totales de páginas anteriores)
-    $transporteAcumulado = 0;
-    foreach($totalPorPagina as $pagNum => $totalPag) {
-        if($pagNum < $numPaginaActual) {
-            $transporteAcumulado += $totalPag;
+// Procesar productos para duplicado (misma lógica que original)
+foreach ($productos as $key => $value) {
+    if(!isset($value["id"]) || !isset($value["cantidad"]) || !isset($value["total"])) {
+        continue;
+    }
+    
+    $getProducto = ControladorProductos::ctrMostrarProductoXId($value["id"]);
+    if(!$getProducto || !is_array($getProducto)) {
+        continue;
+    }
+    
+    // Verificar si necesitamos nueva página
+    $numPaginaActual = $pdf->getPage();
+    $currentY = $pdf->GetY();
+    $espacioDisponible = $alturaMaximaPagina - $currentY - $alturaFooter - $espacioEntreTablaYFooter;
+    
+    // Si no hay espacio o es inicio de página, cerrar tabla anterior y abrir nueva
+    if($espacioDisponible < ($alturaFilaProducto * 2) || ($productosProcesados > 0 && $filasEnPaginaActual == 0)) {
+        // Cerrar tabla anterior si estaba abierta
+        if($tablaAbierta) {
+            $pdf->writeHTML('</table>', false, false, false, false, '');
+            $tablaAbierta = false;
         }
-    }
-    
-    if($transporteAcumulado > 0) {
-        $transporteFormateado = formatearNumeroSinCeros($transporteAcumulado);
-        $bloqueTransporte = '<div style="font-size: 12px; font-weight: bold; text-align: right; margin-bottom: 10px; color: #000;">
-            Transporte: ' . $transporteFormateado . '
-        </div>';
-        $pdf->SetY($ubicacionDetalle);
-        $pdf->writeHTML($bloqueTransporte, false, false, false, false, '');
-        $ubicacionDetalle = $pdf->GetY() + 5; // Ajustar posición después del transporte
-    }
-}
-
-// INCLUIR TABLA DE PRODUCTOS (reutilizar la misma tabla construida)
-$pdf->SetY($ubicacionDetalle);
-$pdf->writeHTML($tablaProductos, false, false, false, false, '');
-
-// Obtener posición Y después de la tabla de productos
-$currentY = $pdf->GetY();
-
-// Calcular posición del footer: después de la tabla + espacio adicional
-$espacioEntreTablaYFooter = 20; // Espacio adicional entre tabla y footer
-$ubicacionFooterCalculada = $currentY + $espacioEntreTablaYFooter;
-
-// Verificar que no se haya excedido el límite de la página antes de agregar footer
-// Mover footer al fondo de la página (cerca del final)
-$alturaMaximaPagina = 287; // Altura máxima de página A4 en mm
-$alturaFooter = 30; // Altura estimada del footer
-$ubicacionFooterFinal = $alturaMaximaPagina - $alturaFooter - 10; // 10mm de margen inferior
-
-if($ubicacionFooterCalculada > $ubicacionFooterFinal) {
-    // Guardar total de la página actual antes de agregar nueva página
-    $numPaginaAntesNuevaDuplicado = $pdf->getPage();
-    $totalPorPagina[$numPaginaAntesNuevaDuplicado] = $totalNumero;
-    
-    $pdf->AddPage('P', 'A4');
-    
-    // REPETIR CABECERA EN NUEVA PÁGINA (DUPLICADO)
-    $pdf->SetY($ubicacionCabecera);
-    $pdf->writeHTML($bloqueCabeceraDuplicado, false, false, false, false, '');
-    
-    // Recalcular posición después de cabecera
-    $yDespuesCabeceraNuevaDuplicado = $pdf->GetY();
-    $ubicacionDetalleNuevaDuplicado = $yDespuesCabeceraNuevaDuplicado + $espacioEntreCabeceraYTabla;
-    
-    // Obtener número de página actual después de AddPage
-    $numPaginaNuevaDuplicado = $pdf->getPage();
-    
-    // Mostrar transporte acumulado si es página 2 o superior
-    if($numPaginaNuevaDuplicado > 1) {
-        $transporteAcumulado = 0;
-        foreach($totalPorPagina as $pagNum => $totalPag) {
-            if($pagNum < $numPaginaNuevaDuplicado) {
-                $transporteAcumulado += $totalPag;
+        
+        // Agregar nueva página
+        $pdf->AddPage('P', 'A4');
+        
+        // REPETIR CABECERA DUPLICADO EN NUEVA PÁGINA
+        $pdf->SetY($ubicacionCabecera);
+        $pdf->writeHTML($bloqueCabeceraDuplicado, false, false, false, false, '');
+        
+        // Recalcular posición después de cabecera
+        $yDespuesCabecera = $pdf->GetY();
+        $ubicacionDetalle = $yDespuesCabecera + $espacioEntreCabeceraYTabla;
+        
+        // Obtener número de página actual
+        $numPaginaActual = $pdf->getPage();
+        
+        // Mostrar transporte acumulado desde página 2 (contando desde inicio duplicado)
+        $paginaDuplicado = $numPaginaActual - $totalPaginasOriginal;
+        if($paginaDuplicado > 1) {
+            $transporteAcumulado = 0;
+            // Sumar totales de páginas anteriores del duplicado
+            for($p = $totalPaginasOriginal + 1; $p < $numPaginaActual; $p++) {
+                if(isset($totalPorPagina[$p])) {
+                    $transporteAcumulado += $totalPorPagina[$p];
+                }
+            }
+            
+            if($transporteAcumulado > 0) {
+                $transporteFormateado = formatearNumeroSinCeros($transporteAcumulado);
+                $bloqueTransporte = '<div style="font-size: 12px; font-weight: bold; text-align: right; margin-bottom: 10px; color: #000;">
+                    Transporte: ' . $transporteFormateado . '
+                </div>';
+                $pdf->SetY($ubicacionDetalle);
+                $pdf->writeHTML($bloqueTransporte, false, false, false, false, '');
+                $ubicacionDetalle = $pdf->GetY() + 5;
             }
         }
         
-        if($transporteAcumulado > 0) {
-            $transporteFormateado = formatearNumeroSinCeros($transporteAcumulado);
-            $bloqueTransporte = '<div style="font-size: 12px; font-weight: bold; text-align: right; margin-bottom: 10px; color: #000;">
-                Transporte: ' . $transporteFormateado . '
-            </div>';
-            $pdf->SetY($ubicacionDetalleNuevaDuplicado);
-            $pdf->writeHTML($bloqueTransporte, false, false, false, false, '');
-            $ubicacionDetalleNuevaDuplicado = $pdf->GetY() + 5;
+        // Abrir nueva tabla
+        $pdf->SetY($ubicacionDetalle);
+        $encabezadoTabla = obtenerEncabezadoTabla($esTipoA);
+        $pdf->writeHTML($encabezadoTabla, false, false, false, false, '');
+        $tablaAbierta = true;
+        $filasEnPaginaActual = 0;
+    }
+    
+    // Si es el primer producto de la primera página duplicado, abrir tabla
+    if(!$tablaAbierta && $productosProcesados == 0) {
+        $pdf->SetY($ubicacionDetalle);
+        $encabezadoTabla = obtenerEncabezadoTabla($esTipoA);
+        $pdf->writeHTML($encabezadoTabla, false, false, false, false, '');
+        $tablaAbierta = true;
+    }
+    
+    // Renderizar fila de producto
+    $filaProducto = renderizarFilaProducto($value, $getProducto, $esTipoA);
+    $pdf->writeHTML($filaProducto, false, false, false, false, '');
+    
+    $productosProcesados++;
+    $filasEnPaginaActual++;
+}
+
+// Cerrar tabla si está abierta
+if($tablaAbierta) {
+    $pdf->writeHTML('</table>', false, false, false, false, '');
+}
+
+// Procesar footer para cada página del DUPLICADO
+$paginaInicioDuplicado = $totalPaginasOriginal + 1;
+$totalPaginasDuplicado = $pdf->getPage();
+for($pag = $paginaInicioDuplicado; $pag <= $totalPaginasDuplicado; $pag++) {
+    $pdf->setPage($pag);
+    
+    // Obtener posición Y actual en esta página
+    $currentY = $pdf->GetY();
+    
+    // Calcular posición del footer
+    $ubicacionFooterCalculada = $currentY + $espacioEntreTablaYFooter;
+    $ubicacionFooterFinal = $alturaMaximaPagina - $alturaFooter - 10;
+    $ubicacionFooter = max($ubicacionFooterCalculada, $ubicacionFooterFinal);
+    
+    // Guardar total de esta página si no está guardado
+    if(!isset($totalPorPagina[$pag])) {
+        $totalPorPagina[$pag] = $totalNumero;
+    }
+    
+    // Renderizar footer en esta página
+    $pdf->SetY($ubicacionFooter);
+    
+    $ivas = json_decode($respuestaVenta["impuesto_detalle"], true);
+    $ivasDiscriminadosNombre = "";
+    $ivasDiscriminadosValor = "";
+    $ivasAcumuladosB = 0;
+    if(is_array($ivas) && !empty($ivas)) {
+        foreach ($ivas as $key => $value) {
+            if(isset($value["descripcion"]) && isset($value["iva"])) {
+                $ivasDiscriminadosNombre .= $value["descripcion"] . ': $<br>';
+                $ivasDiscriminadosValor .= '<b>' . number_format($value["iva"],2, ',', '.') . '</b><br>';
+            }
         }
     }
     
-    // Continuar con tabla de productos en nueva página
-    $pdf->SetY($ubicacionDetalleNuevaDuplicado);
-    $pdf->writeHTML($tablaProductos, false, false, false, false, '');
+    // Calcular número de página relativo al duplicado (1, 2, 3...)
+    $numPaginaRelativoDuplicado = $pag - $totalPaginasOriginal;
     
-    // Recalcular posición del footer en nueva página
-    $currentY = $pdf->GetY();
-    $ubicacionFooterCalculada = $currentY + $espacioEntreTablaYFooter;
-    $ubicacionFooter = max($ubicacionFooterCalculada, $ubicacionFooterFinal);
-} else {
-    // Usar posición calculada pero asegurar que esté cerca del fondo
-    $ubicacionFooter = max($ubicacionFooterCalculada, $ubicacionFooterFinal);
-    // Guardar total de esta página
-    $numPaginaActualFooterDuplicado = $pdf->getPage();
-    $totalPorPagina[$numPaginaActualFooterDuplicado] = $totalNumero;
-}
-
-// INCLUIR FOOTER DUPLICADO (mismo formato que original)
-$pdf->SetY($ubicacionFooter);
-
-$ivas = json_decode($respuestaVenta["impuesto_detalle"], true);
-$ivasDiscriminadosNombre = "";
-$ivasDiscriminadosValor = "";
-$ivasAcumuladosB = 0;
-if(is_array($ivas)) {
-    foreach ($ivas as $key => $value) {
-        $ivasDiscriminadosNombre .= $value["descripcion"] . ': $<br>';
-        $ivasDiscriminadosValor .= '<b>' . number_format($value["iva"],2, ',', '.') . '</b><br>';
+    //---------------------Datos Factura neto, totales, iva, descuento (DUPLICADO)
+    if ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4) {
+    if(isset($jsonQRBase64) && !empty($jsonQRBase64) && $numPaginaRelativoDuplicado == 1) {
+        $style = array('border' => false, 'fgcolor' => array(0,0,0), 'bgcolor' => false);
+        $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
     }
-}
-
-//---------------------Datos Factura neto, totales, iva, descuento (DUPLICADO)
-if ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4) {
-if(isset($jsonQRBase64) && !empty($jsonQRBase64)) {
-    $style = array('border' => false, 'fgcolor' => array(0,0,0), 'bgcolor' => false);
-    $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
-}
-$pdf->SetY($ubicacionFooter);
-$numPaginaFooterDuplicado = $pdf->getPage(); // Calcular número de página antes del heredoc
+    $pdf->SetY($ubicacionFooter);
+    $numPaginaFooterDuplicado = $numPaginaRelativoDuplicado;
 $bloqueDatosFact = <<<EOF
 	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
 		<tr>
@@ -998,28 +1032,28 @@ $bloqueDatosFact = <<<EOF
 	</table>
 EOF;
 
-} else {
-
-$cbteBoCAutorizado = "";
-$leyendaArcaB = "";
-if ($facturada && isset($jsonQRBase64) && !empty($jsonQRBase64)) {
-    $style = array('border' => false, 'fgcolor' => array(0,0,0), 'bgcolor' => false);
-    $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
-    $pdf->SetY($ubicacionFooter);
-    $cbteBoCAutorizado = '<div style="color: #242C4F; font-size:11px; font-weight: bold;">
-						ARCA - Comprobante Autorizado
-					 </div>
-					<div style="font-size:8px; margin-top: 3px;">
-						<b>CAE:</b> ' . $cae . ' - <b>Vto. CAE:</b> ' . $vtoCae . '
-					</div>
-					<div style="font-size: 7px; font-style:italic; margin-top: 5px;">
-						Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación
-					</div>';
+    } else {
+    
+    $cbteBoCAutorizado = "";
+    $leyendaArcaB = "";
+    if ($facturada && isset($jsonQRBase64) && !empty($jsonQRBase64) && $numPaginaRelativoDuplicado == 1) {
+        $style = array('border' => false, 'fgcolor' => array(0,0,0), 'bgcolor' => false);
+        $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
+        $pdf->SetY($ubicacionFooter);
+        $cbteBoCAutorizado = '<div style="color: #242C4F; font-size:11px; font-weight: bold;">
+							ARCA - Comprobante Autorizado
+						 </div>
+						<div style="font-size:8px; margin-top: 3px;">
+							<b>CAE:</b> ' . $cae . ' - <b>Vto. CAE:</b> ' . $vtoCae . '
+						</div>
+						<div style="font-size: 7px; font-style:italic; margin-top: 5px;">
+							Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación
+						</div>';
+    }
     $leyendaArcaB = ($respuestaVenta["cbte_tipo"] == 6 || $respuestaVenta["cbte_tipo"] == 7 || $respuestaVenta["cbte_tipo"] == 8 || $respuestaVenta["cbte_tipo"] == 9) ? "IVA contenido (Ley 27.743) $<br><br>" : "";
     $ivasAcumuladosB = ($respuestaVenta["cbte_tipo"] == 6 || $respuestaVenta["cbte_tipo"] == 7 || $respuestaVenta["cbte_tipo"] == 8 || $respuestaVenta["cbte_tipo"] == 9) ? "<b>" . $respuestaVenta["impuesto"] . "</b><br><br>" : "";
-}
-$numPaginaFooterB = $pdf->getPage(); // Calcular número de página antes del heredoc
-$bloqueDatosFact = <<<EOF
+    $numPaginaFooterB = $numPaginaRelativoDuplicado;
+    $bloqueDatosFact = <<<EOF
 	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
 		<tr>
 			<td style="width:15%; vertical-align: top;">
@@ -1047,8 +1081,9 @@ $bloqueDatosFact = <<<EOF
 	</table>
 EOF;
 
+    }
+    $pdf->writeHTML($bloqueDatosFact, false, false, false, false, '');
 }
-$pdf->writeHTML($bloqueDatosFact, false, false, false, false, '');
 
 //SALIDA DEL ARCHIVO
 $nomArchivo = 'CBTE_'.$tipoVtaLetra.'_'.$ptoVta.'-'.$numCte.'.pdf';
@@ -1056,8 +1091,6 @@ if(isset($_GET["descargarFactura"])){
 $pdf->Output($nomArchivo, 'D');
 } else {
 $pdf->Output($nomArchivo);
-}
-
 }
 
 }

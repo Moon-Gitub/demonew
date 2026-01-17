@@ -125,6 +125,25 @@ try {
         echo json_encode(['error' => false, 'message' => 'Parámetros recibidos']);
         exit;
     }
+    
+    // CRÍTICO: Ignorar IDs de prueba o inválidos (como 123456 que es usado en simulaciones)
+    // Los payment_ids reales de MercadoPago tienen un formato específico (números largos)
+    if ($topic === 'payment' && (strlen($id) < 8 || $id === '123456' || !is_numeric($id))) {
+        error_log("⚠️ Webhook ignorado: ID de prueba o inválido detectado (ID: $id, Topic: $topic)");
+        error_log("   Los payment_ids reales de MercadoPago son números largos (mínimo 8 dígitos)");
+        
+        // Registrar webhook pero marcarlo como procesado para evitar reintentos
+        if (class_exists('ModeloMercadoPago')) {
+            $webhookId = ModeloMercadoPago::mdlRegistrarWebhook($topic, $id, json_encode(['ignored' => true, 'reason' => 'test_id']));
+            if ($webhookId) {
+                ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
+            }
+        }
+        
+        http_response_code(200);
+        echo json_encode(['error' => false, 'message' => 'Webhook de prueba ignorado']);
+        exit;
+    }
 
     // Registrar el webhook en la base de datos (solo si las clases están disponibles)
     $webhookId = null;
