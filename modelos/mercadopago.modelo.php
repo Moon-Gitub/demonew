@@ -34,23 +34,55 @@ class ModeloMercadoPago {
 				}
 			}
 
-			// PREVENIR MÚLTIPLES INTENTOS PENDIENTES: Verificar si hay un intento pendiente reciente (últimos 5 minutos) para el mismo cliente y monto
+			// PREVENIR MÚLTIPLES INTENTOS PENDIENTES: Verificar si hay un intento pendiente reciente (últimos 30 minutos) para el mismo cliente y monto
+			// AUMENTADO DE 5 A 30 MINUTOS para evitar duplicados cuando se recarga la página
 			if (isset($datos["id_cliente_moon"]) && isset($datos["monto"])) {
-				$stmtCheckCliente = $conexion->prepare("SELECT id FROM mercadopago_intentos 
+				$monto = floatval($datos["monto"]);
+				
+				// Verificar por cliente y monto (con tolerancia de 0.01 para redondeos)
+				$stmtCheckCliente = $conexion->prepare("SELECT id, preference_id, fecha_creacion FROM mercadopago_intentos 
 					WHERE id_cliente_moon = :id_cliente 
-					AND monto = :monto 
+					AND ABS(monto - :monto) < 0.01
 					AND estado = 'pendiente' 
-					AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+					AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 30 MINUTE)
+					ORDER BY fecha_creacion DESC
 					LIMIT 1");
 				$stmtCheckCliente->bindParam(":id_cliente", $datos["id_cliente_moon"], PDO::PARAM_INT);
-				$monto = floatval($datos["monto"]);
 				$stmtCheckCliente->bindParam(":monto", $monto, PDO::PARAM_STR);
 				$stmtCheckCliente->execute();
 				$intentoReciente = $stmtCheckCliente->fetch();
 				$stmtCheckCliente->closeCursor();
 				
 				if ($intentoReciente) {
-					error_log("⚠️ Ya existe un intento pendiente reciente para cliente " . $datos["id_cliente_moon"] . " con monto $monto (ID: " . $intentoReciente['id'] . ")");
+					error_log("⚠️ Ya existe un intento pendiente reciente para cliente " . $datos["id_cliente_moon"] . " con monto $monto (ID: " . $intentoReciente['id'] . ", creado: " . $intentoReciente['fecha_creacion'] . ")");
+					error_log("   NO se creará un nuevo intento para evitar duplicados");
+					return "ok"; // Retornar ok para evitar duplicados
+				}
+			}
+			
+			// PREVENIR DUPLICADOS POR PREFERENCE_ID (si no tiene preference_id, verificar por cliente+monto+descripcion)
+			// Esto evita crear múltiples intentos cuando se recarga la página sin preference_id
+			if ((!isset($datos["preference_id"]) || empty($datos["preference_id"])) && isset($datos["id_cliente_moon"]) && isset($datos["monto"]) && isset($datos["descripcion"])) {
+				$monto = floatval($datos["monto"]);
+				$descripcion = isset($datos["descripcion"]) ? $datos["descripcion"] : '';
+				
+				$stmtCheckSinPreference = $conexion->prepare("SELECT id FROM mercadopago_intentos 
+					WHERE id_cliente_moon = :id_cliente 
+					AND ABS(monto - :monto) < 0.01
+					AND descripcion = :descripcion
+					AND (preference_id IS NULL OR preference_id = '')
+					AND estado = 'pendiente' 
+					AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 30 MINUTE)
+					LIMIT 1");
+				$stmtCheckSinPreference->bindParam(":id_cliente", $datos["id_cliente_moon"], PDO::PARAM_INT);
+				$stmtCheckSinPreference->bindParam(":monto", $monto, PDO::PARAM_STR);
+				$stmtCheckSinPreference->bindParam(":descripcion", $descripcion, PDO::PARAM_STR);
+				$stmtCheckSinPreference->execute();
+				$intentoSinPreference = $stmtCheckSinPreference->fetch();
+				$stmtCheckSinPreference->closeCursor();
+				
+				if ($intentoSinPreference) {
+					error_log("⚠️ Ya existe un intento pendiente sin preference_id para cliente " . $datos["id_cliente_moon"] . " con monto $monto y descripción '$descripcion' (ID: " . $intentoSinPreference['id'] . ")");
 					return "ok"; // Retornar ok para evitar duplicados
 				}
 			}
@@ -97,10 +129,11 @@ class ModeloMercadoPago {
 	static public function mdlRegistrarPagoConfirmado($datos) {
 
 		// Validar datos requeridos
-		if (!isset($datos["id_cliente_moon"]) || empty($datos["id_cliente_moon"])) {
+		// NOTA: id_cliente_moon puede ser 0 para pagos QR/ventas POS sin cliente asociado
+		if (!isset($datos["id_cliente_moon"]) || $datos["id_cliente_moon"] === null || $datos["id_cliente_moon"] === '') {
 			error_log("ERROR mdlRegistrarPagoConfirmado: id_cliente_moon no proporcionado");
 			error_log("Datos recibidos: " . print_r($datos, true));
-			return array("error" => "id_cliente_moon requerido");
+			return array("error" => "id_cliente_moon requerido (puede ser 0 para pagos sin cliente)");
 		}
 
 		if (!isset($datos["payment_id"]) || empty($datos["payment_id"])) {
@@ -126,8 +159,10 @@ class ModeloMercadoPago {
 			
 			if ($pagoExistente) {
 				error_log("⚠️ ADVERTENCIA: Payment ID " . $datos["payment_id"] . " ya existe en mercadopago_pagos (ID: " . $pagoExistente['id'] . ")");
-				error_log("   Esto no debería pasar si se verificó antes. Puede ser race condition.");
-				return array("error" => "Pago ya existe", "id_existente" => $pagoExistente['id']);
+				error_log("   Esto no debería pasar si se verificó antes. Puede ser race condition o webhook duplicado.");
+				// Retornar "ok" en lugar de error para evitar que el webhook se marque como fallido
+				// El pago ya está registrado, así que consideramos el proceso exitoso
+				return "ok";
 			}
 
 			$stmt = $conexion->prepare("INSERT INTO mercadopago_pagos
@@ -354,13 +389,13 @@ class ModeloMercadoPago {
 				$stmt->closeCursor();
 			}
 
-			// Método 2: Si no se actualizó y hay order_id, buscar intentos pendientes recientes del mismo cliente
+			// Método 2: Si no se actualizó y hay order_id, buscar intentos pendientes recientes
 			// Esto es para el modelo atendido (QR estático) donde no hay preference_id
+			// NOTA: Los pagos QR pueden no tener intentos registrados, así que esto es opcional
 			if ($filasAfectadas == 0 && $orderId && !empty($orderId)) {
-				// Obtener datos de la orden para buscar el intento
-				// Nota: En el modelo atendido, el external_reference puede contener info del cliente
-				// Por ahora, actualizamos todos los intentos pendientes recientes (últimos 10 minutos)
+				// Intentar actualizar intentos pendientes recientes (últimos 10 minutos)
 				// Esto es un fallback para cuando no hay preference_id
+				// Solo actualizamos si hay intentos pendientes recientes
 				$stmt = $conexion->prepare("UPDATE mercadopago_intentos
 					SET estado = :estado, fecha_actualizacion = :fecha_actualizacion
 					WHERE estado = 'pendiente' 
@@ -375,6 +410,8 @@ class ModeloMercadoPago {
 					$filasAfectadas = $stmt->rowCount();
 					if ($filasAfectadas > 0) {
 						error_log("✅ Estado de intento actualizado por order_id (fallback): $orderId -> $estado");
+					} else {
+						error_log("ℹ️ No se encontraron intentos pendientes recientes para actualizar con order_id: $orderId (puede ser pago QR sin intento previo)");
 					}
 				}
 				$stmt->closeCursor();

@@ -923,18 +923,43 @@ class ControladorMercadoPago {
 				$paymentId = null;
 				
 				if (isset($order['payments']) && is_array($order['payments']) && count($order['payments']) > 0) {
-					$payment = $order['payments'][0];
-					$paymentId = isset($payment['id']) ? $payment['id'] : null;
-					$paymentStatus = isset($payment['status']) ? $payment['status'] : null;
+					// Revisar TODOS los pagos de la orden, no solo el primero
+					// Algunas órdenes pueden tener múltiples pagos
+					foreach ($order['payments'] as $payment) {
+						$paymentId = isset($payment['id']) ? $payment['id'] : null;
+						$paymentStatus = isset($payment['status']) ? $payment['status'] : null;
+						
+						// El pago está aprobado si el status es 'approved'
+						if ($paymentStatus === 'approved') {
+							$paymentApproved = true;
+							error_log("Verificación orden $orderId: Pago aprobado encontrado - Payment ID: $paymentId, Status: $paymentStatus");
+							break; // Si encontramos uno aprobado, ya está
+						}
+						
+						// Si no hay paymentId aún, usar el primero
+						if (!$paymentId && isset($payment['id'])) {
+							$paymentId = $payment['id'];
+						}
+					}
 					
-					// El pago está aprobado si el status es 'approved'
-					$paymentApproved = ($paymentStatus === 'approved');
+					// Si no encontramos ninguno aprobado, usar el estado del primer pago
+					if (!isset($paymentApproved) && isset($order['payments'][0])) {
+						$payment = $order['payments'][0];
+						$paymentStatus = isset($payment['status']) ? $payment['status'] : null;
+						$paymentApproved = ($paymentStatus === 'approved');
+						$paymentId = isset($payment['id']) ? $payment['id'] : null;
+					}
 					
-					error_log("Verificación orden $orderId: status=$status, closed=$closed, payment_status=$paymentStatus, payment_approved=$paymentApproved");
+					error_log("Verificación orden $orderId: status=$status, closed=$closed, payment_status=$paymentStatus, payment_approved=" . (isset($paymentApproved) ? ($paymentApproved ? 'true' : 'false') : 'N/A'));
+				} else {
+					$paymentApproved = false;
+					$paymentStatus = null;
+					$paymentId = null;
+					error_log("Verificación orden $orderId: No hay pagos asociados");
 				}
 				
 				// La orden está aprobada si está cerrada Y el pago está aprobado
-				$aprobado = $closed && $paymentApproved;
+				$aprobado = $closed && (isset($paymentApproved) && $paymentApproved);
 				
 				return array(
 					'error' => false,

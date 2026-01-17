@@ -3189,10 +3189,10 @@ function iniciarVerificacionPagoQR(){
 		clearInterval(intervaloVerificacionQR);
 	}
 	
-	// Verificar cada 3 segundos
+	// Verificar cada 2 segundos para detectar pagos más rápido
 	intervaloVerificacionQR = setInterval(function(){
 		verificarPagoQR();
-	}, 3000);
+	}, 2000);
 	
 	// También verificar inmediatamente
 	verificarPagoQR();
@@ -3227,7 +3227,18 @@ function verificarPagoQR(){
 				clearInterval(intervaloVerificacionQR);
 				intervaloVerificacionQR = null;
 				
+				// MOSTRAR AVISO INMEDIATAMENTE
 				$("#qrEstado").removeClass("alert-info alert-danger alert-warning").addClass("alert-success").html('<i class="fa fa-check-circle"></i> ¡Pago confirmado en Mercado Pago! Payment ID: ' + (respuesta.payment_id || 'N/A'));
+				
+				// Mostrar alerta visual inmediata
+				swal({
+					title: "¡Pago Confirmado!",
+					text: "El pago ha sido aprobado en Mercado Pago. Payment ID: " + (respuesta.payment_id || 'N/A'),
+					type: "success",
+					confirmButtonText: "Continuar",
+					timer: 3000,
+					showConfirmButton: true
+				});
 				
 				// REGISTRAR PAGO EN SISTEMA DE COBRO (TABLA mercadopago_pagos)
 				// Esto es crítico porque el webhook puede no estar funcionando
