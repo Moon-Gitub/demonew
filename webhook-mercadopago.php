@@ -214,6 +214,13 @@ try {
 
         // Consultar el pago en la API de MercadoPago
         $url = "https://api.mercadopago.com/v1/payments/$id";
+        
+        error_log("═══════════════════════════════════════");
+        error_log("CONSULTANDO PAGO EN API DE MERCADOPAGO");
+        error_log("URL: $url");
+        error_log("Payment ID: $id");
+        error_log("Topic: $topic");
+        error_log("═══════════════════════════════════════");
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -221,15 +228,37 @@ try {
             'Authorization: Bearer ' . $credenciales['access_token'],
             'Content-Type: application/json'
         ));
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30); // Timeout de 30 segundos
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); // Timeout de conexión de 10 segundos
 
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
         curl_close($ch);
 
-        error_log("Respuesta de MP (HTTP $httpCode): " . $response);
+        if ($curlError) {
+            error_log("❌ ERROR cURL al consultar pago: $curlError");
+        }
+        
+        error_log("Respuesta de MP (HTTP $httpCode): " . substr($response, 0, 500) . (strlen($response) > 500 ? '...' : ''));
 
         if ($httpCode == 200) {
             $payment = json_decode($response, true);
+            
+            if (!$payment || !is_array($payment)) {
+                error_log("❌ ERROR: No se pudo decodificar la respuesta de MercadoPago");
+                if ($webhookId) {
+                    ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
+                }
+                http_response_code(500);
+                echo json_encode(['error' => true, 'message' => 'Error al decodificar respuesta de MercadoPago']);
+                exit;
+            }
+            
+            error_log("✅ Pago obtenido correctamente de MercadoPago");
+            error_log("   - Payment ID: " . (isset($payment['id']) ? $payment['id'] : 'N/A'));
+            error_log("   - Status: " . (isset($payment['status']) ? $payment['status'] : 'N/A'));
+            error_log("   - External Reference: " . (isset($payment['external_reference']) ? $payment['external_reference'] : 'N/A'));
 
             // Si es merchant_order, obtener el payment de la orden
             if ($topic === 'merchant_order') {
@@ -669,7 +698,10 @@ try {
             } else {
                 // Registrar pagos con otros estados (pending, rejected, cancelled, etc.)
                 // Esto permite tener un registro completo de todos los intentos de pago
-                error_log("Pago con estado: $estadoPago - Registrando en BD sin procesar cuenta corriente");
+                error_log("═══════════════════════════════════════");
+                error_log("PAGO CON ESTADO: $estadoPago (NO APROBADO)");
+                error_log("Registrando en BD sin procesar cuenta corriente");
+                error_log("═══════════════════════════════════════");
                 
                 // Obtener ID del cliente (mismo proceso que para approved)
                 $idClienteMoon = null;
@@ -685,6 +717,40 @@ try {
                 
                 if (!$idClienteMoon && isset($payment['metadata']['id_cliente_moon'])) {
                     $idClienteMoon = intval($payment['metadata']['id_cliente_moon']);
+                }
+                
+                // Para pagos QR con formato venta_pos_TIMESTAMP_MONTO, buscar en intentos recientes
+                if (!$idClienteMoon && isset($payment['external_reference']) && strpos($payment['external_reference'], 'venta_pos_') === 0) {
+                    $montoDelPago = isset($payment['transaction_amount']) ? floatval($payment['transaction_amount']) : 0;
+                    
+                    if ($montoDelPago > 0) {
+                        error_log("Buscando cliente en intentos recientes para pago QR (estado: $estadoPago) con monto: $montoDelPago");
+                        
+                        try {
+                            if (class_exists('Conexion')) {
+                                $conexion = Conexion::conectarMoon();
+                                if ($conexion) {
+                                    $stmtBuscarIntento = $conexion->prepare("SELECT id_cliente_moon FROM mercadopago_intentos 
+                                        WHERE ABS(monto - :monto) < 0.01
+                                        AND estado = 'pendiente' 
+                                        AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 30 MINUTE)
+                                        ORDER BY fecha_creacion DESC
+                                        LIMIT 1");
+                                    $stmtBuscarIntento->bindParam(":monto", $montoDelPago, PDO::PARAM_STR);
+                                    $stmtBuscarIntento->execute();
+                                    $intentoEncontrado = $stmtBuscarIntento->fetch();
+                                    $stmtBuscarIntento->closeCursor();
+                                    
+                                    if ($intentoEncontrado && isset($intentoEncontrado['id_cliente_moon']) && $intentoEncontrado['id_cliente_moon'] > 0) {
+                                        $idClienteMoon = intval($intentoEncontrado['id_cliente_moon']);
+                                        error_log("✅ ID Cliente encontrado desde intento reciente (estado: $estadoPago): $idClienteMoon");
+                                    }
+                                }
+                            }
+                        } catch (Exception $e) {
+                            error_log("ERROR al buscar cliente en intentos (estado: $estadoPago): " . $e->getMessage());
+                        }
+                    }
                 }
                 
                 $idClienteMoonFinal = ($idClienteMoon && $idClienteMoon > 0) ? $idClienteMoon : 0;
