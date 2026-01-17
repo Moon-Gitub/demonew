@@ -188,6 +188,43 @@ if(isset($_POST["registrarPagoDesdeFrontend"]) || isset($_GET["registrarPagoDesd
 			}
 		}
 		
+		// Método 4: Para pagos QR con formato venta_pos_TIMESTAMP_MONTO, buscar en intentos recientes
+		// Si el external_reference tiene formato venta_pos_*, buscar intentos pendientes recientes con el mismo monto
+		if(!$idClienteMoon && isset($payment['external_reference']) && strpos($payment['external_reference'], 'venta_pos_') === 0){
+			$montoDelPago = isset($payment['transaction_amount']) ? floatval($payment['transaction_amount']) : 0;
+			
+			if($montoDelPago > 0){
+				error_log("Buscando cliente en intentos recientes para pago QR desde frontend con monto: $montoDelPago");
+				
+				try {
+					require_once __DIR__ . '/../modelos/conexion.php';
+					$conexion = Conexion::conectarMoon();
+					if($conexion){
+						// Buscar intentos pendientes recientes (últimos 30 minutos) con el mismo monto
+						$stmtBuscarIntento = $conexion->prepare("SELECT id_cliente_moon FROM mercadopago_intentos 
+							WHERE ABS(monto - :monto) < 0.01
+							AND estado = 'pendiente' 
+							AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 30 MINUTE)
+							ORDER BY fecha_creacion DESC
+							LIMIT 1");
+						$stmtBuscarIntento->bindParam(":monto", $montoDelPago, PDO::PARAM_STR);
+						$stmtBuscarIntento->execute();
+						$intentoEncontrado = $stmtBuscarIntento->fetch();
+						$stmtBuscarIntento->closeCursor();
+						
+						if($intentoEncontrado && isset($intentoEncontrado['id_cliente_moon']) && $intentoEncontrado['id_cliente_moon'] > 0){
+							$idClienteMoon = intval($intentoEncontrado['id_cliente_moon']);
+							error_log("✅ ID Cliente encontrado desde intento reciente (frontend): $idClienteMoon (monto: $montoDelPago)");
+						} else {
+							error_log("⚠️ No se encontró intento reciente con monto $montoDelPago (frontend)");
+						}
+					}
+				} catch(Exception $e){
+					error_log("ERROR al buscar cliente en intentos desde frontend: " . $e->getMessage());
+				}
+			}
+		}
+		
 		// Si aún no se encuentra, usar 0 para auditoría
 		// Esto es válido para ventas POS que no están asociadas al sistema de cobro
 		if(!$idClienteMoon){
