@@ -468,16 +468,17 @@ try {
                     $montoDelPago = isset($payment['transaction_amount']) ? floatval($payment['transaction_amount']) : 0;
                     
                     if ($montoDelPago > 0) {
-                        error_log("Buscando cliente en intentos recientes para pago QR con monto: $montoDelPago");
+                        error_log("🔍🔍🔍 Buscando cliente en intentos recientes para pago QR con monto: $montoDelPago 🔍🔍🔍");
                         
                         try {
                             $conexion = Conexion::conectarMoon();
                             if ($conexion) {
-                                // Buscar intentos pendientes recientes (últimos 30 minutos) con el mismo monto
+                                // Buscar intentos pendientes recientes (últimos 60 minutos) con el mismo monto
+                                // AUMENTADO A 60 MINUTOS para capturar más intentos
                                 $stmtBuscarIntento = $conexion->prepare("SELECT id_cliente_moon FROM mercadopago_intentos 
                                     WHERE ABS(monto - :monto) < 0.01
                                     AND estado = 'pendiente' 
-                                    AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 30 MINUTE)
+                                    AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 60 MINUTE)
                                     ORDER BY fecha_creacion DESC
                                     LIMIT 1");
                                 $stmtBuscarIntento->bindParam(":monto", $montoDelPago, PDO::PARAM_STR);
@@ -487,7 +488,7 @@ try {
                                 
                                 if ($intentoEncontrado && isset($intentoEncontrado['id_cliente_moon']) && $intentoEncontrado['id_cliente_moon'] > 0) {
                                     $idClienteMoon = intval($intentoEncontrado['id_cliente_moon']);
-                                    error_log("✅ ID Cliente encontrado desde intento reciente: $idClienteMoon (monto: $montoDelPago)");
+                                    error_log("✅✅✅ ID Cliente encontrado desde intento reciente: $idClienteMoon (monto: $montoDelPago) ✅✅✅");
                                 } else {
                                     error_log("⚠️ No se encontró intento reciente con monto $montoDelPago");
                                 }

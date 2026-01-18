@@ -194,17 +194,18 @@ if(isset($_POST["registrarPagoDesdeFrontend"]) || isset($_GET["registrarPagoDesd
 			$montoDelPago = isset($payment['transaction_amount']) ? floatval($payment['transaction_amount']) : 0;
 			
 			if($montoDelPago > 0){
-				error_log("Buscando cliente en intentos recientes para pago QR desde frontend con monto: $montoDelPago");
+				error_log("🔍 Buscando cliente en intentos recientes para pago QR desde frontend con monto: $montoDelPago");
 				
 				try {
 					require_once __DIR__ . '/../modelos/conexion.php';
 					$conexion = Conexion::conectarMoon();
 					if($conexion){
-						// Buscar intentos pendientes recientes (últimos 30 minutos) con el mismo monto
+						// Buscar intentos pendientes recientes (últimos 60 minutos) con el mismo monto
+						// AUMENTADO A 60 MINUTOS para capturar más intentos
 						$stmtBuscarIntento = $conexion->prepare("SELECT id_cliente_moon FROM mercadopago_intentos 
 							WHERE ABS(monto - :monto) < 0.01
 							AND estado = 'pendiente' 
-							AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 30 MINUTE)
+							AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 60 MINUTE)
 							ORDER BY fecha_creacion DESC
 							LIMIT 1");
 						$stmtBuscarIntento->bindParam(":monto", $montoDelPago, PDO::PARAM_STR);
@@ -214,7 +215,7 @@ if(isset($_POST["registrarPagoDesdeFrontend"]) || isset($_GET["registrarPagoDesd
 						
 						if($intentoEncontrado && isset($intentoEncontrado['id_cliente_moon']) && $intentoEncontrado['id_cliente_moon'] > 0){
 							$idClienteMoon = intval($intentoEncontrado['id_cliente_moon']);
-							error_log("✅ ID Cliente encontrado desde intento reciente (frontend): $idClienteMoon (monto: $montoDelPago)");
+							error_log("✅✅✅ ID Cliente encontrado desde intento reciente (frontend): $idClienteMoon (monto: $montoDelPago) ✅✅✅");
 						} else {
 							error_log("⚠️ No se encontró intento reciente con monto $montoDelPago (frontend)");
 						}
@@ -222,6 +223,68 @@ if(isset($_POST["registrarPagoDesdeFrontend"]) || isset($_GET["registrarPagoDesd
 				} catch(Exception $e){
 					error_log("ERROR al buscar cliente en intentos desde frontend: " . $e->getMessage());
 				}
+			}
+		}
+		
+		// Método 5: Si aún no se encontró y hay orderId, buscar en la orden de MercadoPago
+		if(!$idClienteMoon && $orderId){
+			error_log("🔍 Buscando cliente desde orden de MercadoPago (order_id: $orderId)");
+			
+			try {
+				$orderUrl = "https://api.mercadopago.com/merchant_orders/$orderId";
+				$chOrder = curl_init($orderUrl);
+				curl_setopt($chOrder, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($chOrder, CURLOPT_HTTPHEADER, array(
+					'Authorization: Bearer ' . $credenciales['access_token'],
+					'Content-Type: application/json'
+				));
+				$orderResponse = curl_exec($chOrder);
+				$orderHttpCode = curl_getinfo($chOrder, CURLINFO_HTTP_CODE);
+				curl_close($chOrder);
+				
+				if($orderHttpCode == 200){
+					$order = json_decode($orderResponse, true);
+					
+					// Intentar desde external_reference de la orden
+					if(isset($order['external_reference']) && !empty($order['external_reference'])){
+						$externalRef = $order['external_reference'];
+						if(is_numeric($externalRef)){
+							$idClienteMoon = intval($externalRef);
+							error_log("✅ ID Cliente encontrado desde order.external_reference: $idClienteMoon");
+						} elseif(preg_match('/^(\d+)/', $externalRef, $matches)){
+							$idClienteMoon = intval($matches[1]);
+							error_log("✅ ID Cliente extraído desde order.external_reference: $idClienteMoon");
+						}
+					}
+					
+					// Si aún no se encontró, buscar en intentos por monto de la orden
+					if(!$idClienteMoon && isset($order['total_amount'])){
+						$montoOrden = floatval($order['total_amount']);
+						error_log("🔍 Buscando cliente en intentos por monto de orden: $montoOrden");
+						
+						require_once __DIR__ . '/../modelos/conexion.php';
+						$conexion = Conexion::conectarMoon();
+						if($conexion){
+							$stmtBuscarIntento = $conexion->prepare("SELECT id_cliente_moon FROM mercadopago_intentos 
+								WHERE ABS(monto - :monto) < 0.01
+								AND estado = 'pendiente' 
+								AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 60 MINUTE)
+								ORDER BY fecha_creacion DESC
+								LIMIT 1");
+							$stmtBuscarIntento->bindParam(":monto", $montoOrden, PDO::PARAM_STR);
+							$stmtBuscarIntento->execute();
+							$intentoEncontrado = $stmtBuscarIntento->fetch();
+							$stmtBuscarIntento->closeCursor();
+							
+							if($intentoEncontrado && isset($intentoEncontrado['id_cliente_moon']) && $intentoEncontrado['id_cliente_moon'] > 0){
+								$idClienteMoon = intval($intentoEncontrado['id_cliente_moon']);
+								error_log("✅✅✅ ID Cliente encontrado desde intento por monto de orden: $idClienteMoon ✅✅✅");
+							}
+						}
+					}
+				}
+			} catch(Exception $e){
+				error_log("ERROR al buscar cliente desde orden: " . $e->getMessage());
 			}
 		}
 		
@@ -253,28 +316,63 @@ if(isset($_POST["registrarPagoDesdeFrontend"]) || isset($_GET["registrarPagoDesd
 			'datos_json' => json_encode($payment)
 		);
 		
-		// Registrar en mercadopago_pagos
+		// CRÍTICO: Registrar en mercadopago_pagos
+		error_log("═══════════════════════════════════════");
+		error_log("REGISTRANDO PAGO DESDE FRONTEND");
+		error_log("Payment ID: $paymentId");
+		error_log("Order ID: $orderId");
+		error_log("Cliente Moon: " . ($idClienteMoon ?: 'NO ENCONTRADO (0)'));
+		error_log("Monto: " . (isset($payment['transaction_amount']) ? $payment['transaction_amount'] : 'N/A'));
+		error_log("Estado: " . (isset($payment['status']) ? $payment['status'] : 'N/A'));
+		error_log("═══════════════════════════════════════");
+		
 		$resultadoPago = ControladorMercadoPago::ctrRegistrarPagoConfirmado($datosPago);
+		error_log("Resultado registro en mercadopago_pagos: " . (is_array($resultadoPago) ? json_encode($resultadoPago) : $resultadoPago));
 		
 		if($resultadoPago === "ok"){
+			error_log("✅✅✅ PAGO REGISTRADO EN mercadopago_pagos ✅✅✅");
+			
 			// Actualizar estado del intento (puede ser por preference_id o order_id)
 			$preferenceId = isset($datosPago['preference_id']) && !empty($datosPago['preference_id']) ? $datosPago['preference_id'] : null;
-			ModeloMercadoPago::mdlActualizarEstadoIntento($preferenceId, 'aprobado', $orderId);
+			$resultadoIntento = ModeloMercadoPago::mdlActualizarEstadoIntento($preferenceId, 'aprobado', $orderId);
+			error_log("Resultado actualización intento: " . ($resultadoIntento === "ok" ? "✅ OK" : "⚠️ " . $resultadoIntento));
 			
-			// Registrar en cuenta corriente si el pago está aprobado y hay cliente válido
+			// CRÍTICO: Registrar en cuenta corriente si el pago está aprobado y hay cliente válido
 			if($idClienteMoon > 0 && isset($payment['status']) && $payment['status'] === 'approved'){
 				$monto = floatval($payment['transaction_amount']);
-				ControladorSistemaCobro::ctrRegistrarMovimientoCuentaCorriente($idClienteMoon, $monto);
-				ControladorSistemaCobro::ctrActualizarClientesCobro($idClienteMoon, 0); // Desbloquear
+				
+				error_log("═══════════════════════════════════════");
+				error_log("REGISTRANDO EN CUENTA CORRIENTE (FRONTEND)");
+				error_log("Cliente: $idClienteMoon");
+				error_log("Monto: $monto");
+				error_log("═══════════════════════════════════════");
+				
+				$resultadoCtaCte = ControladorSistemaCobro::ctrRegistrarMovimientoCuentaCorriente($idClienteMoon, $monto);
+				error_log("Resultado cuenta corriente: " . (is_array($resultadoCtaCte) ? json_encode($resultadoCtaCte) : $resultadoCtaCte));
+				
+				if($resultadoCtaCte === "ok"){
+					error_log("✅✅✅ MOVIMIENTO DE CUENTA CORRIENTE REGISTRADO ✅✅✅");
+				} else {
+					error_log("❌❌❌ ERROR AL REGISTRAR EN CUENTA CORRIENTE ❌❌❌");
+				}
+				
+				// Desbloquear cliente
+				$resultadoDesbloqueo = ControladorSistemaCobro::ctrActualizarClientesCobro($idClienteMoon, 0);
+				error_log("Resultado desbloqueo: " . ($resultadoDesbloqueo !== false ? "✅ Cliente desbloqueado" : "⚠️ No se pudo desbloquear"));
+			} else {
+				error_log("⚠️ No se registra en cuenta corriente: Cliente=" . ($idClienteMoon ?: '0') . ", Status=" . (isset($payment['status']) ? $payment['status'] : 'N/A'));
 			}
 			
 			echo json_encode(array(
 				"error" => false,
 				"mensaje" => "Pago registrado correctamente en sistema de cobro",
 				"id_cliente_moon" => $idClienteMoon,
-				"payment_id" => $paymentId
+				"payment_id" => $paymentId,
+				"registrado_en_pagos" => true,
+				"registrado_en_cuenta_corriente" => ($idClienteMoon > 0 && isset($payment['status']) && $payment['status'] === 'approved')
 			));
 		} else {
+			error_log("❌❌❌ ERROR AL REGISTRAR PAGO EN mercadopago_pagos ❌❌❌");
 			http_response_code(500);
 			echo json_encode(array(
 				"error" => true,
