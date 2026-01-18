@@ -3274,8 +3274,14 @@ function registrarPagoConfirmadoDesdeFrontend(paymentId, orderId){
 	// Este método registra el pago en mercadopago_pagos cuando se detecta desde el frontend
 	// Es necesario porque el webhook puede no estar funcionando o no estar configurado
 	
+	console.log("🔵🔵🔵 REGISTRANDO PAGO DESDE FRONTEND 🔵🔵🔵");
+	console.log("Payment ID:", paymentId);
+	console.log("Order ID:", orderId);
+	
 	if(!paymentId || !orderId){
-		console.error("No se puede registrar pago: paymentId o orderId faltante");
+		console.error("❌ No se puede registrar pago: paymentId o orderId faltante");
+		console.error("   Payment ID:", paymentId);
+		console.error("   Order ID:", orderId);
 		return;
 	}
 	
@@ -3294,14 +3300,52 @@ function registrarPagoConfirmadoDesdeFrontend(paymentId, orderId){
 		},
 		dataType: "json",
 		success: function(respuesta){
+			console.log("📥 Respuesta del servidor:", respuesta);
+			
 			if(respuesta.error){
-				console.error("Error registrando pago desde frontend:", respuesta.mensaje);
+				console.error("❌❌❌ ERROR registrando pago desde frontend:", respuesta.mensaje);
+				swal({
+					title: "Error",
+					text: "Error al registrar el pago: " + respuesta.mensaje,
+					type: "error",
+					confirmButtonText: "Cerrar"
+				});
 			} else {
-				console.log("✅ Pago registrado correctamente en sistema de cobro:", respuesta);
+				console.log("✅✅✅ PAGO REGISTRADO CORRECTAMENTE EN SISTEMA DE COBRO ✅✅✅");
+				console.log("   - Cliente Moon:", respuesta.id_cliente_moon || 'N/A');
+				console.log("   - Payment ID:", respuesta.payment_id);
+				console.log("   - Registrado en pagos:", respuesta.registrado_en_pagos ? '✅ SÍ' : '❌ NO');
+				console.log("   - Registrado en cuenta corriente:", respuesta.registrado_en_cuenta_corriente ? '✅ SÍ' : '❌ NO');
+				
+				// Mostrar confirmación visual
+				if(respuesta.registrado_en_pagos && respuesta.registrado_en_cuenta_corriente){
+					swal({
+						title: "¡Pago Registrado!",
+						text: "El pago se ha registrado correctamente en el sistema de cobro y cuenta corriente.",
+						type: "success",
+						confirmButtonText: "Continuar",
+						timer: 3000
+					});
+				} else if(respuesta.registrado_en_pagos){
+					swal({
+						title: "Pago Parcialmente Registrado",
+						text: "El pago se registró en mercadopago_pagos pero no en cuenta corriente. Verifique los logs.",
+						type: "warning",
+						confirmButtonText: "Continuar"
+					});
+				}
 			}
 		},
 		error: function(xhr, status, error){
-			console.error("Error en AJAX al registrar pago:", error);
+			console.error("❌❌❌ ERROR en AJAX al registrar pago:", error);
+			console.error("   Status:", status);
+			console.error("   Response:", xhr.responseText);
+			swal({
+				title: "Error de Comunicación",
+				text: "Error al comunicarse con el servidor: " + error,
+				type: "error",
+				confirmButtonText: "Cerrar"
+			});
 		}
 	});
 }
