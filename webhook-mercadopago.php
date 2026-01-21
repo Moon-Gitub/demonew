@@ -190,9 +190,9 @@ try {
         exit;
     }
     
-    // CRÍTICO: Ignorar IDs de prueba conocidos (como 123456 usado en simulaciones)
-    // PERO permitir todos los payment_ids reales de MercadoPago (números largos)
-    // Los payment_ids reales pueden tener 9+ dígitos (ej: 142487401144, 142486192994)
+    // CRÍTICO: Solo ignorar IDs de prueba para payments, NO para merchant_orders
+    // Los merchant_orders pueden tener IDs cortos (como 123456 en pruebas)
+    // PERO los payment_ids reales son números largos (9+ dígitos)
     if ($topic === 'payment' && ($id === '123456' || ($id !== null && strlen($id) < 9 && !preg_match('/^[0-9]{9,}$/', $id)))) {
         error_log("⚠️ Webhook ignorado: ID de prueba o inválido detectado (ID: $id, Topic: $topic)");
         error_log("   Los payment_ids reales de MercadoPago son números largos (mínimo 9 dígitos)");
@@ -211,6 +211,10 @@ try {
         
         exitOk('Webhook de prueba ignorado (ID: 123456)', false);
     }
+    
+    // IMPORTANTE: NO ignorar merchant_orders aunque tengan ID corto
+    // Los merchant_orders pueden tener IDs cortos y aún así ser válidos
+    // El ID real del payment vendrá dentro de data.transactions.payments
     
     // Log detallado para payment_ids reales
     if ($topic === 'payment' && preg_match('/^[0-9]{9,}$/', $id)) {

@@ -884,8 +884,28 @@ MODAL COBRO MEJORADO
                         },
                     });
                     
-                    // ELIMINADA VERIFICACIÓN AUTOMÁTICA - El webhook procesa los pagos
-                    // No hay más setInterval, setTimeout, ni verificaciones que causen recargas
+                    // VERIFICACIÓN AUTOMÁTICA DE PAGOS QR PENDIENTES (solo cuando se abre el modal)
+                    // Esto es un respaldo al webhook que puede no estar recibiendo notificaciones
+                    $('#modalCobro').on('shown.bs.modal', function() {
+                        // Verificar una vez si hay pagos QR pendientes que no se registraron
+                        setTimeout(function() {
+                            $.ajax({
+                                url: 'ajax/verificar-pagos-qr-pendientes.ajax.php',
+                                method: 'GET',
+                                dataType: 'json',
+                                success: function(resp) {
+                                    if (resp.pagos_registrados > 0) {
+                                        console.log('Pagos QR encontrados y registrados:', resp);
+                                        // Recargar para mostrar el saldo actualizado
+                                        location.reload();
+                                    }
+                                },
+                                error: function() {
+                                    // Error silencioso
+                                }
+                            });
+                        }, 3000); // Esperar 3 segundos después de abrir el modal
+                    });
                     
                 </script>
 
