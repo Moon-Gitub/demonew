@@ -75,13 +75,28 @@ date_default_timezone_set('America/Argentina/Mendoza');
 
 // Log para debugging con timestamp
 $timestamp = date('Y-m-d H:i:s');
+$inputRaw = file_get_contents('php://input');
 error_log("==========================================");
 error_log("=== WEBHOOK MERCADOPAGO RECIBIDO ===");
 error_log("Timestamp: $timestamp");
 error_log("Método: " . $_SERVER['REQUEST_METHOD']);
 error_log("GET params: " . json_encode($_GET));
 error_log("POST params: " . json_encode($_POST));
-error_log("Body raw: " . file_get_contents('php://input'));
+error_log("Body raw (primeros 500 chars): " . substr($inputRaw, 0, 500));
+error_log("Body completo length: " . strlen($inputRaw));
+if ($inputRaw) {
+    $inputParsed = json_decode($inputRaw, true);
+    if ($inputParsed) {
+        error_log("Body parseado correctamente:");
+        error_log("   - action: " . (isset($inputParsed['action']) ? $inputParsed['action'] : 'NO'));
+        error_log("   - type: " . (isset($inputParsed['type']) ? $inputParsed['type'] : 'NO'));
+        error_log("   - data.id: " . (isset($inputParsed['data']['id']) ? $inputParsed['data']['id'] : 'NO'));
+        error_log("   - data.external_reference: " . (isset($inputParsed['data']['external_reference']) ? $inputParsed['data']['external_reference'] : 'NO'));
+        error_log("   - data.transactions.payments: " . (isset($inputParsed['data']['transactions']['payments']) ? count($inputParsed['data']['transactions']['payments']) : 0));
+    } else {
+        error_log("⚠️ Body NO se pudo parsear como JSON");
+    }
+}
 error_log("Headers: " . json_encode(getallheaders()));
 error_log("==========================================");
 
@@ -302,15 +317,37 @@ try {
             // MÉTODO 1: Intentar extraer payments directamente del JSON del input (más rápido)
             if ($input) {
                 $inputData = json_decode($input, true);
-                if ($inputData && isset($inputData['data']['transactions']['payments']) && is_array($inputData['data']['transactions']['payments'])) {
-                    error_log("✅ Payments encontrados directamente en JSON del input");
+                error_log("DEBUG: Input parseado: " . ($inputData ? "SÍ" : "NO"));
+                if ($inputData) {
+                    error_log("DEBUG: Tiene data: " . (isset($inputData['data']) ? "SÍ" : "NO"));
+                    if (isset($inputData['data'])) {
+                        error_log("DEBUG: Tiene transactions: " . (isset($inputData['data']['transactions']) ? "SÍ" : "NO"));
+                        if (isset($inputData['data']['transactions'])) {
+                            error_log("DEBUG: Tiene payments: " . (isset($inputData['data']['transactions']['payments']) ? "SÍ" : "NO"));
+                            if (isset($inputData['data']['transactions']['payments'])) {
+                                error_log("DEBUG: Payments es array: " . (is_array($inputData['data']['transactions']['payments']) ? "SÍ" : "NO"));
+                                if (is_array($inputData['data']['transactions']['payments'])) {
+                                    error_log("DEBUG: Cantidad de payments: " . count($inputData['data']['transactions']['payments']));
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                if ($inputData && isset($inputData['data']['transactions']['payments']) && is_array($inputData['data']['transactions']['payments']) && count($inputData['data']['transactions']['payments']) > 0) {
+                    error_log("✅✅✅ Payments encontrados directamente en JSON del input ✅✅✅");
                     $paymentsParaProcesar = $inputData['data']['transactions']['payments'];
+                    error_log("   Cantidad de payments: " . count($paymentsParaProcesar));
                     // Guardar external_reference y otros datos de la orden del JSON
                     if (isset($inputData['data']['external_reference'])) {
                         $externalRefFromJson = $inputData['data']['external_reference'];
                         error_log("   External Reference desde JSON: $externalRefFromJson");
                     }
+                } else {
+                    error_log("⚠️ NO se encontraron payments en data.transactions.payments del JSON");
                 }
+            } else {
+                error_log("⚠️ Input está vacío");
             }
             
             // MÉTODO 2: Si no hay payments en el JSON, consultar la orden en MP
@@ -357,9 +394,14 @@ try {
             
             // Procesar cada payment encontrado
             if (!empty($paymentsParaProcesar)) {
-                error_log("Procesando " . count($paymentsParaProcesar) . " payment(s)");
+                error_log("═══════════════════════════════════════");
+                error_log("PROCESANDO " . count($paymentsParaProcesar) . " PAYMENT(S)");
+                error_log("═══════════════════════════════════════");
                 
-                foreach ($paymentsParaProcesar as $paymentInfo) {
+                foreach ($paymentsParaProcesar as $idx => $paymentInfo) {
+                    error_log("--- Payment " . ($idx + 1) . " de " . count($paymentsParaProcesar) . " ---");
+                    error_log("Datos del payment: " . json_encode($paymentInfo));
+                    
                     $paymentId = isset($paymentInfo['id']) ? $paymentInfo['id'] : null;
                     
                     if (!$paymentId) {
@@ -367,7 +409,7 @@ try {
                         continue;
                     }
                     
-                    error_log("Procesando payment ID: $paymentId");
+                    error_log("✅ Payment ID válido: $paymentId");
                     
                     // Verificar si este payment_id ya fue procesado
                     if (ControladorMercadoPago::ctrVerificarPagoProcesado($paymentId)) {
@@ -375,6 +417,7 @@ try {
                         continue;
                     }
                     
+                    error_log("Consultando payment completo desde MP API...");
                     // Consultar el pago completo desde MP para obtener todos los datos
                     $paymentUrl = "https://api.mercadopago.com/v1/payments/$paymentId";
                     $ch = curl_init($paymentUrl);
@@ -388,13 +431,24 @@ try {
                     
                     $paymentResponse = curl_exec($ch);
                     $paymentHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    $curlError = curl_error($ch);
                     curl_close($ch);
+                    
+                    if ($curlError) {
+                        error_log("❌ ERROR cURL: $curlError");
+                    }
+                    
+                    error_log("Respuesta HTTP: $paymentHttpCode");
                     
                     if ($paymentHttpCode == 200) {
                         $payment = json_decode($paymentResponse, true);
                         
                         if ($payment && is_array($payment)) {
-                            error_log("✅ Payment obtenido correctamente: $paymentId");
+                            error_log("✅✅✅ Payment obtenido correctamente desde MP ✅✅✅");
+                            error_log("   Payment ID: " . (isset($payment['id']) ? $payment['id'] : 'N/A'));
+                            error_log("   Status: " . (isset($payment['status']) ? $payment['status'] : 'N/A'));
+                            error_log("   Transaction Amount: " . (isset($payment['transaction_amount']) ? $payment['transaction_amount'] : 'N/A'));
+                            
                             // Si la orden tiene external_reference, agregarlo al payment si no lo tiene
                             if ($order && isset($order['external_reference']) && !isset($payment['external_reference'])) {
                                 $payment['external_reference'] = $order['external_reference'];
@@ -405,10 +459,15 @@ try {
                                 $payment['external_reference'] = $inputData['data']['external_reference'];
                                 error_log("   External Reference agregado desde JSON: " . $inputData['data']['external_reference']);
                             }
+                            
+                            error_log("   External Reference FINAL: " . (isset($payment['external_reference']) ? $payment['external_reference'] : 'NO'));
                             break; // Procesar solo el primer payment aprobado
+                        } else {
+                            error_log("❌ Payment decodificado pero no es array válido");
                         }
                     } else {
-                        error_log("⚠️ No se pudo obtener payment $paymentId (HTTP $paymentHttpCode), continuando con siguiente...");
+                        error_log("❌ No se pudo obtener payment $paymentId (HTTP $paymentHttpCode)");
+                        error_log("   Respuesta: " . substr($paymentResponse, 0, 200));
                     }
                 }
             }
