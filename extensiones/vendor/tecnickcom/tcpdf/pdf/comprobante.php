@@ -666,7 +666,7 @@ $bloqueDatosFact = <<<EOF
             <td style="width:80px;">
                  <!--ACA VA CODIGO QR -->
             </td>
-            <td style="width:300px; font-size:8px; text-align: left;  border-color: #000; padding-bottom:0px ">
+            <td style="width:300px; font-size:8px; text-align: left;  border-color: #000;">
                 <div style="color: #242C4F; font-size:12;">
                     <b>ARCA</b> - Comprobante autorizado
                 </div> <br>
@@ -730,7 +730,7 @@ $bloqueDatosFact = <<<EOF
             <td style="width:80px;border-color: #000;">
                  <!--ACA VA CODIGO QR -->
             </td>
-            <td style="width:300px; font-size:8px; text-align: left;  border-color: #000; padding-bottom:0px ">
+            <td style="width:300px; font-size:8px; text-align: left;  border-color: #000; ">
                 $cbteBoCAutorizado <br>
                 <span style="font-size: 10px; font-style:italic; text-align:right">PAGINA $numPaginaActual</span>
             </td>
@@ -783,7 +783,7 @@ $bloqueCabeceraDuplicado = <<<EOF
         </tr>
     </table>
     <table border="0" >
-        <tr style="padding: 0px;">
+        <tr ">
             <td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> 
                 <h2>$respEmpresa[razon_social]</h2>
             </td>
@@ -798,7 +798,7 @@ $bloqueCabeceraDuplicado = <<<EOF
             </td>
         </tr>
     </table>
-    <table border="0" style="padding: 10px">
+    <table border="0" >
         <tr>
         <td style="width:280px; font-size:10px; text-align: left;">
                 <br>
@@ -809,20 +809,20 @@ $bloqueCabeceraDuplicado = <<<EOF
                 <span><b>Defensa al Consumidor Mza. 08002226678</b></span> 
             </td>
             <td style="width:280px; font-size:10px; text-align: left">
-                <div style="padding-top:5px">
-                    <span><b>N° Cbte:</b> $ptoVta - $numCte</span> <br>
-                    <span><b>Fecha Emisión:</b> $fecEmi </span><br>
-                    <span><b>CUIT:</b> $respEmpresa[cuit] </span><br>
-                    <span><b>II.BB.:</b> $respEmpresa[numero_iibb] </span><br>
-                    <span><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades] </span>
-                </div>
+                
+                <span><b>N° Cbte:</b> $ptoVta - $numCte</span> <br>
+                <span><b>Fecha Emisión:</b> $fecEmi </span><br>
+                <span><b>CUIT:</b> $respEmpresa[cuit] </span><br>
+                <span><b>II.BB.:</b> $respEmpresa[numero_iibb] </span><br>
+                <span><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades] </span>
+                
             </td>
         </tr>
     </table>
 
     $tieneServicio
 
-    <table border="1" style="padding: 5px">
+    <table border="1" >
         <tr>
             <td style="width:560px; font-size:8px; text-align: left;">
                 <br>
@@ -884,7 +884,7 @@ $formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
 if($imprimoCabeceraDetalle){
 //---------------------CABECERA DETALLE A
 $bloqueDetalleCab = <<<EOF
-    <table border="1" style="padding: 5px">
+    <table border="1" >
         <tr style="background-color: #f4f4f4">
             <td style="width:30px; font-size:8px; text-align: center;">
                 <span><b>Cant.</b></span> 
@@ -913,7 +913,7 @@ $imprimoCabeceraDetalle = false;
 
 //--------------------- DETALLE COMPROBANTE A
 $bloqueDetalle = <<<EOF
-    <table style=" padding: 2px; ">
+    <table >
         <tr>
             <td style="width:30px; font-size:8px; text-align: center;">
                 <span>$formatCantidad</span> 
@@ -948,7 +948,7 @@ $formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
 if($imprimoCabeceraDetalle){
 //--------------------- CABECERA DETALLE B | C | X
 $bloqueDetalleCab = <<<EOF
-    <table border="1" style="padding: 5px">
+    <table border="1" >
         <tr style="background-color: #f4f4f4">
             <td style="width:50px; font-size:8px; text-align: center;">
                 <span><b>Cant.</b></span> 
@@ -971,7 +971,7 @@ $imprimoCabeceraDetalle = false;
 }
 
 $bloqueDetalle = <<<EOF
-    <table style=" padding: 2px; ">
+    <table >
         <tr>
             <td style="width:50px; font-size:8px; text-align: center;">
                 <span>$formatCantidad</span> 
@@ -1053,7 +1053,7 @@ $bloqueDatosFact = <<<EOF
             <td style="width:80px;">
                  <!--ACA VA CODIGO QR -->
             </td>
-            <td style="width:300px; font-size:8px; text-align: left;  border-color: #000; padding-bottom:0px ">
+            <td style="width:300px; font-size:8px; text-align: left;  border-color: #000; ">
                 <div style="color: #242C4F; font-size:12;">
                     <b>ARCA</b> - Comprobante autorizado
                 </div> <br>
@@ -1116,7 +1116,7 @@ $bloqueDatosFact = <<<EOF
             <td style="width:80px;border-color: #000;">
                  <!--ACA VA CODIGO QR -->
             </td>
-            <td style="width:300px; font-size:8px; text-align: left;  border-color: #000; padding-bottom:0px ">
+            <td style="width:300px; font-size:8px; text-align: left;  border-color: #000; ">
                 $cbteBoCAutorizado <br>
                 <span style="font-size: 10px; font-style:italic; text-align:right">PAGINA $numPaginaActual</span>
             </td>
