@@ -110,14 +110,21 @@ try {
     $topic = isset($_GET['topic']) ? $_GET['topic'] : (isset($_POST['topic']) ? $_POST['topic'] : null);
     $id = isset($_GET['id']) ? $_GET['id'] : (isset($_POST['id']) ? $_POST['id'] : null);
     $action = null; // Para notificaciones QR con formato nuevo
+    
+    // CRÍTICO: Verificar también GET con data_id (formato QR de MP)
+    if (!$id && isset($_GET['data_id'])) {
+        $id = $_GET['data_id'];
+        $topic = isset($_GET['type']) ? $_GET['type'] : null;
+        error_log("✅ Detectado formato GET con data_id: $id, type: $topic");
+    }
 
-    // Si viene por POST, intentar parsear el body
-    if (!$topic && !$id) {
-        $input = file_get_contents('php://input');
+    // Si viene por POST o en input, intentar parsear el body
+    $input = file_get_contents('php://input');
+    if ($input) {
         $data = json_decode($input, true);
 
         if ($data) {
-            // NUEVO FORMATO QR: {"action": "order.processed", "type": "order", "data": {"id": "123456789", "payments": [...]}}
+            // NUEVO FORMATO QR: {"action": "order.processed", "type": "order", "data": {"id": "123456789", ...}}
             if (isset($data['action']) && isset($data['data']['id'])) {
                 $action = $data['action'];
                 // Si action es "order.processed", es una merchant_order
@@ -127,26 +134,36 @@ try {
                     $topic = isset($data['type']) ? $data['type'] : 'payment';
                 }
                 $id = $data['data']['id'];
-                error_log("✅✅✅ WEBHOOK QR DETECTADO - Formato nuevo ✅✅✅");
+                error_log("✅✅✅ WEBHOOK QR DETECTADO - Formato nuevo en input ✅✅✅");
                 error_log("   Action: $action");
                 error_log("   Topic detectado: $topic");
                 error_log("   Order/Payment ID: $id");
                 
-                // Si viene con payments en data, guardar para referencia
-                if (isset($data['data']['payments']) && is_array($data['data']['payments']) && count($data['data']['payments']) > 0) {
-                    error_log("   Payments en data: " . count($data['data']['payments']));
+                // Si viene con payments en data.transactions.payments, guardar para referencia
+                if (isset($data['data']['transactions']['payments']) && is_array($data['data']['transactions']['payments'])) {
+                    error_log("   Payments en data.transactions.payments: " . count($data['data']['transactions']['payments']));
                 }
             } 
             // FORMATO TRADICIONAL
             else {
-                $topic = isset($data['topic']) ? $data['topic'] : (isset($data['type']) ? $data['type'] : null);
-                $id = isset($data['id']) ? $data['id'] : (isset($data['data']['id']) ? $data['data']['id'] : null);
+                if (!$topic) {
+                    $topic = isset($data['topic']) ? $data['topic'] : (isset($data['type']) ? $data['type'] : null);
+                }
+                if (!$id) {
+                    $id = isset($data['id']) ? $data['id'] : (isset($data['data']['id']) ? $data['data']['id'] : null);
+                }
             }
         }
     }
+    
+    // Si topic es "order" del formato QR, convertirlo a merchant_order
+    if ($topic === 'order') {
+        $topic = 'merchant_order';
+        error_log("✅ Topic 'order' convertido a 'merchant_order' para procesamiento QR");
+    }
 
-    error_log("Topic: $topic");
-    error_log("ID: $id");
+    error_log("Topic FINAL: $topic");
+    error_log("ID FINAL: $id");
     if ($action) {
         error_log("Action: $action");
     }
