@@ -140,10 +140,14 @@ try {
         
         // Registrar webhook pero marcarlo como procesado para evitar reintentos
         if (class_exists('ModeloMercadoPago')) {
-            $webhookId = ModeloMercadoPago::mdlRegistrarWebhook($topic, $id, json_encode(['ignored' => true, 'reason' => 'test_id']));
-            if ($webhookId) {
-                ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
-            }
+            $datosWebhookTest = array(
+                'topic' => $topic,
+                'resource_id' => $id,
+                'datos_json' => json_encode(['ignored' => true, 'reason' => 'test_id']),
+                'fecha_recibido' => date('Y-m-d H:i:s'),
+                'procesado' => 1 // Marcar como procesado inmediatamente
+            );
+            $webhookId = ControladorMercadoPago::ctrRegistrarWebhook($datosWebhookTest);
         }
         
         exitOk('Webhook de prueba ignorado (ID: 123456)', false);
@@ -164,25 +168,19 @@ try {
     if (!class_exists('ControladorMercadoPago')) {
         error_log("❌ ERROR CRÍTICO: ControladorMercadoPago no está disponible");
         error_log("   Verificar que el archivo existe: " . __DIR__ . '/controladores/mercadopago.controlador.php');
-        http_response_code(500);
-        echo json_encode(['error' => true, 'message' => 'Controlador no disponible']);
-        exit;
+        exitOk('Controlador no disponible - webhook recibido pero no procesado', false);
     }
     
     if (!class_exists('ModeloMercadoPago')) {
         error_log("❌ ERROR CRÍTICO: ModeloMercadoPago no está disponible");
         error_log("   Verificar que el archivo existe: " . __DIR__ . '/modelos/mercadopago.modelo.php');
-        http_response_code(500);
-        echo json_encode(['error' => true, 'message' => 'Modelo no disponible']);
-        exit;
+        exitOk('Modelo no disponible - webhook recibido pero no procesado', false);
     }
     
     if (!class_exists('ControladorSistemaCobro')) {
         error_log("❌ ERROR CRÍTICO: ControladorSistemaCobro no está disponible");
         error_log("   Verificar que el archivo existe: " . __DIR__ . '/controladores/sistema_cobro.controlador.php');
-        http_response_code(500);
-        echo json_encode(['error' => true, 'message' => 'ControladorSistemaCobro no disponible']);
-        exit;
+        exitOk('ControladorSistemaCobro no disponible - webhook recibido pero no procesado', false);
     }
     
     error_log("✅ Todas las clases están disponibles, procediendo a registrar webhook");
