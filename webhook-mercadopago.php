@@ -117,15 +117,25 @@ try {
         $data = json_decode($input, true);
 
         if ($data) {
-            // NUEVO FORMATO QR: {"action": "payment.updated", "type": "merchant_order", "data": {"id": "123456789"}}
-            if (isset($data['action']) && isset($data['type']) && isset($data['data']['id'])) {
+            // NUEVO FORMATO QR: {"action": "order.processed", "type": "order", "data": {"id": "123456789", "payments": [...]}}
+            if (isset($data['action']) && isset($data['data']['id'])) {
                 $action = $data['action'];
-                $topic = $data['type']; // "merchant_order"
+                // Si action es "order.processed", es una merchant_order
+                if (strpos($action, 'order') !== false) {
+                    $topic = 'merchant_order';
+                } else {
+                    $topic = isset($data['type']) ? $data['type'] : 'payment';
+                }
                 $id = $data['data']['id'];
                 error_log("✅✅✅ WEBHOOK QR DETECTADO - Formato nuevo ✅✅✅");
                 error_log("   Action: $action");
-                error_log("   Type: $topic");
-                error_log("   Order ID: $id");
+                error_log("   Topic detectado: $topic");
+                error_log("   Order/Payment ID: $id");
+                
+                // Si viene con payments en data, guardar para referencia
+                if (isset($data['data']['payments']) && is_array($data['data']['payments']) && count($data['data']['payments']) > 0) {
+                    error_log("   Payments en data: " . count($data['data']['payments']));
+                }
             } 
             // FORMATO TRADICIONAL
             else {
