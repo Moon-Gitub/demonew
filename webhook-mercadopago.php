@@ -102,11 +102,22 @@ function buscarCliente($payment, $topic, $data = null, $order = null) {
         return $idCliente;
     }
     
-    // Método 5: external_reference desde JSON del webhook (para QR)
-    if ($data && isset($data['data']['external_reference']) && is_numeric($data['data']['external_reference'])) {
-        $idCliente = intval($data['data']['external_reference']);
-        logWebhook('INFO', 'Cliente desde JSON webhook', ['id_cliente' => $idCliente]);
-        return $idCliente;
+    // Método 5: external_reference desde JSON del webhook (para QR con formato order.processed)
+    // CRÍTICO: El JSON del webhook QR tiene la estructura: {"action":"order.processed","data":{"external_reference":"14",...}}
+    if ($data && isset($data['data']['external_reference'])) {
+        $externalRef = $data['data']['external_reference'];
+        // Si es numérico directo
+        if (is_numeric($externalRef)) {
+            $idCliente = intval($externalRef);
+            logWebhook('INFO', 'Cliente desde JSON webhook (numérico)', ['id_cliente' => $idCliente, 'external_ref' => $externalRef]);
+            return $idCliente;
+        }
+        // Si tiene formato "ID-*", extraer el ID
+        if (preg_match('/^(\d+)/', $externalRef, $m)) {
+            $idCliente = intval($m[1]);
+            logWebhook('INFO', 'Cliente desde JSON webhook (formato)', ['id_cliente' => $idCliente, 'external_ref' => $externalRef]);
+            return $idCliente;
+        }
     }
     
     // Método 6: Buscar en intentos pendientes por monto (para QR sin external_reference)
@@ -343,13 +354,18 @@ try {
                 $payment = consultarMP($paymentUrl, $credenciales['access_token']);
                 
                 if ($payment && isset($payment['status'])) {
-                    // Agregar external_reference si no lo tiene
+                    // CRÍTICO: Agregar external_reference si no lo tiene
+                    // Prioridad: 1) JSON del webhook, 2) Orden consultada, 3) Payment original
                     if (!isset($payment['external_reference']) || empty($payment['external_reference'])) {
-                        if ($order && isset($order['external_reference'])) {
-                            $payment['external_reference'] = $order['external_reference'];
-                        } elseif ($data && isset($data['data']['external_reference'])) {
+                        if ($data && isset($data['data']['external_reference'])) {
                             $payment['external_reference'] = $data['data']['external_reference'];
+                            logWebhook('INFO', 'External reference agregado desde JSON', ['external_ref' => $data['data']['external_reference']]);
+                        } elseif ($order && isset($order['external_reference'])) {
+                            $payment['external_reference'] = $order['external_reference'];
+                            logWebhook('INFO', 'External reference agregado desde orden', ['external_ref' => $order['external_reference']]);
                         }
+                    } else {
+                        logWebhook('INFO', 'Payment ya tiene external_reference', ['external_ref' => $payment['external_reference']]);
                     }
                     break; // Procesar solo el primero
                 }
