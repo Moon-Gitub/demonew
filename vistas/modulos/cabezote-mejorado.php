@@ -284,7 +284,7 @@ if($ctaCteCliente["saldo"] <= 0) {
             </button>
         </div>';
 
-    // **PREVENCIÓN ABSOLUTA DE DUPLICADOS - LÓGICA MEJORADA**
+    // **PREVENCIÓN ABSOLUTA DE DUPLICADOS**
     // NO crear preferencia si no es absolutamente necesario
     $preference = null;
     $usarPreferenciaExistente = false;
@@ -296,7 +296,6 @@ if($ctaCteCliente["saldo"] <= 0) {
     if(!isset($_GET["preference_id"])) {
         try {
             // PASO 1: SIEMPRE verificar si existe un intento pendiente reciente ANTES de crear
-            // AUMENTAR VENTANA A 60 MINUTOS para evitar crear nuevas preferencias innecesariamente
             $intentoExistente = ControladorMercadoPago::ctrObtenerIntentoPendienteReciente($idCliente, $abonoMensual);
             
             if ($intentoExistente && isset($intentoExistente['preference_id']) && !empty($intentoExistente['preference_id'])) {
@@ -319,27 +318,18 @@ if($ctaCteCliente["saldo"] <= 0) {
                         error_log("✅ Preferencia recuperada exitosamente: " . $preference->id);
                     } else {
                         error_log("❌ No se pudo recuperar preferencia - Respuesta vacía de MP");
-                        // NO crear nueva, usar la que está en la BD aunque no se pueda recuperar
-                        // Esto evita crear duplicados
-                        $usarPreferenciaExistente = true;
-                        // Crear objeto preference básico con el ID que tenemos
-                        $preference = (object)['id' => $intentoExistente['preference_id']];
-                        error_log("⚠️ Usando preference_id de BD sin validar en MP para evitar duplicados");
+                        $intentoExistente = null;
                     }
                 } catch (Exception $e) {
                     error_log("❌ Error recuperando preferencia: " . $e->getMessage());
-                    // NO crear nueva, usar la que está en la BD
-                    $usarPreferenciaExistente = true;
-                    $preference = (object)['id' => $intentoExistente['preference_id']];
-                    error_log("⚠️ Usando preference_id de BD sin validar en MP para evitar duplicados");
+                    $intentoExistente = null;
                 }
             } else {
                 error_log("ℹ️ No hay intentos pendientes recientes para este cliente/monto");
             }
             
             // PASO 2: Solo crear nueva preferencia si NO existe una pendiente válida
-            // CRÍTICO: Si hay un intento pendiente (aunque no se pueda recuperar de MP), NO crear nueva
-            if (!$usarPreferenciaExistente && !$intentoExistente) {
+            if (!$usarPreferenciaExistente) {
                 error_log("📝 Creando NUEVA preferencia...");
                 
                 require_once 'extensiones/vendor/autoload.php';
@@ -945,6 +935,41 @@ MODAL COBRO MEJORADO
                             clearInterval(intervaloVerificacion);
                             intervaloVerificacion = null;
                         }
+                    });
+                    
+                    // VERIFICACIÓN AL CARGAR PÁGINA: Si hay preferencia pendiente, verificar si fue pagada
+                    // Esto funciona incluso si el usuario cerró el navegador y vuelve después
+                    $(document).ready(function() {
+                        // Solo verificar si hay preferencia y no está en un modal fijo
+                        <?php if(!$fijoModal) { ?>
+                        // Verificar una vez al cargar
+                        setTimeout(function() {
+                            $.ajax({
+                                url: 'ajax/verificar-pago-preference.ajax.php',
+                                method: 'GET',
+                                data: { preference_id: preferenceIdActual },
+                                dataType: 'json',
+                                success: function(resp) {
+                                    console.log('Verificación al cargar página:', resp);
+                                    
+                                    if (resp.aprobado === true && !resp.ya_procesado) {
+                                        // Pago encontrado y registrado
+                                        swal({
+                                            title: "¡Pago Detectado!",
+                                            text: "Hemos detectado un pago aprobado.\nPayment ID: " + resp.payment_id,
+                                            type: "success",
+                                            confirmButtonText: "Aceptar"
+                                        }).then(function() {
+                                            location.reload();
+                                        });
+                                    }
+                                },
+                                error: function() {
+                                    // Error silencioso, no molestar al usuario
+                                }
+                            });
+                        }, 2000); // Esperar 2 segundos después de cargar la página
+                        <?php } ?>
                     });
                 </script>
 
