@@ -285,7 +285,7 @@ try {
             exit;
         }
 
-        // CRÍTICO: Si es merchant_order (especialmente del nuevo formato QR), consultar la orden primero
+        // CRÍTICO: Si es merchant_order (especialmente del nuevo formato QR), procesar payments
         if ($topic === 'merchant_order') {
             error_log("═══════════════════════════════════════");
             error_log("PROCESANDO MERCHANT_ORDER (QR)");
@@ -295,114 +295,131 @@ try {
             }
             error_log("═══════════════════════════════════════");
             
-            // Consultar la orden
-            $orderUrl = "https://api.mercadopago.com/merchant_orders/$id";
-            $ch = curl_init($orderUrl);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                'Authorization: Bearer ' . $credenciales['access_token'],
-                'Content-Type: application/json'
-            ));
-            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+            $payment = null;
+            $order = null;
+            $paymentsParaProcesar = [];
             
-            $orderResponse = curl_exec($ch);
-            $orderHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $curlError = curl_error($ch);
-            curl_close($ch);
-            
-            if ($curlError) {
-                error_log("❌ ERROR cURL al consultar orden: $curlError");
+            // MÉTODO 1: Intentar extraer payments directamente del JSON del input (más rápido)
+            if ($input) {
+                $inputData = json_decode($input, true);
+                if ($inputData && isset($inputData['data']['transactions']['payments']) && is_array($inputData['data']['transactions']['payments'])) {
+                    error_log("✅ Payments encontrados directamente en JSON del input");
+                    $paymentsParaProcesar = $inputData['data']['transactions']['payments'];
+                    // Guardar external_reference y otros datos de la orden del JSON
+                    if (isset($inputData['data']['external_reference'])) {
+                        $externalRefFromJson = $inputData['data']['external_reference'];
+                        error_log("   External Reference desde JSON: $externalRefFromJson");
+                    }
+                }
             }
             
-            if ($orderHttpCode == 200) {
-                $order = json_decode($orderResponse, true);
+            // MÉTODO 2: Si no hay payments en el JSON, consultar la orden en MP
+            if (empty($paymentsParaProcesar)) {
+                error_log("⚠️ No se encontraron payments en JSON, consultando orden en MP...");
                 
-                if (!$order || !is_array($order)) {
-                    error_log("❌ ERROR: No se pudo decodificar la respuesta de la orden");
-                    if ($webhookId) {
-                        ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
-                    }
-                    exitOk('Error al decodificar orden', false);
+                $orderUrl = "https://api.mercadopago.com/merchant_orders/$id";
+                $ch = curl_init($orderUrl);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                    'Authorization: Bearer ' . $credenciales['access_token'],
+                    'Content-Type: application/json'
+                ));
+                curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+                
+                $orderResponse = curl_exec($ch);
+                $orderHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                $curlError = curl_error($ch);
+                curl_close($ch);
+                
+                if ($curlError) {
+                    error_log("❌ ERROR cURL al consultar orden: $curlError");
                 }
                 
-                error_log("✅ Orden obtenida correctamente");
-                error_log("   - Order ID: " . (isset($order['id']) ? $order['id'] : 'N/A'));
-                error_log("   - Status: " . (isset($order['status']) ? $order['status'] : 'N/A'));
-                error_log("   - External Reference: " . (isset($order['external_reference']) ? $order['external_reference'] : 'N/A'));
-                error_log("   - Payments: " . (isset($order['payments']) ? count($order['payments']) : 0));
-                
-                // Obtener TODOS los payments de la orden (no solo el primero)
-                if (isset($order['payments']) && is_array($order['payments']) && count($order['payments']) > 0) {
-                    error_log("Procesando " . count($order['payments']) . " payment(s) de la orden");
+                if ($orderHttpCode == 200) {
+                    $order = json_decode($orderResponse, true);
                     
-                    // Procesar cada payment de la orden
-                    foreach ($order['payments'] as $paymentInfo) {
-                        $paymentId = isset($paymentInfo['id']) ? $paymentInfo['id'] : (is_numeric($paymentInfo) ? $paymentInfo : null);
-                        
-                        if (!$paymentId) {
-                            error_log("⚠️ Payment sin ID válido, saltando...");
-                            continue;
+                    if ($order && is_array($order) && isset($order['payments']) && is_array($order['payments']) && count($order['payments']) > 0) {
+                        error_log("✅ Orden obtenida de MP con " . count($order['payments']) . " payment(s)");
+                        // Convertir payments de la orden a formato similar
+                        foreach ($order['payments'] as $paymentInfo) {
+                            $paymentsParaProcesar[] = array(
+                                'id' => isset($paymentInfo['id']) ? $paymentInfo['id'] : (is_numeric($paymentInfo) ? $paymentInfo : null),
+                                'amount' => isset($paymentInfo['transaction_amount']) ? $paymentInfo['transaction_amount'] : null,
+                                'status' => isset($paymentInfo['status']) ? $paymentInfo['status'] : null
+                            );
                         }
-                        
-                        error_log("Procesando payment ID: $paymentId");
-                        
-                        // Verificar si este payment_id ya fue procesado
-                        if (ControladorMercadoPago::ctrVerificarPagoProcesado($paymentId)) {
-                            error_log("⚠️ Payment $paymentId ya fue procesado anteriormente, saltando...");
-                            continue;
-                        }
-                        
-                        // Consultar el pago completo
-                        $paymentUrl = "https://api.mercadopago.com/v1/payments/$paymentId";
-                        $ch = curl_init($paymentUrl);
-                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                            'Authorization: Bearer ' . $credenciales['access_token'],
-                            'Content-Type: application/json'
-                        ));
-                        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-                        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-                        
-                        $paymentResponse = curl_exec($ch);
-                        $paymentHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                        curl_close($ch);
-                        
-                        if ($paymentHttpCode == 200) {
-                            $payment = json_decode($paymentResponse, true);
-                            
-                            if ($payment && is_array($payment)) {
-                                // Continuar con el procesamiento del payment (el código de abajo)
-                                // Marcar que venimos de merchant_order
-                                $vieneDeMerchantOrder = true;
-                                break; // Salir del foreach para procesar este payment
-                            }
-                        } else {
-                            error_log("⚠️ No se pudo obtener payment $paymentId (HTTP $paymentHttpCode), continuando con siguiente...");
-                        }
-                    }
-                    
-                    // Si no se encontró ningún payment válido para procesar
-                    if (!isset($payment) || !is_array($payment)) {
-                        error_log("⚠️ No se encontró ningún payment válido para procesar en la orden");
-                        if ($webhookId) {
-                            ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
-                        }
-                        exitOk('Orden sin payments válidos para procesar', false);
                     }
                 } else {
-                    error_log("⚠️ La orden no tiene pagos asociados");
-                    if ($webhookId) {
-                        ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
-                    }
-                    exitOk('Orden sin pagos', false);
+                    error_log("❌ ERROR: No se pudo consultar la orden (HTTP $orderHttpCode)");
                 }
-            } else {
-                error_log("❌ ERROR: No se pudo consultar la orden (HTTP $orderHttpCode)");
+            }
+            
+            // Procesar cada payment encontrado
+            if (!empty($paymentsParaProcesar)) {
+                error_log("Procesando " . count($paymentsParaProcesar) . " payment(s)");
+                
+                foreach ($paymentsParaProcesar as $paymentInfo) {
+                    $paymentId = isset($paymentInfo['id']) ? $paymentInfo['id'] : null;
+                    
+                    if (!$paymentId) {
+                        error_log("⚠️ Payment sin ID válido, saltando...");
+                        continue;
+                    }
+                    
+                    error_log("Procesando payment ID: $paymentId");
+                    
+                    // Verificar si este payment_id ya fue procesado
+                    if (ControladorMercadoPago::ctrVerificarPagoProcesado($paymentId)) {
+                        error_log("⚠️ Payment $paymentId ya fue procesado anteriormente, saltando...");
+                        continue;
+                    }
+                    
+                    // Consultar el pago completo desde MP para obtener todos los datos
+                    $paymentUrl = "https://api.mercadopago.com/v1/payments/$paymentId";
+                    $ch = curl_init($paymentUrl);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                        'Authorization: Bearer ' . $credenciales['access_token'],
+                        'Content-Type: application/json'
+                    ));
+                    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+                    
+                    $paymentResponse = curl_exec($ch);
+                    $paymentHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    curl_close($ch);
+                    
+                    if ($paymentHttpCode == 200) {
+                        $payment = json_decode($paymentResponse, true);
+                        
+                        if ($payment && is_array($payment)) {
+                            error_log("✅ Payment obtenido correctamente: $paymentId");
+                            // Si la orden tiene external_reference, agregarlo al payment si no lo tiene
+                            if ($order && isset($order['external_reference']) && !isset($payment['external_reference'])) {
+                                $payment['external_reference'] = $order['external_reference'];
+                                error_log("   External Reference agregado desde orden: " . $order['external_reference']);
+                            }
+                            // Si viene del JSON, usar el external_reference del JSON
+                            if ($input && isset($inputData['data']['external_reference']) && !isset($payment['external_reference'])) {
+                                $payment['external_reference'] = $inputData['data']['external_reference'];
+                                error_log("   External Reference agregado desde JSON: " . $inputData['data']['external_reference']);
+                            }
+                            break; // Procesar solo el primer payment aprobado
+                        }
+                    } else {
+                        error_log("⚠️ No se pudo obtener payment $paymentId (HTTP $paymentHttpCode), continuando con siguiente...");
+                    }
+                }
+            }
+            
+            // Si no se encontró ningún payment válido para procesar
+            if (!isset($payment) || !is_array($payment)) {
+                error_log("⚠️ No se encontró ningún payment válido para procesar");
                 if ($webhookId) {
                     ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
                 }
-                exitOk('Error al consultar orden', false);
+                exitOk('Orden sin payments válidos para procesar', false);
             }
         } else {
             // Si es payment directo, consultar el pago normalmente
