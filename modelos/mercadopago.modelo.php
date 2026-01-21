@@ -221,12 +221,13 @@ class ModeloMercadoPago {
 				return null;
 			}
 
-			// Buscar intentos pendientes recientes (últimos 30 minutos) para este cliente
+			// Buscar intentos pendientes recientes (últimos 60 minutos) para este cliente
+			// AUMENTADO A 60 MINUTOS para evitar crear nuevas preferencias innecesariamente
 			$sql = "SELECT id, preference_id, monto, descripcion, fecha_creacion 
 				FROM mercadopago_intentos 
 				WHERE id_cliente_moon = :id_cliente 
 				AND estado = 'pendiente' 
-				AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 30 MINUTE)";
+				AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 60 MINUTE)";
 			
 			$params = [":id_cliente" => $idCliente];
 			

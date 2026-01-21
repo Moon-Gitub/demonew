@@ -462,10 +462,10 @@ try {
                     }
                 }
 
-                // Método 5: Para pagos QR con formato venta_pos_TIMESTAMP_MONTO, buscar en intentos pendientes recientes
-                // Si el external_reference tiene formato venta_pos_*, buscar intentos recientes con el mismo monto
-                if (!$idClienteMoon && isset($payment['external_reference']) && strpos($payment['external_reference'], 'venta_pos_') === 0) {
-                    // Extraer monto del external_reference si es posible
+                // Método 5: Para pagos QR, buscar en intentos pendientes recientes por monto
+                // CRÍTICO: Los pagos QR pueden no tener external_reference con ID de cliente
+                // Buscar en intentos pendientes recientes con el mismo monto
+                if (!$idClienteMoon) {
                     $montoDelPago = isset($payment['transaction_amount']) ? floatval($payment['transaction_amount']) : 0;
                     
                     if ($montoDelPago > 0) {
@@ -475,7 +475,7 @@ try {
                             $conexion = Conexion::conectarMoon();
                             if ($conexion) {
                                 // Buscar intentos pendientes recientes (últimos 60 minutos) con el mismo monto
-                                // AUMENTADO A 60 MINUTOS para capturar más intentos
+                                // AUMENTADO A 60 MINUTOS para coincidir con la lógica de reutilización de preferencias
                                 $stmtBuscarIntento = $conexion->prepare("SELECT id_cliente_moon FROM mercadopago_intentos 
                                     WHERE ABS(monto - :monto) < 0.01
                                     AND estado = 'pendiente' 
@@ -512,47 +512,6 @@ try {
                 }
 
                 error_log("ID Cliente Moon FINAL: " . ($idClienteMoon ?: 'NO ENCONTRADO'));
-                
-                // CRÍTICO: Si no encontramos el cliente pero hay un external_reference con formato venta_pos_,
-                // intentar buscar en intentos pendientes recientes con el mismo monto
-                // Esto es para pagos QR desde el sistema de cobro donde el external_reference no tiene el ID
-                if (!$idClienteMoon && isset($payment['external_reference']) && strpos($payment['external_reference'], 'venta_pos_') === 0) {
-                    $montoDelPago = isset($payment['transaction_amount']) ? floatval($payment['transaction_amount']) : 0;
-                    
-                    if ($montoDelPago > 0) {
-                        error_log("⚠️ CRÍTICO: Pago QR sin cliente encontrado. Buscando en intentos recientes con monto: $montoDelPago");
-                        
-                        try {
-                            if (class_exists('Conexion')) {
-                                $conexion = Conexion::conectarMoon();
-                                if ($conexion) {
-                                    // Buscar intentos pendientes recientes (últimos 30 minutos) con el mismo monto
-                                    $stmtBuscarIntento = $conexion->prepare("SELECT id_cliente_moon FROM mercadopago_intentos 
-                                        WHERE ABS(monto - :monto) < 0.01
-                                        AND estado = 'pendiente' 
-                                        AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 30 MINUTE)
-                                        ORDER BY fecha_creacion DESC
-                                        LIMIT 1");
-                                    $stmtBuscarIntento->bindParam(":monto", $montoDelPago, PDO::PARAM_STR);
-                                    $stmtBuscarIntento->execute();
-                                    $intentoEncontrado = $stmtBuscarIntento->fetch();
-                                    $stmtBuscarIntento->closeCursor();
-                                    
-                                    if ($intentoEncontrado && isset($intentoEncontrado['id_cliente_moon']) && $intentoEncontrado['id_cliente_moon'] > 0) {
-                                        $idClienteMoon = intval($intentoEncontrado['id_cliente_moon']);
-                                        error_log("✅✅✅ ID Cliente encontrado desde intento reciente: $idClienteMoon (monto: $montoDelPago) ✅✅✅");
-                                    } else {
-                                        error_log("⚠️ No se encontró intento reciente con monto $montoDelPago");
-                                    }
-                                }
-                            }
-                        } catch (Exception $e) {
-                            error_log("ERROR al buscar cliente en intentos: " . $e->getMessage());
-                        }
-                    }
-                }
-                
-                error_log("ID Cliente Moon DESPUÉS DE BÚSQUEDA EN INTENTOS: " . ($idClienteMoon ?: 'NO ENCONTRADO (será 0 para pagos QR/ventas POS sin cliente)'));
 
                 // IMPORTANTE: Procesar TODOS los pagos aprobados, incluso si no tienen id_cliente_moon
                 // Los pagos con QR o ventas POS pueden no tener cliente asociado (id_cliente_moon = 0)
