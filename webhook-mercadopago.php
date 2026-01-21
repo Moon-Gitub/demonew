@@ -6,6 +6,15 @@
  * URL a configurar en MercadoPago:
  * https://tu-dominio.com/webhook-mercadopago.php
  */
+// PRIMERO que todo, loguear ABSOLUTAMENTE TODO
+file_put_contents('/tmp/webhook_raw.log', 
+    date('Y-m-d H:i:s') . " - " . 
+    $_SERVER['REQUEST_METHOD'] . " - " .
+    file_get_contents('php://input') . "\n\n",
+    FILE_APPEND
+);
+
+
 
 // CRÍTICO: SIEMPRE responder 200 OK para que MercadoPago no reintente
 ini_set('display_errors', 0);
