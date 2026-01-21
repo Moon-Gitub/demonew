@@ -416,7 +416,6 @@ $bloqueCabeceraOriginal = <<<EOF
     <table border="0" style="padding: 10px">
         <tr>
             <td style="width:280px; font-size:10px; text-align: left;">
-                <br>
                 <span><b>Direccion:</b> $respEmpresa[domicilio]</span> <br>
                 <span><b>Telefono:</b> $respEmpresa[telefono]</span> <br>
                 <span><b>Localidad:</b> $respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</span><br>
