@@ -415,9 +415,6 @@ class ControladorVentas{
     								"pto_vta" => ($postVentaCaja["nuevaPtoVta"] == '') ? 0 : (int)$postVentaCaja["nuevaPtoVta"],
     							    "cbte_tipo"=> (int)$postVentaCaja["nuevotipoCbte"],
     							    "concepto" => (int)$postVentaCaja["nuevaConcepto"],
-    							    "fec_desde" =>  $postVentaCaja["nuevaFecDesde"],
-    					 		    "fec_hasta" => $postVentaCaja["nuevaFecHasta"],
-    							    "fec_vencimiento" => $postVentaCaja["nuevaFecVto"],
     							   	"total"=>$postVentaCaja["nuevoTotalVentaCaja"],
     							   );
     
@@ -478,10 +475,14 @@ class ControladorVentas{
     
     		    			//Si el concepto tiene servicio hay que agregar al array fechas
     		    			if((int)$datosFactura['concepto'] <> 1){
+
+    		    				$mDateDesde = DateTime::createFromFormat('d/m/Y', $postVentaCaja["nuevaFecDesde"]);
+                            	$mDateHasta = DateTime::createFromFormat('d/m/Y', $postVentaCaja["nuevaFecHasta"]);
+                            	$mDateVto = DateTime::createFromFormat('d/m/Y', $postVentaCaja["nuevaFecVto"]);
     							
-    							$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"] += ["FchServDesde" => date('Ymd', strtotime($datosFactura["fec_desde"]))];
-    							$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"] += ["FchServHasta" => date('Ymd', strtotime($datosFactura["fec_hasta"]))];
-    							$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"] += ["FchVtoPago" => date('Ymd', strtotime($datosFactura["fec_vencimiento"]))];
+    							$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"] += ["FchServDesde" => $mDateDesde->format('Ymd')];
+    							$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"] += ["FchServHasta" => $mDateHasta->format('Ymd')];
+    							$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"] += ["FchVtoPago" => $mDateVto->format('Ymd')];
     						}
     
     						//tipos de comprobantes que deben informar comprobante asociado
