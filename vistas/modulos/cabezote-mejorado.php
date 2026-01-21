@@ -305,31 +305,36 @@ if($ctaCteCliente["saldo"] <= 0) {
                 error_log("   - Fecha creación: " . $intentoExistente['fecha_creacion']);
                 error_log("   ➡️ REUTILIZANDO preferencia existente, NO se creará nueva");
                 
-                // Intentar recuperar la preferencia existente
+                // CRÍTICO: Si hay un intento pendiente, usar su preference_id aunque no se pueda validar en MP
+                // Esto evita crear duplicados. Si la preferencia expiró, el usuario puede crear una nueva manualmente
+                $usarPreferenciaExistente = true;
+                // Crear objeto preference básico con el ID que tenemos en BD
+                $preference = (object)['id' => $intentoExistente['preference_id']];
+                error_log("✅ Usando preference_id de BD: " . $intentoExistente['preference_id']);
+                
+                // Intentar validar en MP (opcional, no crítico)
                 try {
                     require_once 'extensiones/vendor/autoload.php';
                     \MercadoPago\MercadoPagoConfig::setAccessToken($accesTokenMercadoPago);
                     
                     $client = new \MercadoPago\Client\Preference\PreferenceClient();
-                    $preference = $client->get($intentoExistente['preference_id']);
+                    $preferenceValidada = $client->get($intentoExistente['preference_id']);
                     
-                    if ($preference && isset($preference->id)) {
-                        $usarPreferenciaExistente = true;
-                        error_log("✅ Preferencia recuperada exitosamente: " . $preference->id);
+                    if ($preferenceValidada && isset($preferenceValidada->id)) {
+                        $preference = $preferenceValidada;
+                        error_log("✅ Preferencia validada exitosamente en MP: " . $preference->id);
                     } else {
-                        error_log("❌ No se pudo recuperar preferencia - Respuesta vacía de MP");
-                        $intentoExistente = null;
+                        error_log("⚠️ Preferencia no válida en MP, pero usando la de BD para evitar duplicados");
                     }
                 } catch (Exception $e) {
-                    error_log("❌ Error recuperando preferencia: " . $e->getMessage());
-                    $intentoExistente = null;
+                    error_log("⚠️ No se pudo validar preferencia en MP: " . $e->getMessage() . " - Usando la de BD");
                 }
             } else {
                 error_log("ℹ️ No hay intentos pendientes recientes para este cliente/monto");
             }
             
-            // PASO 2: Solo crear nueva preferencia si NO existe una pendiente válida
-            if (!$usarPreferenciaExistente) {
+            // PASO 2: Solo crear nueva preferencia si NO existe una pendiente (CRÍTICO: no crear si hay intento)
+            if (!$usarPreferenciaExistente && !$intentoExistente) {
                 error_log("📝 Creando NUEVA preferencia...");
                 
                 require_once 'extensiones/vendor/autoload.php';
