@@ -1,19 +1,19 @@
 <?php
 
 // Habilitar reporte de errores para debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1); // Mostrar errores temporalmente para debugging
-ini_set('log_errors', 1);
+//error_reporting(E_ALL);
+//ini_set('display_errors', 1); // Mostrar errores temporalmente para debugging
+//ini_set('log_errors', 1);
 
 // Crear log específico para este archivo
-$logFile = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/error_log_comprobante.txt';
-ini_set('error_log', $logFile);
+//$logFile = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/error_log_comprobante.txt';
+//ini_set('error_log', $logFile);
 
 // Registrar inicio de ejecución
-error_log("==========================================");
-error_log("INICIO comprobante.php - " . date('Y-m-d H:i:s'));
-error_log("Código recibido: " . (isset($_GET['codigo']) ? $_GET['codigo'] : 'NO DEFINIDO'));
-error_log("==========================================");
+//error_log("==========================================");
+//error_log("INICIO comprobante.php - " . date('Y-m-d H:i:s'));
+//error_log("Código recibido: " . (isset($_GET['codigo']) ? $_GET['codigo'] : 'NO DEFINIDO'));
+//error_log("==========================================");
 
 // Iniciar sesión si no está iniciada
 if (session_status() === PHP_SESSION_NONE) {
@@ -22,28 +22,28 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Validar que se haya proporcionado el código
 if(!isset($_GET['codigo']) || empty($_GET['codigo'])) {
-    error_log("Error comprobante.php: No se proporcionó el código");
+    //error_log("Error comprobante.php: No se proporcionó el código");
     http_response_code(400);
     die('Error: No se proporcionó el código del comprobante');
 }
 
 // Cargar autoload primero (usar ruta relativa como en recibo.php)
 $autoloadPath = '../../../autoload.php';
-error_log("Buscando autoload en: " . __DIR__ . '/' . $autoloadPath);
+//error_log("Buscando autoload en: " . __DIR__ . '/' . $autoloadPath);
 if(!file_exists(__DIR__ . '/' . $autoloadPath)) {
-    error_log("ERROR: autoload.php no encontrado en ruta relativa");
+    //error_log("ERROR: autoload.php no encontrado en ruta relativa");
     die('Error: No se encuentra autoload.php');
 }
-error_log("✅ autoload.php encontrado, cargando...");
+//error_log("✅ autoload.php encontrado, cargando...");
 require_once $autoloadPath;
-error_log("✅ autoload.php cargado");
+//error_log("✅ autoload.php cargado");
 
 // Obtener la ruta base del proyecto (raíz donde está .env)
 // Desde: extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php
 // Hacia: raíz del proyecto (6 niveles arriba)
 $rutaBase = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
-error_log("Ruta base calculada: " . $rutaBase);
-error_log("Ruta base existe: " . (is_dir($rutaBase) ? 'SÍ' : 'NO'));
+//error_log("Ruta base calculada: " . $rutaBase);
+//error_log("Ruta base existe: " . (is_dir($rutaBase) ? 'SÍ' : 'NO'));
 
 // Cargar variables de entorno desde .env PRIMERO (si existe y si Dotenv está instalado)
 // IMPORTANTE: Se carga antes de los modelos para que .env esté disponible
@@ -53,13 +53,13 @@ if (file_exists($envPath)) {
         try {
             $dotenv = Dotenv\Dotenv::createImmutable($rutaBase);
             $dotenv->load();
-            error_log("✅ .env cargado correctamente desde: " . $envPath);
+  //          error_log("✅ .env cargado correctamente desde: " . $envPath);
         } catch (Exception $e) {
-            error_log("❌ Error al cargar .env en comprobante.php: " . $e->getMessage());
+    //        error_log("❌ Error al cargar .env en comprobante.php: " . $e->getMessage());
             // Continuar aunque falle el .env, puede que las variables estén en otro lugar
         }
     } else {
-        error_log("⚠️ Dotenv no está disponible, intentando leer .env manualmente");
+      //  error_log("⚠️ Dotenv no está disponible, intentando leer .env manualmente");
         // Leer .env manualmente si Dotenv no está disponible
         $envLines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         foreach ($envLines as $line) {
@@ -77,7 +77,7 @@ if (file_exists($envPath)) {
         }
     }
 } else {
-    error_log("⚠️ Archivo .env no encontrado en: " . $envPath);
+    //error_log("⚠️ Archivo .env no encontrado en: " . $envPath);
 }
 
 // Cargar helpers (incluye función env() para leer variables)
@@ -85,7 +85,7 @@ $helpersPath = $rutaBase . '/helpers.php';
 if (file_exists($helpersPath)) {
     require_once $helpersPath;
 } else {
-    error_log("⚠️ helpers.php no encontrado en: " . $helpersPath);
+    //error_log("⚠️ helpers.php no encontrado en: " . $helpersPath);
 }
 
 // Usar rutas relativas como en recibo.php que funciona
@@ -105,22 +105,22 @@ $archivos = [
 
 foreach ($archivos as $archivo) {
     $rutaCompleta = __DIR__ . '/' . $archivo;
-    error_log("Verificando archivo: " . basename($archivo) . " en " . $rutaCompleta);
+    //error_log("Verificando archivo: " . basename($archivo) . " en " . $rutaCompleta);
     if (!file_exists($rutaCompleta)) {
-        error_log("❌ Archivo no encontrado: " . $rutaCompleta);
+      //  error_log("❌ Archivo no encontrado: " . $rutaCompleta);
         die('Error: Archivo requerido no encontrado: ' . basename($archivo) . ' en ' . $rutaCompleta);
     }
-    error_log("✅ Cargando: " . basename($archivo));
+    //error_log("✅ Cargando: " . basename($archivo));
     require_once $archivo;
-    error_log("✅ Cargado: " . basename($archivo));
+    //error_log("✅ Cargado: " . basename($archivo));
 }
-error_log("✅ Todos los archivos requeridos cargados correctamente");
+//error_log("✅ Todos los archivos requeridos cargados correctamente");
 
 class imprimirComprobante{
 
 public function traerImpresionComprobante(){
 
-error_log("Iniciando traerImpresionComprobante()");
+//error_log("Iniciando traerImpresionComprobante()");
 
 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
@@ -201,7 +201,7 @@ try {
     $codigoVenta = intval($_GET['codigo']);
     
     if($codigoVenta <= 0) {
-        error_log("Error comprobante.php: Código de venta inválido: " . $_GET['codigo']);
+        //error_log("Error comprobante.php: Código de venta inválido: " . $_GET['codigo']);
         http_response_code(400);
         die('Error: Código de venta inválido');
     }
@@ -210,7 +210,7 @@ try {
     
     // Validar que se obtuvo la venta
     if(!$respuestaVenta || empty($respuestaVenta) || !isset($respuestaVenta["id"])) {
-        error_log("Error comprobante.php: No se encontró la venta con código " . $codigoVenta);
+        //error_log("Error comprobante.php: No se encontró la venta con código " . $codigoVenta);
         http_response_code(404);
         die('Error: No se encontró la venta con código ' . $codigoVenta);
     }
@@ -218,7 +218,7 @@ try {
     $facturada = ControladorVentas::ctrVentaFacturada($respuestaVenta["id"]);
     
     if(!isset($respuestaVenta["id_cliente"]) || empty($respuestaVenta["id_cliente"])) {
-        error_log("Error comprobante.php: La venta no tiene cliente asociado");
+        //error_log("Error comprobante.php: La venta no tiene cliente asociado");
         http_response_code(500);
         die('Error: La venta no tiene cliente asociado');
     }
@@ -227,20 +227,20 @@ try {
     
     // Validar que se obtuvo el cliente
     if(!$respuestaCliente || empty($respuestaCliente)) {
-        error_log("Error comprobante.php: No se encontró el cliente con ID " . $respuestaVenta["id_cliente"]);
+        //error_log("Error comprobante.php: No se encontró el cliente con ID " . $respuestaVenta["id_cliente"]);
         http_response_code(404);
         die('Error: No se encontró el cliente de la venta');
     }
 } catch(Exception $e) {
-    error_log("Error comprobante.php al obtener datos de venta: " . $e->getMessage());
+    //error_log("Error comprobante.php al obtener datos de venta: " . $e->getMessage());
     http_response_code(500);
     die('Error al obtener los datos de la venta: ' . $e->getMessage());
 }
 
 try {
-    error_log("Obteniendo datos de empresa...");
+    //error_log("Obteniendo datos de empresa...");
     $respEmpresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', $respuestaVenta["id_empresa"]);
-    error_log("Datos de empresa obtenidos: " . (is_array($respEmpresa) ? 'SÍ' : 'NO'));
+    //error_log("Datos de empresa obtenidos: " . (is_array($respEmpresa) ? 'SÍ' : 'NO'));
     
     // Configuración del documento
     $pdf->SetCreator('Posmoon');
@@ -248,13 +248,13 @@ try {
 
     // Validar que se obtuvo la empresa
     if(!$respEmpresa || empty($respEmpresa)) {
-        error_log("Error comprobante.php: No se pudo obtener la información de la empresa");
+        //error_log("Error comprobante.php: No se pudo obtener la información de la empresa");
         http_response_code(500);
         die('Error: No se pudo obtener la información de la empresa');
     }
 
 } catch(Exception $e) {
-    error_log("Error comprobante.php en inicialización: " . $e->getMessage());
+    //error_log("Error comprobante.php en inicialización: " . $e->getMessage());
     http_response_code(500);
     die('Error al inicializar el PDF: ' . $e->getMessage());
 }
@@ -285,17 +285,17 @@ try {
     
     // Validar que se obtuvieron los productos
     if(!is_array($productos) || empty($productos)) {
-        error_log("Error comprobante.php: No se pudieron obtener los productos de la venta ID: " . $respuestaVenta["id"]);
-        error_log("Código de venta: " . $codigoVenta);
-        error_log("Respuesta de ctrObtenerProductosVentaLegacy: " . (is_array($productos) ? 'Array con ' . count($productos) . ' elementos' : gettype($productos)));
-        error_log("IMPORTANTE: Esta venta necesita ser migrada. Ejecutar: db/migrar-venta-especifica.sql con id_venta = " . $respuestaVenta["id"]);
+        //error_log("Error comprobante.php: No se pudieron obtener los productos de la venta ID: " . $respuestaVenta["id"]);
+        //error_log("Código de venta: " . $codigoVenta);
+        //error_log("Respuesta de ctrObtenerProductosVentaLegacy: " . (is_array($productos) ? 'Array con ' . count($productos) . ' elementos' : gettype($productos)));
+        //error_log("IMPORTANTE: Esta venta necesita ser migrada. Ejecutar: db/migrar-venta-especifica.sql con id_venta = " . $respuestaVenta["id"]);
         http_response_code(500);
         die('Error: No se encontraron productos en la venta. ID venta: ' . $respuestaVenta["id"] . ', Código: ' . $codigoVenta . '. Esta venta necesita ser migrada a la tabla productos_venta.');
     }
     
     $tamanioProd = count($productos);
 } catch(Exception $e) {
-    error_log("Error comprobante.php al procesar productos: " . $e->getMessage());
+    //error_log("Error comprobante.php al procesar productos: " . $e->getMessage());
     http_response_code(500);
     die('Error al procesar los productos: ' . $e->getMessage());
 }
@@ -1163,20 +1163,20 @@ $pdf->Output($nomArchivo);
 
 }
 
-error_log("Creando instancia de imprimirComprobante...");
+//error_log("Creando instancia de imprimirComprobante...");
 try {
     $comprobante = new imprimirComprobante();
-    error_log("Instancia creada, llamando traerImpresionComprobante()...");
+    //error_log("Instancia creada, llamando traerImpresionComprobante()...");
     $comprobante -> traerImpresionComprobante();
-    error_log("✅ PDF generado exitosamente");
+    //error_log("✅ PDF generado exitosamente");
 } catch (Exception $e) {
-    error_log("❌ ERROR FATAL en comprobante.php: " . $e->getMessage());
-    error_log("Stack trace: " . $e->getTraceAsString());
+    //error_log("❌ ERROR FATAL en comprobante.php: " . $e->getMessage());
+    //error_log("Stack trace: " . $e->getTraceAsString());
     http_response_code(500);
     die('Error al generar el comprobante: ' . $e->getMessage());
 } catch (Error $e) {
-    error_log("❌ ERROR FATAL (Error) en comprobante.php: " . $e->getMessage());
-    error_log("Stack trace: " . $e->getTraceAsString());
+    //error_log("❌ ERROR FATAL (Error) en comprobante.php: " . $e->getMessage());
+    //error_log("Stack trace: " . $e->getTraceAsString());
     http_response_code(500);
     die('Error fatal al generar el comprobante: ' . $e->getMessage());
 }
