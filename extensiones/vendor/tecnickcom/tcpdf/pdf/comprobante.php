@@ -434,7 +434,7 @@ $bloqueCabeceraOriginal = <<<EOF
     
     $tieneServicio
     
-    <table border="1" style="padding: 5px">
+    <table border="1" >
         <tr>
             <td style="width:560px; font-size:8px; text-align: left;">
                 <br>
@@ -821,7 +821,7 @@ $bloqueCabeceraDuplicado = <<<EOF
 
     $tieneServicio
 
-    <table border="1" style="padding: 5px">
+    <table border="1" >
         <tr>
             <td style="width:560px; font-size:8px; text-align: left;">
                 <br>
