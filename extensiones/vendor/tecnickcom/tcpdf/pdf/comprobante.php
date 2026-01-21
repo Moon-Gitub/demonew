@@ -266,7 +266,7 @@ try {
     $fecha = isset($respuestaVenta["fecha"]) ? substr($respuestaVenta["fecha"],0,-8) : date("Y-m-d");
     $fecha = date("d-m-Y",strtotime($fecha));
     
-    if(!isset($respuestaVenta["productos"]) || empty($respuestaVenta["productos"])) {
+    /*if(!isset($respuestaVenta["productos"]) || empty($respuestaVenta["productos"])) {
         error_log("Error comprobante.php: La venta no tiene productos");
         http_response_code(500);
         die('Error: La venta no tiene productos');
@@ -279,6 +279,18 @@ try {
         error_log("Error comprobante.php: No se pudieron decodificar los productos de la venta");
         http_response_code(500);
         die('Error: No se encontraron productos en la venta');
+    }*/
+
+    $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($respuestaVenta["id"]);
+    
+    // Validar que se obtuvieron los productos
+    if(!is_array($productos) || empty($productos)) {
+        error_log("Error comprobante.php: No se pudieron obtener los productos de la venta ID: " . $respuestaVenta["id"]);
+        error_log("Código de venta: " . $codigoVenta);
+        error_log("Respuesta de ctrObtenerProductosVentaLegacy: " . (is_array($productos) ? 'Array con ' . count($productos) . ' elementos' : gettype($productos)));
+        error_log("IMPORTANTE: Esta venta necesita ser migrada. Ejecutar: db/migrar-venta-especifica.sql con id_venta = " . $respuestaVenta["id"]);
+        http_response_code(500);
+        die('Error: No se encontraron productos en la venta. ID venta: ' . $respuestaVenta["id"] . ', Código: ' . $codigoVenta . '. Esta venta necesita ser migrada a la tabla productos_venta.');
     }
     
     $tamanioProd = count($productos);
