@@ -1,5 +1,78 @@
 <?php
 
+// Iniciar sesión si no está iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Validar que se haya proporcionado el código
+if(!isset($_GET['codigo']) || empty($_GET['codigo'])) {
+    //error_log("Error comprobante.php: No se proporcionó el código");
+    http_response_code(400);
+    die('Error: No se proporcionó el código del comprobante');
+}
+
+// Cargar autoload primero (usar ruta relativa como en recibo.php)
+$autoloadPath = '../../../autoload.php';
+//error_log("Buscando autoload en: " . __DIR__ . '/' . $autoloadPath);
+if(!file_exists(__DIR__ . '/' . $autoloadPath)) {
+    //error_log("ERROR: autoload.php no encontrado en ruta relativa");
+    die('Error: No se encuentra autoload.php');
+}
+//error_log("✅ autoload.php encontrado, cargando...");
+require_once $autoloadPath;
+//error_log("✅ autoload.php cargado");
+
+// Obtener la ruta base del proyecto (raíz donde está .env)
+// Desde: extensiones/vendor/tecnickcom/tcpdf/pdf/comprobante.php
+// Hacia: raíz del proyecto (6 niveles arriba)
+$rutaBase = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
+//error_log("Ruta base calculada: " . $rutaBase);
+//error_log("Ruta base existe: " . (is_dir($rutaBase) ? 'SÍ' : 'NO'));
+
+// Cargar variables de entorno desde .env PRIMERO (si existe y si Dotenv está instalado)
+// IMPORTANTE: Se carga antes de los modelos para que .env esté disponible
+$envPath = $rutaBase . '/.env';
+if (file_exists($envPath)) {
+    if (class_exists('Dotenv\Dotenv')) {
+        try {
+            $dotenv = Dotenv\Dotenv::createImmutable($rutaBase);
+            $dotenv->load();
+  //          error_log("✅ .env cargado correctamente desde: " . $envPath);
+        } catch (Exception $e) {
+    //        error_log("❌ Error al cargar .env en comprobante.php: " . $e->getMessage());
+            // Continuar aunque falle el .env, puede que las variables estén en otro lugar
+        }
+    } else {
+      //  error_log("⚠️ Dotenv no está disponible, intentando leer .env manualmente");
+        // Leer .env manualmente si Dotenv no está disponible
+        $envLines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($envLines as $line) {
+            if (strpos(trim($line), '#') === 0) continue; // Saltar comentarios
+            if (strpos($line, '=') !== false) {
+                list($key, $value) = explode('=', $line, 2);
+                $key = trim($key);
+                $value = trim($value);
+                if (!empty($key)) {
+                    $_ENV[$key] = $value;
+                    $_SERVER[$key] = $value;
+                    putenv("$key=$value");
+                }
+            }
+        }
+    }
+} else {
+    //error_log("⚠️ Archivo .env no encontrado en: " . $envPath);
+}
+
+// Cargar helpers (incluye función env() para leer variables)
+$helpersPath = $rutaBase . '/helpers.php';
+if (file_exists($helpersPath)) {
+    require_once $helpersPath;
+} else {
+    //error_log("⚠️ helpers.php no encontrado en: " . $helpersPath);
+}
+
 require_once "../../../../../controladores/empresa.controlador.php";
 require_once "../../../../../modelos/empresa.modelo.php";
 require_once "../../../../../controladores/ventas.controlador.php";
