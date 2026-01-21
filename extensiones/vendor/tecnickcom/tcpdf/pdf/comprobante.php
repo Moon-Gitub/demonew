@@ -390,7 +390,6 @@ if($respuestaVenta["estado"] == 2){
     $condicionVenta = substr($condicionVenta, 0, -2);
 }
 
-
 $bloqueCabeceraOriginal = <<<EOF
     <table border="1">
         <tr>
