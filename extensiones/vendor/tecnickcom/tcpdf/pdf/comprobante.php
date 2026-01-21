@@ -124,10 +124,6 @@ error_log("Iniciando traerImpresionComprobante()");
 
 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
-// Configuración del documento
-$pdf->SetCreator('Posmoon');
-$pdf->SetTitle($respEmpresa["razon_social"]);
-
 $pdf->setPrintHeader(false);
 $pdf->setPrintFooter(false);
 
@@ -246,6 +242,10 @@ try {
     $respEmpresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', $respuestaVenta["id_empresa"]);
     error_log("Datos de empresa obtenidos: " . (is_array($respEmpresa) ? 'SÍ' : 'NO'));
     
+    // Configuración del documento
+    $pdf->SetCreator('Posmoon');
+    $pdf->SetTitle($respEmpresa["razon_social"]);
+
     // Validar que se obtuvo la empresa
     if(!$respEmpresa || empty($respEmpresa)) {
         error_log("Error comprobante.php: No se pudo obtener la información de la empresa");
