@@ -122,6 +122,13 @@ public function traerImpresionComprobante(){
 
 error_log("Iniciando traerImpresionComprobante()");
 
+// Configuración del documento
+$pdf->SetCreator('Posmoon');
+$pdf->SetTitle($respEmpresa["razon_social"]);
+
+$pdf->setPrintHeader(false);
+$pdf->setPrintFooter(false);
+
 $tiposCbtes = array(
 0 => 'X',
 1 => 'Factura A',
@@ -232,97 +239,52 @@ try {
     die('Error al obtener los datos de la venta: ' . $e->getMessage());
 }
 
-
-
-
-
 try {
-
     error_log("Obteniendo datos de empresa...");
-
     $respEmpresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', $respuestaVenta["id_empresa"]);
-
     error_log("Datos de empresa obtenidos: " . (is_array($respEmpresa) ? 'SÍ' : 'NO'));
-
     
-
     // Validar que se obtuvo la empresa
-
     if(!$respEmpresa || empty($respEmpresa)) {
-
         error_log("Error comprobante.php: No se pudo obtener la información de la empresa");
-
         http_response_code(500);
-
         die('Error: No se pudo obtener la información de la empresa');
-
     }
-
     
-
     //REQUERIMOS LA CLASE TCPDF
-
     if(!class_exists('TCPDF')) {
-
         error_log("Error comprobante.php: La clase TCPDF no está disponible");
-
         http_response_code(500);
-
         die('Error: La clase TCPDF no está disponible');
-
     }
-
     
-
     $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-    
-    // Configuración del documento
-    $pdf->SetCreator('Posmoon');
-    $pdf->SetTitle($respEmpresa["razon_social"]);
-    $pdf->setPrintHeader(false);
-    $pdf->setPrintFooter(false);
-    
-    // Agregar primera página
-    $pdf->AddPage('P', 'A4');
-    
-    // Configurar márgenes normales
-    $pdf->SetMargins(10, 10, 10);
-    $pdf->SetAutoPageBreak(true, 10);
-
 } catch(Exception $e) {
-
     error_log("Error comprobante.php en inicialización: " . $e->getMessage());
-
     http_response_code(500);
-
     die('Error al inicializar el PDF: ' . $e->getMessage());
-
 }
 
-
-
 $tipoDocumento = isset($arrTipoDocumento[$respuestaCliente["tipo_documento"]]) ? $arrTipoDocumento[$respuestaCliente["tipo_documento"]] : "(no definido)";
-
 $tipoIva = isset($condIva[$respEmpresa["condicion_iva"]]) ? $condIva[$respEmpresa["condicion_iva"]] : "(no definido)";
-
 $tipoIvaCliente = isset($condIva[$respuestaCliente["condicion_iva"]]) ? $condIva[$respuestaCliente["condicion_iva"]] : "(no definido)";
-
 try {
     $fecha = isset($respuestaVenta["fecha"]) ? substr($respuestaVenta["fecha"],0,-8) : date("Y-m-d");
     $fecha = date("d-m-Y",strtotime($fecha));
     
-    // Obtener productos desde tabla relacional
-    // El controlador ya está cargado arriba, solo necesitamos obtener los productos
-    $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($respuestaVenta["id"]);
+    if(!isset($respuestaVenta["productos"]) || empty($respuestaVenta["productos"])) {
+        error_log("Error comprobante.php: La venta no tiene productos");
+        http_response_code(500);
+        die('Error: La venta no tiene productos');
+    }
+    
+    $productos = json_decode($respuestaVenta["productos"], true);
     
     // Validar que se obtuvieron los productos
     if(!is_array($productos) || empty($productos)) {
-        error_log("Error comprobante.php: No se pudieron obtener los productos de la venta ID: " . $respuestaVenta["id"]);
-        error_log("Código de venta: " . $codigoVenta);
-        error_log("Respuesta de ctrObtenerProductosVentaLegacy: " . (is_array($productos) ? 'Array con ' . count($productos) . ' elementos' : gettype($productos)));
-        error_log("IMPORTANTE: Esta venta necesita ser migrada. Ejecutar: db/migrar-venta-especifica.sql con id_venta = " . $respuestaVenta["id"]);
+        error_log("Error comprobante.php: No se pudieron decodificar los productos de la venta");
         http_response_code(500);
-        die('Error: No se encontraron productos en la venta. ID venta: ' . $respuestaVenta["id"] . ', Código: ' . $codigoVenta . '. Esta venta necesita ser migrada a la tabla productos_venta.');
+        die('Error: No se encontraron productos en la venta');
     }
     
     $tamanioProd = count($productos);
@@ -331,38 +293,21 @@ try {
     http_response_code(500);
     die('Error al procesar los productos: ' . $e->getMessage());
 }
-
-// Función para formatear números sin ceros innecesarios
-function formatearNumeroSinCeros($numero) {
-    $formateado = number_format($numero, 2, ',', '.');
-    // Eliminar ceros innecesarios al final: 180.000,00 -> 180.000
-    $formateado = rtrim($formateado, '0');
-    $formateado = rtrim($formateado, ',');
-    return '$ ' . $formateado;
-}
-
-$totalNumero = isset($respuestaVenta["total"]) ? floatval($respuestaVenta["total"]) : 0;
-$total = formatearNumeroSinCeros($totalNumero);
-$observaciones = isset($respuestaVenta["observaciones"]) ? htmlspecialchars($respuestaVenta["observaciones"], ENT_QUOTES, 'UTF-8') : '';
-$subTotalNumero = isset($respuestaVenta["neto"]) ? floatval($respuestaVenta["neto"]) : 0;
-$subTotal = formatearNumeroSinCeros($subTotalNumero);
-$netoGravNumero = isset($respuestaVenta["neto_gravado"]) ? floatval($respuestaVenta["neto_gravado"]) : 0;
-$neto_grav = formatearNumeroSinCeros($netoGravNumero);
+$total = number_format($respuestaVenta["total"],2, ',', '.');
+$observaciones = $respuestaVenta["observaciones"];
+$subTotal = number_format($respuestaVenta["neto"],2, ',', '.');
+$neto_grav = number_format($respuestaVenta["neto_gravado"],2, ',', '.');
 $jsnPago = json_decode($respuestaVenta["metodo_pago"], true);
-if(!is_array($jsnPago)) {
-    $jsnPago = array();
-}
 
 //$descuentos = $jsnPago[0]["descuento"] * $respuestaVenta["neto"] / 100;
 //$descuentos = $respuestaVenta["descuento"] * $respuestaVenta["neto"] / 100;
-$descuentosNumero = isset($respuestaVenta["descuento"]) ? floatval($respuestaVenta["descuento"]) : 0;
-$descuentos = formatearNumeroSinCeros($descuentosNumero);
+$descuentos = number_format(0, 2, ',','.');
 
 if($respuestaVenta["cbte_tipo"] == "0") {
 
 $tipoVtaLetra = "X";
 $tipoCodigo = "";
-$tipoVta = "Documento no válido como factura";
+$tipoVta = "<h3>Documento no valido como factura</h3>";
 $numCte = str_pad($respuestaVenta["codigo"], 8, "0", STR_PAD_LEFT);
 $vtoCae ="-";
 $cae ="-";
@@ -370,55 +315,36 @@ $cae ="-";
 } else {
 
 $factura = ControladorVentas::ctrVentaFacturadaDatos($respuestaVenta["id"]);
-$nroCbte = isset($factura["nro_cbte"]) ? $factura["nro_cbte"] : 0;
-$caeFactura = isset($factura["cae"]) ? $factura["cae"] : '';
-$fecVtoCae = isset($factura["fec_vto_cae"]) ? $factura["fec_vto_cae"] : '';
-$jsonQR = '{"ver":1,"fecha":"'.date('Y-m-d', strtotime($respuestaVenta["fecha"])).'","cuit":'.$respEmpresa["cuit"].',"ptoVta":'.$respuestaVenta["pto_vta"].',"tipoCmp":'.$respuestaVenta["cbte_tipo"].',"nroCmp":'.$nroCbte.',"importe":'.$respuestaVenta["total"].',"moneda":"PES","ctz":1,"tipoDocRec":'.$respuestaCliente["tipo_documento"].',"nroDocRec":'.$respuestaCliente["documento"].',"tipoCodAut":"E","codAut":'.$caeFactura.'}';
+$jsonQR = '{"ver":1,"fecha":"'.date('Y-m-d', strtotime($respuestaVenta["fecha"])).'","cuit":'.$respEmpresa["cuit"].',"ptoVta":'.$respuestaVenta["pto_vta"].',"tipoCmp":'.$respuestaVenta["cbte_tipo"].',"nroCmp":'.$factura["nro_cbte"].',"importe":'.$respuestaVenta["total"].',"moneda":"PES","ctz":1,"tipoDocRec":'.$respuestaCliente["tipo_documento"].',"nroDocRec":'.$respuestaCliente["documento"].',"tipoCodAut":"E","codAut":'.$factura["cae"].'}';
 $jsonQRBase64 = 'https://www.afip.gob.ar/fe/qr/?p=' . base64_encode($jsonQR);
-$tipoVta = isset($tiposCbtes[$respuestaVenta["cbte_tipo"]]) ? $tiposCbtes[$respuestaVenta["cbte_tipo"]] : 'No definido';
+$tipoVta = "<h2>" . $tiposCbtes[$respuestaVenta["cbte_tipo"]] ."</h2>";
 $tipoCodigo = "Cod. ". $respuestaVenta["cbte_tipo"];
-$tipoVtaLetra = isset($tiposCbtesLetras[$respuestaVenta["cbte_tipo"]]) ? $tiposCbtesLetras[$respuestaVenta["cbte_tipo"]] : 'X';
-$numCte = str_pad($nroCbte, 8, "0", STR_PAD_LEFT);
-$cuit = isset($respEmpresa["cuit"]) ? $respEmpresa["cuit"] : '';
+$tipoVtaLetra = $tiposCbtesLetras[$respuestaVenta["cbte_tipo"]];
+$numCte = str_pad($factura["nro_cbte"], 8, "0", STR_PAD_LEFT);
+$cuit = $respEmpresa["cuit"];
 $tipoComprobante = str_pad($respuestaVenta["cbte_tipo"], 3, "0", STR_PAD_LEFT);
-$cae = $caeFactura;
-$vtoCae = $fecVtoCae;
+$cae = $factura["cae"];
+$vtoCae = $factura["fec_vto_cae"];
 
 }
 
-$ptoVta = str_pad(isset($respuestaVenta["pto_vta"]) ? $respuestaVenta["pto_vta"] : 0, 5, "0", STR_PAD_LEFT);
-$fecEmi = date('d/m/Y', strtotime(isset($respuestaVenta["fecha"]) ? $respuestaVenta["fecha"] : date('Y-m-d')));
-
-// Asegurar que todas las variables usadas en HTML estén inicializadas
-$razonSocial = isset($respEmpresa["razon_social"]) ? htmlspecialchars($respEmpresa["razon_social"], ENT_QUOTES, 'UTF-8') : '';
-$domicilio = isset($respEmpresa["domicilio"]) ? htmlspecialchars($respEmpresa["domicilio"], ENT_QUOTES, 'UTF-8') : '';
-$telefono = isset($respEmpresa["telefono"]) ? htmlspecialchars($respEmpresa["telefono"], ENT_QUOTES, 'UTF-8') : '';
-$localidad = isset($respEmpresa["localidad"]) ? htmlspecialchars($respEmpresa["localidad"], ENT_QUOTES, 'UTF-8') : '';
-$codigoPostal = isset($respEmpresa["codigo_postal"]) ? htmlspecialchars($respEmpresa["codigo_postal"], ENT_QUOTES, 'UTF-8') : '';
-$cuit = isset($respEmpresa["cuit"]) ? htmlspecialchars($respEmpresa["cuit"], ENT_QUOTES, 'UTF-8') : '';
-$numeroIibb = isset($respEmpresa["numero_iibb"]) ? htmlspecialchars($respEmpresa["numero_iibb"], ENT_QUOTES, 'UTF-8') : '';
-$inicioActividades = isset($respEmpresa["inicio_actividades"]) ? htmlspecialchars($respEmpresa["inicio_actividades"], ENT_QUOTES, 'UTF-8') : '';
-$nombreCliente = isset($respuestaCliente["nombre"]) ? htmlspecialchars($respuestaCliente["nombre"], ENT_QUOTES, 'UTF-8') : '';
-$documentoCliente = isset($respuestaCliente["documento"]) ? htmlspecialchars($respuestaCliente["documento"], ENT_QUOTES, 'UTF-8') : '';
-$direccionCliente = isset($respuestaCliente["direccion"]) ? htmlspecialchars($respuestaCliente["direccion"], ENT_QUOTES, 'UTF-8') : '';
-$tieneServicio = isset($tieneServicio) ? $tieneServicio : '';
+$ptoVta = str_pad($respuestaVenta["pto_vta"], 5, "0", STR_PAD_LEFT);
+$fecEmi = date('d/m/Y', strtotime($respuestaVenta["fecha"]));
 
 /*
 if(isset($respEmpresa["logo"]) && $respEmpresa["logo"] != ""){
-	$razonSocial = '<td style="width:250px; padding:45px;"><img src="../../../vistas/img/plantilla/logo_impreso.png"></td>';
+    $razonSocial = '<td style="width:250px; padding:45px;"><img src="../../../vistas/img/plantilla/logo_impreso.png"></td>';
 } else {
-	$razonSocial = $respEmpresa["razon_social"];
+    $razonSocial = $respEmpresa["razon_social"];
 }*/
 
-$ubicacionCabecera  = 5;
-$ubicacionDetalle   = 0; // Se calculará dinámicamente
-$ubicacionFooter    = 0; // Se calculará dinámicamente
+$ubicacionCabecera  = 7;
+$ubicacionDetalle   = 80;
+$ubicacionFooter    = 250;
 $datosFact = []; //Array de datos a imprimir
 $detalleEnTabla = ""; //filas en tabla para armar detalle
 $subTotalPorPagina = 0;
 $transportePorPagina = 0;
-$transporteAcumulado = 0; // Suma acumulada de totales de páginas anteriores
-$totalPorPagina = []; // Array para almacenar totales por página
 $valorY = 0;
 $nuevaPagina = true;
 $imprimoCabeceraDetalle = true;
@@ -429,21 +355,21 @@ $tieneServicio = '';
 if($respuestaVenta["concepto"] != 1){
 $tieneServicio = <<<EOF
             <table border="1" style="padding-left: 5px">
-		<tr>
-			<td style="width:186px; font-size:8px; text-align: left;">
-				<br>
-				<span><b>Fecha Desde:</b> $respuestaVenta[fec_desde]</span> <br>
-			</td>
-			<td style="width:187px; font-size:8px; text-align: left;">
-				<br>
-				<span><b>Fecha Hasta:</b> $respuestaVenta[fec_hasta]</span> <br>
-			</td>
-			<td style="width:187px; font-size:8px; text-align: left;">
-				<br>
-				<span><b>Fecha Vto.:</b> $respuestaVenta[fec_vencimiento]</span> <br>
-			</td>			
-		</tr>
-	</table>
+        <tr>
+            <td style="width:186px; font-size:8px; text-align: left;">
+                <br>
+                <span><b>Fecha Desde:</b> $respuestaVenta[fec_desde]</span> <br>
+            </td>
+            <td style="width:187px; font-size:8px; text-align: left;">
+                <br>
+                <span><b>Fecha Hasta:</b> $respuestaVenta[fec_hasta]</span> <br>
+            </td>
+            <td style="width:187px; font-size:8px; text-align: left;">
+                <br>
+                <span><b>Fecha Vto.:</b> $respuestaVenta[fec_vencimiento]</span> <br>
+            </td>           
+        </tr>
+    </table>
 EOF;
 }
 
@@ -452,638 +378,771 @@ if($respuestaVenta["estado"] == 2){
     $condicionVenta = 'Cuenta Corriente';
 } else {
     //[{"tipo":"Efectivo","entrega":"1000"},{"tipo":"MP-","entrega":"300"}]
-    if(is_array($jsnPago) && !empty($jsnPago)) {
-        foreach ($jsnPago as $clave => $valor) {
-            if(isset($valor["tipo"])) {
-                $condicionVenta .= $valor["tipo"] . ' | ';
-            }
-        }
-        if(!empty($condicionVenta)) {
-            $condicionVenta = substr($condicionVenta, 0, -2);
-        }
+    foreach ($jsnPago as $clave => $valor) {
+        $condicionVenta .= $valor["tipo"] . ' | ';
     }
-    if(empty($condicionVenta)) {
-        $condicionVenta = 'Efectivo';
-    }
+    $condicionVenta = substr($condicionVenta, 0, -2);
 }
 
-
-// Determinar estilo del tipo de venta
-$tipoVtaStyle = '';
-if($respuestaVenta["cbte_tipo"] == "0") {
-    $tipoVtaStyle = 'style="font-size: 11px; font-weight: bold; color: #dc3545; text-align: center;"';
-} else {
-    $tipoVtaStyle = 'style="font-size: 14px; font-weight: bold; text-align: center;"';
-}
 
 $bloqueCabeceraOriginal = <<<EOF
-	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
-		<tr>
-			<td colspan="3" style="text-align: center; padding: 10px; font-size: 16px; font-weight: bold; background-color: #e9ecef;">
-				ORIGINAL
-			</td>
-		</tr>
-		<tr>
-			<td style="width:45%; text-align: center; padding: 15px; vertical-align: middle;">
-				<div style="font-size: 18px; font-weight: bold;">$razonSocial</div>
-			</td>
-			<td style="width:10%; text-align: center; padding: 12px; vertical-align: middle; background-color: #f8f9fa;">
-				<div style="font-size: 42px; font-weight: bold; line-height: 1;">$tipoVtaLetra</div>
-				<div style="font-size: 8px; margin-top: 3px; color: #6c757d;">$tipoCodigo</div>
-			</td>
-			<td style="width:45%; text-align: center; padding: 15px; vertical-align: middle;">
-				<div $tipoVtaStyle>$tipoVta</div>
-			</td>
-		</tr>
-		<tr>
-			<td style="width:50%; font-size: 10px; padding: 12px; vertical-align: top; border-right: 1px solid #000;">
-				<div style="line-height: 1.8;">
-					<div style="margin-bottom: 4px;"><b>Dirección:</b> $domicilio</div>
-					<div style="margin-bottom: 4px;"><b>Teléfono:</b> $telefono</div>
-					<div style="margin-bottom: 4px;"><b>Localidad:</b> $localidad - C.P.: $codigoPostal</div>
-					<div style="margin-bottom: 4px;"><b>Cond. I.V.A.:</b> $tipoIva</div>
-					<div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #dee2e6; font-size: 9px;"><b>Defensa al Consumidor Mza. 08002226678</b></div>
-				</div>
-			</td>
-			<td colspan="2" style="width:50%; font-size: 10px; padding: 12px; vertical-align: top;">
-				<div style="line-height: 1.8;">
-					<div style="margin-bottom: 4px;"><b>N° Cbte:</b> <span style="font-size: 11px; font-weight: bold;">$ptoVta - $numCte</span></div>
-					<div style="margin-bottom: 4px;"><b>Fecha Emisión:</b> $fecEmi</div>
-					<div style="margin-bottom: 4px;"><b>CUIT:</b> $cuit</div>
-					<div style="margin-bottom: 4px;"><b>II.BB.:</b> $numeroIibb</div>
-					<div style="margin-bottom: 4px;"><b>Inic. Actividad:</b> $inicioActividades</div>
-				</div>
-			</td>
-		</tr>
-	</table>
-	
-	$tieneServicio
+    <table border="1">
+        <tr>
+            <td style="width:560px; text-align: center;"> ORIGINAL</td>
+        </tr>
+    </table>
+    <table border="0" >
+        <tr style="padding: 0px;">
+            <td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> 
+                <h2>$respEmpresa[razon_social]</h2>
+            </td>
+            <td style="width:40px; text-align:center">
+                <div>
+                    <span style="font-size:28.5px;">$tipoVtaLetra</span>
+                    <span style="font-size:10px;">$tipoCodigo</span>
+                </div>
+            </td>
+            <td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> 
+                $tipoVta
+            </td>
+        </tr>
+    </table>
+    <table border="0" style="padding: 10px">
+        <tr>
+            <td style="width:280px; font-size:10px; text-align: left;">
+                <br>
+                <span><b>Direccion:</b> $respEmpresa[domicilio]</span> <br>
+                <span><b>Telefono:</b> $respEmpresa[telefono]</span> <br>
+                <span><b>Localidad:</b> $respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</span><br>
+                <span><b>Cond. I.V.A.:</b> $tipoIva </span><br>
+                <span><b>Defensa al Consumidor Mza. 08002226678</b></span> 
+            </td>
+            <td style="width:280px; font-size:10px; text-align: left">
+                <div style="padding-top:5px">
+                    <span><b>N° Cbte:</b> $ptoVta - $numCte</span> <br>
+                    <span><b>Fecha Emisión:</b> $fecEmi </span><br>
+                    <span><b>CUIT:</b> $respEmpresa[cuit] </span><br>
+                    <span><b>II.BB.:</b> $respEmpresa[numero_iibb] </span><br>
+                    <span><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades] </span>
+                </div>
+            </td>
+        </tr>
+    </table>
     
-	<table border="1" cellpadding="5" cellspacing="0" style="width:100%; margin-top: 5px;">
-		<tr>
-			<td style="font-size: 10px; padding: 12px; line-height: 1.8; background-color: #f8f9fa;">
-				<div style="margin-bottom: 5px;"><b>Tipo Doc.:</b> $tipoDocumento: <b>$documentoCliente</b> | <b>Nombre / Razón Social:</b> $nombreCliente</div>
-				<div style="margin-bottom: 5px;"><b>Domicilio:</b> $direccionCliente | <b>Condición I.V.A.:</b> $tipoIvaCliente</div>
-				<div><b>Condición de Venta:</b> <span style="font-weight: bold;">$condicionVenta</span></div>
-			</td>
-		</tr>
-	</table>
+    $tieneServicio
+    
+    <table border="1" style="padding: 5px">
+        <tr>
+            <td style="width:560px; font-size:8px; text-align: left;">
+                <br>
+                <span><b>Tipo Doc.: $tipoDocumento :</b> $respuestaCliente[documento] </span> - <span> <b>Nombre / Razón Social :</b> $respuestaCliente[nombre] </span> 
+                <br>
+                <span><b>Domicilio: </b> $respuestaCliente[direccion] </span> - <span> <b>Condición I.V.A.:</b> $tipoIvaCliente </span> 
+                <br>
+                <span><b>Condición de Venta: </b> $condicionVenta </span> 
+            </td>
+        </tr>
+    </table>
 EOF;
 
-// Crear bloque cabecera duplicado (igual que original pero con "DUPLICADO")
-$bloqueCabeceraDuplicado = str_replace('ORIGINAL', 'DUPLICADO', $bloqueCabeceraOriginal);
+//RECORRO TODOS LOS PRODUCTOS PARA ARMAR DETALLE
+foreach ($productos as $key => $value) {
 
-// Determinar columnas según tipo de comprobante
-$esTipoA = ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4);
-
-// Función para obtener encabezado de tabla
-function obtenerEncabezadoTabla($esTipoA) {
-    if($esTipoA) {
-        return '<table border="1" cellpadding="4" cellspacing="0" style="width:100%; margin-top: 10px;">
-            <tr style="background-color: #343a40; color: #ffffff;">
-                <td style="width:8%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Cant.</td>
-                <td style="width:50%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Detalle</td>
-                <td style="width:14%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Subtotal</td>
-                <td style="width:8%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">IVA %</td>
-                <td style="width:20%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Total</td>
-            </tr>';
-    } else {
-        return '<table border="1" cellpadding="4" cellspacing="0" style="width:100%; margin-top: 10px;">
-            <tr style="background-color: #343a40; color: #ffffff;">
-                <td style="width:10%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Cant.</td>
-                <td style="width:60%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Detalle</td>
-                <td style="width:15%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Unit.</td>
-                <td style="width:15%; font-size: 10px; text-align: center; padding: 8px; font-weight: bold;">Total</td>
-            </tr>';
-    }
-}
-
-// Función para renderizar una fila de producto
-function renderizarFilaProducto($value, $getProducto, $esTipoA) {
-    $formatCantidad = number_format($value["cantidad"], 2, ',', '.');
-    $formatTotal = formatearNumeroSinCeros($value["total"]);
-    $precioProducto = isset($value["precio"]) ? floatval($value["precio"]) : (isset($value["precio_venta"]) ? floatval($value["precio_venta"]) : 0);
-    $descripcion = isset($value["descripcion"]) ? htmlspecialchars($value["descripcion"], ENT_QUOTES, 'UTF-8') : '';
-    $tipoIvaProducto = isset($getProducto["tipo_iva"]) ? floatval($getProducto["tipo_iva"]) : 0;
+if($nuevaPagina){
+$pdf->AddPage('P', 'A4');
+$numPaginaActual++;
+$pdf->SetY($ubicacionDetalle);
+$nuevaPagina = false;
+if($transportePorPagina != 0){
+$bloqueTransporte = <<<EOF
+    <table>
+        <tr style="font-weight: bold">
+            <td style="width:380px;">
+            </td>
+            <td style="width:90px; font-size:10px; text-align: rigth;">
+                TRANSPORTE: $
+            </td>
+            <td style="width:90px; font-size:10px; text-align: left;">
+                $transportePorPagina
+            </td>
+        </tr>
+    </table>
+EOF;
+$pdf->writeHTML($bloqueTransporte, false, false, false, false, '');
+$transportePorPagina = 0;
+$pdf->SetY($ubicacionDetalle + 7);
     
-    if($esTipoA) {
-        $formatPrecioUnit = $precioProducto / (1 + ($tipoIvaProducto / 100));
-        $formatSubtotal = $formatPrecioUnit * floatval($value["cantidad"]);
-        $formatPrecioUnit = formatearNumeroSinCeros($formatPrecioUnit);
-        $formatSubtotal = formatearNumeroSinCeros($formatSubtotal);
-        
-        return '<tr>
-            <td style="width:8%; font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . $formatCantidad . '</td>
-            <td style="width:50%; font-size: 9px; text-align: left; padding: 6px; vertical-align: middle;">' . $descripcion . '</td>
-            <td style="width:14%; font-size: 9px; text-align: right; padding: 6px; vertical-align: middle;">' . $formatSubtotal . '</td>
-            <td style="width:8%; font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . number_format($tipoIvaProducto, 0, ',', '.') . '</td>
-            <td style="width:20%; font-size: 9px; text-align: right; padding: 6px; vertical-align: middle; font-weight: bold;">' . $formatTotal . '</td>
-        </tr>';
-    } else {
-        $formatPrecioUnit = formatearNumeroSinCeros($precioProducto);
-        
-        return '<tr>
-            <td style="width:10%; font-size: 9px; text-align: center; padding: 6px; vertical-align: middle;">' . $formatCantidad . '</td>
-            <td style="width:60%; font-size: 9px; text-align: left; padding: 6px; vertical-align: middle;">' . $descripcion . '</td>
-            <td style="width:15%; font-size: 9px; text-align: right; padding: 6px; vertical-align: middle;">' . $formatPrecioUnit . '</td>
-            <td style="width:15%; font-size: 9px; text-align: right; padding: 6px; vertical-align: middle; font-weight: bold;">' . $formatTotal . '</td>
-        </tr>';
-    }
+}
+$imprimoCabeceraDetalle = true;
 }
 
-// INCLUIR CABECERA PRIMERA PÁGINA
+///////////////DETALLES
+$getProducto        = ControladorProductos::ctrMostrarProductoXId($value["id"]);
+$formatCantidad     = number_format($value["cantidad"],2,',','.');
+$formatTotal        = '$ ' . number_format($value["total"],2,',','.');
+$subTotalPorPagina += $value["total"];
+
+//DISEÑO DETALLE DEPENDIENDO DEL TIPO DE COMPROBANTE
+if ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4) {
+
+$formatPrecioUnit   = $value["precio"] / (1 + ($getProducto["tipo_iva"] / 100));
+$formatSubtotal     = $formatPrecioUnit * $value["cantidad"];
+$formatPrecioUnit   = '$ ' . number_format($formatPrecioUnit,2,',','.');
+$formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
+
+if($imprimoCabeceraDetalle){
+//---------------------CABECERA DETALLE A
+$bloqueDetalleCab = <<<EOF
+    <table border="1" style="padding: 5px">
+        <tr style="background-color: #f4f4f4">
+            <td style="width:30px; font-size:8px; text-align: center;">
+                <span><b>Cant.</b></span> 
+            </td>
+            <td style="width:295px; font-size:8px; text-align: center;">
+                <span><b>Detalle</b></span> 
+            </td>
+            <td style="width:65px; font-size:8px; text-align: center;">
+                <span><b>Unit.</b></span> 
+            </td>
+            <td style="width:65px; font-size:8px; text-align: center;">
+                <span><b>Subtotal</b></span> 
+            </td>
+            <td style="width:35px; font-size:8px; text-align: center;">
+                <span><b>IVA %</b></span> 
+            </td>
+            <td style="width:70px; font-size:8px; text-align: center; background-color">
+                <span><b>Total</b></span> 
+            </td>
+        </tr>
+    </table>
+EOF;
+$pdf->writeHTML($bloqueDetalleCab, false, false, false, false, '');
+$imprimoCabeceraDetalle = false;
+}
+
+//--------------------- DETALLE COMPROBANTE A
+$bloqueDetalle = <<<EOF
+    <table style=" padding: 2px; ">
+        <tr>
+            <td style="width:30px; font-size:8px; text-align: center;">
+                <span>$formatCantidad</span> 
+            </td>           
+            <td style="width:295px; font-size:8px; text-align: left;">
+                <span>$value[descripcion]</span> 
+            </td>
+            <td style="width:65px; font-size:8px; text-align: left;">
+                <span>$formatPrecioUnit</span> 
+            </td>
+            <td style="width:65px; font-size:8px; text-align: left;">
+                <span>$formatSubtotal</span> 
+            </td>
+            <td style="width:35px; font-size:8px; text-align: left;">
+                <span>$getProducto[tipo_iva]</span> 
+            </td>
+            <td style="width:70px; font-size:8px; text-align: left;">
+                <span>$formatTotal</span> 
+            </td>
+        </tr>
+    </table>
+EOF;
+$pdf->writeHTML($bloqueDetalle, false, false, false, false, '');
+
+} else {
+
+$formatPrecioUnit   = $value["precio"];
+$formatSubtotal     = $formatPrecioUnit * $value["cantidad"];
+$formatPrecioUnit   = '$ ' . number_format($formatPrecioUnit,2,',','.');
+$formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
+
+if($imprimoCabeceraDetalle){
+//--------------------- CABECERA DETALLE B | C | X
+$bloqueDetalleCab = <<<EOF
+    <table border="1" style="padding: 5px">
+        <tr style="background-color: #f4f4f4">
+            <td style="width:50px; font-size:8px; text-align: center;">
+                <span><b>Cant.</b></span> 
+            </td>           
+            <td style="width:350px; font-size:8px; text-align: center;">
+                <span><b>Detalle</b></span> 
+            </td>
+            <td style="width:80px; font-size:8px; text-align: center;">
+                <span><b>Unit.</b></span> 
+            </td>
+            <td style="width:80px; font-size:8px; text-align: center; background-color">
+                <span><b>Total</b></span> 
+            </td>
+        </tr>
+    </table>
+EOF;
+$pdf->writeHTML($bloqueDetalleCab, false, false, false, false, '');
+$imprimoCabeceraDetalle = false;
+
+}
+
+$bloqueDetalle = <<<EOF
+    <table style=" padding: 2px; ">
+        <tr>
+            <td style="width:50px; font-size:8px; text-align: center;">
+                <span>$formatCantidad</span> 
+            </td>           
+            <td style="width:350px; font-size:8px; text-align: left;">
+                <span>$value[descripcion]</span> 
+            </td>
+            <td style="width:80px; font-size:8px; text-align: left;">
+                <span>$formatPrecioUnit</span> 
+            </td>
+            <td style="width:80px; font-size:8px; text-align: left;">
+                <span>$formatTotal</span> 
+            </td>
+        </tr>
+    </table>
+EOF;
+$pdf->writeHTML($bloqueDetalle, false, false, false, false, '');
+
+}
+
+$valorY = $pdf->GetY();
+
+if($valorY < ($ubicacionFooter - 15) && ($key+1) != $ultimoProducto){
+//Todavia tengo lugar para incluir productos
+} else {
+
+if(isset($productos[$key+1])) {
+$subTotalPorPagina = number_format($subTotalPorPagina,2,',','.');
+$transportePorPagina = $subTotalPorPagina;
+$bloqueSubtotal = <<<EOF
+    <table>
+        <tr style="font-weight: bold">
+            <td style="width:380px;">
+            </td>
+            <td style="width:90px; font-size:10px; text-align: rigth;">
+                SUBTOTAL: $
+            </td>
+            <td style="width:90px; font-size:10px; text-align: left;">
+                $subTotalPorPagina
+            </td>
+        </tr>
+    </table>
+EOF;
+$pdf->writeHTML($bloqueSubtotal, false, false, false, false, '');
+$subTotalPorPagina = 0;
+}
+
+//INCLUYO CABECERA
 $pdf->SetY($ubicacionCabecera);
 $pdf->writeHTML($bloqueCabeceraOriginal, false, false, false, false, '');
 
-// Obtener posición Y después de la cabecera
-$yDespuesCabecera = $pdf->GetY();
-$espacioEntreCabeceraYTabla = 10;
-$ubicacionDetalle = $yDespuesCabecera + $espacioEntreCabeceraYTabla;
+//$pdf->SetFont('helvetica', '', 8);
+//$pdf->Text(50, 273, 'Pagina 1/2');
 
-// Variables para control de paginación
-$alturaMaximaPagina = 287; // Altura máxima de página A4 en mm
-$alturaFooter = 30;
-$alturaCabecera = 80; // Altura estimada de cabecera
-$alturaFilaProducto = 8; // Altura estimada por fila de producto
-$espacioEntreTablaYFooter = 20;
-$productosProcesados = 0;
-$totalProductos = count($productos);
-$tablaAbierta = false;
-$filasEnPaginaActual = 0;
-$maxFilasPorPagina = floor(($alturaMaximaPagina - $alturaCabecera - $alturaFooter - $espacioEntreTablaYFooter - 20) / $alturaFilaProducto);
+//INCLUYO FOOTER
+$pdf->SetY($ubicacionFooter);
 
-// Procesar productos uno por uno
-foreach ($productos as $key => $value) {
-    if(!isset($value["id"]) || !isset($value["cantidad"]) || !isset($value["total"])) {
-        continue;
-    }
-    
-    $getProducto = ControladorProductos::ctrMostrarProductoXId($value["id"]);
-    if(!$getProducto || !is_array($getProducto)) {
-        continue;
-    }
-    
-    // Verificar si necesitamos nueva página
-    $numPaginaActual = $pdf->getPage();
-    $currentY = $pdf->GetY();
-    $espacioDisponible = $alturaMaximaPagina - $currentY - $alturaFooter - $espacioEntreTablaYFooter;
-    
-    // Si no hay espacio o es inicio de página, cerrar tabla anterior y abrir nueva
-    if($espacioDisponible < ($alturaFilaProducto * 2) || ($productosProcesados > 0 && $filasEnPaginaActual == 0)) {
-        // Cerrar tabla anterior si estaba abierta
-        if($tablaAbierta) {
-            $pdf->writeHTML('</table>', false, false, false, false, '');
-            $tablaAbierta = false;
-        }
-        
-        // Guardar total de página anterior antes de agregar nueva
-        if($numPaginaActual > 1) {
-            $totalPorPagina[$numPaginaActual - 1] = $totalNumero;
-        }
-        
-        // Agregar nueva página
-        $pdf->AddPage('P', 'A4');
-        
-        // REPETIR CABECERA EN NUEVA PÁGINA
-        $pdf->SetY($ubicacionCabecera);
-        $pdf->writeHTML($bloqueCabeceraOriginal, false, false, false, false, '');
-        
-        // Recalcular posición después de cabecera
-        $yDespuesCabecera = $pdf->GetY();
-        $ubicacionDetalle = $yDespuesCabecera + $espacioEntreCabeceraYTabla;
-        
-        // Obtener número de página actual
-        $numPaginaActual = $pdf->getPage();
-        
-        // Mostrar transporte acumulado desde página 2
-        if($numPaginaActual > 1) {
-            $transporteAcumulado = 0;
-            foreach($totalPorPagina as $pagNum => $totalPag) {
-                if($pagNum < $numPaginaActual) {
-                    $transporteAcumulado += $totalPag;
-                }
-            }
-            
-            if($transporteAcumulado > 0) {
-                $transporteFormateado = formatearNumeroSinCeros($transporteAcumulado);
-                $bloqueTransporte = '<div style="font-size: 12px; font-weight: bold; text-align: right; margin-bottom: 10px; color: #000;">
-                    Transporte: ' . $transporteFormateado . '
-                </div>';
-                $pdf->SetY($ubicacionDetalle);
-                $pdf->writeHTML($bloqueTransporte, false, false, false, false, '');
-                $ubicacionDetalle = $pdf->GetY() + 5;
-            }
-        }
-        
-        // Abrir nueva tabla
-        $pdf->SetY($ubicacionDetalle);
-        $encabezadoTabla = obtenerEncabezadoTabla($esTipoA);
-        $pdf->writeHTML($encabezadoTabla, false, false, false, false, '');
-        $tablaAbierta = true;
-        $filasEnPaginaActual = 0;
-    }
-    
-    // Si es el primer producto de la primera página, abrir tabla
-    if(!$tablaAbierta && $productosProcesados == 0) {
-        $pdf->SetY($ubicacionDetalle);
-        $encabezadoTabla = obtenerEncabezadoTabla($esTipoA);
-        $pdf->writeHTML($encabezadoTabla, false, false, false, false, '');
-        $tablaAbierta = true;
-    }
-    
-    // Renderizar fila de producto
-    $filaProducto = renderizarFilaProducto($value, $getProducto, $esTipoA);
-    $pdf->writeHTML($filaProducto, false, false, false, false, '');
-    
-    $productosProcesados++;
-    $filasEnPaginaActual++;
+$ivas = json_decode($respuestaVenta["impuesto_detalle"], true);
+$ivasDiscriminadosNombre = "";
+$ivasDiscriminadosValor = "";
+$ivasAcumuladosB = 0;
+foreach ($ivas as $key => $value) {
+    $ivasDiscriminadosNombre .= $value["descripcion"] . ': $<br>';
+    $ivasDiscriminadosValor .= '<b>' . number_format($value["iva"],2, ',', '.') . '</b><br>';
 }
 
-// Cerrar tabla si está abierta
-if($tablaAbierta) {
-    $pdf->writeHTML('</table>', false, false, false, false, '');
+//---------------------Datos Factura neto, totales, iva, descuento
+if ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4) {
+
+$style = array(
+    'border' => false,
+    'fgcolor' => array(0,0,0),
+    'bgcolor' => false, //array(255,255,255)
+);
+$pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
+$pdf->SetY($ubicacionFooter);
+
+$bloqueDatosFact = <<<EOF
+    <table>
+        <tr>
+            <td style="width:80px;">
+                 <!--ACA VA CODIGO QR -->
+            </td>
+            <td style="width:300px; font-size:8px; text-align: left;  border-color: #000; padding-bottom:0px ">
+                <div style="color: #242C4F; font-size:12;">
+                    <b>ARCA</b> - Comprobante autorizado
+                </div> <br>
+                <b>CAE: </b> $cae - <b>Vto. CAE: </b> $vtoCae <br><br>
+                <span style="font-size: 6.5px; font-style:italic">Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación</span><br>
+
+                <span style="font-size: 10px; font-style:italic; text-align:right">PAGINA $numPaginaActual</span>
+            </td>
+            <td style="width:90px; font-size:8px; text-align: rigth; border-color: #000;  background-color: #f4f4f4;">
+                SUBTOTAL: $<br>
+                DESCUENTO: $<br>
+                NETO GRAVADO: $<br>
+                <!--IVA 21: $<br>
+                IVA 21: $<br>
+                IVA 21: $<br>
+                IVA 21: $<br>
+                IVA 21: $<br> -->
+                $ivasDiscriminadosNombre
+                TOTAL: $<br>
+            </td>
+            <td style="width:90px; font-size:8px; text-align: rigth; border-color: #000;  background-color: #f4f4f4;">
+                <b>$subTotal</b><br>
+                <b>$descuentos</b><br>
+                <b>$neto_grav</b><br>
+                <!--<b>2.5</b><br>
+                <b>5</b><br>
+                <b>10.5</b><br>
+                <b>21</b><br>
+                <b>27</b><br>-->
+                $ivasDiscriminadosValor
+                <b>$total</b><br>
+            </td>
+        </tr>
+    </table>
+EOF;
+
+} else {
+
+$cbteBoCAutorizado = "";
+$leyendaArcaB = "";
+if ($facturada) {
+$style = array(
+    'border' => false,
+    'fgcolor' => array(0,0,0),
+    'bgcolor' => false, //array(255,255,255)
+);
+$pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
+$pdf->SetY($ubicacionFooter);
+$cbteBoCAutorizado = '<div style="color: #242C4F; font-size:12;">
+                        <b>ARCA</b> - Comprobante Autorizado
+                     </div> <br>
+                    <b>CAE: </b> ' . $cae . ' - <b>Vto. CAE: </b> ' . $vtoCae . ' <br><br>
+                    <span style="font-size: 6.5px; font-style:italic">Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación</span>';
+
+$leyendaArcaB = ($respuestaVenta["cbte_tipo"] == 6 || $respuestaVenta["cbte_tipo"] == 7 || $respuestaVenta["cbte_tipo"] == 8 || $respuestaVenta["cbte_tipo"] == 9) ? "IVA contenido (Ley 27.743) $<br><br>" : "";
+$ivasAcumuladosB = ($respuestaVenta["cbte_tipo"] == 6 || $respuestaVenta["cbte_tipo"] == 7 || $respuestaVenta["cbte_tipo"] == 8 || $respuestaVenta["cbte_tipo"] == 9) ? "<b>" . $respuestaVenta["impuesto"] . "</b><br><br>" : "";
+}
+$bloqueDatosFact = <<<EOF
+    <table>
+        <tr>
+            <td style="width:80px;border-color: #000;">
+                 <!--ACA VA CODIGO QR -->
+            </td>
+            <td style="width:300px; font-size:8px; text-align: left;  border-color: #000; padding-bottom:0px ">
+                $cbteBoCAutorizado <br>
+                <span style="font-size: 10px; font-style:italic; text-align:right">PAGINA $numPaginaActual</span>
+            </td>
+            <td style="width:110px; font-size:8px; text-align: rigth; border-color: #000;  background-color: #f4f4f4;">
+                $leyendaArcaB
+                SUBTOTAL: $<br>
+                DESCUENTO: $<br>
+                TOTAL: $<br>
+            </td>
+            <td style="width:70px; font-size:8px; text-align: rigth; border-color: #000;  background-color: #f4f4f4;">
+                $ivasAcumuladosB
+                <b>$subTotal</b><br>
+                <b>$descuentos</b><br>
+                <b>$total</b><br>
+            </td>
+        </tr>
+    </table>
+EOF;
+
+}
+$pdf->writeHTML($bloqueDatosFact, false, false, false, false, '');
+
+$nuevaPagina = true;
+
 }
 
-// Procesar footer para cada página del ORIGINAL
-// Necesitamos renderizar footer en cada página que tenga contenido
-$totalPaginasOriginal = $pdf->getPage();
-for($pag = 1; $pag <= $totalPaginasOriginal; $pag++) {
-    $pdf->setPage($pag);
-    
-    // Obtener posición Y actual en esta página
-    $currentY = $pdf->GetY();
-    
-    // Calcular posición del footer
-    $ubicacionFooterCalculada = $currentY + $espacioEntreTablaYFooter;
-    $ubicacionFooterFinal = $alturaMaximaPagina - $alturaFooter - 10;
-    $ubicacionFooter = max($ubicacionFooterCalculada, $ubicacionFooterFinal);
-    
-    // Guardar total de esta página si no está guardado
-    if(!isset($totalPorPagina[$pag])) {
-        $totalPorPagina[$pag] = $totalNumero;
-    }
-    
-    // Renderizar footer en esta página
-    $pdf->SetY($ubicacionFooter);
-    
-    $ivas = json_decode($respuestaVenta["impuesto_detalle"], true);
-    $ivasDiscriminadosNombre = "";
-    $ivasDiscriminadosValor = "";
-    $ivasAcumuladosB = 0;
-    if(is_array($ivas) && !empty($ivas)) {
-        foreach ($ivas as $key => $value) {
-            if(isset($value["descripcion"]) && isset($value["iva"])) {
-                $ivasDiscriminadosNombre .= $value["descripcion"] . ': $<br>';
-                $ivasDiscriminadosValor .= '<b>' . number_format($value["iva"],2, ',', '.') . '</b><br>';
-            }
-        }
-    }
-    
-    //---------------------Datos Factura neto, totales, iva, descuento (ORIGINAL)
-    if ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4) {
-    if(isset($jsonQRBase64) && !empty($jsonQRBase64) && $pag == 1) {
-        $style = array('border' => false, 'fgcolor' => array(0,0,0), 'bgcolor' => false);
-        $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
-    }
-    $pdf->SetY($ubicacionFooter);
-    // SIEMPRE usar el número de página actual
-    $numPaginaFooter = $pag;
-    $bloqueDatosFact = <<<EOF
-	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
-		<tr>
-			<td style="width:15%; vertical-align: top;">
-				 <!--ACA VA CODIGO QR -->
-			</td>
-			<td style="width:40%; font-size:9px; text-align: left; padding: 8px; vertical-align: top;">
-				<div style="color: #242C4F; font-size:11px; font-weight: bold;">
-					ARCA - Comprobante autorizado
-				</div>
-				<div style="font-size:8px; margin-top: 3px;">
-					<b>CAE:</b> $cae - <b>Vto. CAE:</b> $vtoCae
-				</div>
-				<div style="font-size: 7px; font-style:italic; margin-top: 5px;">
-					Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación
-				</div>
-				<div style="font-size: 9px; font-style:italic; text-align:right; margin-top: 5px;">
-					PAGINA $numPaginaFooter
-				</div>
-			</td>
-			<td style="width:22%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
-				SUBTOTAL: $<br>
-				DESCUENTO: $<br>
-				NETO GRAVADO: $<br>
-				$ivasDiscriminadosNombre
-                TOTAL: $<br>
-			</td>
-			<td style="width:23%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
-				$subTotal<br>
-				$descuentos<br>
-				$neto_grav<br>
-				$ivasDiscriminadosValor
-                $total<br>
-			</td>
-		</tr>
-	</table>
-EOF;
-    } else {
-    
-    $cbteBoCAutorizado = "";
-    $leyendaArcaB = "";
-    if ($facturada && isset($jsonQRBase64) && !empty($jsonQRBase64) && $pag == 1) {
-        $style = array('border' => false, 'fgcolor' => array(0,0,0), 'bgcolor' => false);
-        $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
-        $pdf->SetY($ubicacionFooter);
-        $cbteBoCAutorizado = '<div style="color: #242C4F; font-size:11px; font-weight: bold;">
-							ARCA - Comprobante Autorizado
-						 </div>
-						<div style="font-size:8px; margin-top: 3px;">
-							<b>CAE:</b> ' . $cae . ' - <b>Vto. CAE:</b> ' . $vtoCae . '
-						</div>
-						<div style="font-size: 7px; font-style:italic; margin-top: 5px;">
-							Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación
-						</div>';
-    }
-    $leyendaArcaB = ($respuestaVenta["cbte_tipo"] == 6 || $respuestaVenta["cbte_tipo"] == 7 || $respuestaVenta["cbte_tipo"] == 8 || $respuestaVenta["cbte_tipo"] == 9) ? "IVA contenido (Ley 27.743) $<br><br>" : "";
-    $ivasAcumuladosB = ($respuestaVenta["cbte_tipo"] == 6 || $respuestaVenta["cbte_tipo"] == 7 || $respuestaVenta["cbte_tipo"] == 8 || $respuestaVenta["cbte_tipo"] == 9) ? "<b>" . $respuestaVenta["impuesto"] . "</b><br><br>" : "";
-    $numPaginaFooterB = $pag;
-    $bloqueDatosFact = <<<EOF
-	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
-		<tr>
-			<td style="width:15%; vertical-align: top;">
-				 <!--ACA VA CODIGO QR -->
-			</td>
-			<td style="width:40%; font-size:9px; text-align: left; padding: 8px; vertical-align: top;">
-				$cbteBoCAutorizado
-				<div style="font-size: 9px; font-style:italic; text-align:right; margin-top: 5px;">
-					PAGINA $numPaginaFooterB
-				</div>
-			</td>
-			<td style="width:22%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
-				$leyendaArcaB
-				SUBTOTAL: $<br>
-				DESCUENTO: $<br>
-                TOTAL: $<br>
-			</td>
-			<td style="width:23%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
-				$ivasAcumuladosB
-				$subTotal<br>
-				$descuentos<br>
-                $total<br>
-			</td>
-		</tr>
-	</table>
-EOF;
-
-    }
-    $pdf->writeHTML($bloqueDatosFact, false, false, false, false, '');
 }
 
 
 /*=============================================================================
 -----------------------------------DUPLICADO----------------------------------
 ==============================================================================*/
-// Reiniciar variables para duplicado
-$productosProcesados = 0;
-$tablaAbierta = false;
-$filasEnPaginaActual = 0;
+$ubicacionCabecera  = 7;
+$ubicacionDetalle   = 80;
+$ubicacionFooter    = 250;
+$datosFact = []; //Array de datos a imprimir
+$detalleEnTabla = ""; //filas en tabla para armar detalle
+$subTotalPorPagina = 0;
+$transportePorPagina = 0;
+$valorY = 0;
+$nuevaPagina = true;
+$imprimoCabeceraDetalle = true;
+$numPaginaActual = 0;
+$ultimoProducto = count($productos);
 
-// Agregar nueva página para duplicado
+$bloqueCabeceraDuplicado = <<<EOF
+    <table border="1">
+        <tr>
+            <td style="width:560px; text-align: center;"> DUPLICADO</td>
+        </tr>
+    </table>
+    <table border="0" >
+        <tr style="padding: 0px;">
+            <td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> 
+                <h2>$respEmpresa[razon_social]</h2>
+            </td>
+            <td style="width:40px; text-align:center">
+                <div>
+                    <span style="font-size:28.5px;">$tipoVtaLetra</span>
+                    <span style="font-size:10px;">$tipoCodigo</span>
+                </div>
+            </td>
+            <td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> 
+                $tipoVta
+            </td>
+        </tr>
+    </table>
+    <table border="0" style="padding: 10px">
+        <tr>
+            <td style="width:280px; font-size:10px; text-align: left;">
+                <br>
+                <span><b>Direccion:</b> $respEmpresa[domicilio]</span> <br>
+                <span><b>Telefono:</b> $respEmpresa[telefono]</span> <br>
+                <span><b>Localidad:</b> $respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</span><br>
+                <span><b>Cond. I.V.A.:</b> $tipoIva </span><br>
+                <span><b>Defensa al Consumidor Mza. 08002226678</b></span> 
+            </td>
+            <td style="width:280px; font-size:10px; text-align: left">
+                <div style="padding-top:5px">
+                    <span><b>N° Cbte:</b> $ptoVta - $numCte</span> <br>
+                    <span><b>Fecha Emisión:</b> $fecEmi </span><br>
+                    <span><b>CUIT:</b> $respEmpresa[cuit] </span><br>
+                    <span><b>II.BB.:</b> $respEmpresa[numero_iibb] </span><br>
+                    <span><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades] </span>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    $tieneServicio
+
+    <table border="1" style="padding: 5px">
+        <tr>
+            <td style="width:560px; font-size:8px; text-align: left;">
+                <br>
+                <span><b>Tipo Doc.: $tipoDocumento :</b> $respuestaCliente[documento] </span> - <span> <b>Nombre / Razón Social :</b> $respuestaCliente[nombre] </span> 
+                <br>
+                <span><b>Domicilio: </b> $respuestaCliente[direccion] </span> - <span> <b>Condición I.V.A.:</b> $tipoIvaCliente </span>
+                <br> 
+                <span><b>Condición de Venta: </b> $condicionVenta </span> 
+            </td>
+        </tr>
+    </table>
+EOF;
+
+//RECORRO TODOS LOS PRODUCTOS PARA ARMAR DETALLE
+foreach ($productos as $key => $value) {
+
+if($nuevaPagina){
 $pdf->AddPage('P', 'A4');
-$ubicacionCabecera = 5;
+$numPaginaActual++;
+$pdf->SetY($ubicacionDetalle);
+$nuevaPagina = false;
+if($transportePorPagina != 0){
+$bloqueTransporte = <<<EOF
+    <table>
+        <tr style="font-weight: bold">
+            <td style="width:380px;">
+            </td>
+            <td style="width:90px; font-size:10px; text-align: rigth;">
+                TRANSPORTE: $
+            </td>
+            <td style="width:90px; font-size:10px; text-align: left;">
+                $transportePorPagina
+            </td>
+        </tr>
+    </table>
+EOF;
+$pdf->writeHTML($bloqueTransporte, false, false, false, false, '');
+$transportePorPagina = 0;
+$pdf->SetY($ubicacionDetalle + 7);
+    
+}
+$imprimoCabeceraDetalle = true;
+}
 
-// INCLUIR CABECERA DUPLICADO PRIMERA PÁGINA
+///////////////DETALLES
+$getProducto        = ControladorProductos::ctrMostrarProductoXId($value["id"]);
+$formatCantidad     = number_format($value["cantidad"],2,',','.');
+$formatTotal        = '$ ' . number_format($value["total"],2,',','.');
+$subTotalPorPagina += $value["total"];
+
+//DISEÑO DETALLE DEPENDIENDO DEL TIPO DE COMPROBANTE
+if ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4) {
+
+$formatPrecioUnit   = $value["precio"] / (1 + ($getProducto["tipo_iva"] / 100));
+$formatSubtotal     = $formatPrecioUnit * $value["cantidad"];
+$formatPrecioUnit   = '$ ' . number_format($formatPrecioUnit,2,',','.');
+$formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
+
+if($imprimoCabeceraDetalle){
+//---------------------CABECERA DETALLE A
+$bloqueDetalleCab = <<<EOF
+    <table border="1" style="padding: 5px">
+        <tr style="background-color: #f4f4f4">
+            <td style="width:30px; font-size:8px; text-align: center;">
+                <span><b>Cant.</b></span> 
+            </td>
+            <td style="width:295px; font-size:8px; text-align: center;">
+                <span><b>Detalle</b></span> 
+            </td>
+            <td style="width:65px; font-size:8px; text-align: center;">
+                <span><b>Unit.</b></span> 
+            </td>
+            <td style="width:65px; font-size:8px; text-align: center;">
+                <span><b>Subtotal</b></span> 
+            </td>
+            <td style="width:35px; font-size:8px; text-align: center;">
+                <span><b>IVA %</b></span> 
+            </td>
+            <td style="width:70px; font-size:8px; text-align: center; background-color">
+                <span><b>Total</b></span> 
+            </td>
+        </tr>
+    </table>
+EOF;
+$pdf->writeHTML($bloqueDetalleCab, false, false, false, false, '');
+$imprimoCabeceraDetalle = false;
+}
+
+//--------------------- DETALLE COMPROBANTE A
+$bloqueDetalle = <<<EOF
+    <table style=" padding: 2px; ">
+        <tr>
+            <td style="width:30px; font-size:8px; text-align: center;">
+                <span>$formatCantidad</span> 
+            </td>           
+            <td style="width:295px; font-size:8px; text-align: left;">
+                <span>$value[descripcion]</span> 
+            </td>
+            <td style="width:65px; font-size:8px; text-align: left;">
+                <span>$formatPrecioUnit</span> 
+            </td>
+            <td style="width:65px; font-size:8px; text-align: left;">
+                <span>$formatSubtotal</span> 
+            </td>
+            <td style="width:35px; font-size:8px; text-align: left;">
+                <span>$getProducto[tipo_iva]</span> 
+            </td>
+            <td style="width:70px; font-size:8px; text-align: left;">
+                <span>$formatTotal</span> 
+            </td>
+        </tr>
+    </table>
+EOF;
+$pdf->writeHTML($bloqueDetalle, false, false, false, false, '');
+
+} else {
+    
+$formatPrecioUnit   = $value["precio"];
+$formatSubtotal     = $formatPrecioUnit * $value["cantidad"];
+$formatPrecioUnit   = '$ ' . number_format($formatPrecioUnit,2,',','.');
+$formatSubtotal     = '$ ' . number_format($formatSubtotal,2,',','.');
+
+if($imprimoCabeceraDetalle){
+//--------------------- CABECERA DETALLE B | C | X
+$bloqueDetalleCab = <<<EOF
+    <table border="1" style="padding: 5px">
+        <tr style="background-color: #f4f4f4">
+            <td style="width:50px; font-size:8px; text-align: center;">
+                <span><b>Cant.</b></span> 
+            </td>           
+            <td style="width:350px; font-size:8px; text-align: center;">
+                <span><b>Detalle</b></span> 
+            </td>
+            <td style="width:80px; font-size:8px; text-align: center;">
+                <span><b>Unit.</b></span> 
+            </td>
+            <td style="width:80px; font-size:8px; text-align: center; background-color">
+                <span><b>Total</b></span> 
+            </td>
+        </tr>
+    </table>
+EOF;
+$pdf->writeHTML($bloqueDetalleCab, false, false, false, false, '');
+$imprimoCabeceraDetalle = false;
+
+}
+
+$bloqueDetalle = <<<EOF
+    <table style=" padding: 2px; ">
+        <tr>
+            <td style="width:50px; font-size:8px; text-align: center;">
+                <span>$formatCantidad</span> 
+            </td>           
+            <td style="width:350px; font-size:8px; text-align: left;">
+                <span>$value[descripcion]</span> 
+            </td>
+            <td style="width:80px; font-size:8px; text-align: left;">
+                <span>$formatPrecioUnit</span> 
+            </td>
+            <td style="width:80px; font-size:8px; text-align: left;">
+                <span>$formatTotal</span> 
+            </td>
+        </tr>
+    </table>
+EOF;
+$pdf->writeHTML($bloqueDetalle, false, false, false, false, '');
+
+}
+
+$valorY = $pdf->GetY();
+
+if($valorY < ($ubicacionFooter - 15) && ($key+1) != $ultimoProducto){
+//Todavia tengo lugar para incluir productos
+} else {
+
+if(isset($productos[$key+1])) {
+$subTotalPorPagina = number_format($subTotalPorPagina,2,',','.');
+$transportePorPagina = $subTotalPorPagina;
+$bloqueSubtotal = <<<EOF
+    <table>
+        <tr style="font-weight: bold">
+            <td style="width:380px;">
+            </td>
+            <td style="width:90px; font-size:10px; text-align: rigth;">
+                SUBTOTAL: $
+            </td>
+            <td style="width:90px; font-size:10px; text-align: left;">
+                $subTotalPorPagina
+            </td>
+        </tr>
+    </table>
+EOF;
+$pdf->writeHTML($bloqueSubtotal, false, false, false, false, '');
+$subTotalPorPagina = 0;
+}
+
+//INCLUYO CABECERA
 $pdf->SetY($ubicacionCabecera);
 $pdf->writeHTML($bloqueCabeceraDuplicado, false, false, false, false, '');
 
-// Obtener posición Y después de la cabecera
-$yDespuesCabecera = $pdf->GetY();
-$ubicacionDetalle = $yDespuesCabecera + $espacioEntreCabeceraYTabla;
+//$pdf->SetFont('helvetica', '', 8);
+//$pdf->Text(50, 273, 'Pagina 1/2');
 
-// Procesar productos para duplicado (misma lógica que original)
-foreach ($productos as $key => $value) {
-    if(!isset($value["id"]) || !isset($value["cantidad"]) || !isset($value["total"])) {
-        continue;
-    }
-    
-    $getProducto = ControladorProductos::ctrMostrarProductoXId($value["id"]);
-    if(!$getProducto || !is_array($getProducto)) {
-        continue;
-    }
-    
-    // Verificar si necesitamos nueva página
-    $numPaginaActual = $pdf->getPage();
-    $currentY = $pdf->GetY();
-    $espacioDisponible = $alturaMaximaPagina - $currentY - $alturaFooter - $espacioEntreTablaYFooter;
-    
-    // Si no hay espacio o es inicio de página, cerrar tabla anterior y abrir nueva
-    if($espacioDisponible < ($alturaFilaProducto * 2) || ($productosProcesados > 0 && $filasEnPaginaActual == 0)) {
-        // Cerrar tabla anterior si estaba abierta
-        if($tablaAbierta) {
-            $pdf->writeHTML('</table>', false, false, false, false, '');
-            $tablaAbierta = false;
-        }
-        
-        // Agregar nueva página
-        $pdf->AddPage('P', 'A4');
-        
-        // REPETIR CABECERA DUPLICADO EN NUEVA PÁGINA
-        $pdf->SetY($ubicacionCabecera);
-        $pdf->writeHTML($bloqueCabeceraDuplicado, false, false, false, false, '');
-        
-        // Recalcular posición después de cabecera
-        $yDespuesCabecera = $pdf->GetY();
-        $ubicacionDetalle = $yDespuesCabecera + $espacioEntreCabeceraYTabla;
-        
-        // Obtener número de página actual
-        $numPaginaActual = $pdf->getPage();
-        
-        // Mostrar transporte acumulado desde página 2 (contando desde inicio duplicado)
-        $paginaDuplicado = $numPaginaActual - $totalPaginasOriginal;
-        if($paginaDuplicado > 1) {
-            $transporteAcumulado = 0;
-            // Sumar totales de páginas anteriores del duplicado
-            for($p = $totalPaginasOriginal + 1; $p < $numPaginaActual; $p++) {
-                if(isset($totalPorPagina[$p])) {
-                    $transporteAcumulado += $totalPorPagina[$p];
-                }
-            }
-            
-            if($transporteAcumulado > 0) {
-                $transporteFormateado = formatearNumeroSinCeros($transporteAcumulado);
-                $bloqueTransporte = '<div style="font-size: 12px; font-weight: bold; text-align: right; margin-bottom: 10px; color: #000;">
-                    Transporte: ' . $transporteFormateado . '
-                </div>';
-                $pdf->SetY($ubicacionDetalle);
-                $pdf->writeHTML($bloqueTransporte, false, false, false, false, '');
-                $ubicacionDetalle = $pdf->GetY() + 5;
-            }
-        }
-        
-        // Abrir nueva tabla
-        $pdf->SetY($ubicacionDetalle);
-        $encabezadoTabla = obtenerEncabezadoTabla($esTipoA);
-        $pdf->writeHTML($encabezadoTabla, false, false, false, false, '');
-        $tablaAbierta = true;
-        $filasEnPaginaActual = 0;
-    }
-    
-    // Si es el primer producto de la primera página duplicado, abrir tabla
-    if(!$tablaAbierta && $productosProcesados == 0) {
-        $pdf->SetY($ubicacionDetalle);
-        $encabezadoTabla = obtenerEncabezadoTabla($esTipoA);
-        $pdf->writeHTML($encabezadoTabla, false, false, false, false, '');
-        $tablaAbierta = true;
-    }
-    
-    // Renderizar fila de producto
-    $filaProducto = renderizarFilaProducto($value, $getProducto, $esTipoA);
-    $pdf->writeHTML($filaProducto, false, false, false, false, '');
-    
-    $productosProcesados++;
-    $filasEnPaginaActual++;
+//INCLUYO FOOTER
+$pdf->SetY($ubicacionFooter);
+
+$ivas = json_decode($respuestaVenta["impuesto_detalle"], true);
+$ivasDiscriminadosNombre = "";
+$ivasDiscriminadosValor = "";
+$ivasAcumuladosB = 0;
+foreach ($ivas as $key => $value) {
+    $ivasDiscriminadosNombre .= $value["descripcion"] . ': $<br>';
+    $ivasDiscriminadosValor .= '<b>' . number_format($value["iva"],2, ',', '.') . '</b><br>';
 }
 
-// Cerrar tabla si está abierta
-if($tablaAbierta) {
-    $pdf->writeHTML('</table>', false, false, false, false, '');
-}
-
-// Procesar footer para cada página del DUPLICADO
-$paginaInicioDuplicado = $totalPaginasOriginal + 1;
-$totalPaginasDuplicado = $pdf->getPage();
-for($pag = $paginaInicioDuplicado; $pag <= $totalPaginasDuplicado; $pag++) {
-    $pdf->setPage($pag);
-    
-    // Obtener posición Y actual en esta página
-    $currentY = $pdf->GetY();
-    
-    // Calcular posición del footer
-    $ubicacionFooterCalculada = $currentY + $espacioEntreTablaYFooter;
-    $ubicacionFooterFinal = $alturaMaximaPagina - $alturaFooter - 10;
-    $ubicacionFooter = max($ubicacionFooterCalculada, $ubicacionFooterFinal);
-    
-    // Guardar total de esta página si no está guardado
-    if(!isset($totalPorPagina[$pag])) {
-        $totalPorPagina[$pag] = $totalNumero;
-    }
-    
-    // Renderizar footer en esta página
-    $pdf->SetY($ubicacionFooter);
-    
-    $ivas = json_decode($respuestaVenta["impuesto_detalle"], true);
-    $ivasDiscriminadosNombre = "";
-    $ivasDiscriminadosValor = "";
-    $ivasAcumuladosB = 0;
-    if(is_array($ivas) && !empty($ivas)) {
-        foreach ($ivas as $key => $value) {
-            if(isset($value["descripcion"]) && isset($value["iva"])) {
-                $ivasDiscriminadosNombre .= $value["descripcion"] . ': $<br>';
-                $ivasDiscriminadosValor .= '<b>' . number_format($value["iva"],2, ',', '.') . '</b><br>';
-            }
-        }
-    }
-    
-    // Calcular número de página relativo al duplicado (1, 2, 3...)
-    $numPaginaRelativoDuplicado = $pag - $totalPaginasOriginal;
-    
-    //---------------------Datos Factura neto, totales, iva, descuento (DUPLICADO)
-    if ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4) {
-    if(isset($jsonQRBase64) && !empty($jsonQRBase64) && $numPaginaRelativoDuplicado == 1) {
-        $style = array('border' => false, 'fgcolor' => array(0,0,0), 'bgcolor' => false);
-        $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
-    }
-    $pdf->SetY($ubicacionFooter);
-    $numPaginaFooterDuplicado = $numPaginaRelativoDuplicado;
+//---------------------Datos Factura neto, totales, iva, descuento
+if ($respuestaVenta["cbte_tipo"] == 1 || $respuestaVenta["cbte_tipo"] == 2 || $respuestaVenta["cbte_tipo"] == 3 || $respuestaVenta["cbte_tipo"] == 4) {
+$style = array(
+    'border' => false,
+    'fgcolor' => array(0,0,0),
+    'bgcolor' => false, //array(255,255,255)
+);
+$pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
+$pdf->SetY($ubicacionFooter);
 $bloqueDatosFact = <<<EOF
-	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
-		<tr>
-			<td style="width:15%; vertical-align: top;">
-				 <!--ACA VA CODIGO QR -->
-			</td>
-			<td style="width:40%; font-size:9px; text-align: left; padding: 8px; vertical-align: top;">
-				<div style="color: #242C4F; font-size:11px; font-weight: bold;">
-					ARCA - Comprobante autorizado
-				</div>
-				<div style="font-size:8px; margin-top: 3px;">
-					<b>CAE:</b> $cae - <b>Vto. CAE:</b> $vtoCae
-				</div>
-				<div style="font-size: 7px; font-style:italic; margin-top: 5px;">
-					Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación
-				</div>
-				<div style="font-size: 9px; font-style:italic; text-align:right; margin-top: 5px;">
-					PAGINA $numPaginaFooterDuplicado
-				</div>
-			</td>
-			<td style="width:22%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
-				SUBTOTAL: $<br>
-				DESCUENTO: $<br>
-				NETO GRAVADO: $<br>
-				$ivasDiscriminadosNombre
+    <table>
+        <tr>
+            <td style="width:80px;">
+                 <!--ACA VA CODIGO QR -->
+            </td>
+            <td style="width:300px; font-size:8px; text-align: left;  border-color: #000; padding-bottom:0px ">
+                <div style="color: #242C4F; font-size:12;">
+                    <b>ARCA</b> - Comprobante autorizado
+                </div> <br>
+                <b>CAE: </b> $cae - <b>Vto. CAE: </b> $vtoCae <br><br>
+                <span style="font-size: 6.5px; font-style:italic">Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación</span><br>
+
+                <span style="font-size: 10px; font-style:italic; text-align:right">PAGINA $numPaginaActual</span>
+            </td>
+            <td style="width:90px; font-size:8px; text-align: rigth; border-color: #000;  background-color: #f4f4f4;">
+                SUBTOTAL: $<br>
+                DESCUENTO: $<br>
+                NETO GRAVADO: $<br>
+                <!--IVA 21: $<br>
+                IVA 21: $<br>
+                IVA 21: $<br>
+                IVA 21: $<br>
+                IVA 21: $<br> -->
+                $ivasDiscriminadosNombre
                 TOTAL: $<br>
-			</td>
-			<td style="width:23%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
-				$subTotal<br>
-				$descuentos<br>
-				$neto_grav<br>
-				$ivasDiscriminadosValor
-                $total<br>
-			</td>
-		</tr>
-	</table>
+            </td>
+            <td style="width:90px; font-size:8px; text-align: rigth; border-color: #000;  background-color: #f4f4f4;">
+                <b>$subTotal</b><br>
+                <b>$descuentos</b><br>
+                <b>$neto_grav</b><br>
+                <!--<b>2.5</b><br>
+                <b>5</b><br>
+                <b>10.5</b><br>
+                <b>21</b><br>
+                <b>27</b><br>-->
+                $ivasDiscriminadosValor
+                <b>$total</b><br>
+            </td>
+        </tr>
+    </table>
 EOF;
 
-    } else {
-    
-    $cbteBoCAutorizado = "";
-    $leyendaArcaB = "";
-    if ($facturada && isset($jsonQRBase64) && !empty($jsonQRBase64) && $numPaginaRelativoDuplicado == 1) {
-        $style = array('border' => false, 'fgcolor' => array(0,0,0), 'bgcolor' => false);
-        $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
-        $pdf->SetY($ubicacionFooter);
-        $cbteBoCAutorizado = '<div style="color: #242C4F; font-size:11px; font-weight: bold;">
-							ARCA - Comprobante Autorizado
-						 </div>
-						<div style="font-size:8px; margin-top: 3px;">
-							<b>CAE:</b> ' . $cae . ' - <b>Vto. CAE:</b> ' . $vtoCae . '
-						</div>
-						<div style="font-size: 7px; font-style:italic; margin-top: 5px;">
-							Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación
-						</div>';
-    }
-    $leyendaArcaB = ($respuestaVenta["cbte_tipo"] == 6 || $respuestaVenta["cbte_tipo"] == 7 || $respuestaVenta["cbte_tipo"] == 8 || $respuestaVenta["cbte_tipo"] == 9) ? "IVA contenido (Ley 27.743) $<br><br>" : "";
-    $ivasAcumuladosB = ($respuestaVenta["cbte_tipo"] == 6 || $respuestaVenta["cbte_tipo"] == 7 || $respuestaVenta["cbte_tipo"] == 8 || $respuestaVenta["cbte_tipo"] == 9) ? "<b>" . $respuestaVenta["impuesto"] . "</b><br><br>" : "";
-    $numPaginaFooterB = $numPaginaRelativoDuplicado;
-    $bloqueDatosFact = <<<EOF
-	<table border="1" cellpadding="5" cellspacing="0" style="width:100%;">
-		<tr>
-			<td style="width:15%; vertical-align: top;">
-				 <!--ACA VA CODIGO QR -->
-			</td>
-			<td style="width:40%; font-size:9px; text-align: left; padding: 8px; vertical-align: top;">
-				$cbteBoCAutorizado
-				<div style="font-size: 9px; font-style:italic; text-align:right; margin-top: 5px;">
-					PAGINA $numPaginaFooterB
-				</div>
-			</td>
-			<td style="width:22%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top;">
-				$leyendaArcaB
-				SUBTOTAL: $<br>
-				DESCUENTO: $<br>
-                TOTAL: $<br>
-			</td>
-			<td style="width:23%; font-size:9px; text-align: right; padding: 8px; background-color: #f4f4f4; vertical-align: top; font-weight: bold;">
-				$ivasAcumuladosB
-				$subTotal<br>
-				$descuentos<br>
-                $total<br>
-			</td>
-		</tr>
-	</table>
-EOF;
+} else {
 
-    }
-    $pdf->writeHTML($bloqueDatosFact, false, false, false, false, '');
+$cbteBoCAutorizado = "";
+$leyendaArcaB = "";
+if ($facturada) {
+$style = array(
+    'border' => false,
+    'fgcolor' => array(0,0,0),
+    'bgcolor' => false, //array(255,255,255)
+);
+$pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
+$pdf->SetY($ubicacionFooter);
+$cbteBoCAutorizado = '<div style="color: #242C4F; font-size:12;">
+                        <b>ARCA</b> - Comprobante autorizado
+                     </div> <br>
+                    <b>CAE: </b> ' . $cae . ' - <b>Vto. CAE: </b> ' . $vtoCae . ' <br><br>
+                    <span style="font-size: 6.5px; font-style:italic">Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación</span>';
+$leyendaArcaB = ($respuestaVenta["cbte_tipo"] == 6 || $respuestaVenta["cbte_tipo"] == 7 || $respuestaVenta["cbte_tipo"] == 8 || $respuestaVenta["cbte_tipo"] == 9) ? "IVA contenido (Ley 27.743) $<br><br>" : "";
+$ivasAcumuladosB = ($respuestaVenta["cbte_tipo"] == 6 || $respuestaVenta["cbte_tipo"] == 7 || $respuestaVenta["cbte_tipo"] == 8 || $respuestaVenta["cbte_tipo"] == 9) ? "<b>" . $respuestaVenta["impuesto"] . "</b><br><br>" : "";
 }
+$bloqueDatosFact = <<<EOF
+    <table>
+        <tr>
+            <td style="width:80px;border-color: #000;">
+                 <!--ACA VA CODIGO QR -->
+            </td>
+            <td style="width:300px; font-size:8px; text-align: left;  border-color: #000; padding-bottom:0px ">
+                $cbteBoCAutorizado <br>
+                <span style="font-size: 10px; font-style:italic; text-align:right">PAGINA $numPaginaActual</span>
+            </td>
+            <td style="width:110px; font-size:8px; text-align: rigth; border-color: #000;  background-color: #f4f4f4;">
+                $leyendaArcaB
+                SUBTOTAL: $<br>
+                DESCUENTO: $<br>
+                TOTAL: $<br>
+            </td>
+            <td style="width:70px; font-size:8px; text-align: rigth; border-color: #000;  background-color: #f4f4f4;">
+                $ivasAcumuladosB
+                <b>$subTotal</b><br>
+                <b>$descuentos</b><br>
+                <b>$total</b><br>
+            </td>
+        </tr>
+    </table>
+EOF;
+
+}
+$pdf->writeHTML($bloqueDatosFact, false, false, false, false, '');
+
+$nuevaPagina = true;
+
+}
+
+}
+
 
 //SALIDA DEL ARCHIVO
 $nomArchivo = 'CBTE_'.$tipoVtaLetra.'_'.$ptoVta.'-'.$numCte.'.pdf';
@@ -1091,6 +1150,9 @@ if(isset($_GET["descargarFactura"])){
 $pdf->Output($nomArchivo, 'D');
 } else {
 $pdf->Output($nomArchivo);
+}
+
+
 }
 
 }
