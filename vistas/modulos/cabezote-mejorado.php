@@ -284,20 +284,28 @@ if($ctaCteCliente["saldo"] <= 0) {
             </button>
         </div>';
 
-    // Crear preferencia de MercadoPago (con manejo de errores independiente)
+    // **PREVENCIÓN ABSOLUTA DE DUPLICADOS**
+    // NO crear preferencia si no es absolutamente necesario
     $preference = null;
+    $usarPreferenciaExistente = false;
+    
+    // Log de entrada
+    error_log("=== INICIO VERIFICACIÓN PREFERENCIA ===");
+    error_log("Cliente: $idCliente | Monto: $abonoMensual");
     
     if(!isset($_GET["preference_id"])) {
         try {
-            // CRÍTICO: Verificar si ya existe una preferencia pendiente reciente antes de crear una nueva
-            // Esto previene la creación de múltiples preferencias cuando se recarga la página
+            // PASO 1: SIEMPRE verificar si existe un intento pendiente reciente ANTES de crear
             $intentoExistente = ControladorMercadoPago::ctrObtenerIntentoPendienteReciente($idCliente, $abonoMensual);
             
             if ($intentoExistente && isset($intentoExistente['preference_id']) && !empty($intentoExistente['preference_id'])) {
-                error_log("ℹ️ Ya existe un intento pendiente reciente para cliente $idCliente con monto $abonoMensual (Preference ID: " . $intentoExistente['preference_id'] . ")");
-                error_log("   NO se creará una nueva preferencia para evitar duplicados");
+                error_log("🔍 INTENTO EXISTENTE ENCONTRADO:");
+                error_log("   - ID Intento: " . $intentoExistente['id']);
+                error_log("   - Preference ID: " . $intentoExistente['preference_id']);
+                error_log("   - Fecha creación: " . $intentoExistente['fecha_creacion']);
+                error_log("   ➡️ REUTILIZANDO preferencia existente, NO se creará nueva");
                 
-                // Intentar obtener la preferencia existente desde MercadoPago
+                // Intentar recuperar la preferencia existente
                 try {
                     require_once 'extensiones/vendor/autoload.php';
                     \MercadoPago\MercadoPagoConfig::setAccessToken($accesTokenMercadoPago);
@@ -306,19 +314,24 @@ if($ctaCteCliente["saldo"] <= 0) {
                     $preference = $client->get($intentoExistente['preference_id']);
                     
                     if ($preference && isset($preference->id)) {
-                        error_log("✅ Preferencia existente recuperada: " . $preference->id);
+                        $usarPreferenciaExistente = true;
+                        error_log("✅ Preferencia recuperada exitosamente: " . $preference->id);
                     } else {
-                        error_log("⚠️ No se pudo recuperar la preferencia existente, se creará una nueva");
-                        $intentoExistente = null; // Forzar creación de nueva preferencia
+                        error_log("❌ No se pudo recuperar preferencia - Respuesta vacía de MP");
+                        $intentoExistente = null;
                     }
                 } catch (Exception $e) {
-                    error_log("⚠️ Error al recuperar preferencia existente: " . $e->getMessage() . " - Se creará una nueva");
-                    $intentoExistente = null; // Forzar creación de nueva preferencia
+                    error_log("❌ Error recuperando preferencia: " . $e->getMessage());
+                    $intentoExistente = null;
                 }
+            } else {
+                error_log("ℹ️ No hay intentos pendientes recientes para este cliente/monto");
             }
             
-            // Solo crear nueva preferencia si no existe una pendiente
-            if (!$intentoExistente || !$preference) {
+            // PASO 2: Solo crear nueva preferencia si NO existe una pendiente válida
+            if (!$usarPreferenciaExistente) {
+                error_log("📝 Creando NUEVA preferencia...");
+                
                 require_once 'extensiones/vendor/autoload.php';
 
                 // SDK de MercadoPago v3.x (usando nombres completos de clase)
@@ -367,8 +380,10 @@ if($ctaCteCliente["saldo"] <= 0) {
                     "binary_mode" => true
                 ]);
 
-                // Registrar intento de pago SOLO si se creó una nueva preferencia
+                // PASO 3: Registrar intento SOLO si se creó nueva preferencia
                 if ($preference && isset($preference->id)) {
+                    error_log("✅ Nueva preferencia creada: " . $preference->id);
+                    
                     $datosIntento = array(
                         'id_cliente_moon' => $idCliente,
                         'preference_id' => $preference->id,
@@ -377,12 +392,22 @@ if($ctaCteCliente["saldo"] <= 0) {
                         'fecha_creacion' => date('Y-m-d H:i:s'),
                         'estado' => 'pendiente'
                     );
+                    
                     $resultadoRegistro = ControladorMercadoPago::ctrRegistrarIntentoPago($datosIntento);
-                    if ($resultadoRegistro !== "ok") {
-                        error_log("⚠️ Advertencia: No se pudo registrar el intento (puede ser duplicado): " . (is_array($resultadoRegistro) ? json_encode($resultadoRegistro) : $resultadoRegistro));
+                    
+                    if ($resultadoRegistro === "ok") {
+                        error_log("✅ Intento registrado correctamente");
+                    } else {
+                        error_log("⚠️ No se registró el intento: " . (is_array($resultadoRegistro) ? json_encode($resultadoRegistro) : $resultadoRegistro));
                     }
+                } else {
+                    error_log("❌ No se pudo crear la preferencia");
                 }
+            } else {
+                error_log("✅ Usando preferencia existente - NO se registra nuevo intento");
             }
+            
+            error_log("=== FIN VERIFICACIÓN PREFERENCIA ===");
 
         } catch (Exception $e) {
             // Error creando preferencia - no romper el cabezote
