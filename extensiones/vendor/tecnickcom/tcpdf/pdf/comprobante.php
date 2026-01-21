@@ -423,13 +423,11 @@ $bloqueCabeceraOriginal = <<<EOF
                 <span><b>Defensa al Consumidor Mza. 08002226678</b></span> 
             </td>
             <td style="width:280px; font-size:10px; text-align: left">
-                <div style="padding-top:5px">
-                    <span><b>N° Cbte:</b> $ptoVta - $numCte</span> <br>
-                    <span><b>Fecha Emisión:</b> $fecEmi </span><br>
-                    <span><b>CUIT:</b> $respEmpresa[cuit] </span><br>
-                    <span><b>II.BB.:</b> $respEmpresa[numero_iibb] </span><br>
-                    <span><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades] </span>
-                </div>
+                <span><b>N° Cbte:</b> $ptoVta - $numCte</span> <br>
+                <span><b>Fecha Emisión:</b> $fecEmi </span><br>
+                <span><b>CUIT:</b> $respEmpresa[cuit] </span><br>
+                <span><b>II.BB.:</b> $respEmpresa[numero_iibb] </span><br>
+                <span><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades] </span>
             </td>
         </tr>
     </table>
@@ -812,13 +810,11 @@ $bloqueCabeceraDuplicado = <<<EOF
                 <span><b>Defensa al Consumidor Mza. 08002226678</b></span> 
             </td>
             <td style="width:280px; font-size:10px; text-align: left">
-                <div style="padding-top:5px">
-                    <span><b>N° Cbte:</b> $ptoVta - $numCte</span> <br>
-                    <span><b>Fecha Emisión:</b> $fecEmi </span><br>
-                    <span><b>CUIT:</b> $respEmpresa[cuit] </span><br>
-                    <span><b>II.BB.:</b> $respEmpresa[numero_iibb] </span><br>
-                    <span><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades] </span>
-                </div>
+                <span><b>N° Cbte:</b> $ptoVta - $numCte</span> <br>
+                <span><b>Fecha Emisión:</b> $fecEmi </span><br>
+                <span><b>CUIT:</b> $respEmpresa[cuit] </span><br>
+                <span><b>II.BB.:</b> $respEmpresa[numero_iibb] </span><br>
+                <span><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades] </span>
             </td>
         </tr>
     </table>
