@@ -416,25 +416,28 @@ $bloqueCabeceraOriginal = <<<EOF
     <table border="0" style="padding: 10px">
         <tr>
             <td style="width:280px; font-size:10px; text-align: left;">
-                <span><b>Direccion:</b> $respEmpresa[domicilio]</span> <br>
-                <span><b>Telefono:</b> $respEmpresa[telefono]</span> <br>
+                <br>
+                <span><b>Razón social:</b> $respEmpresa[titular]</span> <br>
+                <span><b>Dirección:</b> $respEmpresa[domicilio]</span> <br>
                 <span><b>Localidad:</b> $respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</span><br>
                 <span><b>Cond. I.V.A.:</b> $tipoIva </span><br>
                 <span><b>Defensa al Consumidor Mza. 08002226678</b></span> 
             </td>
             <td style="width:280px; font-size:10px; text-align: left">
-                <span><b>N° Cbte:</b> $ptoVta - $numCte</span> <br>
-                <span><b>Fecha Emisión:</b> $fecEmi </span><br>
-                <span><b>CUIT:</b> $respEmpresa[cuit] </span><br>
-                <span><b>II.BB.:</b> $respEmpresa[numero_iibb] </span><br>
-                <span><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades] </span>
+                <div style="padding-top:5px">
+                    <span><b>N° Cbte:</b> $ptoVta - $numCte</span> <br>
+                    <span><b>Fecha Emisión:</b> $fecEmi </span><br>
+                    <span><b>CUIT:</b> $respEmpresa[cuit] </span><br>
+                    <span><b>II.BB.:</b> $respEmpresa[numero_iibb] </span><br>
+                    <span><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades] </span>
+                </div>
             </td>
         </tr>
     </table>
     
     $tieneServicio
     
-    <table border="1" >
+    <table border="1" style="padding: 5px">
         <tr>
             <td style="width:560px; font-size:8px; text-align: left;">
                 <br>
