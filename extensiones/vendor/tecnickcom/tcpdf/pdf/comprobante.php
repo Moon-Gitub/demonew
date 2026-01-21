@@ -122,6 +122,8 @@ public function traerImpresionComprobante(){
 
 error_log("Iniciando traerImpresionComprobante()");
 
+$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
 // Configuración del documento
 $pdf->SetCreator('Posmoon');
 $pdf->SetTitle($respEmpresa["razon_social"]);
@@ -250,15 +252,7 @@ try {
         http_response_code(500);
         die('Error: No se pudo obtener la información de la empresa');
     }
-    
-    //REQUERIMOS LA CLASE TCPDF
-    if(!class_exists('TCPDF')) {
-        error_log("Error comprobante.php: La clase TCPDF no está disponible");
-        http_response_code(500);
-        die('Error: La clase TCPDF no está disponible');
-    }
-    
-    $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
 } catch(Exception $e) {
     error_log("Error comprobante.php en inicialización: " . $e->getMessage());
     http_response_code(500);
