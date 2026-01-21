@@ -867,15 +867,74 @@ MODAL COBRO MEJORADO
                 <script type="text/javascript">
                     var clavePublicaMP = document.getElementById('hiddenClavePublicaMP').value;
                     const mp = new MercadoPago(clavePublicaMP, {locale: "es-AR"});
+                    var preferenceIdActual = '<?php echo $preference->id; ?>';
 
                     mp.checkout({
                         preference: {
-                            id: '<?php echo $preference->id; ?>',
+                            id: preferenceIdActual,
                         },
                         render: {
                             container: '.checkout-btn',
                             label: 'Pagar con Mercado Pago',
                         },
+                    });
+                    
+                    // SISTEMA DE VERIFICACIÓN AUTOMÁTICA DE PAGO (RESPALDO AL WEBHOOK)
+                    var intervaloVerificacion = null;
+                    var verificacionesRealizadas = 0;
+                    var maxVerificaciones = 120; // 120 verificaciones x 3 segundos = 6 minutos
+                    
+                    function verificarEstadoPago() {
+                        verificacionesRealizadas++;
+                        
+                        $.ajax({
+                            url: 'ajax/verificar-pago-preference.ajax.php',
+                            method: 'GET',
+                            data: { preference_id: preferenceIdActual },
+                            dataType: 'json',
+                            success: function(resp) {
+                                console.log('Verificación pago #' + verificacionesRealizadas + ':', resp);
+                                
+                                if (resp.aprobado === true) {
+                                    // PAGO APROBADO
+                                    clearInterval(intervaloVerificacion);
+                                    
+                                    swal({
+                                        title: "¡Pago Confirmado!",
+                                        text: "Tu pago ha sido aprobado correctamente.\nPayment ID: " + resp.payment_id,
+                                        type: "success",
+                                        confirmButtonText: "Aceptar"
+                                    }).then(function() {
+                                        location.reload(); // Recargar para que desaparezca el cartel
+                                    });
+                                }
+                                
+                                // Detener después de max verificaciones
+                                if (verificacionesRealizadas >= maxVerificaciones) {
+                                    clearInterval(intervaloVerificacion);
+                                    console.log('Verificación detenida después de ' + maxVerificaciones + ' intentos');
+                                }
+                            },
+                            error: function(xhr) {
+                                console.error('Error verificando pago:', xhr.responseText);
+                            }
+                        });
+                    }
+                    
+                    // Iniciar verificación cuando se muestra el modal
+                    $('#modalCobro').on('shown.bs.modal', function() {
+                        if (intervaloVerificacion) clearInterval(intervaloVerificacion);
+                        verificacionesRealizadas = 0;
+                        intervaloVerificacion = setInterval(verificarEstadoPago, 3000); // Cada 3 segundos
+                        verificarEstadoPago(); // Verificar inmediatamente también
+                    });
+                    
+                    // Detener verificación al cerrar modal
+                    $('#modalCobro').on('hidden.bs.modal', function() {
+                        if (intervaloVerificacion) {
+                            clearInterval(intervaloVerificacion);
+                            intervaloVerificacion = null;
+                        }
                     });
                 </script>
 
