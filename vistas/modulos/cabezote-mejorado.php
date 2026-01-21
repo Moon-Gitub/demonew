@@ -936,6 +936,41 @@ MODAL COBRO MEJORADO
                             intervaloVerificacion = null;
                         }
                     });
+                    
+                    // VERIFICACIÓN AL CARGAR PÁGINA: Si hay preferencia pendiente, verificar si fue pagada
+                    // Esto funciona incluso si el usuario cerró el navegador y vuelve después
+                    $(document).ready(function() {
+                        // Solo verificar si hay preferencia y no está en un modal fijo
+                        <?php if(!$fijoModal) { ?>
+                        // Verificar una vez al cargar
+                        setTimeout(function() {
+                            $.ajax({
+                                url: 'ajax/verificar-pago-preference.ajax.php',
+                                method: 'GET',
+                                data: { preference_id: preferenceIdActual },
+                                dataType: 'json',
+                                success: function(resp) {
+                                    console.log('Verificación al cargar página:', resp);
+                                    
+                                    if (resp.aprobado === true && !resp.ya_procesado) {
+                                        // Pago encontrado y registrado
+                                        swal({
+                                            title: "¡Pago Detectado!",
+                                            text: "Hemos detectado un pago aprobado.\nPayment ID: " + resp.payment_id,
+                                            type: "success",
+                                            confirmButtonText: "Aceptar"
+                                        }).then(function() {
+                                            location.reload();
+                                        });
+                                    }
+                                },
+                                error: function() {
+                                    // Error silencioso, no molestar al usuario
+                                }
+                            });
+                        }, 2000); // Esperar 2 segundos después de cargar la página
+                        <?php } ?>
+                    });
                 </script>
 
                 <style>
