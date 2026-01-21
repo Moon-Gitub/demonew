@@ -12,12 +12,25 @@
 $logFile = __DIR__ . '/diagnostico_webhook.log';
 $maxLogSize = 5 * 1024 * 1024; // 5MB
 
+// Asegurar que el directorio es escribible
+$directorio = dirname($logFile);
+if (!is_writable($directorio) && !is_writable($logFile)) {
+    // Intentar con error_log como fallback
+    error_log("ADVERTENCIA: Directorio $directorio no es escribible. El log puede no generarse.");
+}
+
 // Limpiar log si es muy grande
 if (file_exists($logFile) && filesize($logFile) > $maxLogSize) {
     unlink($logFile);
 }
 
-// Función de logging
+// Crear archivo vacío si no existe para verificar permisos
+if (!file_exists($logFile)) {
+    @touch($logFile);
+    @chmod($logFile, 0666);
+}
+
+// Función de logging con manejo de errores
 function log_diagnostico($tipo, $mensaje, $datos = null) {
     global $logFile;
     
@@ -36,7 +49,44 @@ function log_diagnostico($tipo, $mensaje, $datos = null) {
     
     $log .= "\n$separador\n\n";
     
-    file_put_contents($logFile, $log, FILE_APPEND);
+    // Intentar escribir con manejo de errores
+    $resultado = @file_put_contents($logFile, $log, FILE_APPEND);
+    if ($resultado === false) {
+        // Si falla, intentar escribir en error_log
+        error_log("ERROR: No se pudo escribir en $logFile. Verificar permisos.");
+        // Intentar crear el archivo vacío primero
+        @touch($logFile);
+        @chmod($logFile, 0666);
+        // Reintentar
+        @file_put_contents($logFile, $log, FILE_APPEND);
+    }
+}
+
+// Verificar si es una prueba manual (GET sin parámetros)
+$esPruebaManual = ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($_GET) && empty(file_get_contents('php://input')));
+
+if ($esPruebaManual) {
+    log_diagnostico('PRUEBA MANUAL', 'Acceso directo al script (prueba manual)');
+    log_diagnostico('INFO', 'Este es un test manual. Para recibir webhooks reales:');
+    log_diagnostico('INFO', '1. Configura este archivo como webhook en MercadoPago');
+    log_diagnostico('INFO', '2. Haz un pago QR de prueba');
+    log_diagnostico('INFO', '3. Revisa este log nuevamente');
+    
+    http_response_code(200);
+    header('Content-Type: text/html; charset=utf-8');
+    echo "<!DOCTYPE html><html><head><meta charset='utf-8'><title>Diagnóstico Webhook</title></head><body>";
+    echo "<h1>✅ Script de Diagnóstico Webhook</h1>";
+    echo "<p><strong>Estado:</strong> Funcionando correctamente</p>";
+    echo "<p><strong>Log creado en:</strong> " . basename($logFile) . "</p>";
+    echo "<p><strong>Próximos pasos:</strong></p>";
+    echo "<ol>";
+    echo "<li>Configura este archivo como webhook en MercadoPago</li>";
+    echo "<li>Haz un pago QR de prueba</li>";
+    echo "<li>Revisa el archivo <code>diagnostico_webhook.log</code></li>";
+    echo "</ol>";
+    echo "<p><a href='diagnostico_webhook.log' target='_blank'>Ver log actual</a></p>";
+    echo "</body></html>";
+    exit;
 }
 
 // Iniciar diagnóstico
