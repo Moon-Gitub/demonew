@@ -9,9 +9,21 @@
  * https://tu-dominio.com/webhook-mercadopago.php
  */
 
-// Manejo de errores para que no se muestren al exterior
+// CRÍTICO: SIEMPRE responder 200 OK para que MercadoPago no reintente
+// Los errores se loguean pero no se muestran al exterior
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
+
+// Responder OK INMEDIATAMENTE antes de cualquier procesamiento
+// Esto previene que MercadoPago reciba error 500 y reintente
+http_response_code(200);
+header('Content-Type: application/json');
+
+// Función para salir con éxito (siempre 200 OK)
+function exitOk($message = 'ok', $error = false) {
+    echo json_encode(['error' => $error, 'message' => $message]);
+    exit;
+}
 
 try {
     // Cargar vendor autoload y configuración
@@ -54,7 +66,8 @@ try {
     }
 } catch (Exception $e) {
     error_log("ERROR CARGANDO DEPENDENCIAS WEBHOOK: " . $e->getMessage());
-    // Continuar de todos modos, responder OK
+    // Responder OK de todos modos para que MP no reintente
+    exitOk('Dependencias no disponibles, webhook recibido pero no procesado', false);
 }
 
 // Configurar zona horaria
@@ -72,32 +85,24 @@ error_log("Body raw: " . file_get_contents('php://input'));
 error_log("Headers: " . json_encode(getallheaders()));
 error_log("==========================================");
 
-// Responder OK inmediatamente
-header('HTTP/1.1 200 OK');
-header('Content-Type: application/json');
-
 // Si es una petición OPTIONS (preflight), responder y salir
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type, Authorization');
-    http_response_code(200);
-    echo json_encode(['status' => 'ok']);
-    exit;
+    exitOk('OPTIONS request');
 }
 
 // Aceptar tanto GET como POST
 if ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['error' => 'Method not allowed. Use GET or POST']);
-    exit;
+    error_log("⚠️ Método no permitido: " . $_SERVER['REQUEST_METHOD']);
+    exitOk('Method not allowed but ack received', false);
 }
 
 // Si es un test de MercadoPago (GET sin parámetros), responder OK
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($_GET['topic']) && empty($_GET['id'])) {
-    http_response_code(200);
-    echo json_encode(['status' => 'ok', 'message' => 'Webhook activo']);
-    exit;
+    error_log("✅ Test de webhook - Respondiendo OK");
+    exitOk('Webhook activo y funcionando');
 }
 
 try {
@@ -141,9 +146,7 @@ try {
             }
         }
         
-        http_response_code(200);
-        echo json_encode(['error' => false, 'message' => 'Webhook de prueba ignorado']);
-        exit;
+        exitOk('Webhook de prueba ignorado (ID: 123456)', false);
     }
     
     // Log detallado para payment_ids reales
