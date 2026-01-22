@@ -929,10 +929,14 @@ MODAL COBRAR VENTA
                   <!-- <span class="input-group-btn"><button type="button" class="btn btn-success agergarMedioPago" ><i class="fa fa-plus"></i></button></span> -->
 
                 <select class="form-control" id="nuevoMetodoPagoCaja">
-                  <?php
-                    require_once "../../helpers/medios_pago_helper.php";
-                    echo generarOpcionesMediosPago(false); // Sin MPQR en presupuestos
-                  ?>
+                  <option value="">Medio de pago</option>
+                  <option value="Efectivo">Efectivo</option>
+                  <!-- <option value="Presupuesto">Presupuesto</option> -->
+                  <option value="TD">Tarjeta Débito</option>     
+                  <option value="TC">Tarjeta Crédito</option>
+                  <option value="CC">Cuenta Corriente</option>
+                  <!-- <option value="Mixto">Pago mixto</option> -->
+      
                 </select>    
 
               </div>
