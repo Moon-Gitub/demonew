@@ -15,7 +15,7 @@ $(".tablas").on("click", ".btnEditarMedioPago", function(){
      		$("#editarCodigo").val(respuesta["codigo"]);
      		$("#editarNombre").val(respuesta["nombre"]);
      		$("#editarDescripcion").val(respuesta["descripcion"] || "");
-     		$("#editarOrden").val(respuesta["orden"]);
+     		$("#editarOrden").val(respuesta["orden"] || 0);
      		$("#idMedioPago").val(respuesta["id"]);
      		
      		// Checkboxes

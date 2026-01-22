@@ -7,6 +7,10 @@ if($_SESSION["perfil"] == "Vendedor"){
   return;
 }
 
+$item = null;
+$valor = null;
+$mediosPago = ControladorMediosPago::ctrMostrarMediosPago($item, $valor);
+
 ?>
 <div class="content-wrapper">
 
@@ -36,7 +40,7 @@ if($_SESSION["perfil"] == "Vendedor"){
   
         <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarMedioPago">
           
-          Agregar Medio de Pago
+          Agregar medio de pago
 
         </button>
 
@@ -70,12 +74,7 @@ if($_SESSION["perfil"] == "Vendedor"){
 
         <?php
 
-          $item = null;
-          $valor = null;
-
-          $mediosPago = ControladorMediosPago::ctrMostrarMediosPago($item, $valor);
-
-          if($mediosPago){
+          if($mediosPago) {
             foreach ($mediosPago as $key => $value) {
              
               echo ' <tr>
@@ -86,7 +85,7 @@ if($_SESSION["perfil"] == "Vendedor"){
                       
                       <td class="text-uppercase">'.$value["nombre"].'</td>
 
-                      <td>'.($value["descripcion"] ? $value["descripcion"] : '-').'</td>
+                      <td>'.($value["descripcion"] ?? '').'</td>
 
                       <td class="text-center">'.($value["requiere_codigo"] ? '<span class="label label-success">Sí</span>' : '<span class="label label-default">No</span>').'</td>
 
@@ -144,7 +143,7 @@ MODAL AGREGAR MEDIO DE PAGO
 
           <button type="button" class="close" data-dismiss="modal">&times;</button>
 
-          <h4 class="modal-title">Agregar Medio de Pago</h4>
+          <h4 class="modal-title">Agregar medio de pago</h4>
 
         </div>
 
@@ -157,73 +156,93 @@ MODAL AGREGAR MEDIO DE PAGO
           <div class="box-body">
 
             <!-- ENTRADA PARA EL CÓDIGO -->
+            
             <div class="form-group">
-              <label>Código (máx. 10 caracteres)</label>
+              
               <div class="input-group">
+              
                 <span class="input-group-addon"><i class="fa fa-code"></i></span> 
-                <input type="text" class="form-control input-lg" name="nuevoCodigo" placeholder="Ej: EF, TD, TC" maxlength="10" required>
+
+                <input type="text" class="form-control input-lg" name="nuevoCodigo" placeholder="Código (ej: EF, TD)" maxlength="10" required>
+
               </div>
+
             </div>
 
             <!-- ENTRADA PARA EL NOMBRE -->
+            
             <div class="form-group">
-              <label>Nombre</label>
+              
               <div class="input-group">
+              
                 <span class="input-group-addon"><i class="fa fa-credit-card"></i></span> 
-                <input type="text" class="form-control input-lg" name="nuevoNombre" placeholder="Ej: Efectivo, Tarjeta Débito" required>
+
+                <input type="text" class="form-control input-lg" name="nuevoNombre" placeholder="Nombre del medio de pago" required>
+
               </div>
+
             </div>
 
             <!-- ENTRADA PARA LA DESCRIPCIÓN -->
+            
             <div class="form-group">
-              <label>Descripción (opcional)</label>
+              
               <div class="input-group">
+              
                 <span class="input-group-addon"><i class="fa fa-info"></i></span> 
-                <textarea class="form-control" name="nuevaDescripcion" rows="2" placeholder="Descripción del medio de pago"></textarea>
+
+                <textarea class="form-control" name="nuevaDescripcion" placeholder="Descripción (opcional)" rows="2"></textarea>
+
               </div>
+
             </div>
 
             <!-- CHECKBOXES PARA REQUISITOS -->
+            
             <div class="form-group">
-              <label>Requisitos:</label>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" name="nuevoRequiereCodigo" value="1"> Requiere código de transacción
-                </label>
-              </div>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" name="nuevoRequiereBanco" value="1"> Requiere banco
-                </label>
-              </div>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" name="nuevoRequiereNumero" value="1"> Requiere número de referencia
-                </label>
-              </div>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" name="nuevoRequiereFecha" value="1"> Requiere fecha de vencimiento
-                </label>
-              </div>
+              <label>
+                <input type="checkbox" name="nuevoRequiereCodigo" value="1"> Requiere código de transacción
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label>
+                <input type="checkbox" name="nuevoRequiereBanco" value="1"> Requiere banco
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label>
+                <input type="checkbox" name="nuevoRequiereNumero" value="1"> Requiere número de referencia
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label>
+                <input type="checkbox" name="nuevoRequiereFecha" value="1"> Requiere fecha de vencimiento
+              </label>
             </div>
 
             <!-- ENTRADA PARA ORDEN -->
+            
             <div class="form-group">
-              <label>Orden de visualización</label>
+              
               <div class="input-group">
+              
                 <span class="input-group-addon"><i class="fa fa-sort-numeric-asc"></i></span> 
-                <input type="number" class="form-control" name="nuevoOrden" value="0" min="0">
+
+                <input type="number" class="form-control" name="nuevoOrden" placeholder="Orden de visualización" value="0" min="0">
+
               </div>
+
             </div>
 
             <!-- CHECKBOX PARA ACTIVO -->
+            
             <div class="form-group">
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" name="nuevoActivo" value="1" checked> Activo
-                </label>
-              </div>
+              <label>
+                <input type="checkbox" name="nuevoActivo" value="1" checked> Activo
+              </label>
             </div>
  
           </div>
@@ -276,7 +295,7 @@ MODAL EDITAR MEDIO DE PAGO
 
           <button type="button" class="close" data-dismiss="modal">&times;</button>
 
-          <h4 class="modal-title">Editar Medio de Pago</h4>
+          <h4 class="modal-title">Editar medio de pago</h4>
 
         </div>
 
@@ -289,76 +308,96 @@ MODAL EDITAR MEDIO DE PAGO
           <div class="box-body">
 
             <!-- ENTRADA PARA EL CÓDIGO -->
+            
             <div class="form-group">
-              <label>Código (máx. 10 caracteres)</label>
+              
               <div class="input-group">
+              
                 <span class="input-group-addon"><i class="fa fa-code"></i></span> 
+
                 <input type="text" class="form-control input-lg" name="editarCodigo" id="editarCodigo" maxlength="10" required>
+
+                <input type="hidden" name="idMedioPago" id="idMedioPago" required>
+
               </div>
+
             </div>
 
             <!-- ENTRADA PARA EL NOMBRE -->
+            
             <div class="form-group">
-              <label>Nombre</label>
+              
               <div class="input-group">
+              
                 <span class="input-group-addon"><i class="fa fa-credit-card"></i></span> 
+
                 <input type="text" class="form-control input-lg" name="editarNombre" id="editarNombre" required>
+
               </div>
+
             </div>
 
             <!-- ENTRADA PARA LA DESCRIPCIÓN -->
+            
             <div class="form-group">
-              <label>Descripción (opcional)</label>
+              
               <div class="input-group">
+              
                 <span class="input-group-addon"><i class="fa fa-info"></i></span> 
+
                 <textarea class="form-control" name="editarDescripcion" id="editarDescripcion" rows="2"></textarea>
+
               </div>
+
             </div>
 
             <!-- CHECKBOXES PARA REQUISITOS -->
+            
             <div class="form-group">
-              <label>Requisitos:</label>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" name="editarRequiereCodigo" id="editarRequiereCodigo" value="1"> Requiere código de transacción
-                </label>
-              </div>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" name="editarRequiereBanco" id="editarRequiereBanco" value="1"> Requiere banco
-                </label>
-              </div>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" name="editarRequiereNumero" id="editarRequiereNumero" value="1"> Requiere número de referencia
-                </label>
-              </div>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" name="editarRequiereFecha" id="editarRequiereFecha" value="1"> Requiere fecha de vencimiento
-                </label>
-              </div>
+              <label>
+                <input type="checkbox" name="editarRequiereCodigo" id="editarRequiereCodigo" value="1"> Requiere código de transacción
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label>
+                <input type="checkbox" name="editarRequiereBanco" id="editarRequiereBanco" value="1"> Requiere banco
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label>
+                <input type="checkbox" name="editarRequiereNumero" id="editarRequiereNumero" value="1"> Requiere número de referencia
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label>
+                <input type="checkbox" name="editarRequiereFecha" id="editarRequiereFecha" value="1"> Requiere fecha de vencimiento
+              </label>
             </div>
 
             <!-- ENTRADA PARA ORDEN -->
+            
             <div class="form-group">
-              <label>Orden de visualización</label>
+              
               <div class="input-group">
+              
                 <span class="input-group-addon"><i class="fa fa-sort-numeric-asc"></i></span> 
+
                 <input type="number" class="form-control" name="editarOrden" id="editarOrden" min="0">
+
               </div>
+
             </div>
 
             <!-- CHECKBOX PARA ACTIVO -->
+            
             <div class="form-group">
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" name="editarActivo" id="editarActivo" value="1"> Activo
-                </label>
-              </div>
+              <label>
+                <input type="checkbox" name="editarActivo" id="editarActivo" value="1"> Activo
+              </label>
             </div>
-
-            <input type="hidden" name="idMedioPago" id="idMedioPago" required>
  
           </div>
 
