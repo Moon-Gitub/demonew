@@ -1476,49 +1476,16 @@ MODAL COBRAR VENTA
                <div class="input-group">
                   <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPago" type="button" class="btn btn-success" ><i class="fa fa-plus"></i></button></span>
 	                <select class="form-control" id="nuevoMetodoPagoCaja">
-	                  <?php
-	                    // Cargar medios de pago dinámicamente desde BD
-	                    // Asegurar que el modelo esté cargado
-	                    if (!class_exists('ModeloMediosPago')) {
-	                        require_once __DIR__ . '/../../modelos/medios_pago.modelo.php';
-	                    }
-	                    
-	                    try {
-	                        $mediosPago = ModeloMediosPago::mdlMostrarMediosPagoActivos();
-	                        echo '<option value="">Medio de pago</option>';
-	                        echo '<option value="MPQR">Mercado Pago QR</option>'; // Siempre disponible
-	                        
-	                        if($mediosPago && is_array($mediosPago) && count($mediosPago) > 0) {
-	                            foreach($mediosPago as $medio) {
-	                                $codigo = htmlspecialchars($medio["codigo"]);
-	                                $nombre = htmlspecialchars($medio["nombre"]);
-	                                echo '<option value="' . $codigo . '">' . $nombre . '</option>';
-	                            }
-	                        } else {
-	                            // Si no hay medios en BD, usar valores por defecto
-	                            echo '<option value="Efectivo">Efectivo</option>';
-	                            echo '<option value="MP">Mercado Pago</option>';
-	                            echo '<option value="TD">Tarjeta Débito</option>';
-	                            echo '<option value="TC">Tarjeta Crédito</option>';
-	                            echo '<option value="CH">Cheque</option>';
-	                            echo '<option value="TR">Transferencia</option>';
-	                            echo '<option value="CC">Cuenta Corriente</option>';
-	                        }
-	                    } catch (Exception $e) {
-	                        // Fallback a valores por defecto si hay error
-	                        error_log("Error cargando medios de pago: " . $e->getMessage());
-	                        echo '<option value="">Medio de pago</option>';
-	                        echo '<option value="Efectivo">Efectivo</option>';
-	                        echo '<option value="MP">Mercado Pago</option>';
-	                        echo '<option value="MPQR">Mercado Pago QR</option>';
-	                        echo '<option value="TD">Tarjeta Débito</option>';
-	                        echo '<option value="TC">Tarjeta Crédito</option>';
-	                        echo '<option value="CH">Cheque</option>';
-	                        echo '<option value="TR">Transferencia</option>';
-	                        echo '<option value="CC">Cuenta Corriente</option>';
-	                    }
-	                  ?>
-	                </select>
+	                  <option value="">Medio de pago</option>
+	                  <option value="Efectivo">Efectivo</option>
+	                  <option value="MP" >Mercado Pago</option>
+	                  <option value="MPQR">Mercado Pago QR</option>
+	                  <option value="TD">Tarjeta Débito</option>     
+	                  <option value="TC">Tarjeta Crédito</option>
+	                  <option value="CH">Cheque</option>
+	                  <option value="TR">Transferencia</option>
+	                  <option value="CC">Cuenta Corriente</option>
+	                </select>    
               </div>
             </div>
             <div class="cajasMetodoPagoCaja"></div> <!--Aca se cargan los input de codigo tarjeta, select tarjeta, cuotas  -->
