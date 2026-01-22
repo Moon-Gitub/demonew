@@ -398,8 +398,17 @@ class ControladorVentas{
     			   
     			}
     			
-    			$impuestoDetalle = $impuestoDetalle = (strlen($impuestoDetalle)>1) ? substr($impuestoDetalle, 0, -1) : $impuestoDetalle;
+    			// Eliminar la última coma si existe
+    			if(strlen($impuestoDetalle) > 1) {
+    				$impuestoDetalle = substr($impuestoDetalle, 0, -1);
+    			}
     			$impuestoDetalle = $impuestoDetalle . ']';
+    			
+    			// Si no hay ningún impuesto, asegurar que sea un array vacío válido
+    			if($impuestoDetalle == '[]' && $bimp0 == 0 && $bimp2 == 0 && $bimp5 == 0 && $bimp10 == 0 && $bimp21 == 0 && $bimp27 == 0) {
+    				// Si no hay ninguna base imponible, dejar como array vacío
+    				$impuestoDetalle = '[]';
+    			}
     
     			$tipoCbte = (int)$postVentaCaja["nuevotipoCbte"];
     
