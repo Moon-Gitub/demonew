@@ -1020,104 +1020,6 @@ $(document).ready(function() {
                 </table>
 
 
-            <div class="row lineaServicio" style="padding-top: 10px;"  >
-
-            <table class="table table-bordered table-striped dt-responsive" style="border: 1px solid white;">
-				<tr>
-					<td>
-			             <div class="input-group">
-							<span class="input-group-addon" style="background-color: #ddd">Desde</span>
-								<input type="text" class="form-control input-sm nuevaFecServicios" id="nuevaFecDesde" name="nuevaFecDesde" placeholder="Ingrese fecha">
-
-						 </div>
-					</td>
-					<td>					
-						<div class="input-group">
-							<span class="input-group-addon" style="background-color: #ddd">Hasta</span>
-								<input type="text" class="form-control input-sm nuevaFecServicios" id="nuevaFecHasta" name="nuevaFecHasta" placeholder="Ingrese fecha">
-
-							</div>
-					</td>
-					<td>
-						<div class="input-group">
-							<span class="input-group-addon" style="background-color: #ddd">Vto.</span>
-								<input type="text" class="form-control input-sm nuevaFecServicios" id="nuevaFecVto" name="nuevaFecVto" placeholder="Ingrese fecha">
-
-						</div>
-					</td>
-					</tr>
-				</table>
-			</div>
-
-          <!--=====================================
-          LINEA COMPROBANTES ASOCIADOS
-          ======================================-->
-          <div class="row lineaCbteAsociados" style="padding-top: 10px;"  >
-
-           <table class="table table-bordered table-striped dt-responsive" style="border: 1px solid white;">
-				<tr>
-					<td>
-						<div class="input-group">
-							<span class="input-group-addon" style="background-color: #eee">Tipo cbte. asoc. </span>
-							<?php
-
-							  $arrCbtes = json_decode($arrayEmpresa['tipos_cbtes']);
-
-							  echo '<select title="Seleccione el tipo de comprobante" class="form-control input-sm nuevaCbteAsociado" id="nuevotipoCbteAsociado" name="nuevotipoCbteAsociado" >';
-							  echo '<option value="">Seleccione comprobante asociado</option>';
-
-							  foreach ($arrCbtes as $key => $value) {
-
-								if($value->codigo == '1' || $value->codigo == '4' || $value->codigo == '6' || $value->codigo == '9' || $value->codigo == '11' || $value->codigo == '15' || $value->codigo == '201' || $value->codigo == '206' || $value->codigo == '211'){
-
-								  echo '<option value="' . $value->codigo . '">' . $value->descripcion . '</option>';  
-
-								}
-
-							  }
-
-							  echo '</select>';
-
-							  ?>
-							</div>
-					</td>
-					<td>
-						<div class="input-group">
-							<span class="input-group-addon" style="background-color: #eee">Pto. vta. asoc</span>
-						<?php
-
-							  $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
-							  $arrPuntosHabilitados = explode(',', $_SESSION['puntos_venta']);
-
-							  echo '<select title="Seleccione el punto de venta" class="form-control input-sm nuevaCbteAsociado" id="nuevaPtoVtaAsociado" name="nuevaPtoVtaAsociado">';
-							  echo '<option value="0">Seleccione punto de venta asociado</option>';
-
-							  foreach ($arrPuntos as $key => $value) {
-
-								if (in_array($value["pto"], $arrPuntosHabilitados)) {
-								  echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
-								} else {
-								  echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
-								}
-
-							  }
-
-							  echo '</select>';
-
-							  ?>
-						</div>
-					</td>
-					<td>
-						<div class="input-group">
-							<span class="input-group-addon" style="background-color: #eee">Nro. asoc.</span>
-
-							<input type="text" class="form-control input-sm nuevaCbteAsociado" id="nuevaNroCbteAsociado" name="nuevaNroCbteAsociado" placeholder="Ingrese N° cbte asociado" autocomplete="off">
-
-						</div>
-					</td>
-					</tr>
-					</table>
-			</div>
 
         <!--=====================================
         ENTRADA DEL CLIENTE
@@ -1444,6 +1346,81 @@ MODAL COBRAR VENTA
           <div class="row" style="padding-bottom:10px">
               <div class="col-md-6"><span id="datosCuentaCorrienteCliente" style="font-size:18px"></span></div>
           </div>
+          
+          <!-- Campos de fechas y comprobantes asociados -->
+          <div class="row" style="padding-bottom:10px">
+            <table class="table table-bordered table-striped dt-responsive" style="border: 1px solid white; margin-bottom: 10px;">
+              <tr>
+                <td>
+                  <div class="input-group">
+                    <span class="input-group-addon" style="background-color: #ddd">Desde</span>
+                    <input type="text" class="form-control input-sm nuevaFecServicios" id="nuevaFecDesde" name="nuevaFecDesde" placeholder="Ingrese fecha">
+                  </div>
+                </td>
+                <td>
+                  <div class="input-group">
+                    <span class="input-group-addon" style="background-color: #ddd">Hasta</span>
+                    <input type="text" class="form-control input-sm nuevaFecServicios" id="nuevaFecHasta" name="nuevaFecHasta" placeholder="Ingrese fecha">
+                  </div>
+                </td>
+                <td>
+                  <div class="input-group">
+                    <span class="input-group-addon" style="background-color: #ddd">Vto.</span>
+                    <input type="text" class="form-control input-sm nuevaFecServicios" id="nuevaFecVto" name="nuevaFecVto" placeholder="Ingrese fecha">
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+          
+          <div class="row" style="padding-bottom:10px">
+            <table class="table table-bordered table-striped dt-responsive" style="border: 1px solid white; margin-bottom: 10px;">
+              <tr>
+                <td>
+                  <div class="input-group">
+                    <span class="input-group-addon" style="background-color: #eee">Tipo cbte. asoc. </span>
+                    <?php
+                      $arrCbtes = json_decode($arrayEmpresa['tipos_cbtes']);
+                      echo '<select title="Seleccione el tipo de comprobante" class="form-control input-sm nuevaCbteAsociado" id="nuevotipoCbteAsociado" name="nuevotipoCbteAsociado" >';
+                      echo '<option value="">Seleccione comprobante asociado</option>';
+                      foreach ($arrCbtes as $key => $value) {
+                        if($value->codigo == '1' || $value->codigo == '4' || $value->codigo == '6' || $value->codigo == '9' || $value->codigo == '11' || $value->codigo == '15' || $value->codigo == '201' || $value->codigo == '206' || $value->codigo == '211'){
+                          echo '<option value="' . $value->codigo . '">' . $value->descripcion . '</option>';  
+                        }
+                      }
+                      echo '</select>';
+                    ?>
+                  </div>
+                </td>
+                <td>
+                  <div class="input-group">
+                    <span class="input-group-addon" style="background-color: #eee">Pto. vta. asoc</span>
+                    <?php
+                      $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
+                      $arrPuntosHabilitados = explode(',', $_SESSION['puntos_venta']);
+                      echo '<select title="Seleccione el punto de venta" class="form-control input-sm nuevaCbteAsociado" id="nuevaPtoVtaAsociado" name="nuevaPtoVtaAsociado">';
+                      echo '<option value="0">Seleccione punto de venta asociado</option>';
+                      foreach ($arrPuntos as $key => $value) {
+                        if (in_array($value["pto"], $arrPuntosHabilitados)) {
+                          echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+                        } else {
+                          echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+                        }
+                      }
+                      echo '</select>';
+                    ?>
+                  </div>
+                </td>
+                <td>
+                  <div class="input-group">
+                    <span class="input-group-addon" style="background-color: #eee">Nro. asoc.</span>
+                    <input type="text" class="form-control input-sm nuevaCbteAsociado" id="nuevaNroCbteAsociado" name="nuevaNroCbteAsociado" placeholder="Ingrese N° cbte asociado" autocomplete="off">
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+          
           <div class="row" style="padding-bottom:10px">
           	<div class="col-md-3">
 				<div class="input-group">
