@@ -1460,7 +1460,7 @@ MODAL COBRAR VENTA
 	                            echo 'data-requiere-banco="' . htmlspecialchars($requiereBanco) . '" ';
 	                            echo 'data-requiere-numero="' . htmlspecialchars($requiereNumero) . '" ';
 	                            echo 'data-requiere-fecha="' . htmlspecialchars($requiereFecha) . '">';
-	                            echo htmlspecialchars($medio["nombre"]) . '</option>';
+	                            echo strtoupper(htmlspecialchars($medio["nombre"])) . '</option>';
 	                        }
 	                    }
 	                  ?>
