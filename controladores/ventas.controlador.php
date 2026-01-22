@@ -399,6 +399,61 @@ class ControladorVentas{
     				$netoGravado = $baseMono;
     				$impuestoDetalle = $impuestoDetalle . '{"id":3,"descripcion":"IVA 0%","baseImponible":"'.$baseMono.'","iva":"0"},';
     			   
+    			} else {
+    				// Para otras condiciones de IVA, construir impuesto_detalle con los valores disponibles
+    				if($bimp0 > 0){
+    					$bimp0 = $bimp0 - ($bimp0 * $descGeneral / 100);
+    					$bimp0 = round($bimp0,2);
+    					$netoGravado = $netoGravado + $bimp0;
+    					$impuestoDetalle = $impuestoDetalle . '{"id":3,"descripcion":"IVA 0%","baseImponible":"'.$bimp0.'","iva":"0"},';
+    				}
+    				if($bimp2 > 0){
+    					$bimp2 = $bimp2 - ($bimp2 * $descGeneral / 100);
+    					$bimp2 = round($bimp2,2);
+    					$iva2 = $iva2 - ($iva2 * $descGeneral / 100);
+    					$iva2 = round($iva2,2);
+    					$netoGravado = $netoGravado + $bimp2;
+    					$impuestoDetalle = $impuestoDetalle . '{"id":9,"descripcion":"IVA 2,5%","baseImponible":"'.$bimp2.'","iva":"'.$iva2.'"},';
+    					$impuesto = $impuesto + $iva2;
+    				}
+    				if($bimp5 > 0){
+    					$bimp5 = $bimp5 - ($bimp5 * $descGeneral / 100);
+    					$bimp5 = round($bimp5,2);
+    					$iva5 = $iva5 - ($iva5 * $descGeneral / 100);
+    					$iva5 = round($iva5,2);
+    					$netoGravado = $netoGravado + $bimp5;
+    					$impuestoDetalle = $impuestoDetalle . '{"id":8,"descripcion":"IVA 5%","baseImponible":"'.$bimp5.'","iva":"'.$iva5.'"},';
+    					$impuesto = $impuesto + $iva5;
+    				}
+    				if($bimp10 > 0){
+    					$bimp10 = $bimp10 - ($bimp10 * $descGeneral / 100);
+    					$bimp10 = round($bimp10,2);
+    					$iva10 = $iva10 - ($iva10 * $descGeneral / 100);
+    					$iva10 = round($iva10,2);
+    					$netoGravado = $netoGravado + $bimp10;
+    					$impuestoDetalle = $impuestoDetalle . '{"id":4,"descripcion":"IVA 10,5%","baseImponible":"'.$bimp10.'","iva":"'.$iva10.'"},';
+    					$impuesto = $impuesto + $iva10;
+    				}
+    				if($bimp21 > 0){
+    					$bimp21 = $bimp21 - ($bimp21 * $descGeneral / 100);
+    					$bimp21 = round($bimp21,2);
+    					$iva21 = $iva21 - ($iva21 * $descGeneral / 100);
+    					$iva21 = round($iva21,2);
+    					$netoGravado = $netoGravado + $bimp21;
+    					$impuestoDetalle = $impuestoDetalle . '{"id":5,"descripcion":"IVA 21%","baseImponible":"'.$bimp21.'","iva":"'.$iva21.'"},';
+    					$impuesto = $impuesto + $iva21;
+    				}
+    				if($bimp27 > 0){
+    					$bimp27 = $bimp27 - ($bimp27 * $descGeneral / 100);
+    					$bimp27 = round($bimp27,2);
+    					$iva27 = $iva27 - ($iva27 * $descGeneral / 100);
+    					$iva27 = round($iva27,2);
+    					$netoGravado = $netoGravado + $bimp27;
+    					$impuestoDetalle = $impuestoDetalle . '{"id":6,"descripcion":"IVA 27%","baseImponible":"'.$bimp27.'","iva":"'.$iva27.'"},';
+    					$impuesto = $impuesto + $iva27;
+    				}
+    				$netoGravado = round($netoGravado,2);
+    				$impuesto = round($impuesto,2);
     			}
     			
     			// Eliminar la última coma si existe
@@ -406,6 +461,11 @@ class ControladorVentas{
     				$impuestoDetalle = substr($impuestoDetalle, 0, -1);
     			}
     			$impuestoDetalle = $impuestoDetalle . ']';
+    			
+    			// Asegurar que impuesto_detalle tenga un valor válido antes de guardar
+    			if(empty($impuestoDetalle) || $impuestoDetalle == '[' || !isset($impuestoDetalle)) {
+    				$impuestoDetalle = '[]';
+    			}
     			
     			// Log para debugging (temporal)
     			error_log("DEBUG impuesto_detalle final: " . $impuestoDetalle);
@@ -820,6 +880,9 @@ class ControladorVentas{
     				"iva_27"=>$iva27,
     				"impuesto"=>$impuesto,
     				"impuesto_detalle"=>$impuestoDetalle,
+    				
+    				// Log para verificar que impuesto_detalle se está pasando correctamente
+    				// error_log("DEBUG antes de guardar - impuesto_detalle: " . $impuestoDetalle);
     			   	// "impuesto"=>$postVentaCaja["nuevoPrecioImpuestoCaja"],
     			   	"total"=>$postVentaCaja["nuevoTotalVentaCaja"],
     			   	"metodo_pago"=> json_encode($lstMetodoPago),
