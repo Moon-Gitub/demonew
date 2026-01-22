@@ -919,6 +919,7 @@ $(document).ready(function() {
 </script>
 
               <input type="hidden" name="idVendedor" id="idVendedor" value="<?php echo $_SESSION["id"]; ?>">
+              <input type="hidden" name="idEmpresa" id="idEmpresa" value="<?php echo $_SESSION["empresa"]; ?>">
               <input type="hidden" id="tokenIdTablaVentas">
  
 			  <input type="hidden" name="alto" id="alto" value="">
@@ -964,19 +965,24 @@ $(document).ready(function() {
 					  <?php
 
 					  $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
+					  if (!is_array($arrPuntos)) {
+						$arrPuntos = [];
+					  }
 					  $arrPuntosHabilitados = explode(',', $_SESSION['puntos_venta']);
 
 					  echo '<select title="Seleccione el punto de venta" class="form-control input-sm" id="nuevaPtoVta" name="nuevaPtoVta">';
 					  echo '<option value="0">Seleccione punto de venta</option>';
 
-					  foreach ($arrPuntos as $key => $value) {
-
-						if (in_array($value["pto"], $arrPuntosHabilitados)) {
-						  echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
-						} else {
-						  echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+					  if (is_array($arrPuntos) && !empty($arrPuntos)) {
+						foreach ($arrPuntos as $key => $value) {
+						  if (isset($value["pto"]) && isset($value["det"])) {
+							if (in_array($value["pto"], $arrPuntosHabilitados)) {
+							  echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+							} else {
+							  echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+							}
+						  }
 						}
-
 					  }
 
 					  echo '</select>';
@@ -1020,6 +1026,109 @@ $(document).ready(function() {
                 </table>
 
 
+            <div class="row lineaServicio" style="padding-top: 10px;"  >
+
+            <table class="table table-bordered table-striped dt-responsive" style="border: 1px solid white;">
+				<tr>
+					<td>
+			             <div class="input-group">
+							<span class="input-group-addon" style="background-color: #ddd">Desde</span>
+								<input type="text" class="form-control input-sm nuevaFecServicios" id="nuevaFecDesde" name="nuevaFecDesde" placeholder="Ingrese fecha">
+
+						 </div>
+					</td>
+					<td>					
+						<div class="input-group">
+							<span class="input-group-addon" style="background-color: #ddd">Hasta</span>
+								<input type="text" class="form-control input-sm nuevaFecServicios" id="nuevaFecHasta" name="nuevaFecHasta" placeholder="Ingrese fecha">
+
+							</div>
+					</td>
+					<td>
+						<div class="input-group">
+							<span class="input-group-addon" style="background-color: #ddd">Vto.</span>
+								<input type="text" class="form-control input-sm nuevaFecServicios" id="nuevaFecVto" name="nuevaFecVto" placeholder="Ingrese fecha">
+
+						</div>
+					</td>
+					</tr>
+				</table>
+			</div>
+
+          <!--=====================================
+          LINEA COMPROBANTES ASOCIADOS
+          ======================================-->
+          <div class="row lineaCbteAsociados" style="padding-top: 10px;"  >
+
+           <table class="table table-bordered table-striped dt-responsive" style="border: 1px solid white;">
+				<tr>
+					<td>
+						<div class="input-group">
+							<span class="input-group-addon" style="background-color: #eee">Tipo cbte. asoc. </span>
+							<?php
+
+							  $arrCbtes = json_decode($arrayEmpresa['tipos_cbtes']);
+
+							  echo '<select title="Seleccione el tipo de comprobante" class="form-control input-sm nuevaCbteAsociado" id="nuevotipoCbteAsociado" name="nuevotipoCbteAsociado" >';
+							  echo '<option value="">Seleccione comprobante asociado</option>';
+
+							  foreach ($arrCbtes as $key => $value) {
+
+								if($value->codigo == '1' || $value->codigo == '4' || $value->codigo == '6' || $value->codigo == '9' || $value->codigo == '11' || $value->codigo == '15' || $value->codigo == '201' || $value->codigo == '206' || $value->codigo == '211'){
+
+								  echo '<option value="' . $value->codigo . '">' . $value->descripcion . '</option>';  
+
+								}
+
+							  }
+
+							  echo '</select>';
+
+							  ?>
+							</div>
+					</td>
+					<td>
+						<div class="input-group">
+							<span class="input-group-addon" style="background-color: #eee">Pto. vta. asoc</span>
+						<?php
+
+							  $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
+							  if (!is_array($arrPuntos)) {
+								$arrPuntos = [];
+							  }
+							  $arrPuntosHabilitados = explode(',', $_SESSION['puntos_venta']);
+
+							  echo '<select title="Seleccione el punto de venta" class="form-control input-sm nuevaCbteAsociado" id="nuevaPtoVtaAsociado" name="nuevaPtoVtaAsociado">';
+							  echo '<option value="0">Seleccione punto de venta asociado</option>';
+
+							  if (is_array($arrPuntos) && !empty($arrPuntos)) {
+								foreach ($arrPuntos as $key => $value) {
+								  if (isset($value["pto"]) && isset($value["det"])) {
+									if (in_array($value["pto"], $arrPuntosHabilitados)) {
+									  echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+									} else {
+									  echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+									}
+								  }
+								}
+							  }
+
+							  echo '</select>';
+
+							  ?>
+						</div>
+					</td>
+					<td>
+						<div class="input-group">
+							<span class="input-group-addon" style="background-color: #eee">Nro. asoc.</span>
+
+							<input type="text" class="form-control input-sm nuevaCbteAsociado" id="nuevaNroCbteAsociado" name="nuevaNroCbteAsociado" placeholder="Ingrese N° cbte asociado" autocomplete="off">
+
+						</div>
+					</td>
+					</tr>
+					</table>
+			</div>
 
         <!--=====================================
         ENTRADA DEL CLIENTE
@@ -1125,16 +1234,33 @@ $(document).ready(function() {
 					</td>
 					<td>
                     <?php
-                     $arrSucursal = [ 
-                        'stock' => 'Local',
-                        '' => 'SIN SUCURSAL ASIGNADA'
-                      ];
+
+                        $arrSucursal = json_decode($arrayEmpresa['almacenes'], true);
+                        if (!is_array($arrSucursal)) {
+                            $arrSucursal = [];
+                        }
+
+                        /*$arrSucursal = [ 
+                            'stock' => 'Local',
+                            '' => 'SIN SUCURSAL ASIGNADA'
+                        ];*/
+
 					?>
-                    <input type="hidden" id="sucursalVendedor" value="<?php echo $_SESSION["sucursal"]; ?>">
+                    
                     <div class="form-group">
                          <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-building"></i></span> 
-                              <input type="text" class="form-control input-sm" value="Sucursal: <?php echo $arrSucursal[$_SESSION["sucursal"]]; ?>" readonly>
+                                <?php 
+
+                                foreach ($arrSucursal as $keySuc => $valueSuc) {
+                                    if (in_array($valueSuc["stkProd"], $_SESSION["sucursal"])) {
+                                      echo '<input type="text" class="form-control input-sm" value="Sucursal: '.$valueSuc["det"].'" readonly>';
+                                      echo '<input type="hidden" id="sucursalVendedor" value="'.$valueSuc["stkProd"].'">';
+                                    }
+                                }
+
+                                ?>
+                              <!--<input type="text" class="form-control input-sm" value="Sucursal: <?php echo $arrSucursal[$_SESSION["sucursal"]]; ?>" readonly>-->
 						</div>
                     </div>
 				</td>
@@ -1346,81 +1472,6 @@ MODAL COBRAR VENTA
           <div class="row" style="padding-bottom:10px">
               <div class="col-md-6"><span id="datosCuentaCorrienteCliente" style="font-size:18px"></span></div>
           </div>
-          
-          <!-- Campos de fechas y comprobantes asociados -->
-          <div class="row" id="camposFechasCondicionales" style="padding-bottom:10px; display:none;">
-            <table class="table table-bordered table-striped dt-responsive" style="border: 1px solid white; margin-bottom: 10px;">
-              <tr>
-                <td>
-                  <div class="input-group">
-                    <span class="input-group-addon" style="background-color: #ddd">Desde</span>
-                    <input type="text" class="form-control input-sm nuevaFecServicios" id="nuevaFecDesde" name="nuevaFecDesde" placeholder="Ingrese fecha">
-                  </div>
-                </td>
-                <td>
-                  <div class="input-group">
-                    <span class="input-group-addon" style="background-color: #ddd">Hasta</span>
-                    <input type="text" class="form-control input-sm nuevaFecServicios" id="nuevaFecHasta" name="nuevaFecHasta" placeholder="Ingrese fecha">
-                  </div>
-                </td>
-                <td>
-                  <div class="input-group">
-                    <span class="input-group-addon" style="background-color: #ddd">Vto.</span>
-                    <input type="text" class="form-control input-sm nuevaFecServicios" id="nuevaFecVto" name="nuevaFecVto" placeholder="Ingrese fecha">
-                  </div>
-                </td>
-              </tr>
-            </table>
-          </div>
-          
-          <div class="row" id="camposComprobantesCondicionales" style="padding-bottom:10px; display:none;">
-            <table class="table table-bordered table-striped dt-responsive" style="border: 1px solid white; margin-bottom: 10px;">
-              <tr>
-                <td>
-                  <div class="input-group">
-                    <span class="input-group-addon" style="background-color: #eee">Tipo cbte. asoc. </span>
-                    <?php
-                      $arrCbtes = json_decode($arrayEmpresa['tipos_cbtes']);
-                      echo '<select title="Seleccione el tipo de comprobante" class="form-control input-sm nuevaCbteAsociado" id="nuevotipoCbteAsociado" name="nuevotipoCbteAsociado" >';
-                      echo '<option value="">Seleccione comprobante asociado</option>';
-                      foreach ($arrCbtes as $key => $value) {
-                        if($value->codigo == '1' || $value->codigo == '4' || $value->codigo == '6' || $value->codigo == '9' || $value->codigo == '11' || $value->codigo == '15' || $value->codigo == '201' || $value->codigo == '206' || $value->codigo == '211'){
-                          echo '<option value="' . $value->codigo . '">' . $value->descripcion . '</option>';  
-                        }
-                      }
-                      echo '</select>';
-                    ?>
-                  </div>
-                </td>
-                <td>
-                  <div class="input-group">
-                    <span class="input-group-addon" style="background-color: #eee">Pto. vta. asoc</span>
-                    <?php
-                      $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
-                      $arrPuntosHabilitados = explode(',', $_SESSION['puntos_venta']);
-                      echo '<select title="Seleccione el punto de venta" class="form-control input-sm nuevaCbteAsociado" id="nuevaPtoVtaAsociado" name="nuevaPtoVtaAsociado">';
-                      echo '<option value="0">Seleccione punto de venta asociado</option>';
-                      foreach ($arrPuntos as $key => $value) {
-                        if (in_array($value["pto"], $arrPuntosHabilitados)) {
-                          echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
-                        } else {
-                          echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
-                        }
-                      }
-                      echo '</select>';
-                    ?>
-                  </div>
-                </td>
-                <td>
-                  <div class="input-group">
-                    <span class="input-group-addon" style="background-color: #eee">Nro. asoc.</span>
-                    <input type="text" class="form-control input-sm nuevaCbteAsociado" id="nuevaNroCbteAsociado" name="nuevaNroCbteAsociado" placeholder="Ingrese N° cbte asociado" autocomplete="off">
-                  </div>
-                </td>
-              </tr>
-            </table>
-          </div>
-          
           <div class="row" style="padding-bottom:10px">
           	<div class="col-md-3">
 				<div class="input-group">
@@ -1442,28 +1493,15 @@ MODAL COBRAR VENTA
                <div class="input-group">
                   <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPago" type="button" class="btn btn-success" ><i class="fa fa-plus"></i></button></span>
 	                <select class="form-control" id="nuevoMetodoPagoCaja">
-	                  <?php
-	                    if (!class_exists('ModeloMediosPago')) {
-	                        require_once __DIR__ . '/../../modelos/medios_pago.modelo.php';
-	                    }
-	                    echo '<option value="">Medio de pago</option>';
-	                    echo '<option value="MPQR" data-requiere-codigo="0" data-requiere-banco="0" data-requiere-numero="0" data-requiere-fecha="0">Mercado Pago QR</option>';
-	                    $mediosPago = ModeloMediosPago::mdlMostrarMediosPagoActivos();
-	                    if($mediosPago && is_array($mediosPago)) {
-	                        foreach($mediosPago as $medio) {
-	                            $requiereCodigo = isset($medio["requiere_codigo"]) ? $medio["requiere_codigo"] : 0;
-	                            $requiereBanco = isset($medio["requiere_banco"]) ? $medio["requiere_banco"] : 0;
-	                            $requiereNumero = isset($medio["requiere_numero"]) ? $medio["requiere_numero"] : 0;
-	                            $requiereFecha = isset($medio["requiere_fecha"]) ? $medio["requiere_fecha"] : 0;
-	                            echo '<option value="' . htmlspecialchars($medio["codigo"]) . '" ';
-	                            echo 'data-requiere-codigo="' . htmlspecialchars($requiereCodigo) . '" ';
-	                            echo 'data-requiere-banco="' . htmlspecialchars($requiereBanco) . '" ';
-	                            echo 'data-requiere-numero="' . htmlspecialchars($requiereNumero) . '" ';
-	                            echo 'data-requiere-fecha="' . htmlspecialchars($requiereFecha) . '">';
-	                            echo strtoupper(htmlspecialchars($medio["nombre"])) . '</option>';
-	                        }
-	                    }
-	                  ?>
+	                  <option value="">Medio de pago</option>
+	                  <option value="Efectivo">Efectivo</option>
+	                  <option value="MP" >Mercado Pago</option>
+	                  <option value="MPQR">Mercado Pago QR</option>
+	                  <option value="TD">Tarjeta Débito</option>     
+	                  <option value="TC">Tarjeta Crédito</option>
+	                  <option value="CH">Cheque</option>
+	                  <option value="TR">Transferencia</option>
+	                  <option value="CC">Cuenta Corriente</option>
 	                </select>    
               </div>
             </div>
@@ -1800,6 +1838,57 @@ AGREGAR PRODUCTO
 
         <button type="button" id="btnGuardarNuevoProductoCaja" class="btn btn-primary">Crear</button>
 
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!--=====================================
+MODAL PAGO CON QR MERCADO PAGO
+======================================-->
+<div id="modalPagoQR" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+  
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+
+      <div class="modal-header" style="background:#3c8dbc; color:white">
+        <button type="button" class="close" id="btnCerrarModalQR" data-dismiss="modal" style="display:none;">&times;</button>
+        <h4 class="modal-title"><i class="fa fa-qrcode"></i> Pago con Mercado Pago QR</h4>
+      </div>
+
+      <div class="modal-body">
+        <div class="box-body text-center">
+          <div id="qrLoading" style="display:none;">
+            <i class="fa fa-spinner fa-spin fa-3x"></i>
+            <p>Generando código QR...</p>
+          </div>
+          
+          <div id="qrContent" style="display:none;">
+            <p class="lead"><strong>Monto a pagar: $<span id="qrMonto">0.00</span></strong></p>
+            <div id="qrCodeContainer" style="padding:20px;">
+              <img id="qrCodeImage" src="" alt="Código QR" style="max-width:300px; border:2px solid #ddd; padding:10px; background:white;">
+            </div>
+            <p id="qrMensaje" class="text-info" style="margin-top:15px;">
+              <i class="fa fa-info-circle"></i> Escanea el código QR con la app de Mercado Pago para pagar
+            </p>
+            <div id="qrEstado" class="alert" style="display:none; margin-top:15px;"></div>
+          </div>
+
+          <div id="qrError" style="display:none;" class="alert alert-danger">
+            <i class="fa fa-exclamation-triangle"></i> <span id="qrErrorMensaje"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" id="btnCerrarModalQRFooter" data-dismiss="modal" style="display:none;">Cerrar</button>
+        <button type="button" id="btnVerificarPagoQR" class="btn btn-primary" style="display:none;">
+          <i class="fa fa-refresh"></i> Verificar Pago
+        </button>
       </div>
 
     </div>
