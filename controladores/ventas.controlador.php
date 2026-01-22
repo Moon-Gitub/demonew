@@ -301,19 +301,19 @@ class ControladorVentas{
     			$netoGravado = 0;
     		
     			//Valores Base imponibles
-    			$bimp0 = floatval($postVentaCaja["nuevoVtaCajaBaseImp0"]);
-    			$bimp2 = floatval($postVentaCaja["nuevoVtaCajaBaseImp2"]);
-    			$bimp5 = floatval($postVentaCaja["nuevoVtaCajaBaseImp5"]);
-    			$bimp10 = floatval($postVentaCaja["nuevoVtaCajaBaseImp10"]);
-    			$bimp21 = floatval($postVentaCaja["nuevoVtaCajaBaseImp21"]);
-    			$bimp27 = floatval($postVentaCaja["nuevoVtaCajaBaseImp27"]);
+    			$bimp0 = isset($postVentaCaja["nuevoVtaCajaBaseImp0"]) ? floatval($postVentaCaja["nuevoVtaCajaBaseImp0"]) : 0;
+    			$bimp2 = isset($postVentaCaja["nuevoVtaCajaBaseImp2"]) ? floatval($postVentaCaja["nuevoVtaCajaBaseImp2"]) : 0;
+    			$bimp5 = isset($postVentaCaja["nuevoVtaCajaBaseImp5"]) ? floatval($postVentaCaja["nuevoVtaCajaBaseImp5"]) : 0;
+    			$bimp10 = isset($postVentaCaja["nuevoVtaCajaBaseImp10"]) ? floatval($postVentaCaja["nuevoVtaCajaBaseImp10"]) : 0;
+    			$bimp21 = isset($postVentaCaja["nuevoVtaCajaBaseImp21"]) ? floatval($postVentaCaja["nuevoVtaCajaBaseImp21"]) : 0;
+    			$bimp27 = isset($postVentaCaja["nuevoVtaCajaBaseImp27"]) ? floatval($postVentaCaja["nuevoVtaCajaBaseImp27"]) : 0;
     
-    			//VAlores IVA
-    			$iva2 = floatval($postVentaCaja["nuevoVtaCajaIva2"]);
-    			$iva5 = floatval($postVentaCaja["nuevoVtaCajaIva5"]);
-    			$iva10 = floatval($postVentaCaja["nuevoVtaCajaIva10"]);
-    			$iva21 = floatval($postVentaCaja["nuevoVtaCajaIva21"]);
-    			$iva27 = floatval($postVentaCaja["nuevoVtaCajaIva27"]);
+    			//Valores IVA
+    			$iva2 = isset($postVentaCaja["nuevoVtaCajaIva2"]) ? floatval($postVentaCaja["nuevoVtaCajaIva2"]) : 0;
+    			$iva5 = isset($postVentaCaja["nuevoVtaCajaIva5"]) ? floatval($postVentaCaja["nuevoVtaCajaIva5"]) : 0;
+    			$iva10 = isset($postVentaCaja["nuevoVtaCajaIva10"]) ? floatval($postVentaCaja["nuevoVtaCajaIva10"]) : 0;
+    			$iva21 = isset($postVentaCaja["nuevoVtaCajaIva21"]) ? floatval($postVentaCaja["nuevoVtaCajaIva21"]) : 0;
+    			$iva27 = isset($postVentaCaja["nuevoVtaCajaIva27"]) ? floatval($postVentaCaja["nuevoVtaCajaIva27"]) : 0;
     
     			//Armo array impuesto_detalle y acumulado de impuesto
     			$impuestoDetalle = '[';
@@ -403,12 +403,6 @@ class ControladorVentas{
     				$impuestoDetalle = substr($impuestoDetalle, 0, -1);
     			}
     			$impuestoDetalle = $impuestoDetalle . ']';
-    			
-    			// Si no hay ningún impuesto, asegurar que sea un array vacío válido
-    			if($impuestoDetalle == '[]' && $bimp0 == 0 && $bimp2 == 0 && $bimp5 == 0 && $bimp10 == 0 && $bimp21 == 0 && $bimp27 == 0) {
-    				// Si no hay ninguna base imponible, dejar como array vacío
-    				$impuestoDetalle = '[]';
-    			}
     
     			$tipoCbte = (int)$postVentaCaja["nuevotipoCbte"];
     
