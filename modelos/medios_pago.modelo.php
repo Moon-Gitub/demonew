@@ -49,11 +49,17 @@ class ModeloMediosPago{
 	MOSTRAR MEDIOS DE PAGO ACTIVOS
 	=============================================*/
 	static public function mdlMostrarMediosPagoActivos(){
-		$stmt = Conexion::conectar()->prepare("SELECT * FROM medios_pago WHERE activo = 1 ORDER BY orden ASC, nombre ASC");
-		$stmt -> execute();
-		return $stmt -> fetchAll();
-		$stmt -> close();
-		$stmt = null;
+		try {
+			$stmt = Conexion::conectar()->prepare("SELECT * FROM medios_pago WHERE activo = 1 ORDER BY orden ASC, nombre ASC");
+			$stmt -> execute();
+			$resultado = $stmt -> fetchAll();
+			$stmt -> close();
+			$stmt = null;
+			return $resultado;
+		} catch (Exception $e) {
+			error_log("Error en mdlMostrarMediosPagoActivos: " . $e->getMessage());
+			return false;
+		}
 	}
 
 	/*=============================================
