@@ -34,29 +34,70 @@ class ModeloMercadoPago {
 				}
 			}
 
-			// PREVENIR MÚLTIPLES INTENTOS PENDIENTES: Verificar si hay un intento pendiente reciente (últimos 60 minutos) para el mismo cliente y monto
-			// AUMENTADO A 60 MINUTOS para evitar duplicados cuando se recarga la página o se abre el modal
+			// PASO 1: LIMPIAR INTENTOS EXPIRADOS (más de 24 horas en pendiente)
+			// Esto evita que se acumulen intentos antiguos que nunca se procesaron
+			try {
+				$stmtLimpiar = $conexion->prepare("UPDATE mercadopago_intentos 
+					SET estado = 'expirado', fecha_actualizacion = NOW()
+					WHERE estado = 'pendiente' 
+					AND fecha_creacion < DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+				$stmtLimpiar->execute();
+				$filasLimpiadas = $stmtLimpiar->rowCount();
+				$stmtLimpiar->closeCursor();
+				
+				if ($filasLimpiadas > 0) {
+					error_log("🧹 Limpieza automática: $filasLimpiadas intentos antiguos marcados como expirados");
+				}
+			} catch (Exception $e) {
+				error_log("⚠️ Error en limpieza automática de intentos: " . $e->getMessage());
+			}
+			
+			// PASO 2: PREVENIR MÚLTIPLES INTENTOS PENDIENTES
+			// CRÍTICO: Verificar TODOS los intentos pendientes del cliente (no solo los de 60 minutos)
+			// Si hay un intento pendiente (aunque sea antiguo), no crear uno nuevo
 			if (isset($datos["id_cliente_moon"]) && isset($datos["monto"])) {
 				$monto = floatval($datos["monto"]);
 				
 				// Verificar por cliente y monto (con tolerancia de 0.01 para redondeos)
-				$stmtCheckCliente = $conexion->prepare("SELECT id, preference_id, fecha_creacion FROM mercadopago_intentos 
+				// IMPORTANTE: Buscar TODOS los pendientes, no solo los recientes
+				$stmtCheckCliente = $conexion->prepare("SELECT id, preference_id, fecha_creacion, estado FROM mercadopago_intentos 
 					WHERE id_cliente_moon = :id_cliente 
 					AND ABS(monto - :monto) < 0.01
-					AND estado = 'pendiente' 
-					AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 60 MINUTE)
+					AND estado = 'pendiente'
 					ORDER BY fecha_creacion DESC
 					LIMIT 1");
 				$stmtCheckCliente->bindParam(":id_cliente", $datos["id_cliente_moon"], PDO::PARAM_INT);
 				$stmtCheckCliente->bindParam(":monto", $monto, PDO::PARAM_STR);
 				$stmtCheckCliente->execute();
-				$intentoReciente = $stmtCheckCliente->fetch();
+				$intentoPendiente = $stmtCheckCliente->fetch();
 				$stmtCheckCliente->closeCursor();
 				
-				if ($intentoReciente) {
-					error_log("⚠️ Ya existe un intento pendiente reciente para cliente " . $datos["id_cliente_moon"] . " con monto $monto (ID: " . $intentoReciente['id'] . ", creado: " . $intentoReciente['fecha_creacion'] . ")");
-					error_log("   NO se creará un nuevo intento para evitar duplicados");
-					return "ok"; // Retornar ok para evitar duplicados
+				if ($intentoPendiente) {
+					$diasAntiguedad = round((time() - strtotime($intentoPendiente['fecha_creacion'])) / 86400, 1);
+					error_log("⚠️ Ya existe un intento PENDIENTE para cliente " . $datos["id_cliente_moon"] . " con monto $monto");
+					error_log("   ID: " . $intentoPendiente['id'] . ", Creado hace: $diasAntiguedad días, Preference: " . ($intentoPendiente['preference_id'] ?: 'N/A'));
+					
+					// Si el intento tiene más de 24 horas, marcarlo como expirado y permitir crear uno nuevo
+					if ($diasAntiguedad >= 1) {
+						error_log("   El intento tiene más de 24 horas, marcándolo como expirado...");
+						try {
+							$stmtExpirar = $conexion->prepare("UPDATE mercadopago_intentos 
+								SET estado = 'expirado', fecha_actualizacion = NOW()
+								WHERE id = :id");
+							$stmtExpirar->bindParam(":id", $intentoPendiente['id'], PDO::PARAM_INT);
+							$stmtExpirar->execute();
+							$stmtExpirar->closeCursor();
+							error_log("   ✅ Intento antiguo marcado como expirado, se creará uno nuevo");
+							// Continuar con la creación del nuevo intento
+						} catch (Exception $e) {
+							error_log("   ❌ Error al expirar intento antiguo: " . $e->getMessage());
+							// Aun así, no crear duplicado
+							return "ok";
+						}
+					} else {
+						error_log("   NO se creará un nuevo intento para evitar duplicados");
+						return "ok"; // Retornar ok para evitar duplicados
+					}
 				}
 			}
 			
