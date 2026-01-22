@@ -400,6 +400,40 @@ class ModeloMercadoPago {
 	}
 
 	/*=============================================
+	LIMPIAR INTENTOS EXPIRADOS (más de 24 horas en pendiente)
+	Esta función marca como expirados los intentos antiguos que nunca se procesaron
+	=============================================*/
+	static public function mdlLimpiarIntentosExpirados() {
+		try {
+			$conexion = Conexion::conectarMoon();
+			
+			if (!$conexion) {
+				error_log("ERROR mdlLimpiarIntentosExpirados: No se pudo conectar a BD Moon");
+				return 0;
+			}
+			
+			$stmt = $conexion->prepare("UPDATE mercadopago_intentos 
+				SET estado = 'expirado', fecha_actualizacion = NOW()
+				WHERE estado = 'pendiente' 
+				AND fecha_creacion < DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+			
+			$stmt->execute();
+			$filasAfectadas = $stmt->rowCount();
+			$stmt->closeCursor();
+			
+			if ($filasAfectadas > 0) {
+				error_log("🧹 Limpieza de intentos: $filasAfectadas intentos antiguos marcados como expirados");
+			}
+			
+			return $filasAfectadas;
+			
+		} catch (PDOException $e) {
+			error_log("EXCEPCIÓN al limpiar intentos expirados: " . $e->getMessage());
+			return 0;
+		}
+	}
+
+	/*=============================================
 	ACTUALIZAR ESTADO DE INTENTO DE PAGO
 	=============================================*/
 	/*=============================================
