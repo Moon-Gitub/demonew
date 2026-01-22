@@ -1067,7 +1067,7 @@ $(document).ready(function() {
 							<span class="input-group-addon" style="background-color: #eee">Tipo cbte. asoc. </span>
 							<?php
 
-							  $arrCbtes = json_decode($arrayEmpresa['tipos_cbtes']);
+							  $arrCbtes = json_decode($arrayEmpresa['tipos_cbtes'], true);
 
 							  echo '<select title="Seleccione el tipo de comprobante" class="form-control input-sm nuevaCbteAsociado" id="nuevotipoCbteAsociado" name="nuevotipoCbteAsociado" >';
 							  echo '<option value="">Seleccione comprobante asociado</option>';
@@ -1092,7 +1092,7 @@ $(document).ready(function() {
 							<span class="input-group-addon" style="background-color: #eee">Pto. vta. asoc</span>
 						<?php
 
-							  $arrPuntos = json_decode($arrayEmpresa['ptos_venta']);
+							  $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
 							  if (!is_array($arrPuntos)) {
 								$arrPuntos = [];
 							  }
