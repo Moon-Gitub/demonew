@@ -1092,7 +1092,7 @@ $(document).ready(function() {
 							<span class="input-group-addon" style="background-color: #eee">Pto. vta. asoc</span>
 						<?php
 
-							  $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
+							  $arrPuntos = json_decode($arrayEmpresa['ptos_venta']);
 							  if (!is_array($arrPuntos)) {
 								$arrPuntos = [];
 							  }
@@ -1233,17 +1233,22 @@ $(document).ready(function() {
 						</div> 
 					</td>
 					<td>
-                    <?php
-                     $arrSucursal = [ 
-                        'stock' => 'Local',
-                        '' => 'SIN SUCURSAL ASIGNADA'
-                      ];
-					?>
-                    <input type="hidden" id="sucursalVendedor" value="<?php echo $_SESSION["sucursal"]; ?>">
+                   
                     <div class="form-group">
                          <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-building"></i></span> 
-                              <input type="text" class="form-control input-sm" value="Sucursal: <?php echo $arrSucursal[$_SESSION["sucursal"]]; ?>" readonly>
+                                <?php 
+
+                                $arrSucursal = json_decode($arrayEmpresa['almacenes'], true);
+                                foreach ($arrSucursal as $valueSuc) {
+                                    if ($_SESSION["sucursal"] === $valueSuc["stkProd"]) {
+                                        echo '<input type="text" class="form-control input-sm" value="Sucursal: '.$valueSuc["det"].'" readonly>';
+                                        echo '<input type="hidden" id="sucursalVendedor" value="'.$valueSuc["stkProd"].'">';
+                                    }
+                                }
+
+                                ?>
+                              <!--<input type="text" class="form-control input-sm" value="Sucursal: <?php echo $arrSucursal[$_SESSION["sucursal"]]; ?>" readonly>-->
 						</div>
                     </div>
 				</td>
