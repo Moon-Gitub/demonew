@@ -1843,7 +1843,7 @@ MODAL PAGO CON QR MERCADO PAGO
     <div class="modal-content">
 
       <div class="modal-header" style="background:#3c8dbc; color:white">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <button type="button" class="close" id="btnCerrarModalQR" data-dismiss="modal" style="display:none;">&times;</button>
         <h4 class="modal-title"><i class="fa fa-qrcode"></i> Pago con Mercado Pago QR</h4>
       </div>
 
