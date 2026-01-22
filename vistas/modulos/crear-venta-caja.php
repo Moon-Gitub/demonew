@@ -1348,7 +1348,7 @@ MODAL COBRAR VENTA
           </div>
           
           <!-- Campos de fechas y comprobantes asociados -->
-          <div class="row" style="padding-bottom:10px">
+          <div class="row" id="camposFechasCondicionales" style="padding-bottom:10px; display:none;">
             <table class="table table-bordered table-striped dt-responsive" style="border: 1px solid white; margin-bottom: 10px;">
               <tr>
                 <td>
@@ -1373,7 +1373,7 @@ MODAL COBRAR VENTA
             </table>
           </div>
           
-          <div class="row" style="padding-bottom:10px">
+          <div class="row" id="camposComprobantesCondicionales" style="padding-bottom:10px; display:none;">
             <table class="table table-bordered table-striped dt-responsive" style="border: 1px solid white; margin-bottom: 10px;">
               <tr>
                 <td>
@@ -1447,11 +1447,20 @@ MODAL COBRAR VENTA
 	                        require_once __DIR__ . '/../../modelos/medios_pago.modelo.php';
 	                    }
 	                    echo '<option value="">Medio de pago</option>';
-	                    echo '<option value="MPQR">Mercado Pago QR</option>';
+	                    echo '<option value="MPQR" data-requiere-codigo="0" data-requiere-banco="0" data-requiere-numero="0" data-requiere-fecha="0">Mercado Pago QR</option>';
 	                    $mediosPago = ModeloMediosPago::mdlMostrarMediosPagoActivos();
 	                    if($mediosPago && is_array($mediosPago)) {
 	                        foreach($mediosPago as $medio) {
-	                            echo '<option value="' . htmlspecialchars($medio["codigo"]) . '">' . htmlspecialchars($medio["nombre"]) . '</option>';
+	                            $requiereCodigo = isset($medio["requiere_codigo"]) ? $medio["requiere_codigo"] : 0;
+	                            $requiereBanco = isset($medio["requiere_banco"]) ? $medio["requiere_banco"] : 0;
+	                            $requiereNumero = isset($medio["requiere_numero"]) ? $medio["requiere_numero"] : 0;
+	                            $requiereFecha = isset($medio["requiere_fecha"]) ? $medio["requiere_fecha"] : 0;
+	                            echo '<option value="' . htmlspecialchars($medio["codigo"]) . '" ';
+	                            echo 'data-requiere-codigo="' . htmlspecialchars($requiereCodigo) . '" ';
+	                            echo 'data-requiere-banco="' . htmlspecialchars($requiereBanco) . '" ';
+	                            echo 'data-requiere-numero="' . htmlspecialchars($requiereNumero) . '" ';
+	                            echo 'data-requiere-fecha="' . htmlspecialchars($requiereFecha) . '">';
+	                            echo htmlspecialchars($medio["nombre"]) . '</option>';
 	                        }
 	                    }
 	                  ?>

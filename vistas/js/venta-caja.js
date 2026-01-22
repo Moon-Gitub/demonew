@@ -343,6 +343,29 @@ function cambiarMetodoPagoCaja(valorMetodo){
 	$("#listaMetodoPagoCaja").val('');
 
 	var estoyEditandoMx = 0;
+	
+	// Ocultar campos condicionales por defecto
+	$("#camposFechasCondicionales").hide();
+	$("#camposComprobantesCondicionales").hide();
+	
+	// Si hay un método seleccionado, verificar sus requisitos
+	if(metodo && metodo != "") {
+		var $optionSeleccionada = valorMetodo.find('option:selected');
+		var requiereFecha = $optionSeleccionada.data('requiere-fecha') == 1;
+		var requiereCodigo = $optionSeleccionada.data('requiere-codigo') == 1;
+		var requiereNumero = $optionSeleccionada.data('requiere-numero') == 1;
+		var requiereBanco = $optionSeleccionada.data('requiere-banco') == 1;
+		
+		// Mostrar campos de fechas si requiere_fecha = 1
+		if(requiereFecha) {
+			$("#camposFechasCondicionales").show();
+		}
+		
+		// Mostrar campos de comprobantes si requiere_codigo = 1 o requiere_numero = 1
+		if(requiereCodigo || requiereNumero) {
+			$("#camposComprobantesCondicionales").show();
+		}
+	}
 
 	//Crear-venta = 0 y editar-venta = 1. 
 	//Si ingreso a editar venta la primera carga necesito que no llame a la funcion limpiarCajasMedioPago, 
