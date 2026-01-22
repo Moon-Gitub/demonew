@@ -23,7 +23,6 @@ class ModeloMediosPago{
 		}else{
 			return "error";
 		}
-		$stmt->close();
 		$stmt = null;
 	}
 	
@@ -41,7 +40,6 @@ class ModeloMediosPago{
 			$stmt -> execute();
 			return $stmt -> fetchAll();
 		}
-		$stmt -> close();
 		$stmt = null;
 	}
 
@@ -53,7 +51,6 @@ class ModeloMediosPago{
 			$stmt = Conexion::conectar()->prepare("SELECT * FROM medios_pago WHERE activo = 1 ORDER BY orden ASC, nombre ASC");
 			$stmt -> execute();
 			$resultado = $stmt -> fetchAll();
-			$stmt -> close();
 			$stmt = null;
 			return $resultado;
 		} catch (Exception $e) {
@@ -82,7 +79,6 @@ class ModeloMediosPago{
 		}else{
 			return "error";
 		}
-		$stmt->close();
 		$stmt = null;
 	}
 
@@ -97,7 +93,6 @@ class ModeloMediosPago{
 		}else{
 			return "error";	
 		}
-		$stmt -> close();
 		$stmt = null;
 	}
 }
