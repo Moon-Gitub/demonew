@@ -919,7 +919,6 @@ $(document).ready(function() {
 </script>
 
               <input type="hidden" name="idVendedor" id="idVendedor" value="<?php echo $_SESSION["id"]; ?>">
-              <input type="hidden" name="idEmpresa" id="idEmpresa" value="<?php echo $_SESSION["empresa"]; ?>">
               <input type="hidden" id="tokenIdTablaVentas">
  
 			  <input type="hidden" name="alto" id="alto" value="">
@@ -965,24 +964,19 @@ $(document).ready(function() {
 					  <?php
 
 					  $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
-					  if (!is_array($arrPuntos)) {
-						$arrPuntos = [];
-					  }
 					  $arrPuntosHabilitados = explode(',', $_SESSION['puntos_venta']);
 
 					  echo '<select title="Seleccione el punto de venta" class="form-control input-sm" id="nuevaPtoVta" name="nuevaPtoVta">';
 					  echo '<option value="0">Seleccione punto de venta</option>';
 
-					  if (is_array($arrPuntos) && !empty($arrPuntos)) {
-						foreach ($arrPuntos as $key => $value) {
-						  if (isset($value["pto"]) && isset($value["det"])) {
-							if (in_array($value["pto"], $arrPuntosHabilitados)) {
-							  echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
-							} else {
-							  echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
-							}
-						  }
+					  foreach ($arrPuntos as $key => $value) {
+
+						if (in_array($value["pto"], $arrPuntosHabilitados)) {
+						  echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+						} else {
+						  echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
 						}
+
 					  }
 
 					  echo '</select>';
@@ -1093,24 +1087,19 @@ $(document).ready(function() {
 						<?php
 
 							  $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
-							  if (!is_array($arrPuntos)) {
-								$arrPuntos = [];
-							  }
 							  $arrPuntosHabilitados = explode(',', $_SESSION['puntos_venta']);
 
 							  echo '<select title="Seleccione el punto de venta" class="form-control input-sm nuevaCbteAsociado" id="nuevaPtoVtaAsociado" name="nuevaPtoVtaAsociado">';
 							  echo '<option value="0">Seleccione punto de venta asociado</option>';
 
-							  if (is_array($arrPuntos) && !empty($arrPuntos)) {
-								foreach ($arrPuntos as $key => $value) {
-								  if (isset($value["pto"]) && isset($value["det"])) {
-									if (in_array($value["pto"], $arrPuntosHabilitados)) {
-									  echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
-									} else {
-									  echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
-									}
-								  }
+							  foreach ($arrPuntos as $key => $value) {
+
+								if (in_array($value["pto"], $arrPuntosHabilitados)) {
+								  echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
+								} else {
+								  echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
 								}
+
 							  }
 
 							  echo '</select>';
@@ -1476,19 +1465,15 @@ MODAL COBRAR VENTA
                <div class="input-group">
                   <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPago" type="button" class="btn btn-success" ><i class="fa fa-plus"></i></button></span>
 	                <select class="form-control" id="nuevoMetodoPagoCaja">
-	                  <?php
-	                    if (!class_exists('ModeloMediosPago')) {
-	                        require_once __DIR__ . '/../../modelos/medios_pago.modelo.php';
-	                    }
-	                    echo '<option value="">Medio de pago</option>';
-	                    echo '<option value="MPQR">Mercado Pago QR</option>';
-	                    $mediosPago = ModeloMediosPago::mdlMostrarMediosPagoActivos();
-	                    if($mediosPago && is_array($mediosPago)) {
-	                        foreach($mediosPago as $medio) {
-	                            echo '<option value="' . htmlspecialchars($medio["codigo"]) . '">' . htmlspecialchars($medio["nombre"]) . '</option>';
-	                        }
-	                    }
-	                  ?>
+	                  <option value="">Medio de pago</option>
+	                  <option value="Efectivo">Efectivo</option>
+	                  <option value="MP" >Mercado Pago</option>
+	                  <option value="MPQR">Mercado Pago QR</option>
+	                  <option value="TD">Tarjeta Débito</option>     
+	                  <option value="TC">Tarjeta Crédito</option>
+	                  <option value="CH">Cheque</option>
+	                  <option value="TR">Transferencia</option>
+	                  <option value="CC">Cuenta Corriente</option>
 	                </select>    
               </div>
             </div>
