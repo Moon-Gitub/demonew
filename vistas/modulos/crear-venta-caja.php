@@ -1239,11 +1239,6 @@ $(document).ready(function() {
                             <span class="input-group-addon"><i class="fa fa-building"></i></span> 
                                 <?php 
 
-                                var_dump($arrayEmpresa);
-                                var_dump($arrayEmpresa["almacenes"]);
-                                var_dump($_SESSION);
-                                var_dump($_SESSION["sucursal"]);
-
                                 $arrSucursal = json_decode($arrayEmpresa['almacenes'], true);
                                 foreach ($arrSucursal as $valueSuc) {
                                     if ($_SESSION["sucursal"] === $valueSuc["stkProd"]) {
@@ -1253,7 +1248,7 @@ $(document).ready(function() {
                                 }
 
                                 ?>
-                              <!--<input type="text" class="form-control input-sm" value="Sucursal: <?php echo $arrSucursal[$_SESSION["sucursal"]]; ?>" readonly>-->
+
 						</div>
                     </div>
 				</td>
