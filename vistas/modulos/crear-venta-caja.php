@@ -1233,29 +1233,17 @@ $(document).ready(function() {
 						</div> 
 					</td>
 					<td>
-                    <?php
-
-                        $arrSucursal = json_decode($arrayEmpresa['almacenes']);
-                        //if (!is_array($arrSucursal)) {
-                        //    $arrSucursal = [];
-                        //}
-
-                        /*$arrSucursal = [ 
-                            'stock' => 'Local',
-                            '' => 'SIN SUCURSAL ASIGNADA'
-                        ];*/
-
-					?>
-                    
+                   
                     <div class="form-group">
                          <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-building"></i></span> 
                                 <?php 
 
-                                foreach ($arrSucursal as $keySuc => $valueSuc) {
-                                    if (in_array($_SESSION["sucursal"], $valueSuc["stkProd"] )) {
-                                      echo '<input type="text" class="form-control input-sm" value="Sucursal: '.$valueSuc["det"].'" readonly>';
-                                      echo '<input type="hidden" id="sucursalVendedor" value="'.$valueSuc["stkProd"].'">';
+                                $arrSucursal = json_decode($arrayEmpresa['almacenes']);
+                                foreach ($arrSucursal as $valueSuc) {
+                                    if ($_SESSION["sucursal"] === $valueSuc["stkProd"]) {
+                                        echo '<input type="text" class="form-control input-sm" value="Sucursal: '.$valueSuc["det"].'" readonly>';
+                                        echo '<input type="hidden" id="sucursalVendedor" value="'.$valueSuc["stkProd"].'">';
                                     }
                                 }
 
