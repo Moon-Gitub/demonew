@@ -1092,7 +1092,7 @@ $(document).ready(function() {
 							<span class="input-group-addon" style="background-color: #eee">Pto. vta. asoc</span>
 						<?php
 
-							  $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
+							  $arrPuntos = json_decode($arrayEmpresa['ptos_venta']);
 							  if (!is_array($arrPuntos)) {
 								$arrPuntos = [];
 							  }
@@ -1236,9 +1236,9 @@ $(document).ready(function() {
                     <?php
 
                         $arrSucursal = json_decode($arrayEmpresa['almacenes'], true);
-                        if (!is_array($arrSucursal)) {
-                            $arrSucursal = [];
-                        }
+                        //if (!is_array($arrSucursal)) {
+                        //    $arrSucursal = [];
+                        //}
 
                         /*$arrSucursal = [ 
                             'stock' => 'Local',
@@ -1253,7 +1253,7 @@ $(document).ready(function() {
                                 <?php 
 
                                 foreach ($arrSucursal as $keySuc => $valueSuc) {
-                                    if (in_array($valueSuc["stkProd"], $_SESSION["sucursal"])) {
+                                    if (in_array($_SESSION["sucursal"], $valueSuc["stkProd"] )) {
                                       echo '<input type="text" class="form-control input-sm" value="Sucursal: '.$valueSuc["det"].'" readonly>';
                                       echo '<input type="hidden" id="sucursalVendedor" value="'.$valueSuc["stkProd"].'">';
                                     }
