@@ -318,6 +318,9 @@ class ControladorVentas{
     			//Armo array impuesto_detalle y acumulado de impuesto
     			$impuestoDetalle = '[';
     			
+    			// Log para debugging (temporal)
+    			error_log("DEBUG impuesto_detalle - bimp0: " . $bimp0 . ", bimp2: " . $bimp2 . ", bimp5: " . $bimp5 . ", bimp10: " . $bimp10 . ", bimp21: " . $bimp21 . ", bimp27: " . $bimp27);
+    			
     			/*
     			 "1" => "IVA Responsable Inscripto ",
                  "6" => "Responsable Monotributo ",
@@ -403,6 +406,9 @@ class ControladorVentas{
     				$impuestoDetalle = substr($impuestoDetalle, 0, -1);
     			}
     			$impuestoDetalle = $impuestoDetalle . ']';
+    			
+    			// Log para debugging (temporal)
+    			error_log("DEBUG impuesto_detalle final: " . $impuestoDetalle);
     
     			$tipoCbte = (int)$postVentaCaja["nuevotipoCbte"];
     
