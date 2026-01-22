@@ -5,6 +5,10 @@
 #ajax/error_log
 #**/error_log
 
+# Logs de diagnóstico
+diagnostico_webhook.log
+*.log
+
 # Certificados y archivos de facturación (específicos del servidor)
 #controladores/facturacion/keys/
 #controladores/facturacion/xml/
