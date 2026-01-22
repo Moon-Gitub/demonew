@@ -85,6 +85,7 @@ class ControladorEmpresa{
 					"mail" => $_POST["empMail"],
 					"telefono" => $_POST["empTelefono"],
 					"ptos_venta" => $_POST["empPtosVta"],
+					"almacenes" => $_POST["empStock"],
 					"pto_venta_defecto" => $_POST["empPtoVtaDefecto"],
 					"condicion_iva" => $_POST["empCondicionIva"],
 					"condicion_iibb" => $_POST["empCondicionIIBB"],
