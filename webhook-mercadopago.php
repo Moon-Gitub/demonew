@@ -533,11 +533,23 @@ try {
         }
         
         if (!$payment || !isset($payment['status'])) {
-            logWebhook('ERROR', 'No se pudo obtener payment', ['id' => $id, 'topic' => $topic]);
+            // CRÍTICO: Si no se puede obtener el payment, registrar el webhook pero NO fallar
+            // Esto puede pasar con IDs de prueba o pagos que aún no existen
+            logWebhook('WARNING', 'No se pudo obtener payment', [
+                'id' => $id, 
+                'topic' => $topic,
+                'action' => $action,
+                'razon' => 'Payment no encontrado en API de Mercado Pago (puede ser ID de prueba o pago pendiente)'
+            ]);
+            
+            // Registrar el webhook como recibido (aunque no se pudo procesar)
             if ($webhookId) {
                 ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
             }
-            exitOk('No se pudo obtener payment', false);
+            
+            // IMPORTANTE: Responder 200 OK para que Mercado Pago no reintente
+            // Si respondemos error, Mercado Pago seguirá intentando y mostrará "0% entregadas"
+            exitOk('Webhook recibido - Payment no disponible aún (puede ser prueba o pendiente)', false);
         }
         
         logWebhook('INFO', 'Payment obtenido', [
