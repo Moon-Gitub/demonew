@@ -1235,7 +1235,7 @@ $(document).ready(function() {
 					<td>
                     <?php
 
-                        $arrSucursal = json_decode($arrayEmpresa['almacenes'], true);
+                        $arrSucursal = json_decode($arrayEmpresa['almacenes']);
                         //if (!is_array($arrSucursal)) {
                         //    $arrSucursal = [];
                         //}
