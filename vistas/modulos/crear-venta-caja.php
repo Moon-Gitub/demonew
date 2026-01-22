@@ -1478,30 +1478,35 @@ MODAL COBRAR VENTA
 	                <select class="form-control" id="nuevoMetodoPagoCaja">
 	                  <?php
 	                    // Cargar medios de pago dinámicamente desde BD
-	                    if (class_exists('ModeloMediosPago')) {
-	                        try {
-	                            $mediosPago = ModeloMediosPago::mdlMostrarMediosPagoActivos();
-	                            echo '<option value="">Medio de pago</option>';
-	                            echo '<option value="MPQR">Mercado Pago QR</option>'; // Siempre disponible
-	                            if($mediosPago && is_array($mediosPago)) {
-	                                foreach($mediosPago as $medio) {
-	                                    echo '<option value="' . htmlspecialchars($medio["codigo"]) . '">' . htmlspecialchars($medio["nombre"]) . '</option>';
-	                                }
+	                    // Asegurar que el modelo esté cargado
+	                    if (!class_exists('ModeloMediosPago')) {
+	                        require_once __DIR__ . '/../../modelos/medios_pago.modelo.php';
+	                    }
+	                    
+	                    try {
+	                        $mediosPago = ModeloMediosPago::mdlMostrarMediosPagoActivos();
+	                        echo '<option value="">Medio de pago</option>';
+	                        echo '<option value="MPQR">Mercado Pago QR</option>'; // Siempre disponible
+	                        
+	                        if($mediosPago && is_array($mediosPago) && count($mediosPago) > 0) {
+	                            foreach($mediosPago as $medio) {
+	                                $codigo = htmlspecialchars($medio["codigo"]);
+	                                $nombre = htmlspecialchars($medio["nombre"]);
+	                                echo '<option value="' . $codigo . '">' . $nombre . '</option>';
 	                            }
-	                        } catch (Exception $e) {
-	                            // Fallback a valores por defecto si hay error
-	                            echo '<option value="">Medio de pago</option>';
+	                        } else {
+	                            // Si no hay medios en BD, usar valores por defecto
 	                            echo '<option value="Efectivo">Efectivo</option>';
 	                            echo '<option value="MP">Mercado Pago</option>';
-	                            echo '<option value="MPQR">Mercado Pago QR</option>';
 	                            echo '<option value="TD">Tarjeta Débito</option>';
 	                            echo '<option value="TC">Tarjeta Crédito</option>';
 	                            echo '<option value="CH">Cheque</option>';
 	                            echo '<option value="TR">Transferencia</option>';
 	                            echo '<option value="CC">Cuenta Corriente</option>';
 	                        }
-	                    } else {
-	                        // Si el modelo no está cargado, usar valores por defecto
+	                    } catch (Exception $e) {
+	                        // Fallback a valores por defecto si hay error
+	                        error_log("Error cargando medios de pago: " . $e->getMessage());
 	                        echo '<option value="">Medio de pago</option>';
 	                        echo '<option value="Efectivo">Efectivo</option>';
 	                        echo '<option value="MP">Mercado Pago</option>';
@@ -1513,7 +1518,7 @@ MODAL COBRAR VENTA
 	                        echo '<option value="CC">Cuenta Corriente</option>';
 	                    }
 	                  ?>
-	                </select>    
+	                </select>
               </div>
             </div>
             <div class="cajasMetodoPagoCaja"></div> <!--Aca se cargan los input de codigo tarjeta, select tarjeta, cuotas  -->
