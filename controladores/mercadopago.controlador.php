@@ -725,6 +725,7 @@ class ControladorMercadoPago {
 				"type" => "qr",
 				"total_amount" => $montoString,
 				"description" => $descripcion ?: "Venta POS - $" . $montoString,
+				"notification_url" => $notificationUrl,
 				"external_reference" => $externalReference,
 				"expiration_time" => "PT15M", // 15 minutos (formato ISO 8601)
 				"config" => array(

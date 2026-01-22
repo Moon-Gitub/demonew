@@ -372,7 +372,12 @@ send_ok_once(['ok' => true, 'request_id' => $requestId]);
 // ----------------------
 $topic = $_GET['topic'] ?? $_GET['type'] ?? ($payload['topic'] ?? ($payload['type'] ?? ''));
 $action = $payload['action'] ?? '';
-$dataId = $_GET['id'] ?? $_GET['data_id'] ?? ($payload['data']['id'] ?? ($payload['data_id'] ?? ''));
+$dataId = $_GET['id'] ?? $_GET['data_id'] ?? $_GET['data.id'] ?? ($payload['data']['id'] ?? ($payload['data_id'] ?? ''));
+if (!$dataId && !empty($_GET['resource'])) {
+    if (preg_match('/(\\d+)/', (string)$_GET['resource'], $m)) {
+        $dataId = $m[1];
+    }
+}
 
 if ($action && stripos($action, 'order.') === 0) {
     $topic = 'order';
