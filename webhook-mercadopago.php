@@ -42,6 +42,63 @@ function exitOk($message = 'ok', $error = false) {
     exit;
 }
 
+// Función para validar firma del webhook (según documentación oficial)
+function validarFirmaWebhook($xSignature, $xRequestId, $dataId, $secretKey) {
+    if (empty($xSignature) || empty($secretKey)) {
+        logWebhook('WARNING', 'Validación de firma omitida - faltan datos', [
+            'tiene_signature' => !empty($xSignature),
+            'tiene_secret' => !empty($secretKey)
+        ]);
+        return true; // No fallar si no hay datos (modo permisivo)
+    }
+    
+    // Extraer ts y v1 del header
+    $parts = explode(',', $xSignature);
+    $ts = null;
+    $hash = null;
+    
+    foreach ($parts as $part) {
+        $keyValue = explode('=', trim($part), 2);
+        if (count($keyValue) == 2) {
+            $key = trim($keyValue[0]);
+            $value = trim($keyValue[1]);
+            if ($key === 'ts') {
+                $ts = $value;
+            } elseif ($key === 'v1') {
+                $hash = $value;
+            }
+        }
+    }
+    
+    if (!$ts || !$hash || !$xRequestId || !$dataId) {
+        logWebhook('WARNING', 'Validación de firma omitida - datos incompletos');
+        return true; // Modo permisivo
+    }
+    
+    // CRÍTICO: data.id debe estar en minúsculas según documentación
+    $dataIdLower = strtolower($dataId);
+    
+    // Generar manifest según documentación oficial
+    $manifest = "id:$dataIdLower;request-id:$xRequestId;ts:$ts;";
+    
+    // Calcular HMAC SHA256
+    $calculatedHash = hash_hmac('sha256', $manifest, $secretKey);
+    
+    $valido = ($calculatedHash === $hash);
+    
+    if (!$valido) {
+        logWebhook('WARNING', 'Firma de webhook no válida', [
+            'calculated' => $calculatedHash,
+            'received' => $hash,
+            'manifest' => $manifest
+        ]);
+    } else {
+        logWebhook('INFO', 'Firma de webhook válida');
+    }
+    
+    return $valido;
+}
+
 // Función para consultar API de MercadoPago
 function consultarMP($url, $accessToken, $timeout = 30) {
     $ch = curl_init($url);
@@ -237,6 +294,30 @@ try {
         'method' => $_SERVER['REQUEST_METHOD']
     ]);
     
+    // Validar firma del webhook (opcional pero recomendado)
+    // La clave secreta se obtiene de la configuración de la aplicación en Mercado Pago
+    $xSignature = $_SERVER['HTTP_X_SIGNATURE'] ?? null;
+    $xRequestId = $_SERVER['HTTP_X_REQUEST_ID'] ?? null;
+    $dataId = isset($_GET['data.id']) ? $_GET['data.id'] : (isset($data['data']['id']) ? $data['data']['id'] : $id);
+    
+    // Intentar obtener clave secreta desde .env o configuración
+    $webhookSecret = isset($_ENV['MP_WEBHOOK_SECRET']) ? $_ENV['MP_WEBHOOK_SECRET'] : null;
+    
+    if ($xSignature && $webhookSecret && $xRequestId && $dataId) {
+        $firmaValida = validarFirmaWebhook($xSignature, $xRequestId, $dataId, $webhookSecret);
+        if (!$firmaValida) {
+            logWebhook('WARNING', 'Firma de webhook inválida - procesando de todas formas (modo permisivo)');
+            // No bloquear el procesamiento, solo loguear (modo permisivo)
+        }
+    } else {
+        logWebhook('INFO', 'Validación de firma omitida - no hay datos suficientes', [
+            'tiene_signature' => !empty($xSignature),
+            'tiene_secret' => !empty($webhookSecret),
+            'tiene_request_id' => !empty($xRequestId),
+            'tiene_data_id' => !empty($dataId)
+        ]);
+    }
+    
     // Validar datos mínimos
     if (!$topic || !$id) {
         logWebhook('WARNING', 'Parámetros inválidos', ['topic' => $topic, 'id' => $id]);
@@ -311,21 +392,57 @@ try {
         $payment = null;
         $order = null;
         
-        if ($topic === 'merchant_order') {
-            logWebhook('INFO', 'Procesando merchant_order (QR)', ['order_id' => $id]);
+        if ($topic === 'merchant_order' || ($action && strpos($action, 'order') !== false)) {
+            logWebhook('INFO', 'Procesando order (QR)', ['order_id' => $id, 'action' => $action]);
             
-            // MÉTODO 1: Intentar extraer payments del JSON directamente
+            // Verificar el estado de la order según el action
+            $orderStatus = null;
+            if ($action) {
+                if ($action === 'order.processed') {
+                    $orderStatus = 'processed';
+                } elseif ($action === 'order.canceled') {
+                    $orderStatus = 'canceled';
+                    logWebhook('INFO', 'Order cancelada', ['order_id' => $id]);
+                    if ($webhookId) {
+                        ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
+                    }
+                    exitOk('Order cancelada', false);
+                } elseif ($action === 'order.refunded') {
+                    $orderStatus = 'refunded';
+                    logWebhook('INFO', 'Order reembolsada', ['order_id' => $id]);
+                    // TODO: Procesar reembolso si es necesario
+                    if ($webhookId) {
+                        ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
+                    }
+                    exitOk('Order reembolsada', false);
+                } elseif ($action === 'order.expired') {
+                    $orderStatus = 'expired';
+                    logWebhook('INFO', 'Order expirada', ['order_id' => $id]);
+                    if ($webhookId) {
+                        ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
+                    }
+                    exitOk('Order expirada', false);
+                }
+            }
+            
+            // MÉTODO 1: Intentar extraer payments del JSON directamente (formato nuevo)
             $paymentsParaProcesar = [];
             if ($data && isset($data['data']['transactions']['payments']) && is_array($data['data']['transactions']['payments'])) {
-                logWebhook('INFO', 'Payments encontrados en JSON', ['cantidad' => count($data['data']['transactions']['payments'])]);
+                logWebhook('INFO', 'Payments encontrados en JSON (formato nuevo)', ['cantidad' => count($data['data']['transactions']['payments'])]);
                 $paymentsParaProcesar = $data['data']['transactions']['payments'];
-            } else {
-                // MÉTODO 2: Consultar orden en MP
-                $orderUrl = "https://api.mercadopago.com/merchant_orders/$id";
+            } 
+            // MÉTODO 2: Consultar order usando API moderna /v1/orders
+            if (empty($paymentsParaProcesar)) {
+                $orderUrl = "https://api.mercadopago.com/v1/orders/$id";
                 $order = consultarMP($orderUrl, $credenciales['access_token']);
                 
-                if ($order && isset($order['payments']) && is_array($order['payments']) && count($order['payments']) > 0) {
-                    logWebhook('INFO', 'Payments encontrados en orden', ['cantidad' => count($order['payments'])]);
+                if ($order && isset($order['transactions']['payments']) && is_array($order['transactions']['payments'])) {
+                    logWebhook('INFO', 'Payments encontrados en order (API /v1/orders)', ['cantidad' => count($order['transactions']['payments'])]);
+                    $paymentsParaProcesar = $order['transactions']['payments'];
+                }
+                // Fallback: API antigua merchant_orders
+                elseif ($order && isset($order['payments']) && is_array($order['payments']) && count($order['payments']) > 0) {
+                    logWebhook('INFO', 'Payments encontrados en orden (API antigua)', ['cantidad' => count($order['payments'])]);
                     foreach ($order['payments'] as $paymentInfo) {
                         $paymentsParaProcesar[] = [
                             'id' => is_array($paymentInfo) ? ($paymentInfo['id'] ?? $paymentInfo) : $paymentInfo,
@@ -337,7 +454,7 @@ try {
             }
             
             if (empty($paymentsParaProcesar)) {
-                logWebhook('WARNING', 'No se encontraron payments en la orden', ['order_id' => $id]);
+                logWebhook('WARNING', 'No se encontraron payments en la orden', ['order_id' => $id, 'action' => $action]);
                 if ($webhookId) {
                     ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
                 }

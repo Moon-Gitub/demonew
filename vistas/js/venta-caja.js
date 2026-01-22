@@ -3146,21 +3146,29 @@ function crearPreferenciaPagoQR(){
 	$("#qrEstado").hide();
 	$("#btnVerificarPagoQR").hide();
 	
-	// Generar external_reference único para esta venta
-	externalReferenceActual = "venta_pos_" + Date.now() + "_" + monto.toFixed(2).replace('.', '_');
+	// Obtener ID del cliente para usar como external_reference
+	var idCliente = $("#seleccionarCliente").val() || null;
+	
+	// Generar external_reference: preferir ID del cliente, sino timestamp único
+	if(idCliente && idCliente != "1" && idCliente != 1){
+		externalReferenceActual = String(idCliente);
+	} else {
+		externalReferenceActual = "venta_pos_" + Date.now() + "_" + monto.toFixed(2).replace('.', '_');
+	}
 	
 	// Obtener token CSRF
 	var token = $('meta[name="csrf-token"]').attr('content') || '';
 	
-	// PASO 1: Crear la orden con el monto (MODELO ATENDIDO)
+	// Crear order con QR dinámico (API /v1/orders)
 	$.ajax({
 		url: "ajax/mercadopago.ajax.php",
 		method: "POST",
 		data: {
-			crearOrdenAtendido: "1",
+			crearOrdenQRDinamico: "1",
 			monto: monto,
 			descripcion: "Venta POS - $" + monto.toFixed(2),
-			external_reference: externalReferenceActual
+			external_reference: externalReferenceActual,
+			id_cliente: idCliente
 		},
 		headers: {
 			'X-CSRF-TOKEN': token
@@ -3171,49 +3179,18 @@ function crearPreferenciaPagoQR(){
 				$("#qrLoading").hide();
 				$("#qrError").show();
 				$("#qrErrorMensaje").text(respuestaOrden.mensaje || "Error al crear orden");
+				console.error("Error creando order:", respuestaOrden);
 				return;
 			}
 			
-			// Guardar order_id
+			// Guardar order_id y payment_id
 			orderIdActual = respuestaOrden.order_id;
-			
-			// PASO 2: Obtener QR estático del POS
-			// Si ya tenemos el QR estático en cache, usarlo directamente
-			if(qrEstaticoCache && qrEstaticoCache.qr_code){
-				mostrarQREstatico(monto, qrEstaticoCache);
-				return;
+			if(respuestaOrden.payment_id){
+				paymentIdConfirmado = respuestaOrden.payment_id;
 			}
 			
-			// Obtener o crear POS estático
-			$.ajax({
-				url: "ajax/mercadopago.ajax.php",
-				method: "GET",
-				data: {
-					obtenerQREstatico: "1"
-				},
-				dataType: "json",
-				success: function(respuesta){
-					$("#qrLoading").hide();
-					
-					if(respuesta.error){
-						$("#qrError").show();
-						$("#qrErrorMensaje").text(respuesta.mensaje || "Error al obtener código QR estático");
-						return;
-					}
-					
-					// Guardar en cache
-					qrEstaticoCache = respuesta;
-					
-					// Mostrar QR estático
-					mostrarQREstatico(monto, respuesta);
-				},
-				error: function(xhr, status, error){
-					$("#qrLoading").hide();
-					$("#qrError").show();
-					$("#qrErrorMensaje").text("Error al obtener código QR estático");
-					console.error("Error:", error);
-				}
-			});
+			// Mostrar QR dinámico (ya viene en la respuesta)
+			mostrarQRDinamico(monto, respuestaOrden);
 		},
 		error: function(xhr, status, error){
 			$("#qrLoading").hide();
@@ -3222,6 +3199,44 @@ function crearPreferenciaPagoQR(){
 			console.error("Error:", error);
 		}
 	});
+}
+
+/*=============================================
+MOSTRAR QR DINÁMICO (NUEVO - RECOMENDADO)
+El QR dinámico ya incluye el monto, no requiere que el cliente lo ingrese
+=============================================*/
+function mostrarQRDinamico(monto, datosQR){
+	$("#qrLoading").hide();
+	
+	// Mostrar monto
+	$("#qrMonto").text(monto.toFixed(2));
+	
+	// Mostrar QR dinámico
+	if(datosQR.qr_code){
+		// Si viene como URL de imagen
+		$("#qrCodeImage").attr("src", datosQR.qr_code);
+	} else if(datosQR.qr_data){
+		// Si viene como qr_data (texto del QR), generar imagen
+		var qrImageUrl = "generar-qr.php?url=" + encodeURIComponent(datosQR.qr_data);
+		$("#qrCodeImage").attr("src", qrImageUrl);
+	} else {
+		$("#qrError").show();
+		$("#qrErrorMensaje").text("No se pudo obtener el código QR. Verifique las credenciales de Mercado Pago.");
+		return;
+	}
+	
+	$("#qrContent").show();
+	$("#qrMensaje").html('<i class="fa fa-info-circle"></i> Escanea el código QR con la app de Mercado Pago. El monto <strong>$' + monto.toFixed(2) + '</strong> ya está incluido.');
+	$("#qrEstado").removeClass("alert-danger alert-success").addClass("alert-info").html('<i class="fa fa-clock-o"></i> Esperando pago de $' + monto.toFixed(2) + '...').show();
+	$("#btnVerificarPagoQR").show();
+	
+	// Iniciar verificación automática cada 3 segundos
+	if(intervaloVerificacionQR){
+		clearInterval(intervaloVerificacionQR);
+	}
+	intervaloVerificacionQR = setInterval(function(){
+		verificarPagoQR();
+	}, 3000);
 }
 
 /*=============================================

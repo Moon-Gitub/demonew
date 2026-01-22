@@ -58,7 +58,36 @@ if(isset($_GET["obtenerQREstatico"]) || isset($_POST["obtenerQREstatico"])){
 }
 
 /*=============================================
-CREAR ORDEN PARA MODELO ATENDIDO
+CREAR ORDEN QR DINÁMICO (NUEVO - RECOMENDADO)
+=============================================*/
+if(isset($_POST["crearOrdenQRDinamico"])){
+	$monto = isset($_POST["monto"]) ? floatval($_POST["monto"]) : 0;
+	$descripcion = isset($_POST["descripcion"]) ? $_POST["descripcion"] : "Venta POS";
+	$externalReference = isset($_POST["external_reference"]) ? $_POST["external_reference"] : null;
+	$idCliente = isset($_POST["id_cliente"]) ? intval($_POST["id_cliente"]) : null;
+
+	if($monto <= 0){
+		http_response_code(400);
+		echo json_encode(array("error" => true, "mensaje" => "El monto debe ser mayor a 0"));
+		exit;
+	}
+
+	if(!$externalReference){
+		// Si hay id_cliente, usarlo como external_reference
+		if($idCliente && $idCliente > 0){
+			$externalReference = strval($idCliente);
+		} else {
+			$externalReference = "venta_pos_" . time() . "_" . str_replace('.', '_', $monto);
+		}
+	}
+
+	$respuesta = ControladorMercadoPago::ctrCrearOrdenQRDinamico($monto, $descripcion, $externalReference, $idCliente);
+	echo json_encode($respuesta);
+	exit;
+}
+
+/*=============================================
+CREAR ORDEN PARA MODELO ATENDIDO (DEPRECADO - Mantener por compatibilidad)
 =============================================*/
 if(isset($_POST["crearOrdenAtendido"])){
 	$monto = isset($_POST["monto"]) ? floatval($_POST["monto"]) : 0;
@@ -75,7 +104,9 @@ if(isset($_POST["crearOrdenAtendido"])){
 		$externalReference = "venta_pos_" . time() . "_" . str_replace('.', '_', $monto);
 	}
 
-	$respuesta = ControladorMercadoPago::ctrCrearOrdenAtendido($monto, $descripcion, $externalReference);
+	// Usar el nuevo método QR dinámico en lugar del antiguo
+	$idCliente = isset($_POST["id_cliente"]) ? intval($_POST["id_cliente"]) : null;
+	$respuesta = ControladorMercadoPago::ctrCrearOrdenQRDinamico($monto, $descripcion, $externalReference, $idCliente);
 	echo json_encode($respuesta);
 	exit;
 }

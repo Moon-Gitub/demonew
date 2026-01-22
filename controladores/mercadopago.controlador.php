@@ -646,9 +646,232 @@ class ControladorMercadoPago {
 	}
 
 	/*=============================================
-	CREAR ORDEN PARA MODELO ATENDIDO (QR ESTÁTICO)
+	CREAR ORDEN QR DINÁMICO (API /v1/orders - RECOMENDADO)
+	Usa la API moderna de Mercado Pago para crear orders con QR dinámico.
+	El QR incluye el monto automáticamente, no requiere que el cliente lo ingrese.
+	=============================================*/
+	static public function ctrCrearOrdenQRDinamico($monto, $descripcion, $externalReference, $idCliente = null) {
+		try {
+			$credenciales = self::ctrObtenerCredenciales();
+			
+			// Obtener external_pos_id desde la empresa
+			$posExternalId = null;
+			try {
+				if (class_exists('ControladorEmpresa')) {
+					$empresa = ControladorEmpresa::ctrMostrarempresa('id', 1);
+					
+					// PRIORIDAD 1: external_id guardado manualmente
+					if ($empresa && isset($empresa['mp_pos_external_id']) && !empty($empresa['mp_pos_external_id'])) {
+						$posExternalId = $empresa['mp_pos_external_id'];
+					}
+					// PRIORIDAD 2: Obtener desde pos_id
+					elseif ($empresa && isset($empresa['mp_pos_id']) && !empty($empresa['mp_pos_id'])) {
+						$posId = $empresa['mp_pos_id'];
+						$url = "https://api.mercadopago.com/pos/$posId";
+						$ch = curl_init($url);
+						curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+						curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+							'Authorization: Bearer ' . $credenciales['access_token'],
+							'Content-Type: application/json'
+						));
+						$response = curl_exec($ch);
+						$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+						curl_close($ch);
+						
+						if ($httpCode == 200) {
+							$pos = json_decode($response, true);
+							$posExternalId = isset($pos['external_id']) ? $pos['external_id'] : null;
+						}
+					}
+				}
+			} catch (Exception $e) {
+				error_log("Error obteniendo POS external_id: " . $e->getMessage());
+			}
+			
+			// Si no hay external_id, intentar obtenerlo desde ctrObtenerOcrearPOSEstatico
+			if (!$posExternalId) {
+				$posResult = self::ctrObtenerOcrearPOSEstatico();
+				if (!$posResult['error'] && isset($posResult['pos_external_id'])) {
+					$posExternalId = $posResult['pos_external_id'];
+				}
+			}
+			
+			if (!$posExternalId) {
+				return array(
+					'error' => true,
+					'mensaje' => 'No se pudo obtener el external_id del POS. Configure el External ID del POS en la configuración de empresa.'
+				);
+			}
+			
+			// Generar X-Idempotency-Key único (UUID v4 o string aleatorio)
+			$idempotencyKey = uniqid('order_', true) . '_' . time();
+			
+			// Construir URL de notificación
+			$notificationUrl = "";
+			if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+				$notificationUrl = "https://";
+			} else {
+				$notificationUrl = "http://";
+			}
+			$notificationUrl .= $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . "/webhook-mercadopago.php";
+			// Asegurar que no tenga doble slash
+			$notificationUrl = str_replace('//webhook', '/webhook', $notificationUrl);
+			
+			// Asegurar que el monto sea string con 2 decimales
+			$montoString = number_format(floatval($monto), 2, '.', '');
+			
+			// Preparar datos de la order según documentación oficial
+			$orderData = array(
+				"type" => "qr",
+				"total_amount" => $montoString,
+				"description" => $descripcion ?: "Venta POS - $" . $montoString,
+				"external_reference" => $externalReference,
+				"expiration_time" => "PT15M", // 15 minutos (formato ISO 8601)
+				"config" => array(
+					"qr" => array(
+						"external_pos_id" => $posExternalId,
+						"mode" => "dynamic" // QR dinámico único por transacción
+					)
+				),
+				"transactions" => array(
+					"payments" => array(
+						array(
+							"amount" => $montoString
+						)
+					)
+				),
+				"items" => array(
+					array(
+						"title" => $descripcion ?: "Venta POS",
+						"unit_price" => $montoString,
+						"quantity" => 1,
+						"unit_measure" => "unit"
+					)
+				)
+			);
+			
+			// Crear order usando API /v1/orders
+			$url = "https://api.mercadopago.com/v1/orders";
+			
+			error_log("Creando order QR dinámico - External POS ID: $posExternalId, Monto: $montoString");
+			error_log("Datos de order: " . json_encode($orderData));
+			
+			$ch = curl_init($url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_POST, true);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($orderData));
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				'Authorization: Bearer ' . $credenciales['access_token'],
+				'Content-Type: application/json',
+				'X-Idempotency-Key: ' . $idempotencyKey
+			));
+			
+			$response = curl_exec($ch);
+			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			$curlError = curl_error($ch);
+			curl_close($ch);
+			
+			if ($curlError) {
+				error_log("Error cURL creando order: $curlError");
+				return array(
+					'error' => true,
+					'mensaje' => 'Error de conexión: ' . $curlError
+				);
+			}
+			
+			if ($httpCode == 200 || $httpCode == 201) {
+				$order = json_decode($response, true);
+				error_log("Order creada exitosamente: " . json_encode($order));
+				
+				// Extraer QR data de la respuesta (según documentación oficial)
+				$qrData = null;
+				// Prioridad 1: config.qr.qr_data (ubicación más común según documentación)
+				if (isset($order['config']['qr']['qr_data'])) {
+					$qrData = $order['config']['qr']['qr_data'];
+					error_log("QR data encontrado en config.qr.qr_data");
+				}
+				// Prioridad 2: qr_data directo en la order
+				elseif (isset($order['qr_data'])) {
+					$qrData = $order['qr_data'];
+					error_log("QR data encontrado en qr_data");
+				}
+				// Prioridad 3: Si no viene, consultar la order nuevamente (puede tardar unos segundos)
+				elseif (isset($order['id'])) {
+					error_log("QR data no encontrado en respuesta inicial, consultando order nuevamente...");
+					// Esperar 1 segundo y consultar nuevamente
+					sleep(1);
+					$orderUrl = "https://api.mercadopago.com/v1/orders/{$order['id']}";
+					$ch2 = curl_init($orderUrl);
+					curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+					curl_setopt($ch2, CURLOPT_HTTPHEADER, array(
+						'Authorization: Bearer ' . $credenciales['access_token'],
+						'Content-Type: application/json'
+					));
+					$response2 = curl_exec($ch2);
+					$httpCode2 = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
+					curl_close($ch2);
+					
+					if ($httpCode2 == 200) {
+						$orderCompleta = json_decode($response2, true);
+						if (isset($orderCompleta['config']['qr']['qr_data'])) {
+							$qrData = $orderCompleta['config']['qr']['qr_data'];
+							error_log("QR data obtenido en consulta posterior");
+						} elseif (isset($orderCompleta['qr_data'])) {
+							$qrData = $orderCompleta['qr_data'];
+							error_log("QR data obtenido en consulta posterior (ubicación alternativa)");
+						}
+					}
+				}
+				
+				// Extraer payment_id si está disponible
+				$paymentId = null;
+				if (isset($order['transactions']['payments'][0]['id'])) {
+					$paymentId = $order['transactions']['payments'][0]['id'];
+				}
+				
+				// Si aún no hay qr_data, generar URL alternativa usando el order_id
+				// Según la documentación, para QR dinámico se puede construir la URL
+				if (!$qrData && isset($order['id'])) {
+					error_log("ADVERTENCIA: No se pudo obtener qr_data. El QR se generará usando order_id");
+					// Para QR dinámico, la URL puede construirse con el order_id
+					// Nota: Esto es un fallback, idealmente debería venir en la respuesta
+				}
+				
+				return array(
+					'error' => false,
+					'order_id' => isset($order['id']) ? $order['id'] : null,
+					'payment_id' => $paymentId,
+					'qr_data' => $qrData,
+					'qr_code' => $qrData ? "generar-qr.php?url=" . urlencode($qrData) : null,
+					'status' => isset($order['status']) ? $order['status'] : 'created',
+					'external_reference' => $externalReference,
+					'total_amount' => $montoString
+				);
+			} else {
+				error_log("Error creando order: HTTP $httpCode - $response");
+				$errorData = json_decode($response, true);
+				$errorMessage = isset($errorData['message']) ? $errorData['message'] : 'Error desconocido';
+				return array(
+					'error' => true,
+					'mensaje' => 'Error al crear order: ' . $errorMessage . ' (HTTP ' . $httpCode . ')',
+					'detalle' => $response
+				);
+			}
+			
+		} catch (Exception $e) {
+			error_log("Error creando order QR dinámico: " . $e->getMessage());
+			return array(
+				'error' => true,
+				'mensaje' => $e->getMessage()
+			);
+		}
+	}
+
+	/*=============================================
+	CREAR ORDEN PARA MODELO ATENDIDO (QR ESTÁTICO) - DEPRECADO
 	En el modelo atendido, se crea una orden con el monto específico y se asigna al POS.
 	Cuando el cliente escanea el QR estático, ve la orden con el monto.
+	NOTA: Este método está deprecado. Usar ctrCrearOrdenQRDinamico() en su lugar.
 	=============================================*/
 	static public function ctrCrearOrdenAtendido($monto, $descripcion, $externalReference) {
 		try {
@@ -889,28 +1112,15 @@ class ControladorMercadoPago {
 	}
 
 	/*=============================================
-	VERIFICAR ESTADO DE ORDEN (MODELO ATENDIDO)
+	VERIFICAR ESTADO DE ORDEN (API /v1/orders - NUEVO)
+	Consulta el estado de una order usando la API moderna
 	=============================================*/
 	static public function ctrVerificarEstadoOrden($orderId) {
 		try {
 			$credenciales = self::ctrObtenerCredenciales();
 			
-			// Obtener user_id
-			$userId = null;
-			$tokenParts = explode('-', $credenciales['access_token']);
-			if (count($tokenParts) >= 5) {
-				$userId = $tokenParts[count($tokenParts) - 1];
-			}
-			
-			if (!$userId) {
-				return array(
-					'error' => true,
-					'mensaje' => 'No se pudo obtener el user_id'
-				);
-			}
-			
-			// Consultar estado de la orden
-			$url = "https://api.mercadopago.com/merchant_orders/$orderId";
+			// Consultar order usando API /v1/orders (moderna)
+			$url = "https://api.mercadopago.com/v1/orders/$orderId";
 			
 			$ch = curl_init($url);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -921,7 +1131,16 @@ class ControladorMercadoPago {
 			
 			$response = curl_exec($ch);
 			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			$curlError = curl_error($ch);
 			curl_close($ch);
+			
+			if ($curlError) {
+				error_log("Error cURL verificando order: $curlError");
+				return array(
+					'error' => true,
+					'mensaje' => 'Error de conexión: ' . $curlError
+				);
+			}
 			
 			if ($httpCode == 200) {
 				$order = json_decode($response, true);
