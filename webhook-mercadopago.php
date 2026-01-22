@@ -7,12 +7,31 @@
  * https://tu-dominio.com/webhook-mercadopago.php
  */
 // PRIMERO que todo, loguear ABSOLUTAMENTE TODO
-file_put_contents('/tmp/webhook_raw.log', 
-    date('Y-m-d H:i:s') . " - " . 
+// CRÍTICO: Leer el input UNA SOLA VEZ y guardarlo
+$rawInput = file_get_contents('php://input');
+// Función para obtener headers (compatible con diferentes servidores)
+$rawHeaders = [];
+if (function_exists('getallheaders')) {
+    $rawHeaders = getallheaders();
+} else {
+    foreach ($_SERVER as $key => $value) {
+        if (strpos($key, 'HTTP_') === 0) {
+            $header = str_replace(' ', '-', ucwords(str_replace('_', ' ', strtolower(substr($key, 5)))));
+            $rawHeaders[$header] = $value;
+        }
+    }
+}
+$rawHeadersJson = json_encode($rawHeaders, JSON_UNESCAPED_UNICODE);
+
+// Log completo de la petición
+$logEntry = date('Y-m-d H:i:s') . " - " . 
     $_SERVER['REQUEST_METHOD'] . " - " .
-    file_get_contents('php://input') . "\n\n",
-    FILE_APPEND
-);
+    "URL: " . ($_SERVER['REQUEST_URI'] ?? 'N/A') . " - " .
+    "Headers: " . $rawHeadersJson . " - " .
+    "GET: " . json_encode($_GET) . " - " .
+    "Input: " . $rawInput . "\n\n";
+
+file_put_contents('/tmp/webhook_raw.log', $logEntry, FILE_APPEND);
 
 
 
@@ -38,7 +57,14 @@ function logWebhook($nivel, $mensaje, $datos = []) {
 
 // Función para salir con éxito (siempre 200 OK)
 function exitOk($message = 'ok', $error = false) {
+    // CRÍTICO: Asegurar que siempre respondemos 200 OK
+    http_response_code(200);
+    header('Content-Type: application/json');
     echo json_encode(['error' => $error, 'message' => $message]);
+    // Forzar flush para asegurar que la respuesta se envía
+    if (function_exists('fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    }
     exit;
 }
 
@@ -263,7 +289,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($_GET['topic']) && empty($_GET
 
 try {
     // 1. CAPTURAR DATOS DEL WEBHOOK
-    $input = file_get_contents('php://input');
+    // Usar la variable ya leída al inicio (evitar leer php://input dos veces)
+    $input = $rawInput;
     $data = json_decode($input, true);
     
     $topic = $_GET['topic'] ?? $_GET['type'] ?? $data['type'] ?? null;
@@ -296,8 +323,11 @@ try {
     
     // Validar firma del webhook (opcional pero recomendado)
     // La clave secreta se obtiene de la configuración de la aplicación en Mercado Pago
-    $xSignature = $_SERVER['HTTP_X_SIGNATURE'] ?? null;
-    $xRequestId = $_SERVER['HTTP_X_REQUEST_ID'] ?? null;
+    // Los headers pueden venir con prefijo HTTP_ o directamente
+    $xSignature = $_SERVER['HTTP_X_SIGNATURE'] ?? $_SERVER['X-Signature'] ?? 
+                  (isset($rawHeaders['X-Signature']) ? $rawHeaders['X-Signature'] : null);
+    $xRequestId = $_SERVER['HTTP_X_REQUEST_ID'] ?? $_SERVER['X-Request-Id'] ?? 
+                  (isset($rawHeaders['X-Request-Id']) ? $rawHeaders['X-Request-Id'] : null);
     $dataId = isset($_GET['data.id']) ? $_GET['data.id'] : (isset($data['data']['id']) ? $data['data']['id'] : $id);
     
     // Intentar obtener clave secreta desde .env o configuración
