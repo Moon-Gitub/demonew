@@ -1860,14 +1860,14 @@ AGREGAR PRODUCTO
 <!--=====================================
 MODAL PAGO CON QR MERCADO PAGO
 ======================================-->
-<div id="modalPagoQR" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+<div id="modalPagoQR" class="modal fade" role="dialog">
   
   <div class="modal-dialog">
 
     <div class="modal-content">
 
       <div class="modal-header" style="background:#3c8dbc; color:white">
-        <button type="button" class="close" id="btnCerrarModalQR" data-dismiss="modal" style="display:none;">&times;</button>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h4 class="modal-title"><i class="fa fa-qrcode"></i> Pago con Mercado Pago QR</h4>
       </div>
 
@@ -1896,7 +1896,7 @@ MODAL PAGO CON QR MERCADO PAGO
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" id="btnCerrarModalQRFooter" data-dismiss="modal" style="display:none;">Cerrar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
         <button type="button" id="btnVerificarPagoQR" class="btn btn-primary" style="display:none;">
           <i class="fa fa-refresh"></i> Verificar Pago
         </button>
