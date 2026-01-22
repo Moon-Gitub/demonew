@@ -848,9 +848,17 @@ function agregarProductoVisualmente(respuesta, cantidad, precioUnitario, precioT
 LISTAR MÉTODO DE PAGO
 =============================================*/
 function listarMetodosCaja(){
+	var metodoSeleccionado = $("#nuevoMetodoPagoCaja").val();
+	var $optionSeleccionada = $("#nuevoMetodoPagoCaja option:selected");
+	var requiereCodigo = $optionSeleccionada.data('requiere-codigo') == 1;
+	var requiereBanco = $optionSeleccionada.data('requiere-banco') == 1;
+	var requiereNumero = $optionSeleccionada.data('requiere-numero') == 1;
+	var requiereFecha = $optionSeleccionada.data('requiere-fecha') == 1;
+	
 	var listarMetodosCaja = "";
-	switch($("#nuevoMetodoPagoCaja").val()) {
+	switch(metodoSeleccionado) {
 		case "Efectivo":
+		case "EF":
 			$("#listaMetodoPagoCaja").val("Efectivo");
     	break;
     	case "MP":
@@ -865,24 +873,74 @@ function listarMetodosCaja(){
 	    	}
 	    break;
 	 	case "TD":
-	    	$("#listaMetodoPagoCaja").val("TD-"+$("#nuevoCodigoTransaccionCaja").val());
+	    	var codigo = $("#nuevoCodigoTransaccionCaja").val() || "";
+	    	$("#listaMetodoPagoCaja").val("TD" + (codigo ? "-" + codigo : ""));
 	    break;
 	    case "TC":
-    		//var tarNom = ($("#seleccionarTarjeta").val() != "") ? '-'+$("#seleccionarTarjeta").val() : '';
-    		//var tarCuo = ($("#cuotasTarjetasCaja option:selected").text() != "") ? "-"+$("#cuotasTarjetasCaja option:selected").text() : '';
-    		//$("#listaMetodoPagoCaja").val($("#nuevoMetodoPagoCaja").val()+tarNom+tarCuo+"-"+$("#nuevoCodigoTransaccionCaja").val());
-    		$("#listaMetodoPagoCaja").val("TC-"+$("#nuevoCodigoTransaccionCaja").val());
+    		var codigo = $("#nuevoCodigoTransaccionCaja").val() || "";
+    		$("#listaMetodoPagoCaja").val("TC" + (codigo ? "-" + codigo : ""));
 	    break;
 	    case "CH":
-	    	$("#listaMetodoPagoCaja").val("CH-"+$("#bancoOrigenCheque").val()+"-"+$("#numeroCheque").val()+"-"+$("#fechaCheque").val());
+	    	var banco = $("#bancoOrigenCheque").val() || "";
+	    	var numero = $("#numeroCheque").val() || "";
+	    	var fecha = $("#fechaCheque").val() || "";
+	    	var partes = [];
+	    	if(banco) partes.push(banco);
+	    	if(numero) partes.push(numero);
+	    	if(fecha) partes.push(fecha);
+	    	$("#listaMetodoPagoCaja").val("CH" + (partes.length > 0 ? "-" + partes.join("-") : ""));
 	    break;
 		case "TR":
-	    	$("#listaMetodoPagoCaja").val("TR-"+$("#bancoOrigenTransferencia").val()+"-"+$("#numeroReferenciaTransferencia").val());
+	    	var banco = $("#bancoOrigenTransferencia").val() || "";
+	    	var numero = $("#numeroReferenciaTransferencia").val() || "";
+	    	var partes = [];
+	    	if(banco) partes.push(banco);
+	    	if(numero) partes.push(numero);
+	    	$("#listaMetodoPagoCaja").val("TR" + (partes.length > 0 ? "-" + partes.join("-") : ""));
 	    break;
 		case "CC":
 	    	$("#listaMetodoPagoCaja").val("CC");
 	    break;
-
+	    default:
+	    	// Caso por defecto para medios de pago de la base de datos
+	    	if(metodoSeleccionado && metodoSeleccionado != "") {
+	    		var valorMedio = metodoSeleccionado;
+	    		var partes = [];
+	    		
+	    		// Si requiere código, agregar código de transacción
+	    		if(requiereCodigo) {
+	    			var codigo = $("#nuevoCodigoTransaccionCaja").val() || "";
+	    			if(codigo) partes.push(codigo);
+	    		}
+	    		
+	    		// Si requiere banco, agregar banco
+	    		if(requiereBanco) {
+	    			var banco = $("#bancoOrigenCheque").val() || $("#bancoOrigenTransferencia").val() || "";
+	    			if(banco) partes.push(banco);
+	    		}
+	    		
+	    		// Si requiere número, agregar número
+	    		if(requiereNumero) {
+	    			var numero = $("#numeroCheque").val() || $("#numeroReferenciaTransferencia").val() || "";
+	    			if(numero) partes.push(numero);
+	    		}
+	    		
+	    		// Si requiere fecha, agregar fecha
+	    		if(requiereFecha) {
+	    			var fecha = $("#fechaCheque").val() || "";
+	    			if(fecha) partes.push(fecha);
+	    		}
+	    		
+	    		// Construir el valor final
+	    		if(partes.length > 0) {
+	    			valorMedio = valorMedio + "-" + partes.join("-");
+	    		}
+	    		
+	    		$("#listaMetodoPagoCaja").val(valorMedio);
+	    	} else {
+	    		$("#listaMetodoPagoCaja").val("");
+	    	}
+	    break;
 	}
 }
 
