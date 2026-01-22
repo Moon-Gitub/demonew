@@ -6,26 +6,7 @@ class ControladorMediosPago{
 	CREAR MEDIO DE PAGO
 	=============================================*/
 	static public function ctrCrearMedioPago(){
-		if(isset($_POST["nuevoCodigo"])){
-			// Verificar que el código no exista
-			$existe = ModeloMediosPago::mdlVerificarCodigo($_POST["nuevoCodigo"]);
-			if($existe){
-				echo'<script>
-					swal({
-						type: "error",
-						title: "¡Error!",
-						text: "El código ya existe. Por favor, use otro código.",
-						showConfirmButton: true,
-						confirmButtonText: "Cerrar"
-					}).then(function(result){
-						if (result.value) {
-							window.location = "medios-pago";
-						}
-					})
-				</script>';
-				return;
-			}
-
+		if(isset($_POST["nuevoCodigo"]) && isset($_POST["nuevoNombre"])){
 			$tabla = "medios_pago";
 			$datos = array(
 				"codigo" => strtoupper($_POST["nuevoCodigo"]),
@@ -38,22 +19,30 @@ class ControladorMediosPago{
 				"requiere_fecha" => isset($_POST["nuevoRequiereFecha"]) ? 1 : 0,
 				"orden" => $_POST["nuevoOrden"] ?? 0
 			);
-
 			$respuesta = ModeloMediosPago::mdlIngresarMedioPago($tabla, $datos);
-
 			if($respuesta == "ok"){
 				echo'<script>
-					swal({
-						type: "success",
-						title: "Medios de Pago",
-						text: "El medio de pago ha sido guardado correctamente",
-						showConfirmButton: true,
-						confirmButtonText: "Cerrar"
-					}).then(function(result){
-						if (result.value) {
-							window.location = "medios-pago";
-						}
-					})
+				swal({
+					  type: "success",
+					  title: "Medios de Pago",
+					  text: "El medio de pago ha sido guardado correctamente",
+					  showConfirmButton: true,
+					  confirmButtonText: "Cerrar"
+					  }).then(function(result){
+								if (result.value) {
+								window.location = "medios-pago";
+								}
+							})
+				</script>';
+			} else {
+				echo'<script>
+				swal({
+					  type: "error",
+					  title: "Error",
+					  text: "No se pudo guardar el medio de pago. Verifique que el código no esté duplicado.",
+					  showConfirmButton: true,
+					  confirmButtonText: "Cerrar"
+					  })
 				</script>';
 			}
 		}
@@ -72,29 +61,9 @@ class ControladorMediosPago{
 	EDITAR MEDIO DE PAGO
 	=============================================*/
 	static public function ctrEditarMedioPago(){
-		if(isset($_POST["editarCodigo"])){
-			// Verificar que el código no exista en otro registro
-			$existe = ModeloMediosPago::mdlVerificarCodigo($_POST["editarCodigo"], $_POST["idMedioPago"]);
-			if($existe){
-				echo'<script>
-					swal({
-						type: "error",
-						title: "¡Error!",
-						text: "El código ya existe en otro medio de pago. Por favor, use otro código.",
-						showConfirmButton: true,
-						confirmButtonText: "Cerrar"
-					}).then(function(result){
-						if (result.value) {
-							window.location = "medios-pago";
-						}
-					})
-				</script>';
-				return;
-			}
-
+		if(isset($_POST["editarCodigo"]) && isset($_POST["editarNombre"])){
 			$tabla = "medios_pago";
 			$datos = array(
-				"id" => $_POST["idMedioPago"],
 				"codigo" => strtoupper($_POST["editarCodigo"]),
 				"nombre" => $_POST["editarNombre"],
 				"descripcion" => $_POST["editarDescripcion"] ?? "",
@@ -103,24 +72,33 @@ class ControladorMediosPago{
 				"requiere_banco" => isset($_POST["editarRequiereBanco"]) ? 1 : 0,
 				"requiere_numero" => isset($_POST["editarRequiereNumero"]) ? 1 : 0,
 				"requiere_fecha" => isset($_POST["editarRequiereFecha"]) ? 1 : 0,
-				"orden" => $_POST["editarOrden"] ?? 0
+				"orden" => $_POST["editarOrden"] ?? 0,
+				"id" => $_POST["idMedioPago"]
 			);
-
 			$respuesta = ModeloMediosPago::mdlEditarMedioPago($tabla, $datos);
-
 			if($respuesta == "ok"){
 				echo'<script>
-					swal({
-						type: "success",
-						title: "Medios de Pago",
-						text: "El medio de pago ha sido actualizado correctamente",
-						showConfirmButton: true,
-						confirmButtonText: "Cerrar"
-					}).then(function(result){
-						if (result.value) {
-							window.location = "medios-pago";
-						}
-					})
+				swal({
+					  type: "success",
+					  title: "Medios de Pago",
+					  text: "El medio de pago ha sido actualizado correctamente",
+					  showConfirmButton: true,
+					  confirmButtonText: "Cerrar"
+					  }).then(function(result){
+								if (result.value) {
+								window.location = "medios-pago";
+								}
+							})
+				</script>';
+			} else {
+				echo'<script>
+				swal({
+					  type: "error",
+					  title: "Error",
+					  text: "No se pudo actualizar el medio de pago",
+					  showConfirmButton: true,
+					  confirmButtonText: "Cerrar"
+					  })
 				</script>';
 			}
 		}
@@ -133,22 +111,20 @@ class ControladorMediosPago{
 		if(isset($_GET["idMedioPago"])){
 			$tabla = "medios_pago";
 			$datos = $_GET["idMedioPago"];
-
 			$respuesta = ModeloMediosPago::mdlBorrarMedioPago($tabla, $datos);
-
 			if($respuesta == "ok"){
 				echo'<script>
-					swal({
-						type: "success",
-						title: "Medios de Pago",
-						text: "El medio de pago ha sido eliminado correctamente",
-						showConfirmButton: true,
-						confirmButtonText: "Cerrar"
-					}).then(function(result){
-						if (result.value) {
-							window.location = "medios-pago";
-						}
-					})
+				swal({
+					  type: "success",
+					  title: "Medios de Pago",
+					  text: "El medio de pago ha sido eliminado correctamente",
+					  showConfirmButton: true,
+					  confirmButtonText: "Cerrar"
+					  }).then(function(result){
+								if (result.value) {
+								window.location = "medios-pago";
+								}
+							})
 				</script>';
 			}
 		}
