@@ -1465,19 +1465,14 @@ MODAL COBRAR VENTA
                <div class="input-group">
                   <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPago" type="button" class="btn btn-success" ><i class="fa fa-plus"></i></button></span>
 	                <select class="form-control" id="nuevoMetodoPagoCaja">
-	                  <?php
-	                    if (!class_exists('ModeloMediosPago')) {
-	                        require_once __DIR__ . '/../../modelos/medios_pago.modelo.php';
-	                    }
-	                    echo '<option value="">Medio de pago</option>';
-	                    echo '<option value="MPQR">Mercado Pago QR</option>';
-	                    $mediosPago = ModeloMediosPago::mdlMostrarMediosPagoActivos();
-	                    if($mediosPago && is_array($mediosPago)) {
-	                        foreach($mediosPago as $medio) {
-	                            echo '<option value="' . htmlspecialchars($medio["codigo"]) . '">' . htmlspecialchars($medio["nombre"]) . '</option>';
-	                        }
-	                    }
-	                  ?>
+	                  <option value="">Medio de pago</option>
+	                  <option value="Efectivo">Efectivo</option>
+	                  <option value="MP" >Mercado Pago</option>
+	                  <option value="TD">Tarjeta Débito</option>     
+	                  <option value="TC">Tarjeta Crédito</option>
+	                  <option value="CH">Cheque</option>
+	                  <option value="TR">Transferencia</option>
+	                  <option value="CC">Cuenta Corriente</option>
 	                </select>    
               </div>
             </div>
@@ -1814,57 +1809,6 @@ AGREGAR PRODUCTO
 
         <button type="button" id="btnGuardarNuevoProductoCaja" class="btn btn-primary">Crear</button>
 
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-<!--=====================================
-MODAL PAGO CON QR MERCADO PAGO
-======================================-->
-<div id="modalPagoQR" class="modal fade" role="dialog">
-  
-  <div class="modal-dialog">
-
-    <div class="modal-content">
-
-      <div class="modal-header" style="background:#3c8dbc; color:white">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title"><i class="fa fa-qrcode"></i> Pago con Mercado Pago QR</h4>
-      </div>
-
-      <div class="modal-body">
-        <div class="box-body text-center">
-          <div id="qrLoading" style="display:none;">
-            <i class="fa fa-spinner fa-spin fa-3x"></i>
-            <p>Generando código QR...</p>
-          </div>
-          
-          <div id="qrContent" style="display:none;">
-            <p class="lead"><strong>Monto a pagar: $<span id="qrMonto">0.00</span></strong></p>
-            <div id="qrCodeContainer" style="padding:20px;">
-              <img id="qrCodeImage" src="" alt="Código QR" style="max-width:300px; border:2px solid #ddd; padding:10px; background:white;">
-            </div>
-            <p id="qrMensaje" class="text-info" style="margin-top:15px;">
-              <i class="fa fa-info-circle"></i> Escanea el código QR con la app de Mercado Pago para pagar
-            </p>
-            <div id="qrEstado" class="alert" style="display:none; margin-top:15px;"></div>
-          </div>
-
-          <div id="qrError" style="display:none;" class="alert alert-danger">
-            <i class="fa fa-exclamation-triangle"></i> <span id="qrErrorMensaje"></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-        <button type="button" id="btnVerificarPagoQR" class="btn btn-primary" style="display:none;">
-          <i class="fa fa-refresh"></i> Verificar Pago
-        </button>
       </div>
 
     </div>
