@@ -228,7 +228,8 @@
         $_GET["ruta"] == "editar-ingreso" ||
         $_GET["ruta"] == "compras" ||
         $_GET["ruta"] == "reportes" ||
-        $_GET["ruta"] == "empresa" ||         
+        $_GET["ruta"] == "empresa" ||
+        $_GET["ruta"] == "medios-pago" ||         
         $_GET["ruta"] == "cajas" ||
         $_GET["ruta"] == "cajas-cajero" ||
         $_GET["ruta"] == "cajas-cierre" ||

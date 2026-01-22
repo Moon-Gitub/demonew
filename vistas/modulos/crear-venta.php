@@ -613,14 +613,10 @@ MODAL COBRAR VENTA
                <div class="input-group">
                   <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPago" type="button" class="btn btn-success" ><i class="fa fa-plus"></i></button></span>
 	                <select class="form-control" id="nuevoMetodoPagoCaja">
-	                  <option value="">Medio de pago</option>
-	                  <option value="Efectivo">Efectivo</option>
-	                  <option value="MP" >Mercado Pago</option>
-	                  <option value="TD">Tarjeta Débito</option>     
-	                  <option value="TC">Tarjeta Crédito</option>
-	                  <option value="CH">Cheque</option>
-	                  <option value="TR">Transferencia</option>
-	                  <option value="CC">Cuenta Corriente</option>
+	                  <?php
+	                    require_once "../../helpers/medios_pago_helper.php";
+	                    echo generarOpcionesMediosPago(true);
+	                  ?>
 	                </select>    
               </div>
             </div>
