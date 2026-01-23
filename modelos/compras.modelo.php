@@ -106,6 +106,58 @@ class ModeloCompras{
 	}
 
 	/*=============================================
+	INGRESAR COMPRA DIRECTA (FACTURA SIN ORDEN)
+	=============================================*/
+	static public function mdlIngresarCompraDirecta($tabla, $datos){
+		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(codigo, id_proveedor, usuarioPedido, usuarioConfirma, fechaEntrega, fechaPago, productos, estado, fecha, total, tipo, remitoNumero, numeroFactura, fechaEmision, descuento, totalNeto, iva, precepcionesIngresosBrutos, precepcionesIva, precepcionesGanancias, impuestoInterno, observacionFactura, fechaIngreso) VALUES (:codigo, :id_proveedor, :usuarioPedido, :usuarioConfirma, :fechaEntrega, :fechaPago, :productos, :estado, :fecha, :total, :tipo, :remitoNumero, :numeroFactura, :fechaEmision, :descuento, :totalNeto, :iva, :precepcionesIngresosBrutos, :precepcionesIva, :precepcionesGanancias, :impuestoInterno, :observacionFactura, :fechaIngreso)");
+
+		$stmt->bindParam(":fecha", $datos["fecha"], PDO::PARAM_STR);
+		$stmt->bindParam(":usuarioPedido", $datos["usuarioPedido"], PDO::PARAM_STR);
+		$stmt->bindParam(":usuarioConfirma", $datos["usuarioConfirma"], PDO::PARAM_STR);
+		$stmt->bindParam(":codigo", $datos["codigo"], PDO::PARAM_INT);
+		$stmt->bindParam(":id_proveedor", $datos["id_proveedor"], PDO::PARAM_INT);
+		$stmt->bindParam(":fechaEntrega", $datos["fechaEntrega"], PDO::PARAM_STR);
+		$stmt->bindParam(":fechaPago", $datos["fechaPago"], PDO::PARAM_STR);
+		$stmt->bindParam(":productos", $datos["productos"], PDO::PARAM_STR);
+		$stmt->bindParam(":total", $datos["total"], PDO::PARAM_STR);
+		$stmt->bindParam(":estado", $datos["estado"], PDO::PARAM_STR);
+		$stmt->bindParam(":tipo", $datos["tipo"], PDO::PARAM_STR);
+		$stmt->bindParam(":remitoNumero", $datos["remitoNumero"], PDO::PARAM_STR);
+		$stmt->bindParam(":numeroFactura", $datos["numeroFactura"], PDO::PARAM_STR);
+		$stmt->bindParam(":fechaEmision", $datos["fechaEmision"], PDO::PARAM_STR);
+		$stmt->bindParam(":descuento", $datos["descuento"], PDO::PARAM_STR);
+		$stmt->bindParam(":totalNeto", $datos["totalNeto"], PDO::PARAM_STR);
+		$stmt->bindParam(":iva", $datos["iva"], PDO::PARAM_STR);
+		$stmt->bindParam(":precepcionesIngresosBrutos", $datos["precepcionesIngresosBrutos"], PDO::PARAM_STR);
+		$stmt->bindParam(":precepcionesIva", $datos["precepcionesIva"], PDO::PARAM_STR);
+		$stmt->bindParam(":precepcionesGanancias", $datos["precepcionesGanancias"], PDO::PARAM_STR);
+		$stmt->bindParam(":impuestoInterno", $datos["impuestoInterno"], PDO::PARAM_STR);
+		$stmt->bindParam(":observacionFactura", $datos["observacionFactura"], PDO::PARAM_STR);
+		$stmt->bindParam(":fechaIngreso", $datos["fechaIngreso"], PDO::PARAM_STR);
+		
+		if($stmt->execute()){
+			return "ok";
+		}else{
+			return $stmt -> errorInfo();
+		}
+
+		$stmt->close();
+		$stmt = null;
+	}
+
+	/*=============================================
+	OBTENER ÚLTIMA COMPRA CREADA
+	=============================================*/
+	static public function mdlObtenerUltimaCompra(){
+		$stmt = Conexion::conectar()->prepare("SELECT id FROM compras ORDER BY id DESC LIMIT 1");
+		$stmt -> execute();
+		$resultado = $stmt -> fetch();
+		$stmt -> close();
+		$stmt = null;
+		return $resultado ? $resultado["id"] : null;
+	}
+
+	/*=============================================
 	EDITAR INGRESO
 	=============================================*/
 
