@@ -406,10 +406,7 @@ $bloqueCabecera = <<<EOF
                 <h2>$respEmpresa[razon_social]</h2>
             </td>
             <td style="width:40px; text-align:center">
-                <div>
-                    <span style="font-size:28.5px;">$tipoVtaLetra</span>
-                    <span style="font-size:10px;">$tipoCodigo</span>
-                </div>
+                <div><span style="font-size:28.5px;">$tipoVtaLetra</span><span style="font-size:10px;">$tipoCodigo</span></div>
             </td>
             <td style="width:260px; text-align: center;"> 
                 $tipoVta
