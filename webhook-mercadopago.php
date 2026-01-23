@@ -401,7 +401,7 @@ log_event('INFO', 'Evento parseado', [
 
 if (!$dataId || !$normalizedTopic) {
     log_event('WARNING', 'Datos insuficientes', ['request_id' => $requestId]);
-    exit;
+    exit(0);
 }
 
 // Validacion de firma (permisiva)
@@ -507,7 +507,7 @@ try {
             if ($webhookId && class_exists('ModeloMercadoPago')) {
                 ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
             }
-            return;
+            exit(0);
         }
 
         foreach ($payments as $p) {
@@ -539,7 +539,7 @@ try {
         if ($webhookId && class_exists('ModeloMercadoPago')) {
             ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
         }
-        return;
+        exit(0);
     }
 
     log_event('INFO', 'Payment obtenido', [
@@ -568,11 +568,12 @@ try {
         if ($webhookId && class_exists('ModeloMercadoPago')) {
             ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
         }
-        return;
+        exit(0);
     }
 
     // Buscar cliente
     $idCliente = find_client_id($payment, $payload, $order);
+    log_event('INFO', 'Cliente identificado', ['request_id' => $requestId, 'id_cliente' => $idCliente]);
 
     // Procesar BD si existe
     if (!class_exists('Conexion')) {
@@ -580,7 +581,7 @@ try {
         if ($webhookId && class_exists('ModeloMercadoPago')) {
             ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
         }
-        return;
+        exit(0);
     }
 
     $pdo = Conexion::conectarMoon();
@@ -589,7 +590,7 @@ try {
         if ($webhookId && class_exists('ModeloMercadoPago')) {
             ModeloMercadoPago::mdlMarcarWebhookProcesado($webhookId);
         }
-        return;
+        exit(0);
     }
 
     $pdo->beginTransaction();
@@ -645,9 +646,22 @@ try {
         }
 
         $pdo->commit();
+        log_event('SUCCESS', 'Pago procesado exitosamente', [
+            'request_id' => $requestId,
+            'payment_id' => $payment['id'] ?? null,
+            'id_cliente' => $idCliente,
+            'monto' => $datosPago['monto'] ?? 0
+        ]);
     } catch (Exception $e) {
-        $pdo->rollBack();
-        log_event('ERROR', 'Error procesando BD', ['request_id' => $requestId, 'error' => $e->getMessage()]);
+        if (isset($pdo) && $pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        log_event('ERROR', 'Error procesando BD', [
+            'request_id' => $requestId, 
+            'error' => $e->getMessage(),
+            'payment_id' => $payment['id'] ?? null,
+            'trace' => $e->getTraceAsString()
+        ]);
     }
 } finally {
     if ($lockFp) {
