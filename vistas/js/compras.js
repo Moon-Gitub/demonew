@@ -353,9 +353,6 @@ $('.inputFechaCompra').datepicker({
     	if($(this).attr('id') == 'fechaEmisionDirecta'){
     		$("#fechaEmisionHiddenDirecta").val(selectedDate);
     	}
-    		$("#fechaPagoHidden").val(selectedDate);
-    	} 
-        
         //alert(selectedDate)
     }
 });
@@ -922,60 +919,7 @@ function calcularTotalFacturaDirecta(){
 	$("#totalCompraFacturaDirecta").val(totalFinal);
 }
 
-// Listener para descuento en factura directa
-$("#descuentoCompraOrdenDirecta").on("keyup", function(){
-	var total = parseFloat($("#totalCompra").val() || 0);
-	var descuento = parseFloat($(this).val() || 0);
-	var totalConDescuento = total - descuento;
-	
-	$("#totalTotalCompraOrdenDirecta").val(redondear(totalConDescuento,2));
-	$("#nuevoTotalCompraDirecta").val(redondear(totalConDescuento,2));
-	$("#totalCompraDirecta").val(totalConDescuento);
-	
-	calcularTotalFacturaDirecta();
-});
-
-// Listeners para campos impositivos en factura directa
-$("#totalIVADirecta").on("keyup", function(){
-	calcularTotalFacturaDirecta();
-});
-
-$("#precepcionesIngresosBrutosDirecta").on("keyup", function(){
-	calcularTotalFacturaDirecta();
-});
-
-$("#precepcionesIvaDirecta").on("keyup", function(){
-	calcularTotalFacturaDirecta();
-});
-
-$("#precepcionesGananciasDirecta").on("keyup", function(){
-	calcularTotalFacturaDirecta();
-});
-
-$("#impuestoInternoDirecta").on("keyup", function(){
-	calcularTotalFacturaDirecta();
-});
-
-/*=============================================
-FUNCIONES PARA FACTURA DIRECTA (crear-compra.php)
-=============================================*/
-
-// Calcular total factura directa con impuestos
-function calcularTotalFacturaDirecta(){
-	var totalNeto = parseFloat($("#nuevoTotalCompraDirecta").val() || 0);
-	var iva = parseFloat($("#totalIVADirecta").val() || 0);
-	var ingresosBrutos = parseFloat($("#precepcionesIngresosBrutosDirecta").val() || 0);
-	var precepcionesIva = parseFloat($("#precepcionesIvaDirecta").val() || 0);
-	var precepcionesGanancias = parseFloat($("#precepcionesGananciasDirecta").val() || 0);
-	var impuestoInterno = parseFloat($("#impuestoInternoDirecta").val() || 0);
-	
-	var totalFinal = totalNeto + iva + ingresosBrutos + precepcionesIva + precepcionesGanancias + impuestoInterno;
-	
-	$("#nuevoTotalFacturaDirecta").val(redondear(totalFinal,2));
-	$("#totalCompraFacturaDirecta").val(totalFinal);
-}
-
-// Listener para descuento en factura directa
+// Listener para descuento en factura directa (usando delegación de eventos para elementos dinámicos)
 $(document).on("keyup", "#descuentoCompraOrdenDirecta", function(){
 	var total = parseFloat($("#totalCompra").val() || 0);
 	var descuento = parseFloat($(this).val() || 0);
@@ -988,7 +932,7 @@ $(document).on("keyup", "#descuentoCompraOrdenDirecta", function(){
 	calcularTotalFacturaDirecta();
 });
 
-// Listeners para campos impositivos en factura directa
+// Listeners para campos impositivos en factura directa (usando delegación de eventos)
 $(document).on("keyup", "#totalIVADirecta", function(){
 	calcularTotalFacturaDirecta();
 });

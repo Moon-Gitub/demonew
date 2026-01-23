@@ -189,14 +189,16 @@ class ControladorCompras{
 			    $valor = $value["id"];
 			    
 			    // Si el ID es 0, es un producto servicio virtual (no existe en BD)
+			    // Este es el caso de facturas de servicios como EDEMSA
 			    if($valor == 0 || $valor == "0"){
 			    	// Es un servicio virtual, no actualizar precios ni stock
+			    	// Solo se registra en la compra para mantener consistencia
 			    	continue;
 			    }
 			    
 			    $traerProducto = ModeloProductos::mdlMostrarProductos($tablaProductos, $item, $valor, $orden);
 			    
-			    // Si el producto no existe, es un servicio virtual
+			    // Si el producto no existe en BD, es un servicio virtual
 			    if(!$traerProducto){
 			    	continue;
 			    }
@@ -209,7 +211,7 @@ class ControladorCompras{
 				$respAct = ModeloProductos::mdlActualizarProductoCompraIngreso($precioCompra, $ganancia, $precioVenta, $valor, 'Factura directa ('.$codigo.')');
 				
 				// Actualizar stock SOLO si NO es servicio
-				// Un producto es servicio si su descripción contiene "SERVICIO" o si tiene un ID especial
+				// Un producto es servicio si su descripción contiene palabras clave de servicio
 				$esServicio = false;
 				if(isset($value["descripcion"]) && stripos($value["descripcion"], "SERVICIO") !== false){
 					$esServicio = true;
@@ -219,12 +221,15 @@ class ControladorCompras{
 				   isset($traerProducto["descripcion"]) && (stripos($traerProducto["descripcion"], "SERVICIO") !== false || 
 				   stripos($traerProducto["descripcion"], "EDEMSA") !== false || 
 				   stripos($traerProducto["descripcion"], "LUZ") !== false ||
-				   stripos($traerProducto["descripcion"], "AGUA") !== false)){
+				   stripos($traerProducto["descripcion"], "AGUA") !== false ||
+				   stripos($traerProducto["descripcion"], "GAS") !== false ||
+				   stripos($traerProducto["descripcion"], "INTERNET") !== false ||
+				   stripos($traerProducto["descripcion"], "TELEFONIA") !== false)){
 					$esServicio = true;
 				}
 				
 				// Si NO es servicio, actualizar stock
-				// En factura directa, usar "pedidos" o "cantidad" como cantidad recibida
+				// En factura directa, usar "recibidos", "pedidos" o "cantidad" como cantidad recibida
 				$cantidadRecibida = isset($value["recibidos"]) ? floatval($value["recibidos"]) : 
 				                   (isset($value["pedidos"]) ? floatval($value["pedidos"]) : 
 				                   (isset($value["cantidad"]) ? floatval($value["cantidad"]) : 0));
@@ -274,20 +279,25 @@ class ControladorCompras{
 				// Obtener el ID de la compra recién creada
 				$idCompra = ModeloCompras::mdlObtenerUltimaCompra();
 				
-				// Registrar en cuenta corriente del proveedor
+				// Verificar que no exista ya un registro en cuenta corriente para esta compra
+				// (prevenir duplicados si se procesa dos veces)
 				$tablaCtaCte = "proveedores_cuenta_corriente";
-				$datos_vta = array(
-					'fecha_movimiento' => $fecha,
-					'id_proveedor' => $_POST["seleccionarProveedor"],
-					'tipo' => 1, // Tipo 1 = compra
-					'descripcion'=>"Compra Nro. Int. " . $idCompra,
-					'id_compra' => $idCompra,
-					'importe' => $_POST["nuevoTotalFactura"] ?? $_POST["totalCompra"],
-					'metodo_pago' => null,
-					'estado' => 0,
-					'id_usuario' => $_SESSION["id"]
-				);
-				$compraInsertada = ModeloProveedoresCtaCte::mdlIngresarCtaCteProveedor($tablaCtaCte, $datos_vta);
+				$existeRegistro = ModeloProveedoresCtaCte::mdlMostrarCtaCteProveedor($tablaCtaCte, "id_compra", $idCompra);
+				
+				if(!$existeRegistro || empty($existeRegistro)){
+					$datos_vta = array(
+						'fecha_movimiento' => $fecha,
+						'id_proveedor' => $_POST["seleccionarProveedor"],
+						'tipo' => 1, // Tipo 1 = compra
+						'descripcion'=>"Compra Nro. Int. " . $idCompra,
+						'id_compra' => $idCompra,
+						'importe' => $_POST["nuevoTotalFactura"] ?? $_POST["totalCompra"],
+						'metodo_pago' => null,
+						'estado' => 0,
+						'id_usuario' => $_SESSION["id"]
+					);
+					$compraInsertada = ModeloProveedoresCtaCte::mdlIngresarCtaCteProveedor($tablaCtaCte, $datos_vta);
+				}
 				
 				echo'<script>
 				localStorage.removeItem("rango");

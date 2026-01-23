@@ -1,128 +1,152 @@
 # Mejoras Implementadas en el Módulo de Compras
 
-## Resumen de Cambios
+## Resumen
 
-Se han implementado mejoras en el módulo de compras manteniendo el flujo actual sin romper el comportamiento existente.
+Se implementaron mejoras en el módulo de compras manteniendo el flujo actual sin romper el comportamiento existente. Las mejoras permiten:
 
-## Funcionalidades Agregadas
+1. **Crear factura directamente sin orden previa** (unificar paso 1+2 opcionalmente)
+2. **Registrar compras de servicios** (ej. EDEMSA) sin productos físicos
+3. **Prevenir duplicados en cuenta corriente** del proveedor
 
-### 1. Factura Directa (Sin Orden Previa)
+## Cambios Realizados
 
-**Objetivo**: Permitir cargar facturas directamente sin crear una orden de compra previa.
+### 1. Vista: `vistas/modulos/crear-compra.php`
 
-**Implementación**:
-- Se agregó un checkbox "Cargar factura directa (sin orden previa)" en `crear-compra.php`
-- Cuando está activo, se muestran campos adicionales para datos impositivos
-- Se creó el método `ctrCrearFacturaDirecta()` en `ControladorCompras`
-- Se agregó el método `mdlIngresarCompraDirecta()` en `ModeloCompras`
-- Las facturas directas se guardan con `estado=1` (ingresada directamente)
+**Cambios:**
+- Se agregó un checkbox "Cargar factura directa (sin orden previa)" que permite alternar entre el flujo tradicional y el flujo directo
+- Se agregaron campos para datos impositivos cuando se selecciona factura directa:
+  - Tipo de comprobante (X, Factura A, B, C)
+  - Fecha de emisión
+  - Punto de venta y número de factura
+  - Remito (para tipo X)
+  - Campos impositivos: IVA, Percepciones (Ingresos Brutos, IVA, Ganancias), Impuesto Interno
+  - Descuento y totales
+  - Observaciones
 
-**Archivos modificados**:
-- `vistas/modulos/crear-compra.php`: Agregados campos para factura directa
-- `controladores/compras.controlador.php`: Método `ctrCrearFacturaDirecta()`
-- `modelos/compras.modelo.php`: Método `mdlIngresarCompraDirecta()` y `mdlObtenerUltimaCompra()`
-- `vistas/js/compras.js`: Funciones JavaScript para calcular totales en factura directa
+**Funcionalidad:**
+- Los campos de factura directa están ocultos por defecto
+- Al marcar el checkbox, se muestran los campos y el botón cambia a "Cargar Factura Directa"
+- Al desmarcar, vuelve al comportamiento normal (crear orden)
 
-### 2. Soporte para Facturas de Servicios
+### 2. Controlador: `controladores/compras.controlador.php`
 
-**Objetivo**: Permitir registrar compras de servicios (ej. EDEMSA) sin productos físicos.
+#### Nuevo método: `ctrCrearFacturaDirecta()`
 
-**Implementación**:
-- Se mejoró la detección de servicios en el procesamiento de productos
-- Si no hay productos pero hay un monto total, se crea un "producto servicio virtual" con ID=0
-- Los productos con ID=0 no se procesan (no actualizan precios ni stock)
-- Se detectan servicios por:
-  - Descripción que contiene "SERVICIO"
-  - Stock = 0 y descripción que contiene "EDEMSA", "LUZ", "AGUA"
-  - ID = 0 (producto servicio virtual)
+**Funcionalidad:**
+- Crea una compra con `estado = 1` (ingresada directamente) en lugar de `estado = 0` (orden)
+- Permite facturas de servicios sin productos físicos:
+  - Si `listaProductosCompras` está vacío pero hay un monto (`nuevoTotalFactura`), crea un producto virtual con ID 0
+  - El producto virtual tiene descripción "SERVICIO - [observación]" y no se actualiza en BD
+- Procesa productos reales:
+  - Actualiza precios de compra/venta
+  - Actualiza stock SOLO si NO es servicio (detecta servicios por palabras clave: SERVICIO, EDEMSA, LUZ, AGUA, GAS, INTERNET, TELEFONIA)
+- Registra en cuenta corriente del proveedor con prevención de duplicados
 
-**Archivos modificados**:
-- `controladores/compras.controlador.php`: Lógica de detección de servicios en `ctrCrearFacturaDirecta()` y `ctrEditarCompra()`
+#### Mejoras en `ctrEditarCompra()`
 
-### 3. Mejoras en JavaScript
+**Cambios:**
+- Mejorada la detección de servicios (mismas palabras clave)
+- Prevención de duplicados en cuenta corriente: verifica si ya existe un registro antes de insertar
 
-**Funcionalidades agregadas**:
-- Función `calcularTotalFacturaDirecta()`: Calcula el total de factura con impuestos
-- Sincronización automática de totales cuando cambian productos en modo factura directa
-- Listeners para campos impositivos (IVA, percepciones, etc.) en factura directa
-- Función `cambioDatosFacturaCompra()` mejorada para funcionar tanto en `editar-ingreso.php` como en `crear-compra.php`
-- Datepicker configurado para `fechaEmisionDirecta`
+### 3. Modelo: `modelos/compras.modelo.php`
 
-**Archivos modificados**:
-- `vistas/js/compras.js`: Funciones para factura directa
+**Métodos existentes utilizados:**
+- `mdlIngresarCompraDirecta()`: Inserta compra con todos los campos impositivos
+- `mdlObtenerUltimaCompra()`: Obtiene el ID de la última compra creada para registrar en cuenta corriente
 
-### 4. Prevención de Duplicados en Cuenta Corriente
+**Nota:** No se requirieron cambios en el modelo, se utilizaron métodos existentes.
 
-**Objetivo**: Evitar que se registren duplicados en cuenta corriente del proveedor.
+### 4. JavaScript: `vistas/js/compras.js`
 
-**Implementación**:
-- Se verifica si ya existe un registro en cuenta corriente antes de insertar
-- Aplica tanto para factura directa como para validación de ingreso
+**Funciones agregadas:**
+- `calcularTotalFacturaDirecta()`: Calcula el total final sumando neto + impuestos
+- Listeners para campos de factura directa:
+  - Descuento
+  - IVA
+  - Percepciones (Ingresos Brutos, IVA, Ganancias)
+  - Impuesto Interno
+- Mejora en `sumarTotalCompras()`: Actualiza también los campos de factura directa si está activa
+- Mejora en `cambioDatosFacturaCompra()`: Funciona tanto para `editar-ingreso.php` como para `crear-compra.php` (factura directa)
 
-**Archivos modificados**:
-- `controladores/compras.controlador.php`: Validación en `ctrCrearFacturaDirecta()` y `ctrEditarCompra()`
+**Correcciones:**
+- Eliminado código duplicado de funciones de factura directa
+- Uso de delegación de eventos (`$(document).on()`) para elementos dinámicos
+
+### 5. Prevención de Duplicados en Cuenta Corriente
+
+**Implementación:**
+- En `ctrCrearFacturaDirecta()`: Verifica si ya existe un registro con `id_compra` antes de insertar
+- En `ctrEditarCompra()`: Misma verificación para evitar duplicados al validar ingreso dos veces
+
+**Método utilizado:**
+- `ModeloProveedoresCtaCte::mdlMostrarCtaCteProveedor($tabla, "id_compra", $idCompra)`
 
 ## Flujos de Trabajo
 
-### Flujo 1: Orden de Compra + Validación (Existente - Sin Cambios)
-1. Crear orden de compra (`ctrCrearCompra()`) → `estado=0`
-2. Validar ingreso (`ctrEditarCompra()`) → `estado=1`, se agregan datos impositivos, se actualiza stock, se registra en cuenta corriente
+### Flujo Tradicional (Sin Cambios)
+1. Usuario crea orden de compra (`estado = 0`)
+2. Usuario valida ingreso agregando datos impositivos (`estado = 1`)
+3. Se actualiza stock y se registra en cuenta corriente
 
-### Flujo 2: Factura Directa (Nuevo)
-1. Marcar checkbox "Cargar factura directa"
-2. Agregar productos (o dejar vacío para servicios)
-3. Seleccionar tipo de comprobante
-4. Completar datos impositivos
-5. Guardar → `ctrCrearFacturaDirecta()` → `estado=1`, se actualiza stock (si no es servicio), se registra en cuenta corriente
+### Flujo Factura Directa (Nuevo)
+1. Usuario marca checkbox "Cargar factura directa"
+2. Usuario completa datos impositivos directamente
+3. Al guardar, se crea compra con `estado = 1` directamente
+4. Se actualiza stock (si aplica) y se registra en cuenta corriente
+
+### Flujo Servicios (Nuevo)
+1. Usuario marca checkbox "Cargar factura directa"
+2. Usuario NO agrega productos (o agrega productos servicio)
+3. Usuario completa monto total y datos impositivos
+4. Sistema crea producto virtual (ID 0) si no hay productos
+5. Se registra compra y cuenta corriente sin actualizar stock
 
 ## Estados de Compra
 
-- `estado=0`: Orden de compra (pendiente de validación)
-- `estado=1`: Compra ingresada/validada (con datos impositivos)
-- `estado=2`: Compra validada (según consultas existentes)
+- `estado = 0`: Orden de compra / Nota de pedido (pendiente de validar)
+- `estado = 1`: Compra ingresada / Validada (con datos impositivos)
+- `estado = 2`: Compra validada (según consultas existentes)
 
-## Campos Agregados a la Tabla `compras`
+## Detección de Servicios
 
-Los siguientes campos ya existían y se utilizan en factura directa:
-- `tipo`: Tipo de comprobante (0=X, 1=Factura A, 6=Factura B, 11=Factura C)
-- `remitoNumero`: Número de remito
-- `numeroFactura`: Número de factura
-- `fechaEmision`: Fecha de emisión
-- `descuento`: Descuento aplicado
-- `totalNeto`: Total neto
-- `iva`: IVA
-- `precepcionesIngresosBrutos`: Percepciones de ingresos brutos
-- `precepcionesIva`: Percepciones de IVA
-- `precepcionesGanancias`: Percepciones de ganancias
-- `impuestoInterno`: Impuesto interno
-- `observacionFactura`: Observaciones
-- `fechaIngreso`: Fecha de ingreso
+Un producto se considera servicio si:
+1. Su ID es 0 (producto virtual)
+2. Su descripción contiene: "SERVICIO", "EDEMSA", "LUZ", "AGUA", "GAS", "INTERNET", "TELEFONIA"
+3. Tiene stock = 0 Y descripción que sugiere servicio
 
-## Validaciones de Seguridad
+Los servicios NO actualizan stock al procesarse.
 
-- Validación de token CSRF en ambos métodos
-- Validación de existencia de productos o monto (para servicios)
+## Seguridad
+
+- Validación CSRF en ambos métodos (`ctrCrearCompra` y `ctrCrearFacturaDirecta`)
+- Validación de datos antes de procesar
 - Prevención de duplicados en cuenta corriente
 
 ## Compatibilidad
 
-✅ **No se rompe el flujo existente**: El flujo de orden + validación funciona exactamente igual que antes.
-
-✅ **Compatibilidad con estructura existente**: Se utilizan los mismos campos y tablas.
-
-✅ **Consistencia de datos**: La cuenta corriente se actualiza correctamente en ambos flujos.
-
-## Pruebas Recomendadas
-
-1. **Flujo estándar**: Crear orden → Validar ingreso → Verificar cuenta corriente
-2. **Factura directa con productos**: Marcar checkbox → Agregar productos → Completar datos impositivos → Guardar
-3. **Factura directa de servicio**: Marcar checkbox → No agregar productos → Ingresar monto → Completar datos impositivos → Guardar
-4. **Verificar cuenta corriente**: Confirmar que no se duplican registros
-5. **Verificar stock**: Confirmar que servicios no actualizan stock
+- ✅ El flujo tradicional sigue funcionando igual
+- ✅ No se rompe ninguna funcionalidad existente
+- ✅ Los reportes y consultas existentes siguen funcionando
+- ✅ La estructura de la tabla `compras` no cambió (se usan campos existentes)
 
 ## Notas Técnicas
 
-- Los productos servicio virtuales (ID=0) no se procesan en la base de datos
-- La detección de servicios es heurística (basada en descripción y stock)
-- Los totales se calculan automáticamente en JavaScript antes del envío
-- La fecha de emisión usa el mismo datepicker que las demás fechas
+### Producto Virtual (ID 0)
+- Se crea solo cuando `listaProductosCompras` está vacío pero hay monto
+- No se guarda en la tabla `productos`
+- Se guarda en el JSON de `productos` de la compra para mantener consistencia
+- Permite registrar facturas de servicios sin necesidad de crear productos en el catálogo
+
+### Cuenta Corriente
+- Tipo 1 = Compra (aumenta saldo a pagar)
+- Tipo 0 = Pago (disminuye saldo a pagar)
+- Se previene duplicados verificando `id_compra` antes de insertar
+
+## Pruebas Recomendadas
+
+1. ✅ Crear orden tradicional y validar ingreso (flujo existente)
+2. ✅ Crear factura directa con productos físicos
+3. ✅ Crear factura directa de servicio (EDEMSA) sin productos
+4. ✅ Verificar que no se dupliquen registros en cuenta corriente
+5. ✅ Verificar que servicios no actualicen stock
+6. ✅ Verificar cálculos de totales con impuestos
