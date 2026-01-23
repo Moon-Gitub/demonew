@@ -8,7 +8,7 @@ RewriteRule ^comprobante/([0-9]+)$ extensiones/vendor/tecnickcom/tcpdf/pdf/compr
 
 RewriteRule ^recibo/([0-9]+)$ extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php?idRegistro=$1 [L]
 
-RewriteRule ^compra/([0-9]+)$ extensiones/vendor/tecnickcom/tcpdf/pdf/compra.php?codigo==$1 [L]
+RewriteRule ^compra/([0-9]+)$ extensiones/vendor/tecnickcom/tcpdf/pdf/compra.php?id=$1 [L]
 
 # php -- BEGIN cPanel-generated handler, do not edit
 # Set the “ea-php81” package as the default “PHP” programming language.

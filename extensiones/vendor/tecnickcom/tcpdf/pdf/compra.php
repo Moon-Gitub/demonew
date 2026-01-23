@@ -6,6 +6,8 @@ require_once "../../../../../controladores/productos.controlador.php";
 require_once "../../../../../modelos/productos.modelo.php";
 require_once "../../../../../controladores/empresa.controlador.php";
 require_once "../../../../../modelos/empresa.modelo.php";
+require_once "../../../../../controladores/proveedores.controlador.php";
+require_once "../../../../../modelos/proveedores.modelo.php";
 
 require_once '../../../autoload.php';
 
@@ -18,9 +20,23 @@ public function traerImpresionFactura(){
 //DATOS EMPRESA
 $respEmpresa = ControladorEmpresa::ctrMostrarEmpresa('id', 1);
 
-//TRAEMOS LA INFORMACIÓN DE LA VENTA
+//TRAEMOS LA INFORMACIÓN DE LA COMPRA
+// Acepta tanto 'id' como 'codigo' para compatibilidad
+$idCompra = isset($_GET['id']) ? $_GET['id'] : (isset($_GET['codigo']) ? $_GET['codigo'] : null);
+if(!$idCompra){
+	die("Error: No se proporcionó ID de compra");
+}
 $itemPedido = "id";
-$respuestaCompra = ControladorCompras::ctrMostrarCompras($itemPedido, $_GET['codigo']);
+$respuestaCompra = ControladorCompras::ctrMostrarCompras($itemPedido, $idCompra);
+
+// Verificar que la compra existe
+if(!$respuestaCompra){
+	die("Error: No se encontró la compra con ID: " . $idCompra);
+}
+
+//TRAEMOS LA INFORMACIÓN DEL PROVEEDOR
+$itemProveedor = "id";
+$proveedor = ControladorProveedores::ctrMostrarProveedores($itemProveedor, $respuestaCompra["id_proveedor"]);
 
 $fecha = substr($respuestaCompra["fecha"],0,-8);
 $fecha=date("d-m-Y",strtotime($fecha));
@@ -425,7 +441,7 @@ $pdf->Output('factura.pdf');
 }
 
 $factura = new imprimirFactura();
-$factura -> codigo = $_GET["codigo"];
+$factura -> codigo = isset($_GET['id']) ? $_GET['id'] : (isset($_GET['codigo']) ? $_GET['codigo'] : null);
 $factura -> traerImpresionFactura();
 
 ?>
