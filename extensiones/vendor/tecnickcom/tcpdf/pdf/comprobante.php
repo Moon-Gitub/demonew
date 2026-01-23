@@ -643,7 +643,7 @@ $pdf->SetY($ubicacionFooter);
 $ivas = json_decode($respuestaVenta["impuesto_detalle"], true);
 $ivasDiscriminadosNombre = "";
 $ivasDiscriminadosValor = "";
-$ivasAcumuladosB = 0;
+$ivasAcumuladosB = "";
 foreach ($ivas as $key => $value) {
     $ivasDiscriminadosNombre .= $value["descripcion"] . ': $<br>';
     $ivasDiscriminadosValor .= '<b>' . number_format($value["iva"],2, ',', '.') . '</b><br>';
@@ -956,7 +956,7 @@ $pdf->SetY($ubicacionFooter);
 $ivas = json_decode($respuestaVenta["impuesto_detalle"], true);
 $ivasDiscriminadosNombre = "";
 $ivasDiscriminadosValor = "";
-$ivasAcumuladosB = 0;
+$ivasAcumuladosB = "";
 foreach ($ivas as $key => $value) {
     $ivasDiscriminadosNombre .= $value["descripcion"] . ': $<br>';
     $ivasDiscriminadosValor .= '<b>' . number_format($value["iva"],2, ',', '.') . '</b><br>';
