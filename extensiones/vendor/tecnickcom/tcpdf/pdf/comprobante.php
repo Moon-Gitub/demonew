@@ -360,7 +360,7 @@ $ultimoProducto = count($productos);
 $tieneServicio = '';
 if($respuestaVenta["concepto"] != 1){
 $tieneServicio = <<<EOF
-            <table border="1" style="padding-left: 5px">
+  <table border="1" style="padding: 5px" >
         <tr>
             <td style="width:186px; font-size:8px; text-align: left;">
                 <br>
@@ -397,9 +397,12 @@ $bloqueCabeceraOriginal = <<<EOF
             <td style="width:560px; text-align: center;"> ORIGINAL</td>
         </tr>
     </table>
+EOF;
+
+$bloqueCabecera = <<<EOF
     <table border="0" >
         <tr style="padding: 0px;">
-            <td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> 
+            <td style="width:260px; text-align: center; "> 
                 <h2>$respEmpresa[razon_social]</h2>
             </td>
             <td style="width:40px; text-align:center">
@@ -408,15 +411,14 @@ $bloqueCabeceraOriginal = <<<EOF
                     <span style="font-size:10px;">$tipoCodigo</span>
                 </div>
             </td>
-            <td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> 
+            <td style="width:260px; text-align: center;"> 
                 $tipoVta
             </td>
         </tr>
     </table>
-    <table border="0" style="padding: 10px">
+    <table border="0" style="padding: 5px">
         <tr>
             <td style="width:280px; font-size:10px; text-align: left;">
-                <br>
                 <span><b>Razón social:</b> $respEmpresa[titular]</span> <br>
                 <span><b>Dirección:</b> $respEmpresa[domicilio]</span> <br>
                 <span><b>Localidad:</b> $respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</span><br>
@@ -424,13 +426,11 @@ $bloqueCabeceraOriginal = <<<EOF
                 <span><b>Defensa al Consumidor Mza. 08002226678</b></span> 
             </td>
             <td style="width:280px; font-size:10px; text-align: left">
-                <div style="padding-top:5px">
-                    <span><b>N° Cbte:</b> $ptoVta - $numCte</span> <br>
-                    <span><b>Fecha Emisión:</b> $fecEmi </span><br>
-                    <span><b>CUIT:</b> $respEmpresa[cuit] </span><br>
-                    <span><b>II.BB.:</b> $respEmpresa[numero_iibb] </span><br>
-                    <span><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades] </span>
-                </div>
+                <span><b>N° Cbte:</b> $ptoVta - $numCte</span> <br>
+                <span><b>Fecha Emisión:</b> $fecEmi </span><br>
+                <span><b>CUIT:</b> $respEmpresa[cuit] </span><br>
+                <span><b>II.BB.:</b> $respEmpresa[numero_iibb] </span><br>
+                <span><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades] </span>
             </td>
         </tr>
     </table>
@@ -637,6 +637,7 @@ $subTotalPorPagina = 0;
 //INCLUYO CABECERA
 $pdf->SetY($ubicacionCabecera);
 $pdf->writeHTML($bloqueCabeceraOriginal, false, false, false, false, '');
+$pdf->writeHTML($bloqueCabecera, false, false, false, false, '');
 
 //$pdf->SetFont('helvetica', '', 8);
 //$pdf->Text(50, 273, 'Pagina 1/2');
@@ -663,31 +664,18 @@ $style = array(
 );
 $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
 $pdf->SetY($ubicacionFooter);
-
 $bloqueDatosFact = <<<EOF
     <table>
         <tr>
-            <td style="width:80px;">
+            <td style="width:80px; border-color: #000;">
                  <!--ACA VA CODIGO QR -->
             </td>
-            <td style="width:300px; font-size:8px; text-align: left;  border-color: #000; padding-bottom:0px ">
-                <div style="color: #242C4F; font-size:12;">
-                    <b>ARCA</b> - Comprobante autorizado
-                </div> <br>
-                <b>CAE: </b> $cae - <b>Vto. CAE: </b> $vtoCae <br><br>
-                <span style="font-size: 6.5px; font-style:italic">Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación</span><br>
-
-                <span style="font-size: 10px; font-style:italic; text-align:right">PAGINA $numPaginaActual</span>
+            <td style="width:300px; text-align: left;  border-color: #000; padding-bottom:0px "><span style="color: #242C4F; font-size:10;"><b>ARCA</b> - Comprobante autorizado</span><br><span style="font-size:9;"><b>CAE: </b> $cae - <b>Vto. CAE: </b> $vtoCae <br></span><br><span style="font-size: 6.5px; font-style:italic">Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación</span><br><span style="font-size: 10px; font-style:italic; text-align:right">PAGINA $numPaginaActual</span>
             </td>
             <td style="width:90px; font-size:8px; text-align: rigth; border-color: #000;  background-color: #f4f4f4;">
                 SUBTOTAL: $<br>
                 DESCUENTO: $<br>
                 NETO GRAVADO: $<br>
-                <!--IVA 21: $<br>
-                IVA 21: $<br>
-                IVA 21: $<br>
-                IVA 21: $<br>
-                IVA 21: $<br> -->
                 $ivasDiscriminadosNombre
                 TOTAL: $<br>
             </td>
@@ -695,11 +683,6 @@ $bloqueDatosFact = <<<EOF
                 <b>$subTotal</b><br>
                 <b>$descuentos</b><br>
                 <b>$neto_grav</b><br>
-                <!--<b>2.5</b><br>
-                <b>5</b><br>
-                <b>10.5</b><br>
-                <b>21</b><br>
-                <b>27</b><br>-->
                 $ivasDiscriminadosValor
                 <b>$total</b><br>
             </td>
@@ -719,24 +702,17 @@ $style = array(
 );
 $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
 $pdf->SetY($ubicacionFooter);
-$cbteBoCAutorizado = '<div style="color: #242C4F; font-size:12;">
-                        <b>ARCA</b> - Comprobante Autorizado
-                     </div> <br>
-                    <b>CAE: </b> ' . $cae . ' - <b>Vto. CAE: </b> ' . $vtoCae . ' <br><br>
-                    <span style="font-size: 6.5px; font-style:italic">Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación</span>';
-
+$cbteBoCAutorizado = '<span style="color: #242C4F; font-size:10;"><b>ARCA</b> - Comprobante autorizado</span><br><span style="font-size:9;"><b>CAE: </b>' . $cae . ' - <b>Vto. CAE: </b>' . $vtoCae . '</span><br><span style="font-size: 6.5px; font-style:italic">Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación</span>';
 $leyendaArcaB = ($respuestaVenta["cbte_tipo"] == 6 || $respuestaVenta["cbte_tipo"] == 7 || $respuestaVenta["cbte_tipo"] == 8 || $respuestaVenta["cbte_tipo"] == 9) ? "IVA contenido (Ley 27.743) $<br><br>" : "";
 $ivasAcumuladosB = ($respuestaVenta["cbte_tipo"] == 6 || $respuestaVenta["cbte_tipo"] == 7 || $respuestaVenta["cbte_tipo"] == 8 || $respuestaVenta["cbte_tipo"] == 9) ? "<b>" . $respuestaVenta["impuesto"] . "</b><br><br>" : "";
 }
 $bloqueDatosFact = <<<EOF
     <table>
-        <tr>
+        <tr >
             <td style="width:80px;border-color: #000;">
                  <!--ACA VA CODIGO QR -->
             </td>
-            <td style="width:300px; font-size:8px; text-align: left;  border-color: #000; padding-bottom:0px ">
-                $cbteBoCAutorizado <br>
-                <span style="font-size: 10px; font-style:italic; text-align:right">PAGINA $numPaginaActual</span>
+            <td style="width:300px; border-color: #000;">$cbteBoCAutorizado <br><span style="font-size: 10px; font-style:italic; text-align:right">PAGINA $numPaginaActual</span>
             </td>
             <td style="width:110px; font-size:8px; text-align: rigth; border-color: #000;  background-color: #f4f4f4;">
                 $leyendaArcaB
@@ -784,58 +760,6 @@ $bloqueCabeceraDuplicado = <<<EOF
     <table border="1">
         <tr>
             <td style="width:560px; text-align: center;"> DUPLICADO</td>
-        </tr>
-    </table>
-    <table border="0" >
-        <tr style="padding: 0px;">
-            <td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> 
-                <h2>$respEmpresa[razon_social]</h2>
-            </td>
-            <td style="width:40px; text-align:center">
-                <div>
-                    <span style="font-size:28.5px;">$tipoVtaLetra</span>
-                    <span style="font-size:10px;">$tipoCodigo</span>
-                </div>
-            </td>
-            <td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> 
-                $tipoVta
-            </td>
-        </tr>
-    </table>
-    <table border="0" style="padding: 10px">
-        <tr>
-        <td style="width:280px; font-size:10px; text-align: left;">
-                <br>
-                <span><b>Razón social:</b> $respEmpresa[titular]</span> <br>
-                <span><b>Dirección:</b> $respEmpresa[domicilio]</span> <br>
-                <span><b>Localidad:</b> $respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</span><br>
-                <span><b>Cond. I.V.A.:</b> $tipoIva </span><br>
-                <span><b>Defensa al Consumidor Mza. 08002226678</b></span> 
-            </td>
-            <td style="width:280px; font-size:10px; text-align: left">
-                <div style="padding-top:5px">
-                    <span><b>N° Cbte:</b> $ptoVta - $numCte</span> <br>
-                    <span><b>Fecha Emisión:</b> $fecEmi </span><br>
-                    <span><b>CUIT:</b> $respEmpresa[cuit] </span><br>
-                    <span><b>II.BB.:</b> $respEmpresa[numero_iibb] </span><br>
-                    <span><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades] </span>
-                </div>
-            </td>
-        </tr>
-    </table>
-
-    $tieneServicio
-
-    <table border="1" style="padding: 5px">
-        <tr>
-            <td style="width:560px; font-size:8px; text-align: left;">
-                <br>
-                <span><b>Tipo Doc.: $tipoDocumento :</b> $respuestaCliente[documento] </span> - <span> <b>Nombre / Razón Social :</b> $respuestaCliente[nombre] </span> 
-                <br>
-                <span><b>Domicilio: </b> $respuestaCliente[direccion] </span> - <span> <b>Condición I.V.A.:</b> $tipoIvaCliente </span>
-                <br> 
-                <span><b>Condición de Venta: </b> $condicionVenta </span> 
-            </td>
         </tr>
     </table>
 EOF;
@@ -1026,6 +950,7 @@ $subTotalPorPagina = 0;
 //INCLUYO CABECERA
 $pdf->SetY($ubicacionCabecera);
 $pdf->writeHTML($bloqueCabeceraDuplicado, false, false, false, false, '');
+$pdf->writeHTML($bloqueCabecera, false, false, false, false, '');
 
 //$pdf->SetFont('helvetica', '', 8);
 //$pdf->Text(50, 273, 'Pagina 1/2');
@@ -1054,27 +979,15 @@ $pdf->SetY($ubicacionFooter);
 $bloqueDatosFact = <<<EOF
     <table>
         <tr>
-            <td style="width:80px;">
+            <td style="width:80px; border-color: #000;">
                  <!--ACA VA CODIGO QR -->
             </td>
-            <td style="width:300px; font-size:8px; text-align: left;  border-color: #000; padding-bottom:0px ">
-                <div style="color: #242C4F; font-size:12;">
-                    <b>ARCA</b> - Comprobante autorizado
-                </div> <br>
-                <b>CAE: </b> $cae - <b>Vto. CAE: </b> $vtoCae <br><br>
-                <span style="font-size: 6.5px; font-style:italic">Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación</span><br>
-
-                <span style="font-size: 10px; font-style:italic; text-align:right">PAGINA $numPaginaActual</span>
+            <td style="width:300px; text-align: left;  border-color: #000; padding-bottom:0px "><span style="color: #242C4F; font-size:10;"><b>ARCA</b> - Comprobante autorizado</span><br><span style="font-size:9;"><b>CAE: </b> $cae - <b>Vto. CAE: </b> $vtoCae <br></span><br><span style="font-size: 6.5px; font-style:italic">Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación</span><br><span style="font-size: 10px; font-style:italic; text-align:right">PAGINA $numPaginaActual</span>
             </td>
             <td style="width:90px; font-size:8px; text-align: rigth; border-color: #000;  background-color: #f4f4f4;">
                 SUBTOTAL: $<br>
                 DESCUENTO: $<br>
                 NETO GRAVADO: $<br>
-                <!--IVA 21: $<br>
-                IVA 21: $<br>
-                IVA 21: $<br>
-                IVA 21: $<br>
-                IVA 21: $<br> -->
                 $ivasDiscriminadosNombre
                 TOTAL: $<br>
             </td>
@@ -1082,11 +995,6 @@ $bloqueDatosFact = <<<EOF
                 <b>$subTotal</b><br>
                 <b>$descuentos</b><br>
                 <b>$neto_grav</b><br>
-                <!--<b>2.5</b><br>
-                <b>5</b><br>
-                <b>10.5</b><br>
-                <b>21</b><br>
-                <b>27</b><br>-->
                 $ivasDiscriminadosValor
                 <b>$total</b><br>
             </td>
@@ -1106,23 +1014,17 @@ $style = array(
 );
 $pdf->write2DBarcode($jsonQRBase64, 'QRCODE,L', '', '', 25, 25, $style, 'N');
 $pdf->SetY($ubicacionFooter);
-$cbteBoCAutorizado = '<div style="color: #242C4F; font-size:12;">
-                        <b>ARCA</b> - Comprobante autorizado
-                     </div> <br>
-                    <b>CAE: </b> ' . $cae . ' - <b>Vto. CAE: </b> ' . $vtoCae . ' <br><br>
-                    <span style="font-size: 6.5px; font-style:italic">Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación</span>';
+$cbteBoCAutorizado = '<span style="color: #242C4F; font-size:10;"><b>ARCA</b> - Comprobante autorizado</span><br><span style="font-size:9;"><b>CAE: </b>' . $cae . ' - <b>Vto. CAE: </b>' . $vtoCae . '</span><br><span style="font-size: 6.5px; font-style:italic">Esta Administración Federal no se responsabiliza por los datos ingresados en el detalle de la operación</span>';
 $leyendaArcaB = ($respuestaVenta["cbte_tipo"] == 6 || $respuestaVenta["cbte_tipo"] == 7 || $respuestaVenta["cbte_tipo"] == 8 || $respuestaVenta["cbte_tipo"] == 9) ? "IVA contenido (Ley 27.743) $<br><br>" : "";
 $ivasAcumuladosB = ($respuestaVenta["cbte_tipo"] == 6 || $respuestaVenta["cbte_tipo"] == 7 || $respuestaVenta["cbte_tipo"] == 8 || $respuestaVenta["cbte_tipo"] == 9) ? "<b>" . $respuestaVenta["impuesto"] . "</b><br><br>" : "";
 }
 $bloqueDatosFact = <<<EOF
     <table>
-        <tr>
-            <td style="width:80px;border-color: #000;">
+        <tr >
+            <td style="width:80px; border-color: #000;">
                  <!--ACA VA CODIGO QR -->
             </td>
-            <td style="width:300px; font-size:8px; text-align: left;  border-color: #000; padding-bottom:0px ">
-                $cbteBoCAutorizado <br>
-                <span style="font-size: 10px; font-style:italic; text-align:right">PAGINA $numPaginaActual</span>
+            <td style="width:300px; border-color: #000;">$cbteBoCAutorizado <br><span style="font-size: 10px; font-style:italic; text-align:right">PAGINA $numPaginaActual</span>
             </td>
             <td style="width:110px; font-size:8px; text-align: rigth; border-color: #000;  background-color: #f4f4f4;">
                 $leyendaArcaB
