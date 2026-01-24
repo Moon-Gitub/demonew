@@ -216,12 +216,17 @@ if($_SESSION["perfil"] == "Especial"){
                                 
                                 <!-- Totales e impuestos -->
                                 <div class="row">
-                                    <div class="col-lg-8"></div>
+                                    <div class="col-lg-8">
+                                        <div class="alert alert-info" id="alertaMontoManual" style="display:none; margin-bottom: 10px;">
+                                            <i class="fa fa-info-circle"></i> <strong>Factura de servicio:</strong> Ingrese el monto total de la factura en el campo "SubTotal" ya que no hay productos agregados.
+                                        </div>
+                                    </div>
                                     <div class="col-lg-4">
                                         <div class="input-group">
                                             <span class="input-group-addon">SubTotal</span>
-                                            <input type="number" step="0.01" min="0" class="form-control input-lg" id="totalCompraOrdenDirecta" name="totalCompraOrden" placeholder="0,00" readonly style="font-size: 20px; text-align: center;">
+                                            <input type="number" step="0.01" min="0" class="form-control input-lg" id="totalCompraOrdenDirecta" name="totalCompraOrden" placeholder="0,00" style="font-size: 20px; text-align: center;">
                                         </div>
+                                        <small class="help-block" id="ayudaSubTotal" style="display:none;">Ingrese el monto neto de la factura</small>
                                     </div>
                                 </div>
                                 

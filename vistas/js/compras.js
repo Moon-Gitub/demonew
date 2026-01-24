@@ -253,11 +253,19 @@ $(".formularioCompra").on("click", "button.quitarProductoCompra", function(){
 		$("#cantidadArticulos").val(0);
 		$("#nuevoTotalCompra").attr("total",0);
 		$("#listaProductosCompras").val('');
+		// Verificar si debe mostrar ayuda para monto manual
+		if(typeof verificarMontoManual === 'function'){
+			verificarMontoManual();
+		}
 	}else{
     // SUMAR TOTAL DE PRECIOS
     sumarTotalPreciosCompras();
     // AGRUPAR PRODUCTOS EN FORMATO JSON
     listarProductosCompras();
+    // Verificar si debe ocultar ayuda
+    if(typeof verificarMontoManual === 'function'){
+    	verificarMontoManual();
+    }
 	}
 })
 
@@ -321,13 +329,25 @@ function listarProductosCompras(){
 		var descuento = parseFloat($("#descuentoCompraOrdenDirecta").val() || 0);
 		var totalConDescuento = totalAfuera - descuento;
 		
-		$("#totalCompraOrdenDirecta").val(redondear(totalAfuera,2));
-		$("#totalTotalCompraOrdenDirecta").val(redondear(totalConDescuento,2));
-		$("#nuevoTotalCompraDirecta").val(redondear(totalConDescuento,2));
-		$("#totalCompraDirecta").val(totalConDescuento);
+		// Si hay productos, actualizar desde el total calculado
+		// Si no hay productos, mantener el valor manual ingresado
+		if(totalAfuera > 0){
+			$("#totalCompraOrdenDirecta").val(redondear(totalAfuera,2));
+		}
+		
+		// Recalcular total con descuento
+		var subtotalActual = parseFloat($("#totalCompraOrdenDirecta").val() || 0);
+		var totalConDescuentoActual = subtotalActual - descuento;
+		
+		$("#totalTotalCompraOrdenDirecta").val(redondear(totalConDescuentoActual,2));
+		$("#nuevoTotalCompraDirecta").val(redondear(totalConDescuentoActual,2));
+		$("#totalCompraDirecta").val(totalConDescuentoActual);
 		
 		// Recalcular total factura con impuestos
 		calcularTotalFacturaDirecta();
+		
+		// Mostrar/ocultar ayuda según si hay productos
+		verificarMontoManual();
 	}
 }
 
@@ -919,11 +939,34 @@ function calcularTotalFacturaDirecta(){
 	$("#totalCompraFacturaDirecta").val(totalFinal);
 }
 
+// Listener para SubTotal en factura directa (entrada manual cuando no hay productos)
+$(document).on("keyup", "#totalCompraOrdenDirecta", function(){
+	var subtotal = parseFloat($(this).val() || 0);
+	var descuento = parseFloat($("#descuentoCompraOrdenDirecta").val() || 0);
+	var totalConDescuento = subtotal - descuento;
+	
+	$("#totalTotalCompraOrdenDirecta").val(redondear(totalConDescuento,2));
+	$("#nuevoTotalCompraDirecta").val(redondear(totalConDescuento,2));
+	$("#totalCompraDirecta").val(totalConDescuento);
+	
+	// Actualizar también el total general si no hay productos
+	var totalProductos = parseFloat($("#totalCompra").val() || 0);
+	if(totalProductos == 0){
+		$("#totalCompra").val(subtotal);
+	}
+	
+	calcularTotalFacturaDirecta();
+});
+
 // Listener para descuento en factura directa (usando delegación de eventos para elementos dinámicos)
 $(document).on("keyup", "#descuentoCompraOrdenDirecta", function(){
-	var total = parseFloat($("#totalCompra").val() || 0);
+	var subtotal = parseFloat($("#totalCompraOrdenDirecta").val() || 0);
+	var totalProductos = parseFloat($("#totalCompra").val() || 0);
+	
+	// Usar el mayor entre subtotal manual y total de productos
+	var base = subtotal > 0 ? subtotal : totalProductos;
 	var descuento = parseFloat($(this).val() || 0);
-	var totalConDescuento = total - descuento;
+	var totalConDescuento = base - descuento;
 	
 	$("#totalTotalCompraOrdenDirecta").val(redondear(totalConDescuento,2));
 	$("#nuevoTotalCompraDirecta").val(redondear(totalConDescuento,2));
@@ -952,6 +995,30 @@ $(document).on("keyup", "#precepcionesGananciasDirecta", function(){
 $(document).on("keyup", "#impuestoInternoDirecta", function(){
 	calcularTotalFacturaDirecta();
 });
+
+/*=============================================
+FUNCIÓN PARA VERIFICAR SI SE DEBE PERMITIR ENTRADA MANUAL DE MONTO
+=============================================*/
+function verificarMontoManual(){
+	if(!$("#modoFacturaDirecta").is(":checked")){
+		return;
+	}
+	
+	// Verificar si hay productos en la lista
+	var listaProductos = $("#listaProductosCompras").val();
+	var totalProductos = parseFloat($("#totalCompra").val() || 0);
+	
+	// Si no hay productos o el total es 0, permitir entrada manual
+	if(!listaProductos || listaProductos == "" || totalProductos == 0){
+		// Mostrar ayuda
+		$("#alertaMontoManual").show();
+		$("#ayudaSubTotal").show();
+	} else {
+		// Ocultar ayuda si hay productos
+		$("#alertaMontoManual").hide();
+		$("#ayudaSubTotal").hide();
+	}
+}
 
 /*=============================================
 CUANDO CARGUE LA TABLA CADA VEZ QUE NAVEGUE EN ELLA
