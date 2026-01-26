@@ -124,7 +124,7 @@ $pdf->AddPage('P', 'A4');
 $bloque1 = <<<EOF
 	<table border="1">
 		<tr>
-			<td style="width:560px; text-align: center;"> ORDEN DE COMPRA</td>
+			<td style="width:560px; text-align: center;"> COMPRA CONFIRMADA</td>
 		</tr>
 	</table>
 	<table border="0" >
@@ -133,7 +133,7 @@ $bloque1 = <<<EOF
 				<h2>$respEmpresa[razon_social]</h2>
 			</td>
 			<td style="width:40px; text-align:center"><span style="font-size:28.5px;">X</span></td>
-			<td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);">ORDEN DE COMPRA</td>
+			<td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> COMPRA </td>
 		</tr>
 	</table>
 	<table border="0" style="padding: 10px">
@@ -170,41 +170,18 @@ $pdf->writeHTML($bloque1, false, false, false, false, '');
 // ---------------------------------------------------------
 
 $bloque2 = <<<EOF
-
-	<table>
-		
+	<table style="font-size:10px; padding:5px 10px;">	
 		<tr>
-			
-			<td style="width:540px"><img src="images/back.jpg"></td>
-		
-		</tr>
-
-	</table>
-
-	<table style="font-size:10px; padding:5px 10px;">
-	
-		<tr>
-		
 			<td style="border: 1px solid #666; background-color:white; width:270px">
-
 				<b>Orden De Compra: $respuestaCompra[usuarioPedido]</b> 
-
 			</td>
-
 			<td style="border: 1px solid #666; background-color:white; width:270px; text-align:left">
-			
 				<b>Validado De Compra: $respuestaCompra[usuarioConfirma]</b>
-
 			</td>
 		</tr>
-
-	
 		<tr>
-		
-		<td style="border-bottom: 1px solid #666; background-color:white; width:540px"></td>
-
+			<td style="border-bottom: 1px solid #666; background-color:white; width:540px"></td>
 		</tr>
-
 	</table>
 
 EOF;
@@ -216,20 +193,16 @@ $pdf->writeHTML($bloque2, false, false, false, false, '');
 $bloque3 = <<<EOF
 
 	<table style="font-size:10px; padding:5px 10px;">
-		<tr><td style="border: 1px solid #666; background-color:white; width:540px; text-align:center"><b>Detalle de los productos comprados cantidades</b></td>
+		<tr><td style="border: 1px solid #666; background-color:white; width:540px; text-align:center"><b>Detalle de productos</b></td>
 		</tr>
-
 		<tr>
-		
 		<td style="border: 1px solid #666; background-color:white; width:235px; text-align:center"><b>Producto</b></td>
 		<td style="border: 1px solid #666; background-color:white; width:60px; text-align:center"><b>Pedido</b></td>
 		<td style="border: 1px solid #666; background-color:white; width:65px; text-align:center"><b>Recibido</b></td>
-		<td style="border: 1px solid #666; background-color:white; width:60px; text-align:center"><b>Factura</b></td>	
+		<td style="border: 1px solid #666; background-color:white; width:60px; text-align:center"><b>Factura</b></td>
 		<td style="border: 1px solid #666; background-color:white; width:60px; text-align:center"><b>P. Compra</b></td>
 		<td style="border: 1px solid #666; background-color:white; width:60px; text-align:center"><b>P. Factura</b></td>
-		
 		</tr>
-
 	</table>
 
 EOF;
@@ -243,17 +216,11 @@ foreach ($productos as $key => $item) {
 $itemProducto = "descripcion";
 $valorProducto = $item["descripcion"];
 $orden = null;
-
 $respuestaProducto = ControladorProductos::ctrMostrarProductos($itemProducto, $valorProducto, $orden);
-
 $valorUnitario = number_format($respuestaProducto["precio_venta"], 2);
-
 $precioTotal = number_format($item["total"], 2);
-
 $bloque4 = <<<EOF
-
 	<table style="font-size:8px; padding:5px 10px;">
-
 		<tr>
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:235x; text-align:center"><b>$item[descripcion]</b></td>
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:60px; text-align:center"><b>$item[pedidos]</b></td>
@@ -262,20 +229,14 @@ $bloque4 = <<<EOF
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:60px; text-align:center"><b>$item[precioCompra]</b></td>
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:60px; text-align:center"><b>$item[precioCompraPedido]</b></td>
 		</tr>
-
 	</table>
-
-
 EOF;
-
 $pdf->writeHTML($bloque4, false, false, false, false, '');
 
 }
 
 $bloque5 = <<<EOF
-
 	<table>
-		
 		<tr>
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:420px; height:22px; text-align:center">
 				 TOTAL COMPRA 
@@ -284,48 +245,19 @@ $bloque5 = <<<EOF
 				 $ $total 
 			</td>
 		</tr>
-
 	</table>
-
 EOF;
 $pdf->writeHTML($bloque5, false, false, false, false, '');
-
-$bloque6 = <<<EOF
-
-	<table>
-		
-		<tr>
-			
-			<td style="width:540px"><img src="images/back.jpg"></td>
-		
-		</tr>
-
-	</table>
-
-	<table style="font-size:10px; padding:5px 10px;">
-	
-		
-
-	</table>
-
-EOF;
-$pdf->writeHTML($bloque6, false, false, false, false, '');
 if($respuestaCompra["tipo"]=="factura"){
 $bloque10 = <<<EOF
-
 	<table style="font-size:10px; padding:5px 10px;">
 		<tr><td style="border: 1px solid #666; background-color:white; width:540px; text-align:center"><b>Detalle Factura Numero</b></td>
 		</tr>
-
 		<tr>
-		
-		<td style="border: 1px solid #666; background-color:white; width:270px; text-align:center"><b>Numero Factura $respuestaCompra[numeroFactura]</b></td>
-		<td style="border: 1px solid #666; background-color:white; width:270px; text-align:center"><b>Fecha De Emision $respuestaCompra[fechaEmision]</b></td>
-
+			<td style="border: 1px solid #666; background-color:white; width:270px; text-align:center"><b>Numero Factura $respuestaCompra[numeroFactura]</b></td>
+			<td style="border: 1px solid #666; background-color:white; width:270px; text-align:center"><b>Fecha De Emision $respuestaCompra[fechaEmision]</b></td>
 		</tr>
-
 	</table>
-
 EOF;
 
 $pdf->writeHTML($bloque10, false, false, false, false, '');
@@ -335,31 +267,23 @@ foreach ($productos as $key => $item) {
 $itemProducto = "descripcion";
 $valorProducto = $item["descripcion"];
 $orden = null;
-
 $respuestaProducto = ControladorProductos::ctrMostrarProductos($itemProducto, $valorProducto, $orden);
-
 $valorUnitario = number_format($respuestaProducto["precio_venta"], 2);
 $precioPedido = number_format($item["precioCompraPedido"], 2);
 $precioCompra = number_format($item["precioCompra"], 2);
-
 $diferenciaCantidad =  ($diferenciaCantidad + (($item["articulosFactura"] - $item["recibidos"])*$item["precioCompra"]));
 $diferencia = number_format($item["precioCompra"] - $item["precioCompraPedido"], 2);
 $totalDiferencia = $diferencia * $item["recibidos"];
-
 $totalDiferenciaCalculada = $diferenciaCantidad + $totalDiferencia;
-
 }
 $totalPagar = round(($total ),2);
 // ---------------------------------------------------------
 
-
 $bloque111 = <<<EOF
-
-		<table style="font-size:10px; padding:5px 10px;">
+	<table style="font-size:10px; padding:5px 10px;">
 		<tr>
-			
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:540px; text-align:center">
-				<b>DETALLE ECONOMICO</b>
+				<b>Datos Impositivos</b>
 			</td>
 		</tr>	
 		<tr>
@@ -417,11 +341,8 @@ EOF;
 $pdf->writeHTML($bloque111, false, false, false, false, '');
 if($totalDiferenciaCalculada!=0){
 $bloque112 = <<<EOF
-
 	<table style="font-size:10px; padding:5px 10px;">
-		
 		<tr>
-			
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:540px; text-align:center">
 				<b>TOTAL A PAGAR</b>
 			</td>
@@ -431,17 +352,13 @@ $bloque112 = <<<EOF
 				<b>$ $totalPagar</b>
 			</td>
 		</tr>
-
 	</table>
-
-
 EOF;
 
 $pdf->writeHTML($bloque112, false, false, false, false, '');
 }
 }else{
 $bloqueRemito = <<<EOF
-
 	<table style="font-size:10px; padding:5px 10px;">
 		<tr><td style="border: 1px solid #666; background-color:white; width:540px; text-align:center"><b>Detalle Remito Compra</b></td>
 		</tr>
@@ -459,11 +376,8 @@ EOF;
 
 $pdf->writeHTML($bloqueRemito, false, false, false, false, '');	
 $bloqueRemitoPago = <<<EOF
-
 	<table style="font-size:10px; padding:5px 10px;">
-		
 		<tr>
-			
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:540px; text-align:center">
 				<b>TOTAL A PAGAR</b>
 			</td>
@@ -473,19 +387,15 @@ $bloqueRemitoPago = <<<EOF
 				<b>$ $respuestaCompra[total]</b>
 			</td>
 		</tr>
-
 	</table>
-
-
 EOF;
-
 $pdf->writeHTML($bloqueRemitoPago, false, false, false, false, '');
 }
 // ---------------------------------------------------------
 //SALIDA DEL ARCHIVO 
 
 //$pdf->Output('factura.pdf', 'D');
-$pdf->Output('factura.pdf');
+$pdf->Output('Compra_'.$idCompra.'.pdf');
 
 }
 
