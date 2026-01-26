@@ -110,6 +110,15 @@ $precepcionesGanancias = round($respuestaCompra["precepcionesGanancias"],2);
 $impuestoInterno = round($respuestaCompra["impuestoInterno"],2);
 $diferenciaPago = round($total - $totalNeto,2);
 
+// Obtener impuesto_detalle si existe
+$impuesto_detalle = [];
+if(isset($respuestaCompra["impuesto_detalle"]) && !empty($respuestaCompra["impuesto_detalle"])){
+    $impuesto_detalle = json_decode($respuestaCompra["impuesto_detalle"], true);
+    if(!is_array($impuesto_detalle)){
+        $impuesto_detalle = [];
+    }
+}
+
 //REQUERIMOS LA CLASE TCPDF
 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 // Configuración del documento
@@ -336,6 +345,56 @@ $bloque111 = <<<EOF
 EOF;
 
 $pdf->writeHTML($bloque111, false, false, false, false, '');
+
+// Mostrar detalle de impuestos si existe
+if(!empty($impuesto_detalle) && is_array($impuesto_detalle)){
+$bloqueImpuestoDetalle = <<<EOF
+	<table style="font-size:10px; padding:5px 10px;">
+		<tr>
+			<td style="border: 1px solid #666; color:#333; background-color:white; width:540px; text-align:center">
+				<b>Detalle de Impuestos</b>
+			</td>
+		</tr>	
+		<tr>
+			<td style="border: 1px solid #666; color:#333; background-color:white; width:180px; text-align:center">
+				<b>Descripción</b>
+			</td>
+			<td style="border: 1px solid #666; color:#333; background-color:white; width:180px; text-align:center">
+				<b>Base Imponible</b>
+			</td>
+			<td style="border: 1px solid #666; color:#333; background-color:white; width:180px; text-align:center">
+				<b>IVA</b>
+			</td>
+		</tr>
+EOF;
+
+foreach($impuesto_detalle as $detalle){
+	$descripcion = isset($detalle["descripcion"]) ? $detalle["descripcion"] : "";
+	$baseImponible = isset($detalle["baseImponible"]) ? number_format(floatval($detalle["baseImponible"]), 2, ',', '.') : "0,00";
+	$iva = isset($detalle["iva"]) ? number_format(floatval($detalle["iva"]), 2, ',', '.') : "0,00";
+	
+	$bloqueImpuestoDetalle .= <<<EOF
+		<tr>
+			<td style="border: 1px solid #666; color:#333; background-color:white; width:180px; text-align:center">
+				$descripcion
+			</td>
+			<td style="border: 1px solid #666; color:#333; background-color:white; width:180px; text-align:center">
+				$ $baseImponible
+			</td>
+			<td style="border: 1px solid #666; color:#333; background-color:white; width:180px; text-align:center">
+				$ $iva
+			</td>
+		</tr>
+EOF;
+}
+
+$bloqueImpuestoDetalle .= <<<EOF
+	</table>
+EOF;
+
+$pdf->writeHTML($bloqueImpuestoDetalle, false, false, false, false, '');
+}
+
 if($totalDiferenciaCalculada!=0){
 $bloque112 = <<<EOF
 	<table style="font-size:10px; padding:5px 10px;">
