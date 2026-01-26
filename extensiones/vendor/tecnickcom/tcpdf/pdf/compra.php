@@ -1,15 +1,74 @@
 <?php
 
-require_once "../../../../../controladores/compras.controlador.php";
-require_once "../../../../../modelos/compras.modelo.php";
-require_once "../../../../../controladores/productos.controlador.php";
-require_once "../../../../../modelos/productos.modelo.php";
-require_once "../../../../../controladores/empresa.controlador.php";
-require_once "../../../../../modelos/empresa.modelo.php";
-require_once "../../../../../controladores/proveedores.controlador.php";
-require_once "../../../../../modelos/proveedores.modelo.php";
+$autoloadPath = '../../../autoload.php';
+if(!file_exists(__DIR__ . '/' . $autoloadPath)) {
+    error_log("ERROR: autoload.php no encontrado en ruta relativa");
+    die('Error: No se encuentra autoload.php');
+}
+require_once $autoloadPath;
 
-require_once '../../../autoload.php';
+$rutaBase = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
+
+$envPath = $rutaBase . '/.env';
+if (file_exists($envPath)) {
+    if (class_exists('Dotenv\Dotenv')) {
+        try {
+            $dotenv = Dotenv\Dotenv::createImmutable($rutaBase);
+            $dotenv->load();
+        } catch (Exception $e) {
+            error_log("❌ Error al cargar .env en comprobante.php: " . $e->getMessage());
+        }
+    } else {
+
+        $envLines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($envLines as $line) {
+            if (strpos(trim($line), '#') === 0) continue; // Saltar comentarios
+            if (strpos($line, '=') !== false) {
+                list($key, $value) = explode('=', $line, 2);
+                $key = trim($key);
+                $value = trim($value);
+                if (!empty($key)) {
+                    $_ENV[$key] = $value;
+                    $_SERVER[$key] = $value;
+                    putenv("$key=$value");
+                }
+            }
+        }
+    }
+} else {
+    error_log("⚠️ Archivo .env no encontrado en: " . $envPath);
+}
+
+$helpersPath = $rutaBase . '/helpers.php';
+if (file_exists($helpersPath)) {
+    require_once $helpersPath;
+} else {
+    error_log("⚠️ helpers.php no encontrado en: " . $helpersPath);
+}
+
+// Usar rutas relativas como en recibo.php que funciona
+$archivos = [
+    "../../../../../controladores/empresa.controlador.php",
+    "../../../../../modelos/empresa.modelo.php",
+    "../../../../../controladores/compras.controlador.php",
+    "../../../../../modelos/compras.modelo.php",
+    "../../../../../controladores/proveedores.controlador.php",
+    "../../../../../modelos/proveedores.modelo.php",
+    "../../../../../controladores/usuarios.controlador.php",
+    "../../../../../modelos/usuarios.modelo.php",
+    "../../../../../controladores/productos.controlador.php",
+    "../../../../../modelos/productos.modelo.php",
+    '../../../autoload.php'
+];
+
+foreach ($archivos as $archivo) {
+    $rutaCompleta = __DIR__ . '/' . $archivo;
+    if (!file_exists($rutaCompleta)) {
+        error_log("❌ Archivo no encontrado: " . $rutaCompleta);
+        die('Error: Archivo requerido no encontrado: ' . basename($archivo) . ' en ' . $rutaCompleta);
+    }
+    require_once $archivo;
+}
 
 class imprimirFactura{
 
@@ -65,50 +124,42 @@ $pdf->AddPage('P', 'A4');
 $bloque1 = <<<EOF
 	<table border="1">
 		<tr>
-			<td style="width:560px; text-align: center;"> COMPRA INGRESADA</td>
+			<td style="width:560px; text-align: center;"> ORDEN DE COMPRA</td>
 		</tr>
 	</table>
-	<table border="1" >
+	<table border="0" >
 		<tr style="padding: 0px;">
 			<td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> 
 				<h2>$respEmpresa[razon_social]</h2>
 			</td>
-			<td style="width:40px; text-align:center">
-			<div><span style="font-size:28.5px;">X</span></div>	
-			</td>
-			<td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> 
-				Orden de compra
-			</td>
+			<td style="width:40px; text-align:center"><span style="font-size:28.5px;">X</span></td>
+			<td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);">ORDEN DE COMPRA</td>
 		</tr>
 	</table>
-	<table border="1" style="padding: 10px">
+	<table border="0" style="padding: 10px">
 		<tr>
 			<td style="width:280px; font-size:10px; text-align: left;">
 				<br>
 				<span><b>Direccion:</b> $respEmpresa[domicilio]</span> <br>
-				<span><b>Telefono:</b> $respEmpresa[telefono]</span> <br>
 				<span><b>Localidad:</b> $respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</span><br>
-				<span><b>Defensa al Consumidor Mza. 08002226678</b></span> 
 			</td>
 			<td style="width:280px; font-size:10px; text-align: left">
 				<div style="padding-top:5px">
 					<span><b>N° Cbte:</b> $respuestaCompra[id]</span> <br>
 					<span><b>Fecha Emisión:</b> $fecha </span><br>
-					<span><b>CUIT:</b> $respEmpresa[cuit] </span><br>
-					<span><b>II.BB.:</b> $respEmpresa[numero_iibb] </span><br>
-					<span><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades] </span>
 				</div>
 			</td>
 		</tr>
 	</table>
 	
-    <table style="padding: 5px">
+    <table border="1" style="padding: 5px">
 		<tr>
 			<td style="width:560px; font-size:12px; text-align: left;">
+				<b>Datos proveedor: </b>
 				<br>
-				<span>PROVEEDOR: <b>Nombre / Razón Social :</b> $proveedor[nombre] </span> - <span> <b> $proveedor[cuit] :</b> </span>  
+				<b>Nombre / Razón Social :</b> $proveedor[nombre] - <b> $proveedor[cuit] :</b>
 				<br>
-				<span><b>Domicilio: </b> $proveedor[direccion] </span>  
+				<b>Domicilio: </b> $proveedor[direccion]
 			</td>
 		</tr>
 	</table>

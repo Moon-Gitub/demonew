@@ -132,7 +132,7 @@ $bloque1 = <<<EOF
 		</tr>
 	</table>
 	
-    <table style="padding: 5px">
+    <table border="1" style="padding: 5px">
 		<tr>
 			<td style="width:560px; font-size:12px; text-align: left;">
 				<b>Datos proveedor: </b>
