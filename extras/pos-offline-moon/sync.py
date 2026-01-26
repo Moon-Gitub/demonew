@@ -116,13 +116,18 @@ class SyncManager:
                         except:
                             cliente_id = 1
                 
+                # Mapear sucursal: 'Local' debe ser 'stock' para el servidor
+                sucursal_servidor = venta.sucursal or 'stock'
+                if sucursal_servidor == 'Local':
+                    sucursal_servidor = 'stock'
+                
                 venta_data = {
                     'fecha': venta.fecha.isoformat(),
                     'cliente': cliente_id,  # Enviar ID del cliente
                     'productos': productos_formateados,
                     'total': float(venta.total),
                     'metodo_pago': venta.metodo_pago,
-                    'sucursal': venta.sucursal or 'Local',
+                    'sucursal': sucursal_servidor,
                     'creado_local': True
                 }
                 
