@@ -22,6 +22,7 @@ class Config:
                 "server_url": "https://newmoon.posmoon.com.ar",
                 "api_base": "https://newmoon.posmoon.com.ar/api",
                 "id_cliente_moon": 14,
+                "id_empresa": 1,
                 "sync_interval": 60,
                 "connection_check_interval": 5,
                 "account_check_interval": 300
@@ -63,6 +64,10 @@ class Config:
     @property
     def ID_CLIENTE_MOON(self):
         return self.config.get("id_cliente_moon", 14)
+    
+    @property
+    def ID_EMPRESA(self):
+        return self.config.get("id_empresa", 1)
     
     @property
     def SYNC_INTERVAL(self):

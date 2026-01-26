@@ -176,6 +176,9 @@ try {
         }
         $postVentaCaja['sucursalVendedor'] = $sucursal;
         $postVentaCaja['nombreVendedor'] = $_SESSION['nombre'] ?? 'Sistema';
+        
+        // Obtener id_empresa desde los datos o usar valor por defecto
+        $postVentaCaja['idEmpresa'] = isset($datos['id_empresa']) ? intval($datos['id_empresa']) : 1;
         // El cliente puede venir como ID (número) o como string "ID-Nombre"
         $cliente_id = $datos['cliente'] ?? '1';
         if (is_string($cliente_id) && strpos($cliente_id, '-') !== false) {
@@ -232,6 +235,23 @@ try {
         $postVentaCaja['nuevotipoCbteAsociado'] = '';
         $postVentaCaja['nuevaPtoVtaAsociado'] = '';
         $postVentaCaja['nuevaNroCbteAsociado'] = '';
+        
+        // Procesar impuesto_detalle si viene del sistema offline
+        if (isset($datos['impuesto_detalle']) && !empty($datos['impuesto_detalle'])) {
+            // Si viene como JSON string, decodificarlo
+            if (is_string($datos['impuesto_detalle'])) {
+                $impuesto_detalle = json_decode($datos['impuesto_detalle'], true);
+            } else {
+                $impuesto_detalle = $datos['impuesto_detalle'];
+            }
+            
+            // El controlador calculará el impuesto_detalle completo, pero guardamos el que viene
+            // para que no quede vacío. El controlador lo recalculará con los valores correctos.
+            error_log("impuesto_detalle recibido del offline: " . json_encode($impuesto_detalle));
+        } else {
+            // Si no viene impuesto_detalle, el controlador lo calculará automáticamente
+            error_log("No se recibió impuesto_detalle, el controlador lo calculará");
+        }
         
         // Preparar método de pago
         $metodoPago = $datos['metodo_pago'] ?? 'Efectivo';

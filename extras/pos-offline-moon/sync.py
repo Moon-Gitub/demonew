@@ -121,6 +121,30 @@ class SyncManager:
                 if sucursal_servidor == 'Local':
                     sucursal_servidor = 'stock'
                 
+                # Calcular impuesto_detalle básico basado en productos
+                # Por defecto, asumimos IVA 21% si no se especifica
+                impuesto_detalle = []
+                total_impuesto = 0.0
+                base_imponible_21 = float(venta.total) / 1.21  # Base sin IVA
+                iva_21 = float(venta.total) - base_imponible_21
+                
+                if iva_21 > 0:
+                    impuesto_detalle.append({
+                        "id": 5,
+                        "descripcion": "IVA 21%",
+                        "baseImponible": str(round(base_imponible_21, 2)),
+                        "iva": str(round(iva_21, 2))
+                    })
+                    total_impuesto = iva_21
+                else:
+                    # Si no hay IVA, usar base imponible 0%
+                    impuesto_detalle.append({
+                        "id": 3,
+                        "descripcion": "IVA 0%",
+                        "baseImponible": str(round(float(venta.total), 2)),
+                        "iva": "0"
+                    })
+                
                 venta_data = {
                     'fecha': venta.fecha.isoformat(),
                     'cliente': cliente_id,  # Enviar ID del cliente
@@ -128,6 +152,8 @@ class SyncManager:
                     'total': float(venta.total),
                     'metodo_pago': venta.metodo_pago,
                     'sucursal': sucursal_servidor,
+                    'id_empresa': config.ID_EMPRESA,
+                    'impuesto_detalle': json.dumps(impuesto_detalle),
                     'creado_local': True
                 }
                 
