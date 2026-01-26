@@ -1,16 +1,74 @@
 <?php
 
-require_once "../../../controladores/compras.controlador.php";
-require_once "../../../modelos/compras.modelo.php";
+$autoloadPath = '../../../autoload.php';
+if(!file_exists(__DIR__ . '/' . $autoloadPath)) {
+    error_log("ERROR: autoload.php no encontrado en ruta relativa");
+    die('Error: No se encuentra autoload.php');
+}
+require_once $autoloadPath;
 
-require_once "../../../controladores/productos.controlador.php";
-require_once "../../../modelos/productos.modelo.php";
+$rutaBase = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
 
-require_once "../../../controladores/proveedores.controlador.php";
-require_once "../../../modelos/proveedores.modelo.php";
+$envPath = $rutaBase . '/.env';
+if (file_exists($envPath)) {
+    if (class_exists('Dotenv\Dotenv')) {
+        try {
+            $dotenv = Dotenv\Dotenv::createImmutable($rutaBase);
+            $dotenv->load();
+        } catch (Exception $e) {
+            error_log("❌ Error al cargar .env en comprobante.php: " . $e->getMessage());
+        }
+    } else {
 
-require_once "../../../controladores/empresa.controlador.php";
-require_once "../../../modelos/empresa.modelo.php";
+        $envLines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($envLines as $line) {
+            if (strpos(trim($line), '#') === 0) continue; // Saltar comentarios
+            if (strpos($line, '=') !== false) {
+                list($key, $value) = explode('=', $line, 2);
+                $key = trim($key);
+                $value = trim($value);
+                if (!empty($key)) {
+                    $_ENV[$key] = $value;
+                    $_SERVER[$key] = $value;
+                    putenv("$key=$value");
+                }
+            }
+        }
+    }
+} else {
+    error_log("⚠️ Archivo .env no encontrado en: " . $envPath);
+}
+
+$helpersPath = $rutaBase . '/helpers.php';
+if (file_exists($helpersPath)) {
+    require_once $helpersPath;
+} else {
+    error_log("⚠️ helpers.php no encontrado en: " . $helpersPath);
+}
+
+// Usar rutas relativas como en recibo.php que funciona
+$archivos = [
+    "../../../../../controladores/empresa.controlador.php",
+    "../../../../../modelos/empresa.modelo.php",
+    "../../../../../controladores/compras.controlador.php",
+    "../../../../../modelos/comprass.modelo.php",
+    "../../../../../controladores/proveedores.controlador.php",
+    "../../../../../modelos/proveedoress.modelo.php",
+    "../../../../../controladores/usuarios.controlador.php",
+    "../../../../../modelos/usuarios.modelo.php",
+    "../../../../../controladores/productos.controlador.php",
+    "../../../../../modelos/productos.modelo.php",
+    '../../../autoload.php'
+];
+
+foreach ($archivos as $archivo) {
+    $rutaCompleta = __DIR__ . '/' . $archivo;
+    if (!file_exists($rutaCompleta)) {
+        error_log("❌ Archivo no encontrado: " . $rutaCompleta);
+        die('Error: Archivo requerido no encontrado: ' . basename($archivo) . ' en ' . $rutaCompleta);
+    }
+    require_once $archivo;
+}
 
 class imprimirFactura{
 
@@ -32,10 +90,9 @@ $destino = json_decode($respuestaCompra["destino"],true);
 $total = number_format(round($respuestaCompra["total"],2),2);
 
 $proveedor = ControladorProveedores::ctrMostrarProveedores('id', $respuestaCompra["id_proveedor"])["nombre"];
+
 //REQUERIMOS LA CLASE TCPDF
-
 require_once('tcpdf_include.php');
-
 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
 $pdf->setPrintHeader(false);
@@ -102,23 +159,18 @@ $pdf->writeHTML($bloque1, false, false, false, false, '');
 // ---------------------------------------------------------
 
 $bloque3 = <<<EOF
-
 	<table style="font-size:10px; padding:5px 10px;">
-		<tr><td style="border: 1px solid #666; background-color:white; width:540px; text-align:center"><b>Detalle de los productos comprados cantidades</b></td>
-		</tr>
-
 		<tr>
-		
-		<td style="border: 1px solid #666; background-color:white; width:260px; text-align:center">Producto</td>
-		<td style="border: 1px solid #666; background-color:white; width:80px; text-align:center">Codigo</td>
-		<td style="border: 1px solid #666; background-color:white; width:60px; text-align:center">Pedido</td>
-		<td style="border: 1px solid #666; background-color:white; width:70px; text-align:center">Recibido</td>
-		<td style="border: 1px solid #666; background-color:white; width:70px; text-align:center">Precio</td>
-
+			<td style="border: 1px solid #666; background-color:white; width:540px; text-align:center"><b>Detalle de los productos comprados cantidades</b></td>
 		</tr>
-
+		<tr>
+			<td style="border: 1px solid #666; background-color:white; width:260px; text-align:center">Producto</td>
+			<td style="border: 1px solid #666; background-color:white; width:80px; text-align:center">Codigo</td>
+			<td style="border: 1px solid #666; background-color:white; width:60px; text-align:center">Pedido</td>
+			<td style="border: 1px solid #666; background-color:white; width:70px; text-align:center">Recibido</td>
+			<td style="border: 1px solid #666; background-color:white; width:70px; text-align:center">Precio</td>
+		</tr>
 	</table>
-
 EOF;
 
 $pdf->writeHTML($bloque3, false, false, false, false, '');
@@ -138,11 +190,8 @@ $precioCompra = number_format($item["precioCompra"], 2);
 //$precioTotal = number_format($item["total"], 2);
 
 $bloque4 = <<<EOF
-
 	<table style="font-size:8px; padding:5px 10px;">
-
 		<tr>
-			
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:260px; text-align:center">
 				$item[descripcion]
 			</td>
@@ -158,20 +207,14 @@ $bloque4 = <<<EOF
 				 $ $precioCompra 
 			</td>
 		</tr>
-
 	</table>
-
 EOF;
-
 $pdf->writeHTML($bloque4, false, false, false, false, '');
-
 }
 // ---------------------------------------------------------
 
 $bloque5 = <<<EOF
-
 	<table>
-		
 		<tr>
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:340px; height:22px; text-align:center">
 				 TOTAL COMPRA 
@@ -180,9 +223,7 @@ $bloque5 = <<<EOF
 				 $ $total 
 			</td>
 		</tr>
-
 	</table>
-
 EOF;
 $pdf->writeHTML($bloque5, false, false, false, false, '');
 
@@ -190,7 +231,7 @@ $pdf->writeHTML($bloque5, false, false, false, false, '');
 //SALIDA DEL ARCHIVO 
 
 //$pdf->Output('factura.pdf', 'D');
-$pdf->Output('factura.pdf');
+$pdf->Output('Orden_compra_'.$_GET['codigo'].'.pdf');
 
 }
 
