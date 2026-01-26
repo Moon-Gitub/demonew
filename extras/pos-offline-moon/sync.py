@@ -121,23 +121,78 @@ class SyncManager:
                 if sucursal_servidor == 'Local':
                     sucursal_servidor = 'stock'
                 
-                # Calcular impuesto_detalle básico basado en productos
-                # Por defecto, asumimos IVA 21% si no se especifica
-                impuesto_detalle = []
-                total_impuesto = 0.0
-                base_imponible_21 = float(venta.total) / 1.21  # Base sin IVA
-                iva_21 = float(venta.total) - base_imponible_21
+                # Calcular impuesto_detalle correctamente basado en productos
+                # Mapeo de tipos de IVA a IDs y porcentajes
+                iva_map = {
+                    0: {"id": 3, "descripcion": "IVA 0%", "porcentaje": 0.0},
+                    2: {"id": 9, "descripcion": "IVA 2,5%", "porcentaje": 0.025},
+                    5: {"id": 8, "descripcion": "IVA 5%", "porcentaje": 0.05},
+                    10: {"id": 4, "descripcion": "IVA 10,5%", "porcentaje": 0.105},
+                    21: {"id": 5, "descripcion": "IVA 21%", "porcentaje": 0.21},
+                    27: {"id": 6, "descripcion": "IVA 27%", "porcentaje": 0.27}
+                }
                 
-                if iva_21 > 0:
-                    impuesto_detalle.append({
-                        "id": 5,
-                        "descripcion": "IVA 21%",
-                        "baseImponible": str(round(base_imponible_21, 2)),
-                        "iva": str(round(iva_21, 2))
-                    })
-                    total_impuesto = iva_21
-                else:
-                    # Si no hay IVA, usar base imponible 0%
+                # Agrupar productos por tipo de IVA y calcular bases imponibles
+                bases_por_iva = {}  # {tipo_iva: {"base": 0, "iva": 0}}
+                
+                for prod in productos_formateados:
+                    # Obtener tipo de IVA del producto (buscar en BD local si es necesario)
+                    tipo_iva = prod.get('tipo_iva', 21)  # Por defecto 21% si no se especifica
+                    
+                    # Si no viene en el producto, intentar obtenerlo de la BD local
+                    if 'tipo_iva' not in prod or prod.get('tipo_iva') is None:
+                        try:
+                            from database import get_session, Producto
+                            session_temp = get_session()
+                            producto_bd = session_temp.query(Producto).filter_by(id=prod.get('id', 0)).first()
+                            if producto_bd and producto_bd.iva is not None:
+                                tipo_iva = int(producto_bd.iva)
+                            session_temp.close()
+                        except:
+                            tipo_iva = 21  # Por defecto
+                    
+                    # Obtener subtotal del producto
+                    subtotal = float(prod.get('total', prod.get('subtotal', 0)))
+                    
+                    # Calcular base imponible según tipo de IVA
+                    if tipo_iva in iva_map:
+                        porcentaje = iva_map[tipo_iva]["porcentaje"]
+                        if porcentaje > 0:
+                            # Base imponible = subtotal / (1 + porcentaje)
+                            base_imponible = subtotal / (1 + porcentaje)
+                            iva_calculado = subtotal - base_imponible
+                        else:
+                            # IVA 0%
+                            base_imponible = subtotal
+                            iva_calculado = 0.0
+                        
+                        # Acumular por tipo de IVA
+                        if tipo_iva not in bases_por_iva:
+                            bases_por_iva[tipo_iva] = {"base": 0.0, "iva": 0.0}
+                        bases_por_iva[tipo_iva]["base"] += base_imponible
+                        bases_por_iva[tipo_iva]["iva"] += iva_calculado
+                    else:
+                        # Si el tipo de IVA no está en el mapa, usar IVA 21% por defecto
+                        base_imponible = subtotal / 1.21
+                        iva_calculado = subtotal - base_imponible
+                        if 21 not in bases_por_iva:
+                            bases_por_iva[21] = {"base": 0.0, "iva": 0.0}
+                        bases_por_iva[21]["base"] += base_imponible
+                        bases_por_iva[21]["iva"] += iva_calculado
+                
+                # Construir impuesto_detalle en el formato correcto
+                impuesto_detalle = []
+                for tipo_iva, valores in bases_por_iva.items():
+                    if tipo_iva in iva_map:
+                        impuesto_detalle.append({
+                            "id": iva_map[tipo_iva]["id"],
+                            "descripcion": iva_map[tipo_iva]["descripcion"],
+                            "baseImponible": str(round(valores["base"], 2)),
+                            "iva": str(round(valores["iva"], 2))
+                        })
+                
+                # Si no hay impuestos calculados, usar IVA 0% con el total
+                if not impuesto_detalle:
                     impuesto_detalle.append({
                         "id": 3,
                         "descripcion": "IVA 0%",
