@@ -248,7 +248,7 @@ $bloque5 = <<<EOF
 	</table>
 EOF;
 $pdf->writeHTML($bloque5, false, false, false, false, '');
-if($respuestaCompra["tipo"]=="factura"){
+if($respuestaCompra["tipo"]<>0){
 $bloque10 = <<<EOF
 	<table style="font-size:10px; padding:5px 10px;">
 		<tr><td style="border: 1px solid #666; background-color:white; width:540px; text-align:center"><b>Detalle Factura Numero</b></td>
