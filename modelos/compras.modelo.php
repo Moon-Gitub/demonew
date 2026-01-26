@@ -238,7 +238,8 @@ class ModeloCompras{
 			return $stmt -> fetchAll();	
 
 		}else if($fechaInicial == $fechaFinal){
-			$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE fecha like '%$fechaFinal%' ORDER BY codigo DESC");
+			// Filtrar solo compras pendientes (estado = 0) para validar ingreso
+			$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE estado = 0 AND fecha like '%$fechaFinal%' ORDER BY codigo DESC");
 			$stmt -> bindParam(":fecha", $fechaFinal, PDO::PARAM_STR);
 			$stmt -> execute();
 			return $stmt -> fetchAll();
@@ -254,13 +255,12 @@ class ModeloCompras{
 			$fechaFinalMasUno = $fechaFinal2->format("Y-m-d");
 
 			if($fechaFinalMasUno == $fechaActualMasUno){
-
-				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE fecha BETWEEN '$fechaInicial' AND '$fechaFinalMasUno'");
+				// Filtrar solo compras pendientes (estado = 0) para validar ingreso
+				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE estado = 0 AND fecha BETWEEN '$fechaInicial' AND '$fechaFinalMasUno' ORDER BY id DESC");
 
 			}else{
-
-
-				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE fecha BETWEEN '$fechaInicial' AND '$fechaFinal'");
+				// Filtrar solo compras pendientes (estado = 0) para validar ingreso
+				$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE estado = 0 AND fecha BETWEEN '$fechaInicial' AND '$fechaFinal' ORDER BY id DESC");
 
 			}
 		

@@ -401,6 +401,27 @@ $("#tablaListarCompras").on("click", ".btnEliminarCompra", function(){
   })
 });
 
+/*=============================================
+ELIMINAR COMPRA DESDE VALIDAR INGRESO (ingreso.php)
+=============================================*/
+$(".tablas").on("click", ".btnEliminarCompra", function(){
+  var idCompra = $(this).attr("idCompra");
+  swal({
+    title: '¿Está seguro de borrar la compra?',
+    text: "¡Si no lo está puede cancelar la acción!",
+    type: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    cancelButtonText: 'Cancelar',
+    confirmButtonText: 'Si, borrar compra!'
+  }).then(function(result){
+    if (result.value) {
+      window.location = "index.php?ruta=ingreso&idCompra="+idCompra;
+    }
+  })
+});
+
 //LISTAR COMPRAS (compras.php)
 //AGREGA UN INPUT TEXT PARA BUSCAR EN CADA COLUMNA
 $("#tablaListarCompras tfoot th").each(function (i) {
@@ -1019,6 +1040,22 @@ function verificarMontoManual(){
 		$("#ayudaSubTotal").hide();
 	}
 }
+
+/*=============================================
+ASEGURAR ACTUALIZACIÓN DE PRECIOS ANTES DE GUARDAR COMPRA
+=============================================*/
+$(".formularioCompra").on("submit", function(e){
+	// Si NO está en modo factura directa, actualizar lista de productos
+	// para capturar los precios editados en la minuta
+	if(!$("#modoFacturaDirecta").is(":checked")){
+		// Asegurar que los precios editados se incluyan en el JSON
+		listarProductosCompras();
+	}
+	// Si está en modo factura directa, también actualizar si hay productos
+	if($("#modoFacturaDirecta").is(":checked") && $("#listaProductosCompras").val() != ""){
+		listarProductosCompras();
+	}
+});
 
 /*=============================================
 CUANDO CARGUE LA TABLA CADA VEZ QUE NAVEGUE EN ELLA

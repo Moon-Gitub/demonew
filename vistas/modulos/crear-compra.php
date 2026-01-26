@@ -154,7 +154,7 @@ if($_SESSION["perfil"] == "Especial"){
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Tipo de Comprobante</label>
-                                            <select class="form-control" id="tipoFacturaDirecta" name="tipoFactura" onchange="cambioDatosFacturaCompra(this.value);" required>
+                                            <select class="form-control" id="tipoFacturaDirecta" name="tipoFactura" onchange="cambioDatosFacturaCompra(this.value);">
                                                 <option value="">Seleccionar Tipo</option>
                                                 <option value="0">X</option>
                                                 <option value="1">Factura A</option>
@@ -380,15 +380,33 @@ function toggleModoFactura() {
     var camposFactura = document.getElementById('camposFacturaDirecta');
     var btnGuardar = document.getElementById('btnGuardarCompra');
     var formulario = document.getElementById('formularioCompra');
+    var tipoFactura = document.getElementById('tipoFacturaDirecta');
     
     if (modoFactura) {
         camposFactura.style.display = 'block';
         btnGuardar.textContent = 'Cargar Factura Directa';
-        // Cambiar el action del formulario para que use el método de factura directa
-        // Esto se manejará en el JavaScript que procesa el submit
+        // Agregar required solo cuando está visible
+        if(tipoFactura) {
+            tipoFactura.setAttribute('required', 'required');
+        }
+        // Verificar si hay productos para mostrar ayuda
+        setTimeout(function(){
+            if(typeof verificarMontoManual === 'function'){
+                verificarMontoManual();
+            }
+        }, 100);
     } else {
         camposFactura.style.display = 'none';
         btnGuardar.textContent = 'Guardar compra';
+        // Remover required cuando está oculto
+        if(tipoFactura) {
+            tipoFactura.removeAttribute('required');
+        }
+        // Ocultar ayuda
+        var alerta = document.getElementById('alertaMontoManual');
+        var ayuda = document.getElementById('ayudaSubTotal');
+        if(alerta) alerta.style.display = 'none';
+        if(ayuda) ayuda.style.display = 'none';
     }
 }
 

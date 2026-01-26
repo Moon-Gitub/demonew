@@ -33,17 +33,24 @@ class ControladorCompras{
 				return;
 			}
 			
+			// Validar que haya productos o que se esté creando una factura directa
 			if($_POST["listaProductosCompras"] == ""){
-				echo'<script>
-				swal({
-					  type: "error",
-					  title: "Compras",
-					  text: "La compra no se ha ejecuta si no hay productos",
-					  showConfirmButton: true,
-					  confirmButtonText: "Cerrar"
-					  })
-				</script>';
-				return;
+				// Verificar si es factura directa (tiene monto total)
+				$esFacturaDirecta = isset($_POST["crearFacturaDirecta"]) && $_POST["crearFacturaDirecta"] == "1";
+				$tieneMonto = isset($_POST["nuevoTotalFactura"]) && floatval($_POST["nuevoTotalFactura"]) > 0;
+				
+				if(!$esFacturaDirecta || !$tieneMonto){
+					echo'<script>
+					swal({
+						  type: "error",
+						  title: "Compras",
+						  text: "La compra no se puede ejecutar si no hay productos",
+						  showConfirmButton: true,
+						  confirmButtonText: "Cerrar"
+						  })
+					</script>';
+					return;
+				}
 			}
 
 			date_default_timezone_set('America/Argentina/Mendoza');
