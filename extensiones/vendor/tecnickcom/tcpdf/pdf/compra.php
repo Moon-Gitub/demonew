@@ -204,11 +204,11 @@ $bloque3 = <<<EOF
 		<tr><td style="border: 1px solid #666; background-color:white; width:540px; text-align:center"><b>Detalle de productos</b></td>
 		</tr>
 		<tr>
-		<td style="border: 1px solid #666; background-color:white; width:235px; text-align:center"><b>Producto</b></td>
+		<td style="border: 1px solid #666; background-color:white; width:255px; text-align:center"><b>Producto</b></td>
 		<td style="border: 1px solid #666; background-color:white; width:60px; text-align:center"><b>Pedido</b></td>
 		<td style="border: 1px solid #666; background-color:white; width:65px; text-align:center"><b>Recibido</b></td>
-		<td style="border: 1px solid #666; background-color:white; width:60px; text-align:center"><b>$ Unitario</b></td>
-		<td style="border: 1px solid #666; background-color:white; width:60px; text-align:center"><b>$ Total</b></td>
+		<td style="border: 1px solid #666; background-color:white; width:80px; text-align:center"><b>$ Unitario</b></td>
+		<td style="border: 1px solid #666; background-color:white; width:80px; text-align:center"><b>$ Total</b></td>
 		</tr>
 	</table>
 
@@ -217,7 +217,7 @@ EOF;
 $pdf->writeHTML($bloque3, false, false, false, false, '');
 
 // ---------------------------------------------------------
-
+$precioTotalNeto = 0;
 foreach ($productos as $key => $item) {
 
 //$itemProducto = "descripcion";
@@ -226,6 +226,7 @@ foreach ($productos as $key => $item) {
 //$respuestaProducto = ControladorProductos::ctrMostrarProductos($itemProducto, $valorProducto, $orden);
 $valorUnitario = number_format($item["precioCompra"], 2);
 $precioTotal = number_format($item["total"], 2);
+$precioTotalNeto += $item["total"];
 $bloque4 = <<<EOF
 	<table style="font-size:8px; padding:5px 10px;">
 		<tr>
@@ -244,7 +245,23 @@ $pdf->writeHTML($bloque4, false, false, false, false, '');
 $bloque5 = <<<EOF
 	<table>
 		<tr>
-			<td style="border: 1px solid #666; color:#333; background-color:white; width:420px; height:22px; text-align:left">
+			<td style="border: 1px solid #666; color:#333; background-color:white; width:420px; height:22px; text-align:rigth">
+				 <b>Total neto </b>
+			</td>
+			<td style="border: 1px solid #666; color:#333; background-color:white; width:120px; height:22px; text-align:center">
+				 $ $precioTotalNeto
+			</td>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #666; color:#333; background-color:white; width:420px; height:22px; text-align:rigth">
+				 <b>Descuento </b>
+			</td>
+			<td style="border: 1px solid #666; color:#333; background-color:white; width:120px; height:22px; text-align:center">
+				 $ $respuestaCompra[descuento]
+			</td>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #666; color:#333; background-color:white; width:420px; height:22px; text-align:rigth">
 				 <b>Importe neto </b>
 			</td>
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:120px; height:22px; text-align:center">
@@ -267,6 +284,8 @@ $bloque10 = <<<EOF
 EOF;
 
 $pdf->writeHTML($bloque10, false, false, false, false, '');
+
+/*
 $diferenciaCantidad = 0;
 foreach ($productos as $key => $item) {
 
@@ -283,6 +302,8 @@ $totalDiferencia = $diferencia * $item["recibidos"];
 $totalDiferenciaCalculada = $diferenciaCantidad + $totalDiferencia;
 }
 $totalPagar = round(($total ),2);
+*/
+
 // ---------------------------------------------------------
 
 $bloque111 = <<<EOF
@@ -335,7 +356,7 @@ $bloque111 = <<<EOF
 				<b>$ $impuestoInterno</b>
 			</td>
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:78px; text-align:center">
-				<b>$ $totalPagar</b>
+				<b>$ $total</b>
 			</td>			
 		</tr>
 
@@ -405,7 +426,7 @@ $bloque112 = <<<EOF
 		</tr>	
 		<tr>
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:540px; text-align:center">
-				<b>$ $totalPagar</b>
+				<b>$ $total</b>
 			</td>
 		</tr>
 	</table>
@@ -440,7 +461,7 @@ $bloqueRemitoPago = <<<EOF
 		</tr>	
 		<tr>
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:540px; text-align:center">
-				<b>$ $respuestaCompra[total]</b>
+				<b>$ $total</b>
 			</td>
 		</tr>
 	</table>
