@@ -6,8 +6,8 @@ Este directorio contiene toda la documentación del sistema organizada por módu
 
 - `modulo-compras/` - Documentación del módulo de compras
 - `mercadopago/` - Documentación de integración con Mercado Pago
-- `documentacion/` - Documentación general del sistema (ya existente)
-- `documentacion-completa/` - Documentación completa del sistema (ya existente)
+- `documentacion/` - Documentación general del sistema (instrucciones, guías)
+- `documentacion-completa/` - Documentación completa del sistema (instalación, configuración)
 
 ## Documentación por Módulo
 
