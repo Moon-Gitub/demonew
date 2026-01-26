@@ -107,35 +107,26 @@ $bloque1 = <<<EOF
 			<td style="width:560px; text-align: center;"> ORDEN DE COMPRA</td>
 		</tr>
 	</table>
-	<table border="1" >
+	<table border="0" >
 		<tr style="padding: 0px;">
 			<td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> 
 				<h2>$respEmpresa[razon_social]</h2>
 			</td>
-			<td style="width:40px; text-align:center">
-			<div><span style="font-size:28.5px;">X</span></div>	
-			</td>
-			<td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> 
-				Orden de compra
-			</td>
+			<td style="width:40px; text-align:center"><span style="font-size:28.5px;">X</span></td>
+			<td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);">ORDEN DE COMPRA</td>
 		</tr>
 	</table>
-	<table border="1" style="padding: 10px">
+	<table border="0" style="padding: 10px">
 		<tr>
 			<td style="width:280px; font-size:10px; text-align: left;">
 				<br>
 				<span><b>Direccion:</b> $respEmpresa[domicilio]</span> <br>
-				<span><b>Telefono:</b> $respEmpresa[telefono]</span> <br>
 				<span><b>Localidad:</b> $respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</span><br>
-				<span><b>Defensa al Consumidor Mza. 08002226678</b></span> 
 			</td>
 			<td style="width:280px; font-size:10px; text-align: left">
 				<div style="padding-top:5px">
 					<span><b>N° Cbte:</b> $respuestaCompra[id]</span> <br>
 					<span><b>Fecha Emisión:</b> $fecha </span><br>
-					<span><b>CUIT:</b> $respEmpresa[cuit] </span><br>
-					<span><b>II.BB.:</b> $respEmpresa[numero_iibb] </span><br>
-					<span><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades] </span>
 				</div>
 			</td>
 		</tr>
@@ -144,10 +135,11 @@ $bloque1 = <<<EOF
     <table style="padding: 5px">
 		<tr>
 			<td style="width:560px; font-size:12px; text-align: left;">
+				<b>Datos proveedor: </b>
 				<br>
-				<span>PROVEEDOR: <b>Nombre / Razón Social :</b> $proveedor[nombre] </span> - <span> <b> $proveedor[cuit] :</b> </span>  
+				<b>Nombre / Razón Social :</b> $proveedor[nombre] - <b> $proveedor[cuit] :</b>
 				<br>
-				<span><b>Domicilio: </b> $proveedor[direccion] </span>  
+				<b>Domicilio: </b> $proveedor[direccion]
 			</td>
 		</tr>
 	</table>
@@ -159,9 +151,9 @@ $pdf->writeHTML($bloque1, false, false, false, false, '');
 // ---------------------------------------------------------
 
 $bloque3 = <<<EOF
-	<table style="font-size:10px; padding:5px 10px;">
+	<table style="font-size:9px; padding:5px 10px;">
 		<tr>
-			<td style="border: 1px solid #666; background-color:white; width:540px; text-align:center"><b>Detalle de los productos comprados cantidades</b></td>
+			<td style="border: 1px solid #666; background-color:white; width:540px; text-align:center"><b>Productos pedidos</b></td>
 		</tr>
 		<tr>
 			<td style="border: 1px solid #666; background-color:white; width:260px; text-align:center">Producto</td>
