@@ -10,6 +10,8 @@ RewriteRule ^recibo/([0-9]+)$ extensiones/vendor/tecnickcom/tcpdf/pdf/recibo.php
 
 RewriteRule ^compra/([0-9]+)$ extensiones/vendor/tecnickcom/tcpdf/pdf/compra.php?id=$1 [L]
 
+RewriteRule ^orden-compra/([0-9]+)$ extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php?codigo=$1 [L]
+
 # php -- BEGIN cPanel-generated handler, do not edit
 # Set the “ea-php81” package as the default “PHP” programming language.
 <IfModule mime_module>

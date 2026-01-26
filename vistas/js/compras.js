@@ -494,7 +494,7 @@ $("#tablaListarCompras tfoot th").each(function (i) {
 
 		var codigoCompra = $(this).attr("codigoCompra");
 
-		window.open("extensiones/vendor/tecnickcom/tcpdf/pdf/compraParcial.php?codigo="+codigoCompra, "_blank");
+		window.open("orden-compra/"+codigoCompra, "_blank");
 
 	});
 
@@ -1564,7 +1564,7 @@ $(".tablas").on("click", ".btnImprimirCompra", function(){
 
 	var codigoCompra = $(this).attr("codigoCompra");
 
-	window.open("extensiones/vendor/tecnickcom/tcpdf/pdf/ingresoFactura.php?codigo="+codigoCompra, "_blank");
+	//window.open("extensiones/vendor/tecnickcom/tcpdf/pdf/ingresoFactura.php?codigo="+codigoCompra, "_blank");
 
 })
 
@@ -1575,7 +1575,7 @@ $(".tablas").on("click", ".btnImprimirCompraCtaCte", function(){
 
 	var codigoCompra = $(this).attr("idCompra");
 
-	window.open("extensiones/vendor/tecnickcom/tcpdf/pdf/compra.php?codigo="+codigoCompra, "_blank");
+	window.open("compra/"+codigoCompra, "_blank");
 
 })
 
@@ -1586,7 +1586,7 @@ $(".tablas").on("click", ".btnImprimirCompraFinal", function(){
 
 	var codigoCompra = $(this).attr("codigoCompra");
 
-	window.open("extensiones/vendor/tecnickcom/tcpdf/pdf/compra.php?codigo="+codigoCompra, "_blank");
+	window.open("compra/"+codigoCompra, "_blank");
 
 });
 
