@@ -86,10 +86,10 @@ $respuestaCompra = ControladorCompras::ctrMostrarCompras($itemPedido, $_GET['cod
 $fecha = substr($respuestaCompra["fecha"],0,-8);
 $fecha=date("d-m-Y",strtotime($fecha));
 $productos = json_decode($respuestaCompra["productos"], true);
-$destino = json_decode($respuestaCompra["destino"],true);
+$destino = $respuestaCompra["sucursalDestino"];
 $total = number_format(round($respuestaCompra["total"],2),2);
 
-$proveedor = ControladorProveedores::ctrMostrarProveedores('id', $respuestaCompra["id_proveedor"])["nombre"];
+$proveedor = ControladorProveedores::ctrMostrarProveedores('id', $respuestaCompra["id_proveedor"]);
 
 //REQUERIMOS LA CLASE TCPDF
 require_once('tcpdf_include.php');
