@@ -168,14 +168,13 @@ EOF;
 $pdf->writeHTML($bloque1, false, false, false, false, '');
 
 // ---------------------------------------------------------
-
 $bloque2 = <<<EOF
-	<table style="font-size:10px; padding:5px 10px;">	
+	<table  style="font-size:10px; padding:5px 10px;">	
 		<tr>
-			<td style="border: 1px solid #666; background-color:white; width:270px">
+			<td style="width:270px;">
 				<b>Orden De Compra: $respuestaCompra[usuarioPedido]</b> 
 			</td>
-			<td style="border: 1px solid #666; background-color:white; width:270px; text-align:left">
+			<td style="width:270px;">
 				<b>Validado De Compra: $respuestaCompra[usuarioConfirma]</b>
 			</td>
 		</tr>
@@ -199,9 +198,8 @@ $bloque3 = <<<EOF
 		<td style="border: 1px solid #666; background-color:white; width:235px; text-align:center"><b>Producto</b></td>
 		<td style="border: 1px solid #666; background-color:white; width:60px; text-align:center"><b>Pedido</b></td>
 		<td style="border: 1px solid #666; background-color:white; width:65px; text-align:center"><b>Recibido</b></td>
-		<td style="border: 1px solid #666; background-color:white; width:60px; text-align:center"><b>Factura</b></td>
-		<td style="border: 1px solid #666; background-color:white; width:60px; text-align:center"><b>P. Compra</b></td>
-		<td style="border: 1px solid #666; background-color:white; width:60px; text-align:center"><b>P. Factura</b></td>
+		<td style="border: 1px solid #666; background-color:white; width:60px; text-align:center"><b>$ Unitario</b></td>
+		<td style="border: 1px solid #666; background-color:white; width:60px; text-align:center"><b>$ Total</b></td>
 		</tr>
 	</table>
 
@@ -213,21 +211,20 @@ $pdf->writeHTML($bloque3, false, false, false, false, '');
 
 foreach ($productos as $key => $item) {
 
-$itemProducto = "descripcion";
-$valorProducto = $item["descripcion"];
-$orden = null;
-$respuestaProducto = ControladorProductos::ctrMostrarProductos($itemProducto, $valorProducto, $orden);
-$valorUnitario = number_format($respuestaProducto["precio_venta"], 2);
+//$itemProducto = "descripcion";
+//$valorProducto = $item["descripcion"];
+//$orden = null;
+//$respuestaProducto = ControladorProductos::ctrMostrarProductos($itemProducto, $valorProducto, $orden);
+$valorUnitario = number_format($item["precioCompra"], 2);
 $precioTotal = number_format($item["total"], 2);
 $bloque4 = <<<EOF
 	<table style="font-size:8px; padding:5px 10px;">
 		<tr>
-			<td style="border: 1px solid #666; color:#333; background-color:white; width:235x; text-align:center"><b>$item[descripcion]</b></td>
+			<td style="border: 1px solid #666; color:#333; background-color:white; width:255x; text-align:center"><b>$item[descripcion]</b></td>
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:60px; text-align:center"><b>$item[pedidos]</b></td>
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:65px; text-align:center"><b>$item[recibidos]</b></td>
-			<td style="border: 1px solid #666; color:#333; background-color:white; width:60px; text-align:center"><b>$item[articulosFactura]</b></td>
-			<td style="border: 1px solid #666; color:#333; background-color:white; width:60px; text-align:center"><b>$item[precioCompra]</b></td>
-			<td style="border: 1px solid #666; color:#333; background-color:white; width:60px; text-align:center"><b>$item[precioCompraPedido]</b></td>
+			<td style="border: 1px solid #666; color:#333; background-color:white; width:80px; text-align:center"><b>$valorUnitario</b></td>
+			<td style="border: 1px solid #666; color:#333; background-color:white; width:80px; text-align:center"><b>$precioTotal</b></td>
 		</tr>
 	</table>
 EOF;
@@ -238,11 +235,11 @@ $pdf->writeHTML($bloque4, false, false, false, false, '');
 $bloque5 = <<<EOF
 	<table>
 		<tr>
-			<td style="border: 1px solid #666; color:#333; background-color:white; width:420px; height:22px; text-align:center">
-				 TOTAL COMPRA 
+			<td style="border: 1px solid #666; color:#333; background-color:white; width:420px; height:22px; text-align:left">
+				 <b>Importe neto </b>
 			</td>
 			<td style="border: 1px solid #666; color:#333; background-color:white; width:120px; height:22px; text-align:center">
-				 $ $total 
+				 $ $totalNeto
 			</td>
 		</tr>
 	</table>
