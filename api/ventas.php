@@ -169,7 +169,12 @@ try {
         $postVentaCaja['fechaActual'] = $fecha;
         
         $postVentaCaja['idVendedor'] = $_SESSION['id'] ?? 1;
-        $postVentaCaja['sucursalVendedor'] = $datos['sucursal'] ?? 'Local';
+        // Mapear 'Local' a 'stock' ya que 'Local' no es una columna válida en productos
+        $sucursal = $datos['sucursal'] ?? 'stock';
+        if ($sucursal === 'Local') {
+            $sucursal = 'stock';
+        }
+        $postVentaCaja['sucursalVendedor'] = $sucursal;
         $postVentaCaja['nombreVendedor'] = $_SESSION['nombre'] ?? 'Sistema';
         // El cliente puede venir como ID (número) o como string "ID-Nombre"
         $cliente_id = $datos['cliente'] ?? '1';
