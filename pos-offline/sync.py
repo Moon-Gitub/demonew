@@ -116,21 +116,133 @@ class SyncManager:
                         except:
                             cliente_id = 1
                 
+                # Mapear sucursal: 'Local' debe ser 'stock' para el servidor
+                sucursal_servidor = venta.sucursal or 'stock'
+                if sucursal_servidor == 'Local':
+                    sucursal_servidor = 'stock'
+                
+                # Calcular impuesto_detalle correctamente basado en productos
+                # Mapeo de tipos de IVA a IDs y porcentajes
+                iva_map = {
+                    0: {"id": 3, "descripcion": "IVA 0%", "porcentaje": 0.0},
+                    2: {"id": 9, "descripcion": "IVA 2,5%", "porcentaje": 0.025},
+                    5: {"id": 8, "descripcion": "IVA 5%", "porcentaje": 0.05},
+                    10: {"id": 4, "descripcion": "IVA 10,5%", "porcentaje": 0.105},
+                    21: {"id": 5, "descripcion": "IVA 21%", "porcentaje": 0.21},
+                    27: {"id": 6, "descripcion": "IVA 27%", "porcentaje": 0.27}
+                }
+                
+                # Agrupar productos por tipo de IVA y calcular bases imponibles
+                bases_por_iva = {}  # {tipo_iva: {"base": 0, "iva": 0}}
+                
+                for prod in productos_formateados:
+                    # Obtener tipo de IVA del producto (buscar en BD local si es necesario)
+                    tipo_iva = prod.get('tipo_iva', 21)  # Por defecto 21% si no se especifica
+                    
+                    # Si no viene en el producto, intentar obtenerlo de la BD local
+                    if 'tipo_iva' not in prod or prod.get('tipo_iva') is None:
+                        try:
+                            from database import get_session, Producto
+                            session_temp = get_session()
+                            producto_bd = session_temp.query(Producto).filter_by(id=prod.get('id', 0)).first()
+                            if producto_bd and producto_bd.iva is not None:
+                                tipo_iva = int(producto_bd.iva)
+                            session_temp.close()
+                        except:
+                            tipo_iva = 21  # Por defecto
+                    
+                    # Obtener subtotal del producto
+                    subtotal = float(prod.get('total', prod.get('subtotal', 0)))
+                    
+                    # Calcular base imponible según tipo de IVA
+                    if tipo_iva in iva_map:
+                        porcentaje = iva_map[tipo_iva]["porcentaje"]
+                        if porcentaje > 0:
+                            # Base imponible = subtotal / (1 + porcentaje)
+                            base_imponible = subtotal / (1 + porcentaje)
+                            iva_calculado = subtotal - base_imponible
+                        else:
+                            # IVA 0%
+                            base_imponible = subtotal
+                            iva_calculado = 0.0
+                        
+                        # Acumular por tipo de IVA
+                        if tipo_iva not in bases_por_iva:
+                            bases_por_iva[tipo_iva] = {"base": 0.0, "iva": 0.0}
+                        bases_por_iva[tipo_iva]["base"] += base_imponible
+                        bases_por_iva[tipo_iva]["iva"] += iva_calculado
+                    else:
+                        # Si el tipo de IVA no está en el mapa, usar IVA 21% por defecto
+                        base_imponible = subtotal / 1.21
+                        iva_calculado = subtotal - base_imponible
+                        if 21 not in bases_por_iva:
+                            bases_por_iva[21] = {"base": 0.0, "iva": 0.0}
+                        bases_por_iva[21]["base"] += base_imponible
+                        bases_por_iva[21]["iva"] += iva_calculado
+                
+                # Construir impuesto_detalle en el formato correcto
+                impuesto_detalle = []
+                for tipo_iva, valores in bases_por_iva.items():
+                    if tipo_iva in iva_map:
+                        base_redondeada = round(valores["base"], 2)
+                        iva_redondeado = round(valores["iva"], 2)
+                        # Solo agregar si hay valores mayores a 0
+                        if base_redondeada > 0 or iva_redondeado > 0:
+                            impuesto_detalle.append({
+                                "id": iva_map[tipo_iva]["id"],
+                                "descripcion": iva_map[tipo_iva]["descripcion"],
+                                "baseImponible": str(base_redondeada),
+                                "iva": str(iva_redondeado)
+                            })
+                
+                # Si no hay impuestos calculados, usar IVA 0% con el total
+                if not impuesto_detalle:
+                    impuesto_detalle.append({
+                        "id": 3,
+                        "descripcion": "IVA 0%",
+                        "baseImponible": str(round(float(venta.total), 2)),
+                        "iva": "0"
+                    })
+                
+                # Log para depuración
+                print(f"   📊 impuesto_detalle calculado: {json.dumps(impuesto_detalle)}")
+                
+                # Convertir impuesto_detalle a JSON string
+                impuesto_detalle_json = json.dumps(impuesto_detalle, ensure_ascii=False)
+                
+                # Obtener id_empresa desde config
+                try:
+                    from config import config
+                    id_empresa = getattr(config, 'ID_EMPRESA', 1)
+                except:
+                    id_empresa = 1
+                
                 venta_data = {
                     'fecha': venta.fecha.isoformat(),
                     'cliente': cliente_id,  # Enviar ID del cliente
                     'productos': productos_formateados,
                     'total': float(venta.total),
                     'metodo_pago': venta.metodo_pago,
-                    'sucursal': venta.sucursal or 'Local',
+                    'sucursal': sucursal_servidor,
+                    'id_empresa': id_empresa,
+                    'impuesto_detalle': impuesto_detalle_json,  # Enviar como JSON string
                     'creado_local': True
                 }
+                
+                print(f"   📤 Enviando impuesto_detalle: {impuesto_detalle_json[:200]}...")
                 
                 print(f"🔄 Sincronizando venta ID {venta.id} con {len(productos_formateados)} productos...")
                 print(f"   Total: ${venta.total}, Método: {venta.metodo_pago}")
                 print(f"   Productos: {json.dumps([p.get('descripcion', 'N/A') for p in productos_formateados[:3]], ensure_ascii=False)}")
+                print(f"   ✅ impuesto_detalle incluido en venta_data: {'impuesto_detalle' in venta_data}")
+                if 'impuesto_detalle' in venta_data:
+                    print(f"   📋 impuesto_detalle valor: {venta_data['impuesto_detalle'][:200]}...")
                 
                 try:
+                    # Log del JSON que se va a enviar
+                    json_to_send = json.dumps(venta_data, ensure_ascii=False)
+                    print(f"   📤 JSON completo a enviar (primeros 500 chars): {json_to_send[:500]}...")
+                    
                     response = requests.post(
                         url,
                         json=venta_data,
