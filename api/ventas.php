@@ -133,7 +133,7 @@ try {
         error_log("=== INICIO CREAR VENTA OFFLINE ===");
         
         $raw_input = file_get_contents('php://input');
-        error_log("Raw input recibido: " . substr($raw_input, 0, 500));
+        error_log("Raw input recibido: " . substr($raw_input, 0, 1000));
         
         $datos = json_decode($raw_input, true);
         
@@ -145,7 +145,11 @@ try {
             exit;
         }
         
-        error_log("Datos decodificados: " . print_r($datos, true));
+        error_log("Datos decodificados - Keys: " . implode(', ', array_keys($datos)));
+        error_log("¿Tiene impuesto_detalle? " . (isset($datos['impuesto_detalle']) ? 'SÍ' : 'NO'));
+        if (isset($datos['impuesto_detalle'])) {
+            error_log("impuesto_detalle recibido (tipo: " . gettype($datos['impuesto_detalle']) . "): " . substr(is_string($datos['impuesto_detalle']) ? $datos['impuesto_detalle'] : json_encode($datos['impuesto_detalle']), 0, 300));
+        }
         
         // Validar que hay productos
         if(empty($datos['productos']) || !is_array($datos['productos'])) {

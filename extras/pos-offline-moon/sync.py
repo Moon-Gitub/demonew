@@ -227,8 +227,15 @@ class SyncManager:
                 print(f"🔄 Sincronizando venta ID {venta.id} con {len(productos_formateados)} productos...")
                 print(f"   Total: ${venta.total}, Método: {venta.metodo_pago}")
                 print(f"   Productos: {json.dumps([p.get('descripcion', 'N/A') for p in productos_formateados[:3]], ensure_ascii=False)}")
+                print(f"   ✅ impuesto_detalle incluido en venta_data: {'impuesto_detalle' in venta_data}")
+                if 'impuesto_detalle' in venta_data:
+                    print(f"   📋 impuesto_detalle valor: {venta_data['impuesto_detalle'][:200]}...")
                 
                 try:
+                    # Log del JSON que se va a enviar
+                    json_to_send = json.dumps(venta_data, ensure_ascii=False)
+                    print(f"   📤 JSON completo a enviar (primeros 500 chars): {json_to_send[:500]}...")
+                    
                     response = requests.post(
                         url,
                         json=venta_data,
