@@ -673,20 +673,20 @@ MODAL COBRO MEJORADO
             <!--=====================================
             CABEZA DEL MODAL - SIMPLE Y LIMPIO
             ======================================-->
-            <div class="modal-header" style="background: white; border-bottom: 1px solid #e0e0e0; padding: 20px 25px;">
+            <div class="modal-header" style="background: <?php echo $fijoModal ? '#dc3545' : 'white'; ?>; border-bottom: 1px solid #e0e0e0; padding: 20px 25px; <?php echo $fijoModal ? 'color: white;' : ''; ?>">
                 <?php if(!$fijoModal) { ?>
                     <!-- Botón cerrar solo visible si NO es modal fijo (cliente bloqueado) -->
                     <button type="button" class="close" data-dismiss="modal" style="color: #6c757d; opacity: 0.8; font-size: 28px;">&times;</button>
                 <?php } else { ?>
-                    <!-- Cliente bloqueado: NO mostrar botón cerrar -->
-                    <div style="width: 28px; height: 28px;"></div>
+                    <!-- Cliente bloqueado: NO mostrar botón cerrar (completamente oculto y deshabilitado) -->
+                    <button type="button" class="close" style="display: none !important; visibility: hidden !important; pointer-events: none !important; opacity: 0 !important;" disabled>&times;</button>
                 <?php } ?>
-                <h4 style="margin: 0; color: #2c3e50; font-weight: 600; font-size: 20px;">
-                    <i class="fa fa-credit-card" style="color: #667eea; margin-right: 8px;"></i>
+                <h4 style="margin: 0; color: <?php echo $fijoModal ? 'white' : '#2c3e50'; ?>; font-weight: 600; font-size: 20px;">
+                    <i class="fa fa-credit-card" style="color: <?php echo $fijoModal ? 'white' : '#667eea'; ?>; margin-right: 8px;"></i>
                     Estado de Cuenta
                     <?php if($fijoModal) { ?>
-                        <span style="color: #dc3545; font-size: 14px; margin-left: 10px;">
-                            <i class="fa fa-lock"></i> Sistema Bloqueado
+                        <span style="color: white; font-size: 14px; margin-left: 10px; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 4px;">
+                            <i class="fa fa-lock"></i> Sistema Bloqueado - Debe Pagar para Continuar
                         </span>
                     <?php } ?>
                 </h4>
@@ -1104,22 +1104,80 @@ $(document).ready(function(){
     console.log('📄 Documento listo, verificando modal...');
     
     <?php if($muestroModal && $fijoModal) { ?>
-        // Modal FIJO (cliente bloqueado): SIEMPRE se muestra, NO se puede cerrar
-        console.log('🔒 Modal FIJO: se mostrará siempre (cliente bloqueado)');
+        // Modal FIJO (cliente bloqueado > día 26): TOTALMENTE BLOQUEADO, NO se puede cerrar de NINGUNA manera
+        console.log('🔒 Modal FIJO: Cliente bloqueado - Modal completamente bloqueado');
         
-        // Prevenir cualquier intento de cerrar el modal
+        // ============================================
+        // PROTECCIONES MÚLTIPLES PARA BLOQUEAR CIERRE
+        // ============================================
+        
+        // 1. Prevenir cierre con evento hide (múltiples handlers)
         $("#modalCobro").on('hide.bs.modal', function(e) {
             e.preventDefault();
-            e.stopPropagation();
-            console.log('⛔ Intento de cerrar modal bloqueado - cliente bloqueado');
+            e.stopImmediatePropagation();
+            console.log('⛔ Bloqueado: Intento de cerrar modal (hide.bs.modal)');
             return false;
         });
         
-        // Ocultar botón cerrar si existe
-        $("#modalCobro .close").hide();
+        // 2. Prevenir cierre con evento hidden
+        $("#modalCobro").on('hidden.bs.modal', function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            console.log('⛔ Bloqueado: Intento de cerrar modal (hidden.bs.modal)');
+            // Reabrir inmediatamente si se intenta cerrar
+            setTimeout(function() {
+                $("#modalCobro").modal('show');
+            }, 100);
+            return false;
+        });
         
-        // Mostrar modal fijo (no se puede cerrar)
-        $("#modalCobro").modal({backdrop: 'static', keyboard: false});
+        // 3. Ocultar y deshabilitar completamente el botón cerrar
+        $("#modalCobro .close").css({
+            'display': 'none !important',
+            'visibility': 'hidden !important',
+            'pointer-events': 'none !important',
+            'opacity': '0 !important'
+        }).prop('disabled', true).off('click');
+        
+        // 4. Prevenir cierre con tecla ESC
+        $(document).on('keydown', function(e) {
+            if (e.keyCode === 27 && $("#modalCobro").hasClass('in')) { // ESC key
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                console.log('⛔ Bloqueado: Intento de cerrar con ESC');
+                return false;
+            }
+        });
+        
+        // 5. Prevenir cierre haciendo click fuera del modal
+        $("#modalCobro").on('click', function(e) {
+            if ($(e.target).hasClass('modal') || $(e.target).hasClass('modal-dialog')) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                console.log('⛔ Bloqueado: Intento de cerrar haciendo click fuera');
+                return false;
+            }
+        });
+        
+        // 6. Remover cualquier data-dismiss del modal
+        $("#modalCobro [data-dismiss='modal']").removeAttr('data-dismiss').off('click');
+        
+        // 7. Mostrar modal con todas las protecciones
+        $("#modalCobro").modal({
+            backdrop: 'static',  // No se cierra al hacer click fuera
+            keyboard: false,     // No se cierra con ESC
+            show: true            // Mostrar inmediatamente
+        });
+        
+        // 8. Forzar que el modal permanezca abierto (verificación periódica)
+        setInterval(function() {
+            if (!$("#modalCobro").hasClass('in') && !$("#modalCobro").hasClass('show')) {
+                console.log('⚠️ Modal cerrado, reabriendo...');
+                $("#modalCobro").modal('show');
+            }
+        }, 1000);
+        
+        console.log('✅ Modal FIJO completamente bloqueado - Cliente debe pagar para continuar');
         
     <?php } elseif ($muestroModal) { ?>
         // Modal NORMAL: máximo 3 veces por sesión, se puede cerrar
