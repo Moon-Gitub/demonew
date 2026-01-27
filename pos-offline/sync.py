@@ -142,14 +142,15 @@ class SyncManager:
                     # Si no viene en el producto, intentar obtenerlo de la BD local
                     if 'tipo_iva' not in prod or prod.get('tipo_iva') is None:
                         try:
-                            from database import get_session, Producto
+                            # Usar get_session que ya está importado al inicio del archivo
                             session_temp = get_session()
                             producto_bd = session_temp.query(Producto).filter_by(id=prod.get('id', 0)).first()
                             if producto_bd and producto_bd.iva is not None:
                                 tipo_iva = int(producto_bd.iva)
                             session_temp.close()
-                        except:
-                            tipo_iva = 21  # Por defecto
+                        except Exception as e:
+                            # Si hay error, usar IVA 21% por defecto
+                            tipo_iva = 21
                     
                     # Obtener subtotal del producto
                     subtotal = float(prod.get('total', prod.get('subtotal', 0)))
@@ -210,12 +211,8 @@ class SyncManager:
                 # Convertir impuesto_detalle a JSON string
                 impuesto_detalle_json = json.dumps(impuesto_detalle, ensure_ascii=False)
                 
-                # Obtener id_empresa desde config
-                try:
-                    from config import config
-                    id_empresa = getattr(config, 'ID_EMPRESA', 1)
-                except:
-                    id_empresa = 1
+                # Obtener id_empresa desde config (ya importado al inicio)
+                id_empresa = getattr(config, 'ID_EMPRESA', 1)
                 
                 venta_data = {
                     'fecha': venta.fecha.isoformat(),
