@@ -252,6 +252,9 @@ class ControladorCompras{
 			$fec_hora = $fecha.' '.$hora;
 			$nroFactura = str_pad($_POST["puntoVenta"], 5, "0", STR_PAD_LEFT) . ' - ' .str_pad($_POST["numeroFactura"], 8, "0", STR_PAD_LEFT);
 
+			// Calcular impuesto_detalle basado en productos
+			$impuestoDetalle = self::calcularImpuestoDetalleCompras($listaProductosCompras, $_POST["descuentoCompraOrden"] ?? 0);
+
 			//GUARDAR LA COMPRA CON ESTADO=1 (INGRESADA DIRECTAMENTE)
 			$tabla = "compras";
 			$datos = array(
@@ -277,7 +280,8 @@ class ControladorCompras{
                 "precepcionesGanancias"=>$_POST["precepcionesGanancias"] ?? 0,
                 "impuestoInterno"=>$_POST["impuestoInterno"] ?? 0,
                 "observacionFactura"=>$_POST["observacionFactura"] ?? "",
-                "fechaIngreso"=>$fec_hora
+                "fechaIngreso"=>$fec_hora,
+                "impuesto_detalle"=>$impuestoDetalle
 			);
 
 			$respuesta = ModeloCompras::mdlIngresarCompraDirecta($tabla, $datos);
@@ -392,6 +396,9 @@ class ControladorCompras{
 			}
 			$nroFactura = str_pad($_POST["puntoVenta"], 5, "0", STR_PAD_LEFT) . ' - ' .str_pad($_POST["numeroFactura"], 8, "0", STR_PAD_LEFT);
 
+			// Calcular impuesto_detalle basado en productos
+			$impuestoDetalle = self::calcularImpuestoDetalleCompras($productos, $_POST["descuentoCompraOrden"] ?? 0);
+
 			/*=============================================
 			GUARDAR CAMBIOS DE LA COMPRA
 			=============================================*/	
@@ -415,7 +422,8 @@ class ControladorCompras{
 						   "precepcionesGanancias"=>$_POST["precepcionesGanancias"],
 						   "impuestoInterno"=>$_POST["impuestoInterno"],
 						   "observacionFactura"=>$_POST["observacionFactura"],
-						   "total"=>$_POST["nuevoTotalFactura"]);
+						   "total"=>$_POST["nuevoTotalFactura"],
+						   "impuesto_detalle"=>$impuestoDetalle);
 		   	$respuesta = ModeloCompras::mdlEditarIngreso($tabla, $datos);
 		   	
 		   	// Verificar que no exista ya un registro en cuenta corriente para esta compra
@@ -538,5 +546,106 @@ class ControladorCompras{
 		$tabla = "compras";
 		$respuesta = ModeloCompras::mdlMostrarProveedoresInforme($tabla, $fechaDesde, $fechaHasta);
 		return $respuesta;
+	}
+
+	/*=============================================
+	CALCULAR IMPUESTO_DETALLE PARA COMPRAS
+	=============================================*/
+	static private function calcularImpuestoDetalleCompras($productos, $descuentoPorcentaje = 0){
+		require_once __DIR__ . "/../modelos/productos.modelo.php";
+		
+		// Mapeo de tipos de IVA a IDs y porcentajes
+		$iva_map = array(
+			0 => array("id" => 3, "descripcion" => "IVA 0%", "porcentaje" => 0.0),
+			2 => array("id" => 9, "descripcion" => "IVA 2,5%", "porcentaje" => 0.025),
+			5 => array("id" => 8, "descripcion" => "IVA 5%", "porcentaje" => 0.05),
+			10 => array("id" => 4, "descripcion" => "IVA 10,5%", "porcentaje" => 0.105),
+			21 => array("id" => 5, "descripcion" => "IVA 21%", "porcentaje" => 0.21),
+			27 => array("id" => 6, "descripcion" => "IVA 27%", "porcentaje" => 0.27)
+		);
+		
+		// Agrupar productos por tipo de IVA y calcular bases imponibles
+		$bases_por_iva = array(); // {tipo_iva: {"base": 0, "iva": 0}}
+		
+		$descGeneral = floatval($descuentoPorcentaje);
+		
+		foreach($productos as $prod){
+			// Obtener tipo de IVA del producto
+			$tipo_iva = isset($prod["tipo_iva"]) ? intval($prod["tipo_iva"]) : 21; // Por defecto 21%
+			
+			// Si no viene en el producto, buscar en BD
+			if(!isset($prod["tipo_iva"]) || $prod["tipo_iva"] == null || $prod["tipo_iva"] == ""){
+				if(isset($prod["id"]) && $prod["id"] > 0){
+					$traerProducto = ModeloProductos::mdlMostrarProductos("productos", "id", $prod["id"], "id");
+					if($traerProducto && isset($traerProducto["tipo_iva"])){
+						$tipo_iva = intval($traerProducto["tipo_iva"]);
+					}
+				}
+			}
+			
+			// Obtener subtotal del producto (precioCompra * cantidad recibida o pedida)
+			$cantidad = isset($prod["recibidos"]) ? floatval($prod["recibidos"]) : 
+			           (isset($prod["pedidos"]) ? floatval($prod["pedidos"]) : 
+			           (isset($prod["cantidad"]) ? floatval($prod["cantidad"]) : 1));
+			$precioUnitario = isset($prod["precioCompra"]) ? floatval($prod["precioCompra"]) : 
+			                 (isset($prod["precio"]) ? floatval($prod["precio"]) : 0);
+			$subtotal = isset($prod["total"]) ? floatval($prod["total"]) : ($precioUnitario * $cantidad);
+			
+			// Aplicar descuento si existe
+			if($descGeneral > 0){
+				$subtotal = $subtotal - ($subtotal * $descGeneral / 100);
+			}
+			
+			// Calcular base imponible según tipo de IVA
+			if(isset($iva_map[$tipo_iva])){
+				$porcentaje = $iva_map[$tipo_iva]["porcentaje"];
+				if($porcentaje > 0){
+					// Base imponible = subtotal / (1 + porcentaje)
+					$base_imponible = $subtotal / (1 + $porcentaje);
+					$iva_calculado = $subtotal - $base_imponible;
+				} else {
+					// IVA 0%
+					$base_imponible = $subtotal;
+					$iva_calculado = 0.0;
+				}
+				
+				// Acumular por tipo de IVA
+				if(!isset($bases_por_iva[$tipo_iva])){
+					$bases_por_iva[$tipo_iva] = array("base" => 0.0, "iva" => 0.0);
+				}
+				$bases_por_iva[$tipo_iva]["base"] += $base_imponible;
+				$bases_por_iva[$tipo_iva]["iva"] += $iva_calculado;
+			} else {
+				// Si el tipo de IVA no está en el mapa, usar IVA 21% por defecto
+				$base_imponible = $subtotal / 1.21;
+				$iva_calculado = $subtotal - $base_imponible;
+				if(!isset($bases_por_iva[21])){
+					$bases_por_iva[21] = array("base" => 0.0, "iva" => 0.0);
+				}
+				$bases_por_iva[21]["base"] += $base_imponible;
+				$bases_por_iva[21]["iva"] += $iva_calculado;
+			}
+		}
+		
+		// Construir impuesto_detalle en el formato correcto
+		$impuestoDetalle = '[';
+		foreach($bases_por_iva as $tipo_iva => $valores){
+			if(isset($iva_map[$tipo_iva])){
+				$impuestoDetalle .= '{"id":'.$iva_map[$tipo_iva]["id"].',"descripcion":"'.$iva_map[$tipo_iva]["descripcion"].'","baseImponible":"'.round($valores["base"], 2).'","iva":"'.round($valores["iva"], 2).'"},';
+			}
+		}
+		
+		// Eliminar la última coma si existe
+		if(strlen($impuestoDetalle) > 1){
+			$impuestoDetalle = substr($impuestoDetalle, 0, -1);
+		}
+		$impuestoDetalle .= ']';
+		
+		// Asegurar que impuesto_detalle tenga un valor válido
+		if(empty($impuestoDetalle) || $impuestoDetalle == '[' || !isset($impuestoDetalle)){
+			$impuestoDetalle = '[]';
+		}
+		
+		return $impuestoDetalle;
 	}
 }

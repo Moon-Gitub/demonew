@@ -109,7 +109,7 @@ class ModeloCompras{
 	INGRESAR COMPRA DIRECTA (FACTURA SIN ORDEN)
 	=============================================*/
 	static public function mdlIngresarCompraDirecta($tabla, $datos){
-		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(codigo, id_proveedor, usuarioPedido, usuarioConfirma, fechaEntrega, fechaPago, productos, estado, fecha, total, tipo, remitoNumero, numeroFactura, fechaEmision, descuento, totalNeto, iva, precepcionesIngresosBrutos, precepcionesIva, precepcionesGanancias, impuestoInterno, observacionFactura, fechaIngreso) VALUES (:codigo, :id_proveedor, :usuarioPedido, :usuarioConfirma, :fechaEntrega, :fechaPago, :productos, :estado, :fecha, :total, :tipo, :remitoNumero, :numeroFactura, :fechaEmision, :descuento, :totalNeto, :iva, :precepcionesIngresosBrutos, :precepcionesIva, :precepcionesGanancias, :impuestoInterno, :observacionFactura, :fechaIngreso)");
+		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(codigo, id_proveedor, usuarioPedido, usuarioConfirma, fechaEntrega, fechaPago, productos, estado, fecha, total, tipo, remitoNumero, numeroFactura, fechaEmision, descuento, totalNeto, iva, precepcionesIngresosBrutos, precepcionesIva, precepcionesGanancias, impuestoInterno, observacionFactura, fechaIngreso, impuesto_detalle) VALUES (:codigo, :id_proveedor, :usuarioPedido, :usuarioConfirma, :fechaEntrega, :fechaPago, :productos, :estado, :fecha, :total, :tipo, :remitoNumero, :numeroFactura, :fechaEmision, :descuento, :totalNeto, :iva, :precepcionesIngresosBrutos, :precepcionesIva, :precepcionesGanancias, :impuestoInterno, :observacionFactura, :fechaIngreso, :impuesto_detalle)");
 
 		$stmt->bindParam(":fecha", $datos["fecha"], PDO::PARAM_STR);
 		$stmt->bindParam(":usuarioPedido", $datos["usuarioPedido"], PDO::PARAM_STR);
@@ -134,6 +134,8 @@ class ModeloCompras{
 		$stmt->bindParam(":impuestoInterno", $datos["impuestoInterno"], PDO::PARAM_STR);
 		$stmt->bindParam(":observacionFactura", $datos["observacionFactura"], PDO::PARAM_STR);
 		$stmt->bindParam(":fechaIngreso", $datos["fechaIngreso"], PDO::PARAM_STR);
+		$impuesto_detalle = isset($datos["impuesto_detalle"]) ? $datos["impuesto_detalle"] : '[]';
+		$stmt->bindParam(":impuesto_detalle", $impuesto_detalle, PDO::PARAM_STR);
 		
 		if($stmt->execute()){
 			return "ok";
@@ -163,7 +165,7 @@ class ModeloCompras{
 
 	static public function mdlEditarIngreso($tabla, $datos){
 
-		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET usuarioPedido = :usuarioPedido, id_proveedor= :id_proveedor, usuarioConfirma = :usuarioConfirma, remitoNumero = :remitoNumero, numeroFactura = :numeroFactura, fechaEmision = :fechaEmision, observacionFactura = :observacionFactura, estado = :estado, descuento = :descuento, totalNeto= :totalNeto, tipo = :tipo, iva= :iva, precepcionesIngresosBrutos= :precepcionesIngresosBrutos,  precepcionesIva= :precepcionesIva, precepcionesGanancias= :precepcionesGanancias, impuestoInterno= :impuestoInterno, fechaIngreso = :fechaIngreso, productos = :productos, total= :total WHERE id = :id");
+		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET usuarioPedido = :usuarioPedido, id_proveedor= :id_proveedor, usuarioConfirma = :usuarioConfirma, remitoNumero = :remitoNumero, numeroFactura = :numeroFactura, fechaEmision = :fechaEmision, observacionFactura = :observacionFactura, estado = :estado, descuento = :descuento, totalNeto= :totalNeto, tipo = :tipo, iva= :iva, precepcionesIngresosBrutos= :precepcionesIngresosBrutos,  precepcionesIva= :precepcionesIva, precepcionesGanancias= :precepcionesGanancias, impuestoInterno= :impuestoInterno, fechaIngreso = :fechaIngreso, productos = :productos, total= :total, impuesto_detalle= :impuesto_detalle WHERE id = :id");
 
 		$stmt->bindParam(":usuarioPedido", $datos["usuarioPedido"], PDO::PARAM_STR);
 		$stmt->bindParam(":id_proveedor", $datos["id_proveedor"], PDO::PARAM_STR);
@@ -184,6 +186,8 @@ class ModeloCompras{
 		$stmt->bindParam(":fechaIngreso", $datos["fechaIngreso"], PDO::PARAM_STR);		
 		$stmt->bindParam(":productos", $datos["productos"], PDO::PARAM_STR);
 		$stmt->bindParam(":total", $datos["total"], PDO::PARAM_STR);
+		$impuesto_detalle = isset($datos["impuesto_detalle"]) ? $datos["impuesto_detalle"] : '[]';
+		$stmt->bindParam(":impuesto_detalle", $impuesto_detalle, PDO::PARAM_STR);
 		$stmt->bindParam(":id", $datos["id"], PDO::PARAM_STR);
 
 		if($stmt->execute()){
