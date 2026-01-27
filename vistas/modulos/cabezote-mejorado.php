@@ -1110,8 +1110,8 @@ $(document).ready(function(){
     console.log('📄 Documento listo, verificando modal...');
     
     <?php if($muestroModal && $fijoModal) { ?>
-        // Modal FIJO (cliente bloqueado > día 26): TOTALMENTE BLOQUEADO, NO se puede cerrar de NINGUNA manera
-        console.log('🔒 Modal FIJO: Cliente bloqueado - Modal completamente bloqueado');
+        // Modal FIJO (cliente bloqueado > día 28): TOTALMENTE BLOQUEADO, NO se puede cerrar de NINGUNA manera
+        console.log('🔒 Modal FIJO: Cliente bloqueado (día > 28) - Modal completamente bloqueado');
         
         // ============================================
         // PROTECCIONES MÚLTIPLES PARA BLOQUEAR CIERRE
