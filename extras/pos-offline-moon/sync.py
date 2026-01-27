@@ -184,12 +184,16 @@ class SyncManager:
                 impuesto_detalle = []
                 for tipo_iva, valores in bases_por_iva.items():
                     if tipo_iva in iva_map:
-                        impuesto_detalle.append({
-                            "id": iva_map[tipo_iva]["id"],
-                            "descripcion": iva_map[tipo_iva]["descripcion"],
-                            "baseImponible": str(round(valores["base"], 2)),
-                            "iva": str(round(valores["iva"], 2))
-                        })
+                        base_redondeada = round(valores["base"], 2)
+                        iva_redondeado = round(valores["iva"], 2)
+                        # Solo agregar si hay valores mayores a 0
+                        if base_redondeada > 0 or iva_redondeado > 0:
+                            impuesto_detalle.append({
+                                "id": iva_map[tipo_iva]["id"],
+                                "descripcion": iva_map[tipo_iva]["descripcion"],
+                                "baseImponible": str(base_redondeada),
+                                "iva": str(iva_redondeado)
+                            })
                 
                 # Si no hay impuestos calculados, usar IVA 0% con el total
                 if not impuesto_detalle:
@@ -200,6 +204,12 @@ class SyncManager:
                         "iva": "0"
                     })
                 
+                # Log para depuración
+                print(f"   📊 impuesto_detalle calculado: {json.dumps(impuesto_detalle)}")
+                
+                # Convertir impuesto_detalle a JSON string
+                impuesto_detalle_json = json.dumps(impuesto_detalle, ensure_ascii=False)
+                
                 venta_data = {
                     'fecha': venta.fecha.isoformat(),
                     'cliente': cliente_id,  # Enviar ID del cliente
@@ -208,9 +218,11 @@ class SyncManager:
                     'metodo_pago': venta.metodo_pago,
                     'sucursal': sucursal_servidor,
                     'id_empresa': config.ID_EMPRESA,
-                    'impuesto_detalle': json.dumps(impuesto_detalle),
+                    'impuesto_detalle': impuesto_detalle_json,  # Enviar como JSON string
                     'creado_local': True
                 }
+                
+                print(f"   📤 Enviando impuesto_detalle: {impuesto_detalle_json[:200]}...")
                 
                 print(f"🔄 Sincronizando venta ID {venta.id} con {len(productos_formateados)} productos...")
                 print(f"   Total: ${venta.total}, Método: {venta.metodo_pago}")

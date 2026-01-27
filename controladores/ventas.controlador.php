@@ -317,11 +317,15 @@ class ControladorVentas{
     
     			//Armo array impuesto_detalle y acumulado de impuesto
     			// Si viene impuesto_detalle pre-calculado del sistema offline, usarlo directamente
+    			$usarImpuestoDetalleOffline = false;
     			if (isset($postVentaCaja["impuesto_detalle_offline"]) && !empty($postVentaCaja["impuesto_detalle_offline"])) {
-    				$impuestoDetalle = $postVentaCaja["impuesto_detalle_offline"];
+    				$impuestoDetalleTemp = $postVentaCaja["impuesto_detalle_offline"];
     				// Validar que sea un JSON válido
-    				$impuesto_detalle_array = json_decode($impuestoDetalle, true);
-    				if (json_last_error() === JSON_ERROR_NONE && is_array($impuesto_detalle_array)) {
+    				$impuesto_detalle_array = json_decode($impuestoDetalleTemp, true);
+    				if (json_last_error() === JSON_ERROR_NONE && is_array($impuesto_detalle_array) && count($impuesto_detalle_array) > 0) {
+    					// Usar el impuesto_detalle del sistema offline
+    					$impuestoDetalle = $impuestoDetalleTemp;
+    					$usarImpuestoDetalleOffline = true;
     					// Calcular impuesto total y neto gravado desde el impuesto_detalle
     					$impuesto = 0;
     					$netoGravado = 0;
@@ -331,9 +335,10 @@ class ControladorVentas{
     					}
     					$netoGravado = round($netoGravado, 2);
     					$impuesto = round($impuesto, 2);
-    					error_log("Usando impuesto_detalle del sistema offline: " . $impuestoDetalle);
+    					error_log("✅ Usando impuesto_detalle del sistema offline: " . $impuestoDetalle);
+    					error_log("   Calculado - impuesto: " . $impuesto . ", netoGravado: " . $netoGravado);
     				} else {
-    					// Si no es válido, calcular desde cero
+    					error_log("⚠️ impuesto_detalle_offline no es válido. Error JSON: " . json_last_error_msg());
     					$impuestoDetalle = '[';
     				}
     			} else {
@@ -341,7 +346,7 @@ class ControladorVentas{
     			}
     			
     			// Solo calcular si no se usó el del sistema offline
-    			if ($impuestoDetalle === '[') {
+    			if (!$usarImpuestoDetalleOffline && $impuestoDetalle === '[') {
     				/*
     				 "1" => "IVA Responsable Inscripto ",
                      "6" => "Responsable Monotributo ",
@@ -485,9 +490,13 @@ class ControladorVentas{
     			}
     			
     			// Asegurar que impuesto_detalle tenga un valor válido antes de guardar
-    			if(empty($impuestoDetalle) || $impuestoDetalle == '[' || !isset($impuestoDetalle)) {
+    			// NO sobrescribir si viene del sistema offline y es válido
+    			if (!$usarImpuestoDetalleOffline && (empty($impuestoDetalle) || $impuestoDetalle == '[' || !isset($impuestoDetalle))) {
     				$impuestoDetalle = '[]';
     			}
+    			
+    			// Log final para depuración
+    			error_log("📝 impuesto_detalle final antes de guardar: " . substr($impuestoDetalle, 0, 200));
     
     			$tipoCbte = (int)$postVentaCaja["nuevotipoCbte"];
     
@@ -899,6 +908,7 @@ class ControladorVentas{
     				"iva_27"=>$iva27,
     				"impuesto"=>$impuesto,
     				"impuesto_detalle"=>$impuestoDetalle,
+    				// Log para verificar que se está pasando correctamente
     			   	// "impuesto"=>$postVentaCaja["nuevoPrecioImpuestoCaja"],
     			   	"total"=>$postVentaCaja["nuevoTotalVentaCaja"],
     			   	"metodo_pago"=> json_encode($lstMetodoPago),
