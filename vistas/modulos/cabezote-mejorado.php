@@ -1084,72 +1084,81 @@ MODAL NUEVA COTIZACION
 </div>
 
 <script type="text/javascript">
-(function() {
-    // Función auto-ejecutable para evitar ejecuciones múltiples
-    'use strict';
-    
-    // Verificar si ya se ejecutó este script (evitar múltiples ejecuciones)
-    if (window.modalCobroScriptEjecutado) {
-        return;
-    }
-    window.modalCobroScriptEjecutado = true;
-    
-    $(document).ready(function(){
-        <?php if($muestroModal && $fijoModal) { ?>
-            // Modal fijo (no se puede cerrar) - siempre se muestra
-            $("#modalCobro").modal({backdrop: 'static', keyboard: false});
+// ============================================
+// CONTROL DE APARICIONES DEL MODAL DE COBRO
+// Máximo 3 veces por sesión de login
+// ============================================
+console.log('🔍 Script de control de modal iniciado');
 
-        <?php } elseif ($muestroModal) { ?>
-            // Modal normal (mostrar máximo 3 veces por login/sesión)
+$(document).ready(function(){
+    console.log('📄 Documento listo, verificando modal...');
+    
+    <?php if($muestroModal && $fijoModal) { ?>
+        // Modal fijo (no se puede cerrar) - siempre se muestra
+        console.log('🔒 Modal FIJO: se mostrará siempre (cliente bloqueado)');
+        $("#modalCobro").modal({backdrop: 'static', keyboard: false});
+
+    <?php } elseif ($muestroModal) { ?>
+        // Modal normal (mostrar máximo 3 veces por login/sesión)
+        console.log('🔓 Modal NORMAL: verificando si se debe mostrar...');
+        
+        try {
+            // Inicializar contador si no existe
+            var cantidadMostrado = parseInt(sessionStorage.getItem('modalCobroMostrado')) || 0;
+            console.log('📊 Contador actual:', cantidadMostrado, '/3');
             
-            // Obtener o crear ID único de sesión de navegador (persiste mientras la pestaña está abierta)
-            var sessionId = sessionStorage.getItem('modalCobroSessionId');
-            if (!sessionId) {
-                sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                sessionStorage.setItem('modalCobroSessionId', sessionId);
-            }
+            // Obtener URL actual (sin parámetros GET)
+            var urlActual = window.location.pathname;
+            var ultimaUrl = sessionStorage.getItem('modalCobroUltimaUrl') || '';
+            console.log('🌐 URL actual:', urlActual);
+            console.log('🌐 Última URL:', ultimaUrl);
             
-            // Obtener contador de veces mostrado
-            var cantidadMostrado = Number(sessionStorage.getItem('modalCobroMostrado'));
-            if (isNaN(cantidadMostrado) || cantidadMostrado === null || cantidadMostrado < 0) {
-                cantidadMostrado = 0;
-                sessionStorage.setItem('modalCobroMostrado', 0);
-            }
+            // Verificar si ya se mostró en esta página
+            var yaMostradoEnEstaPagina = (ultimaUrl === urlActual);
+            console.log('✅ Ya mostrado en esta página?', yaMostradoEnEstaPagina);
             
-            // Obtener última URL donde se mostró (para evitar mostrar en la misma página al recargar)
-            var ultimaUrlMostrado = sessionStorage.getItem('modalCobroUltimaUrl');
-            var urlActual = window.location.href.split('?')[0]; // URL sin parámetros
+            // Verificar si el modal ya está abierto
+            var modalYaAbierto = $("#modalCobro").hasClass('in') || $("#modalCobro").hasClass('show') || $("#modalCobro").is(':visible');
+            console.log('👁️ Modal ya abierto?', modalYaAbierto);
             
-            // Verificar si ya se mostró en esta URL específica
-            var yaMostradoEnEstaUrl = (ultimaUrlMostrado === urlActual);
-            
-            // Solo mostrar si:
-            // 1. No se ha alcanzado el límite de 3 veces
-            // 2. No se mostró ya en esta URL (evita mostrar en recargas de la misma página)
-            if (cantidadMostrado < 3 && !yaMostradoEnEstaUrl) {
-                // Verificar que el modal no esté ya abierto
-                if (!$("#modalCobro").hasClass('in') && !$("#modalCobro").hasClass('show')) {
-                    // Incrementar contador ANTES de mostrar
-                    cantidadMostrado = cantidadMostrado + 1;
-                    sessionStorage.setItem('modalCobroMostrado', cantidadMostrado);
-                    sessionStorage.setItem('modalCobroUltimaUrl', urlActual);
-                    
-                    // Mostrar el modal con un pequeño delay para asegurar que el DOM esté listo
-                    setTimeout(function() {
-                        $("#modalCobro").modal();
-                        console.log('✅ Modal de cobro mostrado. Veces mostrado en esta sesión: ' + cantidadMostrado + '/3');
-                    }, 500);
-                }
+            // DECISIÓN: Solo mostrar si:
+            // 1. No se alcanzó el límite de 3 veces
+            // 2. No se mostró ya en esta página (evita recargas)
+            // 3. El modal no está ya abierto
+            if (cantidadMostrado < 3 && !yaMostradoEnEstaPagina && !modalYaAbierto) {
+                console.log('✅ CONDICIONES CUMPLIDAS: Se mostrará el modal');
+                
+                // Incrementar contador INMEDIATAMENTE
+                cantidadMostrado = cantidadMostrado + 1;
+                sessionStorage.setItem('modalCobroMostrado', cantidadMostrado);
+                sessionStorage.setItem('modalCobroUltimaUrl', urlActual);
+                
+                console.log('📈 Contador actualizado a:', cantidadMostrado, '/3');
+                console.log('💾 Guardado en sessionStorage');
+                
+                // Mostrar el modal
+                setTimeout(function() {
+                    console.log('🚀 Abriendo modal...');
+                    $("#modalCobro").modal();
+                }, 300);
+                
             } else {
                 if (cantidadMostrado >= 3) {
-                    console.log('⚠️ Modal de cobro: límite alcanzado (3 veces por sesión). No se mostrará más hasta cerrar sesión.');
-                } else if (yaMostradoEnEstaUrl) {
-                    console.log('ℹ️ Modal de cobro: ya se mostró en esta página. No se mostrará al recargar.');
+                    console.log('⛔ NO SE MUESTRA: Límite de 3 veces alcanzado');
+                } else if (yaMostradoEnEstaPagina) {
+                    console.log('⛔ NO SE MUESTRA: Ya se mostró en esta página');
+                } else if (modalYaAbierto) {
+                    console.log('⛔ NO SE MUESTRA: Modal ya está abierto');
                 }
             }
-        <?php } ?>
-    });
-})();
+        } catch (error) {
+            console.error('❌ ERROR en control de modal:', error);
+            // En caso de error, no mostrar el modal para evitar spam
+        }
+    <?php } else { ?>
+        console.log('ℹ️ Modal no debe mostrarse (cliente al día o sin deuda)');
+    <?php } ?>
+});
 </script>
 
 <?php
