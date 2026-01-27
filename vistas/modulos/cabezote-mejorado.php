@@ -1086,19 +1086,79 @@ MODAL NUEVA COTIZACION
 <script type="text/javascript">
 // ============================================
 // CONTROL DE APARICIONES DEL MODAL DE COBRO
-// Máximo 3 veces por sesión de login
+// Máximo 3 veces por sesión de login (incluso si está bloqueado)
 // ============================================
 console.log('🔍 Script de control de modal iniciado');
 
 $(document).ready(function(){
     console.log('📄 Documento listo, verificando modal...');
     
-    <?php if($muestroModal && $fijoModal) { ?>
-        // Modal fijo (no se puede cerrar) - siempre se muestra
-        console.log('🔒 Modal FIJO: se mostrará siempre (cliente bloqueado)');
-        $("#modalCobro").modal({backdrop: 'static', keyboard: false});
-
-    <?php } elseif ($muestroModal) { ?>
+    <?php if($muestroModal) { ?>
+        // Control de apariciones para TODOS los modales (fijo o normal)
+        // Máximo 3 veces por sesión, incluso si el cliente está bloqueado
+        console.log('<?php echo $fijoModal ? "🔒 Modal FIJO" : "🔓 Modal NORMAL"; ?>: verificando si se debe mostrar...');
+        
+        try {
+            // Inicializar contador si no existe
+            var cantidadMostrado = parseInt(sessionStorage.getItem('modalCobroMostrado')) || 0;
+            console.log('📊 Contador actual:', cantidadMostrado, '/3');
+            
+            // Obtener URL actual (sin parámetros GET)
+            var urlActual = window.location.pathname;
+            var ultimaUrl = sessionStorage.getItem('modalCobroUltimaUrl') || '';
+            console.log('🌐 URL actual:', urlActual);
+            console.log('🌐 Última URL:', ultimaUrl);
+            
+            // Verificar si ya se mostró en esta página
+            var yaMostradoEnEstaPagina = (ultimaUrl === urlActual);
+            console.log('✅ Ya mostrado en esta página?', yaMostradoEnEstaPagina);
+            
+            // Verificar si el modal ya está abierto
+            var modalYaAbierto = $("#modalCobro").hasClass('in') || $("#modalCobro").hasClass('show') || $("#modalCobro").is(':visible');
+            console.log('👁️ Modal ya abierto?', modalYaAbierto);
+            
+            // DECISIÓN: Solo mostrar si:
+            // 1. No se alcanzó el límite de 3 veces
+            // 2. No se mostró ya en esta página (evita recargas)
+            // 3. El modal no está ya abierto
+            if (cantidadMostrado < 3 && !yaMostradoEnEstaPagina && !modalYaAbierto) {
+                console.log('✅ CONDICIONES CUMPLIDAS: Se mostrará el modal');
+                
+                // Incrementar contador INMEDIATAMENTE
+                cantidadMostrado = cantidadMostrado + 1;
+                sessionStorage.setItem('modalCobroMostrado', cantidadMostrado);
+                sessionStorage.setItem('modalCobroUltimaUrl', urlActual);
+                
+                console.log('📈 Contador actualizado a:', cantidadMostrado, '/3');
+                console.log('💾 Guardado en sessionStorage');
+                
+                // Mostrar el modal (fijo o normal según corresponda)
+                setTimeout(function() {
+                    console.log('🚀 Abriendo modal...');
+                    <?php if($fijoModal) { ?>
+                        // Modal fijo: no se puede cerrar
+                        $("#modalCobro").modal({backdrop: 'static', keyboard: false});
+                    <?php } else { ?>
+                        // Modal normal: se puede cerrar
+                        $("#modalCobro").modal();
+                    <?php } ?>
+                }, 300);
+                
+            } else {
+                if (cantidadMostrado >= 3) {
+                    console.log('⛔ NO SE MUESTRA: Límite de 3 veces alcanzado');
+                } else if (yaMostradoEnEstaPagina) {
+                    console.log('⛔ NO SE MUESTRA: Ya se mostró en esta página');
+                } else if (modalYaAbierto) {
+                    console.log('⛔ NO SE MUESTRA: Modal ya está abierto');
+                }
+            }
+        } catch (error) {
+            console.error('❌ ERROR en control de modal:', error);
+            // En caso de error, no mostrar el modal para evitar spam
+        }
+    
+    <?php } else { ?>
         // Modal normal (mostrar máximo 3 veces por login/sesión)
         console.log('🔓 Modal NORMAL: verificando si se debe mostrar...');
         
