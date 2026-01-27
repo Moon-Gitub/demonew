@@ -447,11 +447,18 @@ chmod +x *.sh
 
 ## 🔗 Documentación Adicional
 
+- **MANUAL-INSTALACION-COMPLETO.md**: ⭐ **MANUAL COMPLETO** - Guía paso a paso detallada para Windows y Linux
 - **README.md**: Guía rápida de instalación
 - **INSTALACION.md**: Guía detallada paso a paso
 - **INICIO-RAPIDO.md**: Inicio rápido en 3 pasos
+- **GUIA-INSTALACION-PASO-A-PASO.md**: Guía específica para Linux
 - **mejoras/instalacion_sistema_offline.md**: Mejoras del sistema
 - **mejoras/impresion_local.md**: Servicio de impresión local
+
+### 📘 Recomendación
+
+**Para instalación completa y detallada, consulta:**
+- `pos-offline/MANUAL-INSTALACION-COMPLETO.md` - Manual completo con instrucciones paso a paso para Windows y Linux
 
 ---
 
