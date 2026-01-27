@@ -749,15 +749,17 @@ MODAL COBRO MEJORADO
                 </div>
 
                 <!-- Card: Cómo Pagar -->
-                <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
                     <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
-                        <div style="width: 45px; height: 45px; background: #e3f2fd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
-                            <i class="fa fa-question-circle" style="color: #2196f3; font-size: 22px;"></i>
+                        <div style="width: 50px; height: 50px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
+                            <i class="fa fa-exclamation-circle" style="color: white; font-size: 24px;"></i>
                         </div>
                         <div>
-                            <div style="font-size: 17px; font-weight: 700; color: #2c3e50; margin-bottom: 8px;">CÓMO PAGAR</div>
-                            <div style="font-size: 15px; color: #6c757d; line-height: 1.6;">
-                                Haz clic en el botón de Mercado Pago o escanea el código QR para completar tu pago de forma segura.
+                            <div style="font-size: 18px; font-weight: 700; color: white; margin-bottom: 8px;">⚠️ IMPORTANTE: FORMA DE PAGO</div>
+                            <div style="font-size: 16px; color: rgba(255, 255, 255, 0.95); line-height: 1.7; font-weight: 500;">
+                                <strong>La única forma de que se compute tu pago es haciendo clic en el botón de Mercado Pago.</strong><br>
+                                <span style="font-size: 14px; margin-top: 8px; display: block;">❌ NO se deben hacer transferencias bancarias<br>
+                                ❌ NO se computan pagos fuera del botón</span>
                             </div>
                         </div>
                     </div>
@@ -800,26 +802,15 @@ MODAL COBRO MEJORADO
                 </div>
                 <?php } ?>
 
-                <!-- Card: Métodos Disponibles -->
-                <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                    <div style="font-size: 17px; font-weight: 700; color: #2c3e50; margin-bottom: 15px;">MÉTODOS DISPONIBLES</div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div style="background: #f5f7fa; padding: 18px; border-radius: 8px; text-align: center;">
-                            <i class="fa fa-credit-card" style="font-size: 32px; color: #667eea; display: block; margin-bottom: 8px;"></i>
-                            <span style="font-size: 14px; color: #6c757d; font-weight: 500;">Tarjetas</span>
-                        </div>
-                        <div style="background: #f5f7fa; padding: 18px; border-radius: 8px; text-align: center;">
-                            <i class="fa fa-university" style="font-size: 32px; color: #17a2b8; display: block; margin-bottom: 8px;"></i>
-                            <span style="font-size: 14px; color: #6c757d; font-weight: 500;">Transferencia</span>
-                        </div>
-                        <div style="background: #f5f7fa; padding: 18px; border-radius: 8px; text-align: center;">
-                            <i class="fa fa-money" style="font-size: 32px; color: #28a745; display: block; margin-bottom: 8px;"></i>
-                            <span style="font-size: 14px; color: #6c757d; font-weight: 500;">Efectivo</span>
-                        </div>
-                        <div style="background: #f5f7fa; padding: 18px; border-radius: 8px; text-align: center;">
-                            <i class="fa fa-qrcode" style="font-size: 32px; color: #764ba2; display: block; margin-bottom: 8px;"></i>
-                            <span style="font-size: 14px; color: #6c757d; font-weight: 500;">QR/Débito</span>
-                        </div>
+                <!-- Card: Información de Pago -->
+                <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 4px solid #009ee3;">
+                    <div style="font-size: 17px; font-weight: 700; color: #2c3e50; margin-bottom: 12px;">
+                        <i class="fa fa-info-circle" style="color: #009ee3; margin-right: 8px;"></i>
+                        INFORMACIÓN IMPORTANTE
+                    </div>
+                    <div style="font-size: 15px; color: #6c757d; line-height: 1.7;">
+                        <strong>El pago se procesa únicamente a través del botón de Mercado Pago.</strong><br>
+                        Una vez que hagas clic en el botón, podrás elegir el método de pago que prefieras (tarjeta, transferencia, efectivo, etc.) dentro de la plataforma de Mercado Pago.
                     </div>
                 </div>
 
@@ -832,9 +823,31 @@ MODAL COBRO MEJORADO
                 <?php if($muestroModal && isset($preference)) { ?>
                 <!-- Botones de Pago -->
                 <div style="margin-bottom: 20px;">
+                    <!-- Mensaje destacado sobre el botón -->
+                    <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin-bottom: 20px; border-radius: 6px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fa fa-hand-pointer-o" style="font-size: 24px; color: #ffc107;"></i>
+                            <div>
+                                <strong style="color: #856404; font-size: 16px;">¡HAZ CLIC EN EL BOTÓN DE ABAJO PARA PAGAR!</strong>
+                                <div style="color: #856404; font-size: 14px; margin-top: 5px;">
+                                    Este es el único método que computa tu pago correctamente.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Botón Mercado Pago -->
                     <div class="checkout-btn" style="margin-bottom: 15px;"></div>
                     
+                    <?php
+                    /* ============================================
+                       CÓDIGO QR - COMENTADO (NO ELIMINADO)
+                       ============================================
+                       Este código genera y muestra un código QR para pagos.
+                       Actualmente está oculto pero se mantiene comentado
+                       por si se necesita reactivar en el futuro.
+                    */
+                    /*
                     <!-- Divisor -->
                     <div style="text-align: center; margin: 20px 0; color: #6c757d; font-size: 14px; position: relative;">
                         <span style="background: #f5f7fa; padding: 0 15px; position: relative; z-index: 1;">O ESCANEA EL QR</span>
@@ -866,6 +879,8 @@ MODAL COBRO MEJORADO
                             <i class="fa fa-info-circle"></i> Abre la cámara de tu celular y apunta al código
                         </div>
                     </div>
+                    */
+                    ?>
                 </div>
 
                 <script src="https://sdk.mercadopago.com/js/v2"></script>
@@ -910,36 +925,87 @@ MODAL COBRO MEJORADO
                 </script>
 
                 <style>
-                    /* Botón de Mercado Pago - Estilo simple y grande */
+                    /* Botón de Mercado Pago - MUY DESTACADO Y VISIBLE */
+                    .checkout-btn {
+                        position: relative;
+                        margin: 20px 0 !important;
+                    }
+                    
                     .checkout-btn button {
-                        background: #009ee3 !important;
-                        border-radius: 8px !important;
-                        font-size: 17px !important;
-                        font-weight: 600 !important;
-                        padding: 18px 30px !important;
-                        border: none !important;
-                        box-shadow: 0 3px 12px rgba(0, 158, 227, 0.25) !important;
-                        transition: all 0.2s ease !important;
+                        background: linear-gradient(135deg, #009ee3 0%, #0077b6 100%) !important;
+                        border-radius: 12px !important;
+                        font-size: 22px !important;
+                        font-weight: 700 !important;
+                        padding: 25px 40px !important;
+                        border: 3px solid #0077b6 !important;
+                        box-shadow: 0 8px 25px rgba(0, 158, 227, 0.4), 0 0 20px rgba(0, 158, 227, 0.2) !important;
+                        transition: all 0.3s ease !important;
                         width: 100% !important;
                         cursor: pointer !important;
                         color: white !important;
                         display: flex !important;
                         align-items: center !important;
                         justify-content: center !important;
-                        gap: 10px !important;
+                        gap: 12px !important;
+                        text-transform: uppercase !important;
+                        letter-spacing: 1px !important;
+                        position: relative !important;
+                        overflow: hidden !important;
+                        animation: pulse-button 2s infinite !important;
+                    }
+                    
+                    /* Animación de pulso para llamar la atención */
+                    @keyframes pulse-button {
+                        0%, 100% {
+                            box-shadow: 0 8px 25px rgba(0, 158, 227, 0.4), 0 0 20px rgba(0, 158, 227, 0.2);
+                        }
+                        50% {
+                            box-shadow: 0 8px 35px rgba(0, 158, 227, 0.6), 0 0 30px rgba(0, 158, 227, 0.4);
+                            transform: scale(1.02);
+                        }
+                    }
+                    
+                    /* Efecto de brillo al pasar el mouse */
+                    .checkout-btn button::before {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: -100%;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                        transition: left 0.5s;
+                    }
+                    
+                    .checkout-btn button:hover::before {
+                        left: 100%;
                     }
 
                     .checkout-btn button:hover {
-                        background: #0084c5 !important;
-                        transform: translateY(-2px) !important;
-                        box-shadow: 0 5px 18px rgba(0, 158, 227, 0.35) !important;
+                        background: linear-gradient(135deg, #0077b6 0%, #005a8a 100%) !important;
+                        transform: translateY(-3px) scale(1.02) !important;
+                        box-shadow: 0 12px 35px rgba(0, 158, 227, 0.5), 0 0 40px rgba(0, 158, 227, 0.3) !important;
+                        border-color: #005a8a !important;
+                    }
+                    
+                    .checkout-btn button:active {
+                        transform: translateY(-1px) scale(0.98) !important;
+                    }
+                    
+                    /* Icono dentro del botón más grande */
+                    .checkout-btn button i {
+                        font-size: 24px !important;
                     }
 
                     /* Responsive */
                     @media (max-width: 768px) {
                         .checkout-btn button {
-                            font-size: 16px !important;
-                            padding: 16px 25px !important;
+                            font-size: 18px !important;
+                            padding: 22px 30px !important;
+                        }
+                        
+                        .checkout-btn button i {
+                            font-size: 20px !important;
                         }
                     }
                 </style>
@@ -1024,24 +1090,16 @@ $(function(){
         $("#modalCobro").modal({backdrop: 'static', keyboard: false});
 
     <?php } elseif ($muestroModal) { ?>
-        // Modal normal (mostrar una vez por día, máximo 5 veces)
-        var diaDeHoyModal = new Date();
-        var dateCformat = [diaDeHoyModal.getDate(), (diaDeHoyModal.getMonth()+1), diaDeHoyModal.getFullYear()].join('/');
-        var diaAnterior = localStorage.getItem('diaMostrandoModal');
-
-        if(dateCformat != diaAnterior){
-            var cantidadMostrado = Number(localStorage.getItem('modalCobroMostrado'));
-            if(!cantidadMostrado){
-                localStorage.setItem('modalCobroMostrado', 0);
-            }
-            if(cantidadMostrado != 5) {
-                $("#modalCobro").modal();
-                cantidadMostrado = cantidadMostrado + 1;
-                localStorage.setItem('modalCobroMostrado', cantidadMostrado);
-            } else if (cantidadMostrado == 5) {
-                localStorage.setItem('diaMostrandoModal', dateCformat);
-                localStorage.setItem('modalCobroMostrado', 0);
-            }
+        // Modal normal (mostrar máximo 3 veces por login/sesión)
+        var cantidadMostrado = Number(sessionStorage.getItem('modalCobroMostrado'));
+        if(!cantidadMostrado){
+            sessionStorage.setItem('modalCobroMostrado', 0);
+            cantidadMostrado = 0;
+        }
+        if(cantidadMostrado < 3) {
+            $("#modalCobro").modal();
+            cantidadMostrado = cantidadMostrado + 1;
+            sessionStorage.setItem('modalCobroMostrado', cantidadMostrado);
         }
     <?php } ?>
 });
