@@ -674,10 +674,21 @@ MODAL COBRO MEJORADO
             CABEZA DEL MODAL - SIMPLE Y LIMPIO
             ======================================-->
             <div class="modal-header" style="background: white; border-bottom: 1px solid #e0e0e0; padding: 20px 25px;">
-                <button type="button" class="close" data-dismiss="modal" style="color: #6c757d; opacity: 0.8; font-size: 28px;">&times;</button>
+                <?php if(!$fijoModal) { ?>
+                    <!-- Botón cerrar solo visible si NO es modal fijo (cliente bloqueado) -->
+                    <button type="button" class="close" data-dismiss="modal" style="color: #6c757d; opacity: 0.8; font-size: 28px;">&times;</button>
+                <?php } else { ?>
+                    <!-- Cliente bloqueado: NO mostrar botón cerrar -->
+                    <div style="width: 28px; height: 28px;"></div>
+                <?php } ?>
                 <h4 style="margin: 0; color: #2c3e50; font-weight: 600; font-size: 20px;">
                     <i class="fa fa-credit-card" style="color: #667eea; margin-right: 8px;"></i>
                     Estado de Cuenta
+                    <?php if($fijoModal) { ?>
+                        <span style="color: #dc3545; font-size: 14px; margin-left: 10px;">
+                            <i class="fa fa-lock"></i> Sistema Bloqueado
+                        </span>
+                    <?php } ?>
                 </h4>
             </div>
 
@@ -1086,17 +1097,33 @@ MODAL NUEVA COTIZACION
 <script type="text/javascript">
 // ============================================
 // CONTROL DE APARICIONES DEL MODAL DE COBRO
-// Máximo 3 veces por sesión de login (incluso si está bloqueado)
 // ============================================
 console.log('🔍 Script de control de modal iniciado');
 
 $(document).ready(function(){
     console.log('📄 Documento listo, verificando modal...');
     
-    <?php if($muestroModal) { ?>
-        // Control de apariciones para TODOS los modales (fijo o normal)
-        // Máximo 3 veces por sesión, incluso si el cliente está bloqueado
-        console.log('<?php echo $fijoModal ? "🔒 Modal FIJO" : "🔓 Modal NORMAL"; ?>: verificando si se debe mostrar...');
+    <?php if($muestroModal && $fijoModal) { ?>
+        // Modal FIJO (cliente bloqueado): SIEMPRE se muestra, NO se puede cerrar
+        console.log('🔒 Modal FIJO: se mostrará siempre (cliente bloqueado)');
+        
+        // Prevenir cualquier intento de cerrar el modal
+        $("#modalCobro").on('hide.bs.modal', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('⛔ Intento de cerrar modal bloqueado - cliente bloqueado');
+            return false;
+        });
+        
+        // Ocultar botón cerrar si existe
+        $("#modalCobro .close").hide();
+        
+        // Mostrar modal fijo (no se puede cerrar)
+        $("#modalCobro").modal({backdrop: 'static', keyboard: false});
+        
+    <?php } elseif ($muestroModal) { ?>
+        // Modal NORMAL: máximo 3 veces por sesión, se puede cerrar
+        console.log('🔓 Modal NORMAL: verificando si se debe mostrar...');
         
         try {
             // Inicializar contador si no existe
@@ -1132,16 +1159,10 @@ $(document).ready(function(){
                 console.log('📈 Contador actualizado a:', cantidadMostrado, '/3');
                 console.log('💾 Guardado en sessionStorage');
                 
-                // Mostrar el modal (fijo o normal según corresponda)
+                // Mostrar el modal normal (se puede cerrar)
                 setTimeout(function() {
                     console.log('🚀 Abriendo modal...');
-                    <?php if($fijoModal) { ?>
-                        // Modal fijo: no se puede cerrar
-                        $("#modalCobro").modal({backdrop: 'static', keyboard: false});
-                    <?php } else { ?>
-                        // Modal normal: se puede cerrar
-                        $("#modalCobro").modal();
-                    <?php } ?>
+                    $("#modalCobro").modal();
                 }, 300);
                 
             } else {
