@@ -316,19 +316,43 @@ class ControladorVentas{
     			$iva27 = isset($postVentaCaja["nuevoVtaCajaIva27"]) ? floatval($postVentaCaja["nuevoVtaCajaIva27"]) : 0;
     
     			//Armo array impuesto_detalle y acumulado de impuesto
-    			$impuestoDetalle = '[';
+    			// Si viene impuesto_detalle pre-calculado del sistema offline, usarlo directamente
+    			if (isset($postVentaCaja["impuesto_detalle_offline"]) && !empty($postVentaCaja["impuesto_detalle_offline"])) {
+    				$impuestoDetalle = $postVentaCaja["impuesto_detalle_offline"];
+    				// Validar que sea un JSON válido
+    				$impuesto_detalle_array = json_decode($impuestoDetalle, true);
+    				if (json_last_error() === JSON_ERROR_NONE && is_array($impuesto_detalle_array)) {
+    					// Calcular impuesto total y neto gravado desde el impuesto_detalle
+    					$impuesto = 0;
+    					$netoGravado = 0;
+    					foreach ($impuesto_detalle_array as $item) {
+    						$netoGravado += floatval($item['baseImponible'] ?? 0);
+    						$impuesto += floatval($item['iva'] ?? 0);
+    					}
+    					$netoGravado = round($netoGravado, 2);
+    					$impuesto = round($impuesto, 2);
+    					error_log("Usando impuesto_detalle del sistema offline: " . $impuestoDetalle);
+    				} else {
+    					// Si no es válido, calcular desde cero
+    					$impuestoDetalle = '[';
+    				}
+    			} else {
+    				$impuestoDetalle = '[';
+    			}
     			
-    			/*
-    			 "1" => "IVA Responsable Inscripto ",
-                 "6" => "Responsable Monotributo ",
-                 "4" => "IVA Sujeto Exento",
-                 "7" => "Sujeto no Categorizado",
-                 "10" => "IVA Liberado – Ley Nº 19.640 ",
-                 "13" => "Monotributista Social ",
-                 "15" => "IVA No Alcanzado",
-                 "16" => "Monotributo Trabajador Independiente Promovido"
-                */
-    			if($arrEmpresa["condicion_iva"] == 1){
+    			// Solo calcular si no se usó el del sistema offline
+    			if ($impuestoDetalle === '[') {
+    				/*
+    				 "1" => "IVA Responsable Inscripto ",
+                     "6" => "Responsable Monotributo ",
+                     "4" => "IVA Sujeto Exento",
+                     "7" => "Sujeto no Categorizado",
+                     "10" => "IVA Liberado – Ley Nº 19.640 ",
+                     "13" => "Monotributista Social ",
+                     "15" => "IVA No Alcanzado",
+                     "16" => "Monotributo Trabajador Independiente Promovido"
+                    */
+    				if($arrEmpresa["condicion_iva"] == 1){
     			    
         			if($bimp0 > 0){ //Hay productos con IVA 0% 
         				$bimp0 = $bimp0 - ($bimp0 * $descGeneral / 100);
@@ -451,13 +475,14 @@ class ControladorVentas{
     				}
     				$netoGravado = round($netoGravado,2);
     				$impuesto = round($impuesto,2);
+    				}
+    				
+    				// Eliminar la última coma si existe
+    				if(strlen($impuestoDetalle) > 1) {
+    					$impuestoDetalle = substr($impuestoDetalle, 0, -1);
+    				}
+    				$impuestoDetalle = $impuestoDetalle . ']';
     			}
-    			
-    			// Eliminar la última coma si existe
-    			if(strlen($impuestoDetalle) > 1) {
-    				$impuestoDetalle = substr($impuestoDetalle, 0, -1);
-    			}
-    			$impuestoDetalle = $impuestoDetalle . ']';
     			
     			// Asegurar que impuesto_detalle tenga un valor válido antes de guardar
     			if(empty($impuestoDetalle) || $impuestoDetalle == '[' || !isset($impuestoDetalle)) {

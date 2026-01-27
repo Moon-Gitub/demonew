@@ -237,17 +237,16 @@ try {
         $postVentaCaja['nuevaNroCbteAsociado'] = '';
         
         // Procesar impuesto_detalle si viene del sistema offline
+        // Si viene pre-calculado, pasarlo al controlador para que lo use directamente
         if (isset($datos['impuesto_detalle']) && !empty($datos['impuesto_detalle'])) {
-            // Si viene como JSON string, decodificarlo
+            // Si viene como JSON string, mantenerlo como string para pasarlo al controlador
             if (is_string($datos['impuesto_detalle'])) {
-                $impuesto_detalle = json_decode($datos['impuesto_detalle'], true);
+                $postVentaCaja['impuesto_detalle_offline'] = $datos['impuesto_detalle'];
             } else {
-                $impuesto_detalle = $datos['impuesto_detalle'];
+                // Si viene como array, convertirlo a JSON string
+                $postVentaCaja['impuesto_detalle_offline'] = json_encode($datos['impuesto_detalle']);
             }
-            
-            // El controlador calculará el impuesto_detalle completo, pero guardamos el que viene
-            // para que no quede vacío. El controlador lo recalculará con los valores correctos.
-            error_log("impuesto_detalle recibido del offline: " . json_encode($impuesto_detalle));
+            error_log("impuesto_detalle recibido del offline: " . $postVentaCaja['impuesto_detalle_offline']);
         } else {
             // Si no viene impuesto_detalle, el controlador lo calculará automáticamente
             error_log("No se recibió impuesto_detalle, el controlador lo calculará");
