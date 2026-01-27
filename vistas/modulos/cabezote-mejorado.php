@@ -1086,20 +1086,42 @@ MODAL NUEVA COTIZACION
 <script type="text/javascript">
 $(function(){
     <?php if($muestroModal && $fijoModal) { ?>
-        // Modal fijo (no se puede cerrar)
+        // Modal fijo (no se puede cerrar) - siempre se muestra
         $("#modalCobro").modal({backdrop: 'static', keyboard: false});
 
     <?php } elseif ($muestroModal) { ?>
         // Modal normal (mostrar máximo 3 veces por login/sesión)
-        var cantidadMostrado = Number(sessionStorage.getItem('modalCobroMostrado'));
-        if(!cantidadMostrado){
-            sessionStorage.setItem('modalCobroMostrado', 0);
-            cantidadMostrado = 0;
+        // Verificar si ya se mostró en esta carga de página (evitar múltiples aperturas)
+        if (typeof window.modalCobroYaMostrado === 'undefined') {
+            window.modalCobroYaMostrado = false;
         }
-        if(cantidadMostrado < 3) {
-            $("#modalCobro").modal();
-            cantidadMostrado = cantidadMostrado + 1;
-            sessionStorage.setItem('modalCobroMostrado', cantidadMostrado);
+        
+        // Solo proceder si no se ha mostrado en esta carga de página
+        if (!window.modalCobroYaMostrado) {
+            var cantidadMostrado = Number(sessionStorage.getItem('modalCobroMostrado'));
+            
+            // Si no existe, inicializar en 0
+            if (isNaN(cantidadMostrado) || cantidadMostrado === null) {
+                cantidadMostrado = 0;
+                sessionStorage.setItem('modalCobroMostrado', 0);
+            }
+            
+            // Solo mostrar si no se ha alcanzado el límite de 3 veces
+            if (cantidadMostrado < 3) {
+                // Marcar que se va a mostrar en esta carga
+                window.modalCobroYaMostrado = true;
+                
+                // Incrementar contador ANTES de mostrar
+                cantidadMostrado = cantidadMostrado + 1;
+                sessionStorage.setItem('modalCobroMostrado', cantidadMostrado);
+                
+                // Mostrar el modal
+                $("#modalCobro").modal();
+                
+                console.log('Modal de cobro mostrado. Veces mostrado en esta sesión: ' + cantidadMostrado + '/3');
+            } else {
+                console.log('Modal de cobro: límite alcanzado (3 veces por sesión)');
+            }
         }
     <?php } ?>
 });
