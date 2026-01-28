@@ -11,6 +11,11 @@
   if (class_exists('ModeloListasPrecio') && ModeloListasPrecio::tablaExiste() && !empty($_SESSION['listas_precio'])) {
     $listasPrecioConfig = ModeloListasPrecio::mdlConfigPorCodigos($_SESSION['listas_precio']);
   }
+  // Formatos de balanza: configuración para interpretación de códigos
+  $balanzasFormatosConfig = [];
+  if (class_exists('ModeloBalanzasFormatos') && ModeloBalanzasFormatos::tablaExiste()) {
+    $balanzasFormatosConfig = ModeloBalanzasFormatos::mdlConfigParaVenta();
+  }
   $btnPadronAfip = (isset($arrayEmpresa["ws_padron"])) ? '' : 'disabled';
 ?>
 <style>
@@ -885,6 +890,8 @@
 <script type="text/javascript">
 // Configuración de listas de precio para cálculo (base_precio, tipo_descuento, valor_descuento)
 var listasPrecioConfig = <?php echo json_encode($listasPrecioConfig); ?>;
+// Configuración de formatos de balanza (prefijo, posiciones, etc.)
+var balanzasFormatosConfig = <?php echo json_encode($balanzasFormatosConfig); ?>;
 </script>
 <script>
 // Inicializar datepicker para fecha de emisión

@@ -1029,6 +1029,87 @@ async function esperarPrecio(precio){
 
 }
 
+/*=============================================
+INTERPRETAR CÓDIGOS DE BALANZA (GENÉRICO)
+Usa balanzasFormatosConfig si está definido.
+Devuelve { idProducto, cantidad } o null si no aplica.
+=============================================*/
+function interpretarCodigoBalanza(codigo, cantidadManual) {
+	try {
+		if (!codigo) return null;
+		if (typeof balanzasFormatosConfig === 'undefined' || !balanzasFormatosConfig || !balanzasFormatosConfig.length) {
+			return null;
+		}
+
+		var mejor = null;
+		var codigoStr = String(codigo);
+
+		for (var i = 0; i < balanzasFormatosConfig.length; i++) {
+			var cfg = balanzasFormatosConfig[i];
+			if (!cfg || !cfg.prefijo) continue;
+			var pref = String(cfg.prefijo);
+
+			// Debe comenzar con el prefijo
+			if (codigoStr.indexOf(pref) !== 0) continue;
+
+			// Validar longitudes si están definidas
+			if (cfg.longitud_min && codigoStr.length < cfg.longitud_min) continue;
+			if (cfg.longitud_max && codigoStr.length > cfg.longitud_max) continue;
+
+			// Elegir el formato con prefijo más largo (más específico)
+			if (!mejor || String(mejor.prefijo).length < pref.length) {
+				mejor = cfg;
+			}
+		}
+
+		if (!mejor) {
+			return null;
+		}
+
+		var posProd = parseInt(mejor.pos_producto, 10) || 0;
+		var lenProd = parseInt(mejor.longitud_producto, 10) || 0;
+		if (lenProd <= 0) return null;
+
+		var idProducto = codigoStr.substr(posProd, lenProd);
+
+		var modo = mejor.modo_cantidad || 'ninguno';
+		var cantidad = 0;
+
+		if (modo === 'peso') {
+			var posCant = (mejor.pos_cantidad !== null && typeof mejor.pos_cantidad !== 'undefined')
+				? parseInt(mejor.pos_cantidad, 10)
+				: null;
+			var lenCant = (mejor.longitud_cantidad !== null && typeof mejor.longitud_cantidad !== 'undefined')
+				? parseInt(mejor.longitud_cantidad, 10)
+				: null;
+			if (posCant === null || lenCant === null || lenCant <= 0) return null;
+			var bruto = codigoStr.substr(posCant, lenCant);
+			var num = parseFloat(bruto) || 0;
+			var divisor = parseFloat(mejor.factor_divisor) || 1;
+			if (!divisor || divisor === 0) divisor = 1;
+			cantidad = num / divisor;
+		} else if (modo === 'unidad') {
+			var fija = parseFloat(mejor.cantidad_fija);
+			cantidad = (fija && fija > 0) ? fija : 1;
+		} else {
+			// Usar cantidad ingresada manualmente
+			cantidad = parseFloat(cantidadManual) || 1;
+		}
+
+		if (!cantidad || cantidad <= 0) {
+			cantidad = 1;
+		}
+
+		return {
+			idProducto: idProducto,
+			cantidad: cantidad
+		};
+	} catch (e) {
+		console.error('Error interpretando código de balanza:', e);
+		return null;
+	}
+}
+
 function agregarProductoListaCompra() {
     // Prevenir ejecución múltiple
     if (agregandoProducto) {
@@ -1071,6 +1152,13 @@ function agregarProductoListaCompra() {
 
 	var idProducto = idProductoDos;
 	var cantidad = cantidadDos;
+
+	// Intentar interpretar como código de balanza usando configuración
+	var parsedBalanza = interpretarCodigoBalanza(idProductoDos, cantidadDos);
+	if (parsedBalanza && parsedBalanza.idProducto) {
+		idProducto = parsedBalanza.idProducto;
+		cantidad = parsedBalanza.cantidad;
+	}
 	
 	if(cantidad > 1000) {
 	    swal({
