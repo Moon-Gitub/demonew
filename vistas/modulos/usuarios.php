@@ -1,5 +1,18 @@
 <?php
-    $listasPrecio = $objParametros->getListasPrecio();
+    // Listas de precio desde BD (tabla listas_precio); fallback a parametros si no existe
+    if (class_exists('ModeloListasPrecio') && ModeloListasPrecio::tablaExiste()) {
+        $idEmpresa = isset($_SESSION["empresa"]) ? (int) $_SESSION["empresa"] : 1;
+        $listasArr = ModeloListasPrecio::mdlListar($idEmpresa, false);
+        $listasPrecio = [];
+        foreach ($listasArr as $row) {
+            $listasPrecio[$row['codigo']] = $row['nombre'];
+        }
+        if (empty($listasPrecio)) {
+            $listasPrecio = $objParametros->getListasPrecio();
+        }
+    } else {
+        $listasPrecio = $objParametros->getListasPrecio();
+    }
     $objUsuario = new ControladorUsuarios();
 ?>
 

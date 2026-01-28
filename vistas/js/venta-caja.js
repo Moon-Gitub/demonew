@@ -1179,20 +1179,24 @@ function agregarProductoListaCompra() {
 	          		var ivaValor = 0;
 	      			var stock = respuesta[stockSucursal] || 0; //TOMO EL STOCK DE LA SUCURSAL ASIGNADA AL USUARIO LOGUEADO
 
-	      			// Validar que tipoPrecio esté definido y obtener el precio
+	      			// Obtener precio según lista de precio (config desde BD o fallback)
 	      			var precioDelProducto = null;
+	      			var config = (typeof listasPrecioConfig !== 'undefined' && listasPrecioConfig && listasPrecioConfig[tipoPrecio]) ? listasPrecioConfig[tipoPrecio] : null;
 	      			
-	      			// Intentar obtener el precio en este orden de prioridad:
-	      			// 1. El campo especificado por tipoPrecio
-	      			// 2. precio_venta (fallback común)
-	      			// 3. Cualquier campo que contenga "precio" en el nombre
-	      			
-	      			if (tipoPrecio && respuesta.hasOwnProperty(tipoPrecio)) {
+	      			if (config && tipoPrecio) {
+	      				// Lista configurada en BD: base_precio + descuento opcional
+	      				var base = config.base_precio || 'precio_venta';
+	      				var precioBase = parseFloat(respuesta[base]) || 0;
+	      				if (config.tipo_descuento === 'porcentaje' && parseFloat(config.valor_descuento) > 0) {
+	      					precioDelProducto = precioBase - (precioBase * parseFloat(config.valor_descuento) / 100);
+	      				} else {
+	      					precioDelProducto = precioBase;
+	      				}
+	      			} else if (tipoPrecio && respuesta.hasOwnProperty(tipoPrecio)) {
 	      				precioDelProducto = parseFloat(respuesta[tipoPrecio]) || 0;
 	      			} else if (respuesta.hasOwnProperty("precio_venta")) {
 	      				precioDelProducto = parseFloat(respuesta["precio_venta"]) || 0;
 	      			} else {
-	      				// Buscar cualquier campo de precio disponible
 	      				for (var key in respuesta) {
 	      					if (key.toLowerCase().indexOf("precio") !== -1 && !isNaN(parseFloat(respuesta[key]))) {
 	      						precioDelProducto = parseFloat(respuesta[key]) || 0;
@@ -1200,8 +1204,6 @@ function agregarProductoListaCompra() {
 	      					}
 	      				}
 	      			}
-	      			
-	      			// Si aún no hay precio, usar 0
 	      			if (precioDelProducto === null || isNaN(precioDelProducto)) {
 	      				precioDelProducto = 0;
 	      			}

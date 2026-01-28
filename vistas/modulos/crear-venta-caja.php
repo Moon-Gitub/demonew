@@ -1,7 +1,16 @@
 <?php 
   date_default_timezone_set('America/Argentina/Mendoza'); 
   $cbteDefecto = $objParametros->getCbteDefecto();
-  $arrListasPrecio = $objParametros->getListasPrecio();
+  // Listas de precio: desde BD si existe tabla, sino desde parametros
+  if (class_exists('ModeloListasPrecio') && ModeloListasPrecio::tablaExiste()) {
+    $arrListasPrecio = ModeloListasPrecio::mdlListarParaVenta();
+  } else {
+    $arrListasPrecio = $objParametros->getListasPrecio();
+  }
+  $listasPrecioConfig = [];
+  if (class_exists('ModeloListasPrecio') && ModeloListasPrecio::tablaExiste() && !empty($_SESSION['listas_precio'])) {
+    $listasPrecioConfig = ModeloListasPrecio::mdlConfigPorCodigos($_SESSION['listas_precio']);
+  }
   $btnPadronAfip = (isset($arrayEmpresa["ws_padron"])) ? '' : 'disabled';
 ?>
 <style>
@@ -850,7 +859,7 @@
                     <span title="Listas de precio" class="input-group-addon" style="background-color: #ddd">Listas $</span>
                       <?php 
 
-                      $arrListasPrecioHabilitadas = explode(',', $_SESSION['listas_precio']);
+                      $arrListasPrecioHabilitadas = !empty($_SESSION['listas_precio']) ? array_map('trim', explode(',', $_SESSION['listas_precio'])) : [];
 
                       echo '<select class="form-control input-sm" name="radioPrecio" id="radioPrecio">';
                       foreach ($arrListasPrecio as $key => $value) {
@@ -873,6 +882,10 @@
 
               <input type="hidden" id="fechaActual" name="fechaActual" value="<?php echo date("Y-m-d H:i:s");?>">
 
+<script type="text/javascript">
+// Configuración de listas de precio para cálculo (base_precio, tipo_descuento, valor_descuento)
+var listasPrecioConfig = <?php echo json_encode($listasPrecioConfig); ?>;
+</script>
 <script>
 // Inicializar datepicker para fecha de emisión
 $(document).ready(function() {

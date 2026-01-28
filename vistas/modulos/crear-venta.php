@@ -1,7 +1,15 @@
 <?php 
   date_default_timezone_set('America/Argentina/Mendoza'); 
   $cbteDefecto = $objParametros->getCbteDefecto();
-  $arrListasPrecio = $objParametros->getListasPrecio();
+  if (class_exists('ModeloListasPrecio') && ModeloListasPrecio::tablaExiste()) {
+    $arrListasPrecio = ModeloListasPrecio::mdlListarParaVenta();
+  } else {
+    $arrListasPrecio = $objParametros->getListasPrecio();
+  }
+  $listasPrecioConfig = [];
+  if (class_exists('ModeloListasPrecio') && ModeloListasPrecio::tablaExiste() && !empty($_SESSION['listas_precio'])) {
+    $listasPrecioConfig = ModeloListasPrecio::mdlConfigPorCodigos($_SESSION['listas_precio']);
+  }
   $btnPadronAfip = (isset($arrayEmpresa["ws_padron"])) ? '' : 'disabled';
 ?>
 
@@ -32,7 +40,7 @@
                   <div class="input-group">
                     <span title="Listas de precio" class="input-group-addon" style="background-color: #ddd">Listas $</span>
                       <?php 
-                      $arrListasPrecioHabilitadas = explode(',', $_SESSION['listas_precio']);
+                      $arrListasPrecioHabilitadas = !empty($_SESSION['listas_precio']) ? array_map('trim', explode(',', $_SESSION['listas_precio'])) : [];
 
                       echo '<select class="form-control input-sm" name="radioPrecio" id="radioPrecio">';
                       foreach ($arrListasPrecio as $key => $value) {
@@ -54,7 +62,7 @@
               </table>
 
               <input type="hidden" id="fechaActual" name="fechaActual" value="<?php echo date("Y-m-d H:i:s");?>">
-
+<script type="text/javascript">var listasPrecioConfig = <?php echo json_encode($listasPrecioConfig); ?>;</script>
               <input type="hidden" name="idVendedor" id="idVendedor" value="<?php echo $_SESSION["id"]; ?>">
                <input type="hidden" name="idEmpresa" id="idEmpresa" value="<?php echo $_SESSION["empresa"]; ?>">
               <input type="hidden" id="tokenIdTablaVentas">

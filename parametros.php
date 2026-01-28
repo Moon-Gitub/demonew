@@ -38,9 +38,12 @@ class ClaseParametros{
   }
     
   public function getListasPrecio(){
-
+    // Si existe la tabla listas_precio, usar listas desde BD (por empresa)
+    if (class_exists('ModeloListasPrecio') && ModeloListasPrecio::tablaExiste()) {
+      $id_empresa = isset($_SESSION['empresa']) ? (int) $_SESSION['empresa'] : 1;
+      return ModeloListasPrecio::mdlListarParaVenta($id_empresa);
+    }
     return $this->LISTAS_DE_PRECIO_HABILITADAS;
-
   }
     
   public function getSucursales(){

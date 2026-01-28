@@ -9,11 +9,12 @@
 		?>
 			<li class="<?php echo ($paginaActualMenu == 'inicio') ? 'active' : ''; ?>"><a href="inicio"><i class="fa fa-home"></i><span>Inicio</span></a></li>
 				
-			<li class="treeview <?php echo (in_array($paginaActualMenu, ['empresa', 'usuarios', 'medios-pago'])) ? 'active' : '' ?>">
+			<li class="treeview <?php echo (in_array($paginaActualMenu, ['empresa', 'usuarios', 'listas-precio', 'medios-pago'])) ? 'active' : '' ?>">
 				<a><i class="fa fa-building-o"></i><span>Empresa</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
 				<ul class="treeview-menu">
 					<li><a href="empresa"><i class="fa fa-circle-o"></i><span>Datos Empresa</span></a></li>
 					<li><a href="usuarios"><i class="fa fa-circle-o"></i><span>Usuarios</span></a></li>
+					<li><a href="listas-precio"><i class="fa fa-circle-o"></i><span>Listas de Precio</span></a></li>
 					<li><a href="medios-pago"><i class="fa fa-circle-o"></i><span>Cargar Medios de Pago</span></a></li>
 				</ul>
 			</li>

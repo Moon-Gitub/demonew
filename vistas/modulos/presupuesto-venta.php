@@ -60,11 +60,14 @@
                   <div class="input-group">
                     <span title="Listas de precio" class="input-group-addon" style="background-color: #ddd">Listas $</span>
                       <?php 
-                      $arrListasPrecio = [
-                        'precio_venta' => 'Publico'
-                      ];
-
-                      $arrListasPrecioHabilitadas = explode(',', $_SESSION['listas_precio']);
+                      if (class_exists('ModeloListasPrecio') && ModeloListasPrecio::tablaExiste()) {
+                        $arrListasPrecio = ModeloListasPrecio::mdlListarParaVenta();
+                        $listasPrecioConfigPresupVenta = ModeloListasPrecio::mdlConfigPorCodigos(!empty($_SESSION['listas_precio']) ? $_SESSION['listas_precio'] : 'precio_venta');
+                      } else {
+                        $arrListasPrecio = ['precio_venta' => 'Precio Público'];
+                        $listasPrecioConfigPresupVenta = [];
+                      }
+                      $arrListasPrecioHabilitadas = !empty($_SESSION['listas_precio']) ? array_map('trim', explode(',', $_SESSION['listas_precio'])) : ['precio_venta'];
 
                       echo '<select class="form-control input-sm" name="radioPrecio" id="radioPrecio">';
                       foreach ($arrListasPrecio as $key => $value) {
@@ -84,6 +87,7 @@
                 </div>
               </div>
 
+              <script type="text/javascript">var listasPrecioConfig = <?php echo json_encode(isset($listasPrecioConfigPresupVenta) ? $listasPrecioConfigPresupVenta : []); ?>;</script>
               <input type="hidden" id="fechaActual" name="fechaActual" value="<?php echo date("Y-m-d H:i:s");?>">
 
               <input type="hidden" name="idVendedor" id="idVendedor" value="<?php echo $_SESSION["id"]; ?>">
