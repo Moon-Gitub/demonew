@@ -217,96 +217,6 @@ function sumarTotalPreciosCaja(){
 }
 
 /*=============================================
-RECALCULAR PRECIOS AL CAMBIAR LISTA DE PRECIO
-=============================================*/
-function recalcularPreciosPorListaCaja() {
-	// Configuración de listas disponible desde PHP
-	if (typeof listasPrecioConfig === 'undefined' || !listasPrecioConfig) {
-		return;
-	}
-
-	var tipoPrecio = $('#radioPrecio').val();
-	if (!tipoPrecio || !listasPrecioConfig[tipoPrecio]) {
-		return;
-	}
-
-	var config = listasPrecioConfig[tipoPrecio];
-	var baseCampo = config.base_precio || 'precio_venta';
-	var tipoDesc = config.tipo_descuento || 'ninguno';
-	var valorDesc = parseFloat(config.valor_descuento) || 0;
-
-	// Recorrer cada línea de producto ya agregada
-	$(".nuevoProductoCaja .row").each(function () {
-		var $row = $(this);
-
-		var $inputCantidad = $row.find(".nuevaCantidadProductoCaja");
-		var $precioUnitarioInput = $row.find(".nuevaPrecioUnitario");
-		var $precioTotalInput = $row.find(".nuevoPrecioProductoCaja");
-		var $ivaInput = $row.find(".nuevoTipoIvaValorProducto");
-		var $tipoIvaInput = $row.find(".nuevoValorTipoIva");
-
-		if (!$precioTotalInput.length || !$inputCantidad.length || !$ivaInput.length || !$tipoIvaInput.length) {
-			return;
-		}
-
-		var cantidad = parseFloat($inputCantidad.val()) || 0;
-		var iva = parseFloat($tipoIvaInput.val()) || 0;
-
-		// Tomar precios base que guardamos como data-atributos
-		var precioVentaBase = parseFloat($precioTotalInput.data("precio-venta"));
-		var precioCompraBase = parseFloat($precioTotalInput.data("precio-compra"));
-
-		var precioBase = 0;
-		if (baseCampo === 'precio_compra') {
-			precioBase = isNaN(precioCompraBase) ? 0 : precioCompraBase;
-		} else {
-			precioBase = isNaN(precioVentaBase) ? 0 : precioVentaBase;
-		}
-
-		var precioUnitario = precioBase;
-		if (tipoDesc === 'porcentaje' && valorDesc > 0) {
-			precioUnitario = precioBase - (precioBase * valorDesc / 100);
-		}
-
-		if (isNaN(precioUnitario) || !isFinite(precioUnitario)) {
-			precioUnitario = 0;
-		}
-
-		var precioTotal = precioUnitario * cantidad;
-
-		// Recalcular neto e IVA por línea
-		var precioNetoUnitario = iva ? (precioUnitario / (1 + (iva / 100))) : precioUnitario;
-		var netoTotal = precioNetoUnitario * cantidad;
-		var ivaTotal = precioTotal - netoTotal;
-
-		// Actualizar campos visuales y ocultos
-		if ($precioUnitarioInput.length) {
-			$precioUnitarioInput.val(precioUnitario.toFixed(2));
-		}
-
-		$precioTotalInput.val(precioTotal.toFixed(2));
-		$precioTotalInput.attr("precioReal", precioUnitario.toFixed(2));
-
-		$ivaInput.val(ivaTotal.toFixed(2));
-		$ivaInput.attr("netoUnitario", precioNetoUnitario.toFixed(6));
-		$ivaInput.attr("cantxIva", cantidad);
-
-	});
-
-	// Recalcular totales generales e impuestos
-	sumarTotalPreciosCaja();
-	agregarImpuestoCaja();
-	calcularDescuentoCaja("nuevoDescuentoPorcentajeCaja");
-	calcularInteresCaja("nuevoInteresPorcentajeCaja");
-	listarProductosCaja();
-}
-
-// Recalcular automáticamente cuando cambia la lista de precio seleccionada
-$(document).on('change', '#radioPrecio', function () {
-	recalcularPreciosPorListaCaja();
-});
-
-/*=============================================
 FUNCION CALCULAR DESCUENTOS
 =============================================*/
 function calcularDescuentoCaja(elem){
@@ -925,13 +835,7 @@ function agregarProductoVisualmente(respuesta, cantidad, precioUnitario, precioT
 				'<span class="input-group-addon"><i class="ion ion-social-usd"></i></span>'+
 				'<input type="hidden" class="nuevoTipoIvaValorProducto" value="'+ivaValor+'" netoUnitario="'+(precioNeto*cantidadNum)+'" tipoIva="'+iva+'" cantxIva="'+cantidadNum+'" readonly required>'+
 				'<input type="hidden" class="nuevoValorTipoIva" value="'+iva+'" readonly required>'+
-				// Guardamos SIEMPRE los precios base (venta/compra) para poder recalcular al cambiar la lista de precio
-				'<input type="text" class="form-control input-sm nuevoPrecioProductoCaja" '+
-					'precioReal="'+precioVta+'" '+
-					'precioCompra="'+(respuesta["precio_compra"] || 0)+'" '+
-					'data-precio-venta="'+(respuesta["precio_venta"] || 0)+'" '+
-					'data-precio-compra="'+(respuesta["precio_compra"] || 0)+'" '+
-					'style="text-align:center;" value="'+precioXCantidad+'" required readonly>'+
+				'<input type="text" class="form-control input-sm nuevoPrecioProductoCaja" precioReal="'+precioVta+'" precioCompra="'+(respuesta["precio_compra"] || 0)+'" style="text-align:center;" value="'+precioXCantidad+'" required readonly>'+
 			'</div>'+
 		'</div>'+
 	'</div>';
@@ -1397,17 +1301,12 @@ function agregarProductoListaCompra() {
                 					            '<input type="text" style="text-align:center;" class="form-control input-sm nuevaPrecioUnitario" value="'+values+'"  required>'+
                 							'</div>'+
                 							 
-                				          '<!-- Precio total del producto -->'+
-                				          '<div class="col-xs-4 ingresoPrecio" >'+
-                			  				  '<input type="hidden" class="nuevoTipoIvaValorProducto" value="'+ivaValor+'" netoUnitario="'+precioNeto+'" tipoIva="'+iva+'" cantxIva="1">'+
+            						  '<!-- Precio total del producto -->'+
+            				          '<div class="col-xs-4 ingresoPrecio" >'+
+            			  				  '<input type="hidden" class="nuevoTipoIvaValorProducto" value="'+ivaValor+'" netoUnitario="'+precioNeto+'" tipoIva="'+iva+'" cantxIva="1">'+
    						                      '<input type="hidden" class="nuevoValorTipoIva" value="'+iva+'">'+
-    									      '<input type="text" class="form-control input-sm nuevoPrecioProductoCaja" '+
-    									      	'precioReal="'+values+'" '+
-    									      	'precioCompra="'+respuesta["precio_compra"]+'" '+
-    									      	'data-precio-venta="'+(respuesta["precio_venta"] || 0)+'" '+
-    									      	'data-precio-compra="'+(respuesta["precio_compra"] || 0)+'" '+
-    									      	'style="text-align:center;" value="'+redondear(values*cantidad)+'" required>'+
-                				          '</div>'+
+    									      '<input type="text" class="form-control input-sm nuevoPrecioProductoCaja" precioReal="'+values+'" precioCompra="'+respuesta["precio_compra"]+'" data-precio_venta="'+(respuesta["precio_venta"] || 0)+'" data-precio_compra="'+(respuesta["precio_compra"] || 0)+'" style="text-align:center;" value="'+redondear(values*cantidad)+'" required>'+
+            				          '</div>'+
                 
                 				        '</div>';
         
@@ -1443,12 +1342,7 @@ function agregarProductoListaCompra() {
         						              '<span class="input-group-addon"><i class="ion ion-social-usd"></i></span>'+
         					  				  '<input type="hidden" class="nuevoTipoIvaValorProducto" value="'+ivaValor+'" netoUnitario="'+precioNeto+'" tipoIva="'+iva+'" cantxIva="1">'+
         						              '<input type="hidden" class="nuevoValorTipoIva" value="'+iva+'">'+
-        									  '<input type="text" class="form-control input-sm nuevoPrecioProductoCaja" '+
-        									  	'precioReal="'+values+'" '+
-        									  	'precioCompra="'+respuesta["precio_compra"]+'" '+
-        									  	'data-precio-venta="'+(respuesta["precio_venta"] || 0)+'" '+
-        									  	'data-precio-compra="'+(respuesta["precio_compra"] || 0)+'" '+
-        									  	'style="text-align:center;" value="'+redondear(values*cantidad)+'" required>'+
+        									  '<input type="text" class="form-control input-sm nuevoPrecioProductoCaja" precioReal="'+values+'" precioCompra="'+respuesta["precio_compra"]+'" data-precio_venta="'+(respuesta["precio_venta"] || 0)+'" data-precio_compra="'+(respuesta["precio_compra"] || 0)+'" style="text-align:center;" value="'+redondear(values*cantidad)+'" required>'+
         						            '</div>'+
         						          '</div>'+
         
@@ -1588,12 +1482,7 @@ function agregarProductoListaCompra() {
 				              '<span class="input-group-addon"><i class="ion ion-social-usd"></i></span>'+
 			  				  '<input type="hidden" class="nuevoTipoIvaValorProducto" value="'+ivaValor+'" netoUnitario="'+precioNeto+'" tipoIva="'+iva+'" cantxIva="'+cantidad+'" readonly required>'+
 							  '<input type="hidden" class="nuevoValorTipoIva" value="'+iva+'" readonly required>'+
-				              '<input type="text" class="form-control input-sm nuevoPrecioProductoCaja" '+
-				              	'precioReal="'+precioVta+'" '+
-				              	'precioCompra="'+respuesta["precio_compra"]+'" '+
-				              	'data-precio-venta="'+(respuesta["precio_venta"] || 0)+'" '+
-				              	'data-precio-compra="'+(respuesta["precio_compra"] || 0)+'" '+
-				              	'style="text-align:center;" value="'+precioXCantidad+'" required readonly>'+
+				              '<input type="text" class="form-control input-sm nuevoPrecioProductoCaja" precioReal="'+precioVta+'" precioCompra="'+respuesta["precio_compra"]+'" data-precio_venta="'+(respuesta["precio_venta"] || 0)+'" data-precio_compra="'+(respuesta["precio_compra"] || 0)+'" style="text-align:center;" value="'+precioXCantidad+'" required readonly>'+
 				            '</div>'+
 				          '</div>'+
 
@@ -1627,12 +1516,7 @@ function agregarProductoListaCompra() {
         				            
         			  				  '<input type="hidden" class="nuevoTipoIvaValorProducto" value="'+ivaValor+'" netoUnitario="'+precioNeto+'" tipoIva="'+iva+'" cantxIva="'+cantidad+'" readonly required>'+
         							  '<input type="hidden" class="nuevoValorTipoIva" value="'+iva+'" readonly required>'+
-        				              '<input type="text" class="form-control input-sm nuevoPrecioProductoCaja" '+
-        				              	'precioReal="'+precioVta+'" '+
-        				              	'precioCompra="'+respuesta["precio_compra"]+'" '+
-        				              	'data-precio-venta="'+(respuesta["precio_venta"] || 0)+'" '+
-        				              	'data-precio-compra="'+(respuesta["precio_compra"] || 0)+'" '+
-        				              	'style="text-align:center;" value="'+precioXCantidad+'" required readonly>'+
+        				              '<input type="text" class="form-control input-sm nuevoPrecioProductoCaja" precioReal="'+precioVta+'" precioCompra="'+respuesta["precio_compra"]+'" style="text-align:center;" value="'+precioXCantidad+'" required readonly>'+
         				            
         				          '</div>'+
         
@@ -3721,6 +3605,102 @@ $(document).ready(function() {
 			observer.observe(listaProductos, { childList: true, subtree: true });
 		}
 	}
+});
+
+/*=============================================
+RECALCULAR PRECIOS AL CAMBIAR LISTA DE PRECIO
+=============================================*/
+$(document).on('change', '#radioPrecio', function() {
+	// Solo aplicar en crear-venta-caja
+	if (!window.location.href.includes('crear-venta-caja')) {
+		return;
+	}
+
+	var tipoPrecio = $('#radioPrecio').val();
+	if (!tipoPrecio) {
+		return;
+	}
+
+	// Configuración de la lista seleccionada (base_precio, tipo_descuento, valor_descuento)
+	var config = (typeof listasPrecioConfig !== 'undefined' && listasPrecioConfig && listasPrecioConfig[tipoPrecio])
+		? listasPrecioConfig[tipoPrecio]
+		: null;
+
+	// Recalcular precio de cada producto ya cargado
+	$(".nuevoProductoCaja .row").each(function() {
+		var $row = $(this);
+		var $cantidadInput = $row.find(".nuevaCantidadProductoCaja");
+		var $precioUnitInput = $row.find(".nuevaPrecioUnitario");
+		var $precioTotalInput = $row.find(".nuevoPrecioProductoCaja");
+		var $ivaHidden = $row.find(".nuevoTipoIvaValorProducto");
+
+		if (!$cantidadInput.length || !$precioTotalInput.length || !$ivaHidden.length) {
+			return;
+		}
+
+		var cantidad = parseFloat($cantidadInput.val()) || 0;
+		var iva = parseFloat($ivaHidden.attr("tipoIva")) || 0;
+
+		// Obtener precios base guardados como data- atributos
+		var precioBaseVenta = parseFloat($precioTotalInput.attr("data-precio_venta")) || 0;
+		var precioBaseCompra = parseFloat($precioTotalInput.attr("data-precio_compra")) || 0;
+
+		var precioBase = 0;
+
+		if (config && config.base_precio) {
+			if (config.base_precio === 'precio_compra') {
+				precioBase = precioBaseCompra;
+			} else {
+				// Default precio_venta
+				precioBase = precioBaseVenta;
+			}
+		} else {
+			// Fallback: mantener precioReal actual
+			precioBase = parseFloat($precioTotalInput.attr("precioReal")) || 0;
+		}
+
+		// Aplicar descuento según configuración
+		var nuevoPrecioUnitario = precioBase;
+		if (config && config.tipo_descuento === 'porcentaje' && parseFloat(config.valor_descuento) > 0) {
+			var porc = parseFloat(config.valor_descuento) / 100;
+			nuevoPrecioUnitario = precioBase - (precioBase * porc);
+		}
+
+		// Recalcular neto e IVA
+		var precioNetoUnitario = 0;
+		var ivaUnitario = 0;
+		if (iva > 0) {
+			precioNetoUnitario = nuevoPrecioUnitario / ((iva / 100) + 1);
+			ivaUnitario = (precioNetoUnitario * iva / 100);
+		} else {
+			precioNetoUnitario = nuevoPrecioUnitario;
+			ivaUnitario = 0;
+		}
+
+		var nuevoPrecioTotal = nuevoPrecioUnitario * cantidad;
+		var nuevoIvaTotal = ivaUnitario * cantidad;
+
+		// Actualizar inputs de la fila
+		if ($precioUnitInput.length) {
+			$precioUnitInput.val(redondear(nuevoPrecioUnitario));
+		}
+
+		$precioTotalInput
+			.val(redondear(nuevoPrecioTotal))
+			.attr("precioReal", redondear(nuevoPrecioUnitario));
+
+		$ivaHidden
+			.val(redondear(nuevoIvaTotal))
+			.attr("netoUnitario", redondear(precioNetoUnitario))
+			.attr("cantxIva", cantidad);
+	});
+
+	// Recalcular totales generales y JSON de productos
+	sumarTotalPreciosCaja();
+	agregarImpuestoCaja();
+	calcularDescuentoCaja("nuevoDescuentoPorcentajeCaja");
+	calcularInteresCaja("nuevoInteresPorcentajeCaja");
+	listarProductosCaja();
 });
 
 // Sistema completo de atajos de teclado (SOLO EN crear-venta-caja)
