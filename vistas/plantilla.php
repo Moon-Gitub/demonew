@@ -230,6 +230,7 @@
         $_GET["ruta"] == "reportes" ||
         $_GET["ruta"] == "empresa" ||
         $_GET["ruta"] == "listas-precio" ||
+        $_GET["ruta"] == "balanzas-formatos" ||
         $_GET["ruta"] == "medios-pago" ||         
         $_GET["ruta"] == "cajas" ||
         $_GET["ruta"] == "cajas-cajero" ||
