@@ -16,7 +16,7 @@ $verIntegraciones = _menuPuedeVer('integraciones') || _menuPuedeVer('chat');
 	<section class="sidebar">
 		<ul class="sidebar-menu" data-widget="tree">
 		<?php
-		if ($_SESSION["perfil"] == "Administrador" && (!isset($_SESSION["permisos_pantallas"]) || is_array($_SESSION["permisos_pantallas"]))) {
+		if ($_SESSION["perfil"] == "Administrador") {
 			if (_menuPuedeVer('inicio')) { ?>
 			<li class="<?php echo ($paginaActualMenu == 'inicio') ? 'active' : ''; ?>"><a href="inicio"><i class="fa fa-home"></i><span>Inicio</span></a></li>
 			<?php }
@@ -32,7 +32,7 @@ $verIntegraciones = _menuPuedeVer('integraciones') || _menuPuedeVer('chat');
 					<?php if (_menuPuedeVer('medios-pago')) { ?><li><a href="medios-pago"><i class="fa fa-circle-o"></i><span>Cargar Medios de Pago</span></a></li><?php } ?>
 				</ul>
 			</li>
-			<?php }
+			<?php } ?>
 
 			<li class="treeview <?php echo (in_array($paginaActualMenu, ['productos', 'categorias', 'combos', 'impresion-precios', 'productos-importar-excel2'])) ? 'active' : '' ?>">
 				<a><i class="fa fa-product-hunt"></i><span>Productos</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
