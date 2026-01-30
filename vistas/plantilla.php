@@ -176,10 +176,11 @@
       //MENU
       include "modulos/menu.php";
       
-      //CONTENIDO
+      //CONTENIDO (ruta desde directorio de plantilla para evitar 404)
+      $dirModulos = __DIR__ . "/modulos";
       if(isset($_GET["ruta"])){
         $ruta = $_GET["ruta"];
-        $archivo = "modulos/".$ruta.".php";
+        $archivo = $dirModulos . "/" . $ruta . ".php";
         $permiso = true;
         if (isset($_SESSION["permisos_pantallas"]) && is_array($_SESSION["permisos_pantallas"])) {
           $permiso = in_array($ruta, $_SESSION["permisos_pantallas"], true);
@@ -189,10 +190,10 @@
         if ($permiso && file_exists($archivo)) {
           include $archivo;
         } else {
-          include "modulos/404.php";
+          include $dirModulos . "/404.php";
         }
       } else {
-        include "modulos/inicio.php";
+        include $dirModulos . "/inicio.php";
       }
 
       /*=============================================
