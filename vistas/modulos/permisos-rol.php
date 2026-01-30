@@ -4,9 +4,25 @@ if ($_SESSION["perfil"] != "Administrador") {
   return;
 }
 
-require_once dirname(__DIR__, 2) . "/modelos/permisos_rol.modelo.php";
-$roles = ModeloPermisosRol::mdlListarRoles();
-$pantallasAgrupadas = ModeloPermisosRol::mdlListarPantallasAgrupadas();
+$roles = ['Administrador', 'Vendedor'];
+$pantallasAgrupadas = [];
+$errorPermisos = null;
+try {
+  $rutaModelo = dirname(__DIR__, 2) . "/modelos/permisos_rol.modelo.php";
+  if (!is_file($rutaModelo)) {
+    $errorPermisos = 'No se encuentra el archivo del modelo de permisos. Suba los archivos del módulo permisos-rol al servidor.';
+  } else {
+    require_once $rutaModelo;
+    if (!class_exists('ModeloPermisosRol')) {
+      $errorPermisos = 'El modelo de permisos no está disponible.';
+    } else {
+      $roles = ModeloPermisosRol::mdlListarRoles();
+      $pantallasAgrupadas = ModeloPermisosRol::mdlListarPantallasAgrupadas();
+    }
+  }
+} catch (Throwable $e) {
+  $errorPermisos = 'Error al cargar permisos: ' . htmlspecialchars($e->getMessage()) . '. Ejecute en la base de datos del servidor el script <code>db/crear-tablas-permisos-rol.sql</code>.';
+}
 ?>
 <div class="content-wrapper">
   <section class="content-header">
@@ -18,6 +34,11 @@ $pantallasAgrupadas = ModeloPermisosRol::mdlListarPantallasAgrupadas();
     </ol>
   </section>
   <section class="content">
+    <?php if ($errorPermisos): ?>
+    <div class="alert alert-warning">
+      <strong>Atención:</strong> <?php echo $errorPermisos; ?>
+    </div>
+    <?php endif; ?>
     <div class="box">
       <div class="box-header with-border">
         <p class="help-block">
