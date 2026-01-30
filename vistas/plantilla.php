@@ -178,79 +178,21 @@
       
       //CONTENIDO
       if(isset($_GET["ruta"])){
-        
-        if($_GET["ruta"] == "inicio" ||
-        $_GET["ruta"] == "usuarios" ||
-        $_GET["ruta"] == "categorias" ||
-        $_GET["ruta"] == "productos" ||
-        $_GET["ruta"] == "combos" ||
-        $_GET["ruta"] == "productos-stock-medio" ||
-        $_GET["ruta"] == "productos-stock-bajo" ||
-        $_GET["ruta"] == "productos-stock-valorizado" ||
-        $_GET["ruta"] == "productos-historial" ||
-        $_GET["ruta"] == "productos-importar-excel" ||
-        $_GET["ruta"] == "productos-importar-excel2" ||
-        $_GET["ruta"] == "pedidos-validados" ||
-        $_GET["ruta"] == "pedidos-nuevos" ||
-        $_GET["ruta"] == "crear-venta-caja-impresion" ||
-        $_GET["ruta"] == "info" ||
-        $_GET["ruta"] == "pedidos-generar-movimiento" ||
-        $_GET["ruta"] == "impresion-precios" || 
-        $_GET["ruta"] == "impresionPreciosCuidados" ||
-        $_GET["ruta"] == "impresionPreciosOfertas" ||
-        $_GET["ruta"] == "impresionPreciosCuidadosGrande" || 
-        $_GET["ruta"] == "proveedores" ||
-        $_GET["ruta"] == "proveedores-cuenta-saldos" ||
-        $_GET["ruta"] == "proveedores_cuenta" ||
-        $_GET["ruta"] == "proveedores-saldo" ||
-        $_GET["ruta"] == "proveedores-pagos" ||
-        $_GET["ruta"] == "integraciones" ||
-        $_GET["ruta"] == "chat" ||
-        $_GET["ruta"] == "clientes" ||
-        $_GET["ruta"] == "editar-pedido" ||
-        $_GET["ruta"] == "clientes-cuenta-saldos" ||
-        $_GET["ruta"] == "clientes-cuenta-deuda" ||
-        $_GET["ruta"] == "clientes_cuenta" ||
-        $_GET["ruta"] == "ventas" ||
-        $_GET["ruta"] == "ventas-categoria-proveedor-informe" ||
-        $_GET["ruta"] == "ventas-productos" ||
-        $_GET["ruta"] == "presupuestos" ||
-        $_GET["ruta"] == "presupuesto-venta" ||
-        $_GET["ruta"] == "crear-presupuesto-caja" ||
-        $_GET["ruta"] == "crear-presupuesto-caja2" ||
-        $_GET["ruta"] == "libro-iva-ventas" ||
-        $_GET["ruta"] == "ventas-rentabilidad" ||
-        $_GET["ruta"] == "crear-venta" ||
-        $_GET["ruta"] == "crear-venta-caja" ||
-        $_GET["ruta"] == "editar-venta" ||
-        $_GET["ruta"] == "crear-compra" ||
-        $_GET["ruta"] == "ingreso" ||
-        $_GET["ruta"] == "editar-ingreso" ||
-        $_GET["ruta"] == "compras" ||
-        $_GET["ruta"] == "reportes" ||
-        $_GET["ruta"] == "empresa" ||
-        $_GET["ruta"] == "listas-precio" ||
-        $_GET["ruta"] == "balanzas-formatos" ||
-        $_GET["ruta"] == "medios-pago" ||         
-        $_GET["ruta"] == "cajas" ||
-        $_GET["ruta"] == "cajas-cajero" ||
-        $_GET["ruta"] == "cajas-cierre" ||
-        $_GET["ruta"] == "parametros-facturacion" ||
-        $_GET["ruta"] == "factura-manual" ||
-        $_GET["ruta"] == "procesar-pago" ||
-        $_GET["ruta"] == "combos" ||
-        $_GET["ruta"] == "salir"){
-
-          include "modulos/".$_GET["ruta"].".php";
-
+        $ruta = $_GET["ruta"];
+        $archivo = "modulos/".$ruta.".php";
+        $permiso = true;
+        if (isset($_SESSION["permisos_pantallas"]) && is_array($_SESSION["permisos_pantallas"])) {
+          $permiso = in_array($ruta, $_SESSION["permisos_pantallas"], true);
+        } else {
+          $permiso = ($ruta == "inicio" || $ruta == "usuarios" || $ruta == "categorias" || $ruta == "productos" || $ruta == "combos" || $ruta == "productos-stock-medio" || $ruta == "productos-stock-bajo" || $ruta == "productos-stock-valorizado" || $ruta == "productos-historial" || $ruta == "productos-importar-excel" || $ruta == "productos-importar-excel2" || $ruta == "pedidos-validados" || $ruta == "pedidos-nuevos" || $ruta == "crear-venta-caja-impresion" || $ruta == "info" || $ruta == "pedidos-generar-movimiento" || $ruta == "impresion-precios" || $ruta == "impresionPreciosCuidados" || $ruta == "impresionPreciosOfertas" || $ruta == "impresionPreciosCuidadosGrande" || $ruta == "proveedores" || $ruta == "proveedores-cuenta-saldos" || $ruta == "proveedores_cuenta" || $ruta == "proveedores-saldo" || $ruta == "proveedores-pagos" || $ruta == "integraciones" || $ruta == "chat" || $ruta == "clientes" || $ruta == "editar-pedido" || $ruta == "clientes-cuenta-saldos" || $ruta == "clientes-cuenta-deuda" || $ruta == "clientes_cuenta" || $ruta == "ventas" || $ruta == "ventas-categoria-proveedor-informe" || $ruta == "ventas-productos" || $ruta == "presupuestos" || $ruta == "presupuesto-venta" || $ruta == "crear-presupuesto-caja" || $ruta == "crear-presupuesto-caja2" || $ruta == "libro-iva-ventas" || $ruta == "ventas-rentabilidad" || $ruta == "crear-venta" || $ruta == "crear-venta-caja" || $ruta == "editar-venta" || $ruta == "crear-compra" || $ruta == "ingreso" || $ruta == "editar-ingreso" || $ruta == "compras" || $ruta == "reportes" || $ruta == "empresa" || $ruta == "listas-precio" || $ruta == "balanzas-formatos" || $ruta == "permisos-rol" || $ruta == "medios-pago" || $ruta == "cajas" || $ruta == "cajas-cajero" || $ruta == "cajas-cierre" || $ruta == "parametros-facturacion" || $ruta == "factura-manual" || $ruta == "procesar-pago" || $ruta == "salir");
+        }
+        if ($permiso && file_exists($archivo)) {
+          include $archivo;
         } else {
           include "modulos/404.php";
-
         }
-
       } else {
         include "modulos/inicio.php";
-
       }
 
       /*=============================================

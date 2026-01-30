@@ -84,6 +84,14 @@ class ControladorUsuarios{
 							// Token CSRF
 							$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
+							// Permisos por rol: pantallas a las que puede acceder este perfil
+							require_once $raiz . "/modelos/permisos_rol.modelo.php";
+							if (ModeloPermisosRol::tablasExisten()) {
+								$_SESSION["permisos_pantallas"] = ModeloPermisosRol::mdlCodigosPermitidosPorRol($respuesta["perfil"]);
+							} else {
+								$_SESSION["permisos_pantallas"] = null; // legacy: sin filtro
+							}
+
 							/*=============================================
 							REGISTRAR FECHA PARA SABER EL ÚLTIMO LOGIN
 							=============================================*/
