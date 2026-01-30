@@ -831,11 +831,12 @@ class ModeloVentas{
 	static public function mdlEstadisticasDashboard($fechaHoy, $fechaSemanaInicio, $fechaSemanaFin, $fechaMesInicio, $fechaMesFin, $fechaMesAnteriorInicio, $fechaMesAnteriorFin){
 		
 		// OPTIMIZADO: Una sola consulta con UNION para todas las estadísticas
+		// Ventas de hoy: usar DATE() para que coincida con todo el día (fecha puede ser TIMESTAMP/DATETIME)
 		$stmt = Conexion::conectar()->prepare("
 			SELECT 'hoy' as periodo, COALESCE(SUM(total), 0) as total 
 			FROM ventas 
 			WHERE cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999) 
-			AND fecha = :fechaHoy
+			AND DATE(fecha) = :fechaHoy
 			
 			UNION ALL
 			
