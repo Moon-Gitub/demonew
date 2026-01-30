@@ -4,7 +4,7 @@ function _menuPuedeVer($ruta) {
 	if (!isset($_SESSION["permisos_pantallas"]) || !is_array($_SESSION["permisos_pantallas"])) return true;
 	return in_array($ruta, $_SESSION["permisos_pantallas"], true);
 }
-$verEmpresa = _menuPuedeVer('empresa') || _menuPuedeVer('usuarios') || _menuPuedeVer('listas-precio') || _menuPuedeVer('balanzas-formatos') || _menuPuedeVer('permisos-rol') || _menuPuedeVer('medios-pago');
+$verEmpresa = ($_SESSION["perfil"] == "Administrador") || _menuPuedeVer('empresa') || _menuPuedeVer('usuarios') || _menuPuedeVer('listas-precio') || _menuPuedeVer('balanzas-formatos') || _menuPuedeVer('permisos-rol') || _menuPuedeVer('medios-pago');
 $verProductos = _menuPuedeVer('productos') || _menuPuedeVer('categorias') || _menuPuedeVer('combos') || _menuPuedeVer('impresion-precios') || _menuPuedeVer('productos-importar-excel2');
 $verMov = _menuPuedeVer('pedidos-generar-movimiento') || _menuPuedeVer('pedidos-nuevos') || _menuPuedeVer('pedidos-validados');
 $verCajas = _menuPuedeVer('cajas') || _menuPuedeVer('cajas-cierre');
@@ -28,7 +28,7 @@ $verIntegraciones = _menuPuedeVer('integraciones') || _menuPuedeVer('chat');
 					<?php if (_menuPuedeVer('usuarios')) { ?><li><a href="usuarios"><i class="fa fa-circle-o"></i><span>Usuarios</span></a></li><?php } ?>
 					<?php if (_menuPuedeVer('listas-precio')) { ?><li><a href="listas-precio"><i class="fa fa-circle-o"></i><span>Listas de Precio</span></a></li><?php } ?>
 					<?php if (_menuPuedeVer('balanzas-formatos')) { ?><li><a href="balanzas-formatos"><i class="fa fa-circle-o"></i><span>Formatos de Balanza</span></a></li><?php } ?>
-					<?php if (_menuPuedeVer('permisos-rol')) { ?><li><a href="permisos-rol"><i class="fa fa-circle-o"></i><span>Permisos por Rol</span></a></li><?php } ?>
+					<?php if ($_SESSION["perfil"] == "Administrador" || _menuPuedeVer('permisos-rol')) { ?><li><a href="permisos-rol"><i class="fa fa-circle-o"></i><span>Permisos por Rol</span></a></li><?php } ?>
 					<?php if (_menuPuedeVer('medios-pago')) { ?><li><a href="medios-pago"><i class="fa fa-circle-o"></i><span>Cargar Medios de Pago</span></a></li><?php } ?>
 				</ul>
 			</li>

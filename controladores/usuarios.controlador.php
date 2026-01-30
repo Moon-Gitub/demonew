@@ -87,7 +87,13 @@ class ControladorUsuarios{
 							// Permisos por rol: pantallas a las que puede acceder este perfil
 							require_once $raiz . "/modelos/permisos_rol.modelo.php";
 							if (ModeloPermisosRol::tablasExisten()) {
-								$_SESSION["permisos_pantallas"] = ModeloPermisosRol::mdlCodigosPermitidosPorRol($respuesta["perfil"]);
+								$codigos = ModeloPermisosRol::mdlCodigosPermitidosPorRol($respuesta["perfil"]);
+								// Si Administrador tiene lista vacía (tablas nuevas sin INSERTs), usar legacy para que pueda entrar a todo y a permisos-rol
+								if ($respuesta["perfil"] === "Administrador" && empty($codigos)) {
+									$_SESSION["permisos_pantallas"] = null;
+								} else {
+									$_SESSION["permisos_pantallas"] = $codigos;
+								}
 							} else {
 								$_SESSION["permisos_pantallas"] = null; // legacy: sin filtro
 							}
