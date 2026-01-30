@@ -16,7 +16,7 @@ $verIntegraciones = _menuPuedeVer('integraciones') || _menuPuedeVer('chat');
 	<section class="sidebar">
 		<ul class="sidebar-menu" data-widget="tree">
 		<?php
-		if ($_SESSION["perfil"] == "Administrador" && (!isset($_SESSION["permisos_pantallas"]) || is_array($_SESSION["permisos_pantallas"])) {
+		if ($_SESSION["perfil"] == "Administrador" && (!isset($_SESSION["permisos_pantallas"]) || is_array($_SESSION["permisos_pantallas"]))) {
 			if (_menuPuedeVer('inicio')) { ?>
 			<li class="<?php echo ($paginaActualMenu == 'inicio') ? 'active' : ''; ?>"><a href="inicio"><i class="fa fa-home"></i><span>Inicio</span></a></li>
 			<?php }
