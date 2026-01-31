@@ -12,6 +12,7 @@ class ControladorUsuarios{
 	INGRESO DE USUARIO
 	=============================================*/
 	static public function ctrIngresoUsuario(){
+		$raiz = dirname(__DIR__);
 
 		if(isset($_POST["ingUsuario"])){
 
