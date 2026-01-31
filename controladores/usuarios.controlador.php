@@ -117,11 +117,12 @@ class ControladorUsuarios{
 							$ultimoLogin = ModeloUsuarios::mdlActualizarUsuario($tabla, $item1, $valor1, $item2, $valor2);
 
 							if($ultimoLogin == "ok"){
-
+								// Guardar sesión antes del redirect para que el GET a "inicio" ya tenga sesión (evita tener que ingresar dos veces)
+								session_write_close();
 								echo '<script>
 									window.location = "inicio";
 								</script>';
-
+								return;
 							}				
 							
 						}else{
