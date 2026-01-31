@@ -97,7 +97,7 @@ try {
     $descripcion = isset($respuestaRegistro["descripcion"]) ? $respuestaRegistro["descripcion"] : "";
     $total = isset($respuestaRegistro["importe"]) ? number_format($respuestaRegistro["importe"], 2, ',', '.') : "0,00";
     //$metPago = (isset($respuestaRegistro["metodo_pago"]) && !empty($respuestaRegistro["metodo_pago"])) ? "Medio de pago: " . $respuestaRegistro["metodo_pago"] : "";
-    $numRecibo = (isset($respuestaRegistro["numero_recibo"]) && !empty($respuestaRegistro["numero_recibo"]) ? $respuestaRegistro["numero_recibo"] : "";
+    $numRecibo = (isset($respuestaRegistro["numero_recibo"]) && !empty($respuestaRegistro["numero_recibo"])) ? $respuestaRegistro["numero_recibo"] : "";
 
     $metPago = json_decode($respuestaRegistro["metodo_pago"], true);
     
