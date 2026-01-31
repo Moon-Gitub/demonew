@@ -574,35 +574,10 @@ body.login-page .login-box-body,
 </div>
 
 <script>
-// Mejoras de UX en login (sin focus inmediato para evitar que se pierda el primer carácter)
+// Mínimo JS en login: solo focus con retraso. Sin tocar el submit para que el formulario envíe bien a la primera.
 $(document).ready(function(){
-    // Focus con pequeño retraso para que el input esté listo y no "trague" el primer carácter
     setTimeout(function(){
         $('#usuarioInput').focus();
-    }, 150);
-    
-    // Animación al enviar el formulario (no prevenir submit para que los valores se envíen)
-    $('#loginForm').on('submit', function(){
-        var $btn = $('.btn-login');
-        var originalHtml = $btn.html();
-        
-        $btn.html('<i class="fa fa-spinner fa-spin"></i> Ingresando...');
-        $btn.prop('disabled', true);
-        
-        // Si hay error, restaurar el botón después de 2 segundos
-        setTimeout(function(){
-            if($('.alert-danger').length > 0) {
-                $btn.html(originalHtml);
-                $btn.prop('disabled', false);
-            }
-        }, 2000);
-    });
-    
-    // Efecto de validación en tiempo real
-    $('#usuarioInput, #passwordInput').on('blur', function(){
-        if($(this).val().trim() !== '') {
-            $(this).closest('.form-group').removeClass('has-error').addClass('has-success');
-        }
-    });
+    }, 200);
 });
 </script>
