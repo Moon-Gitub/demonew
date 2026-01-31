@@ -395,7 +395,7 @@ function cambiarMetodoPagoCaja(valorMetodo){
 
         '</div>');
 
-	if(metodo == "Efectivo") {
+	if(metodo == "Efectivo" || metodo == "EF") {
 
 		$("#filaDescuentoCaja").css("display", ""); //Muestro Fila con inputs de descuento
 
@@ -1924,7 +1924,13 @@ $("#btnGuardarVentaCaja").click(function(e){
 			keyboard: false
 		});
 		$("#modalCobrarVenta").modal('show');
-		$("#nuevoMetodoPagoCaja").val("Efectivo").change(); //Por defecto selecciona Efectivo
+		// Por defecto: Efectivo (EF) si existe en el select, sino primera opción
+		if ($("#nuevoMetodoPagoCaja option[value='EF']").length) {
+			$("#nuevoMetodoPagoCaja").val("EF");
+		} else {
+			$("#nuevoMetodoPagoCaja").prop("selectedIndex", 1);
+		}
+		$("#nuevoMetodoPagoCaja").change();
 		$("#nuevoValorEntrega").val($("#nuevoTotalVentaCaja").val());
 	} else {
 	    swal({
@@ -2163,6 +2169,7 @@ function guardarVentaCaja(){
                     medioEvaluado = tipoMedioElegido[rec]["tipo"].split('-');
                     console.log(medioEvaluado[0])
                     switch(medioEvaluado[0]){
+                        case "EF": tckMedio += "<li>Efectivo" + " ( $ " + tipoMedioElegido[rec]["entrega"] + ")</li>"; break;
                         case "TD": tckMedio += "<li>Tarjeta Débito "  + medioEvaluado[1] + " ( $ " + tipoMedioElegido[rec]["entrega"] + ")</li>"; break;
                         case "MP": tckMedio += "<li>Mercado Pago "  + medioEvaluado[1] + " ( $ " + tipoMedioElegido[rec]["entrega"] + ")</li>"; break;
                         case "MPQR": 
