@@ -32,7 +32,7 @@ class ControladorClientesCtaCte{
 	=============================================*/
 	static public function ctrIngresarCtaCte() {
 
-		if(isset($_POST["tipoMovimientoCtaCteCliente"])){ //0 deibtos del cliente (ventas) - 1 creditos del cliente (pagos)
+		if(isset($_POST["tipoMovimientoCtaCteCliente"])){ //0 debitos del cliente (ventas) - 1 creditos del cliente (pagos)
 
 			date_default_timezone_set('America/Argentina/Mendoza');
 
@@ -40,15 +40,15 @@ class ControladorClientesCtaCte{
 			$hora = date('H:i:s');
 			$fec_hor = $fecha.' '.$hora;
 
-			$dineroMedio = (isset($_POST["ingresoMedioPago"])) ? $_POST["ingresoMedioPago"] : 'Efectivo';
-			$dineroMedio = (isset($_POST["ingresoMedioPagoCtaCteCliente"])) ? $_POST["ingresoMedioPagoCtaCteCliente"] : $dineroMedio;
-
+			//$dineroMedio = (isset($_POST["ingresoMedioPago"])) ? $_POST["ingresoMedioPago"] : 'Efectivo';
+			$dineroMedio = (isset($_POST["ingresoMedioPagoCtaCteCliente"]) && $_POST["ingresoMedioPagoCtaCteCliente"] != "") ? $_POST["ingresoMedioPagoCtaCteCliente"] : '[{"tipo":"'.$_POST["nuevoMetodoPagoCtaCteCliente"].'", "entrega":"'.$_POST["montoMovimientoCtaCteCliente"].'"}]';
+ 
 		   	$tabla = "clientes_cuenta_corriente";
 
 	   		$msjCaja = (($_POST["tipoMovimientoCtaCteCliente"] == 1) ? "Crédito" : "Débito");
 
-	   		$numeroRecibo = ($_POST["tipoMovimientoCtaCteCliente"] == 1 && $dineroMedio != 'Bonificacion') ? ModeloClientesCtaCte::mdlMostrarUltimoNumeroRecibo()["ult_recibo"] + 1 : null;
-				
+	   		$numeroRecibo = ($_POST["tipoMovimientoCtaCteCliente"] == 1 && $dineroMedio != 'Bonificacion') ? ModeloClientesCtaCte::mdlMostrarUltimoNumeroRecibo()["num_recibo"] + 1 : null;
+
 	   		$datosCtaCte = array(
 					'fecha' => $fec_hor,
 					'id_cliente' => $_POST["idClienteMovimientoCtaCteCliente"],
@@ -60,26 +60,34 @@ class ControladorClientesCtaCte{
 					'numero_recibo' => $numeroRecibo);
 	   		
 			$respuesta = ModeloClientesCtaCte::mdlIngresarCtaCte($tabla, $datosCtaCte);
-
-	   		if($_POST["tipoMovimientoCtaCteCliente"] == 1 && $dineroMedio != 'Bonificacion') {
-		   		//INGRESO DATOS A CAJA
-		   		$datos = array(
-		   				'fecha' => $fec_hor,
-		   				'id_usuario' => $_POST['idUsuarioMovimientoCtaCteCliente'],
-		   				'punto_venta' => $_POST['puntoVentaMovimientoCtaCteCliente'],
-		   				'tipo' => $_POST['tipoMovimientoCtaCteCliente'],
-		   				'monto' => $_POST['montoMovimientoCtaCteCliente'],
-		   				'medio_pago' => $dineroMedio,
-		   				'descripcion' => $_POST['detalleMovimientoCtaCteCliente'],
-		   				'codigo_venta' => null,
-		   				"id_venta" => null,
-	   					"id_cliente_proveedor" => $_POST["idClienteMovimientoCtaCteCliente"],
-		   				'observaciones' => null);
-
-		   		$respuesta = ModeloCajas::mdlIngresarCaja('cajas', $datos);
+            
+	   		if($_POST["tipoMovimientoCtaCteCliente"] == 1) {
+	   		    
+	   		    $jsonMetodosPago = json_decode($dineroMedio, true);
+			
+			    foreach ($jsonMetodosPago as $key => $value) {
+	   		    
+	   		        if($value["tipo"] != 'BO') {
+        		   		//INGRESO DATOS A CAJA
+        		   		$datos = array(
+        		   				'fecha' => $fec_hor,
+        		   				'id_usuario' => $_POST['idUsuarioMovimientoCtaCteCliente'],
+        		   				'punto_venta' => $_POST['puntoVentaMovimientoCtaCteCliente'],
+        		   				'tipo' => 1,
+        		   				'monto' => $value["entrega"],
+        		   				'medio_pago' => $value["tipo"],
+        		   				'descripcion' => $_POST['detalleMovimientoCtaCteCliente'],
+        		   				'codigo_venta' => null,
+        		   				"id_venta" => null,
+        	   					"id_cliente_proveedor" => $_POST["idClienteMovimientoCtaCteCliente"],
+        		   				'observaciones' => null);
+        
+        		   		$respuesta = ModeloCajas::mdlIngresarCaja('cajas', $datos);
+	   		        }
+			    }
 
 	   		}
-
+			
 		   	if($respuesta == "ok"){
 
 	   			echo'<script>

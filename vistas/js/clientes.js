@@ -415,3 +415,57 @@ $("#btnNuevoDocumentoId").click(function(){
     }  
   });
 });
+
+//BOTON PARA AGREGAR MEDIO DE PAGO 
+$("#agregarMedioPagoCC").click(function(){
+    var filas = $('#listadoMetodosPagoMixtoCC').attr('cantidadFilas');
+    filas++;
+    $('#listadoMetodosPagoMixtoCC').attr('cantidadFilas', filas);
+    
+    if(filas > 0){
+        $("#nuevoValorSaldoCCPost").attr('name', 'montoMovimientoCtaCteCliente');
+        $("#montoMovimientoCtaCteCliente").removeAttr('name');
+    } 
+    
+  var metPago = $("#nuevoMetodoPagoCtaCteCliente").val();
+  $("#divImportesPagoMixtoCC").css('display', '');
+  var entrega = $("#montoMovimientoCtaCteCliente").val();
+  $("#montoMovimientoCtaCteCliente").val('');
+  $("#listadoMetodosPagoMixtoCC").append("<tr><td><span class='quitarMedioPagoCC' style='color: red'><i class='fa fa-minus-square'></i></span></td><td><span class='nuevoTipoMPCaja' entrega='"+entrega+"'>"+metPago+"</span></td><td>"+entrega+"</td></tr>");
+  listarMediosPagoCajaCC();
+  
+});
+
+//QUITAR MEDIO DE PAGO EN LISTADO DE PAGO MIXTO
+$('#listadoMetodosPagoMixtoCC').on('click', '.quitarMedioPagoCC', function(){
+  $(this).closest("tr").remove();
+  listarMediosPagoCajaCC(); 
+  var filas = $('#listadoMetodosPagoMixtoCC').attr('cantidadFilas');
+    filas--;
+    $('#listadoMetodosPagoMixtoCC').attr('cantidadFilas', filas);
+    
+    if(filas == 0){
+        $("#nuevoValorSaldoCCPost").removeAttr('name');
+         $("#montoMovimientoCtaCteCliente").attr('name', 'montoMovimientoCtaCteCliente');
+    } 
+});
+
+//LISTAR TODOS LOS MEDIOS DE PAGO
+function listarMediosPagoCajaCC(){
+
+  var listaMedioPago = [];
+  var tipo = $(".nuevoTipoMPCaja");
+  //var total = Number($("#montoMovimientoCtaCteCliente").val());
+  var entrado = 0;
+  for(var i = 0; i < tipo.length; i++){
+    listaMedioPago.push({"tipo" : $(tipo[i]).text(), 
+               "entrega" : $(tipo[i]).attr("entrega")
+    });
+    entrado += Number($(tipo[i]).attr("entrega"));
+  }
+
+  $("#mxMediosPagos").val(JSON.stringify(listaMedioPago));
+  $("#nuevoValorSaldoCC").text(entrado);
+  $("#nuevoValorSaldoCCPost").val(entrado);
+  
+}
