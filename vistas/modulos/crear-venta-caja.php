@@ -1521,16 +1521,8 @@ MODAL COBRAR VENTA
 	                      $rf = (int)($mp['requiere_fecha'] ?? 0);
 	                      echo '<option value="' . $cod . '" data-requiere-codigo="' . $rc . '" data-requiere-banco="' . $rb . '" data-requiere-numero="' . $rn . '" data-requiere-fecha="' . $rf . '">' . $nom . '</option>';
 	                    }
-	                  } else {
-	                    // Fallback si la tabla no existe o está vacía
-	                    ?>
-	                    <option value="EF">Efectivo</option>
-	                    <option value="TD">Tarjeta Débito</option>
-	                    <option value="TC">Tarjeta Crédito</option>
-	                    <option value="CH">Cheque</option>
-	                    <option value="TR">Transferencia</option>
-	                    <option value="CC">Cuenta Corriente</option>
-	                  <?php } ?>
+	                  }
+	                  ?>
 	                </select>    
               </div>
             </div>
