@@ -1,3 +1,13 @@
+<?php
+  // Medios de pago: desde BD (tabla medios_pago), mismo criterio que crear-venta-caja
+  $listaMediosPagoCtaCte = [];
+  if (class_exists('ModeloMediosPago')) {
+    $listaMediosPagoCtaCte = ModeloMediosPago::mdlMostrarMediosPagoActivos();
+    if (!is_array($listaMediosPagoCtaCte)) {
+      $listaMediosPagoCtaCte = [];
+    }
+  }
+?>
 <style>
   /* ============================
      Estilos modernos para cuenta corriente cliente
@@ -537,14 +547,20 @@ MODAL AGREGAR MOVIMIENTO
               <div class="input-group">
                   <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPagoCC" type="button" class="btn btn-success" ><i class="fa fa-plus"></i></button></span>
                   <select class="form-control" id="nuevoMetodoPagoCtaCteCliente" name="nuevoMetodoPagoCtaCteCliente">
-                    
-                    <option value="Efectivo" selected>Efectivo</option>
-                    <option value="MP-" >Mercado Pago</option>
-                    <option value="TD-">Tarjeta Débito</option>     
-                    <option value="TC-">Tarjeta Crédito</option>
-                    <option value="CH--">Cheque</option>
-                    <option value="TR--">Transferencia</option>
-                    <option value="BO">Bonificación</option>
+                    <option value="">Medio de pago</option>
+                    <?php
+                    if (!empty($listaMediosPagoCtaCte)) {
+                      foreach ($listaMediosPagoCtaCte as $mp) {
+                        $cod = htmlspecialchars($mp['codigo'] ?? '');
+                        $nom = htmlspecialchars($mp['nombre'] ?? $cod);
+                        $rc = (int)($mp['requiere_codigo'] ?? 0);
+                        $rb = (int)($mp['requiere_banco'] ?? 0);
+                        $rn = (int)($mp['requiere_numero'] ?? 0);
+                        $rf = (int)($mp['requiere_fecha'] ?? 0);
+                        echo '<option value="' . $cod . '" data-requiere-codigo="' . $rc . '" data-requiere-banco="' . $rb . '" data-requiere-numero="' . $rn . '" data-requiere-fecha="' . $rf . '">' . $nom . '</option>';
+                      }
+                    }
+                    ?>
                   </select>    
               </div>
               
