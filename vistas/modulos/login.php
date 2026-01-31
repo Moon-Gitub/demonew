@@ -572,12 +572,3 @@ body.login-page .login-box-body,
   </div>
 
 </div>
-
-<script>
-// Mínimo JS en login: solo focus con retraso. Sin tocar el submit para que el formulario envíe bien a la primera.
-$(document).ready(function(){
-    setTimeout(function(){
-        $('#usuarioInput').focus();
-    }, 200);
-});
-</script>
