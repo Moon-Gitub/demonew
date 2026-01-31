@@ -574,13 +574,15 @@ body.login-page .login-box-body,
 </div>
 
 <script>
-// Focus automático y mejoras de UX
+// Mejoras de UX en login (sin focus inmediato para evitar que se pierda el primer carácter)
 $(document).ready(function(){
-    // Focus automático en el campo de usuario
-    $('#usuarioInput').focus();
+    // Focus con pequeño retraso para que el input esté listo y no "trague" el primer carácter
+    setTimeout(function(){
+        $('#usuarioInput').focus();
+    }, 150);
     
-    // Animación al enviar el formulario
-    $('#loginForm').on('submit', function(e){
+    // Animación al enviar el formulario (no prevenir submit para que los valores se envíen)
+    $('#loginForm').on('submit', function(){
         var $btn = $('.btn-login');
         var originalHtml = $btn.html();
         
