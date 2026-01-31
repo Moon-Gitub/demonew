@@ -134,8 +134,6 @@ EOF;
     
     $total = number_format($total, 2, ',', '.');
 
-    $condicionIva = $condIva[$respEmpresa[condicion_iva]];
-
     //TRAEMOS LA INFORMACIÓN DEL CLIENTE
     if(!isset($respuestaRegistro["id_cliente"]) || empty($respuestaRegistro["id_cliente"])) {
         throw new Exception("El registro no tiene cliente asociado");
@@ -169,6 +167,9 @@ EOF;
     http_response_code(500);
     die('Error al generar el recibo: ' . $e->getMessage());
 }
+
+$condicionIva = $condIva[$respEmpresa["condicion_iva"]];
+
 // Configuración del documento
 $pdf->SetCreator('Posmoon');
 $pdf->SetTitle($respEmpresa["razon_social"]);
