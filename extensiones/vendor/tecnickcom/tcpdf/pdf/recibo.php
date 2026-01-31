@@ -103,11 +103,10 @@ try {
     $metPagoDsg = '';
 
     foreach ($metPago as $key => $value) {
-    	$metPagoDsg .= <<<EOF 
-		    <b> $value[tipo] </b>: $ $value[entrega]  <br>
-	    EOF;
+$metPagoDsg .= <<<EOF
+<b> $value[tipo] </b>: $ $value[entrega]  <br>
+EOF;
     }
-
     
     
     //TRAEMOS LA INFORMACIÓN DEL CLIENTE
