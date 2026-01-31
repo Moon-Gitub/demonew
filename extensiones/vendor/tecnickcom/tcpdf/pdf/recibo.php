@@ -191,7 +191,7 @@ $bloqueCabecera = <<<EOF
 			</td>
 			<td style="width:280px; font-size:10px; text-align: left">
 				<div style="padding-top:5px">
-					<span><b>N° Cbte:</b> $respuestaRegistro[numero_recibo] </span> <br>
+					<span><b>N° Cbte:</b> $numRecibo </span> <br>
 					<span><b>Fecha Emisión:</b> $fecha </span><br>
 					<span><b>CUIT:</b> $respEmpresa[cuit] </span><br>
 					<span><b>II.BB.:</b> $respEmpresa[numero_iibb] </span> - <span><b>Inic. Actividad:</b> $respEmpresa[inicio_actividades] </span>
@@ -250,7 +250,7 @@ $pdf->writeHTML($bloqueDetalle, false, false, false, false, '');
 $pdf->writeHTML($bloqueFondo, false, false, false, false, '');	
 
 //SALIDA DEL ARCHIVO 
-$pdf->Output('Recibo_Num_'.$respuestaRegistro[numero_recibo].'.pdf');
+$pdf->Output('Recibo_Num_'.$numRecibo.'.pdf');
 
 }
 
