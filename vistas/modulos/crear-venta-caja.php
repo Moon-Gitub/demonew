@@ -16,7 +16,7 @@
   if (class_exists('ModeloBalanzasFormatos') && ModeloBalanzasFormatos::tablaExiste()) {
     $balanzasFormatosConfig = ModeloBalanzasFormatos::mdlConfigParaVenta();
   }
-  // Medios de pago: desde BD (tabla medios_pago), no hardcodeados
+  // Medios de pago: desde BD (tabla medios_pago)
   $listaMediosPago = [];
   if (class_exists('ModeloMediosPago')) {
     $listaMediosPago = ModeloMediosPago::mdlMostrarMediosPagoActivos();
@@ -1525,8 +1525,6 @@ MODAL COBRAR VENTA
 	                    // Fallback si la tabla no existe o está vacía
 	                    ?>
 	                    <option value="EF">Efectivo</option>
-	                    <option value="MP">Mercado Pago</option>
-	                    <option value="MPQR">Mercado Pago QR</option>
 	                    <option value="TD">Tarjeta Débito</option>
 	                    <option value="TC">Tarjeta Crédito</option>
 	                    <option value="CH">Cheque</option>

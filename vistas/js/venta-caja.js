@@ -2171,7 +2171,7 @@ function guardarVentaCaja(){
                     switch(medioEvaluado[0]){
                         case "EF": tckMedio += "<li>Efectivo" + " ( $ " + tipoMedioElegido[rec]["entrega"] + ")</li>"; break;
                         case "TD": tckMedio += "<li>Tarjeta Débito "  + medioEvaluado[1] + " ( $ " + tipoMedioElegido[rec]["entrega"] + ")</li>"; break;
-                        case "MP": tckMedio += "<li>Mercado Pago "  + medioEvaluado[1] + " ( $ " + tipoMedioElegido[rec]["entrega"] + ")</li>"; break;
+                        case "MP": tckMedio += "<li>Mercado Pago "  + (medioEvaluado[1] || "") + " ( $ " + tipoMedioElegido[rec]["entrega"] + ")</li>"; break;
                         case "MPQR": 
                             var paymentId = medioEvaluado.length > 2 ? medioEvaluado[2] : "";
                             tckMedio += "<li>Mercado Pago QR" + (paymentId ? " (Payment ID: " + paymentId + ")" : "") + " ( $ " + tipoMedioElegido[rec]["entrega"] + ")</li>"; 
