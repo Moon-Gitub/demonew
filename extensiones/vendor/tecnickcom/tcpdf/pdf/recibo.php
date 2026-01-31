@@ -97,6 +97,22 @@ try {
     $descripcion = isset($respuestaRegistro["descripcion"]) ? $respuestaRegistro["descripcion"] : "";
     $total = isset($respuestaRegistro["importe"]) ? number_format($respuestaRegistro["importe"], 2, ',', '.') : "0,00";
     $metPago = (isset($respuestaRegistro["metodo_pago"]) && !empty($respuestaRegistro["metodo_pago"])) ? "Medio de pago: " . $respuestaRegistro["metodo_pago"] : "";
+
+    $metPago = json_decode($metPago, true);
+    
+    $metPagoDsg = <<<EOF 
+    <td>
+    EOF;
+
+    foreach ($metPago as $key => $value) {
+    	$metPagoDsg .= <<<EOF 
+		    <b> $value[tipo] </b>: $ $value[entrega]  
+	    EOF;
+    }
+
+    $metPagoDsg .= <<<EOF 
+    </td>
+    EOF;
     
     //TRAEMOS LA INFORMACIÓN DEL CLIENTE
     if(!isset($respuestaRegistro["id_cliente"]) || empty($respuestaRegistro["id_cliente"])) {
@@ -153,7 +169,7 @@ $bloqueCabeceraDuplicado = <<<EOF
 EOF;
 
 $bloqueCabecera = <<<EOF
-	<table border="1" >
+	<table border="0" >
 		<tr style="padding: 0px;">
 			<td style="width:260px; text-align: center; border-style:solid; border-width:2px; border-bottom-color:rgb(255,255,255);"> 
 				<h2>$respEmpresa[razon_social]</h2>
@@ -168,7 +184,7 @@ $bloqueCabecera = <<<EOF
 			</td>
 		</tr>
 	</table>
-	<table border="1" style="padding: 5px">
+	<table border="0" style="padding: 5px">
 		<tr>
 			<td style="width:280px; font-size:10px; text-align: left;">
 				<br>
@@ -196,7 +212,7 @@ $bloqueDetalle = <<<EOF
 			<td><p style="line-height: 1.5">RECIBIMOS de $respuestaCliente[nombre] ( Documento/CUIT/CUIL.: $respuestaCliente[documento] ) la suma de pesos: $ $total, en concepto de: $respuestaRegistro[descripcion].</p></td>
 		</tr>
 		<tr>
-			<td><p>$metPago</p></td>
+			$metPagoDsg
 		</tr>
 	</table>
 EOF;
@@ -236,7 +252,7 @@ $pdf->writeHTML($bloqueDetalle, false, false, false, false, '');
 $pdf->writeHTML($bloqueFondo, false, false, false, false, '');	
 
 //SALIDA DEL ARCHIVO 
-$pdf->Output('factura.pdf');
+$pdf->Output('Recibo_Num_'.$respuestaRegistro[numero_recibo].'.pdf');
 
 }
 
