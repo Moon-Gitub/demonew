@@ -77,6 +77,21 @@ public $id_registro;
 
 public function traerImpresionFactura(){
 
+$condIva = array(
+0 => "Consumidor Final",
+1 => "IVA Responsable Inscripto",
+4 => "IVA Sujeto Exento",
+5 => "Consumidor Final",
+6 => "Responsable Monotributo",
+7 => "Sujeto no Categorizado",
+8 => "Proveedor del Exterior",
+9 => "Cliente del Exterior",
+10 => "IVA Liberado – Ley Nº 19.640",
+13 => "Monotributista Social",
+15 => "IVA no alcanzado",
+16 => "Monotributo Trabajador Independiente Promovido",
+''=>"(no definido)");
+
 try {
     //TRAEMOS LA INFORMACION REGISTRO
     $item = "id";
@@ -95,7 +110,7 @@ try {
     
     $fecha = isset($respuestaRegistro["fecha"]) ? date('d/m/Y', strtotime($respuestaRegistro["fecha"])) : date('d/m/Y');
     $descripcion = isset($respuestaRegistro["descripcion"]) ? $respuestaRegistro["descripcion"] : "";
-    $total = isset($respuestaRegistro["importe"]) ? number_format($respuestaRegistro["importe"], 2, ',', '.') : "0,00";
+    
     //$metPago = (isset($respuestaRegistro["metodo_pago"]) && !empty($respuestaRegistro["metodo_pago"])) ? "Medio de pago: " . $respuestaRegistro["metodo_pago"] : "";
     $numRecibo = (isset($respuestaRegistro["numero_recibo"]) && !empty($respuestaRegistro["numero_recibo"])) ? $respuestaRegistro["numero_recibo"] : "";
 
@@ -104,12 +119,21 @@ try {
     $metPagoDsg = '';
 
     foreach ($metPago as $key => $value) {
+$letra = $value["tipo"];
+$descontar = 0;
+if($letra == "BO") {
+	$letra = "Bonificación ";
+	$descontar += $value["entrega"];
+} 
 $metPagoDsg .= <<<EOF
-<b> $value[tipo] </b>: $ $value[entrega]  <br>
+<b> $letra </b>: $ $value[entrega]  <br>
 EOF;
     }
+
+    $total = $respuestaRegistro["importe"] - $descontar;
     
-    
+    $total = number_format($total, 2, ',', '.');
+
     //TRAEMOS LA INFORMACIÓN DEL CLIENTE
     if(!isset($respuestaRegistro["id_cliente"]) || empty($respuestaRegistro["id_cliente"])) {
         throw new Exception("El registro no tiene cliente asociado");
@@ -187,7 +211,7 @@ $bloqueCabecera = <<<EOF
 				<span><b>Direccion:</b> $respEmpresa[domicilio]</span> <br>
 				<span><b>Telefono:</b> $respEmpresa[telefono]</span> <br>
 				<span><b>Localidad:</b> $respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</span><br>
-				<span><b>Cond. I.V.A.:</b> I.V.A. Responsable Inscripto </span><br>
+				<span><b>Cond. I.V.A.:</b> $condIva[$respEmpresa[condicion_iva]] </span><br>
 			</td>
 			<td style="width:280px; font-size:10px; text-align: left">
 				<div style="padding-top:5px">
