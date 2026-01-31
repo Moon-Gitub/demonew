@@ -124,10 +124,15 @@ $descontar = 0;
 if($letra == "BO") {
 	$letra = "Bonificación ";
 	$descontar += $value["entrega"];
-} 
+$metPagoDsg .= <<<EOF
+<b> $letra </b>: -$ $value[entrega]  <br>
+EOF;
+} else {
 $metPagoDsg .= <<<EOF
 <b> $letra </b>: $ $value[entrega]  <br>
 EOF;
+}
+
     }
 
     $total = $respuestaRegistro["importe"] - $descontar;
