@@ -100,19 +100,15 @@ try {
 
     $metPago = json_decode($metPago, true);
     
-    $metPagoDsg = <<<EOF 
-    <td>
-    EOF;
+    $metPagoDsg = '';
 
     foreach ($metPago as $key => $value) {
     	$metPagoDsg .= <<<EOF 
-		    <b> $value[tipo] </b>: $ $value[entrega]  
+		    <b> $value[tipo] </b>: $ $value[entrega]  <br>
 	    EOF;
     }
 
-    $metPagoDsg .= <<<EOF 
-    </td>
-    EOF;
+    
     
     //TRAEMOS LA INFORMACIÓN DEL CLIENTE
     if(!isset($respuestaRegistro["id_cliente"]) || empty($respuestaRegistro["id_cliente"])) {
@@ -212,7 +208,9 @@ $bloqueDetalle = <<<EOF
 			<td><p style="line-height: 1.5">RECIBIMOS de $respuestaCliente[nombre] ( Documento/CUIT/CUIL.: $respuestaCliente[documento] ) la suma de pesos: $ $total, en concepto de: $respuestaRegistro[descripcion].</p></td>
 		</tr>
 		<tr>
-			$metPagoDsg
+			<td>
+				$metPagoDsg
+			</td>
 		</tr>
 	</table>
 EOF;
