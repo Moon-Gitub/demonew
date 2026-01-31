@@ -380,9 +380,8 @@ function listarMetodosCtaCteProveedor(){
   switch($("#nuevoMetodoPagoCtaCteProveedor").val()) {
 
     case "Efectivo":
-
+    case "EF":
       $("#metodoPagoCtaCteProveedor").val("Efectivo");
-          
     break;
 
     case "BO":
@@ -410,13 +409,19 @@ function listarMetodosCtaCteProveedor(){
     break;
 
     case "TR":
-
       $("#metodoPagoCtaCteProveedor").val("TR-"+$("#bancoOrigenTransferencia").val() + "-" + $("#numeroReferenciaTransferencia").val());
-
     break;
-      
-  }
 
+    default:
+      var codigo = $("#nuevoMetodoPagoCtaCteProveedor").val();
+      var $opt = $("#nuevoMetodoPagoCtaCteProveedor option:selected");
+      if (codigo && $opt.data("requiere-codigo") == 1 && $("#nuevoCodigoTransaccionCtaCteProveedor").length) {
+        $("#metodoPagoCtaCteProveedor").val(codigo + "-" + ($("#nuevoCodigoTransaccionCtaCteProveedor").val() || ""));
+      } else {
+        $("#metodoPagoCtaCteProveedor").val(codigo || "Efectivo");
+      }
+    break;
+  }
 }
 
 $(".cajasMetodoPagoCtaCteProveedor").on("change", "#nuevoCodigoTransaccionCtaCteProveedor", function(){  

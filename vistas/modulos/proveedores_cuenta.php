@@ -6,6 +6,15 @@
 
     $proveedor = ControladorProveedores::ctrMostrarProveedores($item, $valor);
 
+    // Medios de pago: desde BD (tabla medios_pago), mismo criterio que crear-venta-caja y clientes cta cte
+    $listaMediosPagoProveedor = [];
+    if (class_exists('ModeloMediosPago')) {
+      $listaMediosPagoProveedor = ModeloMediosPago::mdlMostrarMediosPagoActivos();
+      if (!is_array($listaMediosPagoProveedor)) {
+        $listaMediosPagoProveedor = [];
+      }
+    }
+
 ?>
 
 <div class="content-wrapper">
@@ -465,13 +474,19 @@ MODAL INGRESAR MOVIMIENTO
 
                 <select class="form-control" id="nuevoMetodoPagoCtaCteProveedor" name="nuevoMetodoPagoCtaCteProveedor">
                   <option value="">Medio de pago</option>
-                  <option value="Efectivo">Efectivo</option>
-                  <!-- <option value="TD">Tarjeta Débito</option>     
-                  <option value="TC">Tarjeta Crédito</option> -->
-                  <option value="CH">Cheque</option>
-                  <option value="TR">Transferencia</option>
-                  <option value="BO">Bonificación</option>
-
+                  <?php
+                  if (!empty($listaMediosPagoProveedor)) {
+                    foreach ($listaMediosPagoProveedor as $mp) {
+                      $cod = htmlspecialchars($mp['codigo'] ?? '');
+                      $nom = htmlspecialchars($mp['nombre'] ?? $cod);
+                      $rc = (int)($mp['requiere_codigo'] ?? 0);
+                      $rb = (int)($mp['requiere_banco'] ?? 0);
+                      $rn = (int)($mp['requiere_numero'] ?? 0);
+                      $rf = (int)($mp['requiere_fecha'] ?? 0);
+                      echo '<option value="' . $cod . '" data-requiere-codigo="' . $rc . '" data-requiere-banco="' . $rb . '" data-requiere-numero="' . $rn . '" data-requiere-fecha="' . $rf . '">' . $nom . '</option>';
+                    }
+                  }
+                  ?>
                 </select>
               </div>
 
