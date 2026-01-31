@@ -134,6 +134,8 @@ EOF;
     
     $total = number_format($total, 2, ',', '.');
 
+    $condicionIva = $condIva[$respEmpresa[condicion_iva]];
+
     //TRAEMOS LA INFORMACIÓN DEL CLIENTE
     if(!isset($respuestaRegistro["id_cliente"]) || empty($respuestaRegistro["id_cliente"])) {
         throw new Exception("El registro no tiene cliente asociado");
@@ -211,7 +213,7 @@ $bloqueCabecera = <<<EOF
 				<span><b>Direccion:</b> $respEmpresa[domicilio]</span> <br>
 				<span><b>Telefono:</b> $respEmpresa[telefono]</span> <br>
 				<span><b>Localidad:</b> $respEmpresa[localidad] - C.P.: $respEmpresa[codigo_postal]</span><br>
-				<span><b>Cond. I.V.A.:</b> $condIva[$respEmpresa[condicion_iva]] </span><br>
+				<span><b>Cond. I.V.A.:</b> $condicionIva </span><br>
 			</td>
 			<td style="width:280px; font-size:10px; text-align: left">
 				<div style="padding-top:5px">
