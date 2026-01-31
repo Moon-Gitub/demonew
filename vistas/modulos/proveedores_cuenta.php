@@ -469,9 +469,7 @@ MODAL INGRESAR MOVIMIENTO
             <div class="form-group ctacteProveedorCaja" style="display: none">
 
               <div class="input-group">
-
-                <span class="input-group-addon"><i class="fa fa-credit-card"></i></span> 
-
+                <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPagoProveedor" type="button" class="btn btn-success"><i class="fa fa-plus"></i></button></span>
                 <select class="form-control" id="nuevoMetodoPagoCtaCteProveedor" name="nuevoMetodoPagoCtaCteProveedor">
                   <option value="">Medio de pago</option>
                   <?php
@@ -490,8 +488,33 @@ MODAL INGRESAR MOVIMIENTO
                 </select>
               </div>
 
-              <input type="hidden" id="metodoPagoCtaCteProveedor" name="ingresoMedioPagoCtaCteProveedor">
+              <div class="cajasMetodoPagoCtaCteProveedor"></div>
 
+              <div class="row" style="display: none;" id="divImportesPagoMixtoProveedor">
+                <table class="table" id="listadoMetodosPagoMixtoProveedor" cantidadFilas="0">
+                  <thead>
+                    <tr>
+                      <th><i class="fa fa-minus-square"></i></th>
+                      <th>Método</th>
+                      <th>Importe</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                  <tfoot>
+                    <tr>
+                      <td></td>
+                      <td></td>
+                      <td style="font-size: 18px">
+                        <b>TOTAL: $</b> <span id="nuevoValorSaldoProveedor" style="color:green">0</span>
+                        <input type="hidden" id="nuevoValorSaldoProveedorPost">
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <input type="hidden" id="metodoPagoCtaCteProveedor" name="ingresoMedioPagoCtaCteProveedor">
+              <input type="hidden" id="mxMediosPagosProveedor">
             </div>
 
             <div class="form-group row">

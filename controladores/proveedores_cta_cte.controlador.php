@@ -201,27 +201,48 @@ class ControladorProveedoresCtaCte{
 
 			$dineroMedio = (isset($_POST["ingresoMedioPagoCtaCteProveedor"])) ? $_POST["ingresoMedioPagoCtaCteProveedor"] : 'Efectivo';
 
+			// Pago mixto: ingresoMedioPagoCtaCteProveedor es JSON [{"tipo":"EF","entrega":"5000"},...]
+			$esPagoMixto = (is_string($dineroMedio) && strlen($dineroMedio) > 0 && $dineroMedio[0] === '[');
+			$jsonMetodosPago = $esPagoMixto ? json_decode($dineroMedio, true) : null;
+
 			///VEMOS SI TIENE QUE IMPACTAR EN CAJA ( si tipo es 0 - es un pago - va a caja)
-			if($_POST["tipoMovimientoCtaCteProveedor"] == 0 && $dineroMedio != 'Bonificacion') {
-
-		   		//INGRESO DATOS A CAJA
-		   		$datos = array(
-		   				'fecha' => $fec_hor,
-		   				'id_usuario' => $_POST['idUsuarioMovimientoCtaCteProveedor'],
-		   				'punto_venta' => $_POST['puntoVentaMovimientoCtaCteProveedor'],
-		   				'tipo' => 0,
-		   				'monto' => $_POST['montoMovimientoCtaCteProveedor'],
-		   				'medio_pago' => $dineroMedio,
-		   				'descripcion' => $_POST['detalleMovimientoCtaCteProveedor'],
-		   				'codigo_venta' => null,
-		   				"id_venta" => null,
-	   					"id_cliente_proveedor" => $_POST["idProveedorMovimientoCtaCteProveedor"],
-		   				'observaciones' => null
-		   				);
-
-		   		$respuesta = ModeloCajas::mdlIngresarCaja('cajas', $datos);
-
-	   		}
+			if ($_POST["tipoMovimientoCtaCteProveedor"] == 0) {
+				if ($esPagoMixto && is_array($jsonMetodosPago)) {
+					foreach ($jsonMetodosPago as $value) {
+						if (isset($value["tipo"]) && $value["tipo"] != 'BO' && $value["tipo"] != 'Bonificacion') {
+							$datos = array(
+								'fecha' => $fec_hor,
+								'id_usuario' => $_POST['idUsuarioMovimientoCtaCteProveedor'],
+								'punto_venta' => $_POST['puntoVentaMovimientoCtaCteProveedor'],
+								'tipo' => 0,
+								'monto' => isset($value["entrega"]) ? $value["entrega"] : 0,
+								'medio_pago' => $value["tipo"],
+								'descripcion' => $_POST['detalleMovimientoCtaCteProveedor'],
+								'codigo_venta' => null,
+								"id_venta" => null,
+								"id_cliente_proveedor" => $_POST["idProveedorMovimientoCtaCteProveedor"],
+								'observaciones' => null
+							);
+							$respuesta = ModeloCajas::mdlIngresarCaja('cajas', $datos);
+						}
+					}
+				} elseif ($dineroMedio != 'Bonificacion' && $dineroMedio != 'BO') {
+					$datos = array(
+						'fecha' => $fec_hor,
+						'id_usuario' => $_POST['idUsuarioMovimientoCtaCteProveedor'],
+						'punto_venta' => $_POST['puntoVentaMovimientoCtaCteProveedor'],
+						'tipo' => 0,
+						'monto' => $_POST['montoMovimientoCtaCteProveedor'],
+						'medio_pago' => $dineroMedio,
+						'descripcion' => $_POST['detalleMovimientoCtaCteProveedor'],
+						'codigo_venta' => null,
+						"id_venta" => null,
+						"id_cliente_proveedor" => $_POST["idProveedorMovimientoCtaCteProveedor"],
+						'observaciones' => null
+					);
+					$respuesta = ModeloCajas::mdlIngresarCaja('cajas', $datos);
+				}
+			}
 
 			if($respuesta == "ok"){
 

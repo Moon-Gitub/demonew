@@ -376,8 +376,11 @@ $("#nuevoMetodoPagoCtaCteProveedor").change(function(){
 function listarMetodosCtaCteProveedor(){
 
   var listaMetodos = "";
+  var codigo = $("#nuevoMetodoPagoCtaCteProveedor").val();
+  var $opt = $("#nuevoMetodoPagoCtaCteProveedor option:selected");
+  var requiereCodigo = $opt.data('requiere-codigo') == 1;
 
-  switch($("#nuevoMetodoPagoCtaCteProveedor").val()) {
+  switch(codigo) {
 
     case "Efectivo":
     case "EF":
@@ -385,27 +388,19 @@ function listarMetodosCtaCteProveedor(){
     break;
 
     case "BO":
-
       $("#metodoPagoCtaCteProveedor").val("Bonificacion");
-          
     break;
     
     case "TD":
-        
-        $("#metodoPagoCtaCteProveedor").val("TD-"+$("#nuevoCodigoTransaccionCtaCteProveedor").val());
-
+      $("#metodoPagoCtaCteProveedor").val("TD-"+($("#nuevoCodigoTransaccionCtaCteProveedor").val() || ""));
     break;
 
     case "TC":
-
-        $("#metodoPagoCtaCteProveedor").val("TC-"+$("#seleccionarTarjeta").val()+"-1");
-
+      $("#metodoPagoCtaCteProveedor").val("TC-"+($("#seleccionarTarjeta").val() || "")+"-1");
     break;
 
     case "CH":
-
       $("#metodoPagoCtaCteProveedor").val("CH-"+$("#bancoOrigenCheque").val() + "-" + $("#numeroCheque").val() + "-" + $("#fechaCheque").val());
-
     break;
 
     case "TR":
@@ -413,15 +408,14 @@ function listarMetodosCtaCteProveedor(){
     break;
 
     default:
-      var codigo = $("#nuevoMetodoPagoCtaCteProveedor").val();
-      var $opt = $("#nuevoMetodoPagoCtaCteProveedor option:selected");
-      if (codigo && $opt.data("requiere-codigo") == 1 && $("#nuevoCodigoTransaccionCtaCteProveedor").length) {
-        $("#metodoPagoCtaCteProveedor").val(codigo + "-" + ($("#nuevoCodigoTransaccionCtaCteProveedor").val() || ""));
-      } else {
-        $("#metodoPagoCtaCteProveedor").val(codigo || "Efectivo");
+      if (codigo) {
+        var v = codigo;
+        if (requiereCodigo) v += "-" + ($("#nuevoCodigoTransaccionCtaCteProveedor").val() || "");
+        $("#metodoPagoCtaCteProveedor").val(v);
       }
     break;
   }
+
 }
 
 $(".cajasMetodoPagoCtaCteProveedor").on("change", "#nuevoCodigoTransaccionCtaCteProveedor", function(){  
@@ -435,3 +429,65 @@ $(".cajasMetodoPagoCtaCteProveedor").on("change", "#seleccionarTarjeta", functio
 $(".cajasMetodoPagoCtaCteProveedor").on("change", ".inputCtaCteProveedorMedioPago", function(){
   listarMetodosCtaCteProveedor();
 });
+
+// BOTÓN AGREGAR MEDIO DE PAGO (PAGO MIXTO)
+$("#agregarMedioPagoProveedor").click(function(){
+  var filas = parseInt($('#listadoMetodosPagoMixtoProveedor').attr('cantidadFilas') || 0, 10);
+  filas++;
+  $('#listadoMetodosPagoMixtoProveedor').attr('cantidadFilas', filas);
+
+  if (filas > 0) {
+    $("#nuevoValorSaldoProveedorPost").attr('name', 'montoMovimientoCtaCteProveedor');
+    $("#montoMovimientoCtaCteProveedor").removeAttr('name');
+  }
+
+  listarMetodosCtaCteProveedor();
+  var valorEnviar = $("#metodoPagoCtaCteProveedor").val() || $("#nuevoMetodoPagoCtaCteProveedor").val();
+  var metPagoTexto = $("#nuevoMetodoPagoCtaCteProveedor option:selected").text();
+  $("#divImportesPagoMixtoProveedor").css('display', '');
+  var entrega = $("#montoMovimientoCtaCteProveedor").val() || "0";
+  $("#montoMovimientoCtaCteProveedor").val('');
+
+  var $fila = $("<tr><td><span class='quitarMedioPagoProveedor' style='color: red; cursor: pointer'><i class='fa fa-minus-square'></i></span></td><td><span class='nuevoTipoMPCajaProveedor' entrega='"+entrega+"'>"+metPagoTexto+"</span></td><td>"+entrega+"</td></tr>");
+  $fila.find(".nuevoTipoMPCajaProveedor").attr("data-tipo", valorEnviar);
+  $("#listadoMetodosPagoMixtoProveedor tbody").append($fila);
+  listarMediosPagoCajaProveedor();
+});
+
+// QUITAR MEDIO DE PAGO EN LISTADO DE PAGO MIXTO
+$('#listadoMetodosPagoMixtoProveedor').on('click', '.quitarMedioPagoProveedor', function(){
+  $(this).closest("tr").remove();
+  var filas = parseInt($('#listadoMetodosPagoMixtoProveedor').attr('cantidadFilas') || 0, 10);
+  filas = Math.max(0, filas - 1);
+  $('#listadoMetodosPagoMixtoProveedor').attr('cantidadFilas', filas);
+
+  if (filas === 0) {
+    $("#nuevoValorSaldoProveedorPost").removeAttr('name');
+    $("#montoMovimientoCtaCteProveedor").attr('name', 'montoMovimientoCtaCteProveedor');
+  }
+
+  listarMediosPagoCajaProveedor();
+});
+
+// LISTAR TODOS LOS MEDIOS DE PAGO (PAGO MIXTO) Y ACTUALIZAR HIDDEN ENVIADO
+function listarMediosPagoCajaProveedor(){
+  var listaMedioPago = [];
+  var tipo = $(".nuevoTipoMPCajaProveedor");
+  var entrado = 0;
+
+  for (var i = 0; i < tipo.length; i++) {
+    var tipoValor = $(tipo[i]).attr("data-tipo") || $(tipo[i]).text();
+    listaMedioPago.push({ "tipo": tipoValor, "entrega": $(tipo[i]).attr("entrega") || "0" });
+    entrado += Number($(tipo[i]).attr("entrega")) || 0;
+  }
+
+  $("#mxMediosPagosProveedor").val(JSON.stringify(listaMedioPago));
+  $("#nuevoValorSaldoProveedor").text(entrado);
+  $("#nuevoValorSaldoProveedorPost").val(entrado);
+
+  if (listaMedioPago.length > 0) {
+    $("#metodoPagoCtaCteProveedor").val(JSON.stringify(listaMedioPago));
+  } else {
+    listarMetodosCtaCteProveedor();
+  }
+}
