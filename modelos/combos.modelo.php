@@ -45,7 +45,7 @@ class ModeloCombos{
 	=============================================*/
 	static public function mdlMostrarProductosCombo($idCombo){
 		try {
-			$stmt = Conexion::conectar()->prepare("SELECT cp.*, p.descripcion, p.codigo, p.precio_venta, p.stock, p.tipo_iva 
+			$stmt = Conexion::conectar()->prepare("SELECT cp.*, p.descripcion, p.codigo, p.precio_venta, p.precio_compra, p.stock, p.tipo_iva 
 				FROM combos_productos cp 
 				LEFT JOIN productos p ON cp.id_producto = p.id 
 				WHERE cp.id_combo = :id_combo 
@@ -297,6 +297,71 @@ class ModeloCombos{
 			// Re-lanzar otros errores
 			throw $e;
 		}
+	}
+
+	/*=============================================
+	EXPANDIR LÍNEA DE VENTA SI ES COMBO (para informes)
+	Devuelve la línea tal cual con vendido_como_combo=false, o las líneas
+	de los productos componentes con vendido_como_combo=true y montos prorrateados.
+	=============================================*/
+	static public function mdlExpandirLineaVentaSiCombo($linea){
+		if (!is_array($linea) || empty($linea)) {
+			return [];
+		}
+		$idProducto = isset($linea["id_producto"]) ? intval($linea["id_producto"]) : (isset($linea["id"]) ? intval($linea["id"]) : 0);
+		if ($idProducto <= 0) {
+			return [array_merge($linea, ["vendido_como_combo" => false])];
+		}
+		$combo = self::mdlEsCombo($idProducto);
+		if (!$combo || !isset($combo["id"])) {
+			return [array_merge($linea, ["vendido_como_combo" => false])];
+		}
+		$componentes = self::mdlMostrarProductosCombo($combo["id"]);
+		if (empty($componentes)) {
+			return [array_merge($linea, ["vendido_como_combo" => false])];
+		}
+		$cantidadVenta = floatval($linea["cantidad"] ?? 0);
+		$totalVentaCombo = floatval($linea["total"] ?? ($cantidadVenta * floatval($linea["precio_venta"] ?? $linea["precio"] ?? 0)));
+		$totalCostoCombo = $cantidadVenta * floatval($linea["precio_compra"] ?? 0);
+		$sumPonderacionVenta = 0;
+		$sumPonderacionCosto = 0;
+		foreach ($componentes as $cp) {
+			$q = floatval($cp["cantidad"] ?? 0);
+			$pu = floatval($cp["precio_unitario"] ?? $cp["precio_venta"] ?? 0);
+			$pc = floatval($cp["precio_compra"] ?? 0);
+			$sumPonderacionVenta += $q * $pu;
+			$sumPonderacionCosto += $q * $pc;
+		}
+		if ($sumPonderacionVenta <= 0) { $sumPonderacionVenta = 1; }
+		if ($sumPonderacionCosto <= 0) { $sumPonderacionCosto = 1; }
+		$resultado = [];
+		foreach ($componentes as $cp) {
+			$q = floatval($cp["cantidad"] ?? 0);
+			$pu = floatval($cp["precio_unitario"] ?? $cp["precio_venta"] ?? 0);
+			$pc = floatval($cp["precio_compra"] ?? 0);
+			$cantidadComponente = $cantidadVenta * $q;
+			$ponderacionVenta = $q * $pu;
+			$ponderacionCosto = $q * $pc;
+			$totalComponenteVenta = $totalVentaCombo * ($ponderacionVenta / $sumPonderacionVenta);
+			$totalComponenteCosto = $totalCostoCombo * ($ponderacionCosto / $sumPonderacionCosto);
+			$precioVentaUnit = $cantidadComponente > 0 ? $totalComponenteVenta / $cantidadComponente : 0;
+			$precioCostoUnit = $cantidadComponente > 0 ? $totalComponenteCosto / $cantidadComponente : 0;
+			$resultado[] = [
+				"id" => $cp["id_producto"],
+				"id_producto" => $cp["id_producto"],
+				"descripcion" => $cp["descripcion"] ?? "",
+				"codigo" => $cp["codigo"] ?? "",
+				"cantidad" => $cantidadComponente,
+				"categoria" => $linea["categoria"] ?? "",
+				"stock" => 0,
+				"precio_compra" => $precioCostoUnit,
+				"precio" => $precioVentaUnit,
+				"precio_venta" => $precioVentaUnit,
+				"total" => $totalComponenteVenta,
+				"vendido_como_combo" => true,
+			];
+		}
+		return $resultado;
 	}
 
 }

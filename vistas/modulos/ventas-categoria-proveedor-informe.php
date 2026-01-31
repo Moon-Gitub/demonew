@@ -58,17 +58,15 @@
         continue;
       }
       
-      // Obtener productos desde tabla relacional
-      $productosVta = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
+      // Obtener productos con combos expandidos (cada componente como producto separado)
+      $productosVta = ControladorVentas::ctrObtenerProductosVentaExpandidoCombos($value["id"]);
       
       if (is_array($productosVta) && !empty($productosVta)) {
         for ($i=0; $i < count($productosVta); $i++) {
-          // Validar que el producto tenga id
-          if (!isset($productosVta[$i]["id"]) || empty($productosVta[$i]["id"])) {
-            continue;
-          }
+          $idProd = $productosVta[$i]["id_producto"] ?? $productosVta[$i]["id"] ?? 0;
+          if (empty($idProd)) continue;
           
-          $prodIterado = ControladorProductos::ctrMostrarProductos('id', $productosVta[$i]["id"], null);
+          $prodIterado = ControladorProductos::ctrMostrarProductos('id', $idProd, null);
           
           // Validar que prodIterado sea válido
           if (!$prodIterado || !isset($prodIterado["id_categoria"])) {
@@ -114,17 +112,15 @@
         continue;
       }
       
-      // Obtener productos desde tabla relacional
-      $productosVta = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
+      // Obtener productos con combos expandidos (cada componente como producto separado)
+      $productosVta = ControladorVentas::ctrObtenerProductosVentaExpandidoCombos($value["id"]);
       
       if (is_array($productosVta) && !empty($productosVta)) {
         for ($i=0; $i < count($productosVta); $i++) {
-          // Validar que el producto tenga id
-          if (!isset($productosVta[$i]["id"]) || empty($productosVta[$i]["id"])) {
-            continue;
-          }
+          $idProd = $productosVta[$i]["id_producto"] ?? $productosVta[$i]["id"] ?? 0;
+          if (empty($idProd)) continue;
           
-          $prodIterado = ControladorProductos::ctrMostrarProductos('id', $productosVta[$i]["id"], null);
+          $prodIterado = ControladorProductos::ctrMostrarProductos('id', $idProd, null);
           
           // Validar que prodIterado sea válido
           if (!$prodIterado || !isset($prodIterado["id_proveedor"])) {
@@ -171,17 +167,15 @@
         continue;
       }
       
-      // Obtener productos desde tabla relacional
-      $productosVta = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
+      // Obtener productos con combos expandidos (cada componente como producto separado)
+      $productosVta = ControladorVentas::ctrObtenerProductosVentaExpandidoCombos($value["id"]);
       
       if (is_array($productosVta) && !empty($productosVta)) {
         for ($i=0; $i < count($productosVta); $i++) {
-          // Validar que el producto tenga id
-          if (!isset($productosVta[$i]["id"]) || empty($productosVta[$i]["id"])) {
-            continue;
-          }
+          $idProd = $productosVta[$i]["id_producto"] ?? $productosVta[$i]["id"] ?? 0;
+          if (empty($idProd)) continue;
           
-          $prodIterado = ControladorProductos::ctrMostrarProductos('id', $productosVta[$i]["id"], null);
+          $prodIterado = ControladorProductos::ctrMostrarProductos('id', $idProd, null);
           
           // Validar que prodIterado sea válido
           if (!$prodIterado || !isset($prodIterado["id"])) {

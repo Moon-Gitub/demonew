@@ -604,6 +604,35 @@ class ModeloVentas{
 	}
 
 	/*=============================================
+	LISTAR PRODUCTOS VENTA POR RANGO DE FECHAS (para informes con combos expandidos)
+	=============================================*/
+	static public function mdlListarProductosVentaPorRango($fechaInicial, $fechaFinal){
+		$stmt = Conexion::conectar()->prepare("SELECT 
+			pv.id_producto,
+			p.descripcion,
+			p.codigo,
+			c.categoria,
+			pv.cantidad,
+			pv.precio_compra,
+			pv.precio_venta,
+			(pv.cantidad * pv.precio_venta) as total
+		FROM ventas v
+		INNER JOIN productos_venta pv ON v.id = pv.id_venta
+		LEFT JOIN productos p ON pv.id_producto = p.id
+		LEFT JOIN categorias c ON p.id_categoria = c.id
+		WHERE v.fecha BETWEEN :fechaInicial AND :fechaFinal
+		AND v.cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999)
+		ORDER BY v.fecha ASC, pv.id ASC");
+		$stmt->bindParam(":fechaInicial", $fechaInicial, PDO::PARAM_STR);
+		$stmt->bindParam(":fechaFinal", $fechaFinal, PDO::PARAM_STR);
+		$stmt->execute();
+		$resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$stmt->closeCursor();
+		$stmt = null;
+		return $resultado;
+	}
+
+	/*=============================================
 	INSERTAR PRODUCTOS DE VENTA (TABLA RELACIONAL)
 	=============================================*/
 	static public function mdlIngresarProductosVenta($idVenta, $productos){

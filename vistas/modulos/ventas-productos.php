@@ -278,12 +278,12 @@
           
           if (is_array($respuestaVta)) {
             foreach ($respuestaVta as $key => $value) {
-              // Obtener productos desde tabla relacional
-              $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
+              // Productos con combos expandidos (cada componente como línea)
+              $productos = ControladorVentas::ctrObtenerProductosVentaExpandidoCombos($value["id"]);
               
               if (is_array($productos)) {
                 foreach ($productos as $keyPro => $valuePro) {
-                  $totalUnidades += isset($valuePro["cantidad"]) ? intval($valuePro["cantidad"]) : 0;
+                  $totalUnidades += isset($valuePro["cantidad"]) ? floatval($valuePro["cantidad"]) : 0;
                   $precioCompra = isset($valuePro["precio_compra"]) ? floatval($valuePro["precio_compra"]) : 0;
                   $cantidad = isset($valuePro["cantidad"]) ? intval($valuePro["cantidad"]) : 0;
                   $totalCompra += $precioCompra * $cantidad;
@@ -303,13 +303,11 @@
           $dataProductos = [];
           $colorsProductos = [];
           
-          // Agrupar productos por descripción y sumar montos
+          // Agrupar productos por descripción y sumar montos (combos expandidos = productos separados)
           $productosAgrupados = [];
           if (is_array($respuestaVta)) {
             foreach ($respuestaVta as $key => $value) {
-              // Obtener productos desde tabla relacional
-              $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
-              
+              $productos = ControladorVentas::ctrObtenerProductosVentaExpandidoCombos($value["id"]);
               if (is_array($productos)) {
                 foreach ($productos as $keyPro => $valuePro) {
                   $desc = $valuePro["descripcion"] ?? "Sin descripción";
@@ -413,7 +411,8 @@
            <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Cant.</th>
            <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Descripcion</th>
            <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">$ Compra (Compra x Cant)</th>
-           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">$ Venta (Venta x Cant)</th> 
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">$ Venta (Venta x Cant)</th>
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Origen</th>
          </tr> 
         </thead>
         <tfoot>
@@ -421,10 +420,10 @@
             <th>Fecha</th>
             <th>Nro. Int.</th>
             <th>Cant.</th>
-            
             <th>Descripcion</th>
             <th>$ Compra</th>
-            <th>$ Venta</th> 
+            <th>$ Venta</th>
+            <th>Origen</th>
           </tr>
         </tfoot>        
         <tbody>
@@ -433,22 +432,23 @@
           // Usar las variables ya calculadas arriba
           if (is_array($respuestaVta)) {
             foreach ($respuestaVta as $key => $value) {
-              // Obtener productos desde tabla relacional
-              $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
+              $productos = ControladorVentas::ctrObtenerProductosVentaExpandidoCombos($value["id"]);
               
               if (is_array($productos)) {
                 foreach ($productos as $keyPro => $valuePro) {
                   echo '<tr>';
                   echo '<td>'.($value["fecha"] ?? '').'</td>';
                   echo '<td><a href="#" class="verDetalleVenta" data-id-venta="'.($value["id"] ?? '').'" data-codigo-venta="'.($value["codigo"] ?? '').'" style="cursor: pointer; color: #3498db; font-weight: 600;">' . ($value["codigo"] ?? '') . '</a></td>';
-                  echo '<td>'.(isset($valuePro["cantidad"]) ? $valuePro["cantidad"] : 0).'</td>';
+                  echo '<td>'.(isset($valuePro["cantidad"]) ? number_format($valuePro["cantidad"], 2, ',', '.') : '0').'</td>';
                   echo '<td>'.(isset($valuePro["descripcion"]) ? htmlspecialchars($valuePro["descripcion"]) : '').'</td>';
                   $precioCompra = isset($valuePro["precio_compra"]) ? floatval($valuePro["precio_compra"]) : 0;
-                  $cantidad = isset($valuePro["cantidad"]) ? intval($valuePro["cantidad"]) : 0;
+                  $cantidad = isset($valuePro["cantidad"]) ? floatval($valuePro["cantidad"]) : 0;
                   echo '<td>'.number_format($precioCompra, 2, ',', '.').' ('.number_format($precioCompra * $cantidad, 2, ',', '.').')</td>';
                   $precioVenta = isset($valuePro["precio"]) ? floatval($valuePro["precio"]) : (isset($valuePro["precio_venta"]) ? floatval($valuePro["precio_venta"]) : 0);
                   $total = isset($valuePro["total"]) ? floatval($valuePro["total"]) : 0;
                   echo '<td>'.number_format($precioVenta, 2, ',', '.').' ('.number_format($total, 2, ',', '.').')</td>';
+                  $origen = !empty($valuePro["vendido_como_combo"]) ? '<span class="label label-info">Combo</span>' : '<span class="text-muted">Suelto</span>';
+                  echo '<td>'.$origen.'</td>';
                   echo '</tr>';
                 }
               }

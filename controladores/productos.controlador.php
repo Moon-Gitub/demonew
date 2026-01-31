@@ -652,15 +652,45 @@ class ControladorProductos{
 	}
 
 	/*=============================================
-	PRODUCTOS MAS VENDIDOS - ULTRA OPTIMIZADO
+	PRODUCTOS MAS VENDIDOS - CON COMBOS EXPANDIDOS
+	Combos se cuentan como productos separados (sus componentes).
 	=============================================*/
 	static public function ctrMostrarProductosMasVendidos($fechaInicial, $fechaFinal){
 
-		// OPTIMIZADO: La consulta SQL ya retorna los productos agregados y ordenados
-		$respuesta = ModeloProductos::mdlMostrarProductosMasVendidos($fechaInicial, $fechaFinal);
-
-		// La consulta ya retorna el formato correcto, solo formatear
 		$productosVendidos = array();
+		if (class_exists("ModeloVentas") && class_exists("ModeloCombos")) {
+			$filas = ModeloVentas::mdlListarProductosVentaPorRango($fechaInicial, $fechaFinal);
+			foreach ($filas as $row) {
+				$linea = array(
+					"id_producto" => $row["id_producto"] ?? 0,
+					"descripcion" => $row["descripcion"] ?? "",
+					"codigo" => $row["codigo"] ?? "",
+					"cantidad" => floatval($row["cantidad"] ?? 0),
+					"precio_venta" => floatval($row["precio_venta"] ?? 0),
+					"precio_compra" => floatval($row["precio_compra"] ?? 0),
+					"total" => floatval($row["total"] ?? 0),
+					"categoria" => $row["categoria"] ?? ""
+				);
+				$expandido = ModeloCombos::mdlExpandirLineaVentaSiCombo($linea);
+				foreach ($expandido as $item) {
+					$idP = intval($item["id_producto"] ?? $item["id"] ?? 0);
+					$desc = $item["descripcion"] ?? "Sin descripción";
+					$cant = floatval($item["cantidad"] ?? 0);
+					if ($idP <= 0) continue;
+					if (!isset($productosVendidos[$idP])) {
+						$productosVendidos[$idP] = array("cantidad" => 0, "descripcion" => $desc);
+					}
+					$productosVendidos[$idP]["cantidad"] += $cant;
+					$productosVendidos[$idP]["descripcion"] = $desc;
+				}
+			}
+			uasort($productosVendidos, function($a, $b) { return $b["cantidad"] <=> $a["cantidad"]; });
+			$productosVendidos = array_slice($productosVendidos, 0, 10, true);
+			return $productosVendidos;
+		}
+
+		// Fallback sin expansión de combos
+		$respuesta = ModeloProductos::mdlMostrarProductosMasVendidos($fechaInicial, $fechaFinal);
 		if (is_array($respuesta)) {
 			foreach ($respuesta as $row) {
 				$idProducto = intval($row["id_producto"] ?? 0);
@@ -670,11 +700,8 @@ class ControladorProductos{
 				);
 			}
 		}
-
-		// Ya viene ordenado de la consulta SQL, pero mantenemos arsort por compatibilidad
-		arsort($productosVendidos);
+		uasort($productosVendidos, function($a, $b) { return $b["cantidad"] <=> $a["cantidad"]; });
 		return array_slice($productosVendidos, 0, 10, true);
-
 	}
 	
  	/*=============================================

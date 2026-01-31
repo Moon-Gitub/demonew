@@ -466,6 +466,4 @@ El formato queda desactivado pero no se elimina. Para reactivarlo, editarlo y ma
 - **Ruteo:**
   - `vistas/plantilla.php` - Registro de ruta `balanzas-formatos`
   - `vistas/modulos/menu.php` - Item de menú "Formatos de balanza"
-  - `index.php` - Inclusión de controlador y modelo
-
----## Resumen rápido✅ **Para agregar una nueva balanza:** Crear registro en ABM → Recargar página de ventas → Probar✅ **Para modificar un formato:** Editar en ABM → Recargar página de ventas → Probar✅ **Para desactivar:** Clic en ❌ → Confirmar✅ **Si no funciona:** Verificar prefijo, posiciones (base 0), longitudes, y que el formato esté activo---**Última actualización:** Sistema implementado y funcional. ABM disponible para Administradores.
+  - `index.php` - Inclusión de controlador y modelo---## Resumen rápido✅ **Para agregar una nueva balanza:** Crear registro en ABM → Recargar página de ventas → Probar✅ **Para modificar un formato:** Editar en ABM → Recargar página de ventas → Probar✅ **Para desactivar:** Clic en ❌ → Confirmar✅ **Si no funciona:** Verificar prefijo, posiciones (base 0), longitudes, y que el formato esté activo---**Última actualización:** Sistema implementado y funcional. ABM disponible para Administradores.

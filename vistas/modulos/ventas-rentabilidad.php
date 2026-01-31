@@ -219,8 +219,8 @@
 
           foreach ($ventas as $key => $value) {
             
-            // Obtener productos desde tabla relacional
-            $productos = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id"]);
+            // Obtener productos con combos expandidos (cada componente como producto separado)
+            $productos = ControladorVentas::ctrObtenerProductosVentaExpandidoCombos($value["id"]);
             
             $costoVenta = 0;
             
@@ -230,18 +230,22 @@
                 $ventaProducto = $valuep["total"] ?? 0;
                 $costoVenta += $costoProducto;
 
-                // Agrupar por producto
+                // Agrupar por producto (combos ya expandidos como productos separados)
                 $descProducto = $valuep["descripcion"] ?? "Sin descripción";
                 if (!isset($productosRentabilidad[$descProducto])) {
                   $productosRentabilidad[$descProducto] = [
                     "venta" => 0,
                     "costo" => 0,
-                    "cantidad" => 0
+                    "cantidad" => 0,
+                    "vendido_como_combo" => false
                   ];
                 }
                 $productosRentabilidad[$descProducto]["venta"] += $ventaProducto;
                 $productosRentabilidad[$descProducto]["costo"] += $costoProducto;
                 $productosRentabilidad[$descProducto]["cantidad"] += $valuep["cantidad"] ?? 0;
+                if (!empty($valuep["vendido_como_combo"])) {
+                  $productosRentabilidad[$descProducto]["vendido_como_combo"] = true;
+                }
               }
             }
             
@@ -393,6 +397,7 @@
                 <th>Costo Total</th>
                 <th>Rentabilidad</th>
                 <th>Margen %</th>
+                <th>Origen</th>
               </tr>
             </thead>
             <tbody>
@@ -408,6 +413,8 @@
                   echo '<td style="color: ' . $colorRenta . '; font-weight: 600;">$ ' . number_format($datos["rentabilidad"], 2, ',', '.') . '</td>';
                   $colorMargen = $datos["margen"] >= 30 ? '#2ecc71' : ($datos["margen"] >= 15 ? '#f39c12' : '#e74c3c');
                   echo '<td style="color: ' . $colorMargen . '; font-weight: 600;">' . number_format($datos["margen"], 2, ',', '.') . '%</td>';
+                  $origen = !empty($datos["vendido_como_combo"]) ? '<span class="label label-info">Combo</span>' : '<span class="text-muted">Suelto</span>';
+                  echo '<td>' . $origen . '</td>';
                   echo '</tr>';
                 }
               ?>

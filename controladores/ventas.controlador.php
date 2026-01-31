@@ -1931,6 +1931,7 @@ class ControladorVentas{
 		foreach ($productos as $prod) {
 			$productosLegacy[] = array(
 				"id" => $prod["id_producto"],
+				"id_producto" => $prod["id_producto"],
 				"descripcion" => $prod["descripcion"] ?? "",
 				"cantidad" => $prod["cantidad"],
 				"categoria" => $prod["categoria"] ?? "",
@@ -1944,7 +1945,27 @@ class ControladorVentas{
 		
 		return $productosLegacy;
 		
-	}	
+	}
+
+	/*=============================================
+	OBTENER PRODUCTOS DE VENTA CON COMBOS EXPANDIDOS (para informes)
+	Combos se muestran como productos separados; cada línea tiene vendido_como_combo true/false.
+	=============================================*/
+	static public function ctrObtenerProductosVentaExpandidoCombos($idVenta){
+		$productos = self::ctrObtenerProductosVentaLegacy($idVenta);
+		if (empty($productos)) {
+			return [];
+		}
+		if (!class_exists("ModeloCombos")) {
+			return $productos;
+		}
+		$expandido = [];
+		foreach ($productos as $p) {
+			$lineas = ModeloCombos::mdlExpandirLineaVentaSiCombo($p);
+			$expandido = array_merge($expandido, $lineas);
+		}
+		return $expandido;
+	}
 
 	/*=============================================
 	LIBRO IVA VENTAS
