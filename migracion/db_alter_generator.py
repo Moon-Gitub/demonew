@@ -110,16 +110,19 @@ class SimpleSQLParser:
                     primary_key = cols
                     continue
 
-                # UNIQUE KEY o KEY normal
+                # UNIQUE KEY/INDEX o KEY/INDEX normal (KEY e INDEX son sinónimos en MySQL)
+                # Nombre con o sin backticks; permitir texto tras ')' (USING BTREE, COMMENT, etc.)
                 idx_match = re.match(
-                    r"^(UNIQUE\s+KEY|KEY)\s+`(?P<nombre>\w+)`\s*\((?P<cols>.+?)\)(?:,)?$",
+                    r"^(UNIQUE\s+(?:KEY|INDEX)|KEY|INDEX)\s+(?:`(?P<nombre_bt>\w+)`|(?P<nombre_plain>\w+))\s*\((?P<cols>.+?)\)",
                     linea,
                     re.IGNORECASE,
                 )
                 if idx_match:
                     tipo_idx = idx_match.group(1).upper()
-                    idx_nombre = idx_match.group("nombre")
-                    cols = [c.strip().strip("`") for c in idx_match.group("cols").split(",")]
+                    idx_nombre = idx_match.group("nombre_bt") or idx_match.group("nombre_plain")
+                    cols_raw = idx_match.group("cols")
+                    # Columnas pueden ser `col` o `col`(longitud) para prefijo de índice
+                    cols = [c.strip().strip("`").strip() for c in cols_raw.split(",")]
                     indices[idx_nombre] = {
                         "campos": cols,
                         "unique": "UNIQUE" in tipo_idx,
@@ -136,6 +139,62 @@ class SimpleSQLParser:
                 "charset": charset,
                 "create_statement": create_stmt,
             }
+
+        # Segundo paso: en dumps de phpMyAdmin los índices van en ALTER TABLE separados, no dentro del CREATE
+        self._parse_alter_table_indexes()
+
+    def _parse_alter_table_indexes(self) -> None:
+        """
+        Parsea bloques ALTER TABLE ... ADD PRIMARY KEY / ADD KEY / ADD UNIQUE KEY / ADD INDEX
+        (formato típico de exportación phpMyAdmin) y actualiza primary_key e indices de cada tabla.
+        """
+        # Encontrar cada ALTER TABLE `tabla` ... ; (puede ocupar varias líneas)
+        alter_pattern = re.compile(
+            r"ALTER\s+TABLE\s+`(?P<tabla>\w+)`\s+(?P<cuerpo>[^;]+);",
+            re.IGNORECASE | re.DOTALL,
+        )
+        for m in alter_pattern.finditer(self.sql_content):
+            tabla = m.group("tabla")
+            if tabla not in self.tables:
+                continue
+            cuerpo = m.group("cuerpo")
+
+            # ADD PRIMARY KEY (`col1`, ...) [USING BTREE]
+            pk_match = re.search(
+                r"ADD\s+PRIMARY\s+KEY\s*\((?P<cols>[^)]+)\)",
+                cuerpo,
+                re.IGNORECASE,
+            )
+            if pk_match:
+                cols = [c.strip().strip("`") for c in pk_match.group("cols").split(",")]
+                self.tables[tabla]["primary_key"] = cols
+
+            # ADD [UNIQUE] KEY `nombre` (`col`, ...) o ADD [UNIQUE] INDEX `nombre` (`col`, ...)
+            # Nombre con o sin backticks
+            for add_match in re.finditer(
+                r"ADD\s+(UNIQUE\s+)?(?:KEY|INDEX)\s+(?:`(?P<nombre_bt>\w+)`|(?P<nombre_plain>\w+))\s*\((?P<cols>[^)]+)\)",
+                cuerpo,
+                re.IGNORECASE,
+            ):
+                idx_nombre = add_match.group("nombre_bt") or add_match.group("nombre_plain")
+                if idx_nombre.upper() == "PRIMARY":
+                    continue
+                cols = [c.strip().strip("`").strip() for c in add_match.group("cols").split(",")]
+                self.tables[tabla]["indices"][idx_nombre] = {
+                    "campos": cols,
+                    "unique": add_match.group(1) is not None,
+                }
+
+            # Reconstruir create_statement con los índices actualizados
+            t = self.tables[tabla]
+            t["create_statement"] = self._reconstruir_create_table(
+                tabla,
+                t["campos"],
+                t["primary_key"],
+                t["indices"],
+                t["engine"],
+                t["charset"],
+            )
 
     def _extraer_tipo(self, definicion: str) -> str:
         m = re.match(r"^(\w+(?:\([^)]+\))?)", definicion.strip(), re.IGNORECASE)
@@ -486,11 +545,13 @@ def validar_sintaxis_sql(sql: str) -> Dict[str, any]:
     if comillas_sin_comentarios % 2 != 0:
         errores.append("Comillas simples desbalanceadas (posible comilla sin cerrar)")
     
-    # Verificar que todas las líneas SQL terminen con ;
+    # Verificar que las sentencias SQL completas terminen con ; (omitir líneas que son continuación)
     lineas_sql = [l.strip() for l in sql.split('\n') if l.strip() and not l.strip().startswith('--')]
     lineas_sin_punto_coma = []
     for i, linea in enumerate(lineas_sql, 1):
-        # Excluir SET statements que ya tienen ;
+        # Líneas que son parte de sentencia multilínea (terminan en ( o ,) no requieren ; en esa línea
+        if linea.rstrip().endswith('(') or linea.rstrip().endswith(','):
+            continue
         if any(linea.upper().startswith(cmd) for cmd in ['SET ', 'CREATE ', 'ALTER ']):
             if not linea.rstrip().endswith(';'):
                 lineas_sin_punto_coma.append(f"Línea {i}: {linea[:50]}...")
@@ -508,13 +569,18 @@ def validar_sintaxis_sql(sql: str) -> Dict[str, any]:
         'ENUM', 'SET', 'JSON', 'BOOLEAN', 'BOOL'
     ]
     
-    # Buscar tipos potencialmente inválidos en CREATE/ALTER TABLE
-    patron_tipo = re.compile(r'\b([A-Z]+)\s*\(', re.IGNORECASE)
+    # Buscar tipos potencialmente inválidos solo en contexto CREATE/ALTER (no en SET @var = SELECT COUNT... etc.)
+    funciones_sql_ignorar = {
+        'COUNT', 'DATABASE', 'IF', 'COALESCE', 'NULLIF', 'TRIM', 'UUID', 'REPLACE',
+        'LEFT', 'RIGHT', 'CONCAT', 'SUBSTRING', 'LENGTH', 'NOW', 'CURRENT_TIMESTAMP',
+        'SUM', 'MAX', 'MIN', 'AVG', 'GROUP_CONCAT',
+    }
+    patron_tipo = re.compile(r'\b([A-Z][A-Z0-9_]*)\s*\(', re.IGNORECASE)
     for match in patron_tipo.finditer(sql):
         tipo = match.group(1).upper()
-        # Verificar si es un tipo válido o si tiene parámetros conocidos
+        if tipo in funciones_sql_ignorar:
+            continue
         if tipo not in tipos_validos and not re.match(r'^(VARCHAR|CHAR|DECIMAL|NUMERIC|FLOAT|DOUBLE|INT|BIGINT|SMALLINT|TINYINT|MEDIUMINT)', tipo):
-            # Puede ser válido si tiene parámetros, solo advertencia
             advertencias.append(f"Tipo de dato potencialmente inválido: {tipo}")
     
     return {
@@ -703,6 +769,44 @@ def generar_sql(cambios: List[Dict], destino: Dict, archivo_destino: str, archiv
         lineas.append("-- ================================================================")
         lineas.append("")
 
+        # Columnas que pasan a NOT NULL y en DESTINO tienen UNIQUE sobre esa columna:
+        # rellenar NULL/vacío antes de MODIFY para evitar #1062 (aunque el UNIQUE ya exista en origen)
+        columnas_notnull_mas_unique: List[str] = []
+        tabla_dest = destino.get(tabla, {})
+        indices_dest = tabla_dest.get("indices") or {}
+        for c in mods:
+            if c["tipo"] != "MODIFY_COLUMN":
+                continue
+            col = c["campo"]
+            if c["definicion_nueva"].get("null") is True:
+                continue
+            # En DESTINO hay un UNIQUE sobre esta columna sola?
+            for idx_name, idx_def in indices_dest.items():
+                if not idx_def.get("unique"):
+                    continue
+                idx_cols = idx_def.get("campos") or []
+                if len(idx_cols) == 1 and idx_cols[0].lower() == col.lower():
+                    columnas_notnull_mas_unique.append(col)
+                    break
+        tipos_string = ("VARCHAR", "CHAR", "TEXT", "TINYTEXT", "MEDIUMTEXT", "LONGTEXT")
+        for col in columnas_notnull_mas_unique:
+            # Obtener tipo del MODIFY para esta columna
+            tipo_col = None
+            for c in mods:
+                if c.get("campo") == col and c.get("definicion_nueva"):
+                    tipo_col = (c["definicion_nueva"].get("tipo") or "").upper()
+                    break
+            if tipo_col and any(tipo_col.startswith(t) for t in tipos_string):
+                # VARCHAR(34) no cabe UUID() completo (36); usar sin guiones (32) o LEFT(..., long)
+                expr = "REPLACE(UUID(),'-','')"
+                if "VARCHAR" in tipo_col:
+                    m = re.search(r"VARCHAR\s*\(\s*(\d+)\s*\)", tipo_col, re.IGNORECASE)
+                    if m and int(m.group(1)) < 36:
+                        expr = f"LEFT(REPLACE(UUID(),'-',''), {m.group(1)})"
+                lineas.append(f"-- Rellenar NULL/vacío en '{col}' antes de NOT NULL + UNIQUE KEY (evita #1062)")
+                lineas.append(f"UPDATE `{tabla}` SET `{col}` = {expr} WHERE `{col}` IS NULL OR TRIM(IFNULL(`{col}`,'')) = '';")
+                lineas.append("")
+
         # ADD COLUMN con verificación de existencia (idempotente)
         for c in adds:
             campo = c["campo"]
@@ -771,22 +875,32 @@ def generar_sql(cambios: List[Dict], destino: Dict, archivo_destino: str, archiv
         if mods:
             lineas.append("")
 
-        # Índices (con IF NOT EXISTS cuando sea posible)
+        # Índices: idempotente (solo agregar si no existe en INFORMATION_SCHEMA.STATISTICS)
         for c in idxs:
             idx = c["indice"]
             d = c["definicion"]
             cols = ", ".join(f"`{col}`" for col in d["campos"])
-            
-            # MySQL no soporta IF NOT EXISTS en ALTER TABLE ADD INDEX directamente
-            # Pero podemos agregar comentario informativo
             if d["unique"]:
-                lineas.append(
-                    f"ALTER TABLE `{tabla}` ADD UNIQUE KEY `{idx}` ({cols});"
-                )
+                alter_stmt = f"ALTER TABLE `{tabla}` ADD UNIQUE KEY `{idx}` ({cols})"
             else:
-                lineas.append(
-                    f"ALTER TABLE `{tabla}` ADD INDEX `{idx}` ({cols});"
-                )
+                alter_stmt = f"ALTER TABLE `{tabla}` ADD INDEX `{idx}` ({cols})"
+            alter_stmt_escaped = alter_stmt.replace("'", "''")
+            mensaje_escaped = f"Índice `{idx}` ya existe en `{tabla}`, se omite".replace("'", "''")
+            lineas.append(f"-- Agregar índice '{idx}' (solo si no existe)")
+            lineas.append(f"SET @idx_exists = (")
+            lineas.append(f"  SELECT COUNT(*) FROM INFORMATION_SCHEMA.STATISTICS")
+            lineas.append(f"  WHERE TABLE_SCHEMA = DATABASE()")
+            lineas.append(f"    AND TABLE_NAME = '{tabla}'")
+            lineas.append(f"    AND INDEX_NAME = '{idx}'")
+            lineas.append(f");")
+            lineas.append(f"SET @sql = IF(@idx_exists = 0,")
+            lineas.append(f"  '{alter_stmt_escaped}',")
+            lineas.append(f"  'SELECT ''{mensaje_escaped}'' AS mensaje'")
+            lineas.append(f");")
+            lineas.append(f"PREPARE stmt FROM @sql;")
+            lineas.append(f"EXECUTE stmt;")
+            lineas.append(f"DEALLOCATE PREPARE stmt;")
+            lineas.append("")
             total_idx += 1
 
         lineas.append("")
@@ -1343,6 +1457,7 @@ class AlterGeneratorApp:
             mensaje_exito += f"Tablas: {len([c for c in cambios if c['tipo'] == 'CREATE_TABLE'])}\n"
             mensaje_exito += f"Columnas agregadas: {sum(1 for c in cambios if c['tipo'] == 'ADD_COLUMN')}\n"
             mensaje_exito += f"Columnas modificadas: {sum(1 for c in cambios if c['tipo'] == 'MODIFY_COLUMN')}\n"
+            mensaje_exito += f"Índices agregados: {sum(1 for c in cambios if c['tipo'] == 'ADD_INDEX')}\n"
             
             if validacion['advertencias']:
                 mensaje_exito += f"\n⚠️ {len(validacion['advertencias'])} advertencias (ver archivo)"

@@ -3,6 +3,8 @@
 - [Inicio (Home)](Home)
 
 ## Primeros pasos
+- [Beneficios y funcionalidades del sistema](Beneficios-y-funcionalidades-del-sistema)
+- [Nuevas funcionalidades para el cliente](Nuevas-funcionalidades-para-el-cliente)
 - [Inicio de sesión y perfiles](Inicio-de-sesion-y-perfiles)
 
 ## Empresa

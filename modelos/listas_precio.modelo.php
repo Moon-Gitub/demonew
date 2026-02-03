@@ -26,6 +26,10 @@ class ModeloListasPrecio {
 		$stmt->execute();
 		$out = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		$stmt = null;
+		// Multi-empresa: si esta empresa no tiene listas, usar las de empresa 1 (no rompe lo existente)
+		if ($id_empresa !== null && (int) $id_empresa !== 1 && empty($out)) {
+			return self::mdlListar(1, $soloActivas);
+		}
 		return $out;
 	}
 
@@ -51,6 +55,10 @@ class ModeloListasPrecio {
 		$stmt->execute();
 		$out = $stmt->fetch(PDO::FETCH_ASSOC);
 		$stmt = null;
+		// Multi-empresa: si no existe para esta empresa, buscar en empresa 1
+		if (($out === false || $out === null) && (int) $id_empresa !== 1) {
+			return self::mdlMostrarPorCodigo($codigo, 1);
+		}
 		return $out;
 	}
 
@@ -96,6 +104,10 @@ class ModeloListasPrecio {
 		$stmt->execute(array_merge([$id_empresa], $codigos));
 		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		$stmt = null;
+		// Multi-empresa: si esta empresa no tiene esas listas, usar config de empresa 1
+		if (empty($rows) && (int) $id_empresa !== 1) {
+			return self::mdlConfigPorCodigos($codigos, 1);
+		}
 		$config = [];
 		foreach ($rows as $r) {
 			$config[$r['codigo']] = [

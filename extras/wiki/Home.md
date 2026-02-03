@@ -10,6 +10,8 @@ Bienvenido a la documentación del **Sistema POS Moon**, un sistema de gestión 
 
 | Tema | Descripción |
 |------|-------------|
+| [Beneficios y funcionalidades del sistema](Beneficios-y-funcionalidades-del-sistema) | Qué pueden hacer los usuarios y en qué los beneficia el nuevo sistema (seguridad, roles, listas de precio, medios de pago, cobro, actualizaciones). |
+| [Nuevas funcionalidades para el cliente](Nuevas-funcionalidades-para-el-cliente) | Resumen para vender y presentar las mejoras al cliente: qué gana el negocio con cada función (sin contenido técnico). |
 | [Inicio de sesión y perfiles](Inicio-de-sesion-y-perfiles) | Cómo ingresar al sistema, perfiles (Administrador / Vendedor) y qué puede hacer cada uno. |
 
 ### Configuración de la empresa

@@ -31,3 +31,17 @@ O desde phpMyAdmin: importar o pegar el contenido de `db/crear-tabla-listas-prec
 3. **Crear venta**: el dropdown "Listas $" muestra solo las listas asignadas al usuario; el precio del producto se calcula con la lista elegida (base + descuento si corresponde).
 
 Si la tabla no existe, el sistema sigue usando la configuración de `parametros.php` (fallback).
+
+## Multi-sucursal / multi-empresa
+
+Las listas se filtran por **id_empresa** (que viene de `usuarios.empresa` al iniciar sesión). Si en `listas_precio` solo hay filas con `id_empresa = 1`, los usuarios con `empresa = 2`, `3`, etc. no verán listas y ventas no funcionará bien.
+
+**Solución:** replicar las listas de empresa 1 al resto de empresas que tengan usuarios:
+
+```bash
+mysql -u USUARIO -p NOMBRE_BD < db/replicar-listas-precio-por-empresa.sql
+```
+
+O desde phpMyAdmin: importar o pegar el contenido de `db/replicar-listas-precio-por-empresa.sql`.
+
+El script copia cada lista de `id_empresa = 1` a cada `empresa` que exista en `usuarios` (2, 3, 4…), sin crear duplicados. Después, cada usuario verá las listas de su empresa.
