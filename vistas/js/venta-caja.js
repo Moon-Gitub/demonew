@@ -4,6 +4,9 @@ $('.selectTipoCbte').change(function(){
 	cambiaTipoCbte();
 });
 
+// Último cliente seleccionado en crear-venta-caja (para re-sincronizar id interno si hace falta)
+var ultimaSeleccionClienteCaja = null;
+
 /*=============================================
 RESTAURAR PRODUCTOS AL CARGAR LA PÁGINA
 =============================================*/
@@ -525,6 +528,15 @@ function cambiarMetodoPagoCaja(valorMetodo){
 	}  
 
 	if(metodo == "CC"){
+		// Si parece que no hay cliente (id = 1), pero hay un cliente visible y recordado,
+		// re-sincronizar el id interno antes de mostrar el error. Esto ayuda cuando el
+		// usuario elige cliente y guarda muy rápido.
+		if($("#seleccionarCliente").val()==1){
+			if (ultimaSeleccionClienteCaja && ultimaSeleccionClienteCaja.id && $("#autocompletarClienteCaja").val()) {
+				$("#seleccionarCliente").val(ultimaSeleccionClienteCaja.id);
+			}
+		}
+		// Si después de re-sincronizar sigue siendo 1, realmente no hay cliente válido
 		if($("#seleccionarCliente").val()==1){
 			swal({
 			      title: "Ventas",
@@ -2665,9 +2677,15 @@ $( "#autocompletarClienteCaja" ).autocomplete({
   	event.preventDefault();
 	var idSeleccionado = ui.item.value.id;
 	if(idSeleccionado[0]!=""){
-		$(this).val(ui.item.value.nombre + ' - ' + ui.item.value.tipo_documento + ': ' + ui.item.value.documento );
+		var textoCliente = ui.item.value.nombre + ' - ' + ui.item.value.tipo_documento + ': ' + ui.item.value.documento;
+		$(this).val(textoCliente);
 		$("#seleccionarCliente").val(idSeleccionado);
 		$("#autocompletarClienteCajaMail").val(ui.item.value.email);
+		// Guardar última selección para poder re-sincronizar si el id interno se pierde
+		ultimaSeleccionClienteCaja = {
+			id: Number(idSeleccionado),
+			texto: textoCliente
+		};
 	} 
    },
     change: function (event, ui) {
@@ -2675,6 +2693,8 @@ $( "#autocompletarClienteCaja" ).autocomplete({
             $(this).val('');
             $('#seleccionarCliente').val(1);
             $("#autocompletarClienteCajaMail").val('');
+            // Limpiar última selección si el usuario borra o escribe algo no válido
+            ultimaSeleccionClienteCaja = null;
         }
     }
 
