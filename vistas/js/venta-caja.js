@@ -1931,11 +1931,8 @@ $("#btnGuardarVentaCaja").click(function(e){
 	    }
 	
 	
-		$("#modalCobrarVenta").modal({
-			backdrop: 'static',
-			keyboard: false
-		});
-		$("#modalCobrarVenta").modal('show');
+		// Mostrar sección de cobro abajo (centrada), no modal
+		$("#seccionCobroVenta").show();
 		// Por defecto: Efectivo (EF) si existe en el select, sino primera opción
 		if ($("#nuevoMetodoPagoCaja option[value='EF']").length) {
 			$("#nuevoMetodoPagoCaja").val("EF");
@@ -1944,6 +1941,9 @@ $("#btnGuardarVentaCaja").click(function(e){
 		}
 		$("#nuevoMetodoPagoCaja").change();
 		$("#nuevoValorEntrega").val($("#nuevoTotalVentaCaja").val());
+		// Scroll suave a la sección de cobro
+		$("html, body").animate({ scrollTop: $("#seccionCobroVenta").offset().top - 20 }, 300);
+		$("#nuevoMetodoPagoCaja").focus();
 	} else {
 	    swal({
 	      title: "Ventas",
@@ -2127,7 +2127,7 @@ function guardarVentaCaja(){
 				  timer: 3000
 				});;
 
-	      		$("#modalCobrarVenta").modal('hide');
+	      		$("#seccionCobroVenta").hide();
 	      		var jsonProductos = JSON.parse($("#listaProductosCaja").val());
 	      		var subto = 0;
 	            for(var i = 0; i < jsonProductos.length; i++){
@@ -2481,7 +2481,7 @@ $("#btnGuardarPresupuestoCaja").click(function(e){
 				  timer: 3000
 				});;
 
-	      		$("#modalCobrarVenta").modal('hide');
+	      		$("#seccionCobroVenta").hide();
 
 	      		var jsonProductos = JSON.parse($("#listaProductosCaja").val());
 
@@ -2577,6 +2577,11 @@ $("#btnGuardarPresupuestoCaja").click(function(e){
 $("#btnSalirMedioPagoCaja").click(function(){
 	$("#btnCobrarMedioPagoCaja").removeAttr('disabled');
 	$("div.nuevoProductoCaja .descuentoPorTipoCliente").remove();
+	// Cerrar sección de cobro (ya no usamos modal) y volver al buscador de productos
+	if ($("#seccionCobroVenta").length) {
+		$("#seccionCobroVenta").hide();
+		$("#ventaCajaDetalle").focus();
+	}
 });
 
 $("#btnImprimirTicketControl").click(function(){
@@ -3041,7 +3046,7 @@ function atajoModalVentaCaja(e) {
 
     }
     
-    if ($('#modalCobrarVenta').hasClass('in')===true && e.keyCode == 119){ //atajo para guardar venta F8
+    if (($('#seccionCobroVenta').length && $('#seccionCobroVenta').is(':visible')) && e.keyCode == 119){ //atajo para guardar venta F8
 
         $("#btnCobrarMedioPagoCaja").click();
     
@@ -3055,7 +3060,7 @@ function atajoModalVentaCaja(e) {
         window.location = 'crear-venta-caja';
     }
 
-    if ($('#modalCobrarVenta').hasClass('in')===true && e.keyCode == 27) {//atajo para salir sin imprimir ticket
+    if ($('#seccionCobroVenta').length && $('#seccionCobroVenta').is(':visible') && e.keyCode == 27) {//atajo ESC: cerrar sección cobro
     
         $("#btnSalirMedioPagoCaja").click();
     }
@@ -3067,7 +3072,7 @@ function atajoModalVentaCaja(e) {
         window.location = 'crear-venta-caja';
     }
     
-    if ($('#modalCobrarVenta').hasClass('in')===true && e.ctrlKey && e.keyCode == 77  ) { //CTRL + M cambio medios de pago
+    if ($('#seccionCobroVenta').length && $('#seccionCobroVenta').is(':visible') && e.ctrlKey && e.keyCode == 77  ) { //CTRL + M cambio medios de pago
     
         var medios = $("#nuevoMetodoPagoCaja option").length;
         var indice = $("#nuevoMetodoPagoCaja").prop('selectedIndex');
