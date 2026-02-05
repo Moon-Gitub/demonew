@@ -1902,7 +1902,7 @@ function initSeccionCobroVentaCaja() {
 	if ($("#nuevoMetodoPagoCaja option[value='EF']").length) {
 		$("#nuevoMetodoPagoCaja").val("EF");
 	} else {
-		$("#nuevoMetodoPagoCaja").prop("selectedIndex", 1);
+		$("#nuevoMetodoPagoCaja").prop("selectedIndex", 0);
 	}
 	$("#nuevoMetodoPagoCaja").change();
 	var total = $("#nuevoTotalVentaCaja").val() || $("#nuevoPrecioNetoCajaForm").val() || "0";
@@ -1937,6 +1937,23 @@ function PadLeft(value, length) {
 
 // BOTON GUARDAR VENTA
 $("#btnCobrarMedioPagoCaja").click(function(e){
+	// Medio de pago obligatorio: nunca vacío al guardar
+	if (!$("#nuevoMetodoPagoCaja").val() || $("#nuevoMetodoPagoCaja").val().trim() === "") {
+		swal({
+	      title: "Ventas",
+	      text: "Debe seleccionar medio de pago",
+	      type: "error",
+		  toast: true,
+		  position: 'top',
+		  showConfirmButton: false,
+		  timer: 3000
+		});
+		$("#btnCobrarMedioPagoCaja").removeAttr('disabled');
+		return;
+	}
+	// Sincronizar valor al hidden por si no se disparó change
+	listarMetodosCaja();
+
 	if(Number($("#nuevoValorSaldo").text()) != 0){
 		swal({
 	      title: "Ventas",
@@ -1949,11 +1966,6 @@ $("#btnCobrarMedioPagoCaja").click(function(e){
 		});
 		$("#btnCobrarMedioPagoCaja").removeAttr('disabled');
 		return;	
-	}
-
-	// Medio de pago fijo Efectivo (sin selector visible)
-	if (!$("#listaMetodoPagoCaja").val()) {
-		$("#listaMetodoPagoCaja").val("Efectivo");
 	}
 
 	// Validar pago MPQR antes de guardar
@@ -3037,7 +3049,7 @@ function atajoModalVentaCaja(e) {
     
         var medios = $("#nuevoMetodoPagoCaja option").length;
         var indice = $("#nuevoMetodoPagoCaja").prop('selectedIndex');
-        if( indice === (medios-1) ) { indice = 1;} else { indice++; }
+        if (indice === (medios - 1)) { indice = 0; } else { indice++; }
         $("#nuevoMetodoPagoCaja").prop('selectedIndex', indice).change();
         
     }

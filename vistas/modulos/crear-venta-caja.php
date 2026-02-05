@@ -1518,9 +1518,40 @@ $(document).ready(function() {
                     </div>
                   </div>
                 </div>
-                <!-- Medio de pago fijo Efectivo (sin selector visible) -->
-                <select id="nuevoMetodoPagoCaja" style="display:none !important;"><option value="EF" selected>Efectivo</option></select>
-                <div class="cajasMetodoPagoCaja" style="display:none !important;"></div>
+                <div class="form-group row">
+                  <div class="col-md-12">
+                    <div class="input-group">
+                      <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPago" type="button" class="btn btn-success"><i class="fa fa-plus"></i></button></span>
+                      <select class="form-control" id="nuevoMetodoPagoCaja" required>
+                        <?php
+                        $idx = 0;
+                        $idxEf = -1;
+                        if (!empty($listaMediosPago)) {
+                          foreach ($listaMediosPago as $mp) {
+                            $cod = htmlspecialchars($mp['codigo'] ?? '');
+                            if ($cod === 'EF') $idxEf = $idx;
+                            $idx++;
+                          }
+                          $selIdx = ($idxEf >= 0) ? $idxEf : 0;
+                          $i = 0;
+                          foreach ($listaMediosPago as $mp) {
+                            $cod = htmlspecialchars($mp['codigo'] ?? '');
+                            $nom = htmlspecialchars($mp['nombre'] ?? $cod);
+                            $rc = (int)($mp['requiere_codigo'] ?? 0);
+                            $rb = (int)($mp['requiere_banco'] ?? 0);
+                            $rn = (int)($mp['requiere_numero'] ?? 0);
+                            $rf = (int)($mp['requiere_fecha'] ?? 0);
+                            $sel = ($i === $selIdx) ? ' selected' : '';
+                            echo '<option value="' . $cod . '"' . $sel . ' data-requiere-codigo="' . $rc . '" data-requiere-banco="' . $rb . '" data-requiere-numero="' . $rn . '" data-requiere-fecha="' . $rf . '">' . $nom . '</option>';
+                            $i++;
+                          }
+                        }
+                        ?>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="cajasMetodoPagoCaja"></div>
+                </div>
                 <hr>
                 <div class="row">
                   <div class="col-md-6">
