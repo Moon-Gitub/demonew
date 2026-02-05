@@ -122,7 +122,7 @@
 
 /* Móvil: lista productos y cobro adaptados */
 @media (max-width: 767px) {
-    .crear-venta-caja #nuevoProductoCaja { min-height: 120px !important; max-height: 220px !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
+    .crear-venta-caja #nuevoProductoCaja { min-height: 120px !important; overflow: visible !important; }
     .crear-venta-caja #seccionCobroVenta .box-body .row > [class*="col-md-6"] { width: 100% !important; max-width: 100% !important; flex: 0 0 100% !important; }
     .crear-venta-caja #seccionCobroVenta .box-footer { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; justify-content: space-between !important; }
     .crear-venta-caja #seccionCobroVenta .box-footer .btn { min-width: 44px !important; }
@@ -149,11 +149,24 @@
 .crear-venta-caja #seccionCobroVenta .box-body #nuevoTotalVentaCaja { font-size: 1rem !important; min-height: 36px !important; }
 .crear-venta-caja #seccionCobroVenta .box-footer { padding: 8px 12px !important; }
 .crear-venta-caja #seccionCobroVenta .box-footer .btn { padding: 8px 14px !important; font-size: 14px !important; min-height: 38px !important; }
-/* Total grande (derecha): menos altura */
-.crear-venta-caja #nuevoPrecioNetoCajaForm { font-size: 2rem !important; min-height: 48px !important; padding: 8px 12px !important; }
-.crear-venta-caja .col-lg-5 .table.table-bordered th .input-group { margin-bottom: 0 !important; }
-.crear-venta-caja .col-lg-5 .table.table-bordered th .input-group-addon,
-.crear-venta-caja .col-lg-5 .table.table-bordered th .form-control { min-height: 44px !important; padding: 8px 12px !important; }
+/* Ocultar total duplicado en Cobro: solo se usa el total de arriba */
+.crear-venta-caja .total-cobro-oculto { display: none !important; }
+
+/* Total único (arriba): lo más grande posible */
+.crear-venta-caja .total-unico-grande,
+.crear-venta-caja #nuevoPrecioNetoCajaForm {
+    font-size: min(4.5rem, 12vw) !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    min-height: 72px !important;
+    padding: 16px 20px !important;
+    width: 100% !important;
+    border-width: 3px !important;
+}
+.crear-venta-caja .col-lg-5 .table.table-bordered th { padding: 12px !important; }
+.crear-venta-caja .col-lg-5 .table.table-bordered th .input-group { margin-bottom: 0 !important; width: 100% !important; }
+.crear-venta-caja .col-lg-5 .table.table-bordered th .input-group-addon { font-size: 1.5rem !important; padding: 16px 20px !important; min-height: 72px !important; }
+.crear-venta-caja .col-lg-5 .table.table-bordered th .form-control { min-height: 72px !important; padding: 16px 20px !important; }
 /* cajasMetodoPagoCaja y totales visibles (no cortados) */
 .crear-venta-caja #seccionCobroVenta .cajasMetodoPagoCaja { min-height: 0 !important; }
 .crear-venta-caja #seccionCobroVenta .box-body .row .col-md-6 { overflow: visible !important; }
@@ -369,14 +382,36 @@
     border-radius: 0 0 16px 16px !important;
 }
 
-/* Mejorar área de productos */
+/* Columna izquierda: que llegue hasta el fondo de la página (sin cortar a la mitad) */
+@media (min-width: 992px) {
+    .crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-7 .box {
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: calc(100vh - 130px) !important;
+    }
+}
+.crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-7 .box {
+    display: flex !important;
+    flex-direction: column !important;
+}
+.crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-7 .box .box-body {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+}
+.crear-venta-caja .crear-venta-caja-espacio-fondo {
+    flex: 1 1 auto !important;
+    min-height: 80px !important;
+}
+/* Área productos: crece con el contenido, scroll solo al final (scroll de página) */
 .crear-venta-caja #nuevoProductoCaja {
     min-height: 200px;
-    max-height: 400px;
     padding: 15px;
     background: #f8f9fa;
     border-radius: 8px;
     border: 2px dashed #e0e0e0;
+    overflow: visible !important;
 }
 
 .crear-venta-caja #nuevoProductoCaja:empty::before {
@@ -1307,7 +1342,7 @@ $(document).ready(function() {
               </div>
               <hr>
 
-              <div class="form-group row nuevoProductoCaja" id="nuevoProductoCaja" style="width:100%; overflow-y:auto; overflow-x: text;"></div>
+              <div class="form-group row nuevoProductoCaja" id="nuevoProductoCaja" style="width:100%;"></div>
 
               <!-- CAMPOS NECESARIOS PARA ENVIAR POR POST PARA GUARDAR LA VENTA -->
               <input type="hidden" id="nuevaVentaCajaForm" name="nuevaVentaCaja">
@@ -1343,6 +1378,8 @@ $(document).ready(function() {
               <input type="hidden" id="nuevoVtaCajaBaseImp27" name="nuevoVtaCajaBaseImp27" value="0">
 
               <hr>
+              <!-- Espaciador: lleva el contenido hasta el fondo de la página (scroll solo al final) -->
+              <div class="crear-venta-caja-espacio-fondo" aria-hidden="true"></div>
 
           </div> 
 
@@ -1424,7 +1461,7 @@ $(document).ready(function() {
 					    <th>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
-                                <input type="number" step="0.01" min="0" class="form-control input-lg" id="nuevoPrecioNetoCajaForm" name="nuevoPrecioNetoCaja" placeholder="0,00" readonly style="font-size: 2rem; text-align: center;">
+                                <input type="number" step="0.01" min="0" class="form-control input-lg total-unico-grande" id="nuevoPrecioNetoCajaForm" name="nuevoPrecioNetoCaja" placeholder="0,00" readonly>
 			                </div>
 			            </th>
 		            </tr>
@@ -1501,7 +1538,7 @@ $(document).ready(function() {
                   </div>
                   <div class="col-md-6">
                     <table class="table">
-                      <tr>
+                      <tr class="total-cobro-oculto">
                         <td style="vertical-align:middle; border: none;">Total:</td>
                         <td style="border: none;">
                           <div class="input-group">
@@ -1548,7 +1585,7 @@ $(document).ready(function() {
                           </div>
                         </td>
                       </tr>
-                      <tr>
+                      <tr class="total-cobro-oculto">
                         <td style="vertical-align:middle; border: none;"><b>TOTAL:</b></td>
                         <td style="border: none;">
                           <div class="input-group">
