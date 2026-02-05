@@ -404,6 +404,28 @@
     flex: 1 1 auto !important;
     min-height: 80px !important;
 }
+/* Columna derecha: que también llegue hasta el fondo */
+@media (min-width: 992px) {
+    .crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-5 .box {
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: calc(100vh - 130px) !important;
+    }
+}
+.crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-5 .box {
+    display: flex !important;
+    flex-direction: column !important;
+}
+.crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-5 .box .box-body {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+}
+.crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-5 .crear-venta-caja-espacio-fondo {
+    flex: 1 1 auto !important;
+    min-height: 60px !important;
+}
 /* Área productos: crece con el contenido, scroll solo al final (scroll de página) */
 .crear-venta-caja #nuevoProductoCaja {
     min-height: 200px;
@@ -1606,6 +1628,11 @@ $(document).ready(function() {
                 <p>No se pudo autorizar el comprobante</p>
                 <span id="impTicketCobroCajaObservacionFact" style="font-size: 12px;"></span>
               </div>
+            </div>
+          </div>
+          <!-- Espaciador derecha: lleva el contenido hasta el fondo -->
+          <div class="crear-venta-caja-espacio-fondo" aria-hidden="true"></div>
+
             </div>
           </div>
 
