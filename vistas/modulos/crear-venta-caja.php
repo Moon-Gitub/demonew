@@ -64,12 +64,6 @@
         flex-direction: column !important;
         min-height: 0 !important;
     }
-    .crear-venta-caja #seccionCobroVenta > .box {
-        flex: 1 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        min-height: 0 !important;
-    }
     .crear-venta-caja .crear-venta-caja-espacio-fondo-derecha {
         flex: 1 1 auto !important;
         min-height: 40px !important;
@@ -113,9 +107,8 @@
     }
     .crear-venta-caja .btn { min-height: 44px !important; padding: 12px 16px !important; font-size: 16px !important; }
     .crear-venta-caja #nuevoPrecioNetoCajaForm { font-size: 1.75rem !important; min-height: 48px !important; }
-    .crear-venta-caja #seccionCobroVenta .box-body .row [class*="col-"] { width: 100% !important; max-width: 100% !important; }
-    .crear-venta-caja #seccionCobroVenta .form-group.row .col-md-12 { width: 100% !important; }
-    .crear-venta-caja #seccionCobroVenta .box-footer .btn { width: 48% !important; margin: 2px 0 !important; }
+    .crear-venta-caja .contenido-cobro-inline .form-group-row-unificado [class*="col-"] { width: 100% !important; max-width: 100% !important; }
+    .crear-venta-caja .box-footer-unificado .btn { width: 48% !important; margin: 2px 0 !important; }
     .crear-venta-caja .nuevoProductoCaja .row [class*="col-"] { flex: 0 0 100% !important; max-width: 100% !important; }
 }
 @media (max-width: 576px) {
@@ -128,9 +121,7 @@
     .crear-venta-caja .col-md-3, .crear-venta-caja .col-md-6, .crear-venta-caja .col-md-9,
     .crear-venta-caja .col-xs-3, .crear-venta-caja .col-xs-6, .crear-venta-caja .col-xs-9 { width: 100% !important; max-width: 100% !important; }
     .crear-venta-caja #nuevoPrecioNetoCajaForm { font-size: 1.5rem !important; }
-    .crear-venta-caja #seccionCobroVenta .box-footer .btn { width: 100% !important; display: block !important; margin: 6px 0 !important; }
-    .crear-venta-caja #btnCobrarMedioPagoCaja { order: 1 !important; }
-    .crear-venta-caja #btnSalirMedioPagoCaja { order: 2 !important; }
+    .crear-venta-caja .box-footer-unificado .btn { width: 100% !important; display: block !important; margin: 6px 0 !important; }
 }
 /* Touch: evitar hover que quede “pegado” en táctiles */
 @media (hover: none) {
@@ -152,35 +143,26 @@
 /* Móvil: lista productos y cobro adaptados */
 @media (max-width: 767px) {
     .crear-venta-caja #nuevoProductoCaja { min-height: 120px !important; overflow: visible !important; }
-    .crear-venta-caja #seccionCobroVenta .box-body .row > [class*="col-md-6"] { width: 100% !important; max-width: 100% !important; flex: 0 0 100% !important; }
-    .crear-venta-caja #seccionCobroVenta .box-footer { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; justify-content: space-between !important; }
-    .crear-venta-caja #seccionCobroVenta .box-footer .btn { min-width: 44px !important; }
+    .crear-venta-caja .contenido-cobro-inline .form-group-row-unificado > [class*="col-md-"] { width: 100% !important; max-width: 100% !important; flex: 0 0 100% !important; }
+    .crear-venta-caja .box-footer-unificado { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; justify-content: space-between !important; }
+    .crear-venta-caja .box-footer-unificado .btn { min-width: 44px !important; }
 }
 
 /* ============================================
-   MENOS ALTURA: Cobro de venta y total más compactos
+   COLUMNA DERECHA UNIFICADA: todo en una sola sección, bien alineado
    ============================================ */
-.crear-venta-caja #seccionCobroVenta { margin-top: 8px !important; }
-.crear-venta-caja #seccionCobroVenta .box-header { padding: 6px 12px !important; }
-.crear-venta-caja #seccionCobroVenta .box-header .box-title { font-size: 1rem !important; margin: 0 !important; }
-.crear-venta-caja #seccionCobroVenta .box-body { padding: 8px 12px !important; }
-.crear-venta-caja #seccionCobroVenta .box-body .row { margin-left: -6px !important; margin-right: -6px !important; }
-.crear-venta-caja #seccionCobroVenta .box-body .row.row-cobro-compact,
-.crear-venta-caja #seccionCobroVenta .box-body .row[style*="padding-bottom"] { padding-bottom: 4px !important; margin-bottom: 2px !important; }
-.crear-venta-caja #seccionCobroVenta .box-body .form-group.row { margin-bottom: 6px !important; }
-.crear-venta-caja #seccionCobroVenta .box-body hr { margin: 6px 0 !important; }
-.crear-venta-caja #seccionCobroVenta .input-group-addon,
-.crear-venta-caja #seccionCobroVenta .box-body .form-control,
-.crear-venta-caja #seccionCobroVenta .box-body input,
-.crear-venta-caja #seccionCobroVenta .box-body select { min-height: 38px !important; padding: 6px 10px !important; font-size: 15px !important; }
-.crear-venta-caja #seccionCobroVenta .box-body .table td { padding: 4px 8px !important; }
-.crear-venta-caja #seccionCobroVenta .box-body #nuevoPrecioNetoCaja,
-.crear-venta-caja #seccionCobroVenta .box-body #nuevoTotalVentaCaja { font-size: 1rem !important; min-height: 36px !important; }
-/* Casi pegado: poco espacio entre Descuento y botones Salir / Guardar e imprimir */
-.crear-venta-caja #seccionCobroVenta .box-body { padding-bottom: 4px !important; }
-.crear-venta-caja #seccionCobroVenta .box-footer { padding: 4px 12px 8px !important; margin-top: 0 !important; border-top-width: 1px !important; }
-.crear-venta-caja #seccionCobroVenta .box-footer .btn { padding: 8px 14px !important; font-size: 14px !important; min-height: 38px !important; }
-/* Ocultar total duplicado en Cobro: solo se usa el total de arriba */
+.crear-venta-caja .hr-unificado { margin: 12px 0 !important; border-color: #e0e0e0 !important; }
+.crear-venta-caja .contenido-cobro-inline { margin-top: 0 !important; }
+.crear-venta-caja .contenido-cobro-inline .form-group-row-unificado { margin-bottom: 10px !important; }
+.crear-venta-caja .contenido-cobro-inline .input-group-unificado .form-control,
+.crear-venta-caja .contenido-cobro-inline .input-group-unificado .input-group-addon { min-height: 40px !important; padding: 8px 12px !important; font-size: 15px !important; }
+.crear-venta-caja .contenido-cobro-inline .input-group-unificado .btn { min-height: 40px !important; padding: 8px 12px !important; }
+.crear-venta-caja .contenido-cobro-inline .table-totales-inline td { padding: 4px 8px !important; border: none !important; vertical-align: middle !important; }
+.crear-venta-caja .contenido-cobro-inline .table-totales-inline .input-group-sm .form-control { min-height: 34px !important; font-size: 14px !important; }
+.crear-venta-caja .contenido-cobro-inline .cajasMetodoPagoCaja { min-height: 0 !important; }
+.crear-venta-caja .box-footer-unificado { padding: 10px 15px !important; margin-top: 4px !important; border-top: 1px solid #e0e0e0 !important; }
+.crear-venta-caja .box-footer-unificado .btn { font-size: 16px !important; padding: 12px 20px !important; min-height: 48px !important; }
+/* Ocultar total duplicado: solo se usa el total de arriba */
 .crear-venta-caja .total-cobro-oculto { display: none !important; }
 
 /* Total único (arriba): lo más grande posible */
@@ -198,13 +180,10 @@
 .crear-venta-caja .col-lg-5 .table.table-bordered th .input-group { margin-bottom: 0 !important; width: 100% !important; }
 .crear-venta-caja .col-lg-5 .table.table-bordered th .input-group-addon { font-size: 1.5rem !important; padding: 16px 20px !important; min-height: 72px !important; }
 .crear-venta-caja .col-lg-5 .table.table-bordered th .form-control { min-height: 72px !important; padding: 16px 20px !important; }
-/* cajasMetodoPagoCaja y totales visibles (no cortados) */
-.crear-venta-caja #seccionCobroVenta .cajasMetodoPagoCaja { min-height: 0 !important; }
-.crear-venta-caja #seccionCobroVenta .box-body .row .col-md-6 { overflow: visible !important; }
 @media (max-width: 480px) {
     .crear-venta-caja .content { padding: 6px 4px !important; }
-    .crear-venta-caja .box-header, .crear-venta-caja #seccionCobroVenta .box-header { padding: 10px 12px !important; font-size: 1rem !important; }
-    .crear-venta-caja #seccionCobroVenta .box-footer .btn { width: 100% !important; }
+    .crear-venta-caja .contenido-cobro-inline .row.form-group-row-unificado > [class*="col-"] { width: 100% !important; max-width: 100% !important; margin-bottom: 8px !important; }
+    .crear-venta-caja .box-footer-unificado .btn { width: 100% !important; }
 }
 
 /* ============================================
@@ -1497,155 +1476,80 @@ $(document).ready(function() {
 			            </th>
 		            </tr>
 	            </table>
-          
 
-          <!-- Sección Cobro de venta (Bloque 3): siempre visible; acción principal Guardar e imprimir (F8) -->
-          <div id="seccionCobroVenta" style="margin-top:12px;">
-            <div class="box" style="border-top: 3px solid #3c8dbc;">
-              <div class="box-header with-border" style="background:#3c8dbc; color:white">
-                <h4 class="box-title">Cobro de venta</h4>
+            <hr class="hr-unificado">
+            <input type="hidden" name="ingresoCajaTipo" id="ingresoCajaTipo" value="1">
+            <div id="seccionCobroVenta" class="contenido-cobro-inline">
+              <div class="row form-group-row-unificado">
+                <div class="col-md-12"><span id="datosCuentaCorrienteCliente" style="font-size:1rem"></span></div>
               </div>
-              <div class="box-body cobro-venta-compact">
-                <input type="hidden" name="ingresoCajaTipo" id="ingresoCajaTipo" value="1">
-                <div class="row row-cobro-compact">
-                  <div class="col-md-12"><span id="datosCuentaCorrienteCliente" style="font-size:1rem"></span></div>
-                </div>
-                <div class="row row-cobro-compact">
-                  <div class="col-md-12">
-                    <div class="input-group">
-                      <span class="input-group-addon" style="background-color: #eee"><b>PAGO</b></span>
-                      <input type="text" class="form-control" id="nuevoValorEntrega">
-                    </div>
+              <div class="row form-group-row-unificado">
+                <div class="col-md-5 col-sm-6">
+                  <div class="input-group input-group-unificado">
+                    <span class="input-group-addon"><b>PAGO</b></span>
+                    <input type="text" class="form-control" id="nuevoValorEntrega">
                   </div>
                 </div>
-                <div class="form-group row">
-                  <div class="col-md-12">
-                    <div class="input-group">
-                      <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPago" type="button" class="btn btn-success"><i class="fa fa-plus"></i></button></span>
-                      <select class="form-control" id="nuevoMetodoPagoCaja" required>
-                        <?php
-                        $idx = 0;
-                        $idxEf = -1;
-                        if (!empty($listaMediosPago)) {
-                          foreach ($listaMediosPago as $mp) {
-                            $cod = htmlspecialchars($mp['codigo'] ?? '');
-                            if ($cod === 'EF') $idxEf = $idx;
-                            $idx++;
-                          }
-                          $selIdx = ($idxEf >= 0) ? $idxEf : 0;
-                          $i = 0;
-                          foreach ($listaMediosPago as $mp) {
-                            $cod = htmlspecialchars($mp['codigo'] ?? '');
-                            $nom = htmlspecialchars($mp['nombre'] ?? $cod);
-                            $rc = (int)($mp['requiere_codigo'] ?? 0);
-                            $rb = (int)($mp['requiere_banco'] ?? 0);
-                            $rn = (int)($mp['requiere_numero'] ?? 0);
-                            $rf = (int)($mp['requiere_fecha'] ?? 0);
-                            $sel = ($i === $selIdx) ? ' selected' : '';
-                            echo '<option value="' . $cod . '"' . $sel . ' data-requiere-codigo="' . $rc . '" data-requiere-banco="' . $rb . '" data-requiere-numero="' . $rn . '" data-requiere-fecha="' . $rf . '">' . $nom . '</option>';
-                            $i++;
-                          }
+                <div class="col-md-7 col-sm-6">
+                  <div class="input-group input-group-unificado">
+                    <span class="input-group-btn"><button id="agregarMedioPago" type="button" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></button></span>
+                    <select class="form-control" id="nuevoMetodoPagoCaja" required>
+                      <?php
+                      $idx = 0;
+                      $idxEf = -1;
+                      if (!empty($listaMediosPago)) {
+                        foreach ($listaMediosPago as $mp) {
+                          $cod = htmlspecialchars($mp['codigo'] ?? '');
+                          if ($cod === 'EF') $idxEf = $idx;
+                          $idx++;
                         }
-                        ?>
-                      </select>
-                    </div>
+                        $selIdx = ($idxEf >= 0) ? $idxEf : 0;
+                        $i = 0;
+                        foreach ($listaMediosPago as $mp) {
+                          $cod = htmlspecialchars($mp['codigo'] ?? '');
+                          $nom = htmlspecialchars($mp['nombre'] ?? $cod);
+                          $rc = (int)($mp['requiere_codigo'] ?? 0);
+                          $rb = (int)($mp['requiere_banco'] ?? 0);
+                          $rn = (int)($mp['requiere_numero'] ?? 0);
+                          $rf = (int)($mp['requiere_fecha'] ?? 0);
+                          $sel = ($i === $selIdx) ? ' selected' : '';
+                          echo '<option value="' . $cod . '"' . $sel . ' data-requiere-codigo="' . $rc . '" data-requiere-banco="' . $rb . '" data-requiere-numero="' . $rn . '" data-requiere-fecha="' . $rf . '">' . $nom . '</option>';
+                          $i++;
+                        }
+                      }
+                      ?>
+                    </select>
                   </div>
-                  <div class="cajasMetodoPagoCaja"></div>
                 </div>
-                <hr>
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="row" style="display: none;" id="divImportesPagoMixto">
-                      <table class="table" id="listadoMetodosPagoMixto">
-                        <thead>
-                          <tr>
-                            <th><i class="fa fa-minus-square"></i></th>
-                            <th>Metodo</th>
-                            <th>Importe</th>
-                          </tr>
-                        </thead>
-                        <tbody></tbody>
-                        <tfoot>
-                          <tr>
-                            <td></td>
-                            <td></td>
-                            <td style="font-size: 18px"><b>SALDO: $</b> <span id="nuevoValorSaldo" style="color:red">0</span></td>
-                          </tr>
-                        </tfoot>
-                      </table>
-                    </div>
-                    <input type="hidden" id="listaMetodoPagoCaja">
-                    <input type="hidden" id="mxMediosPagos">
-                  </div>
-                  <div class="col-md-6">
-                    <table class="table">
-                      <tr class="total-cobro-oculto">
-                        <td style="vertical-align:middle; border: none;">Total:</td>
-                        <td style="border: none;">
-                          <div class="input-group">
-                            <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
-                            <input type="number" step="0.01" min="0" class="form-control input-sm" id="nuevoPrecioNetoCaja" placeholder="0,00" readonly style="font-size: 18px;">
-                          </div>
-                        </td>
-                      </tr>
-                      <tr id="filaInteresCaja" style="display:none;">
-                        <td style="vertical-align:middle; border: none;">Interés:</td>
-                        <td style="border: none;">
-                          <div class="row">
-                            <div class="col-xs-6">
-                              <div class="input-group">
-                                <span class="input-group-addon"><b>%</b></span>
-                                <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoInteresCaja" id="nuevoInteresPorcentajeCaja">
-                              </div>
-                            </div>
-                            <div class="col-xs-6">
-                              <div class="input-group">
-                                <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
-                                <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoInteresCaja" id="nuevoInteresPrecioCaja">
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr id="filaDescuentoCaja" style="display:none;">
-                        <td style="vertical-align:middle; border: none;">Descuento:</td>
-                        <td style="border: none;">
-                          <div class="row">
-                            <div class="col-xs-6">
-                              <div class="input-group">
-                                <span class="input-group-addon"><b>%</b></span>
-                                <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoDescuentoCaja" id="nuevoDescuentoPorcentajeCaja">
-                              </div>
-                            </div>
-                            <div class="col-xs-6">
-                              <div class="input-group">
-                                <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
-                                <input type="number" step="0.01" min="0" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoDescuentoCaja" id="nuevoDescuentoPrecioCaja" placeholder="0,00">
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr class="total-cobro-oculto">
-                        <td style="vertical-align:middle; border: none;"><b>TOTAL:</b></td>
-                        <td style="border: none;">
-                          <div class="input-group">
-                            <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
-                            <input type="number" step="0.01" min="0" style="font-size: 18px; font-weight:bold; text-align:center;" class="form-control input-sm" id="nuevoTotalVentaCaja" total="" placeholder="0,00" readonly required>
-                          </div>
-                        </td>
-                      </tr>
+                <div class="cajasMetodoPagoCaja"></div>
+              </div>
+              <div class="row form-group-row-unificado">
+                <div class="col-md-6">
+                  <div class="row" style="display: none;" id="divImportesPagoMixto">
+                    <table class="table" id="listadoMetodosPagoMixto">
+                      <thead><tr><th><i class="fa fa-minus-square"></i></th><th>Metodo</th><th>Importe</th></tr></thead>
+                      <tbody></tbody>
+                      <tfoot><tr><td></td><td></td><td><b>SALDO: $</b> <span id="nuevoValorSaldo" style="color:red">0</span></td></tr></tfoot>
                     </table>
                   </div>
+                  <input type="hidden" id="listaMetodoPagoCaja">
+                  <input type="hidden" id="mxMediosPagos">
+                </div>
+                <div class="col-md-6">
+                  <table class="table table-condensed table-totales-inline">
+                    <tr class="total-cobro-oculto"><td style="border:none;">Total:</td><td style="border:none;"><div class="input-group input-group-sm"><span class="input-group-addon">$</span><input type="number" step="0.01" class="form-control" id="nuevoPrecioNetoCaja" placeholder="0,00" readonly></div></td></tr>
+                    <tr id="filaInteresCaja" style="display:none;"><td style="border:none;">Interés:</td><td style="border:none;"><div class="row"><div class="col-xs-6"><div class="input-group input-group-sm"><span class="input-group-addon">%</span><input type="number" step="0.01" class="form-control nuevoInteresCaja" id="nuevoInteresPorcentajeCaja"></div></div><div class="col-xs-6"><div class="input-group input-group-sm"><span class="input-group-addon">$</span><input type="number" step="0.01" class="form-control nuevoInteresCaja" id="nuevoInteresPrecioCaja"></div></div></div></td></tr>
+                    <tr id="filaDescuentoCaja" style="display:none;"><td style="border:none;">Descuento:</td><td style="border:none;"><div class="row"><div class="col-xs-6"><div class="input-group input-group-sm"><span class="input-group-addon">%</span><input type="number" step="0.01" class="form-control nuevoDescuentoCaja" id="nuevoDescuentoPorcentajeCaja"></div></div><div class="col-xs-6"><div class="input-group input-group-sm"><span class="input-group-addon">$</span><input type="number" step="0.01" class="form-control nuevoDescuentoCaja" id="nuevoDescuentoPrecioCaja" placeholder="0,00"></div></div></div></td></tr>
+                    <tr class="total-cobro-oculto"><td style="border:none;"><b>TOTAL:</b></td><td style="border:none;"><div class="input-group input-group-sm"><span class="input-group-addon">$</span><input type="number" step="0.01" class="form-control" id="nuevoTotalVentaCaja" total="" placeholder="0,00" readonly required></div></td></tr>
+                  </table>
                 </div>
               </div>
-              <div class="box-footer">
-                <button type="button" id="btnCobrarMedioPagoCaja" onClick="this.disabled=true;" class="btn btn-primary">Guardar e imprimir (F8)</button>
-              </div>
-              <!-- Espaciador: columna derecha hasta el fondo (mensaje comprobante no aprobado se muestra por swal, no aquí) -->
-              <div class="crear-venta-caja-espacio-fondo-derecha" aria-hidden="true"></div>
             </div>
-          </div>
+            <div class="crear-venta-caja-espacio-fondo-derecha" aria-hidden="true"></div>
+            </div>
+            <div class="box-footer box-footer-unificado">
+              <button type="button" id="btnCobrarMedioPagoCaja" onClick="this.disabled=true;" class="btn btn-primary btn-block">Guardar e imprimir (F8)</button>
+            </div>
 
       </div>
 </div>
