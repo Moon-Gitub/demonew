@@ -1518,30 +1518,9 @@ $(document).ready(function() {
                     </div>
                   </div>
                 </div>
-                <div class="form-group row">
-                  <div class="col-md-12">
-                    <div class="input-group">
-                      <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPago" type="button" class="btn btn-success"><i class="fa fa-plus"></i></button></span>
-                      <select class="form-control" id="nuevoMetodoPagoCaja">
-                        <option value="">Medio de pago</option>
-                        <?php
-                        if (!empty($listaMediosPago)) {
-                          foreach ($listaMediosPago as $mp) {
-                            $cod = htmlspecialchars($mp['codigo'] ?? '');
-                            $nom = htmlspecialchars($mp['nombre'] ?? $cod);
-                            $rc = (int)($mp['requiere_codigo'] ?? 0);
-                            $rb = (int)($mp['requiere_banco'] ?? 0);
-                            $rn = (int)($mp['requiere_numero'] ?? 0);
-                            $rf = (int)($mp['requiere_fecha'] ?? 0);
-                            echo '<option value="' . $cod . '" data-requiere-codigo="' . $rc . '" data-requiere-banco="' . $rb . '" data-requiere-numero="' . $rn . '" data-requiere-fecha="' . $rf . '">' . $nom . '</option>';
-                          }
-                        }
-                        ?>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="cajasMetodoPagoCaja"></div>
-                </div>
+                <!-- Medio de pago fijo Efectivo (sin selector visible) -->
+                <select id="nuevoMetodoPagoCaja" style="display:none !important;"><option value="EF" selected>Efectivo</option></select>
+                <div class="cajasMetodoPagoCaja" style="display:none !important;"></div>
                 <hr>
                 <div class="row">
                   <div class="col-md-6">
@@ -1630,7 +1609,6 @@ $(document).ready(function() {
                 </div>
               </div>
               <div class="box-footer">
-                <button type="button" id="btnSalirMedioPagoCaja" class="btn btn-default pull-left">Salir (ESC)</button>
                 <button type="button" id="btnCobrarMedioPagoCaja" onClick="this.disabled=true;" class="btn btn-primary">Guardar e imprimir (F8)</button>
               </div>
               <!-- Espaciador: columna derecha hasta el fondo (mensaje comprobante no aprobado se muestra por swal, no aquí) -->

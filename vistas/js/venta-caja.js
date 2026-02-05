@@ -1951,6 +1951,11 @@ $("#btnCobrarMedioPagoCaja").click(function(e){
 		return;	
 	}
 
+	// Medio de pago fijo Efectivo (sin selector visible)
+	if (!$("#listaMetodoPagoCaja").val()) {
+		$("#listaMetodoPagoCaja").val("Efectivo");
+	}
+
 	// Validar pago MPQR antes de guardar
 	var metodoPago = $("#listaMetodoPagoCaja").val() || "";
 	if(metodoPago.indexOf("MPQR-") === 0){
@@ -3667,7 +3672,11 @@ if (!$('#estilos-atajos-teclado').length) {
 $(document).ready(function() {
 	if (window.location.href.includes('crear-venta-caja')) {
 		actualizarListaProductos();
-		
+		// Medio de pago fijo Efectivo (sin selector visible)
+		if ($("#nuevoMetodoPagoCaja").length) {
+			$("#nuevoMetodoPagoCaja").val("EF").change();
+		}
+		$("#listaMetodoPagoCaja").val("Efectivo");
 		// Actualizar cuando cambia el contenido de la lista
 		var listaProductos = document.getElementById('nuevoProductoCaja');
 		if (listaProductos) {
