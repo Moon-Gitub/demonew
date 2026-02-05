@@ -251,6 +251,8 @@ function calcularDescuentoCaja(elem){
 		$("#totalVentaCaja").val(totalConDescuento);
 		$("#nuevoTotalVentaCaja").attr("total",totalConDescuento);
 		$("#totalVentaMetodoPagoCaja").val(totalConDescuento);
+		// Actualizar el total grande de arriba para que refleje el total con descuento
+		$("#nuevoPrecioNetoCajaForm").val(totalConDescuento.toFixed(2));
 
 	// }
 
