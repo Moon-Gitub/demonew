@@ -449,6 +449,90 @@
     min-height: 48px !important;
 }
 
+/* ========== Sección Cobro de venta: alineación y aspecto ========== */
+#seccionCobroVenta .box-body {
+    padding: 16px 18px !important;
+}
+#seccionCobroVenta .row {
+    margin-left: -8px;
+    margin-right: -8px;
+}
+#seccionCobroVenta .row > [class*="col-"] {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+#seccionCobroVenta .form-group.row {
+    align-items: flex-start;
+    margin-bottom: 12px !important;
+}
+/* PAGO: misma altura y alineación */
+#seccionCobroVenta .input-group {
+    display: flex !important;
+    align-items: stretch;
+}
+#seccionCobroVenta .input-group-addon {
+    min-width: 90px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border: 2px solid #e0e0e0 !important;
+    border-radius: 8px 0 0 8px !important;
+    font-weight: 600 !important;
+    padding: 10px 12px !important;
+}
+#seccionCobroVenta .input-group .form-control {
+    border-radius: 0 8px 8px 0 !important;
+    border: 2px solid #e0e0e0 !important;
+    border-left: none !important;
+    padding: 10px 12px !important;
+    min-height: 42px !important;
+}
+#seccionCobroVenta #nuevoValorEntrega {
+    font-size: 1.05rem !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+}
+/* Fila Entrega / Vuelto: igual ancho y alineada */
+#seccionCobroVenta .cajasMetodoPagoCaja {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0 10px;
+    align-items: stretch;
+}
+#seccionCobroVenta .cajasMetodoPagoCaja > div {
+    flex: 1 1 0;
+    min-width: 0;
+}
+#seccionCobroVenta .cajasMetodoPagoCaja .input-group {
+    width: 100% !important;
+}
+#seccionCobroVenta .cajasMetodoPagoCaja .input-group-addon {
+    min-width: 75px;
+}
+/* Botón + y select medio de pago alineados */
+#seccionCobroVenta #agregarMedioPago {
+    border-radius: 8px 0 0 8px !important;
+    padding: 10px 14px !important;
+    min-height: 42px !important;
+}
+#seccionCobroVenta #nuevoMetodoPagoCaja {
+    border-radius: 0 8px 8px 0 !important;
+    min-height: 42px !important;
+}
+#seccionCobroVenta hr {
+    margin: 14px 0 !important;
+}
+#seccionCobroVenta .box-footer {
+    padding: 12px 18px !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
 #modalCobrarVenta .input-group-addon[style*="background-color: #eee"] {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
     border: 2px solid #e0e0e0 !important;

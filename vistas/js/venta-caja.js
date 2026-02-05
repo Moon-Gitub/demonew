@@ -415,18 +415,18 @@ function cambiarMetodoPagoCaja(valorMetodo){
 		$("#nuevoPrecioImpuestoCaja").val(cero.toFixed(2)); //PARA QUE SE USA????
 
 		valorMetodo.parent().parent().parent().children('.cajasMetodoPagoCaja').html(
-			'<div class="col-md-3">'+
+			'<div class="col-xs-6 col-sm-6 col-md-6">'+
 				'<div class="input-group">'+
 					'<span class="input-group-addon" style="background-color: #eee">Entrega</span>'+
-					'<input type="text" class="form-control" onkeyup="cambioCalculo(this.value);" >'+
+					'<input type="text" class="form-control" onkeyup="cambioCalculo(this.value);" placeholder="0">'+
 				'</div>'+
-	      	'</div>'+
-			'<div class="col-xs-3" style="padding-left:0px">'+	
+			'</div>'+
+			'<div class="col-xs-6 col-sm-6 col-md-6">'+
 				'<div class="input-group">'+
 					'<span class="input-group-addon" style="background-color: #eee">Vuelto</span>'+
-					'<input type="text" class="form-control" id="cambio">'+
+					'<input type="text" class="form-control" id="cambio" readonly placeholder="0">'+
 				'</div>'+
-	        '</div>');
+			'</div>');
 		$("#nuevoDescuentoPorcentajeCaja").keyup();
 
 	}
