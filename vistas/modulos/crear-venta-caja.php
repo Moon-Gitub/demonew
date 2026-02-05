@@ -28,6 +28,35 @@
 ?>
 <style>
 /* ============================================
+   LAYOUT CREAR VENTA: derecha siempre visible, izquierda se achica si hace falta
+   ============================================ */
+.crear-venta-caja .content .row.crear-venta-caja-fila {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    margin-left: 0;
+    margin-right: 0;
+}
+.crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-7 {
+    flex: 1 1 55% !important;
+    max-width: 58% !important;
+    min-width: 0 !important;
+}
+.crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-5 {
+    flex: 0 0 42% !important;
+    min-width: 360px !important;
+    max-width: 42% !important;
+}
+@media (max-width: 1200px) {
+    .crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-7 { flex: 1 1 50% !important; max-width: 55% !important; }
+    .crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-5 { min-width: 320px !important; }
+}
+@media (max-width: 991px) {
+    .crear-venta-caja .content .row.crear-venta-caja-fila { flex-wrap: wrap !important; }
+    .crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-7,
+    .crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-5 { flex: none !important; max-width: 100% !important; min-width: 0 !important; }
+}
+
+/* ============================================
    ESTILOS MODERNOS PARA CREAR VENTA CAJA
    Solo cambios visuales - Sin tocar funcionalidad
    Responsive y mejorado
@@ -840,12 +869,12 @@
 </style>
 <div class="content-wrapper crear-venta-caja">
   <section class="content">
-    <div class="row">
+    <div class="row crear-venta-caja-fila">
 
       <!--=====================================
       EL FORMULARIO
       ======================================-->
-      <div class="col-lg-7" >
+      <div class="col-lg-7">
         
 				<div class="box box-warning">
 
@@ -1319,158 +1348,153 @@ $(document).ready(function() {
           
 
           <div class="box-footer">
-         
             <center><button type="submit" class="btn btn-primary" id="btnGuardarVentaCaja">Cobrar (F7)</button></center>
-
           </div>
 
+          <!-- Sección Cobro de venta (Bloque 3): visible al pulsar F7, se actualiza como el modal -->
+          <div id="seccionCobroVenta" style="display:none; margin-top:12px;">
+            <div class="box" style="border-top: 3px solid #3c8dbc;">
+              <div class="box-header with-border" style="background:#3c8dbc; color:white">
+                <h4 class="box-title">Cobro de venta</h4>
+              </div>
+              <div class="box-body">
+                <input type="hidden" name="ingresoCajaTipo" id="ingresoCajaTipo" value="1">
+                <div class="row" style="padding-bottom:10px">
+                  <div class="col-md-12"><span id="datosCuentaCorrienteCliente" style="font-size:18px"></span></div>
+                </div>
+                <div class="row" style="padding-bottom:10px">
+                  <div class="col-md-12">
+                    <div class="input-group">
+                      <span class="input-group-addon" style="background-color: #eee"><b>PAGO</b></span>
+                      <input type="text" class="form-control" id="nuevoValorEntrega">
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-md-12">
+                    <div class="input-group">
+                      <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPago" type="button" class="btn btn-success"><i class="fa fa-plus"></i></button></span>
+                      <select class="form-control" id="nuevoMetodoPagoCaja">
+                        <option value="">Medio de pago</option>
+                        <?php
+                        if (!empty($listaMediosPago)) {
+                          foreach ($listaMediosPago as $mp) {
+                            $cod = htmlspecialchars($mp['codigo'] ?? '');
+                            $nom = htmlspecialchars($mp['nombre'] ?? $cod);
+                            $rc = (int)($mp['requiere_codigo'] ?? 0);
+                            $rb = (int)($mp['requiere_banco'] ?? 0);
+                            $rn = (int)($mp['requiere_numero'] ?? 0);
+                            $rf = (int)($mp['requiere_fecha'] ?? 0);
+                            echo '<option value="' . $cod . '" data-requiere-codigo="' . $rc . '" data-requiere-banco="' . $rb . '" data-requiere-numero="' . $rn . '" data-requiere-fecha="' . $rf . '">' . $nom . '</option>';
+                          }
+                        }
+                        ?>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="cajasMetodoPagoCaja"></div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="row" style="display: none;" id="divImportesPagoMixto">
+                      <table class="table" id="listadoMetodosPagoMixto">
+                        <thead>
+                          <tr>
+                            <th><i class="fa fa-minus-square"></i></th>
+                            <th>Metodo</th>
+                            <th>Importe</th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                          <tr>
+                            <td></td>
+                            <td></td>
+                            <td style="font-size: 18px"><b>SALDO: $</b> <span id="nuevoValorSaldo" style="color:red">0</span></td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                    <input type="hidden" id="listaMetodoPagoCaja">
+                    <input type="hidden" id="mxMediosPagos">
+                  </div>
+                  <div class="col-md-6">
+                    <table class="table">
+                      <tr>
+                        <td style="vertical-align:middle; border: none;">Total:</td>
+                        <td style="border: none;">
+                          <div class="input-group">
+                            <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                            <input type="number" step="0.01" min="0" class="form-control input-sm" id="nuevoPrecioNetoCaja" placeholder="0,00" readonly style="font-size: 18px;">
+                          </div>
+                        </td>
+                      </tr>
+                      <tr id="filaInteresCaja" style="display:none;">
+                        <td style="vertical-align:middle; border: none;">Interés:</td>
+                        <td style="border: none;">
+                          <div class="row">
+                            <div class="col-xs-6">
+                              <div class="input-group">
+                                <span class="input-group-addon"><b>%</b></span>
+                                <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoInteresCaja" id="nuevoInteresPorcentajeCaja">
+                              </div>
+                            </div>
+                            <div class="col-xs-6">
+                              <div class="input-group">
+                                <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                                <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoInteresCaja" id="nuevoInteresPrecioCaja">
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr id="filaDescuentoCaja" style="display:none;">
+                        <td style="vertical-align:middle; border: none;">Descuento:</td>
+                        <td style="border: none;">
+                          <div class="row">
+                            <div class="col-xs-6">
+                              <div class="input-group">
+                                <span class="input-group-addon"><b>%</b></span>
+                                <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoDescuentoCaja" id="nuevoDescuentoPorcentajeCaja">
+                              </div>
+                            </div>
+                            <div class="col-xs-6">
+                              <div class="input-group">
+                                <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                                <input type="number" step="0.01" min="0" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoDescuentoCaja" id="nuevoDescuentoPrecioCaja" placeholder="0,00">
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="vertical-align:middle; border: none;"><b>TOTAL:</b></td>
+                        <td style="border: none;">
+                          <div class="input-group">
+                            <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                            <input type="number" step="0.01" min="0" style="font-size: 18px; font-weight:bold; text-align:center;" class="form-control input-sm" id="nuevoTotalVentaCaja" total="" placeholder="0,00" readonly required>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="box-footer">
+                <button type="button" id="btnSalirMedioPagoCaja" class="btn btn-default pull-left">Salir (ESC)</button>
+                <button type="button" id="btnCobrarMedioPagoCaja" onClick="this.disabled=true;" class="btn btn-primary">Guardar e imprimir (F8)</button>
+              </div>
+              <div class="box-body" style="display: none; background-color: #f5c5ca" id="divVisualizarObservacionesFactura">
+                <p>No se pudo autorizar el comprobante</p>
+                <span id="impTicketCobroCajaObservacionFact" style="font-size: 12px;"></span>
+              </div>
+            </div>
+          </div>
 
       </div>
 </div>
     </div>
-
-  <!-- Sección Cobro de venta: visible al pulsar F7, centrada, se actualiza como el modal -->
-  <div id="seccionCobroVenta" class="row" style="display:none; margin-top:15px;">
-    <div class="col-xs-12" style="max-width:800px; margin:0 auto;">
-      <div class="box" style="border-top: 3px solid #3c8dbc;">
-        <div class="box-header with-border" style="background:#3c8dbc; color:white">
-          <h4 class="box-title">Cobro de venta</h4>
-        </div>
-        <div class="box-body">
-          <input type="hidden" name="ingresoCajaTipo" id="ingresoCajaTipo" value="1">
-          <div class="row" style="padding-bottom:10px">
-            <div class="col-md-6"><span id="datosCuentaCorrienteCliente" style="font-size:18px"></span></div>
-          </div>
-          <div class="row" style="padding-bottom:10px">
-            <div class="col-md-3">
-              <div class="input-group">
-                <span class="input-group-addon" style="background-color: #eee"><b>PAGO</b></span>
-                <input type="text" class="form-control" id="nuevoValorEntrega">
-              </div>
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-md-3">
-              <div class="input-group">
-                <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPago" type="button" class="btn btn-success"><i class="fa fa-plus"></i></button></span>
-                <select class="form-control" id="nuevoMetodoPagoCaja">
-                  <option value="">Medio de pago</option>
-                  <?php
-                  if (!empty($listaMediosPago)) {
-                    foreach ($listaMediosPago as $mp) {
-                      $cod = htmlspecialchars($mp['codigo'] ?? '');
-                      $nom = htmlspecialchars($mp['nombre'] ?? $cod);
-                      $rc = (int)($mp['requiere_codigo'] ?? 0);
-                      $rb = (int)($mp['requiere_banco'] ?? 0);
-                      $rn = (int)($mp['requiere_numero'] ?? 0);
-                      $rf = (int)($mp['requiere_fecha'] ?? 0);
-                      echo '<option value="' . $cod . '" data-requiere-codigo="' . $rc . '" data-requiere-banco="' . $rb . '" data-requiere-numero="' . $rn . '" data-requiere-fecha="' . $rf . '">' . $nom . '</option>';
-                    }
-                  }
-                  ?>
-                </select>
-              </div>
-            </div>
-            <div class="cajasMetodoPagoCaja"></div>
-          </div>
-          <hr>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="row" style="display: none;" id="divImportesPagoMixto">
-                <table class="table" id="listadoMetodosPagoMixto">
-                  <thead>
-                    <tr>
-                      <th><i class="fa fa-minus-square"></i></th>
-                      <th>Metodo</th>
-                      <th>Importe</th>
-                    </tr>
-                  </thead>
-                  <tbody></tbody>
-                  <tfoot>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td style="font-size: 18px"><b>SALDO: $</b> <span id="nuevoValorSaldo" style="color:red">0</span></td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-              <input type="hidden" id="listaMetodoPagoCaja">
-              <input type="hidden" id="mxMediosPagos">
-            </div>
-            <div class="col-md-6">
-              <table class="table">
-                <tr>
-                  <td style="vertical-align:middle; border: none;">Total:</td>
-                  <td style="border: none;">
-                    <div class="input-group">
-                      <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
-                      <input type="number" step="0.01" min="0" class="form-control input-sm" id="nuevoPrecioNetoCaja" placeholder="0,00" readonly style="font-size: 18px;">
-                    </div>
-                  </td>
-                </tr>
-                <tr id="filaInteresCaja" style="display:none;">
-                  <td style="vertical-align:middle; border: none;">Interés:</td>
-                  <td style="border: none;">
-                    <div class="row">
-                      <div class="col-xs-6">
-                        <div class="input-group">
-                          <span class="input-group-addon"><b>%</b></span>
-                          <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoInteresCaja" id="nuevoInteresPorcentajeCaja">
-                        </div>
-                      </div>
-                      <div class="col-xs-6">
-                        <div class="input-group">
-                          <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
-                          <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoInteresCaja" id="nuevoInteresPrecioCaja">
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr id="filaDescuentoCaja" style="display:none;">
-                  <td style="vertical-align:middle; border: none;">Descuento:</td>
-                  <td style="border: none;">
-                    <div class="row">
-                      <div class="col-xs-6">
-                        <div class="input-group">
-                          <span class="input-group-addon"><b>%</b></span>
-                          <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoDescuentoCaja" id="nuevoDescuentoPorcentajeCaja">
-                        </div>
-                      </div>
-                      <div class="col-xs-6">
-                        <div class="input-group">
-                          <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
-                          <input type="number" step="0.01" min="0" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoDescuentoCaja" id="nuevoDescuentoPrecioCaja" placeholder="0,00">
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="vertical-align:middle; border: none;"><b>TOTAL:</b></td>
-                  <td style="border: none;">
-                    <div class="input-group">
-                      <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
-                      <input type="number" step="0.01" min="0" style="font-size: 18px; font-weight:bold; text-align:center;" class="form-control input-sm" id="nuevoTotalVentaCaja" total="" placeholder="0,00" readonly required>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="box-footer">
-          <button type="button" id="btnSalirMedioPagoCaja" class="btn btn-default pull-left">Salir (ESC)</button>
-          <button type="button" id="btnCobrarMedioPagoCaja" onClick="this.disabled=true;" class="btn btn-primary">Guardar e imprimir (F8)</button>
-        </div>
-        <div class="box-body" style="display: none; background-color: #f5c5ca" id="divVisualizarObservacionesFactura">
-          <p>No se pudo autorizar el comprobante</p>
-          <span id="impTicketCobroCajaObservacionFact" style="font-size: 12px;"></span>
-        </div>
-      </div>
-    </div>
-  </div>
 
   </section>
 
