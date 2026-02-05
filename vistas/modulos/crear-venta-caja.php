@@ -86,10 +86,7 @@
     .crear-venta-caja #nuevoPrecioNetoCajaForm { font-size: 1.75rem !important; min-height: 48px !important; }
     .crear-venta-caja #seccionCobroVenta .box-body .row [class*="col-"] { width: 100% !important; max-width: 100% !important; }
     .crear-venta-caja #seccionCobroVenta .form-group.row .col-md-12 { width: 100% !important; }
-    .crear-venta-caja #seccionCobroVenta .cajasMetodoPagoCaja { flex-direction: column !important; }
-    .crear-venta-caja #seccionCobroVenta .cajasMetodoPagoCaja > div { min-width: 100% !important; max-width: 100% !important; }
-    .crear-venta-caja #seccionCobroVenta .box-footer { flex-direction: column; }
-    .crear-venta-caja #seccionCobroVenta .box-footer .btn { width: 100% !important; min-width: 0 !important; margin: 2px 0 !important; }
+    .crear-venta-caja #seccionCobroVenta .box-footer .btn { width: 48% !important; margin: 2px 0 !important; }
     .crear-venta-caja .nuevoProductoCaja .row [class*="col-"] { flex: 0 0 100% !important; max-width: 100% !important; }
 }
 @media (max-width: 576px) {
@@ -102,88 +99,13 @@
     .crear-venta-caja .col-md-3, .crear-venta-caja .col-md-6, .crear-venta-caja .col-md-9,
     .crear-venta-caja .col-xs-3, .crear-venta-caja .col-xs-6, .crear-venta-caja .col-xs-9 { width: 100% !important; max-width: 100% !important; }
     .crear-venta-caja #nuevoPrecioNetoCajaForm { font-size: 1.5rem !important; }
-    .crear-venta-caja #seccionCobroVenta .box-footer .btn { width: 100% !important; display: block !important; margin: 6px 0 !important; min-width: 0 !important; }
-    .crear-venta-caja #seccionCobroVenta .box-body .table .input-group { flex-wrap: nowrap; }
+    .crear-venta-caja #seccionCobroVenta .box-footer .btn { width: 100% !important; display: block !important; margin: 6px 0 !important; }
     .crear-venta-caja #btnCobrarMedioPagoCaja { order: 1 !important; }
     .crear-venta-caja #btnSalirMedioPagoCaja { order: 2 !important; }
 }
 /* Touch: evitar hover que quede “pegado” en táctiles */
 @media (hover: none) {
     .crear-venta-caja .btn:active { opacity: 0.9; }
-}
-
-/* ============================================
-   COBRO DE VENTA: alineado y más bonito
-   ============================================ */
-#seccionCobroVenta .box-body {
-    padding: 16px !important;
-}
-#seccionCobroVenta .box-body > .row,
-#seccionCobroVenta .box-body > .form-group.row {
-    margin-left: -8px;
-    margin-right: -8px;
-    align-items: center;
-}
-#seccionCobroVenta .box-body .row + .row,
-#seccionCobroVenta .box-body .form-group.row {
-    margin-top: 12px;
-}
-#seccionCobroVenta .input-group {
-    width: 100%;
-    max-width: 100%;
-}
-#seccionCobroVenta .input-group-addon {
-    min-width: 80px;
-    text-align: center;
-    background-color: #eee !important;
-    border-color: #ddd !important;
-}
-#seccionCobroVenta .form-group.row .input-group .form-control {
-    flex: 1;
-    min-width: 0;
-}
-#seccionCobroVenta .cajasMetodoPagoCaja {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 12px;
-    align-items: flex-start;
-    margin-top: 8px;
-}
-#seccionCobroVenta .cajasMetodoPagoCaja > div {
-    flex: 1 1 auto;
-    min-width: 140px;
-    max-width: 100%;
-}
-#seccionCobroVenta .cajasMetodoPagoCaja .input-group {
-    margin-bottom: 0;
-}
-#seccionCobroVenta .box-body .table {
-    margin-bottom: 0;
-}
-#seccionCobroVenta .box-body .table td {
-    padding: 10px 12px !important;
-    vertical-align: middle !important;
-    border: none !important;
-}
-#seccionCobroVenta .box-body .table td:first-child {
-    width: 1%;
-    white-space: nowrap;
-    padding-right: 12px !important;
-}
-#seccionCobroVenta .box-body .table .input-group-addon {
-    min-width: 36px;
-}
-#seccionCobroVenta .box-footer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 16px !important;
-    border-top: 1px solid #eee !important;
-}
-#seccionCobroVenta .box-footer .btn {
-    min-width: 140px;
 }
 
 /* Evitar scroll horizontal en móvil */
@@ -205,6 +127,36 @@
     .crear-venta-caja #seccionCobroVenta .box-footer { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; justify-content: space-between !important; }
     .crear-venta-caja #seccionCobroVenta .box-footer .btn { min-width: 44px !important; }
 }
+
+/* ============================================
+   MENOS ALTURA: Cobro de venta y total más compactos
+   ============================================ */
+.crear-venta-caja #seccionCobroVenta { margin-top: 8px !important; }
+.crear-venta-caja #seccionCobroVenta .box-header { padding: 6px 12px !important; }
+.crear-venta-caja #seccionCobroVenta .box-header .box-title { font-size: 1rem !important; margin: 0 !important; }
+.crear-venta-caja #seccionCobroVenta .box-body { padding: 8px 12px !important; }
+.crear-venta-caja #seccionCobroVenta .box-body .row { margin-left: -6px !important; margin-right: -6px !important; }
+.crear-venta-caja #seccionCobroVenta .box-body .row.row-cobro-compact,
+.crear-venta-caja #seccionCobroVenta .box-body .row[style*="padding-bottom"] { padding-bottom: 4px !important; margin-bottom: 2px !important; }
+.crear-venta-caja #seccionCobroVenta .box-body .form-group.row { margin-bottom: 6px !important; }
+.crear-venta-caja #seccionCobroVenta .box-body hr { margin: 6px 0 !important; }
+.crear-venta-caja #seccionCobroVenta .input-group-addon,
+.crear-venta-caja #seccionCobroVenta .box-body .form-control,
+.crear-venta-caja #seccionCobroVenta .box-body input,
+.crear-venta-caja #seccionCobroVenta .box-body select { min-height: 38px !important; padding: 6px 10px !important; font-size: 15px !important; }
+.crear-venta-caja #seccionCobroVenta .box-body .table td { padding: 4px 8px !important; }
+.crear-venta-caja #seccionCobroVenta .box-body #nuevoPrecioNetoCaja,
+.crear-venta-caja #seccionCobroVenta .box-body #nuevoTotalVentaCaja { font-size: 1rem !important; min-height: 36px !important; }
+.crear-venta-caja #seccionCobroVenta .box-footer { padding: 8px 12px !important; }
+.crear-venta-caja #seccionCobroVenta .box-footer .btn { padding: 8px 14px !important; font-size: 14px !important; min-height: 38px !important; }
+/* Total grande (derecha): menos altura */
+.crear-venta-caja #nuevoPrecioNetoCajaForm { font-size: 2rem !important; min-height: 48px !important; padding: 8px 12px !important; }
+.crear-venta-caja .col-lg-5 .table.table-bordered th .input-group { margin-bottom: 0 !important; }
+.crear-venta-caja .col-lg-5 .table.table-bordered th .input-group-addon,
+.crear-venta-caja .col-lg-5 .table.table-bordered th .form-control { min-height: 44px !important; padding: 8px 12px !important; }
+/* cajasMetodoPagoCaja y totales visibles (no cortados) */
+.crear-venta-caja #seccionCobroVenta .cajasMetodoPagoCaja { min-height: 0 !important; }
+.crear-venta-caja #seccionCobroVenta .box-body .row .col-md-6 { overflow: visible !important; }
 @media (max-width: 480px) {
     .crear-venta-caja .content { padding: 6px 4px !important; }
     .crear-venta-caja .box-header, .crear-venta-caja #seccionCobroVenta .box-header { padding: 10px 12px !important; font-size: 1rem !important; }
@@ -1472,7 +1424,7 @@ $(document).ready(function() {
 					    <th>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
-                                <input type="number" step="0.01" min="0" class="form-control input-lg" id="nuevoPrecioNetoCajaForm" name="nuevoPrecioNetoCaja" placeholder="0,00" id="nuevoPrecioNetoCajaForm" readonly style="font-size: 50px;text-align: center;">
+                                <input type="number" step="0.01" min="0" class="form-control input-lg" id="nuevoPrecioNetoCajaForm" name="nuevoPrecioNetoCaja" placeholder="0,00" readonly style="font-size: 2rem; text-align: center;">
 			                </div>
 			            </th>
 		            </tr>
@@ -1485,12 +1437,12 @@ $(document).ready(function() {
               <div class="box-header with-border" style="background:#3c8dbc; color:white">
                 <h4 class="box-title">Cobro de venta</h4>
               </div>
-              <div class="box-body">
+              <div class="box-body cobro-venta-compact">
                 <input type="hidden" name="ingresoCajaTipo" id="ingresoCajaTipo" value="1">
-                <div class="row" style="padding-bottom:10px">
-                  <div class="col-md-12"><span id="datosCuentaCorrienteCliente" style="font-size:18px"></span></div>
+                <div class="row row-cobro-compact">
+                  <div class="col-md-12"><span id="datosCuentaCorrienteCliente" style="font-size:1rem"></span></div>
                 </div>
-                <div class="row" style="padding-bottom:10px">
+                <div class="row row-cobro-compact">
                   <div class="col-md-12">
                     <div class="input-group">
                       <span class="input-group-addon" style="background-color: #eee"><b>PAGO</b></span>
