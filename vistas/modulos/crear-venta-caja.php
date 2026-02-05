@@ -45,6 +45,35 @@
     flex: 0 0 42% !important;
     min-width: 360px !important;
     max-width: 42% !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+@media (min-width: 992px) {
+    .crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-5 {
+        min-height: calc(100vh - 130px) !important;
+    }
+    .crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-5 > .box {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: 0 !important;
+    }
+    .crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-5 #seccionCobroVenta {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: 0 !important;
+    }
+    .crear-venta-caja #seccionCobroVenta > .box {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: 0 !important;
+    }
+    .crear-venta-caja .crear-venta-caja-espacio-fondo-derecha {
+        flex: 1 1 auto !important;
+        min-height: 40px !important;
+    }
 }
 @media (max-width: 1200px) {
     .crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-7 { flex: 1 1 50% !important; max-width: 55% !important; }
@@ -403,28 +432,6 @@
 .crear-venta-caja .crear-venta-caja-espacio-fondo {
     flex: 1 1 auto !important;
     min-height: 80px !important;
-}
-/* Columna derecha: que también llegue hasta el fondo */
-@media (min-width: 992px) {
-    .crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-5 .box {
-        display: flex !important;
-        flex-direction: column !important;
-        min-height: calc(100vh - 130px) !important;
-    }
-}
-.crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-5 .box {
-    display: flex !important;
-    flex-direction: column !important;
-}
-.crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-5 .box .box-body {
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    min-height: 0 !important;
-}
-.crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-5 .crear-venta-caja-espacio-fondo {
-    flex: 1 1 auto !important;
-    min-height: 60px !important;
 }
 /* Área productos: crece con el contenido, scroll solo al final (scroll de página) */
 .crear-venta-caja #nuevoProductoCaja {
@@ -1624,15 +1631,8 @@ $(document).ready(function() {
                 <button type="button" id="btnSalirMedioPagoCaja" class="btn btn-default pull-left">Salir (ESC)</button>
                 <button type="button" id="btnCobrarMedioPagoCaja" onClick="this.disabled=true;" class="btn btn-primary">Guardar e imprimir (F8)</button>
               </div>
-              <div class="box-body" style="display: none; background-color: #f5c5ca" id="divVisualizarObservacionesFactura">
-                <p>No se pudo autorizar el comprobante</p>
-                <span id="impTicketCobroCajaObservacionFact" style="font-size: 12px;"></span>
-              </div>
-            </div>
-          </div>
-          <!-- Espaciador derecha: lleva el contenido hasta el fondo -->
-          <div class="crear-venta-caja-espacio-fondo" aria-hidden="true"></div>
-
+              <!-- Espaciador: columna derecha hasta el fondo (mensaje comprobante no aprobado se muestra por swal, no aquí) -->
+              <div class="crear-venta-caja-espacio-fondo-derecha" aria-hidden="true"></div>
             </div>
           </div>
 
@@ -1641,6 +1641,9 @@ $(document).ready(function() {
     </div>
 
   </section>
+
+  <!-- Oculto: mensaje comprobante no aprobado se muestra por swal, no en la pantalla de cobro -->
+  <div id="divVisualizarObservacionesFactura" style="display:none !important; position:absolute; left:-9999px;"><span id="impTicketCobroCajaObservacionFact"></span></div>
 
 </div>
 

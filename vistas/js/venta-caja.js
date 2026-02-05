@@ -2332,14 +2332,7 @@ function guardarVentaCaja(){
 
 				$("#btnCobrarMedioPagoCajaFac").removeAttr('disabled');
 
-				// if(respuesta['factura']['observaciones'] != ""){
-				// 	$("#divVisualizarObservacionesFactura").css('display', '');
-				//  $("#impTicketCobroCajaObservacionFact").text( respuesta['factura']['observaciones']);
-				// }
-
-				$("#divVisualizarObservacionesFactura").css('display', '');
-
-				//if ('observaciones' in respuesta['factura']) {
+				var mesajes = "";
 				if (respuesta.hasOwnProperty('modeloVentas')) {
 					mesajes = 'Error: ' + respuesta['modeloVentas'];
 				}
@@ -2348,19 +2341,21 @@ function guardarVentaCaja(){
 					if (respuesta['factura'].hasOwnProperty('observaciones')) {
 						mesajes = 'Observaciones: ' + respuesta['factura']['observaciones'];
 					}
-
-					// if ('errores' in respuesta['factura']) {
 					if (respuesta['factura'].hasOwnProperty('errores')) {
-						mesajes = mesajes + ' Errores: ' + respuesta['factura']['errores'];	
-					} 
-
-					// if ('eventos' in respuesta['factura']) {
-					if (respuesta['factura'].hasOwnProperty('eventos')) {	
+						mesajes = mesajes + ' Errores: ' + respuesta['factura']['errores'];
+					}
+					if (respuesta['factura'].hasOwnProperty('eventos')) {
 						mesajes = mesajes + ' Eventos: ' + respuesta['factura']['eventos'];
 					}
 				}
 
 				$("#impTicketCobroCajaObservacionFact").text(mesajes);
+				swal({
+					title: "No se pudo autorizar el comprobante",
+					text: mesajes || "Revise los datos e intente de nuevo.",
+					type: "error",
+					confirmButtonText: "Cerrar"
+				});
 
       		}
       	},
@@ -2501,21 +2496,18 @@ $("#btnGuardarPresupuestoCaja").click(function(e){
 
 				$("#btnCobrarMedioPagoCajaFac").removeAttr('disabled');
 				var mesajes = "";
-				$("#divVisualizarObservacionesFactura").css('display', '');
-
-				// if (respuesta['factura'].hasOwnProperty('observaciones')) {
-				// 	mesajes = 'Observaciones: ' + respuesta['factura']['observaciones'];
-				// }
-
-				// if (respuesta['factura'].hasOwnProperty('errores')) {
-				// 	mesajes = mesajes + ' Errores: ' + respuesta['factura']['errores'];	
-				// } 
-
-				// if (respuesta['factura'].hasOwnProperty('eventos')) {	
-				// 	mesajes = mesajes + ' Eventos: ' + respuesta['factura']['eventos'];
-				// }
-
+				if (respuesta.hasOwnProperty('factura')) {
+					if (respuesta['factura'].hasOwnProperty('observaciones')) mesajes = 'Observaciones: ' + respuesta['factura']['observaciones'];
+					if (respuesta['factura'].hasOwnProperty('errores')) mesajes = mesajes + ' Errores: ' + respuesta['factura']['errores'];
+					if (respuesta['factura'].hasOwnProperty('eventos')) mesajes = mesajes + ' Eventos: ' + respuesta['factura']['eventos'];
+				}
 				$("#impTicketCobroCajaObservacionFact").text(mesajes);
+				swal({
+					title: "No se pudo autorizar el comprobante",
+					text: mesajes || "Revise los datos e intente de nuevo.",
+					type: "error",
+					confirmButtonText: "Cerrar"
+				});
 
       		}
       	},
