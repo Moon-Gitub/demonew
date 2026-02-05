@@ -86,7 +86,10 @@
     .crear-venta-caja #nuevoPrecioNetoCajaForm { font-size: 1.75rem !important; min-height: 48px !important; }
     .crear-venta-caja #seccionCobroVenta .box-body .row [class*="col-"] { width: 100% !important; max-width: 100% !important; }
     .crear-venta-caja #seccionCobroVenta .form-group.row .col-md-12 { width: 100% !important; }
-    .crear-venta-caja #seccionCobroVenta .box-footer .btn { width: 48% !important; margin: 2px 0 !important; }
+    .crear-venta-caja #seccionCobroVenta .cajasMetodoPagoCaja { flex-direction: column !important; }
+    .crear-venta-caja #seccionCobroVenta .cajasMetodoPagoCaja > div { min-width: 100% !important; max-width: 100% !important; }
+    .crear-venta-caja #seccionCobroVenta .box-footer { flex-direction: column; }
+    .crear-venta-caja #seccionCobroVenta .box-footer .btn { width: 100% !important; min-width: 0 !important; margin: 2px 0 !important; }
     .crear-venta-caja .nuevoProductoCaja .row [class*="col-"] { flex: 0 0 100% !important; max-width: 100% !important; }
 }
 @media (max-width: 576px) {
@@ -99,13 +102,88 @@
     .crear-venta-caja .col-md-3, .crear-venta-caja .col-md-6, .crear-venta-caja .col-md-9,
     .crear-venta-caja .col-xs-3, .crear-venta-caja .col-xs-6, .crear-venta-caja .col-xs-9 { width: 100% !important; max-width: 100% !important; }
     .crear-venta-caja #nuevoPrecioNetoCajaForm { font-size: 1.5rem !important; }
-    .crear-venta-caja #seccionCobroVenta .box-footer .btn { width: 100% !important; display: block !important; margin: 6px 0 !important; }
+    .crear-venta-caja #seccionCobroVenta .box-footer .btn { width: 100% !important; display: block !important; margin: 6px 0 !important; min-width: 0 !important; }
+    .crear-venta-caja #seccionCobroVenta .box-body .table .input-group { flex-wrap: nowrap; }
     .crear-venta-caja #btnCobrarMedioPagoCaja { order: 1 !important; }
     .crear-venta-caja #btnSalirMedioPagoCaja { order: 2 !important; }
 }
 /* Touch: evitar hover que quede “pegado” en táctiles */
 @media (hover: none) {
     .crear-venta-caja .btn:active { opacity: 0.9; }
+}
+
+/* ============================================
+   COBRO DE VENTA: alineado y más bonito
+   ============================================ */
+#seccionCobroVenta .box-body {
+    padding: 16px !important;
+}
+#seccionCobroVenta .box-body > .row,
+#seccionCobroVenta .box-body > .form-group.row {
+    margin-left: -8px;
+    margin-right: -8px;
+    align-items: center;
+}
+#seccionCobroVenta .box-body .row + .row,
+#seccionCobroVenta .box-body .form-group.row {
+    margin-top: 12px;
+}
+#seccionCobroVenta .input-group {
+    width: 100%;
+    max-width: 100%;
+}
+#seccionCobroVenta .input-group-addon {
+    min-width: 80px;
+    text-align: center;
+    background-color: #eee !important;
+    border-color: #ddd !important;
+}
+#seccionCobroVenta .form-group.row .input-group .form-control {
+    flex: 1;
+    min-width: 0;
+}
+#seccionCobroVenta .cajasMetodoPagoCaja {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 12px;
+    align-items: flex-start;
+    margin-top: 8px;
+}
+#seccionCobroVenta .cajasMetodoPagoCaja > div {
+    flex: 1 1 auto;
+    min-width: 140px;
+    max-width: 100%;
+}
+#seccionCobroVenta .cajasMetodoPagoCaja .input-group {
+    margin-bottom: 0;
+}
+#seccionCobroVenta .box-body .table {
+    margin-bottom: 0;
+}
+#seccionCobroVenta .box-body .table td {
+    padding: 10px 12px !important;
+    vertical-align: middle !important;
+    border: none !important;
+}
+#seccionCobroVenta .box-body .table td:first-child {
+    width: 1%;
+    white-space: nowrap;
+    padding-right: 12px !important;
+}
+#seccionCobroVenta .box-body .table .input-group-addon {
+    min-width: 36px;
+}
+#seccionCobroVenta .box-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px !important;
+    border-top: 1px solid #eee !important;
+}
+#seccionCobroVenta .box-footer .btn {
+    min-width: 140px;
 }
 
 /* Evitar scroll horizontal en móvil */
@@ -447,90 +525,6 @@
     border-radius: 8px !important;
     padding: 12px 15px !important;
     min-height: 48px !important;
-}
-
-/* ========== Sección Cobro de venta: alineación y aspecto ========== */
-#seccionCobroVenta .box-body {
-    padding: 16px 18px !important;
-}
-#seccionCobroVenta .row {
-    margin-left: -8px;
-    margin-right: -8px;
-}
-#seccionCobroVenta .row > [class*="col-"] {
-    padding-left: 8px;
-    padding-right: 8px;
-}
-#seccionCobroVenta .form-group.row {
-    align-items: flex-start;
-    margin-bottom: 12px !important;
-}
-/* PAGO: misma altura y alineación */
-#seccionCobroVenta .input-group {
-    display: flex !important;
-    align-items: stretch;
-}
-#seccionCobroVenta .input-group-addon {
-    min-width: 90px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
-    border: 2px solid #e0e0e0 !important;
-    border-radius: 8px 0 0 8px !important;
-    font-weight: 600 !important;
-    padding: 10px 12px !important;
-}
-#seccionCobroVenta .input-group .form-control {
-    border-radius: 0 8px 8px 0 !important;
-    border: 2px solid #e0e0e0 !important;
-    border-left: none !important;
-    padding: 10px 12px !important;
-    min-height: 42px !important;
-}
-#seccionCobroVenta #nuevoValorEntrega {
-    font-size: 1.05rem !important;
-    font-weight: 600 !important;
-    text-align: center !important;
-}
-/* Fila Entrega / Vuelto: igual ancho y alineada */
-#seccionCobroVenta .cajasMetodoPagoCaja {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 0 10px;
-    align-items: stretch;
-}
-#seccionCobroVenta .cajasMetodoPagoCaja > div {
-    flex: 1 1 0;
-    min-width: 0;
-}
-#seccionCobroVenta .cajasMetodoPagoCaja .input-group {
-    width: 100% !important;
-}
-#seccionCobroVenta .cajasMetodoPagoCaja .input-group-addon {
-    min-width: 75px;
-}
-/* Botón + y select medio de pago alineados */
-#seccionCobroVenta #agregarMedioPago {
-    border-radius: 8px 0 0 8px !important;
-    padding: 10px 14px !important;
-    min-height: 42px !important;
-}
-#seccionCobroVenta #nuevoMetodoPagoCaja {
-    border-radius: 0 8px 8px 0 !important;
-    min-height: 42px !important;
-}
-#seccionCobroVenta hr {
-    margin: 14px 0 !important;
-}
-#seccionCobroVenta .box-footer {
-    padding: 12px 18px !important;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
 }
 
 #modalCobrarVenta .input-group-addon[style*="background-color: #eee"] {
