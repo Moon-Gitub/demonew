@@ -159,6 +159,19 @@
 .crear-venta-caja .contenido-cobro-inline .input-group-unificado .btn { min-height: 40px !important; padding: 8px 12px !important; }
 .crear-venta-caja .contenido-cobro-inline .table-totales-inline td { padding: 4px 8px !important; border: none !important; vertical-align: middle !important; }
 .crear-venta-caja .contenido-cobro-inline .table-totales-inline .input-group-sm .form-control { min-height: 34px !important; font-size: 14px !important; }
+/* Alinear filas Descuento e Interés: label e inputs % y $ en la misma línea base */
+.crear-venta-caja .contenido-cobro-inline .table-totales-inline #filaDescuentoCaja td,
+.crear-venta-caja .contenido-cobro-inline .table-totales-inline #filaInteresCaja td { vertical-align: middle !important; }
+.crear-venta-caja .contenido-cobro-inline .table-totales-inline #filaDescuentoCaja .row,
+.crear-venta-caja .contenido-cobro-inline .table-totales-inline #filaInteresCaja .row { display: flex !important; align-items: stretch !important; margin-left: -5px !important; margin-right: -5px !important; }
+.crear-venta-caja .contenido-cobro-inline .table-totales-inline #filaDescuentoCaja .row > [class*="col-"],
+.crear-venta-caja .contenido-cobro-inline .table-totales-inline #filaInteresCaja .row > [class*="col-"] { display: flex !important; padding-left: 5px !important; padding-right: 5px !important; }
+.crear-venta-caja .contenido-cobro-inline .table-totales-inline #filaDescuentoCaja .input-group-sm,
+.crear-venta-caja .contenido-cobro-inline .table-totales-inline #filaInteresCaja .input-group-sm { min-height: 38px !important; display: flex !important; align-items: stretch !important; width: 100% !important; }
+.crear-venta-caja .contenido-cobro-inline .table-totales-inline #filaDescuentoCaja .input-group-addon,
+.crear-venta-caja .contenido-cobro-inline .table-totales-inline #filaDescuentoCaja .input-group-sm .form-control,
+.crear-venta-caja .contenido-cobro-inline .table-totales-inline #filaInteresCaja .input-group-addon,
+.crear-venta-caja .contenido-cobro-inline .table-totales-inline #filaInteresCaja .input-group-sm .form-control { min-height: 38px !important; padding: 8px 10px !important; font-size: 14px !important; }
 .crear-venta-caja .contenido-cobro-inline .cajasMetodoPagoCaja { min-height: 0 !important; }
 /* Alinear en todos los medios de pago: misma altura y línea base (Entrega/Vuelto, Cheque, etc.) */
 .crear-venta-caja .contenido-cobro-inline .row.form-group-row-unificado {
