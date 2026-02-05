@@ -57,6 +57,83 @@
 }
 
 /* ============================================
+   RESPONSIVE MÓVIL (celu / tablet chica)
+   ============================================ */
+.crear-venta-caja .content {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+}
+@media (max-width: 767px) {
+    .crear-venta-caja .content { padding: 8px 6px !important; }
+    .crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-7,
+    .crear-venta-caja .content .row.crear-venta-caja-fila > .col-lg-5 {
+        width: 100% !important;
+        padding-left: 6px !important;
+        padding-right: 6px !important;
+    }
+    .crear-venta-caja .box { margin-bottom: 12px !important; }
+    .crear-venta-caja .table td, .crear-venta-caja .table th { padding: 8px 6px !important; font-size: 14px !important; }
+    .crear-venta-caja .input-group-addon,
+    .crear-venta-caja .form-control,
+    .crear-venta-caja input[type="text"],
+    .crear-venta-caja input[type="number"],
+    .crear-venta-caja select.form-control {
+        min-height: 44px !important;
+        padding: 10px 12px !important;
+        font-size: 16px !important; /* evita zoom en iOS al enfocar */
+    }
+    .crear-venta-caja .btn { min-height: 44px !important; padding: 12px 16px !important; font-size: 16px !important; }
+    .crear-venta-caja #nuevoPrecioNetoCajaForm { font-size: 1.75rem !important; min-height: 48px !important; }
+    .crear-venta-caja #seccionCobroVenta .box-body .row [class*="col-"] { width: 100% !important; max-width: 100% !important; }
+    .crear-venta-caja #seccionCobroVenta .form-group.row .col-md-12 { width: 100% !important; }
+    .crear-venta-caja #seccionCobroVenta .box-footer .btn { width: 48% !important; margin: 2px 0 !important; }
+    .crear-venta-caja .nuevoProductoCaja .row [class*="col-"] { flex: 0 0 100% !important; max-width: 100% !important; }
+}
+@media (max-width: 576px) {
+    .crear-venta-caja .content { padding: 6px 4px !important; }
+    .crear-venta-caja .table { font-size: 13px !important; }
+    .crear-venta-caja .table td, .crear-venta-caja .table th { padding: 6px 4px !important; white-space: normal !important; word-break: break-word; }
+    .crear-venta-caja .input-group { flex-wrap: wrap !important; }
+    .crear-venta-caja .input-group .form-control { border-radius: 8px !important; border-left: 2px solid #e0e0e0 !important; }
+    .crear-venta-caja .input-group-addon { border-radius: 8px !important; margin-bottom: 4px; width: 100% !important; text-align: left !important; }
+    .crear-venta-caja .col-md-3, .crear-venta-caja .col-md-6, .crear-venta-caja .col-md-9,
+    .crear-venta-caja .col-xs-3, .crear-venta-caja .col-xs-6, .crear-venta-caja .col-xs-9 { width: 100% !important; max-width: 100% !important; }
+    .crear-venta-caja #nuevoPrecioNetoCajaForm { font-size: 1.5rem !important; }
+    .crear-venta-caja #seccionCobroVenta .box-footer .btn { width: 100% !important; display: block !important; margin: 6px 0 !important; }
+    .crear-venta-caja #btnCobrarMedioPagoCaja { order: 1 !important; }
+    .crear-venta-caja #btnSalirMedioPagoCaja { order: 2 !important; }
+}
+/* Touch: evitar hover que quede “pegado” en táctiles */
+@media (hover: none) {
+    .crear-venta-caja .btn:active { opacity: 0.9; }
+}
+
+/* Evitar scroll horizontal en móvil */
+.crear-venta-caja.content-wrapper { overflow-x: hidden !important; }
+.crear-venta-caja .content { overflow-x: hidden !important; max-width: 100vw; }
+.crear-venta-caja .row.crear-venta-caja-fila { overflow-x: hidden !important; }
+
+/* Safe area para móviles con muesca */
+@supports (padding: max(0px)) {
+    @media (max-width: 767px) {
+        .crear-venta-caja .content { padding-left: max(8px, env(safe-area-inset-left)) !important; padding-right: max(8px, env(safe-area-inset-right)) !important; padding-bottom: max(12px, env(safe-area-inset-bottom)) !important; }
+    }
+}
+
+/* Móvil: lista productos y cobro adaptados */
+@media (max-width: 767px) {
+    .crear-venta-caja #nuevoProductoCaja { min-height: 120px !important; max-height: 220px !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
+    .crear-venta-caja #seccionCobroVenta .box-body .row > [class*="col-md-6"] { width: 100% !important; max-width: 100% !important; flex: 0 0 100% !important; }
+    .crear-venta-caja #seccionCobroVenta .box-footer { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; justify-content: space-between !important; }
+    .crear-venta-caja #seccionCobroVenta .box-footer .btn { min-width: 44px !important; }
+}
+@media (max-width: 480px) {
+    .crear-venta-caja .content { padding: 6px 4px !important; }
+    .crear-venta-caja .box-header, .crear-venta-caja #seccionCobroVenta .box-header { padding: 10px 12px !important; font-size: 1rem !important; }
+    .crear-venta-caja #seccionCobroVenta .box-footer .btn { width: 100% !important; }
+}
+
+/* ============================================
    ESTILOS MODERNOS PARA CREAR VENTA CAJA
    Solo cambios visuales - Sin tocar funcionalidad
    Responsive y mejorado
@@ -281,50 +358,27 @@
     padding: 50px 20px;
 }
 
-/* Responsive - Mobile */
+/* Responsive - Tablet y móvil (columnas apiladas) */
 @media (max-width: 991px) {
     .crear-venta-caja .col-lg-7,
     .crear-venta-caja .col-lg-5 {
         width: 100% !important;
-        margin-bottom: 20px;
+        margin-bottom: 16px;
     }
-    
     .crear-venta-caja .table {
         display: block;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        max-width: 100%;
     }
-    
     .crear-venta-caja .table td,
     .crear-venta-caja .table th {
-        white-space: nowrap;
-        min-width: 120px;
+        min-width: 80px;
     }
-    
-    .crear-venta-caja .input-group {
-        margin-bottom: 10px;
-    }
-    
+    .crear-venta-caja .input-group { margin-bottom: 10px; }
     .crear-venta-caja .col-md-3,
-    .crear-venta-caja .col-md-9 {
-        width: 100% !important;
-        margin-bottom: 10px;
-    }
-    
-    .crear-venta-caja #nuevoPrecioNetoCajaForm {
-        font-size: 36px !important;
-    }
-}
-
-/* Responsive - Tablet */
-@media (min-width: 768px) and (max-width: 991px) {
-    .crear-venta-caja .col-lg-7 {
-        width: 100% !important;
-    }
-    
-    .crear-venta-caja .col-lg-5 {
-        width: 100% !important;
-    }
+    .crear-venta-caja .col-md-9 { margin-bottom: 10px; }
+    .crear-venta-caja #nuevoPrecioNetoCajaForm { font-size: 2rem !important; }
 }
 
 /* Mejorar modales */
@@ -1347,12 +1401,8 @@ $(document).ready(function() {
 	            </table>
           
 
-          <div class="box-footer">
-            <center><button type="submit" class="btn btn-primary" id="btnGuardarVentaCaja">Cobrar (F7)</button></center>
-          </div>
-
-          <!-- Sección Cobro de venta (Bloque 3): visible al pulsar F7, se actualiza como el modal -->
-          <div id="seccionCobroVenta" style="display:none; margin-top:12px;">
+          <!-- Sección Cobro de venta (Bloque 3): siempre visible; acción principal Guardar e imprimir (F8) -->
+          <div id="seccionCobroVenta" style="margin-top:12px;">
             <div class="box" style="border-top: 3px solid #3c8dbc;">
               <div class="box-header with-border" style="background:#3c8dbc; color:white">
                 <h4 class="box-title">Cobro de venta</h4>

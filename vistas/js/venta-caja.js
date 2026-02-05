@@ -151,6 +151,10 @@ function sumarTotalPreciosCaja(){
 	$("#nuevoTotalVentaCaja").attr("total",sumaTotalPrecioCaja);
 	//$("#totalVentaMetodoPagoCaja").val(sumaTotalPrecioCaja); //////???
 	$("#nuevoPrecioNetoCajaForm").val(sumaTotalPrecioCaja);
+	// Mantener PAGO en sync con el total (sección cobro siempre visible)
+	if ($("#nuevoValorEntrega").length) {
+		$("#nuevoValorEntrega").val(sumaTotalPrecioCaja);
+	}
 
 	// CALCULO Y SEPARO TIPOS DE IVA
 	var calculoIva = $(".nuevoTipoIvaValorProducto");
@@ -540,9 +544,12 @@ function cambiarMetodoPagoCaja(valorMetodo){
 		if($("#seleccionarCliente").val()==1){
 			swal({
 			      title: "Ventas",
-			      text: "Debe seleccionar cliente",
+			      text: "Para pagar con Cuenta Corriente debe seleccionar un cliente con cuenta. Busque y elija el cliente en el campo de arriba.",
 			      type: "error",
 			      confirmButtonText: "¡Cerrar!"
+			    }, function() {
+			      // Llevar el foco al campo de cliente para corregir rápido
+			      $("#autocompletarClienteCaja").focus();
 			    });
 			$("#nuevoMetodoPagoCaja").prop("selectedIndex", 0);
 			return false;
@@ -1889,74 +1896,38 @@ function datosCliente(valor){
 	});
 }
 
-$("#btnGuardarVentaCaja").click(function(e){
-
-	e.preventDefault(); //Esta linea anula el submit para que no llame al controlador
-	if($("#nuevoPrecioNetoCajaForm").val() != 0){ //si es cero no hace nada
-	    
-	    if(Number($("#seleccionarCliente").val()) != 1){
-	        var datosClienteCtaCte = new FormData();
-	        datosClienteCtaCte.append("idClienteCtaCte", Number($("#seleccionarCliente").val()));
-	        
-	        $.ajax({
-             	url:"ajax/clientes_cta_cte.ajax.php",
-              	method: "POST",
-              	data: datosClienteCtaCte,
-              	cache: false,
-              	contentType: false,
-              	processData: false,
-              	dataType:"json",
-              	success:function(respuesta){
-                    $("#datosCuentaCorrienteCliente").html('<a href="index.php?ruta=clientes_cuenta&id_cliente='+$("#seleccionarCliente").val()+'" target="_blank"><i class="fa fa-book"></i></a>  ' + $("#autocompletarClienteCaja").val() + '<br>Estado Cta Cte: <b>$ ' + respuesta["saldo"] + '</b>');
-              	},
-        		error: function(xhr, status, error) {
-        		  
-        			console.log( xhr.responseText);
-        			console.log( xhr);
-        			console.log( status);
-        			console.log( error);
-        
-        			swal({
-        			      title: "Ventas",
-        			      text: "Error (500 - descripcion en consola)",
-        			      type: "error",
-        				  toast: true,
-        				  position: 'top',
-        				  showConfirmButton: false,
-        				  timer: 3000
-        				});
-        		  
-        		}
-            });
-	    }
-	
-	
-		// Mostrar sección de cobro abajo (centrada), no modal
-		$("#seccionCobroVenta").show();
-		// Por defecto: Efectivo (EF) si existe en el select, sino primera opción
-		if ($("#nuevoMetodoPagoCaja option[value='EF']").length) {
-			$("#nuevoMetodoPagoCaja").val("EF");
-		} else {
-			$("#nuevoMetodoPagoCaja").prop("selectedIndex", 1);
-		}
-		$("#nuevoMetodoPagoCaja").change();
-		$("#nuevoValorEntrega").val($("#nuevoTotalVentaCaja").val());
-		// Scroll suave a la sección de cobro
-		$("html, body").animate({ scrollTop: $("#seccionCobroVenta").offset().top - 20 }, 300);
-		$("#nuevoMetodoPagoCaja").focus();
+/* Inicializar sección de cobro (siempre visible): medio por defecto y PAGO = total */
+function initSeccionCobroVentaCaja() {
+	if (!$("#seccionCobroVenta").length) return;
+	if ($("#nuevoMetodoPagoCaja option[value='EF']").length) {
+		$("#nuevoMetodoPagoCaja").val("EF");
 	} else {
-	    swal({
-	      title: "Ventas",
-	      text: "Importe es igual a cero",
-	      type: "error",
-		  toast: true,
-		  position: 'top',
-		  showConfirmButton: false,
-		  timer: 3000
-		});
-		return;
+		$("#nuevoMetodoPagoCaja").prop("selectedIndex", 1);
 	}
+	$("#nuevoMetodoPagoCaja").change();
+	var total = $("#nuevoTotalVentaCaja").val() || $("#nuevoPrecioNetoCajaForm").val() || "0";
+	$("#nuevoValorEntrega").val(total);
+	// Cargar estado Cta Cte si hay cliente seleccionado (no Consumidor Final)
+	if (Number($("#seleccionarCliente").val()) !== 1) {
+		var datosClienteCtaCte = new FormData();
+		datosClienteCtaCte.append("idClienteCtaCte", Number($("#seleccionarCliente").val()));
+		$.ajax({
+			url: "ajax/clientes_cta_cte.ajax.php",
+			method: "POST",
+			data: datosClienteCtaCte,
+			cache: false,
+			contentType: false,
+			processData: false,
+			dataType: "json",
+			success: function(respuesta) {
+				$("#datosCuentaCorrienteCliente").html('<a href="index.php?ruta=clientes_cuenta&id_cliente=' + $("#seleccionarCliente").val() + '" target="_blank"><i class="fa fa-book"></i></a>  ' + $("#autocompletarClienteCaja").val() + '<br>Estado Cta Cte: <b>$ ' + respuesta["saldo"] + '</b>');
+			}
+		});
+	}
+}
 
+$(function() {
+	if ($("#seccionCobroVenta").length) initSeccionCobroVentaCaja();
 });
 
 function PadLeft(value, length) {
@@ -2127,7 +2098,6 @@ function guardarVentaCaja(){
 				  timer: 3000
 				});;
 
-	      		$("#seccionCobroVenta").hide();
 	      		var jsonProductos = JSON.parse($("#listaProductosCaja").val());
 	      		var subto = 0;
 	            for(var i = 0; i < jsonProductos.length; i++){
@@ -2481,8 +2451,6 @@ $("#btnGuardarPresupuestoCaja").click(function(e){
 				  timer: 3000
 				});;
 
-	      		$("#seccionCobroVenta").hide();
-
 	      		var jsonProductos = JSON.parse($("#listaProductosCaja").val());
 
 	            for(var i = 0; i < jsonProductos.length; i++){
@@ -2577,11 +2545,8 @@ $("#btnGuardarPresupuestoCaja").click(function(e){
 $("#btnSalirMedioPagoCaja").click(function(){
 	$("#btnCobrarMedioPagoCaja").removeAttr('disabled');
 	$("div.nuevoProductoCaja .descuentoPorTipoCliente").remove();
-	// Cerrar sección de cobro (ya no usamos modal) y volver al buscador de productos
-	if ($("#seccionCobroVenta").length) {
-		$("#seccionCobroVenta").hide();
-		$("#ventaCajaDetalle").focus();
-	}
+	// Sección cobro siempre visible: solo volver al buscador de productos
+	$("#ventaCajaDetalle").focus();
 });
 
 $("#btnImprimirTicketControl").click(function(){
@@ -3040,13 +3005,13 @@ function atajoModalVentaCaja(e) {
     
     //console.log(e.keyCode)
 
-    if (e.keyCode == 118) { // Atajo para abrir modal de Guardar Venta--->F7
-        
-        $("#btnGuardarVentaCaja").click();
-
+    if (e.keyCode == 118) { // F7: ir a la sección de cobro (siempre visible; acción principal es F8)
+        if ($("#seccionCobroVenta").length) {
+            $("#nuevoMetodoPagoCaja").focus();
+        }
     }
     
-    if (($('#seccionCobroVenta').length && $('#seccionCobroVenta').is(':visible')) && e.keyCode == 119){ //atajo para guardar venta F8
+    if ($('#seccionCobroVenta').length && e.keyCode == 119){ // F8: guardar e imprimir
 
         $("#btnCobrarMedioPagoCaja").click();
     
@@ -3060,9 +3025,8 @@ function atajoModalVentaCaja(e) {
         window.location = 'crear-venta-caja';
     }
 
-    if ($('#seccionCobroVenta').length && $('#seccionCobroVenta').is(':visible') && e.keyCode == 27) {//atajo ESC: cerrar sección cobro
-    
-        $("#btnSalirMedioPagoCaja").click();
+    if ($('#seccionCobroVenta').length && e.keyCode == 27) {// ESC: salir de sección cobro (focus a productos)
+        $("#ventaCajaDetalle").focus();
     }
     
     if ($('#modalImprimirTicketCaja').hasClass('in')===true && e.keyCode == 27) {//atajo para salir sin imprimir ticket
@@ -3072,7 +3036,7 @@ function atajoModalVentaCaja(e) {
         window.location = 'crear-venta-caja';
     }
     
-    if ($('#seccionCobroVenta').length && $('#seccionCobroVenta').is(':visible') && e.ctrlKey && e.keyCode == 77  ) { //CTRL + M cambio medios de pago
+    if ($('#seccionCobroVenta').length && e.ctrlKey && e.keyCode == 77  ) { // CTRL+M cambio medios de pago
     
         var medios = $("#nuevoMetodoPagoCaja option").length;
         var indice = $("#nuevoMetodoPagoCaja").prop('selectedIndex');
@@ -3866,10 +3830,10 @@ if (window.location.href.includes('crear-venta-caja')) {
 			return false;
 		}
 		
-		// F7: Cobrar (ya existe, pero asegurarse de que funcione)
+		// F7: ir a sección de cobro (siempre visible; acción principal F8)
 		if (e.keyCode === 118) { // F7
 			e.preventDefault();
-			$("#btnGuardarVentaCaja").click();
+			if ($("#nuevoMetodoPagoCaja").length) $("#nuevoMetodoPagoCaja").focus();
 			return false;
 		}
 		
@@ -3996,10 +3960,10 @@ if (window.location.href.includes('crear-venta-caja')) {
 		return false;
 	}
 	
-	// F7: Cobrar (ya existe, pero asegurarse de que funcione siempre)
+	// F7: ir a sección de cobro (siempre visible; acción principal F8)
 	if (e.keyCode === 118) { // F7
 		e.preventDefault();
-		$("#btnGuardarVentaCaja").click();
+		if ($("#nuevoMetodoPagoCaja").length) $("#nuevoMetodoPagoCaja").focus();
 		return false;
 	}
 	
@@ -4082,7 +4046,7 @@ $(document).ready(function() {
 	
 	// Asegurar que los botones sean accesibles con Tab
 	$("button.quitarProductoCaja").attr("tabindex", "0");
-	$("#btnGuardarVentaCaja").attr("tabindex", "0");
+	if ($("#btnGuardarVentaCaja").length) $("#btnGuardarVentaCaja").attr("tabindex", "0");
 	
 	// Asegurar que los selects sean accesibles
 	$("#radioPrecio, #nuevotipoCbte, #nuevaPtoVta, #nuevaConcepto").attr("tabindex", "0");
