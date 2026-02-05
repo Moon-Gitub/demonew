@@ -160,6 +160,29 @@
 .crear-venta-caja .contenido-cobro-inline .table-totales-inline td { padding: 4px 8px !important; border: none !important; vertical-align: middle !important; }
 .crear-venta-caja .contenido-cobro-inline .table-totales-inline .input-group-sm .form-control { min-height: 34px !important; font-size: 14px !important; }
 .crear-venta-caja .contenido-cobro-inline .cajasMetodoPagoCaja { min-height: 0 !important; }
+/* Alinear en todos los medios de pago: misma altura y línea base (Entrega/Vuelto, Cheque, etc.) */
+.crear-venta-caja .contenido-cobro-inline .row.form-group-row-unificado {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: flex-end !important;
+}
+.crear-venta-caja .contenido-cobro-inline .cajasMetodoPagoCaja {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: flex-end !important;
+    gap: 8px 12px !important;
+}
+.crear-venta-caja .contenido-cobro-inline .cajasMetodoPagoCaja .input-group,
+.crear-venta-caja .contenido-cobro-inline .cajasMetodoPagoCaja .input-group-addon,
+.crear-venta-caja .contenido-cobro-inline .cajasMetodoPagoCaja .form-control {
+    min-height: 40px !important;
+    padding: 8px 12px !important;
+    font-size: 15px !important;
+}
+.crear-venta-caja .contenido-cobro-inline .cajasMetodoPagoCaja > [class*="col-"] {
+    flex: 0 0 auto !important;
+    max-width: none !important;
+}
 .crear-venta-caja .box-footer-unificado { padding: 10px 15px !important; margin-top: 4px !important; border-top: 1px solid #e0e0e0 !important; }
 .crear-venta-caja .box-footer-unificado .btn { font-size: 16px !important; padding: 12px 20px !important; min-height: 48px !important; }
 /* Ocultar total duplicado: solo se usa el total de arriba */
