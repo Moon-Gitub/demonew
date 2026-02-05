@@ -176,7 +176,9 @@
 .crear-venta-caja #seccionCobroVenta .box-body .table td { padding: 4px 8px !important; }
 .crear-venta-caja #seccionCobroVenta .box-body #nuevoPrecioNetoCaja,
 .crear-venta-caja #seccionCobroVenta .box-body #nuevoTotalVentaCaja { font-size: 1rem !important; min-height: 36px !important; }
-.crear-venta-caja #seccionCobroVenta .box-footer { padding: 8px 12px !important; }
+/* Casi pegado: poco espacio entre Descuento y botones Salir / Guardar e imprimir */
+.crear-venta-caja #seccionCobroVenta .box-body { padding-bottom: 4px !important; }
+.crear-venta-caja #seccionCobroVenta .box-footer { padding: 4px 12px 8px !important; margin-top: 0 !important; border-top-width: 1px !important; }
 .crear-venta-caja #seccionCobroVenta .box-footer .btn { padding: 8px 14px !important; font-size: 14px !important; min-height: 38px !important; }
 /* Ocultar total duplicado en Cobro: solo se usa el total de arriba */
 .crear-venta-caja .total-cobro-oculto { display: none !important; }
