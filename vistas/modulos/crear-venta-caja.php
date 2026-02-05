@@ -837,136 +837,6 @@
     padding: 15px 40px !important;
     min-width: 200px;
 }
-
-/* ============================================
-   PANTALLA COMPLETA SIN SCROLL DE PÁGINA
-   Todo cabe en viewport; solo scroll interno donde haga falta
-   ============================================ */
-.crear-venta-caja.content-wrapper {
-    height: 100vh !important;
-    min-height: 100vh !important;
-    max-height: 100vh !important;
-    overflow: hidden !important;
-    padding-bottom: 0 !important;
-}
-.crear-venta-caja .content {
-    height: calc(100vh - 50px) !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-    padding: 8px 12px !important;
-}
-.crear-venta-caja .content .row {
-    height: 100% !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-wrap: nowrap !important;
-}
-.crear-venta-caja .content .row > .col-lg-7,
-.crear-venta-caja .content .row > .col-lg-5 {
-    display: flex !important;
-    flex-direction: column !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-}
-.crear-venta-caja .content .row > .col-lg-7 .box,
-.crear-venta-caja .content .row > .col-lg-5 .box {
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-}
-/* Columna izquierda: solo el box-body hace scroll (lista de productos) */
-.crear-venta-caja .content .row > .col-lg-7 .box .box-body {
-    flex: 1 !important;
-    min-height: 0 !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-}
-/* Columna derecha: box-body sin scroll; el cuadrado de cobro abajo tiene scroll interno */
-.crear-venta-caja .content .row > .col-lg-5 .box .box-body {
-    flex: 1 !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-.crear-venta-caja .content .row > .col-lg-5 .box .box-body > .box-footer {
-    flex-shrink: 0 !important;
-}
-/* Base font más grande en toda la pantalla */
-.crear-venta-caja {
-    font-size: 16px !important;
-}
-.crear-venta-caja .form-control,
-.crear-venta-caja input[type="text"],
-.crear-venta-caja input[type="number"],
-.crear-venta-caja select.form-control {
-    font-size: 16px !important;
-    min-height: 44px !important;
-    padding: 10px 14px !important;
-}
-.crear-venta-caja .input-group-addon {
-    font-size: 15px !important;
-    padding: 10px 14px !important;
-    min-height: 44px !important;
-}
-.crear-venta-caja .control-label,
-.crear-venta-caja .table th,
-.crear-venta-caja center {
-    font-size: 16px !important;
-}
-.crear-venta-caja #nuevoPrecioNetoCajaForm {
-    font-size: 2.2rem !important;
-    min-height: 56px !important;
-}
-/* Panel de cobro integrado - cuadrado abajo a la derecha, sin hacer scroll la página */
-#panelCobroIntegrado {
-    margin-top: 8px;
-    padding: 10px 12px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    flex: 1 !important;
-    min-height: 0 !important;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto !important;
-    overflow-x: hidden;
-}
-#panelCobroIntegrado .panel-cobro-titulo {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #3c8dbc;
-    margin-bottom: 10px;
-    padding-bottom: 6px;
-    border-bottom: 2px solid #3c8dbc;
-}
-#panelCobroIntegrado .form-control,
-#panelCobroIntegrado input,
-#panelCobroIntegrado select {
-    font-size: 16px !important;
-    min-height: 44px !important;
-}
-#panelCobroIntegrado #nuevoPrecioNetoCaja,
-#panelCobroIntegrado #nuevoTotalVentaCaja {
-    font-size: 1.25rem !important;
-    font-weight: 700 !important;
-}
-#panelCobroIntegrado #datosCuentaCorrienteCliente {
-    font-size: 1rem !important;
-}
-#panelCobroIntegrado .btn {
-    font-size: 16px !important;
-    padding: 12px 20px !important;
-}
-@media (max-width: 991px) {
-    .crear-venta-caja.content-wrapper { height: auto !important; min-height: 100vh !important; max-height: none !important; overflow: visible !important; }
-    .crear-venta-caja .content { height: auto !important; overflow: visible !important; }
-    .crear-venta-caja .content .row { height: auto !important; flex-wrap: wrap !important; }
-    #panelCobroIntegrado { flex: none !important; min-height: 200px !important; }
-}
 </style>
 <div class="content-wrapper crear-venta-caja">
   <section class="content">
@@ -1446,148 +1316,12 @@ $(document).ready(function() {
 			            </th>
 		            </tr>
 	            </table>
-
-          <!-- Panel de cobro integrado (mismo contenido que el modal, sin popup) -->
-          <div id="panelCobroIntegrado" class="panel-cobro-integrado">
-            <div class="panel-cobro-titulo">Cobro de venta</div>
-            <input type="hidden" name="ingresoCajaTipo" id="ingresoCajaTipo" value="1">
-            <div class="row" style="padding-bottom:10px">
-              <div class="col-md-12"><span id="datosCuentaCorrienteCliente" style="font-size:1rem"></span></div>
-            </div>
-            <div class="row" style="padding-bottom:10px">
-              <div class="col-md-4">
-                <div class="input-group">
-                  <span class="input-group-addon" style="background-color: #eee"><b>PAGO</b></span>
-                  <input type="text" class="form-control" id="nuevoValorEntrega">
-                </div>
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="col-md-4">
-                <div class="input-group">
-                  <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPago" type="button" class="btn btn-success"><i class="fa fa-plus"></i></button></span>
-                  <select class="form-control" id="nuevoMetodoPagoCaja">
-                    <option value="">Medio de pago</option>
-                    <?php
-                    if (!empty($listaMediosPago)) {
-                      foreach ($listaMediosPago as $mp) {
-                        $cod = htmlspecialchars($mp['codigo'] ?? '');
-                        $nom = htmlspecialchars($mp['nombre'] ?? $cod);
-                        $rc = (int)($mp['requiere_codigo'] ?? 0);
-                        $rb = (int)($mp['requiere_banco'] ?? 0);
-                        $rn = (int)($mp['requiere_numero'] ?? 0);
-                        $rf = (int)($mp['requiere_fecha'] ?? 0);
-                        echo '<option value="' . $cod . '" data-requiere-codigo="' . $rc . '" data-requiere-banco="' . $rb . '" data-requiere-numero="' . $rn . '" data-requiere-fecha="' . $rf . '">' . $nom . '</option>';
-                      }
-                    }
-                    ?>
-                  </select>
-                </div>
-              </div>
-              <div class="cajasMetodoPagoCaja"></div>
-            </div>
-            <hr>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="row" style="display: none;" id="divImportesPagoMixto">
-                  <table class="table" id="listadoMetodosPagoMixto">
-                    <thead>
-                      <tr>
-                        <th><i class="fa fa-minus-square"></i></th>
-                        <th>Metodo</th>
-                        <th>Importe</th>
-                      </tr>
-                    </thead>
-                    <tbody></tbody>
-                    <tfoot>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td style="font-size: 1rem"><b>SALDO: $</b> <span id="nuevoValorSaldo" style="color:red">0</span></td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-                <input type="hidden" id="listaMetodoPagoCaja">
-                <input type="hidden" id="mxMediosPagos">
-              </div>
-              <div class="col-md-6">
-                <table class="table">
-                  <tr>
-                    <td style="vertical-align:middle; border: none;">Total:</td>
-                    <td style="border: none;">
-                      <div class="input-group">
-                        <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
-                        <input type="number" step="0.01" min="0" class="form-control input-sm" id="nuevoPrecioNetoCaja" placeholder="0,00" readonly style="font-size: 1.25rem;">
-                      </div>
-                    </td>
-                  </tr>
-                  <tr id="filaInteresCaja" style="display:none;">
-                    <td style="vertical-align:middle; border: none;">Interés:</td>
-                    <td style="border: none;">
-                      <div class="row">
-                        <div class="col-xs-6">
-                          <div class="input-group">
-                            <span class="input-group-addon"><b>%</b></span>
-                            <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 1rem;" class="form-control input-sm nuevoInteresCaja" id="nuevoInteresPorcentajeCaja">
-                          </div>
-                        </div>
-                        <div class="col-xs-6">
-                          <div class="input-group">
-                            <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
-                            <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 1rem;" class="form-control input-sm nuevoInteresCaja" id="nuevoInteresPrecioCaja">
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr id="filaDescuentoCaja" style="display:none;">
-                    <td style="vertical-align:middle; border: none;">Descuento:</td>
-                    <td style="border: none;">
-                      <div class="row">
-                        <div class="col-xs-6">
-                          <div class="input-group">
-                            <span class="input-group-addon"><b>%</b></span>
-                            <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 1rem;" class="form-control input-sm nuevoDescuentoCaja" id="nuevoDescuentoPorcentajeCaja">
-                          </div>
-                        </div>
-                        <div class="col-xs-6">
-                          <div class="input-group">
-                            <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
-                            <input type="number" step="0.01" min="0" style="text-align:center; font-size: 1rem;" class="form-control input-sm nuevoDescuentoCaja" id="nuevoDescuentoPrecioCaja" placeholder="0,00">
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="vertical-align:middle; border: none;"><b>TOTAL:</b></td>
-                    <td style="border: none;">
-                      <div class="input-group">
-                        <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
-                        <input type="number" step="0.01" min="0" style="font-size: 1.25rem; font-weight:bold; text-align:center;" class="form-control input-sm" id="nuevoTotalVentaCaja" total="" placeholder="0,00" readonly required>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-            <div class="row" style="margin-top:10px;">
-              <div class="col-xs-6">
-                <button type="button" id="btnSalirMedioPagoCaja" class="btn btn-default">Salir (ESC)</button>
-              </div>
-              <div class="col-xs-6 text-right">
-                <button type="button" id="btnCobrarMedioPagoCaja" onClick="this.disabled=true;" class="btn btn-primary">Guardar e imprimir (F8)</button>
-              </div>
-            </div>
-            <div class="box-body" style="display: none; background-color: #f5c5ca; margin-top: 10px; border-radius: 8px;" id="divVisualizarObservacionesFactura">
-              <p>No se pudo autorizar el comprobante</p>
-              <span id="impTicketCobroCajaObservacionFact" style="font-size: 12px;"></span>
-            </div>
-          </div>
+          
 
           <div class="box-footer">
-            <center><button type="button" class="btn btn-primary" id="btnGuardarVentaCaja">Cobrar (F7)</button></center>
+         
+            <center><button type="submit" class="btn btn-primary" id="btnGuardarVentaCaja">Cobrar (F7)</button></center>
+
           </div>
 
 
@@ -1732,12 +1466,173 @@ MODAL AGREGAR CLIENTE
 </div>
 
 <!--=====================================
-MODAL COBRAR VENTA (vacío: cobro integrado en panel derecho)
+MODAL COBRAR VENTA
 ======================================-->
-<div id="modalCobrarVenta" class="modal fade" role="dialog" style="display:none;">
+<div id="modalCobrarVenta" class="modal fade" role="dialog">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-        <div class="modal-body"><p class="text-muted">El cobro se realiza en el panel de la derecha.</p></div>
+        <!--=====================================
+        CABEZA DEL MODAL
+        ======================================-->
+        <div class="modal-header" style="background:#3c8dbc; color:white">
+          <h4 class="modal-title">Cobro de venta</h4>
+        </div>
+        <!--=====================================
+        CUERPO DEL MODAL
+        ======================================-->
+        <div class="modal-body">
+          <div class="box-body">
+            <!-- ENTRADA PARA TIPO (INGRESO / EGRESO)-  -->
+            <input type="hidden" name="ingresoCajaTipo" id="ingresoCajaTipo" value="1">
+          </div>
+          <div class="row" style="padding-bottom:10px">
+              <div class="col-md-6"><span id="datosCuentaCorrienteCliente" style="font-size:18px"></span></div>
+          </div>
+          <div class="row" style="padding-bottom:10px">
+          	<div class="col-md-3">
+				<div class="input-group">
+					<span class="input-group-addon" style="background-color: #eee"><b>PAGO</b></span>
+					<input type="text" class="form-control" id="nuevoValorEntrega">
+				</div>
+          	</div>
+          	<!--
+          	<div class="col-md-3">
+          	    <div class="icheck-primary d-inline ml-2">
+                    <input type="checkbox" id="pagoCtaCte" checked>
+                    <label for="pagoCtaCte">Cuenta Corriente</label>
+                </div>
+          	</div>-->
+          	
+          </div>
+          <div class="form-group row">
+            <div class="col-md-3">
+               <div class="input-group">
+                  <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPago" type="button" class="btn btn-success" ><i class="fa fa-plus"></i></button></span>
+	                <select class="form-control" id="nuevoMetodoPagoCaja">
+	                  <option value="">Medio de pago</option>
+	                  <?php
+	                  if (!empty($listaMediosPago)) {
+	                    foreach ($listaMediosPago as $mp) {
+	                      $cod = htmlspecialchars($mp['codigo'] ?? '');
+	                      $nom = htmlspecialchars($mp['nombre'] ?? $cod);
+	                      $rc = (int)($mp['requiere_codigo'] ?? 0);
+	                      $rb = (int)($mp['requiere_banco'] ?? 0);
+	                      $rn = (int)($mp['requiere_numero'] ?? 0);
+	                      $rf = (int)($mp['requiere_fecha'] ?? 0);
+	                      echo '<option value="' . $cod . '" data-requiere-codigo="' . $rc . '" data-requiere-banco="' . $rb . '" data-requiere-numero="' . $rn . '" data-requiere-fecha="' . $rf . '">' . $nom . '</option>';
+	                    }
+	                  }
+	                  ?>
+	                </select>    
+              </div>
+            </div>
+            <div class="cajasMetodoPagoCaja"></div> <!--Aca se cargan los input de codigo tarjeta, select tarjeta, cuotas  -->
+          </div>      
+					<hr>
+          <div class="row">
+            <div class="col-md-6">
+            	<div class="row" style="display: none;" id="divImportesPagoMixto">
+            		<table class="table" id="listadoMetodosPagoMixto">
+            			<thead>
+            				<!--<tr style="background-color: #eee; text-align: center;"><td colspan="2">Medios Pago</td></tr>-->
+            				<tr>
+		            			<th><i class="fa fa-minus-square"></i> </th>
+		            			<th>Metodo</th>
+		            			<th>Importe</th>
+	            			</tr>
+            			</thead>
+            			<tbody>
+            				
+            			</tbody>
+            			<tfoot>
+            				<tr>
+            					<td></td>
+            					<td></td>
+            					<td style="font-size: 18px">
+            						<b>SALDO: $</b> <span id="nuevoValorSaldo" style="color:red">0</span>
+            					</td>
+            				</tr>
+            			</tfoot>
+            		</table>
+            	</div>
+            	<input type="hidden" id="listaMetodoPagoCaja"> <!--Manda al servidor si se paga en Efectivo, tarjeta debito, tarjeta credito, etc -->
+            	<input type="hidden" id="mxMediosPagos"> <!--Array con los medios de pago en pago mixto -->
+            </div>
+            <div class="col-md-6">
+              <table class="table">
+								<tr>
+								  <td style="vertical-align:middle; border: none;">Total:</td>
+								  <td style="border: none;">
+								    <div class="input-group">
+								      <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+								      <input type="number" step="0.01" min="0" class="form-control input-sm" id="nuevoPrecioNetoCaja" placeholder="0,00" readonly style="font-size: 18px;">
+								    </div>
+								  </td>
+								</tr>
+								<tr id="filaInteresCaja" style="display:none;">
+								  <td style="vertical-align:middle; border: none;">Interés:</td>
+								  <td style=" border: none;">
+										<div class="row">
+										  <div class="col-xs-6">
+										    <div class="input-group">
+										      <span class="input-group-addon"><b>%</b></span>
+										      <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoInteresCaja" id="nuevoInteresPorcentajeCaja">
+										    </div>
+										  </div>
+										  <div class="col-xs-6">
+										    <div class="input-group">
+										      <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+										      <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoInteresCaja" id="nuevoInteresPrecioCaja">
+										    </div>
+										  </div>
+										</div>
+								  </td>
+								</tr>
+								<tr id="filaDescuentoCaja" style="display:none;">
+								  <td style="vertical-align:middle; border: none;">Descuento:</td>
+								  <td style="border: none;">
+								    <div class="row">
+								      <div class="col-xs-6">
+								        <div class="input-group">
+								          <span class="input-group-addon"><b>%</b></span>
+								          <input type="number" step="0.01" min="0" placeholder="0,00" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoDescuentoCaja" id="nuevoDescuentoPorcentajeCaja" >
+								        </div>
+								      </div>
+								      <div class="col-xs-6">
+								        <div class="input-group">
+								          <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+								          <input type="number" step="0.01" min="0" style="text-align:center; font-size: 18px;" class="form-control input-sm nuevoDescuentoCaja" id="nuevoDescuentoPrecioCaja" placeholder="0,00" >
+								        </div>
+								      </div>
+								    </div>
+								  </td>
+								</tr>
+								<tr>
+									<td style="vertical-align:middle; border: none;"><b>TOTAL:</b></td>
+									<td style="border: none;">
+										<div class="input-group">
+											<span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+											<input type="number" step="0.01" min="0" style="font-size: 18px; font-weight:bold; text-align:center; " class="form-control input-sm" id="nuevoTotalVentaCaja" total="" placeholder="0,00" readonly required>
+										</div>
+									</td>
+								</tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!--=====================================
+        PIE DEL MODAL
+        ======================================-->
+        <div class="modal-footer">
+          <button type="button" id="btnSalirMedioPagoCaja" class="btn btn-default pull-left" data-dismiss="modal">Salir (ESC)</button>
+          <button type="button" id="btnCobrarMedioPagoCaja" onClick="this.disabled=true;" class="btn btn-primary">Guardar e imprimir (F8)</button>
+        </div>
+        <!-- Observaciones facturacion -->
+        <div class="box-body" style="display: none; background-color: #f5c5ca" id="divVisualizarObservacionesFactura">
+          <p>No se pudo autorizar el comprobante</p>
+          <span id="impTicketCobroCajaObservacionFact" style="font-size: 12px;">
+          </span>
+        </div>
     </div>
   </div>
 </div>
