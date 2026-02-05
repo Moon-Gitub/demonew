@@ -839,25 +839,35 @@
 }
 
 /* ============================================
-   PANTALLA COMPLETA, RESPONSIVE Y FUENTES GRANDES
+   PANTALLA COMPLETA SIN SCROLL DE PÁGINA
+   Todo cabe en viewport; solo scroll interno donde haga falta
    ============================================ */
 .crear-venta-caja.content-wrapper {
+    height: 100vh !important;
     min-height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
     padding-bottom: 0 !important;
 }
 .crear-venta-caja .content {
-    min-height: calc(100vh - 50px) !important;
-    padding: 12px 15px !important;
+    height: calc(100vh - 50px) !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    padding: 8px 12px !important;
 }
 .crear-venta-caja .content .row {
-    min-height: calc(100vh - 80px) !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
     display: flex !important;
-    flex-wrap: wrap !important;
+    flex-wrap: nowrap !important;
 }
 .crear-venta-caja .content .row > .col-lg-7,
 .crear-venta-caja .content .row > .col-lg-5 {
     display: flex !important;
     flex-direction: column !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
 }
 .crear-venta-caja .content .row > .col-lg-7 .box,
 .crear-venta-caja .content .row > .col-lg-5 .box {
@@ -865,12 +875,25 @@
     display: flex !important;
     flex-direction: column !important;
     min-height: 0 !important;
+    overflow: hidden !important;
 }
-.crear-venta-caja .content .row > .col-lg-7 .box .box-body,
-.crear-venta-caja .content .row > .col-lg-5 .box .box-body {
+/* Columna izquierda: solo el box-body hace scroll (lista de productos) */
+.crear-venta-caja .content .row > .col-lg-7 .box .box-body {
     flex: 1 !important;
+    min-height: 0 !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
+}
+/* Columna derecha: box-body sin scroll; el cuadrado de cobro abajo tiene scroll interno */
+.crear-venta-caja .content .row > .col-lg-5 .box .box-body {
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+.crear-venta-caja .content .row > .col-lg-5 .box .box-body > .box-footer {
+    flex-shrink: 0 !important;
 }
 /* Base font más grande en toda la pantalla */
 .crear-venta-caja {
@@ -898,18 +921,19 @@
     font-size: 2.2rem !important;
     min-height: 56px !important;
 }
-/* Panel de cobro integrado - siempre visible en columna derecha */
+/* Panel de cobro integrado - cuadrado abajo a la derecha, sin hacer scroll la página */
 #panelCobroIntegrado {
-    margin-top: 12px;
-    padding: 14px;
+    margin-top: 8px;
+    padding: 10px 12px;
     background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
     border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    flex: 1;
-    min-height: 280px;
+    border-radius: 10px;
+    flex: 1 !important;
+    min-height: 0 !important;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    overflow-y: auto !important;
+    overflow-x: hidden;
 }
 #panelCobroIntegrado .panel-cobro-titulo {
     font-size: 1.15rem;
@@ -938,8 +962,10 @@
     padding: 12px 20px !important;
 }
 @media (max-width: 991px) {
-    .crear-venta-caja .content .row { min-height: auto !important; }
-    #panelCobroIntegrado { min-height: 240px; }
+    .crear-venta-caja.content-wrapper { height: auto !important; min-height: 100vh !important; max-height: none !important; overflow: visible !important; }
+    .crear-venta-caja .content { height: auto !important; overflow: visible !important; }
+    .crear-venta-caja .content .row { height: auto !important; flex-wrap: wrap !important; }
+    #panelCobroIntegrado { flex: none !important; min-height: 200px !important; }
 }
 </style>
 <div class="content-wrapper crear-venta-caja">
