@@ -218,6 +218,20 @@
     color: #ad1457;
 }
 .crear-venta-caja .link-atajos-teclado:focus { box-shadow: 0 0 0 3px rgba(194, 24, 91, 0.3); }
+/* Enlace Atajos de teclado arriba dentro del formulario (barra rosa) */
+.crear-venta-caja .link-atajos-teclado.btn-atajos-in-form {
+    display: inline-block !important;
+    padding: 10px 20px !important;
+    background: linear-gradient(135deg, #ec407a 0%, #c2185b 100%) !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(194, 24, 91, 0.35) !important;
+}
+.crear-venta-caja .link-atajos-teclado.btn-atajos-in-form:hover { background: linear-gradient(135deg, #f06292 0%, #ad1457 100%) !important; color: #fff !important; }
+.crear-venta-caja .link-atajos-teclado.btn-atajos-in-form:focus { color: #fff !important; }
 
 /* Ocultar total duplicado: solo se usa el total de arriba */
 .crear-venta-caja .total-cobro-oculto { display: none !important; }
@@ -1055,15 +1069,22 @@
 </style>
 <div class="content-wrapper crear-venta-caja">
   <section class="content">
+    <!-- Atajos de teclado: arriba, dentro del formulario (F1 dos veces para abrir) -->
+    <div class="row row-atajos-teclado-form" style="margin-bottom: 12px;">
+      <div class="col-xs-12 text-center">
+        <a href="javascript:void(0);" id="linkAtajosTeclado" class="link-atajos-teclado btn-atajos-in-form" tabindex="0" role="button" title="Ver atajos de teclado (F1 dos veces)">
+          <i class="fa fa-keyboard-o"></i>
+          <span style="margin-left: 6px;">Atajos de teclado</span>
+        </a>
+      </div>
+    </div>
     <div class="row crear-venta-caja-fila">
 
       <!--=====================================
       EL FORMULARIO
       ======================================-->
       <div class="col-lg-7">
-        <p class="text-center" style="margin-bottom: 10px;">
-          <a href="javascript:void(0);" id="linkAtajosTecladoForm" class="link-atajos-teclado" tabindex="0" role="button" title="Ver atajos de teclado (F1 dos veces)"><i class="fa fa-keyboard-o"></i> Atajos de teclado</a>
-        </p>
+        
 				<div class="box box-warning">
 
           <div class="box-header with-border"></div>
