@@ -540,6 +540,16 @@ if($ctaCteCliente["saldo"] <= 0) {
                   </li>
             <?php } ?>
 
+                <?php if (isset($_GET["ruta"]) && $_GET["ruta"] === "crear-venta-caja") { ?>
+                <!-- Atajos de teclado (solo en Crear venta caja) -->
+                <li>
+                    <a href="javascript:void(0);" id="linkAtajosTeclado" class="link-atajos-teclado-navbar" tabindex="0" role="button" title="Ver atajos de teclado (F1 dos veces)">
+                        <i class="fa fa-keyboard-o"></i>
+                        <span class="hidden-xs" style="margin-left: 5px;">Atajos de teclado</span>
+                    </a>
+                </li>
+                <?php } ?>
+
                 <?php if($_SESSION["perfil"] == "Administrador") { ?>
 
                 <!-- Sistema de Cobro Moon -->
@@ -599,6 +609,28 @@ if($ctaCteCliente["saldo"] <= 0) {
     </nav>
 
 </header>
+
+<!--=====================================
+ATAJOS DE TECLADO EN NAVBAR (crear-venta-caja)
+======================================-->
+<style>
+.link-atajos-teclado-navbar {
+    display: inline-flex !important;
+    align-items: center;
+    padding: 10px 15px !important;
+    color: rgba(255,255,255,.8) !important;
+    text-decoration: none !important;
+}
+.link-atajos-teclado-navbar:hover,
+.link-atajos-teclado-navbar:focus {
+    color: #fff !important;
+    background: rgba(255,255,255,.1) !important;
+    text-decoration: none !important;
+}
+.link-atajos-teclado-navbar:focus {
+    outline: 1px dotted rgba(255,255,255,.6);
+}
+</style>
 
 <!--=====================================
 ESTILOS RESPONSIVE PARA MÓVIL

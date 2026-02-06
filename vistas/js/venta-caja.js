@@ -3861,13 +3861,6 @@ if (window.location.href.includes('crear-venta-caja')) {
 			return false;
 		}
 		
-		// Alt+P: Punto de venta (también desde inputs)
-		if (e.altKey && e.keyCode === 80) {
-			e.preventDefault();
-			if ($("#nuevaPtoVta").length) $("#nuevaPtoVta").focus();
-			return false;
-		}
-		
 		// Ctrl+Q: Focus en cantidad del producto seleccionado
 		if (e.ctrlKey && e.keyCode === 81) { // Ctrl+Q
 			e.preventDefault();
@@ -3968,18 +3961,13 @@ if (window.location.href.includes('crear-venta-caja')) {
 		e.preventDefault();
 		var $select = $("#radioPrecio");
 		$select.focus();
-		if ($select.length && $select[0].options) {
+		// Abrir el dropdown (trigger click en el select)
+		if ($select.length) {
 			$select[0].size = $select[0].options.length;
-			setTimeout(function() { $select[0].size = 1; }, 100);
+			setTimeout(function() {
+				$select[0].size = 1;
+			}, 100);
 		}
-		return false;
-	}
-	
-	// Alt+P: Punto de venta
-	if (e.altKey && e.keyCode === 80) { // Alt+P
-		e.preventDefault();
-		var $pto = $("#nuevaPtoVta");
-		if ($pto.length) { $pto.focus(); }
 		return false;
 	}
 	
@@ -4087,15 +4075,6 @@ $(document).ready(function() {
 		return;
 	}
 	
-	// Enlace Atajos de teclado en el header (navbar, top derecha, junto a Estado Cuenta / usuario)
-	var $nav = $('.navbar-custom-menu .nav.navbar-nav');
-	if ($nav.length && !$('#linkAtajosTeclado').length) {
-		var $li = $('<li></li>').append(
-			$('<a href="javascript:void(0);" id="linkAtajosTeclado" class="link-atajos-teclado" tabindex="0" role="button" title="Ver atajos de teclado (F1 dos veces)">Atajos de teclado</a>')
-		);
-		$nav.prepend($li);
-	}
-	
 	// Asegurar que los botones sean accesibles con Tab
 	$("button.quitarProductoCaja").attr("tabindex", "0");
 	if ($("#btnGuardarVentaCaja").length) $("#btnGuardarVentaCaja").attr("tabindex", "0");
@@ -4153,19 +4132,16 @@ function mostrarAyudaAtajos() {
 	var ayuda = '<div class="modal fade" id="modalAyudaAtajos" tabindex="-1" role="dialog">' +
 		'<div class="modal-dialog" role="document">' +
 		'<div class="modal-content">' +
-		'<div class="modal-header bg-primary" style="display:flex;align-items:center;flex-wrap:wrap;">' +
-		'<h4 class="modal-title" style="flex:1;margin:0;">Atajos de Teclado - Panel de Ventas</h4>' +
-		'<div style="display:flex;align-items:center;gap:8px;">' +
-		'<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cerrar</button>' +
-		'<button type="button" class="close" data-dismiss="modal" style="margin:0;opacity:1;">&times;</button>' +
-		'</div>' +
+		'<div class="modal-header bg-primary">' +
+		'<button type="button" class="close" data-dismiss="modal">&times;</button>' +
+		'<h4 class="modal-title">Atajos de Teclado - Panel de Ventas</h4>' +
 		'</div>' +
 		'<div class="modal-body">' +
 		'<h5><strong>Navegación principal</strong></h5>' +
 		'<ul>' +
 		'<li><kbd>F1</kbd> - Búsqueda de producto (Cod. artículo)</li>' +
 		'<li><kbd>F2</kbd> - Campo Cantidad</li>' +
-		'<li><kbd>F7</kbd> - Ir a sección de cobro (método de pago)</li>' +
+		'<li><kbd>F7</kbd> - Ir a sección de cobro (PAGO / método de pago)</li>' +
 		'<li><kbd>Tab</kbd> / <kbd>Shift+Tab</kbd> - Navegar entre campos</li>' +
 		'<li><kbd>F1</kbd> dos veces - Ver esta ayuda</li>' +
 		'</ul>' +
@@ -4189,12 +4165,14 @@ function mostrarAyudaAtajos() {
 		'<ul>' +
 		'<li><kbd>F7</kbd> - Ir a método de pago</li>' +
 		'<li><kbd>Alt+E</kbd> - Campo Entrega (PAGO)</li>' +
-		'<li><kbd>Ctrl+M</kbd> - Cambiar medio de pago</li>' +
 		'<li><kbd>F8</kbd> - Guardar e imprimir</li>' +
 		'<li><kbd>Esc</kbd> - Salir de cobro (volver a productos)</li>' +
 		'</ul>' +
 		'<h5><strong>Impresión</strong></h5>' +
 		'<ul><li><kbd>F9</kbd> - Imprimir ticket (en modal de impresión)</li></ul>' +
+		'</div>' +
+		'<div class="modal-footer">' +
+		'<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>' +
 		'</div>' +
 		'</div>' +
 		'</div>' +

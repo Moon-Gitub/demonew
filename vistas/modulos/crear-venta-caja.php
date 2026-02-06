@@ -198,31 +198,26 @@
 }
 .crear-venta-caja .box-footer-unificado { padding: 10px 15px !important; margin-top: 4px !important; border-top: 1px solid #e0e0e0 !important; }
 .crear-venta-caja .box-footer-unificado .btn { font-size: 16px !important; padding: 12px 20px !important; min-height: 48px !important; }
-/* Enlace Atajos de teclado (en navbar, top derecha) */
-.link-atajos-teclado {
+/* Enlace Atajos de teclado (visible, centrado, accesible por teclado) */
+.crear-venta-caja .link-atajos-teclado {
     display: inline-block;
-    padding: 10px 16px;
-    background: rgba(236, 112, 151, 0.2);
-    border: 1px solid rgba(236, 112, 151, 0.5);
-    border-radius: 6px;
+    padding: 8px 20px;
+    background: rgba(236, 112, 151, 0.25);
+    border: 2px solid rgba(236, 112, 151, 0.6);
+    border-radius: 8px;
     color: #c2185b;
     font-weight: 600;
     text-decoration: none;
     cursor: pointer;
     outline: none;
-    margin: 8px 4px 0 0;
 }
-.link-atajos-teclado:hover,
-.link-atajos-teclado:focus {
+.crear-venta-caja .link-atajos-teclado:hover,
+.crear-venta-caja .link-atajos-teclado:focus {
     background: rgba(236, 112, 151, 0.35);
     border-color: #c2185b;
     color: #ad1457;
-    text-decoration: none;
 }
-.link-atajos-teclado:focus { box-shadow: 0 0 0 2px rgba(194, 24, 91, 0.3); }
-@media (max-width: 768px) {
-    .link-atajos-teclado { padding: 8px 12px; font-size: 13px; }
-}
+.crear-venta-caja .link-atajos-teclado:focus { box-shadow: 0 0 0 3px rgba(194, 24, 91, 0.3); }
 
 /* Ocultar total duplicado: solo se usa el total de arriba */
 .crear-venta-caja .total-cobro-oculto { display: none !important; }
