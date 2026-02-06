@@ -4081,7 +4081,7 @@ $(document).ready(function() {
 	
 	// Asegurar que los selects sean accesibles
 	$("#radioPrecio, #nuevotipoCbte, #nuevaPtoVta, #nuevaConcepto").attr("tabindex", "0");
-	// Enlace Atajos de teclado (navbar y formulario): click y Enter/Espacio abren la ayuda
+	// Enlace Atajos de teclado (navbar y dentro del form): click y Enter/Espacio abren la ayuda
 	$(document).on('click', '#linkAtajosTeclado, #linkAtajosTecladoForm', function(e) {
 		e.preventDefault();
 		if (typeof mostrarAyudaAtajos === 'function') mostrarAyudaAtajos();
