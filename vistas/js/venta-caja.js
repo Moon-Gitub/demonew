@@ -3801,10 +3801,19 @@ $(document).on('change', '#radioPrecio', function() {
 // Sistema completo de atajos de teclado (SOLO EN crear-venta-caja)
 // IMPORTANTE: Este event listener solo se registra si estamos en la página correcta
 if (window.location.href.includes('crear-venta-caja')) {
+	// Flag para doble F1: si está en true, no hacer focus en búsqueda (la ayuda ya se abrió)
+	window._crearVentaCajaF1MostrarAyuda = false;
+
 	$(document).on('keydown', function(e) {
 		// Verificación adicional por seguridad
 		if (!window.location.href.includes('crear-venta-caja')) {
 			return; // Salir inmediatamente si no estamos en la página correcta
+		}
+		// Si fue doble F1, no procesar F1 como "ir a búsqueda"
+		if (e.keyCode === 112 && window._crearVentaCajaF1MostrarAyuda) {
+			window._crearVentaCajaF1MostrarAyuda = false;
+			e.preventDefault();
+			return false;
 		}
 	
 	// Solo procesar si no estamos en un modal o input de texto activo
@@ -3831,7 +3840,7 @@ if (window.location.href.includes('crear-venta-caja')) {
 		}
 		
 		// Procesar atajos específicos incluso en inputs
-		// F1: Focus en búsqueda de producto
+		// F1: Focus en búsqueda de producto (no si fue doble F1)
 		if (e.keyCode === 112) { // F1
 			e.preventDefault();
 			$("#ventaCajaDetalle").focus();
@@ -3975,6 +3984,13 @@ if (window.location.href.includes('crear-venta-caja')) {
 		return false;
 	}
 	
+	// Alt+E: Focus en campo Entrega (PAGO) en sección de cobro
+	if (e.altKey && e.keyCode === 69) { // Alt+E
+		e.preventDefault();
+		if ($("#nuevoValorEntrega").length) $("#nuevoValorEntrega").focus();
+		return false;
+	}
+	
 	// F7: ir a sección de cobro (siempre visible; acción principal F8)
 	if (e.keyCode === 118) { // F7
 		e.preventDefault();
@@ -4065,6 +4081,19 @@ $(document).ready(function() {
 	
 	// Asegurar que los selects sean accesibles
 	$("#radioPrecio, #nuevotipoCbte, #nuevaPtoVta, #nuevaConcepto").attr("tabindex", "0");
+	// Enlace Atajos de teclado: click y Enter/Espacio abren la ayuda
+	$(document).on('click', '#linkAtajosTeclado', function(e) {
+		e.preventDefault();
+		if (typeof mostrarAyudaAtajos === 'function') mostrarAyudaAtajos();
+	});
+	$(document).on('keydown', '#linkAtajosTeclado', function(e) {
+		if (e.keyCode === 13 || e.keyCode === 32) {
+			e.preventDefault();
+			if (typeof mostrarAyudaAtajos === 'function') mostrarAyudaAtajos();
+		}
+	});
+	// Botones de la sección cobro accesibles por Tab
+	$("#agregarMedioPago, #btnCobrarMedioPagoCaja").attr("tabindex", "0");
 	
 	// Mejorar accesibilidad de la lista de productos
 	$(".nuevoProductoCaja").on("focus", "input.nuevaCantidadProductoCaja", function() {
@@ -4075,33 +4104,28 @@ $(document).ready(function() {
 });
 
 // Mostrar ayuda de atajos al presionar F1 dos veces rápidamente (SOLO EN crear-venta-caja)
-// Solo registrar este event listener si estamos en la página correcta
+// Listener en fase capture para que al segundo F1 se marque el flag y no se haga focus en búsqueda
 if (window.location.href.includes('crear-venta-caja')) {
 	var f1PressCount = 0;
 	var f1Timer = null;
 
-	$(document).on('keydown', function(e) {
-		// Verificación adicional por seguridad
-		if (!window.location.href.includes('crear-venta-caja')) {
-			return;
-		}
-		
+	document.addEventListener('keydown', function(e) {
+		if (!window.location.href.includes('crear-venta-caja')) return;
 		if (e.keyCode === 112) { // F1
 			f1PressCount++;
 			if (f1PressCount === 1) {
-				f1Timer = setTimeout(function() {
-					f1PressCount = 0;
-				}, 500);
+				f1Timer = setTimeout(function() { f1PressCount = 0; }, 500);
 			} else if (f1PressCount === 2) {
 				clearTimeout(f1Timer);
 				f1PressCount = 0;
+				window._crearVentaCajaF1MostrarAyuda = true;
 				mostrarAyudaAtajos();
 			}
 		} else {
 			f1PressCount = 0;
 			if (f1Timer) clearTimeout(f1Timer);
 		}
-	});
+	}, true);
 }
 
 function mostrarAyudaAtajos() {
@@ -4113,41 +4137,39 @@ function mostrarAyudaAtajos() {
 		'<h4 class="modal-title">Atajos de Teclado - Panel de Ventas</h4>' +
 		'</div>' +
 		'<div class="modal-body">' +
-		'<h5><strong>Navegación Principal:</strong></h5>' +
+		'<h5><strong>Navegación principal</strong></h5>' +
 		'<ul>' +
-		'<li><kbd>F1</kbd> - Focus en búsqueda de producto (Cod. artículo)</li>' +
-		'<li><kbd>F2</kbd> - Focus en campo Cantidad</li>' +
-		'<li><kbd>F7</kbd> - Cobrar / Abrir modal de pago</li>' +
-		'<li><kbd>Tab</kbd> - Navegar entre campos</li>' +
-		'<li><kbd>Shift+Tab</kbd> - Navegar hacia atrás</li>' +
+		'<li><kbd>F1</kbd> - Búsqueda de producto (Cod. artículo)</li>' +
+		'<li><kbd>F2</kbd> - Campo Cantidad</li>' +
+		'<li><kbd>F7</kbd> - Ir a sección de cobro (PAGO / método de pago)</li>' +
+		'<li><kbd>Tab</kbd> / <kbd>Shift+Tab</kbd> - Navegar entre campos</li>' +
+		'<li><kbd>F1</kbd> dos veces - Ver esta ayuda</li>' +
 		'</ul>' +
-		'<h5><strong>Campos Específicos:</strong></h5>' +
+		'<h5><strong>Campos cabecera</strong></h5>' +
 		'<ul>' +
-		'<li><kbd>Alt+D</kbd> - Focus en campo Día (fecha)</li>' +
-		'<li><kbd>Alt+H</kbd> - Focus en campo Hora</li>' +
-		'<li><kbd>Alt+L</kbd> - Abrir dropdown Listas de precio</li>' +
-		'<li><kbd>Alt+A</kbd> - Abrir modal Agregar cliente</li>' +
+		'<li><kbd>Alt+D</kbd> - Día (fecha)</li>' +
+		'<li><kbd>Alt+H</kbd> - Hora</li>' +
+		'<li><kbd>Alt+L</kbd> - Listas de precio</li>' +
+		'<li><kbd>Alt+P</kbd> - Punto de venta</li>' +
+		'<li><kbd>Alt+A</kbd> - Agregar cliente</li>' +
 		'</ul>' +
-		'<h5><strong>Lista de Productos:</strong></h5>' +
+		'<h5><strong>Lista de productos</strong></h5>' +
 		'<ul>' +
-		'<li><kbd>↑</kbd> / <kbd>↓</kbd> - Navegar por productos en la lista</li>' +
-		'<li><kbd>Ctrl+Q</kbd> - Focus en cantidad del producto seleccionado</li>' +
-		'<li><kbd>Ctrl+Del</kbd> o <kbd>Shift+Del</kbd> - Eliminar producto seleccionado</li>' +
-		'<li><kbd>Enter</kbd> - Confirmar cantidad (en campo cantidad)</li>' +
+		'<li><kbd>↑</kbd> <kbd>↓</kbd> - Navegar por ítems</li>' +
+		'<li><kbd>Ctrl+Q</kbd> - Cantidad del ítem seleccionado</li>' +
+		'<li><kbd>Ctrl+Del</kbd> / <kbd>Shift+Del</kbd> - Quitar ítem</li>' +
+		'<li><kbd>Enter</kbd> - Confirmar cantidad; en búsqueda agregar producto</li>' +
+		'<li><kbd>←</kbd> desde búsqueda → Cantidad · <kbd>→</kbd> desde cantidad → Búsqueda</li>' +
 		'</ul>' +
-		'<h5><strong>Modal de Pago:</strong></h5>' +
+		'<h5><strong>Sección de cobro</strong></h5>' +
 		'<ul>' +
-		'<li><kbd>F8</kbd> - Guardar venta (dentro del modal)</li>' +
-		'<li><kbd>F9</kbd> - Imprimir ticket (dentro del modal de impresión)</li>' +
-		'<li><kbd>Esc</kbd> - Cerrar modal</li>' +
-		'<li><kbd>Ctrl+M</kbd> - Cambiar método de pago (dentro del modal)</li>' +
+		'<li><kbd>F7</kbd> - Ir a método de pago</li>' +
+		'<li><kbd>Alt+E</kbd> - Campo Entrega (PAGO)</li>' +
+		'<li><kbd>F8</kbd> - Guardar e imprimir</li>' +
+		'<li><kbd>Esc</kbd> - Salir de cobro (volver a productos)</li>' +
 		'</ul>' +
-		'<h5><strong>Búsqueda de Productos:</strong></h5>' +
-		'<ul>' +
-		'<li><kbd>←</kbd> (desde búsqueda) - Ir a campo Cantidad</li>' +
-		'<li><kbd>→</kbd> (desde cantidad) - Ir a campo Búsqueda</li>' +
-		'<li><kbd>Enter</kbd> - Agregar producto a la lista</li>' +
-		'</ul>' +
+		'<h5><strong>Impresión</strong></h5>' +
+		'<ul><li><kbd>F9</kbd> - Imprimir ticket (en modal de impresión)</li></ul>' +
 		'</div>' +
 		'<div class="modal-footer">' +
 		'<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>' +

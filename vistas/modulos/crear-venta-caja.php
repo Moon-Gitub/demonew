@@ -198,6 +198,27 @@
 }
 .crear-venta-caja .box-footer-unificado { padding: 10px 15px !important; margin-top: 4px !important; border-top: 1px solid #e0e0e0 !important; }
 .crear-venta-caja .box-footer-unificado .btn { font-size: 16px !important; padding: 12px 20px !important; min-height: 48px !important; }
+/* Enlace Atajos de teclado (visible, centrado, accesible por teclado) */
+.crear-venta-caja .link-atajos-teclado {
+    display: inline-block;
+    padding: 8px 20px;
+    background: rgba(236, 112, 151, 0.25);
+    border: 2px solid rgba(236, 112, 151, 0.6);
+    border-radius: 8px;
+    color: #c2185b;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    outline: none;
+}
+.crear-venta-caja .link-atajos-teclado:hover,
+.crear-venta-caja .link-atajos-teclado:focus {
+    background: rgba(236, 112, 151, 0.35);
+    border-color: #c2185b;
+    color: #ad1457;
+}
+.crear-venta-caja .link-atajos-teclado:focus { box-shadow: 0 0 0 3px rgba(194, 24, 91, 0.3); }
+
 /* Ocultar total duplicado: solo se usa el total de arriba */
 .crear-venta-caja .total-cobro-oculto { display: none !important; }
 
@@ -1034,6 +1055,11 @@
 </style>
 <div class="content-wrapper crear-venta-caja">
   <section class="content">
+    <div class="row" style="margin-bottom: 10px;">
+      <div class="col-xs-12 text-center">
+        <a href="javascript:void(0);" id="linkAtajosTeclado" class="link-atajos-teclado" tabindex="0" role="button" title="Ver atajos de teclado (o presione F1 dos veces)">Atajos de teclado</a>
+      </div>
+    </div>
     <div class="row crear-venta-caja-fila">
 
       <!--=====================================
@@ -1736,7 +1762,21 @@ MODAL COBRAR VENTA (no se usa; el cobro va en #seccionCobroVenta)
 <div id="modalCobrarVenta" class="modal fade" role="dialog" style="display:none;">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-body"><p class="text-muted">El cobro se realiza en la sección inferior (F7).</p></div>
+      <div class="modal-header"><h4 class="modal-title">Cobro de venta</h4></div>
+      <div class="modal-body">
+        <p class="text-muted">El cobro se realiza en la sección inferior de la pantalla.</p>
+        <h5><strong>Atajos de teclado</strong></h5>
+        <ul class="list-unstyled">
+          <li><kbd>F1</kbd> Búsqueda de producto</li>
+          <li><kbd>F2</kbd> Cantidad</li>
+          <li><kbd>F7</kbd> Ir a sección de cobro / Pago</li>
+          <li><kbd>F8</kbd> Guardar e imprimir</li>
+          <li><kbd>Esc</kbd> Salir de cobro (volver a productos)</li>
+          <li><kbd>Alt+D</kbd> Día · <kbd>Alt+H</kbd> Hora · <kbd>Alt+L</kbd> Listas · <kbd>Alt+P</kbd> Pto. venta · <kbd>Alt+A</kbd> Cliente · <kbd>Alt+E</kbd> Entrega</li>
+          <li><kbd>↑</kbd><kbd>↓</kbd> Lista productos · <kbd>Ctrl+Q</kbd> Cantidad del ítem · <kbd>Ctrl+Del</kbd> Quitar ítem</li>
+          <li><kbd>F1</kbd> dos veces: ver todos los atajos</li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
