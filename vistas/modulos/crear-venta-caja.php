@@ -1061,7 +1061,9 @@
       EL FORMULARIO
       ======================================-->
       <div class="col-lg-7">
-        
+        <p class="text-center" style="margin-bottom: 10px;">
+          <a href="javascript:void(0);" id="linkAtajosTecladoForm" class="link-atajos-teclado" tabindex="0" role="button" title="Ver atajos de teclado (F1 dos veces)"><i class="fa fa-keyboard-o"></i> Atajos de teclado</a>
+        </p>
 				<div class="box box-warning">
 
           <div class="box-header with-border"></div>
