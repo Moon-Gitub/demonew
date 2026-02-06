@@ -3861,6 +3861,13 @@ if (window.location.href.includes('crear-venta-caja')) {
 			return false;
 		}
 		
+		// Alt+P: Punto de venta (también desde inputs)
+		if (e.altKey && e.keyCode === 80) {
+			e.preventDefault();
+			if ($("#nuevaPtoVta").length) $("#nuevaPtoVta").focus();
+			return false;
+		}
+		
 		// Ctrl+Q: Focus en cantidad del producto seleccionado
 		if (e.ctrlKey && e.keyCode === 81) { // Ctrl+Q
 			e.preventDefault();
@@ -3968,6 +3975,13 @@ if (window.location.href.includes('crear-venta-caja')) {
 				$select[0].size = 1;
 			}, 100);
 		}
+		return false;
+	}
+	
+	// Alt+P: Focus en Punto de venta
+	if (e.altKey && e.keyCode === 80) { // Alt+P
+		e.preventDefault();
+		if ($("#nuevaPtoVta").length) $("#nuevaPtoVta").focus();
 		return false;
 	}
 	
@@ -4163,7 +4177,7 @@ function mostrarAyudaAtajos() {
 		'</ul>' +
 		'<h5><strong>Sección de cobro</strong></h5>' +
 		'<ul>' +
-		'<li><kbd>F7</kbd> - Ir a método de pago</li>' +
+		'<li><kbd>F7</kbd> - Ir a sección de cobro / método de pago</li>' +
 		'<li><kbd>Alt+E</kbd> - Campo Entrega (PAGO)</li>' +
 		'<li><kbd>F8</kbd> - Guardar e imprimir</li>' +
 		'<li><kbd>Esc</kbd> - Salir de cobro (volver a productos)</li>' +

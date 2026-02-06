@@ -1055,11 +1055,6 @@
 </style>
 <div class="content-wrapper crear-venta-caja">
   <section class="content">
-    <div class="row" style="margin-bottom: 10px;">
-      <div class="col-xs-12 text-center">
-        <a href="javascript:void(0);" id="linkAtajosTeclado" class="link-atajos-teclado" tabindex="0" role="button" title="Ver atajos de teclado (o presione F1 dos veces)">Atajos de teclado</a>
-      </div>
-    </div>
     <div class="row crear-venta-caja-fila">
 
       <!--=====================================
@@ -1110,6 +1105,9 @@
                       ?>
                   </div>
                  </td>
+					<td class="text-center" style="vertical-align: middle !important;">
+						<a href="javascript:void(0);" id="linkAtajosTeclado" class="link-atajos-teclado" tabindex="0" role="button" title="Ver atajos de teclado (F1 dos veces)">Atajos de teclado</a>
+					</td>
 				</tr>
               </table>
 
@@ -1762,20 +1760,47 @@ MODAL COBRAR VENTA (no se usa; el cobro va en #seccionCobroVenta)
 <div id="modalCobrarVenta" class="modal fade" role="dialog" style="display:none;">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header"><h4 class="modal-title">Cobro de venta</h4></div>
+      <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <button type="button" class="close" data-dismiss="modal" style="color: white; opacity: 1;">&times;</button>
+        <h4 class="modal-title">Atajos de Teclado - Panel de Ventas</h4>
+      </div>
       <div class="modal-body">
         <p class="text-muted">El cobro se realiza en la sección inferior de la pantalla.</p>
-        <h5><strong>Atajos de teclado</strong></h5>
+        <h5><strong>Navegación principal</strong></h5>
         <ul class="list-unstyled">
-          <li><kbd>F1</kbd> Búsqueda de producto</li>
-          <li><kbd>F2</kbd> Cantidad</li>
-          <li><kbd>F7</kbd> Ir a sección de cobro / Pago</li>
-          <li><kbd>F8</kbd> Guardar e imprimir</li>
-          <li><kbd>Esc</kbd> Salir de cobro (volver a productos)</li>
-          <li><kbd>Alt+D</kbd> Día · <kbd>Alt+H</kbd> Hora · <kbd>Alt+L</kbd> Listas · <kbd>Alt+P</kbd> Pto. venta · <kbd>Alt+A</kbd> Cliente · <kbd>Alt+E</kbd> Entrega</li>
-          <li><kbd>↑</kbd><kbd>↓</kbd> Lista productos · <kbd>Ctrl+Q</kbd> Cantidad del ítem · <kbd>Ctrl+Del</kbd> Quitar ítem</li>
-          <li><kbd>F1</kbd> dos veces: ver todos los atajos</li>
+          <li><kbd>F1</kbd> - Búsqueda de producto (Cod. artículo)</li>
+          <li><kbd>F2</kbd> - Campo Cantidad</li>
+          <li><kbd>F7</kbd> - Ir a sección de cobro (PAGO / método de pago)</li>
+          <li><kbd>Tab</kbd> / <kbd>Shift+Tab</kbd> - Navegar entre campos</li>
+          <li><kbd>F1</kbd> dos veces - Ver esta ayuda</li>
         </ul>
+        <h5><strong>Campos cabecera</strong></h5>
+        <ul class="list-unstyled">
+          <li><kbd>Alt+D</kbd> - Día (fecha)</li>
+          <li><kbd>Alt+H</kbd> - Hora</li>
+          <li><kbd>Alt+L</kbd> - Listas de precio</li>
+          <li><kbd>Alt+P</kbd> - Punto de venta</li>
+          <li><kbd>Alt+A</kbd> - Agregar cliente</li>
+        </ul>
+        <h5><strong>Lista de productos</strong></h5>
+        <ul class="list-unstyled">
+          <li><kbd>↑</kbd> <kbd>↓</kbd> - Navegar por ítems</li>
+          <li><kbd>Ctrl+Q</kbd> - Cantidad del ítem seleccionado</li>
+          <li><kbd>Ctrl+Del</kbd> / <kbd>Shift+Del</kbd> - Quitar ítem</li>
+          <li><kbd>Enter</kbd> - Confirmar cantidad; en búsqueda agregar producto</li>
+        </ul>
+        <h5><strong>Sección de cobro</strong></h5>
+        <ul class="list-unstyled">
+          <li><kbd>F7</kbd> - Ir a método de pago</li>
+          <li><kbd>Alt+E</kbd> - Campo Entrega (PAGO)</li>
+          <li><kbd>F8</kbd> - Guardar e imprimir</li>
+          <li><kbd>Esc</kbd> - Salir de cobro (volver a productos)</li>
+        </ul>
+        <h5><strong>Impresión</strong></h5>
+        <ul class="list-unstyled"><li><kbd>F9</kbd> - Imprimir ticket (en modal de impresión)</li></ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>
