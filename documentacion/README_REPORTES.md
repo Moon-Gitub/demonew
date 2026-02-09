@@ -53,6 +53,8 @@ Responde **"¿Qué debo comprar?"** con:
 
 **Parámetros**: Días de análisis (7–90, default 30), días de cobertura deseado (7–90, default 30). Esquema real: `productos.stock`, `productos.stock_bajo`, `productos_venta.cantidad`, `ventas.cbte_tipo` excluidos.
 
+**Rendimiento**: Las consultas parten de `ventas` (filtradas por fecha) y agregan por producto; si sigue siendo lento, ejecutar los índices recomendados en `db/reportes_indices_recomendados.sql`.
+
 ## Informes previstos (especificación)
 
 1. **Dashboard ejecutivo diario** – Implementado.

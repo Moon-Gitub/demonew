@@ -21,6 +21,7 @@ class ModeloReporteGestionPedidos {
 		$fechaDesde = date('Y-m-d', strtotime("-$diasAnalisis days"));
 		$fechaDesde7 = date('Y-m-d', strtotime('-7 days'));
 
+		// Optimizado: partir de ventas en el rango de fechas (usa índice en ventas.fecha), agregar por id_producto, luego unir a productos/proveedores.
 		$stmt = Conexion::conectar()->prepare("
 			SELECT
 			  p.id,
@@ -32,16 +33,22 @@ class ModeloReporteGestionPedidos {
 			  COALESCE(p.precio_venta, 0) AS precio_venta,
 			  prov.nombre AS proveedor,
 			  p.id_proveedor,
-			  COALESCE(SUM(CASE WHEN v.fecha >= :fecha_7 THEN pv.cantidad ELSE 0 END), 0) AS ventas_7_dias,
-			  COALESCE(SUM(pv.cantidad), 0) AS ventas_30_dias
-			FROM productos p
+			  COALESCE(agg.ventas_7_dias, 0) AS ventas_7_dias,
+			  COALESCE(agg.ventas_30_dias, 0) AS ventas_30_dias
+			FROM (
+			  SELECT
+			    pv.id_producto,
+			    SUM(CASE WHEN v.fecha >= :fecha_7 THEN pv.cantidad ELSE 0 END) AS ventas_7_dias,
+			    SUM(pv.cantidad) AS ventas_30_dias
+			  FROM ventas v
+			  INNER JOIN productos_venta pv ON pv.id_venta = v.id
+			  WHERE v.fecha >= :fecha_desde
+			    AND v.cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS . ")
+			  GROUP BY pv.id_producto
+			  HAVING ventas_30_dias > 0
+			) agg
+			INNER JOIN productos p ON p.id = agg.id_producto
 			LEFT JOIN proveedores prov ON p.id_proveedor = prov.id
-			LEFT JOIN productos_venta pv ON p.id = pv.id_producto
-			LEFT JOIN ventas v ON pv.id_venta = v.id
-			  AND v.fecha >= :fecha_desde
-			  AND v.cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS . ")
-			GROUP BY p.id, p.codigo, p.descripcion, p.stock, p.stock_bajo, p.precio_compra, p.precio_venta, prov.nombre, p.id_proveedor
-			HAVING ventas_30_dias > 0
 		");
 		$stmt->bindParam(":fecha_desde", $fechaDesde, PDO::PARAM_STR);
 		$stmt->bindParam(":fecha_7", $fechaDesde7, PDO::PARAM_STR);
@@ -139,6 +146,7 @@ class ModeloReporteGestionPedidos {
 	 */
 	static public function mdlBajaRotacion($dias = 90) {
 		$fechaDesde = date('Y-m-d', strtotime("-$dias days"));
+		// Optimizado: subconsulta agrega ventas por producto solo en el rango de fechas; luego JOIN a productos con stock.
 		$stmt = Conexion::conectar()->prepare("
 			SELECT
 			  p.id,
@@ -146,15 +154,18 @@ class ModeloReporteGestionPedidos {
 			  p.descripcion,
 			  IF(p.stock < 0, 0, COALESCE(p.stock, 0)) AS stock_actual,
 			  COALESCE(p.precio_compra, 0) AS precio_compra,
-			  (IF(p.stock < 0, 0, COALESCE(p.stock, 0)) * COALESCE(p.precio_compra, 0)) AS valorizado,
-			  COALESCE(SUM(pv.cantidad), 0) AS ventas_periodo
+			  (IF(p.stock < 0, 0, COALESCE(p.stock, 0)) * COALESCE(p.precio_compra, 0)) AS valorizado
 			FROM productos p
-			LEFT JOIN productos_venta pv ON p.id = pv.id_producto
-			LEFT JOIN ventas v ON pv.id_venta = v.id AND v.fecha >= :fecha_desde
-			  AND v.cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS . ")
+			LEFT JOIN (
+			  SELECT pv.id_producto, SUM(pv.cantidad) AS ventas_periodo
+			  FROM ventas v
+			  INNER JOIN productos_venta pv ON pv.id_venta = v.id
+			  WHERE v.fecha >= :fecha_desde
+			    AND v.cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS . ")
+			  GROUP BY pv.id_producto
+			) ventas_per ON ventas_per.id_producto = p.id
 			WHERE IF(p.stock < 0, 0, COALESCE(p.stock, 0)) > 0
-			GROUP BY p.id, p.codigo, p.descripcion, p.stock, p.precio_compra
-			HAVING ventas_periodo < 1
+			  AND (ventas_per.ventas_periodo IS NULL OR ventas_per.ventas_periodo < 1)
 			ORDER BY valorizado DESC
 			LIMIT 50
 		");
