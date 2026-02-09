@@ -14,3 +14,6 @@ ALTER TABLE productos_venta ADD INDEX idx_pv_id_producto (id_producto);
 
 -- Opcional: índice compuesto para agrupar por producto en reportes
 -- ALTER TABLE productos_venta ADD INDEX idx_pv_venta_producto (id_venta, id_producto);
+
+-- Cajas: saldo acumulado por fecha (Dashboard ejecutivo)
+ALTER TABLE cajas ADD INDEX idx_cajas_fecha (fecha);

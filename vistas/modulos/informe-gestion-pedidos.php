@@ -167,7 +167,10 @@ try {
         <?php if (!empty($dataCobertura)) { ?>
         <div class="igp-section">
           <h4>Top 20 productos por días de cobertura (menor = más urgente)</h4>
-          <div style="height:320px;"><canvas id="igpChartCobertura"></canvas></div>
+          <div style="height:320px; position:relative;">
+            <canvas id="igpChartCobertura"></canvas>
+            <p id="igpChartFallback" class="text-muted" style="display:none; padding:20px;">Si no ves el gráfico, actualizá la página.</p>
+          </div>
         </div>
         <?php } ?>
 
@@ -274,9 +277,14 @@ try {
 (function() {
   var labels = <?php echo json_encode($labelsCobertura); ?>;
   var data = <?php echo json_encode($dataCobertura); ?>;
-  if (typeof Chart !== 'undefined') {
+  function dibujarGrafico() {
     var ctx = document.getElementById('igpChartCobertura');
-    if (ctx) {
+    var fallback = document.getElementById('igpChartFallback');
+    if (!ctx || typeof Chart === 'undefined') {
+      if (fallback) fallback.style.display = 'block';
+      return;
+    }
+    try {
       new Chart(ctx.getContext('2d'), {
         type: 'bar',
         data: {
@@ -290,7 +298,14 @@ try {
           legend: { display: false }
         }
       });
+    } catch (e) {
+      if (fallback) fallback.style.display = 'block';
     }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', dibujarGrafico);
+  } else {
+    dibujarGrafico();
   }
 })();
 </script>

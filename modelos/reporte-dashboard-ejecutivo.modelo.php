@@ -13,23 +13,26 @@ class ModeloReporteDashboardEjecutivo {
 
 	/**
 	 * Resumen del día: ventas totales, transacciones, ticket promedio, clientes atendidos.
+	 * Usa rango de fechas para poder usar índice en ventas.fecha.
 	 * @param string $fecha Fecha en Y-m-d
 	 * @return array|null
 	 */
 	static public function mdlResumenDia($fecha) {
 		$stmt = Conexion::conectar()->prepare("
 			SELECT
-			  DATE(v.fecha) AS fecha,
+			  :fecha AS fecha,
 			  COALESCE(SUM(v.total), 0) AS ventas_totales,
 			  COUNT(*) AS cantidad_transacciones,
 			  COALESCE(AVG(v.total), 0) AS ticket_promedio,
 			  COUNT(DISTINCT v.id_cliente) AS clientes_atendidos
 			FROM ventas v
-			WHERE DATE(v.fecha) = :fecha
+			WHERE v.fecha >= :fecha
+			  AND v.fecha < :fecha_fin
 			  AND v.cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS . ")
-			GROUP BY DATE(v.fecha)
 		");
+		$fechaFin = date('Y-m-d', strtotime($fecha . ' +1 day'));
 		$stmt->bindParam(":fecha", $fecha, PDO::PARAM_STR);
+		$stmt->bindParam(":fecha_fin", $fechaFin, PDO::PARAM_STR);
 		$stmt->execute();
 		$res = $stmt->fetch(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
@@ -38,7 +41,7 @@ class ModeloReporteDashboardEjecutivo {
 	}
 
 	/**
-	 * Ventas del día anterior (para comparativa %).
+	 * Ventas del día anterior (para comparativa %). Rango de fechas para índice.
 	 * @param string $fechaAyer Fecha en Y-m-d
 	 * @return float
 	 */
@@ -46,10 +49,13 @@ class ModeloReporteDashboardEjecutivo {
 		$stmt = Conexion::conectar()->prepare("
 			SELECT COALESCE(SUM(total), 0) AS total
 			FROM ventas
-			WHERE DATE(fecha) = :fecha
+			WHERE fecha >= :fecha
+			  AND fecha < :fecha_fin
 			  AND cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS . ")
 		");
+		$fechaFin = date('Y-m-d', strtotime($fechaAyer . ' +1 day'));
 		$stmt->bindParam(":fecha", $fechaAyer, PDO::PARAM_STR);
+		$stmt->bindParam(":fecha_fin", $fechaFin, PDO::PARAM_STR);
 		$stmt->execute();
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
@@ -79,7 +85,7 @@ class ModeloReporteDashboardEjecutivo {
 	}
 
 	/**
-	 * Top 10 productos más vendidos del día.
+	 * Top 10 productos más vendidos del día. Parte de ventas en rango (índice).
 	 * @param string $fecha Y-m-d
 	 * @return array
 	 */
@@ -88,17 +94,20 @@ class ModeloReporteDashboardEjecutivo {
 			SELECT
 			  p.descripcion AS nombre,
 			  SUM(pv.cantidad) AS cantidad_vendida,
-			  SUM(pv.cantidad * pv.precio_venta) AS monto_total
-			FROM productos_venta pv
+			  SUM(pv.cantidad * COALESCE(pv.precio_venta, pv.precio_unitario, 0)) AS monto_total
+			FROM ventas v
+			INNER JOIN productos_venta pv ON pv.id_venta = v.id
 			INNER JOIN productos p ON pv.id_producto = p.id
-			INNER JOIN ventas v ON pv.id_venta = v.id
-			WHERE DATE(v.fecha) = :fecha
+			WHERE v.fecha >= :fecha
+			  AND v.fecha < :fecha_fin
 			  AND v.cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS . ")
 			GROUP BY p.id, p.descripcion
 			ORDER BY cantidad_vendida DESC
 			LIMIT 10
 		");
+		$fechaFin = date('Y-m-d', strtotime($fecha . ' +1 day'));
 		$stmt->bindParam(":fecha", $fecha, PDO::PARAM_STR);
+		$stmt->bindParam(":fecha_fin", $fechaFin, PDO::PARAM_STR);
 		$stmt->execute();
 		$res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
@@ -107,7 +116,7 @@ class ModeloReporteDashboardEjecutivo {
 	}
 
 	/**
-	 * Distribución por medio de pago del día.
+	 * Distribución por medio de pago del día. Rango de fechas para índice.
 	 * @param string $fecha Y-m-d
 	 * @return array
 	 */
@@ -118,12 +127,15 @@ class ModeloReporteDashboardEjecutivo {
 			  COUNT(*) AS cantidad,
 			  COALESCE(SUM(v.total), 0) AS monto_total
 			FROM ventas v
-			WHERE DATE(v.fecha) = :fecha
+			WHERE v.fecha >= :fecha
+			  AND v.fecha < :fecha_fin
 			  AND v.cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS . ")
 			GROUP BY v.metodo_pago
 			ORDER BY monto_total DESC
 		");
+		$fechaFin = date('Y-m-d', strtotime($fecha . ' +1 day'));
 		$stmt->bindParam(":fecha", $fecha, PDO::PARAM_STR);
+		$stmt->bindParam(":fecha_fin", $fechaFin, PDO::PARAM_STR);
 		$stmt->execute();
 		$res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
@@ -133,6 +145,7 @@ class ModeloReporteDashboardEjecutivo {
 
 	/**
 	 * Saldo de caja acumulado hasta la fecha (ingresos tipo=1 menos egresos tipo=0).
+	 * Usa fecha < :fecha_fin para poder usar índice en cajas.fecha.
 	 * @param string $fecha Y-m-d
 	 * @return float
 	 */
@@ -142,9 +155,10 @@ class ModeloReporteDashboardEjecutivo {
 			  COALESCE(SUM(CASE WHEN tipo = 1 THEN monto ELSE 0 END), 0) -
 			  COALESCE(SUM(CASE WHEN tipo = 0 THEN monto ELSE 0 END), 0) AS saldo_caja
 			FROM cajas
-			WHERE DATE(fecha) <= :fecha
+			WHERE fecha < :fecha_fin
 		");
-		$stmt->bindParam(":fecha", $fecha, PDO::PARAM_STR);
+		$fechaFin = date('Y-m-d', strtotime($fecha . ' +1 day'));
+		$stmt->bindParam(":fecha_fin", $fechaFin, PDO::PARAM_STR);
 		$stmt->execute();
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();

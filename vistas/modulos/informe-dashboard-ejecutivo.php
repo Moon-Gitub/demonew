@@ -3,7 +3,11 @@
  * Vista: Dashboard Ejecutivo Diario
  * Métricas del día: ventas, transacciones, ticket promedio, top productos, medios de pago, saldo caja.
  */
+@set_time_limit(90);
 $fechaHoy = isset($_GET['fecha']) ? $_GET['fecha'] : date('Y-m-d');
+if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fechaHoy)) {
+	$fechaHoy = date('Y-m-d');
+}
 
 $resumen = ModeloReporteDashboardEjecutivo::mdlResumenDia($fechaHoy);
 $ventasHoy = $resumen ? (float)($resumen['ventas_totales']) : 0;
