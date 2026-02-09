@@ -1,11 +1,10 @@
 <div class="content-wrapper">
   <section class="content-header">
-    <h1>
-      Informe ventas por productos
-    </h1>
+    <h1><i class="fa fa-area-chart"></i> Informes <small>Productos vendidos</small></h1>
     <ol class="breadcrumb">
       <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
-        <li class="active">Ventas por producto</li>
+      <li><a href="ventas-productos">Informes</a></li>
+      <li class="active">Productos vendidos</li>
     </ol>
   </section>
 

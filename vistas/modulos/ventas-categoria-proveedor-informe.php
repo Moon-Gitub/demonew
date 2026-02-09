@@ -356,21 +356,12 @@
 <div class="content-wrapper">
 
   <section class="content-header">
-    
-    <h1>
-      
-      Administrar ventas <small>- <b> Informe de ventas por categorias | proveedor | productos </b> </small>
-    
-    </h1>
-
+    <h1><i class="fa fa-area-chart"></i> Informes <small>Ventas por categoría / proveedor / productos</small></h1>
     <ol class="breadcrumb">
-      
       <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
-      
-      <li class="active">Administrar ventas</li>
-    
+      <li><a href="ventas-categoria-proveedor-informe">Informes</a></li>
+      <li class="active">Ventas por categoría / proveedor</li>
     </ol>
-
   </section>
 
   <section class="content">

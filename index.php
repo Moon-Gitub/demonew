@@ -73,6 +73,7 @@ require_once "modelos/medios_pago.modelo.php";
 require_once "modelos/presupuestos.modelo.php";
 require_once "modelos/pedidos.modelo.php";
 require_once "modelos/integraciones.modelo.php";
+require_once "modelos/reporte-dashboard-ejecutivo.modelo.php";
 
 require_once "parametros.php";
 

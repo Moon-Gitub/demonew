@@ -7,21 +7,12 @@
 <div class="content-wrapper">
 
   <section class="content-header">
-    
-    <h1>
-      
-      Administrar ventas <small>- <b> Informe rentabilidad </b> </small>
-    
-    </h1>
-
+    <h1><i class="fa fa-area-chart"></i> Informes <small>Rentabilidad</small></h1>
     <ol class="breadcrumb">
-      
       <li><a href="inicio"><i class="fa fa-dashboard"></i> Inicio</a></li>
-      
-      <li class="active">Administrar ventas</li>
-    
+      <li><a href="ventas-rentabilidad">Informes</a></li>
+      <li class="active">Rentabilidad</li>
     </ol>
-
   </section>
 
   <section class="content">
