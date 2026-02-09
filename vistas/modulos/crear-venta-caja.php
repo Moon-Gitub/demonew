@@ -1064,13 +1064,7 @@
         
 				<div class="box box-warning">
 
-          <div class="box-header with-border">
-            <div class="row row-atajos-teclado-form text-center" style="margin: 0 -10px 8px -10px;">
-              <a href="javascript:void(0);" id="linkAtajosTecladoForm" class="link-atajos-teclado" tabindex="0" role="button" title="Ver atajos de teclado (F1 dos veces)">
-                <i class="fa fa-keyboard-o"></i> Atajos de teclado
-              </a>
-            </div>
-          </div>
+          <div class="box-header with-border"></div>
       
             <div class="box-body">
       

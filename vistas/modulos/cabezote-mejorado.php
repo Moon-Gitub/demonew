@@ -540,7 +540,15 @@ if($ctaCteCliente["saldo"] <= 0) {
                   </li>
             <?php } ?>
 
-                <?php /* Atajos de teclado: ya está dentro del formulario crear-venta-caja (arriba del contenido), no en navbar */ ?>
+                <?php if (isset($_GET["ruta"]) && $_GET["ruta"] === "crear-venta-caja") { ?>
+                <!-- Atajos de teclado (solo en Crear venta caja) -->
+                <li>
+                    <a href="javascript:void(0);" id="linkAtajosTeclado" class="link-atajos-teclado-navbar" tabindex="0" role="button" title="Ver atajos de teclado (F1 dos veces)">
+                        <i class="fa fa-keyboard-o"></i>
+                        <span class="hidden-xs" style="margin-left: 5px;">Atajos de teclado</span>
+                    </a>
+                </li>
+                <?php } ?>
 
                 <?php if($_SESSION["perfil"] == "Administrador") { ?>
 

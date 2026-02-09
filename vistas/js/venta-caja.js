@@ -4081,12 +4081,12 @@ $(document).ready(function() {
 	
 	// Asegurar que los selects sean accesibles
 	$("#radioPrecio, #nuevotipoCbte, #nuevaPtoVta, #nuevaConcepto").attr("tabindex", "0");
-	// Enlace Atajos de teclado (navbar y dentro del form): click y Enter/Espacio abren la ayuda
-	$(document).on('click', '#linkAtajosTeclado, #linkAtajosTecladoForm', function(e) {
+	// Enlace Atajos de teclado: click y Enter/Espacio abren la ayuda
+	$(document).on('click', '#linkAtajosTeclado', function(e) {
 		e.preventDefault();
 		if (typeof mostrarAyudaAtajos === 'function') mostrarAyudaAtajos();
 	});
-	$(document).on('keydown', '#linkAtajosTeclado, #linkAtajosTecladoForm', function(e) {
+	$(document).on('keydown', '#linkAtajosTeclado', function(e) {
 		if (e.keyCode === 13 || e.keyCode === 32) {
 			e.preventDefault();
 			if (typeof mostrarAyudaAtajos === 'function') mostrarAyudaAtajos();
