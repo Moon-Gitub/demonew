@@ -4,24 +4,38 @@
  * Métricas del día: ventas, transacciones, ticket promedio, top productos, medios de pago, saldo caja.
  */
 @set_time_limit(90);
-$fechaHoy = isset($_GET['fecha']) ? $_GET['fecha'] : date('Y-m-d');
+$errorDashboard = null;
+$fechaHoy = isset($_GET['fecha']) ? trim($_GET['fecha']) : date('Y-m-d');
 if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fechaHoy)) {
 	$fechaHoy = date('Y-m-d');
 }
-
-$resumen = ModeloReporteDashboardEjecutivo::mdlResumenDia($fechaHoy);
+try {
+	$resumen = ModeloReporteDashboardEjecutivo::mdlResumenDia($fechaHoy);
+} catch (Throwable $e) {
+	$errorDashboard = $e->getMessage();
+	$resumen = null;
+}
 $ventasHoy = $resumen ? (float)($resumen['ventas_totales']) : 0;
 $cantidadTransacciones = $resumen ? (int)($resumen['cantidad_transacciones']) : 0;
 $ticketPromedio = $resumen ? (float)($resumen['ticket_promedio']) : 0;
 $clientesAtendidos = $resumen ? (int)($resumen['clientes_atendidos']) : 0;
 
 $fechaAyer = date('Y-m-d', strtotime($fechaHoy . ' -1 day'));
-$ventasAyer = ModeloReporteDashboardEjecutivo::mdlVentasDiaAnterior($fechaAyer);
+$ventasAyer = 0;
+$topProductos = [];
+$mediosPago = [];
+$saldoCaja = 0;
+if (!$errorDashboard) {
+	try {
+		$ventasAyer = ModeloReporteDashboardEjecutivo::mdlVentasDiaAnterior($fechaAyer);
+		$topProductos = ModeloReporteDashboardEjecutivo::mdlTopProductosDia($fechaHoy);
+		$mediosPago = ModeloReporteDashboardEjecutivo::mdlMediosPagoDia($fechaHoy);
+		$saldoCaja = ModeloReporteDashboardEjecutivo::mdlSaldoCajaAl($fechaHoy);
+	} catch (Throwable $e) {
+		$errorDashboard = $e->getMessage();
+	}
+}
 $variacionAyer = $ventasAyer > 0 ? (($ventasHoy - $ventasAyer) / $ventasAyer) * 100 : ($ventasHoy > 0 ? 100 : 0);
-
-$topProductos = ModeloReporteDashboardEjecutivo::mdlTopProductosDia($fechaHoy);
-$mediosPago = ModeloReporteDashboardEjecutivo::mdlMediosPagoDia($fechaHoy);
-$saldoCaja = ModeloReporteDashboardEjecutivo::mdlSaldoCajaAl($fechaHoy);
 
 $totalMediosPago = 0;
 foreach ($mediosPago as $mp) { $totalMediosPago += (float)$mp['monto_total']; }
@@ -78,6 +92,12 @@ $dataMediosJson = json_encode($dataMedios);
         </form>
       </div>
       <div class="box-body">
+        <?php if ($errorDashboard) { ?>
+        <div class="alert alert-danger">
+          <strong>Error al cargar el dashboard</strong><br>
+          <?php echo htmlspecialchars($errorDashboard); ?>
+        </div>
+        <?php } ?>
         <div class="row">
           <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="ide-card">

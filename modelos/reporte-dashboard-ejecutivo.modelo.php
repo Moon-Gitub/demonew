@@ -18,22 +18,20 @@ class ModeloReporteDashboardEjecutivo {
 	 * @return array|null
 	 */
 	static public function mdlResumenDia($fecha) {
+		$fechaFin = date('Y-m-d', strtotime($fecha . ' +1 day'));
 		$stmt = Conexion::conectar()->prepare("
 			SELECT
-			  :fecha AS fecha,
+			  ? AS fecha,
 			  COALESCE(SUM(v.total), 0) AS ventas_totales,
 			  COUNT(*) AS cantidad_transacciones,
 			  COALESCE(AVG(v.total), 0) AS ticket_promedio,
 			  COUNT(DISTINCT v.id_cliente) AS clientes_atendidos
 			FROM ventas v
-			WHERE v.fecha >= :fecha
-			  AND v.fecha < :fecha_fin
+			WHERE v.fecha >= ?
+			  AND v.fecha < ?
 			  AND v.cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS . ")
 		");
-		$fechaFin = date('Y-m-d', strtotime($fecha . ' +1 day'));
-		$stmt->bindParam(":fecha", $fecha, PDO::PARAM_STR);
-		$stmt->bindParam(":fecha_fin", $fechaFin, PDO::PARAM_STR);
-		$stmt->execute();
+		$stmt->execute([$fecha, $fecha, $fechaFin]);
 		$res = $stmt->fetch(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
 		$stmt = null;
@@ -46,17 +44,15 @@ class ModeloReporteDashboardEjecutivo {
 	 * @return float
 	 */
 	static public function mdlVentasDiaAnterior($fechaAyer) {
+		$fechaFin = date('Y-m-d', strtotime($fechaAyer . ' +1 day'));
 		$stmt = Conexion::conectar()->prepare("
 			SELECT COALESCE(SUM(total), 0) AS total
 			FROM ventas
-			WHERE fecha >= :fecha
-			  AND fecha < :fecha_fin
+			WHERE fecha >= ?
+			  AND fecha < ?
 			  AND cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS . ")
 		");
-		$fechaFin = date('Y-m-d', strtotime($fechaAyer . ' +1 day'));
-		$stmt->bindParam(":fecha", $fechaAyer, PDO::PARAM_STR);
-		$stmt->bindParam(":fecha_fin", $fechaFin, PDO::PARAM_STR);
-		$stmt->execute();
+		$stmt->execute([$fechaAyer, $fechaFin]);
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
 		$stmt = null;
@@ -72,12 +68,11 @@ class ModeloReporteDashboardEjecutivo {
 		$stmt = Conexion::conectar()->prepare("
 			SELECT COALESCE(SUM(total), 0) AS total
 			FROM ventas
-			WHERE fecha >= DATE_SUB(:fecha, INTERVAL 1 MONTH)
-			  AND fecha < DATE_ADD(DATE_SUB(:fecha, INTERVAL 1 MONTH), INTERVAL 1 DAY)
+			WHERE fecha >= DATE_SUB(?, INTERVAL 1 MONTH)
+			  AND fecha < DATE_ADD(DATE_SUB(?, INTERVAL 1 MONTH), INTERVAL 1 DAY)
 			  AND cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS . ")
 		");
-		$stmt->bindParam(":fecha", $fecha, PDO::PARAM_STR);
-		$stmt->execute();
+		$stmt->execute([$fecha, $fecha]);
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
 		$stmt = null;
@@ -90,25 +85,23 @@ class ModeloReporteDashboardEjecutivo {
 	 * @return array
 	 */
 	static public function mdlTopProductosDia($fecha) {
+		$fechaFin = date('Y-m-d', strtotime($fecha . ' +1 day'));
 		$stmt = Conexion::conectar()->prepare("
 			SELECT
 			  p.descripcion AS nombre,
 			  SUM(pv.cantidad) AS cantidad_vendida,
-			  SUM(pv.cantidad * COALESCE(pv.precio_venta, pv.precio_unitario, 0)) AS monto_total
+			  SUM(pv.cantidad * COALESCE(pv.precio_unitario, pv.precio_venta, 0)) AS monto_total
 			FROM ventas v
 			INNER JOIN productos_venta pv ON pv.id_venta = v.id
 			INNER JOIN productos p ON pv.id_producto = p.id
-			WHERE v.fecha >= :fecha
-			  AND v.fecha < :fecha_fin
+			WHERE v.fecha >= ?
+			  AND v.fecha < ?
 			  AND v.cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS . ")
 			GROUP BY p.id, p.descripcion
 			ORDER BY cantidad_vendida DESC
 			LIMIT 10
 		");
-		$fechaFin = date('Y-m-d', strtotime($fecha . ' +1 day'));
-		$stmt->bindParam(":fecha", $fecha, PDO::PARAM_STR);
-		$stmt->bindParam(":fecha_fin", $fechaFin, PDO::PARAM_STR);
-		$stmt->execute();
+		$stmt->execute([$fecha, $fechaFin]);
 		$res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
 		$stmt = null;
@@ -121,22 +114,20 @@ class ModeloReporteDashboardEjecutivo {
 	 * @return array
 	 */
 	static public function mdlMediosPagoDia($fecha) {
+		$fechaFin = date('Y-m-d', strtotime($fecha . ' +1 day'));
 		$stmt = Conexion::conectar()->prepare("
 			SELECT
 			  v.metodo_pago AS nombre,
 			  COUNT(*) AS cantidad,
 			  COALESCE(SUM(v.total), 0) AS monto_total
 			FROM ventas v
-			WHERE v.fecha >= :fecha
-			  AND v.fecha < :fecha_fin
+			WHERE v.fecha >= ?
+			  AND v.fecha < ?
 			  AND v.cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS . ")
 			GROUP BY v.metodo_pago
 			ORDER BY monto_total DESC
 		");
-		$fechaFin = date('Y-m-d', strtotime($fecha . ' +1 day'));
-		$stmt->bindParam(":fecha", $fecha, PDO::PARAM_STR);
-		$stmt->bindParam(":fecha_fin", $fechaFin, PDO::PARAM_STR);
-		$stmt->execute();
+		$stmt->execute([$fecha, $fechaFin]);
 		$res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
 		$stmt = null;
@@ -150,16 +141,15 @@ class ModeloReporteDashboardEjecutivo {
 	 * @return float
 	 */
 	static public function mdlSaldoCajaAl($fecha) {
+		$fechaFin = date('Y-m-d', strtotime($fecha . ' +1 day'));
 		$stmt = Conexion::conectar()->prepare("
 			SELECT
 			  COALESCE(SUM(CASE WHEN tipo = 1 THEN monto ELSE 0 END), 0) -
 			  COALESCE(SUM(CASE WHEN tipo = 0 THEN monto ELSE 0 END), 0) AS saldo_caja
 			FROM cajas
-			WHERE fecha < :fecha_fin
+			WHERE fecha < ?
 		");
-		$fechaFin = date('Y-m-d', strtotime($fecha . ' +1 day'));
-		$stmt->bindParam(":fecha_fin", $fechaFin, PDO::PARAM_STR);
-		$stmt->execute();
+		$stmt->execute([$fechaFin]);
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
 		$stmt = null;
