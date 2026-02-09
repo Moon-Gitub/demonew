@@ -40,7 +40,6 @@ class ModeloReporteGestionPedidos {
 			LEFT JOIN ventas v ON pv.id_venta = v.id
 			  AND v.fecha >= :fecha_desde
 			  AND v.cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS . ")
-			WHERE (p.activo = 1 OR p.activo IS NULL)
 			GROUP BY p.id, p.codigo, p.descripcion, p.stock, p.stock_bajo, p.precio_compra, p.precio_venta, prov.nombre, p.id_proveedor
 			HAVING ventas_30_dias > 0
 		");
@@ -153,8 +152,7 @@ class ModeloReporteGestionPedidos {
 			LEFT JOIN productos_venta pv ON p.id = pv.id_producto
 			LEFT JOIN ventas v ON pv.id_venta = v.id AND v.fecha >= :fecha_desde
 			  AND v.cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS . ")
-			WHERE (p.activo = 1 OR p.activo IS NULL)
-			  AND IF(p.stock < 0, 0, COALESCE(p.stock, 0)) > 0
+			WHERE IF(p.stock < 0, 0, COALESCE(p.stock, 0)) > 0
 			GROUP BY p.id, p.codigo, p.descripcion, p.stock, p.precio_compra
 			HAVING ventas_periodo < 1
 			ORDER BY valorizado DESC
