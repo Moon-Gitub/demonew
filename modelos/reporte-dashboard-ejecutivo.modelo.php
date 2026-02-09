@@ -90,7 +90,7 @@ class ModeloReporteDashboardEjecutivo {
 			SELECT
 			  p.descripcion AS nombre,
 			  SUM(pv.cantidad) AS cantidad_vendida,
-			  SUM(pv.cantidad * COALESCE(pv.precio_unitario, pv.precio_venta, 0)) AS monto_total
+			  SUM(pv.cantidad * COALESCE(pv.precio_venta, 0)) AS monto_total
 			FROM ventas v
 			INNER JOIN productos_venta pv ON pv.id_venta = v.id
 			INNER JOIN productos p ON pv.id_producto = p.id

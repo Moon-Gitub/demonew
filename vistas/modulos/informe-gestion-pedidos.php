@@ -163,13 +163,39 @@ try {
           </div>
         </div>
 
-        <!-- Gráfico días cobertura -->
-        <?php if (!empty($dataCobertura)) { ?>
+        <!-- Top 20 productos por días de cobertura: gráfico + tabla de respaldo -->
+        <?php if (!empty($dataCobertura)) {
+          $top20Cobertura = array_slice($productos, 0, 20);
+        ?>
         <div class="igp-section">
           <h4>Top 20 productos por días de cobertura (menor = más urgente)</h4>
-          <div style="height:320px; position:relative;">
+          <div style="height:320px; position:relative; margin-bottom:15px;">
             <canvas id="igpChartCobertura"></canvas>
-            <p id="igpChartFallback" class="text-muted" style="display:none; padding:20px;">Si no ves el gráfico, actualizá la página.</p>
+            <p id="igpChartFallback" class="text-muted" style="display:none; padding:20px;">Si no ves el gráfico, consultá la tabla debajo.</p>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-bordered table-condensed table-sm">
+              <thead>
+                <tr style="background:#667eea; color:white;">
+                  <th style="color:white;">#</th>
+                  <th style="color:white;">Producto</th>
+                  <th style="color:white;">Días cobertura</th>
+                  <th style="color:white;">Stock</th>
+                  <th style="color:white;">Venta/día</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($top20Cobertura as $i => $p) { ?>
+                <tr>
+                  <td><?php echo $i + 1; ?></td>
+                  <td><?php echo htmlspecialchars(mb_substr($p['descripcion'], 0, 50)); ?><?php echo mb_strlen($p['descripcion']) > 50 ? '…' : ''; ?></td>
+                  <td><strong><?php echo $p['dias_cobertura'] == 999 ? '-' : $p['dias_cobertura']; ?></strong></td>
+                  <td><?php echo number_format($p['stock_actual'], 0, ',', '.'); ?></td>
+                  <td><?php echo number_format($p['promedio_venta_diaria'], 2, ',', '.'); ?></td>
+                </tr>
+                <?php } ?>
+              </tbody>
+            </table>
           </div>
         </div>
         <?php } ?>
@@ -280,7 +306,8 @@ try {
   function dibujarGrafico() {
     var ctx = document.getElementById('igpChartCobertura');
     var fallback = document.getElementById('igpChartFallback');
-    if (!ctx || typeof Chart === 'undefined') {
+    if (!ctx) return;
+    if (typeof Chart === 'undefined') {
       if (fallback) fallback.style.display = 'block';
       return;
     }
@@ -294,8 +321,8 @@ try {
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
-          legend: { display: false }
+          legend: { display: false },
+          scales: { yAxes: [{ ticks: { beginAtZero: true } }] }
         }
       });
     } catch (e) {
@@ -305,7 +332,7 @@ try {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', dibujarGrafico);
   } else {
-    dibujarGrafico();
+    setTimeout(dibujarGrafico, 100);
   }
 })();
 </script>
