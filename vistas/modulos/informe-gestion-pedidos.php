@@ -3,23 +3,41 @@
  * Informe Gestión Inteligente de Pedidos - ¿Qué debo comprar?
  * Productos críticos, días de cobertura, cantidad sugerida, ROI, por proveedor, baja rotación.
  */
-$diasAnalisis = isset($_GET['dias_analisis']) ? max(7, min(90, (int)$_GET['dias_analisis'])) : 30;
-$diasCobertura = isset($_GET['dias_cobertura']) ? max(7, min(90, (int)$_GET['dias_cobertura'])) : 30;
+$errorInforme = null;
+try {
+	if (!class_exists('ModeloReporteGestionPedidos')) {
+		throw new Exception('No se cargó el modelo del informe. Revisar que index.php incluya modelos/reporte-gestion-pedidos.modelo.php');
+	}
+	$diasAnalisis = isset($_GET['dias_analisis']) ? max(7, min(90, (int)$_GET['dias_analisis'])) : 30;
+	$diasCobertura = isset($_GET['dias_cobertura']) ? max(7, min(90, (int)$_GET['dias_cobertura'])) : 30;
 
-$productos = ModeloReporteGestionPedidos::mdlProductosCriticos($diasAnalisis, $diasCobertura);
-$resumen = ModeloReporteGestionPedidos::mdlResumenInversion($diasAnalisis, $diasCobertura);
-$porProveedor = ModeloReporteGestionPedidos::mdlPedidoPorProveedor($diasAnalisis, $diasCobertura);
-$bajaRotacion = ModeloReporteGestionPedidos::mdlBajaRotacion(90);
+	$productos = ModeloReporteGestionPedidos::mdlProductosCriticos($diasAnalisis, $diasCobertura);
+	$resumen = ModeloReporteGestionPedidos::mdlResumenInversion($diasAnalisis, $diasCobertura);
+	$porProveedor = ModeloReporteGestionPedidos::mdlPedidoPorProveedor($diasAnalisis, $diasCobertura);
+	$bajaRotacion = ModeloReporteGestionPedidos::mdlBajaRotacion(90);
 
-$criticos48h = array_filter($productos, function ($p) { return $p['dias_cobertura'] <= 2 && $p['dias_cobertura'] < 999; });
-$top10Ganancia = array_slice($productos, 0, 10);
-$gananciaTop10 = array_sum(array_column($top10Ganancia, 'ganancia_esperada'));
+	$criticos48h = array_filter($productos, function ($p) { return $p['dias_cobertura'] <= 2 && $p['dias_cobertura'] < 999; });
+	$top10Ganancia = array_slice($productos, 0, 10);
+	$gananciaTop10 = array_sum(array_column($top10Ganancia, 'ganancia_esperada'));
 
-$labelsCobertura = [];
-$dataCobertura = [];
-foreach (array_slice($productos, 0, 20) as $p) {
-	$labelsCobertura[] = mb_substr($p['descripcion'], 0, 20) . (mb_strlen($p['descripcion']) > 20 ? '…' : '');
-	$dataCobertura[] = $p['dias_cobertura'] == 999 ? 0 : $p['dias_cobertura'];
+	$labelsCobertura = [];
+	$dataCobertura = [];
+	foreach (array_slice($productos, 0, 20) as $p) {
+		$labelsCobertura[] = mb_substr($p['descripcion'], 0, 20) . (mb_strlen($p['descripcion']) > 20 ? '…' : '');
+		$dataCobertura[] = $p['dias_cobertura'] == 999 ? 0 : $p['dias_cobertura'];
+	}
+} catch (Throwable $e) {
+	$errorInforme = $e->getMessage();
+	$productos = [];
+	$resumen = ['inversion_total' => 0, 'inversion_criticos' => 0, 'ganancia_esperada' => 0, 'cantidad_productos' => 0, 'criticos_count' => 0, 'urgentes_count' => 0];
+	$porProveedor = [];
+	$bajaRotacion = [];
+	$criticos48h = [];
+	$gananciaTop10 = 0;
+	$labelsCobertura = [];
+	$dataCobertura = [];
+	$diasAnalisis = 30;
+	$diasCobertura = 30;
 }
 ?>
 <div class="content-wrapper">
@@ -33,6 +51,25 @@ foreach (array_slice($productos, 0, 20) as $p) {
   </section>
 
   <section class="content">
+    <?php if ($errorInforme !== null) { ?>
+    <div class="alert alert-danger">
+      <strong>Error al cargar el informe</strong><br>
+      <?php echo htmlspecialchars($errorInforme); ?>
+      <br><small>Revisá el archivo error_log del servidor o la configuración de la base de datos (.env).</small>
+    </div>
+    <div class="box">
+      <div class="box-header with-border">
+        <form method="get" action="" class="form-inline">
+          <input type="hidden" name="ruta" value="informe-gestion-pedidos">
+          <label>Días de análisis:</label>
+          <input type="number" name="dias_analisis" class="form-control" value="30" min="7" max="90" style="width:70px; margin:0 8px;">
+          <label>Días de cobertura:</label>
+          <input type="number" name="dias_cobertura" class="form-control" value="30" min="7" max="90" style="width:70px; margin:0 8px;">
+          <button type="submit" class="btn btn-primary"><i class="fa fa-refresh"></i> Reintentar</button>
+        </form>
+      </div>
+    </div>
+    <?php } else { ?>
     <style>
       .igp-card { background:#fff; border-radius:10px; padding:15px 20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); border:1px solid #f0f0f0; margin-bottom:15px; }
       .igp-card-title { font-size:12px; text-transform:uppercase; color:#7f8c8d; margin-bottom:5px; }
@@ -226,10 +263,11 @@ foreach (array_slice($productos, 0, 20) as $p) {
         <?php } ?>
       </div>
     </div>
+    <?php } ?>
   </section>
 </div>
 
-<?php if (!empty($dataCobertura)) { ?>
+<?php if (!$errorInforme && !empty($dataCobertura)) { ?>
 <script>
 (function() {
   var labels = <?php echo json_encode($labelsCobertura); ?>;
