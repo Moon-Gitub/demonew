@@ -153,6 +153,9 @@ $dataMediosJson = json_encode($dataMedios);
               <div class="ide-chart-title">Top 10 productos más vendidos (monto)</div>
               <div class="chart-responsive" style="position:relative;height:300px;">
                 <canvas id="ideProductosBar"></canvas>
+                <?php if (empty($topProductos)) { ?>
+                <p class="text-muted" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);margin:0;text-align:center;">No hay ventas en esta fecha.<br>El gráfico aparecerá cuando haya datos.</p>
+                <?php } ?>
               </div>
             </div>
           </div>
@@ -161,6 +164,9 @@ $dataMediosJson = json_encode($dataMedios);
               <div class="ide-chart-title">Distribución por medio de pago</div>
               <div class="chart-responsive" style="position:relative;height:300px;">
                 <canvas id="ideMediosPie"></canvas>
+                <?php if (empty($mediosPago)) { ?>
+                <p class="text-muted" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);margin:0;text-align:center;">No hay ventas en esta fecha.<br>El gráfico aparecerá cuando haya datos.</p>
+                <?php } ?>
               </div>
               <?php if (!empty($mediosPago)) { ?>
               <ul class="list-unstyled" style="margin-top:12px;font-size:12px;">
@@ -213,46 +219,57 @@ $dataMediosJson = json_encode($dataMedios);
   var dataProductos = <?php echo $dataProductosJson; ?>;
   var labelsMedios = <?php echo $labelsMediosJson; ?>;
   var dataMedios = <?php echo $dataMediosJson; ?>;
+  var coloresPie = ['#2ecc71','#3498db','#9b59b6','#e67e22','#1abc9c'];
 
-  if (typeof Chart !== 'undefined' && labelsProductos.length > 0) {
-    var ctxBar = document.getElementById('ideProductosBar');
-    if (ctxBar) {
-      new Chart(ctxBar.getContext('2d'), {
-        type: 'bar',
-        data: {
+  function initCharts() {
+    if (typeof Chart === 'undefined') return;
+    if (labelsProductos.length > 0) {
+      var ctxBar = document.getElementById('ideProductosBar');
+      if (ctxBar) {
+        var barData = {
           labels: labelsProductos,
           datasets: [{
-            label: 'Monto vendido',
-            data: dataProductos,
-            backgroundColor: ['#3498db','#e74c3c','#2ecc71','#9b59b6','#f1c40f','#1abc9c','#e67e22','#34495e','#ff7675','#6c5ce7']
+            fillColor: 'rgba(52,152,219,0.6)',
+            strokeColor: 'rgba(52,152,219,0.8)',
+            highlightFill: 'rgba(52,152,219,0.8)',
+            highlightStroke: 'rgba(52,152,219,1)',
+            data: dataProductos
           }]
-        },
-        options: {
+        };
+        new Chart(ctxBar.getContext('2d')).Bar(barData, {
+          scaleBeginAtZero: true,
           responsive: true,
           maintainAspectRatio: false,
-          scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
-          legend: { display: false }
+          showScale: true
+        });
+      }
+    }
+    if (labelsMedios.length > 0) {
+      var ctxPie = document.getElementById('ideMediosPie');
+      if (ctxPie) {
+        var pieData = [];
+        for (var i = 0; i < labelsMedios.length; i++) {
+          pieData.push({
+            value: dataMedios[i],
+            color: coloresPie[i % coloresPie.length],
+            highlight: coloresPie[i % coloresPie.length],
+            label: labelsMedios[i]
+          });
         }
-      });
+        new Chart(ctxPie.getContext('2d')).Pie(pieData, {
+          responsive: true,
+          maintainAspectRatio: false,
+          segmentShowStroke: true,
+          segmentStrokeColor: '#fff',
+          segmentStrokeWidth: 1
+        });
+      }
     }
   }
-
-  if (typeof Chart !== 'undefined' && labelsMedios.length > 0) {
-    var ctxPie = document.getElementById('ideMediosPie');
-    if (ctxPie) {
-      new Chart(ctxPie.getContext('2d'), {
-        type: 'pie',
-        data: {
-          labels: labelsMedios,
-          datasets: [{ data: dataMedios, backgroundColor: ['#2ecc71','#3498db','#9b59b6','#e67e22','#1abc9c'] }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          legend: { position: 'bottom' }
-        }
-      });
-    }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCharts);
+  } else {
+    initCharts();
   }
 })();
 </script>

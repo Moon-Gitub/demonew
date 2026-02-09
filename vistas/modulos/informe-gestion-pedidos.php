@@ -169,9 +169,10 @@ try {
         ?>
         <div class="igp-section">
           <h4>Top 20 productos por días de cobertura (menor = más urgente)</h4>
-          <div style="height:320px; position:relative; margin-bottom:15px;">
+          <p class="text-muted" style="margin-top:0;font-size:12px;">Gráfico de barras: días de cobertura por producto. Los mismos datos están en la tabla debajo.</p>
+          <div style="height:320px; position:relative; margin-bottom:15px; background:#f9f9f9; border:1px solid #eee; border-radius:8px;">
             <canvas id="igpChartCobertura"></canvas>
-            <p id="igpChartFallback" class="text-muted" style="display:none; padding:20px;">Si no ves el gráfico, consultá la tabla debajo.</p>
+            <p id="igpChartFallback" class="text-muted" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); margin:0; text-align:center; width:80%;">El gráfico no pudo cargarse. Consultá la tabla debajo para ver los datos.</p>
           </div>
           <div class="table-responsive">
             <table class="table table-bordered table-condensed table-sm">
@@ -303,6 +304,7 @@ try {
 (function() {
   var labels = <?php echo json_encode($labelsCobertura); ?>;
   var data = <?php echo json_encode($dataCobertura); ?>;
+  var graficoDibujado = false;
   function dibujarGrafico() {
     var ctx = document.getElementById('igpChartCobertura');
     var fallback = document.getElementById('igpChartFallback');
@@ -312,27 +314,37 @@ try {
       return;
     }
     try {
-      new Chart(ctx.getContext('2d'), {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{ label: 'Días de cobertura', data: data, backgroundColor: '#3498db' }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          legend: { display: false },
-          scales: { yAxes: [{ ticks: { beginAtZero: true } }] }
-        }
+      var barData = {
+        labels: labels,
+        datasets: [{
+          fillColor: 'rgba(52,152,219,0.6)',
+          strokeColor: 'rgba(52,152,219,0.8)',
+          highlightFill: 'rgba(52,152,219,0.8)',
+          highlightStroke: 'rgba(52,152,219,1)',
+          data: data
+        }]
+      };
+      new Chart(ctx.getContext('2d')).Bar(barData, {
+        scaleBeginAtZero: true,
+        responsive: true,
+        maintainAspectRatio: false,
+        showScale: true
       });
+      graficoDibujado = true;
     } catch (e) {
       if (fallback) fallback.style.display = 'block';
     }
   }
+  function mostrarFallbackSiFalta() {
+    if (!graficoDibujado) {
+      var fallback = document.getElementById('igpChartFallback');
+      if (fallback) fallback.style.display = 'block';
+    }
+  }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', dibujarGrafico);
+    document.addEventListener('DOMContentLoaded', function() { dibujarGrafico(); setTimeout(mostrarFallbackSiFalta, 1500); });
   } else {
-    setTimeout(dibujarGrafico, 100);
+    setTimeout(function() { dibujarGrafico(); setTimeout(mostrarFallbackSiFalta, 1500); }, 100);
   }
 })();
 </script>
