@@ -10,7 +10,7 @@ $verMov = _menuPuedeVer('pedidos-generar-movimiento') || _menuPuedeVer('pedidos-
 $verCajas = _menuPuedeVer('cajas') || _menuPuedeVer('cajas-cierre');
 $verVentas = _menuPuedeVer('ventas') || _menuPuedeVer('presupuestos') || _menuPuedeVer('crear-venta-caja');
 $verCompras = _menuPuedeVer('compras') || _menuPuedeVer('crear-compra') || _menuPuedeVer('ingreso');
-$verInformes = _menuPuedeVer('productos-stock-bajo') || _menuPuedeVer('productos-stock-medio') || _menuPuedeVer('productos-stock-valorizado') || _menuPuedeVer('ventas-rentabilidad') || _menuPuedeVer('ventas-categoria-proveedor-informe') || _menuPuedeVer('ventas-productos') || _menuPuedeVer('proveedores-saldo') || _menuPuedeVer('proveedores-cuenta-saldos') || _menuPuedeVer('clientes-cuenta-saldos') || _menuPuedeVer('informe-dashboard-ejecutivo') || _menuPuedeVer('informe-gestion-pedidos');
+$verInformes = ($_SESSION["perfil"] == "Administrador") || _menuPuedeVer('productos-stock-bajo') || _menuPuedeVer('productos-stock-medio') || _menuPuedeVer('productos-stock-valorizado') || _menuPuedeVer('ventas-rentabilidad') || _menuPuedeVer('ventas-categoria-proveedor-informe') || _menuPuedeVer('ventas-productos') || _menuPuedeVer('proveedores-saldo') || _menuPuedeVer('proveedores-cuenta-saldos') || _menuPuedeVer('clientes-cuenta-saldos') || _menuPuedeVer('informe-dashboard-ejecutivo') || _menuPuedeVer('informe-gestion-pedidos');
 $verIntegraciones = _menuPuedeVer('integraciones') || _menuPuedeVer('chat');
 ?>
 <aside class="main-sidebar">
@@ -90,8 +90,8 @@ $verIntegraciones = _menuPuedeVer('integraciones') || _menuPuedeVer('chat');
 				<a><i class="fa fa-area-chart"></i><span>Informes</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
 				<ul class="treeview-menu">
 					<li class="header" style="padding: 5px 10px; color: #999; font-size: 11px;">EJECUTIVO</li>
-					<?php if (_menuPuedeVer('informe-dashboard-ejecutivo')) { ?><li><a href="informe-dashboard-ejecutivo"><i class="fa fa-circle-o"></i><span>Dashboard ejecutivo</span></a></li><?php } ?>
-					<?php if (_menuPuedeVer('informe-gestion-pedidos')) { ?><li><a href="informe-gestion-pedidos"><i class="fa fa-circle-o"></i><span>Gestión de pedidos</span></a></li><?php } ?>
+					<?php if ($_SESSION["perfil"] == "Administrador" || _menuPuedeVer('informe-dashboard-ejecutivo')) { ?><li><a href="informe-dashboard-ejecutivo"><i class="fa fa-circle-o"></i><span>Dashboard ejecutivo</span></a></li><?php } ?>
+					<?php if ($_SESSION["perfil"] == "Administrador" || _menuPuedeVer('informe-gestion-pedidos')) { ?><li><a href="informe-gestion-pedidos"><i class="fa fa-circle-o"></i><span>Gestión de pedidos</span></a></li><?php } ?>
 					<li class="header" style="padding: 5px 10px; color: #999; font-size: 11px;">VENTAS</li>
 					<?php if (_menuPuedeVer('ventas-productos')) { ?><li><a href="ventas-productos"><i class="fa fa-circle-o"></i><span>Productos vendidos</span></a></li><?php } ?>
 					<?php if (_menuPuedeVer('ventas-rentabilidad')) { ?><li><a href="ventas-rentabilidad"><i class="fa fa-circle-o"></i><span>Rentabilidad</span></a></li><?php } ?>
