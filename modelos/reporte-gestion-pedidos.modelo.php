@@ -49,6 +49,8 @@ class ModeloReporteGestionPedidos {
 			) agg
 			INNER JOIN productos p ON p.id = agg.id_producto
 			LEFT JOIN proveedores prov ON p.id_proveedor = prov.id
+			ORDER BY agg.ventas_30_dias DESC
+			LIMIT 1000
 		");
 		$stmt->bindParam(":fecha_desde", $fechaDesde, PDO::PARAM_STR);
 		$stmt->bindParam(":fecha_7", $fechaDesde7, PDO::PARAM_STR);
@@ -98,9 +100,12 @@ class ModeloReporteGestionPedidos {
 
 	/**
 	 * Resumen: inversión total, solo críticos, ganancia esperada, cantidad productos.
+	 * Si se pasa $lista (resultado de mdlProductosCriticos), no se vuelve a consultar la BD.
 	 */
-	static public function mdlResumenInversion($diasAnalisis = 30, $diasCoberturaDeseado = 30) {
-		$lista = self::mdlProductosCriticos($diasAnalisis, $diasCoberturaDeseado);
+	static public function mdlResumenInversion($diasAnalisis = 30, $diasCoberturaDeseado = 30, array $lista = null) {
+		if ($lista === null) {
+			$lista = self::mdlProductosCriticos($diasAnalisis, $diasCoberturaDeseado);
+		}
 		$inversionTotal = 0;
 		$inversionCriticos = 0;
 		$gananciaTotal = 0;
@@ -123,9 +128,12 @@ class ModeloReporteGestionPedidos {
 
 	/**
 	 * Agrupado por proveedor: lista de productos a pedir y total por proveedor.
+	 * Si se pasa $lista (resultado de mdlProductosCriticos), no se vuelve a consultar la BD.
 	 */
-	static public function mdlPedidoPorProveedor($diasAnalisis = 30, $diasCoberturaDeseado = 30) {
-		$lista = self::mdlProductosCriticos($diasAnalisis, $diasCoberturaDeseado);
+	static public function mdlPedidoPorProveedor($diasAnalisis = 30, $diasCoberturaDeseado = 30, array $lista = null) {
+		if ($lista === null) {
+			$lista = self::mdlProductosCriticos($diasAnalisis, $diasCoberturaDeseado);
+		}
 		$porProveedor = [];
 		foreach ($lista as $r) {
 			$nombre = $r['proveedor'] ?: 'Sin proveedor';

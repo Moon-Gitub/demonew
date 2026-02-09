@@ -11,9 +11,11 @@ try {
 	$diasAnalisis = isset($_GET['dias_analisis']) ? max(7, min(90, (int)$_GET['dias_analisis'])) : 30;
 	$diasCobertura = isset($_GET['dias_cobertura']) ? max(7, min(90, (int)$_GET['dias_cobertura'])) : 30;
 
+	// Una sola consulta pesada; resumen y por proveedor se calculan en PHP con el mismo resultado.
+	@set_time_limit(120);
 	$productos = ModeloReporteGestionPedidos::mdlProductosCriticos($diasAnalisis, $diasCobertura);
-	$resumen = ModeloReporteGestionPedidos::mdlResumenInversion($diasAnalisis, $diasCobertura);
-	$porProveedor = ModeloReporteGestionPedidos::mdlPedidoPorProveedor($diasAnalisis, $diasCobertura);
+	$resumen = ModeloReporteGestionPedidos::mdlResumenInversion($diasAnalisis, $diasCobertura, $productos);
+	$porProveedor = ModeloReporteGestionPedidos::mdlPedidoPorProveedor($diasAnalisis, $diasCobertura, $productos);
 	$bajaRotacion = ModeloReporteGestionPedidos::mdlBajaRotacion(90);
 
 	$criticos48h = array_filter($productos, function ($p) { return $p['dias_cobertura'] <= 2 && $p['dias_cobertura'] < 999; });
