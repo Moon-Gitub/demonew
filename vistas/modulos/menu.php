@@ -10,7 +10,7 @@ $verMov = _menuPuedeVer('pedidos-generar-movimiento') || _menuPuedeVer('pedidos-
 $verCajas = _menuPuedeVer('cajas') || _menuPuedeVer('cajas-cierre');
 $verVentas = _menuPuedeVer('ventas') || _menuPuedeVer('presupuestos') || _menuPuedeVer('crear-venta-caja');
 $verCompras = _menuPuedeVer('compras') || _menuPuedeVer('crear-compra') || _menuPuedeVer('ingreso');
-$verInformes = _menuPuedeVer('productos-stock-bajo') || _menuPuedeVer('productos-stock-medio') || _menuPuedeVer('productos-stock-valorizado') || _menuPuedeVer('ventas-rentabilidad') || _menuPuedeVer('ventas-categoria-proveedor-informe') || _menuPuedeVer('ventas-productos') || _menuPuedeVer('proveedores-saldo') || _menuPuedeVer('proveedores-cuenta-saldos') || _menuPuedeVer('clientes-cuenta-saldos') || _menuPuedeVer('informe-dashboard-ejecutivo');
+$verInformes = _menuPuedeVer('productos-stock-bajo') || _menuPuedeVer('productos-stock-medio') || _menuPuedeVer('productos-stock-valorizado') || _menuPuedeVer('ventas-rentabilidad') || _menuPuedeVer('ventas-categoria-proveedor-informe') || _menuPuedeVer('ventas-productos') || _menuPuedeVer('proveedores-saldo') || _menuPuedeVer('proveedores-cuenta-saldos') || _menuPuedeVer('clientes-cuenta-saldos') || _menuPuedeVer('informe-dashboard-ejecutivo') || _menuPuedeVer('informe-gestion-pedidos');
 $verIntegraciones = _menuPuedeVer('integraciones') || _menuPuedeVer('chat');
 ?>
 <aside class="main-sidebar">
@@ -86,11 +86,12 @@ $verIntegraciones = _menuPuedeVer('integraciones') || _menuPuedeVer('chat');
 			<li class="<?php echo (in_array($paginaActualMenu, ['proveedores', 'proveedores_cuenta'])) ? 'active' : ''; ?>"><a href="proveedores"><i class="fa fa-address-book-o" aria-hidden="true"></i><span>Proveedores</span></a></li>
 
 			<?php if ($verInformes) { ?>
-			<li class="treeview <?php echo (in_array($paginaActualMenu, ['productos-stock-bajo', 'productos-stock-medio', 'productos-stock-valorizado', 'ventas-rentabilidad', 'ventas-categoria-proveedor-informe', 'ventas-productos', 'proveedores-saldo', 'proveedores-cuenta-saldos', 'clientes-cuenta-saldos', 'informe-dashboard-ejecutivo'])) ? 'active' : ''; ?>">
+			<li class="treeview <?php echo (in_array($paginaActualMenu, ['productos-stock-bajo', 'productos-stock-medio', 'productos-stock-valorizado', 'ventas-rentabilidad', 'ventas-categoria-proveedor-informe', 'ventas-productos', 'proveedores-saldo', 'proveedores-cuenta-saldos', 'clientes-cuenta-saldos', 'informe-dashboard-ejecutivo', 'informe-gestion-pedidos'])) ? 'active' : ''; ?>">
 				<a><i class="fa fa-area-chart"></i><span>Informes</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
 				<ul class="treeview-menu">
 					<li class="header" style="padding: 5px 10px; color: #999; font-size: 11px;">EJECUTIVO</li>
 					<?php if (_menuPuedeVer('informe-dashboard-ejecutivo')) { ?><li><a href="informe-dashboard-ejecutivo"><i class="fa fa-circle-o"></i><span>Dashboard ejecutivo</span></a></li><?php } ?>
+					<?php if (_menuPuedeVer('informe-gestion-pedidos')) { ?><li><a href="informe-gestion-pedidos"><i class="fa fa-circle-o"></i><span>Gestión de pedidos</span></a></li><?php } ?>
 					<li class="header" style="padding: 5px 10px; color: #999; font-size: 11px;">VENTAS</li>
 					<?php if (_menuPuedeVer('ventas-productos')) { ?><li><a href="ventas-productos"><i class="fa fa-circle-o"></i><span>Productos vendidos</span></a></li><?php } ?>
 					<?php if (_menuPuedeVer('ventas-rentabilidad')) { ?><li><a href="ventas-rentabilidad"><i class="fa fa-circle-o"></i><span>Rentabilidad</span></a></li><?php } ?>

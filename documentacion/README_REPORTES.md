@@ -7,12 +7,14 @@ Documentación de los informes para toma de decisiones del negocio.
 - **Base de datos**: `db/reportes_ejecutivos_queries.sql` – Consultas SQL reutilizables (Dashboard, Rentabilidad, Inventario, Ventas periódico, Flujo de caja).
 - **Modelo**: `modelos/reporte-dashboard-ejecutivo.modelo.php` – Métricas del dashboard diario (resumen día, top productos, medios de pago, saldo caja).
 - **Vista**: `vistas/modulos/informe-dashboard-ejecutivo.php` – Pantalla del Dashboard ejecutivo con tarjetas (KPIs) y gráficos (Chart.js).
+- **Modelo**: `modelos/reporte-gestion-pedidos.modelo.php` – Gestión inteligente de pedidos (productos críticos, días cobertura, cantidad sugerida, ROI, por proveedor, baja rotación).
+- **Vista**: `vistas/modulos/informe-gestion-pedidos.php` – Informe "¿Qué debo comprar?" con alertas, tablas y gráfico de días de cobertura.
 
 ## Acceso
 
-- **Menú**: Informes → **Dashboard ejecutivo**.
-- **URL**: `index.php?ruta=informe-dashboard-ejecutivo`.
-- **Permisos**: Visible para usuarios con pantalla `informe-dashboard-ejecutivo`; el perfil Administrador puede abrirlo siempre.
+- **Menú**: Informes → **Dashboard ejecutivo** / **Gestión de pedidos**.
+- **URL**: `index.php?ruta=informe-dashboard-ejecutivo` o `index.php?ruta=informe-gestion-pedidos`.
+- **Permisos**: Visible para usuarios con la pantalla correspondiente; el perfil Administrador puede abrir ambos siempre.
 
 ## Dashboard ejecutivo diario
 
@@ -38,16 +40,30 @@ Documentación de los informes para toma de decisiones del negocio.
 - **productos_venta**: `id_venta`, `id_producto`, `cantidad`, `precio_venta`, `precio_compra`.
 - **cajas**: `fecha`, `tipo` (1 = ingreso, 0 = egreso), `monto`.
 
+## Gestión inteligente de pedidos
+
+Responde **"¿Qué debo comprar?"** con:
+
+- **Productos críticos**: Stock actual, ventas 7/30 días, promedio diario, días de cobertura, cantidad sugerida, inversión, ganancia esperada, ROI. Estado: CRÍTICO (≤3 días), URGENTE (4–7), NORMAL (>7).
+- **Resumen**: Inversión total sugerida, inversión solo críticos, ganancia esperada, cantidad de productos y de críticos/urgentes.
+- **Alertas**: Productos sin stock en 48 h, ganancia si repone top 10, monto para reponer solo críticos, productos de baja rotación.
+- **Gráfico**: Top 20 productos por días de cobertura (menor = más urgente).
+- **Por proveedor**: Listado agrupado con productos a pedir y total por proveedor.
+- **Baja rotación**: Productos con stock pero sin ventas en 90 días (no pedir más / liquidar).
+
+**Parámetros**: Días de análisis (7–90, default 30), días de cobertura deseado (7–90, default 30). Esquema real: `productos.stock`, `productos.stock_bajo`, `productos_venta.cantidad`, `ventas.cbte_tipo` excluidos.
+
 ## Informes previstos (especificación)
 
 1. **Dashboard ejecutivo diario** – Implementado.
-2. Rentabilidad por producto.
-3. Análisis clientes y cuenta corriente.
-4. Control de inventario y stock.
-5. Análisis proveedores y compras.
-6. Análisis de ventas periódico.
-7. Flujo de caja.
-8. Presupuestos y conversión.
+2. **Gestión inteligente de pedidos** – Implementado.
+3. Rentabilidad por producto.
+4. Análisis clientes y cuenta corriente.
+5. Control de inventario y stock.
+6. Análisis proveedores y compras.
+7. Análisis de ventas periódico.
+8. Flujo de caja.
+9. Presupuestos y conversión.
 
 Para ampliar: reutilizar las consultas de `db/reportes_ejecutivos_queries.sql`, crear un modelo en `modelos/reporte-*.modelo.php` y una vista en `vistas/modulos/informe-*.php` con el mismo estilo (tarjetas + Chart.js).
 

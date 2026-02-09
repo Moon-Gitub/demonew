@@ -125,3 +125,9 @@ FROM cajas c
 WHERE c.fecha BETWEEN :fecha_desde AND :fecha_hasta
 GROUP BY DATE(c.fecha)
 ORDER BY fecha ASC;
+
+-- -----------------------------------------------------------------------------
+-- 6. GESTIÓN INTELIGENTE DE PEDIDOS - Ver modelo reporte-gestion-pedidos.modelo.php
+-- Productos con ventas: stock, stock_bajo, ventas 7/30 días; días cobertura y cantidad
+-- sugerida se calculan en PHP (promedio_venta_diaria, cantidad_sugerida, ROI).
+-- -----------------------------------------------------------------------------
