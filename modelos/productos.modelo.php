@@ -205,9 +205,6 @@ class ModeloProductos{
 
 		$resultado = $stmt->fetch();
 
-		$stmt->close();
-		$stmt = null;
-
 		return $resultado;
 	}
 
