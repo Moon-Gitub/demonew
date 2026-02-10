@@ -190,6 +190,28 @@ class ModeloProductos{
 	}
 
 	/*=============================================
+	VERIFICAR SI PRODUCTO TIENE VENTAS
+	=============================================*/
+	static public function mdlProductoTieneVentas($idProducto){
+
+		$stmt = Conexion::conectar()->prepare(
+			"SELECT COUNT(*) AS total 
+			 FROM productos_venta 
+			 WHERE id_producto = :id"
+		);
+
+		$stmt->bindParam(":id", $idProducto, PDO::PARAM_INT);
+		$stmt->execute();
+
+		$resultado = $stmt->fetch();
+
+		$stmt->close();
+		$stmt = null;
+
+		return $resultado;
+	}
+
+	/*=============================================
 	ACTUALIZAR PRODUCTO
 	=============================================*/
 	static public function mdlActualizarProducto($tabla, $item1, $valor1, $valor, $cambioDesde){

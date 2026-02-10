@@ -253,7 +253,30 @@ class ControladorProductos{
 		if(isset($_GET["idProducto"])){
 			$tabla ="productos";
 			$datos = $_GET["idProducto"];
-			
+
+			// Primero verifico si el producto tiene ventas asociadas
+			$tieneVentas = ModeloProductos::mdlProductoTieneVentas($datos);
+			$cantidadVentas = isset($tieneVentas["total"]) ? (int)$tieneVentas["total"] : 0;
+
+			if ($cantidadVentas > 0) {
+				// No permitir borrar para no romper históricos ni FKs
+				echo '<script>
+					swal({
+						  type: "error",
+						  title: "Productos",
+						  text: "No se puede eliminar el producto porque tiene ventas asociadas. Podés dejar de usarlo pero quedará para el historial.",
+						  showConfirmButton: true,
+						  confirmButtonText: "Cerrar"
+						  }).then(function(result){
+							if (result.value) {
+								window.location = "productos";
+							}
+						})
+					</script>';
+				return;
+			}
+
+			// Si no tiene ventas, se permite el borrado físico como antes
 			if(isset($_GET["imagen"]) && $_GET["imagen"] != "" && $_GET["imagen"] != "vistas/img/productos/default/anonymous.png" && file_exists($_GET["imagen"])){
 				@unlink($_GET["imagen"]);
 				if(isset($_GET["codigo"]) && $_GET["codigo"] != ""){
@@ -263,9 +286,9 @@ class ControladorProductos{
 					}
 				}
 			}
-			
+
 			$respuesta = ModeloProductos::mdlEliminarProducto($tabla, $datos);
-			
+
 			if($respuesta == "ok"){
 				echo'<script> 
 					swal({ 
