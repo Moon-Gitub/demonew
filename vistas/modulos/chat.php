@@ -54,15 +54,15 @@ if($integraciones && is_array($integraciones) && count($integraciones) > 0){
     </ol>
   </section>
   <section class="content">
-    <div class="row">
+    <div class="chat-fullscreen-wrapper">
       <div class="col-md-12">
-        <div class="box box-primary" style="border-radius: 12px; box-shadow: 0 4px 18px rgba(0,0,0,0.08);">
+        <div class="box box-primary chat-box-full">
           <div class="box-header with-border">
             <h3 class="box-title">
               <i class="fa fa-comments"></i> Asistente Virtual
             </h3>
           </div>
-          <div class="box-body" style="padding: 0;">
+          <div class="box-body">
             <?php if (!$webhookUrl): ?>
               <div class="alert alert-warning" style="margin: 20px;">
                 <i class="fa fa-warning"></i> 
@@ -73,7 +73,7 @@ if($integraciones && is_array($integraciones) && count($integraciones) > 0){
             <?php endif; ?>
             
             <!-- Área de mensajes -->
-            <div id="chat-messages" style="height: calc(100vh - 260px); min-height: 380px; overflow-y: auto; padding: 20px; background: #f9f9f9;">
+            <div id="chat-messages" class="chat-messages-area">
               <div class="chat-message bot-message">
                 <div class="message-avatar">
                   <i class="fa fa-robot"></i>
@@ -86,8 +86,8 @@ if($integraciones && is_array($integraciones) && count($integraciones) > 0){
             </div>
             
             <!-- Preguntas sugeridas -->
-            <div id="suggested-questions" style="padding: 15px 20px; background: #f8f9fa; border-top: 1px solid #e0e0e0; display: none;">
-              <div style="font-size: 12px; color: #666; margin-bottom: 10px; font-weight: 600;">
+            <div id="suggested-questions" class="chat-suggested-area" style="display: none;">
+              <div class="chat-suggested-title">
                 <i class="fa fa-lightbulb-o"></i> Preguntas sugeridas:
               </div>
               <div class="suggested-questions-list" style="display: flex; flex-wrap: wrap; gap: 8px;">
@@ -96,7 +96,7 @@ if($integraciones && is_array($integraciones) && count($integraciones) > 0){
             </div>
             
             <!-- Área de entrada -->
-            <div class="box-footer" style="border-top: 1px solid #ddd;">
+            <div class="box-footer chat-footer">
               <form id="chat-form">
                 <div class="input-group">
                   <input 
@@ -123,6 +123,57 @@ if($integraciones && is_array($integraciones) && count($integraciones) > 0){
 </div>
 
 <style>
+.chat-fullscreen-wrapper {
+  height: calc(100vh - 120px);
+  display: flex;
+  align-items: stretch;
+}
+
+.chat-box-full {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-box-full .box-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.chat-messages-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #f9f9f9;
+}
+
+.chat-suggested-area {
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+}
+
+.chat-suggested-title {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.chat-footer {
+  border-top: 1px solid #ddd;
+}
+
+.chat-footer .input-group > .form-control {
+  border-radius: 20px 0 0 20px;
+}
+
+.chat-footer .input-group-btn > .btn {
+  border-radius: 0 20px 20px 0;
+}
+
 .chat-message {
   display: flex;
   margin-bottom: 20px;

@@ -375,21 +375,22 @@ $(document).ready(function() {
     // Auto-focus en el input
     $chatInput.focus();
     
-    // Preguntas sugeridas (mix: métricas + soporte de uso)
+    // Preguntas sugeridas
     const preguntasSugeridas = [
-        // Métricas y análisis
+        // Soporte / uso del sistema
+        '¿Cómo creo un nuevo producto?',
+        '¿Cómo cierro la caja al final del día?',
+        '¿Por qué no veo el informe de Gestión inteligente de pedidos?',
+        '¿Cómo desactivo un producto que ya no uso?',
+        // Preguntas de gestión y análisis
         '¿Cuánto dinero tengo en cuenta corriente?',
+        '¿Qué me deben?',
         '¿Cuáles son mis productos más vendidos?',
         '¿Cuántas ventas hice este mes?',
+        '¿Qué clientes tienen deuda?',
+        '¿Cuál es mi stock actual?',
         '¿Cuánto facturé este mes?',
-        // Soporte de uso básico
-        '¿Cómo creo un producto nuevo?',
-        '¿Cómo desactivo un producto que no uso más?',
-        '¿Cómo hago una venta rápida desde caja?',
-        '¿Cómo cierro la caja del día?',
-        // Informes ejecutivos
-        'Explícame el informe de gestión de pedidos.',
-        'Explícame el dashboard ejecutivo diario.'
+        '¿Qué productos están por vencer?'
     ];
     
     // Función para mostrar preguntas sugeridas
@@ -400,7 +401,7 @@ $(document).ready(function() {
         // Solo mostrar si no hay mensajes del usuario aún
         if (historial.filter(m => m.role === 'user').length === 0) {
             $questionsList.empty();
-            preguntasSugeridas.forEach(pregunta => {
+            preguntasSugeridas.slice(0, 4).forEach(pregunta => {
                 const $btn = $('<button>')
                     .addClass('suggested-question-btn')
                     .text(pregunta)
