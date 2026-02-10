@@ -55,8 +55,8 @@ if($integraciones && is_array($integraciones) && count($integraciones) > 0){
   </section>
   <section class="content">
     <div class="row">
-      <div class="col-md-8 col-md-offset-2">
-        <div class="box box-primary">
+      <div class="col-md-12">
+        <div class="box box-primary" style="border-radius: 12px; box-shadow: 0 4px 18px rgba(0,0,0,0.08);">
           <div class="box-header with-border">
             <h3 class="box-title">
               <i class="fa fa-comments"></i> Asistente Virtual
@@ -73,7 +73,7 @@ if($integraciones && is_array($integraciones) && count($integraciones) > 0){
             <?php endif; ?>
             
             <!-- Área de mensajes -->
-            <div id="chat-messages" style="height: 500px; overflow-y: auto; padding: 20px; background: #f9f9f9;">
+            <div id="chat-messages" style="height: calc(100vh - 260px); min-height: 380px; overflow-y: auto; padding: 20px; background: #f9f9f9;">
               <div class="chat-message bot-message">
                 <div class="message-avatar">
                   <i class="fa fa-robot"></i>

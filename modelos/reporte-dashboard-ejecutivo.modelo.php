@@ -109,29 +109,84 @@ class ModeloReporteDashboardEjecutivo {
 	}
 
 	/**
-	 * Distribución por medio de pago del día. Rango de fechas para índice.
+	 * Distribución por medio de pago del día.
+	 *
+	 * Nota: la columna ventas.metodo_pago puede venir como texto simple ("Efectivo")
+	 * o como JSON con el detalle por medio:
+	 *   [{"tipo":"Efectivo","entrega":"1300.22"}, {"tipo":"TD","entrega":"500.00"}]
+	 *
+	 * Para que el dashboard no muestre el JSON crudo, acá normalizamos todo a
+	 * "tipo" legible y agregamos los montos por tipo.
+	 *
 	 * @param string $fecha Y-m-d
-	 * @return array
+	 * @return array  cada elemento: ['nombre' => 'Efectivo', 'cantidad' => n, 'monto_total' => x]
 	 */
 	static public function mdlMediosPagoDia($fecha) {
 		$fechaFin = date('Y-m-d', strtotime($fecha . ' +1 day'));
+
+		// Traemos las ventas del día con el campo metodo_pago "en bruto"
 		$stmt = Conexion::conectar()->prepare("
-			SELECT
-			  v.metodo_pago AS nombre,
-			  COUNT(*) AS cantidad,
-			  COALESCE(SUM(v.total), 0) AS monto_total
+			SELECT v.metodo_pago, v.total
 			FROM ventas v
 			WHERE v.fecha >= ?
 			  AND v.fecha < ?
 			  AND v.cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS . ")
-			GROUP BY v.metodo_pago
-			ORDER BY monto_total DESC
 		");
 		$stmt->execute([$fecha, $fechaFin]);
-		$res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
 		$stmt = null;
-		return $res ?: [];
+
+		if (!$rows) {
+			return [];
+		}
+
+		$acumulado = [];
+
+		foreach ($rows as $row) {
+			$raw = trim((string)$row['metodo_pago']);
+			$totalVenta = (float)$row['total'];
+
+			// Intentar decodificar como JSON (lista de medios)
+			$decoded = null;
+			if ($raw !== '' && ($raw[0] === '[' || $raw[0] === '{')) {
+				$decoded = json_decode($raw, true);
+			}
+
+			if (is_array($decoded)) {
+				// Formato JSON: sumar por cada ítem de medios
+				foreach ($decoded as $item) {
+					if (!is_array($item)) {
+						continue;
+					}
+					$tipo = isset($item['tipo']) && $item['tipo'] !== '' ? (string)$item['tipo'] : 'Otro';
+					$monto = isset($item['entrega']) ? (float)$item['entrega'] : $totalVenta;
+
+					if (!isset($acumulado[$tipo])) {
+						$acumulado[$tipo] = ['nombre' => $tipo, 'cantidad' => 0, 'monto_total' => 0.0];
+					}
+					$acumulado[$tipo]['cantidad']++;
+					$acumulado[$tipo]['monto_total'] += $monto;
+				}
+			} else {
+				// Texto simple: usarlo tal cual como nombre de medio
+				$tipo = $raw !== '' ? $raw : 'Sin especificar';
+				if (!isset($acumulado[$tipo])) {
+					$acumulado[$tipo] = ['nombre' => $tipo, 'cantidad' => 0, 'monto_total' => 0.0];
+				}
+				$acumulado[$tipo]['cantidad']++;
+				$acumulado[$tipo]['monto_total'] += $totalVenta;
+			}
+		}
+
+		// Pasar a array indexado y ordenar por monto descendente (como antes)
+		$result = array_values($acumulado);
+		usort($result, function ($a, $b) {
+			if ($a['monto_total'] == $b['monto_total']) return 0;
+			return ($a['monto_total'] > $b['monto_total']) ? -1 : 1;
+		});
+
+		return $result;
 	}
 
 	/**
