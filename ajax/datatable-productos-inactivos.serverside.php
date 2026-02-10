@@ -72,8 +72,8 @@ $columns = array(
     )
 );
 
-// Script de apoyo para DataTables (ya existente en el proyecto)
-require( 'ssp.customized.class.php' );
+// Script de apoyo para DataTables (misma clase que productos/pedidos)
+require( '../extensiones/ssp.class.php' );
 
 echo json_encode(
     SSP::simple( $_GET, $sql_details, $table, $primaryKey, $columns )
