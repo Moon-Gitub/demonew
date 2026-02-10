@@ -16,9 +16,11 @@ class ControladorCompras{
 		return $respuesta;
 	}
 
-	//CREAR VENTA
+	//CREAR ORDEN DE COMPRA (PENDIENTE DE INGRESO)
 	static public function ctrCrearCompra(){
-		if(isset($_POST["seleccionarProveedor"])){
+		// Solo debe ejecutarse cuando NO es factura directa.
+		// Si viene crearFacturaDirecta=1, se maneja en ctrCrearFacturaDirecta.
+		if(isset($_POST["seleccionarProveedor"]) && (!isset($_POST["crearFacturaDirecta"]) || $_POST["crearFacturaDirecta"] != "1")){
 			// Validar token CSRF
 			if(!isset($_POST["csrf_token"]) || !isset($_SESSION['csrf_token']) || $_POST["csrf_token"] !== $_SESSION['csrf_token']){
 				echo'<script>
