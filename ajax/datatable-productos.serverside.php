@@ -63,9 +63,9 @@ $table = <<<EOT
       pd.stock_medio,
       pd.stock_bajo
     FROM productos pd
-    WHERE pd.activo = 1
     LEFT JOIN categorias c ON pd.id_categoria = c.id
     LEFT JOIN proveedores pv ON pd.id_proveedor = pv.id
+    WHERE pd.activo = 1
  ) temp
 EOT;
 
