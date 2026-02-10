@@ -253,7 +253,7 @@ try {
               <span class="pull-right">Total: $ <?php echo number_format($prov['total_inversion'], 2, ',', '.'); ?></span>
             </div>
             <div class="panel-body">
-              <table class="table table-condensed table-bordered">
+              <table class="table table-condensed table-bordered dt-responsive tablaPedidoProveedorIGP" width="100%">
                 <thead><tr><th>Producto</th><th>Cant. sugerida</th><th>P. compra</th><th>Subtotal</th></tr></thead>
                 <tbody>
                   <?php foreach ($prov['productos'] as $item) { ?>
@@ -405,6 +405,18 @@ try {
       $('#tablaBajaRotacion').DataTable($.extend(true, {}, opcionesComun, {
         order: [[3, 'desc']]
       }));
+    }
+
+    // Tablas por proveedor (una por panel)
+    if ($('.tablaPedidoProveedorIGP').length) {
+      $('.tablaPedidoProveedorIGP').each(function() {
+        if (!$.fn.DataTable.isDataTable(this)) {
+          $(this).DataTable($.extend(true, {}, opcionesComun, {
+            pageLength: 10,
+            order: [[3, 'desc']]
+          }));
+        }
+      });
     }
   }
 
