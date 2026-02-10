@@ -238,11 +238,21 @@ class ControladorCompras{
 				}
 				
 				// Si NO es servicio, actualizar stock
-				// En factura directa, usar "recibidos", "pedidos" o "cantidad" como cantidad recibida
-				$cantidadRecibida = isset($value["recibidos"]) ? floatval($value["recibidos"]) : 
-				                   (isset($value["pedidos"]) ? floatval($value["pedidos"]) : 
-				                   (isset($value["cantidad"]) ? floatval($value["cantidad"]) : 0));
-				
+				// En factura directa:
+				// - Si ya viene "recibidos" > 0 lo usamos (caso edición previa)
+				// - Si no, usamos "pedidos" (toda la cantidad pedida se considera ingresada)
+				// - Fallback: "cantidad" si existiera
+				$cantRecibidos = (isset($value["recibidos"])) ? floatval($value["recibidos"]) : 0;
+				if($cantRecibidos > 0){
+					$cantidadRecibida = $cantRecibidos;
+				} elseif (isset($value["pedidos"])) {
+					$cantidadRecibida = floatval($value["pedidos"]);
+				} elseif (isset($value["cantidad"])) {
+					$cantidadRecibida = floatval($value["cantidad"]);
+				} else {
+					$cantidadRecibida = 0;
+				}
+
 				if(!$esServicio && $cantidadRecibida > 0){
 					$modificoStock = floatval($traerProducto["stock"]) + $cantidadRecibida;
 					ModeloProductos::mdlActualizarProducto('productos', 'stock', $modificoStock, $valor, 'Ingreso stock (Factura directa: '.$codigo.')');
