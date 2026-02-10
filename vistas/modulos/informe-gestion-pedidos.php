@@ -175,7 +175,7 @@ try {
             <p id="igpChartFallback" class="text-muted" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); margin:0; text-align:center; width:80%;">El gráfico no pudo cargarse. Consultá la tabla debajo para ver los datos.</p>
           </div>
           <div class="table-responsive">
-            <table class="table table-bordered table-condensed table-sm">
+            <table class="table table-bordered table-condensed table-sm dt-responsive" id="tablaTopCobertura" width="100%">
               <thead>
                 <tr style="background:#667eea; color:white;">
                   <th style="color:white;">#</th>
@@ -205,7 +205,7 @@ try {
         <div class="igp-section">
           <h4>Productos críticos – Cantidad sugerida e inversión</h4>
           <div class="table-responsive">
-            <table class="table table-bordered table-striped table-condensed">
+            <table class="table table-bordered table-striped table-condensed dt-responsive" id="tablaProductosCriticos" width="100%">
               <thead>
                 <tr style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white;">
                   <th style="color:white;">Estado</th>
@@ -276,7 +276,7 @@ try {
         <div class="igp-section">
           <h4>Productos de baja rotación (stock pero sin ventas en 90 días)</h4>
           <p class="text-muted">No conviene pedir más; evaluar liquidar o reducir pedidos.</p>
-          <table class="table table-bordered table-striped table-condensed">
+          <table class="table table-bordered table-striped table-condensed dt-responsive" id="tablaBajaRotacion" width="100%">
             <thead>
               <tr><th>Código</th><th>Descripción</th><th>Stock</th><th>Valorizado</th></tr>
             </thead>
@@ -299,9 +299,10 @@ try {
   </section>
 </div>
 
-<?php if (!$errorInforme && !empty($dataCobertura)) { ?>
 <script>
 (function() {
+  // Gráfico de cobertura (solo si hay datos y no hubo error)
+  <?php if (!$errorInforme && !empty($dataCobertura)) { ?>
   var labels = <?php echo json_encode($labelsCobertura); ?>;
   var data = <?php echo json_encode($dataCobertura); ?>;
   var graficoDibujado = false;
@@ -346,6 +347,71 @@ try {
   } else {
     setTimeout(function() { dibujarGrafico(); setTimeout(mostrarFallbackSiFalta, 1500); }, 100);
   }
+  <?php } ?>
+
+  // Inicializar DataTables en las tablas del informe
+  function initDataTablesIGP() {
+    if (typeof $.fn.DataTable === 'undefined') {
+      return;
+    }
+    var opcionesComun = {
+      language: {
+        sProcessing:     "Procesando...",
+        sLengthMenu:     "Mostrar _MENU_ registros",
+        sZeroRecords:    "No se encontraron resultados",
+        sEmptyTable:     "Ningún dato disponible en esta tabla",
+        sInfo:           "Mostrando _START_ a _END_ de _TOTAL_",
+        sInfoEmpty:      "Mostrando 0 a 0 de 0",
+        sInfoFiltered:   "(filtrado de _MAX_ registros)",
+        sSearch:         "Buscar:",
+        sLoadingRecords: "Cargando...",
+        oPaginate: {
+          sFirst:    "Primero",
+          sLast:     "Último",
+          sNext:     "Siguiente",
+          sPrevious: "Anterior"
+        },
+        oAria: {
+          sSortAscending:  ": Activar para ordenar la columna ascendente",
+          sSortDescending: ": Activar para ordenar la columna descendente"
+        }
+      },
+      pageLength: 25,
+      dom: 'Bfrtip',
+      buttons: [
+        { extend: 'excelHtml5', text: '<i class="fa fa-file-excel-o"></i>', titleAttr: 'Exportar a Excel', className: 'btn btn-success' },
+        { extend: 'pdfHtml5',   text: '<i class="fa fa-file-pdf-o"></i>',   titleAttr: 'Exportar a PDF',   className: 'btn btn-danger' },
+        { extend: 'print',      text: '<i class="fa fa-print"></i>',       titleAttr: 'Imprimir',         className: 'btn btn-info' },
+        { extend: 'pageLength', text: '<i class="fa fa-list-alt"></i>',    titleAttr: 'Mostrar registros',className: 'btn btn-primary' }
+      ]
+    };
+
+    // Top 20 cobertura
+    if ($('#tablaTopCobertura').length) {
+      $('#tablaTopCobertura').DataTable($.extend(true, {}, opcionesComun, {
+        order: [[2, 'asc']]
+      }));
+    }
+
+    // Productos críticos
+    if ($('#tablaProductosCriticos').length) {
+      $('#tablaProductosCriticos').DataTable($.extend(true, {}, opcionesComun, {
+        order: [[5, 'asc']]
+      }));
+    }
+
+    // Baja rotación
+    if ($('#tablaBajaRotacion').length) {
+      $('#tablaBajaRotacion').DataTable($.extend(true, {}, opcionesComun, {
+        order: [[3, 'desc']]
+      }));
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDataTablesIGP);
+  } else {
+    initDataTablesIGP();
+  }
 })();
 </script>
-<?php } ?>
