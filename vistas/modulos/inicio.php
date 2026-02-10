@@ -27,7 +27,7 @@
 
           <?php
 
-            //ctas ctes clientes - proveedores
+            //ctas ctes clientes - proveedores (se mantiene en el dashboard)
             if($_SESSION["perfil"] =="Administrador"){            
              include "inicio/cuentas-corrientes.php";
             }
@@ -36,27 +36,7 @@
 
         </div>
 
-        <div class="col-lg-6">
-          <?php
-
-            if($_SESSION["perfil"] =="Administrador"){
-             include "reportes/productos-mas-vendidos.php";
-            }
-
-          ?>
-        </div>
-
-        <div class="col-lg-6">
-          <?php
-
-            if($_SESSION["perfil"] =="Administrador"){
-             include "inicio/productos-recientes.php";
-            }
-
-          ?>
-        </div>
-
-         <div class="col-lg-12">
+        <div class="col-lg-12">
           <?php
 
           if($_SESSION["perfil"] !="Administrador"){
