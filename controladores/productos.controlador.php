@@ -351,6 +351,48 @@ class ControladorProductos{
 	}
 
 	/*=============================================
+	ACTIVAR PRODUCTO (desde listado de desactivados)
+	=============================================*/
+	static public function ctrActivarProducto(){
+		if(isset($_GET["idProducto"]) && isset($_GET["accion"]) && $_GET["accion"] === "activar"){
+			$idProducto = (int) $_GET["idProducto"];
+
+			$respuesta = ModeloProductos::mdlActivarProducto($idProducto);
+
+			if($respuesta == "ok"){
+				echo '<script>
+					swal({
+						  type: "success",
+						  title: "Productos",
+						  text: "El producto ha sido activado nuevamente. Ya puede volver a usarse en nuevas ventas.",
+						  showConfirmButton: true,
+						  confirmButtonText: "Cerrar"
+						  }).then(function(result){
+							if (result.value) {
+								window.location = "productos-desactivados";
+							}
+						})
+					</script>';
+			} else {
+				$respError = (isset($respuesta[2])) ? $respuesta[2] : "Error desconocido al activar el producto";
+				echo '<script>
+					swal({
+						  type: "error",
+						  title: "Productos",
+						  text: "'.$respError.'",
+						  showConfirmButton: true,
+						  confirmButtonText: "Cerrar"
+						  }).then(function(result){
+							if (result.value) {
+								window.location = "productos-desactivados";
+							}
+						})
+					</script>';
+			}
+		}
+	}
+
+	/*=============================================
 	LISTAR PRODUCTOS CON STOCK MEDIO
 	=============================================*/
 	static public function ctrMostrarStockMedio(){

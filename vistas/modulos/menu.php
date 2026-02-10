@@ -5,7 +5,7 @@ function _menuPuedeVer($ruta) {
 	return in_array($ruta, $_SESSION["permisos_pantallas"], true);
 }
 $verEmpresa = ($_SESSION["perfil"] == "Administrador") || _menuPuedeVer('empresa') || _menuPuedeVer('usuarios') || _menuPuedeVer('listas-precio') || _menuPuedeVer('balanzas-formatos') || _menuPuedeVer('permisos-rol') || _menuPuedeVer('medios-pago');
-$verProductos = _menuPuedeVer('productos') || _menuPuedeVer('categorias') || _menuPuedeVer('combos') || _menuPuedeVer('impresion-precios') || _menuPuedeVer('productos-importar-excel2');
+$verProductos = _menuPuedeVer('productos') || _menuPuedeVer('productos-desactivados') || _menuPuedeVer('categorias') || _menuPuedeVer('combos') || _menuPuedeVer('impresion-precios') || _menuPuedeVer('productos-importar-excel2');
 $verMov = _menuPuedeVer('pedidos-generar-movimiento') || _menuPuedeVer('pedidos-nuevos') || _menuPuedeVer('pedidos-validados');
 $verCajas = _menuPuedeVer('cajas') || _menuPuedeVer('cajas-cierre');
 $verVentas = _menuPuedeVer('ventas') || _menuPuedeVer('presupuestos') || _menuPuedeVer('crear-venta-caja');
@@ -35,10 +35,11 @@ $verIntegraciones = _menuPuedeVer('integraciones') || _menuPuedeVer('chat');
 			</li>
 			<?php } ?>
 
-			<li class="treeview <?php echo (in_array($paginaActualMenu, ['productos', 'categorias', 'combos', 'impresion-precios', 'productos-importar-excel2'])) ? 'active' : '' ?>">
+			<li class="treeview <?php echo (in_array($paginaActualMenu, ['productos', 'productos-desactivados', 'categorias', 'combos', 'impresion-precios', 'productos-importar-excel2'])) ? 'active' : '' ?>">
 				<a><i class="fa fa-product-hunt"></i><span>Productos</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
 				<ul class="treeview-menu">
 					<li><a href="productos"><i class="fa fa-circle-o"></i><span>Administrar Productos</span></a></li>
+					<li><a href="productos-desactivados"><i class="fa fa-circle-o"></i><span>Productos desactivados</span></a></li>
 					<li><a href="categorias"><i class="fa fa-circle-o"></i><span>Categorias</span></a></li>
 					<li><a href="combos"><i class="fa fa-circle-o"></i><span>Combos</span></a></li>
 					<li><a href="impresion-precios"><i class="fa fa-circle-o"></i><span>Imprimir Precios</span></a></li>
