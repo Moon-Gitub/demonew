@@ -227,14 +227,49 @@ class ControladorCajaCierres{
 			if(!is_array($value) || !isset($value["tipo"])) {
 				continue; // Saltar elementos inválidos
 			}
-			if($value["tipo"] == 0) { //pago o gasto
-				if(isset($value["id_cliente_proveedor"]) && $value["id_cliente_proveedor"]) { //es un pago de cta cte proveedor
+			if($value["tipo"] == 0) { //pago, gasto o devolución
+				// 1) Egresos por devoluciones (tienen id_venta)
+				if(isset($value["id_venta"]) && $value["id_venta"]) {
+					$ventaDev = ModeloVentas::mdlMostrarVentaConCliente($value["id_venta"]);
+					$descripcionDetallada = 'Devolución';
+					if($ventaDev && isset($ventaDev["codigo"])) {
+						$descripcionDetallada .= ' N° ' . $ventaDev["codigo"];
+					}
+					// Armar breve lista de productos devueltos
+					$productosDev = ControladorVentas::ctrObtenerProductosVentaLegacy($value["id_venta"]);
+					if(is_array($productosDev) && count($productosDev) > 0) {
+						$labelsProd = array();
+						foreach($productosDev as $idxProd => $prodDev) {
+							if($idxProd >= 3) { // limitar a 3 para que no explote el resumen
+								$labelsProd[] = '...';
+								break;
+							}
+							$nombreProd = isset($prodDev["descripcion"]) ? $prodDev["descripcion"] : 'Prod. sin nombre';
+							$cantProd = isset($prodDev["cantidad"]) ? $prodDev["cantidad"] : 1;
+							$labelsProd[] = $nombreProd . ' (x' . $cantProd . ')';
+						}
+						if(!empty($labelsProd)) {
+							$descripcionDetallada .= ' - ' . implode(', ', $labelsProd);
+						}
+					}
+					$datos["egresos"][$indexEgresos] = array(
+						'id' => isset($value["id"]) ? $value["id"] : 0,
+						'tipo' => 'devolucion',
+						'descripcion' => $descripcionDetallada,
+						'monto' => isset($value["monto"]) ? floatval($value["monto"]) : 0
+					);
+					$indexEgresos++;
+				}
+				// 2) Pagos a proveedores (cta cte proveedor)
+				elseif(isset($value["id_cliente_proveedor"]) && $value["id_cliente_proveedor"]) { //es un pago de cta cte proveedor
 					$nombreProveedor = ModeloProveedores::mdlMostrarProveedoresPorId($value["id_cliente_proveedor"]);
 					if($nombreProveedor && isset($nombreProveedor["nombre"])) {
 						$datos["egresos"][$indexEgresos] = array('id' => isset($value["id"]) ? $value["id"] : 0, 'tipo' => 'proveedor', 'descripcion' => $nombreProveedor["nombre"], 'monto' => isset($value["monto"]) ? floatval($value["monto"]) : 0);
 						$indexEgresos++;
 					}
-				} else {
+				}
+				// 3) Otros egresos comunes (fletes, gastos varios, etc.)
+				else {
 					$descripcion = isset($value["descripcion"]) ? $value["descripcion"] : "";
 					$monto = isset($value["monto"]) ? floatval($value["monto"]) : 0;
 					if($descripcion || $monto > 0) {

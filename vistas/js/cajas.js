@@ -460,6 +460,9 @@ $(".tablaCierresCaja").on("click", "a.btnCierreCaja", function(e){
             var monto = parseFloat(jsonEgresos[i]["monto"] || 0).toFixed(2);
             if(jsonEgresos[i]["tipo"] == "comun") {
               $("#tblEgresosComunesResumenCierreCaja").append("<tr><td>"+(jsonEgresos[i]["descripcion"] || "")+"</td><td> <b>$ "+monto+"</b></td></tr>");
+            } else if(jsonEgresos[i]["tipo"] == "devolucion") {
+              // Mostrar devoluciones también en la tabla de egresos comunes pero resaltadas
+              $("#tblEgresosComunesResumenCierreCaja").append("<tr><td style='color:#c0392b;'>"+(jsonEgresos[i]["descripcion"] || "")+"</td><td> <b style='color:#c0392b;'>$ "+monto+"</b></td></tr>");
             } else if(jsonEgresos[i]["tipo"] == "proveedor") {
               $("#tblEgresosProveedoresResumenCierreCaja").append("<tr><td>"+(jsonEgresos[i]["descripcion"] || "")+"</td><td> <b>$ "+monto+"</b></td></tr>");
             } 
