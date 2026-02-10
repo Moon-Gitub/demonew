@@ -254,21 +254,63 @@ class ControladorProductos{
 			$tabla ="productos";
 			$datos = $_GET["idProducto"];
 
+			// Si viene la acción de desactivar, no intento borrar: desactivo directamente
+			if (isset($_GET["accion"]) && $_GET["accion"] === "desactivar") {
+
+				$respuestaDesactivar = ModeloProductos::mdlDesactivarProducto($datos);
+
+				if ($respuestaDesactivar == "ok") {
+					echo '<script>
+						swal({
+							  type: "success",
+							  title: "Productos",
+							  text: "El producto ha sido desactivado correctamente. Ya no se podrá usar en nuevas ventas, pero seguirá figurando en los históricos.",
+							  showConfirmButton: true,
+							  confirmButtonText: "Cerrar"
+							  }).then(function(result){
+								if (result.value) {
+									window.location = "productos";
+								}
+							})
+						</script>';
+				} else {
+					$respError = (isset($respuestaDesactivar[2])) ? $respuestaDesactivar[2] : "Error desconocido al desactivar el producto";
+					echo '<script>
+						swal({
+							  type: "error",
+							  title: "Productos",
+							  text: "'.$respError.'",
+							  showConfirmButton: true,
+							  confirmButtonText: "Cerrar"
+							  }).then(function(result){
+								if (result.value) {
+									window.location = "productos";
+								}
+							})
+						</script>';
+				}
+
+				return;
+			}
+
 			// Primero verifico si el producto tiene ventas asociadas
 			$tieneVentas = ModeloProductos::mdlProductoTieneVentas($datos);
 			$cantidadVentas = isset($tieneVentas["total"]) ? (int)$tieneVentas["total"] : 0;
 
 			if ($cantidadVentas > 0) {
-				// No permitir borrar para no romper históricos ni FKs
+				// Tiene ventas: no borro, ofrezco desactivarlo
 				echo '<script>
 					swal({
-						  type: "error",
+						  type: "warning",
 						  title: "Productos",
-						  text: "No se puede eliminar el producto porque tiene ventas asociadas. Podés dejar de usarlo pero quedará para el historial.",
-						  showConfirmButton: true,
-						  confirmButtonText: "Cerrar"
+						  text: "No se puede eliminar el producto porque tiene ventas asociadas. ¿Querés desactivarlo para que no se pueda usar más en nuevas ventas?",
+						  showCancelButton: true,
+						  cancelButtonText: "No, cancelar",
+						  confirmButtonText: "Sí, desactivar"
 						  }).then(function(result){
 							if (result.value) {
+								window.location = "index.php?ruta=productos&idProducto='.$datos.'&accion=desactivar";
+							} else {
 								window.location = "productos";
 							}
 						})

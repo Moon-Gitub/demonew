@@ -190,6 +190,26 @@ class ModeloProductos{
 	}
 
 	/*=============================================
+	DESACTIVAR PRODUCTO (activo = 0)
+	=============================================*/
+	static public function mdlDesactivarProducto($idProducto){
+
+		$stmt = Conexion::conectar()->prepare(
+			"UPDATE productos 
+			 SET activo = 0 
+			 WHERE id = :id"
+		);
+
+		$stmt->bindParam(":id", $idProducto, PDO::PARAM_INT);
+
+		if ($stmt->execute()) {
+			return "ok";
+		} else {
+			return $stmt->errorInfo();
+		}
+	}
+
+	/*=============================================
 	VERIFICAR SI PRODUCTO TIENE VENTAS
 	=============================================*/
 	static public function mdlProductoTieneVentas($idProducto){
