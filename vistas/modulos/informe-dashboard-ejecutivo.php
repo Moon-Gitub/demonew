@@ -186,7 +186,7 @@ $dataMediosJson = json_encode($dataMedios);
           <div class="col-xs-12">
             <div class="ide-chart-container">
               <div class="ide-chart-title">Detalle top productos</div>
-              <table class="table table-bordered table-striped table-condensed">
+              <table class="table table-bordered table-striped table-condensed" id="tablaTopProductosDia">
                 <thead>
                   <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                     <th style="color:white;">Producto</th>
@@ -272,4 +272,31 @@ $dataMediosJson = json_encode($dataMedios);
     initCharts();
   }
 })();
+</script>
+
+<script>
+// Convertir tabla de detalle de top productos en DataTable
+$(function() {
+  if (typeof $.fn.DataTable === 'undefined') {
+    return;
+  }
+
+  var $tabla = $('#tablaTopProductosDia');
+  if (!$tabla.length) {
+    return;
+  }
+
+  $tabla.DataTable({
+    paging: true,
+    pageLength: 10,
+    lengthChange: true,
+    searching: true,
+    ordering: true,
+    order: [[2, 'desc']], // ordenar por monto
+    responsive: true,
+    dom: 'Bfrtip',
+    buttons: (typeof GL_DATATABLE_BOTONES !== 'undefined') ? GL_DATATABLE_BOTONES : ['copy', 'excel', 'pdf', 'print'],
+    language: (typeof GL_DATATABLE_LENGUAJE !== 'undefined') ? GL_DATATABLE_LENGUAJE : {}
+  });
+});
 </script>
