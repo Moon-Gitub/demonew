@@ -124,7 +124,8 @@ if($integraciones && is_array($integraciones) && count($integraciones) > 0){
 
 <style>
 .chat-fullscreen-wrapper {
-  height: calc(100vh - 120px);
+  /* Ocupa el 80% de la altura visible de la pantalla */
+  height: 80vh;
   display: flex;
   align-items: stretch;
 }
