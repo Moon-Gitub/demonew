@@ -188,6 +188,10 @@
           if ($ruta === 'permisos-rol' && isset($_SESSION['perfil']) && $_SESSION['perfil'] === 'Administrador') {
             $permiso = true;
           }
+          // Administrador siempre puede ver productos desactivados
+          if ($ruta === 'productos-desactivados' && isset($_SESSION['perfil']) && $_SESSION['perfil'] === 'Administrador') {
+            $permiso = true;
+          }
           if ($ruta === 'informe-dashboard-ejecutivo' && isset($_SESSION['perfil']) && $_SESSION['perfil'] === 'Administrador') {
             $permiso = true;
           }
