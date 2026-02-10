@@ -968,3 +968,40 @@ table.dt-responsive {
 .bg-danger {
     background-color: #fa709a !important;
 }
+
+/* ============================================
+   SIDEBAR - Menú Informes y treeview igual abierto/cerrado
+   Unifica el aspecto del submenú cuando la barra está
+   colapsada (dropdown al pasar el mouse) y cuando está expandida.
+   ============================================ */
+
+.sidebar-menu .treeview-menu {
+    margin: 0 1px;
+}
+.sidebar-menu .treeview-menu > li > a {
+    padding: 8px 10px 8px 15px;
+    font-size: 13px;
+}
+.sidebar-menu .treeview-menu > li.header {
+    padding: 8px 10px 6px 15px;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #8aa4af;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 2px;
+}
+
+/* Cuando la barra está colapsada, el submenú se muestra como dropdown:
+   mismo fondo y enlaces para que se vea igual que expandido */
+.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > .treeview-menu {
+    box-shadow: 2px 4px 12px rgba(0,0,0,0.25);
+    border-radius: 0 4px 4px 0;
+}
+.sidebar-mini.sidebar-collapse .sidebar-menu > li > .treeview-menu > li > a,
+.sidebar-menu .treeview-menu > li > a {
+    border-left: 3px solid transparent;
+}
+.sidebar-mini.sidebar-collapse .sidebar-menu > li > .treeview-menu > li > a:hover,
+.sidebar-menu .treeview-menu > li > a:hover {
+    border-left-color: rgba(255,255,255,0.3);
+}

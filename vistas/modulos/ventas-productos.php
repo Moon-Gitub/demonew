@@ -302,7 +302,8 @@
           $dataProductos = [];
           $colorsProductos = [];
           
-          // Agrupar productos por descripción y sumar montos (combos expandidos = productos separados)
+          // Agrupar productos por descripción y sumar cantidades, compra y venta (combos expandidos = productos separados)
+          // Estructura: [ 'descripcion' => ['cantidad' => x, 'monto_compra' => y, 'monto_venta' => z] ]
           $productosAgrupados = [];
           if (is_array($respuestaVta)) {
             foreach ($respuestaVta as $key => $value) {
@@ -311,22 +312,35 @@
                 foreach ($productos as $keyPro => $valuePro) {
                   $desc = $valuePro["descripcion"] ?? "Sin descripción";
                   if (!isset($productosAgrupados[$desc])) {
-                    $productosAgrupados[$desc] = 0;
+                    $productosAgrupados[$desc] = [
+                      "cantidad"     => 0,
+                      "monto_compra" => 0,
+                      "monto_venta"  => 0,
+                    ];
                   }
-                  $productosAgrupados[$desc] += isset($valuePro["total"]) ? floatval($valuePro["total"]) : 0;
+                  $cant = isset($valuePro["cantidad"]) ? floatval($valuePro["cantidad"]) : 0;
+                  $precioCompra = isset($valuePro["precio_compra"]) ? floatval($valuePro["precio_compra"]) : 0;
+                  $montoVentaLinea = isset($valuePro["total"]) ? floatval($valuePro["total"]) : 0;
+                  
+                  $productosAgrupados[$desc]["cantidad"]     += $cant;
+                  $productosAgrupados[$desc]["monto_compra"] += $precioCompra * $cant;
+                  $productosAgrupados[$desc]["monto_venta"]  += $montoVentaLinea;
                 }
               }
             }
           }
           
-          // Ordenar por monto descendente
-          arsort($productosAgrupados);
+          // Ordenar por monto de venta descendente
+          uasort($productosAgrupados, function($a, $b) {
+            return ($b["monto_venta"] <=> $a["monto_venta"]);
+          });
           
+          // Datos para el gráfico (top 10 por monto vendido)
           $i = 0;
-          foreach ($productosAgrupados as $desc => $monto) {
+          foreach ($productosAgrupados as $desc => $datosProd) {
             if ($i >= 10) break; // top 10
             $labelsProductos[] = $desc;
-            $dataProductos[] = round($monto, 2);
+            $dataProductos[] = round($datosProd["monto_venta"], 2);
             $colorsProductos[] = $colores[$i % count($colores)];
             $i++;
           }
@@ -397,6 +411,50 @@
            </div>
          </div>
        </div>
+
+       <!-- =======================
+            Resumen por producto (agregado)
+            ======================= -->
+       <?php if (!empty($productosAgrupados)) { ?>
+       <div class="vp-chart-container">
+         <div class="vp-chart-title">
+           Resumen por producto
+           <span class="vp-chart-subtitle">(totales del período seleccionado)</span>
+         </div>
+         <div class="table-responsive">
+           <table class="table table-bordered table-striped table-condensed">
+             <thead>
+               <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                 <th style="color:white;">Producto</th>
+                 <th style="color:white; text-align:right;">Cantidad total</th>
+                 <th style="color:white; text-align:right;">$ Compra total</th>
+                 <th style="color:white; text-align:right;">$ Venta total</th>
+                 <th style="color:white; text-align:right;">Margen</th>
+                 <th style="color:white; text-align:right;">% sobre venta</th>
+               </tr>
+             </thead>
+             <tbody>
+               <?php foreach ($productosAgrupados as $desc => $datosProd) {
+                 $cant   = $datosProd["cantidad"];
+                 $compra = $datosProd["monto_compra"];
+                 $venta  = $datosProd["monto_venta"];
+                 $margen = $venta - $compra;
+                 $pct    = $totalVenta > 0 ? ($venta * 100 / $totalVenta) : 0;
+               ?>
+               <tr>
+                 <td><?php echo htmlspecialchars($desc); ?></td>
+                 <td style="text-align:right;"><?php echo number_format($cant, 2, ',', '.'); ?></td>
+                 <td style="text-align:right;">$ <?php echo number_format($compra, 2, ',', '.'); ?></td>
+                 <td style="text-align:right;">$ <?php echo number_format($venta, 2, ',', '.'); ?></td>
+                 <td style="text-align:right;">$ <?php echo number_format($margen, 2, ',', '.'); ?></td>
+                 <td style="text-align:right;"><?php echo number_format($pct, 1, ',', '.'); ?>%</td>
+               </tr>
+               <?php } ?>
+             </tbody>
+           </table>
+         </div>
+       </div>
+       <?php } ?>
 
        <!-- =======================
             Tabla detalle
