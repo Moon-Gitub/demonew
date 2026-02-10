@@ -14,7 +14,7 @@ class ModeloProductos{
 			$stmt -> execute();
 			return $stmt -> fetch();
 		}else{
-	        $stmt = Conexion::conectar()->prepare("SELECT productos.*, proveedores.nombre FROM $tabla LEFT JOIN proveedores ON productos.id_proveedor = proveedores.id ORDER BY productos.$orden DESC");
+	        $stmt = Conexion::conectar()->prepare("SELECT productos.*, proveedores.nombre FROM $tabla LEFT JOIN proveedores ON productos.id_proveedor = proveedores.id WHERE productos.activo = 1 ORDER BY productos.$orden DESC");
 			$stmt -> execute();
 			return $stmt -> fetchAll();
 		}
@@ -26,7 +26,7 @@ class ModeloProductos{
 	MOSTRAR PRODUCTOS PAGINADOS
 	=============================================*/
 	static public function mdlMostrarProductosPaginados($desde, $limite){
-        $stmt = Conexion::conectar()->prepare("SELECT productos.*, proveedores.nombre FROM productos LEFT JOIN proveedores ON productos.id_proveedor = proveedores.id ORDER BY productos.id ASC LIMIT $desde, $limite");
+        $stmt = Conexion::conectar()->prepare("SELECT productos.*, proveedores.nombre FROM productos LEFT JOIN proveedores ON productos.id_proveedor = proveedores.id WHERE productos.activo = 1 ORDER BY productos.id ASC LIMIT $desde, $limite");
 		$stmt -> execute();
 		return $stmt -> fetchAll();
 		$stmt -> close();
@@ -414,7 +414,7 @@ class ModeloProductos{
 		// stock bueno
 		// SELECT * FROM productos WHERE stock >= stock_medio
 
-		$stmt = Conexion::conectar()->prepare("SELECT * FROM productos");
+		$stmt = Conexion::conectar()->prepare("SELECT * FROM productos WHERE activo = 1");
 
 		$stmt -> execute();
 
@@ -437,7 +437,7 @@ class ModeloProductos{
 		// SELECT COUNT(*) FROM productos WHERE stock > stock_bajo AND stock <= stock_medio
 		// stock bueno
 		// SELECT COUNT(*) FROM productos WHERE stock >= stock_medio
-		$stmt = Conexion::conectar()->prepare("SELECT * FROM productos");
+		$stmt = Conexion::conectar()->prepare("SELECT * FROM productos WHERE activo = 1");
 		$stmt -> execute();
 		return $stmt -> fetchAll();
 		$stmt -> close();
@@ -450,7 +450,7 @@ class ModeloProductos{
 	=============================================*/
 	static public function mdlMostrarStockMedio(){
 		//$stmt = Conexion::conectar()->prepare("SELECT * FROM productos WHERE (stock + stock_balloffet + stock_moreno + stock_edison) <= stock_medio AND (stock + stock_balloffet + stock_moreno + stock_edison) > stock_bajo ");
-		$stmt = Conexion::conectar()->prepare("SELECT * FROM productos WHERE (IF(stock<0,0,stock)) <= stock_medio AND (IF(stock<0,0,stock)) > stock_bajo ");
+		$stmt = Conexion::conectar()->prepare("SELECT * FROM productos WHERE activo = 1 AND (IF(stock<0,0,stock)) <= stock_medio AND (IF(stock<0,0,stock)) > stock_bajo ");
 		$stmt -> execute();
 		return $stmt -> fetchAll();
 		$stmt -> close();
@@ -461,7 +461,7 @@ class ModeloProductos{
 	LISTAR PRODUCTOS CON STOCK BAJO
 	=============================================*/
 	static public function mdlMostrarStockBajo(){
-		$stmt = Conexion::conectar()->prepare("SELECT * FROM productos WHERE (IF(stock<0,0,stock)) <= stock_bajo");
+		$stmt = Conexion::conectar()->prepare("SELECT * FROM productos WHERE activo = 1 AND (IF(stock<0,0,stock)) <= stock_bajo");
 		$stmt -> execute();
 		return $stmt -> fetchAll();
 		$stmt -> close();
@@ -472,7 +472,7 @@ class ModeloProductos{
 	LISTAR PRODUCTOS STOCK VALORIZADO
 	=============================================*/
 	static public function mdlMostrarStockValorizado(){
-		$stmt = Conexion::conectar()->prepare("SELECT codigo, descripcion, (IF(stock<0,0,stock)) as stock, precio_compra, ROUND((IF(stock<0,0,stock)) * precio_compra, 2) as invertido, precio_venta, ROUND((IF(stock<0,0,stock)) * precio_venta, 2) as valorizado FROM productos WHERE (IF(stock<0,0,stock)) > 0");
+		$stmt = Conexion::conectar()->prepare("SELECT codigo, descripcion, (IF(stock<0,0,stock)) as stock, precio_compra, ROUND((IF(stock<0,0,stock)) * precio_compra, 2) as invertido, precio_venta, ROUND((IF(stock<0,0,stock)) * precio_venta, 2) as valorizado FROM productos WHERE activo = 1 AND (IF(stock<0,0,stock)) > 0");
 		$stmt -> execute();
 		return $stmt -> fetchAll();
 		$stmt -> close();
@@ -483,7 +483,7 @@ class ModeloProductos{
 	LISTAR PRODUCTOS STOCK VALORIZADO TOTALES
 	=============================================*/
 	static public function mdlMostrarStockValorizadoTotales(){
-		$stmt = Conexion::conectar()->prepare("SELECT SUM(ROUND((IF(stock<0,0,stock)) * precio_compra,2)) as invertido, SUM(ROUND((IF(stock<0,0,stock)) * precio_venta,2)) as valorizado FROM productos WHERE stock > 0");
+		$stmt = Conexion::conectar()->prepare("SELECT SUM(ROUND((IF(stock<0,0,stock)) * precio_compra,2)) as invertido, SUM(ROUND((IF(stock<0,0,stock)) * precio_venta,2)) as valorizado FROM productos WHERE activo = 1 AND stock > 0");
 		$stmt -> execute();
 		return $stmt -> fetch();
 		$stmt -> close();
@@ -933,7 +933,7 @@ class ModeloProductos{
 	=============================================*/
 	static public function mdlMostrarProductosLector($valor){
 
-		$stmt = Conexion::conectar()->prepare("SELECT * FROM productos WHERE codigo = :valor");
+		$stmt = Conexion::conectar()->prepare("SELECT * FROM productos WHERE codigo = :valor AND activo = 1");
 
 		$stmt -> bindParam(":valor", $valor, PDO::PARAM_STR);
 

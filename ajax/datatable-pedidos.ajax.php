@@ -53,6 +53,7 @@ $table = <<<EOT
     FROM productos pd
     LEFT JOIN categorias c ON pd.id_categoria = c.id
     LEFT JOIN proveedores pv ON pd.id_proveedor = pv.id
+    WHERE pd.activo = 1
  ) temp
 EOT;
  
