@@ -31,7 +31,8 @@ class ModeloVentas{
 		$productosJson = '[]';
 
 		$conexion = Conexion::conectar();
-		$stmt = $conexion->prepare("INSERT IGNORE INTO $tabla(uuid, id_empresa, fecha, codigo, cbte_tipo, id_cliente, id_vendedor, productos, impuesto, impuesto_detalle, neto, neto_gravado, base_imponible_0, base_imponible_2, base_imponible_5, base_imponible_10, base_imponible_21, base_imponible_27, iva_2, iva_5, iva_10, iva_21, iva_27, total, metodo_pago, pto_vta, concepto, fec_desde, fec_hasta, fec_vencimiento, asociado_tipo_cbte, asociado_pto_vta, asociado_nro_cbte, estado, observaciones_vta, pedido_afip, respuesta_afip) VALUES (:uuid, :id_empresa, :fecha, :codigo, :cbte_tipo, :id_cliente, :id_vendedor, :productos, :impuesto, :impuesto_detalle, :neto, :neto_gravado, :base_imponible_0, :base_imponible_2, :base_imponible_5, :base_imponible_10, :base_imponible_21, :base_imponible_27, :iva_2, :iva_5, :iva_10, :iva_21, :iva_27, :total, :metodo_pago, :pto_vta, :concepto, :fec_desde, :fec_hasta, :fec_vencimiento, :asociado_tipo_cbte, :asociado_pto_vta, :asociado_nro_cbte, :estado, :observaciones_vta, :pedido_afip, :respuesta_afip)");
+		// Usar INSERT normal (sin IGNORE); la unicidad se garantiza con UNIQUE(uuid) en la base
+		$stmt = $conexion->prepare("INSERT INTO $tabla(uuid, id_empresa, fecha, codigo, cbte_tipo, id_cliente, id_vendedor, productos, impuesto, impuesto_detalle, neto, neto_gravado, base_imponible_0, base_imponible_2, base_imponible_5, base_imponible_10, base_imponible_21, base_imponible_27, iva_2, iva_5, iva_10, iva_21, iva_27, total, metodo_pago, pto_vta, concepto, fec_desde, fec_hasta, fec_vencimiento, asociado_tipo_cbte, asociado_pto_vta, asociado_nro_cbte, estado, observaciones_vta, pedido_afip, respuesta_afip) VALUES (:uuid, :id_empresa, :fecha, :codigo, :cbte_tipo, :id_cliente, :id_vendedor, :productos, :impuesto, :impuesto_detalle, :neto, :neto_gravado, :base_imponible_0, :base_imponible_2, :base_imponible_5, :base_imponible_10, :base_imponible_21, :base_imponible_27, :iva_2, :iva_5, :iva_10, :iva_21, :iva_27, :total, :metodo_pago, :pto_vta, :concepto, :fec_desde, :fec_hasta, :fec_vencimiento, :asociado_tipo_cbte, :asociado_pto_vta, :asociado_nro_cbte, :estado, :observaciones_vta, :pedido_afip, :respuesta_afip)");
 
 		$stmt->bindParam(":uuid", $datos["uuid"], PDO::PARAM_STR);
 		$stmt->bindParam(":id_empresa", $datos["id_empresa"], PDO::PARAM_INT);
@@ -633,7 +634,7 @@ class ModeloVentas{
 	}
 
 	/*=============================================
-	INSERTAR / ACTUALIZAR PRODUCTOS DE VENTA (TABLA RELACIONAL, IDMPOTENTE)
+	INSERTAR PRODUCTOS DE VENTA (TABLA RELACIONAL)
 	=============================================*/
 	static public function mdlIngresarProductosVenta($idVenta, $productos){
 
@@ -647,7 +648,6 @@ class ModeloVentas{
 		}
 
 		$conexion = Conexion::conectar();
-		$conexion->beginTransaction();
 
 		try {
 			foreach ($productos as $producto) {
@@ -657,8 +657,7 @@ class ModeloVentas{
 				$precioVenta = isset($producto["precio"]) ? floatval($producto["precio"]) : (isset($producto["precio_venta"]) ? floatval($producto["precio_venta"]) : 0);
 
 				if ($idProducto > 0 && $cantidad > 0) {
-					// Usar INSERT ... ON DUPLICATE KEY UPDATE para evitar duplicados y hacer la operación idempotente.
-					// Requiere índice único en la BD: UNIQUE KEY uq_venta_producto (id_venta, id_producto)
+					// Evitar duplicados con UNIQUE(id_venta, id_producto) y ON DUPLICATE KEY UPDATE
 					$stmt = $conexion->prepare("
 						INSERT INTO productos_venta (id_venta, id_producto, cantidad, precio_compra, precio_venta) 
 						VALUES (:id_venta, :id_producto, :cantidad, :precio_compra, :precio_venta)
@@ -679,11 +678,9 @@ class ModeloVentas{
 				}
 			}
 
-			$conexion->commit();
 			return "ok";
 
 		} catch (Exception $e) {
-			$conexion->rollBack();
 			return "error: " . $e->getMessage();
 		}
 
