@@ -633,7 +633,9 @@ class ModeloVentas{
 	}
 
 	/*=============================================
-	INSERTAR PRODUCTOS DE VENTA (TABLA RELACIONAL)
+	INSERTAR / ACTUALIZAR PRODUCTOS DE VENTA (TABLA RELACIONAL)
+	- Requiere UNIQUE KEY (id_venta, id_producto) en productos_venta
+	- Usa ON DUPLICATE KEY UPDATE para evitar duplicados en reintentos
 	=============================================*/
 	static public function mdlIngresarProductosVenta($idVenta, $productos){
 
@@ -650,21 +652,27 @@ class ModeloVentas{
 		$conexion->beginTransaction();
 
 		try {
+			$sql = "INSERT INTO productos_venta (id_venta, id_producto, cantidad, precio_compra, precio_venta)
+			        VALUES (:id_venta, :id_producto, :cantidad, :precio_compra, :precio_venta)
+			        ON DUPLICATE KEY UPDATE
+			            cantidad = VALUES(cantidad),
+			            precio_compra = VALUES(precio_compra),
+			            precio_venta = VALUES(precio_venta)";
+
+			$stmt = $conexion->prepare($sql);
+
 			foreach ($productos as $producto) {
-				$idProducto = isset($producto["id"]) ? intval($producto["id"]) : 0;
-				$cantidad = isset($producto["cantidad"]) ? floatval($producto["cantidad"]) : 0;
-				$precioCompra = isset($producto["precio_compra"]) ? floatval($producto["precio_compra"]) : 0;
-				$precioVenta = isset($producto["precio"]) ? floatval($producto["precio"]) : (isset($producto["precio_venta"]) ? floatval($producto["precio_venta"]) : 0);
+				$idProducto   = isset($producto['id']) ? (int)$producto['id'] : 0;
+				$cantidad     = isset($producto['cantidad']) ? (float)$producto['cantidad'] : 0;
+				$precioCompra = isset($producto['precio_compra']) ? (float)$producto['precio_compra'] : 0;
+				$precioVenta  = isset($producto['precio']) ? (float)$producto['precio'] : (isset($producto['precio_venta']) ? (float)$producto['precio_venta'] : 0);
 
 				if ($idProducto > 0 && $cantidad > 0) {
-					$stmt = $conexion->prepare("INSERT INTO productos_venta (id_venta, id_producto, cantidad, precio_compra, precio_venta) 
-						VALUES (:id_venta, :id_producto, :cantidad, :precio_compra, :precio_venta)");
-
-					$stmt->bindParam(":id_venta", $idVenta, PDO::PARAM_INT);
-					$stmt->bindParam(":id_producto", $idProducto, PDO::PARAM_INT);
-					$stmt->bindParam(":cantidad", $cantidad, PDO::PARAM_STR);
-					$stmt->bindParam(":precio_compra", $precioCompra, PDO::PARAM_STR);
-					$stmt->bindParam(":precio_venta", $precioVenta, PDO::PARAM_STR);
+					$stmt->bindParam(':id_venta', $idVenta, PDO::PARAM_INT);
+					$stmt->bindParam(':id_producto', $idProducto, PDO::PARAM_INT);
+					$stmt->bindParam(':cantidad', $cantidad, PDO::PARAM_STR);
+					$stmt->bindParam(':precio_compra', $precioCompra, PDO::PARAM_STR);
+					$stmt->bindParam(':precio_venta', $precioVenta, PDO::PARAM_STR);
 
 					$stmt->execute();
 					$stmt->closeCursor();
