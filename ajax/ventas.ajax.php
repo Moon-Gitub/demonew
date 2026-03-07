@@ -135,3 +135,24 @@ if(isset($_POST["idVentaConCliente"])){
 	$venta -> ajaxMostrarVentaConCliente($_POST["idVentaConCliente"]);
 
 }
+
+/*=============================================
+FACTURAR POR LOTE
+=============================================*/
+if(isset($_POST["facturarLoteIds"]) && is_array($_POST["facturarLoteIds"]) && count($_POST["facturarLoteIds"]) > 0){
+
+	$ids = array_map('intval', $_POST["facturarLoteIds"]);
+	$idEmpresa = isset($_POST["facturarLoteIdEmpresa"]) && $_POST["facturarLoteIdEmpresa"] !== '' ? (int)$_POST["facturarLoteIdEmpresa"] : null;
+	$respuesta = ControladorVentas::ctrFacturarVentasLote($ids, $idEmpresa);
+	// Formato esperado por ventas.js: estado, mensaje, resultados (array con ok, id_venta, codigo?, mensaje?)
+	$resultados = [];
+	foreach ($respuesta['aprobadas'] as $a) {
+		$resultados[] = ['ok' => true, 'id_venta' => $a['id_venta'], 'codigo' => isset($a['nro_cbte']) ? $a['nro_cbte'] : null];
+	}
+	foreach ($respuesta['rechazadas'] as $r) {
+		$resultados[] = ['ok' => false, 'id_venta' => $r['id_venta'], 'mensaje' => $r['motivo'] ?? ''];
+	}
+	$respuesta['resultados'] = $resultados;
+	echo json_encode($respuesta);
+
+}

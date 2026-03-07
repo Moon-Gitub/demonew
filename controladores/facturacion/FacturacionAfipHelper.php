@@ -38,10 +38,20 @@ class FacturacionAfipHelper {
 	 * @param array|null $cbtesAsoc opcional [['Tipo'=>int,'PtoVta'=>int,'Nro'=>int]]
 	 * @return array estructura FeCAEReq para pasar a WSFE::CAESolicitar
 	 */
-	public static function buildFeCAEReq(array $datosFactura, array $cliente, $condicionIvaEmisor, $ultComp, $cbteFchYmd, array $cbtesAsoc = null) {
+	/**
+	 * Construye solo el array FECAEDetRequest para un comprobante (para uso en lote).
+	 * @param array $datosFactura
+	 * @param array $cliente
+	 * @param int $condicionIvaEmisor
+	 * @param int $cbteDesde número desde (ej. ultComp+1)
+	 * @param int $cbteHasta número hasta (ej. ultComp+1 para uno)
+	 * @param string $cbteFchYmd
+	 * @param array|null $cbtesAsoc
+	 * @return array FECAEDetRequest
+	 */
+	public static function buildFECAEDetRequest(array $datosFactura, array $cliente, $condicionIvaEmisor, $cbteDesde, $cbteHasta, $cbteFchYmd, array $cbtesAsoc = null) {
 		$impIVA = 0.0;
 		$impTotal = round((float) ($datosFactura['total'] ?? 0), 2);
-		// AFIP exige ImpTotal = ImpNeto + ImpTrib (+ ImpIVA en comprobantes que discriminan). Para Monotributista: ImpIVA=0, ImpTrib=0 => ImpNeto debe ser igual a ImpTotal.
 		if (self::esMonotributista($condicionIvaEmisor)) {
 			$impNeto = $impTotal;
 		} else {
@@ -53,8 +63,8 @@ class FacturacionAfipHelper {
 			'Concepto' => (int) ($datosFactura['concepto'] ?? 1),
 			'DocTipo' => (int) $cliente['tipo_documento'],
 			'DocNro' => (float) $cliente['documento'],
-			'CbteDesde' => $ultComp + 1,
-			'CbteHasta' => $ultComp + 1,
+			'CbteDesde' => (int) $cbteDesde,
+			'CbteHasta' => (int) $cbteHasta,
 			'CbteFch' => $cbteFchYmd,
 			'ImpTotal' => $impTotal,
 			'ImpTotConc' => 0,
@@ -80,7 +90,6 @@ class FacturacionAfipHelper {
 			$det['CbtesAsoc'] = $cbtesAsoc;
 		}
 
-		// Solo RI y comprobantes que discriminan IVA: agregar AlicIva desde venta (persistido)
 		if (!self::esMonotributista($condicionIvaEmisor) && in_array((int) ($datosFactura['cbte_tipo'] ?? 0), self::CBTES_DISCRIMINAN_IVA, true)) {
 			$impuestoDetalle = $datosFactura['impuesto_detalle'] ?? '';
 			if (is_string($impuestoDetalle)) {
@@ -100,6 +109,12 @@ class FacturacionAfipHelper {
 			}
 		}
 
+		return $det;
+	}
+
+	public static function buildFeCAEReq(array $datosFactura, array $cliente, $condicionIvaEmisor, $ultComp, $cbteFchYmd, array $cbtesAsoc = null) {
+		$cbte = $ultComp + 1;
+		$det = self::buildFECAEDetRequest($datosFactura, $cliente, $condicionIvaEmisor, $cbte, $cbte, $cbteFchYmd, $cbtesAsoc);
 		return [
 			'FeCAEReq' => [
 				'FeCabReq' => [
@@ -109,6 +124,43 @@ class FacturacionAfipHelper {
 				],
 				'FeDetReq' => [
 					'FECAEDetRequest' => $det,
+				],
+			],
+		];
+	}
+
+	/**
+	 * Construye FeCAEReq para facturación por lote (varios comprobantes en una sola llamada).
+	 * Todas las ventas deben ser mismo pto_vta y cbte_tipo.
+	 *
+	 * @param array $items cada elemento: ['datosFactura' => array, 'cliente' => array, 'cbtesAsoc' => array|null]
+	 * @param int $condicionIvaEmisor empresa.condicion_iva
+	 * @param int $pto_vta
+	 * @param int $cbte_tipo
+	 * @param int $ultComp último número autorizado (AFIP)
+	 * @return array FeCAEReq listo para CAESolicitar
+	 */
+	public static function buildFeCAEReqLote(array $items, $condicionIvaEmisor, $pto_vta, $cbte_tipo, $ultComp) {
+		$dets = [];
+		$n = count($items);
+		for ($i = 0; $i < $n; $i++) {
+			$cbteNro = $ultComp + 1 + $i;
+			$item = $items[$i];
+			$datosFactura = $item['datosFactura'];
+			$cliente = $item['cliente'];
+			$cbtesAsoc = isset($item['cbtesAsoc']) ? $item['cbtesAsoc'] : null;
+			$fch = isset($datosFactura['fecha']) ? date('Ymd', strtotime($datosFactura['fecha'])) : date('Ymd');
+			$dets[] = self::buildFECAEDetRequest($datosFactura, $cliente, $condicionIvaEmisor, $cbteNro, $cbteNro, $fch, $cbtesAsoc);
+		}
+		return [
+			'FeCAEReq' => [
+				'FeCabReq' => [
+					'CantReg' => $n,
+					'PtoVta' => (int) $pto_vta,
+					'CbteTipo' => (int) $cbte_tipo,
+				],
+				'FeDetReq' => [
+					'FECAEDetRequest' => $dets,
 				],
 			],
 		];

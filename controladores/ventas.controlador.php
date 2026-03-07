@@ -1473,6 +1473,170 @@ class ControladorVentas{
 	}
 
 	/*===========================================
+	FACTURAR POR LOTE (varias ventas en una sola llamada AFIP)
+	=============================================*/
+	/**
+	 * Factura varias ventas en una sola solicitud a AFIP.
+	 * Todas deben tener mismo pto_vta y cbte_tipo (y no estar ya facturadas).
+	 * @param array $idsVentas array de id de ventas
+	 * @param int|null $idEmpresa empresa con la que facturar (credenciales AFIP)
+	 * @return array ['estado' => 'ok'|'error', 'aprobadas' => [...], 'rechazadas' => [...], 'mensaje' => string]
+	 */
+	static public function ctrFacturarVentasLote($idsVentas, $idEmpresa = null) {
+		require_once __DIR__ . '/../modelos/ventas.modelo.php';
+		require_once __DIR__ . '/../modelos/clientes.modelo.php';
+		require_once __DIR__ . '/../modelos/empresa.modelo.php';
+		require_once __DIR__ . '/facturacion/wsfe.class.php';
+		require_once __DIR__ . '/facturacion/FacturacionAfipHelper.php';
+
+		$idsVentas = array_map('intval', (array) $idsVentas);
+		$idsVentas = array_values(array_unique(array_filter($idsVentas)));
+		if (count($idsVentas) === 0) {
+			return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => 'No se enviaron ventas.'];
+		}
+
+		if ($idEmpresa === null || $idEmpresa === '') {
+			$idEmpresa = isset($_SESSION['empresa']) ? (int)$_SESSION['empresa'] : 1;
+		} else {
+			$idEmpresa = (int) $idEmpresa;
+		}
+		$arrEmpresa = ModeloEmpresa::mdlMostrarEmpresa("empresa", "id", $idEmpresa);
+		if (!$arrEmpresa) {
+			return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => 'Empresa no encontrada.'];
+		}
+
+		$ventas = [];
+		$ptoVtaRef = null;
+		$cbteTipoRef = null;
+		foreach ($idsVentas as $idVenta) {
+			if (ModeloVentas::mdlVentaFacturada($idVenta)) {
+				return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => "La venta #$idVenta ya está facturada."];
+			}
+			$venta = ModeloVentas::mdlMostrarVentas("ventas", "id", $idVenta);
+			if (!$venta) {
+				return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => "Venta #$idVenta no encontrada."];
+			}
+			$tipoCbte = (int) ($venta['cbte_tipo'] ?? 0);
+			if ($tipoCbte === 0 || $tipoCbte === 999) {
+				return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => "Venta #$idVenta tiene tipo X o Devolución; no se puede facturar por AFIP."];
+			}
+			$ptoVta = (int) ($venta['pto_vta'] ?? 0);
+			if ($ptoVtaRef !== null && ($ptoVta !== $ptoVtaRef || $tipoCbte !== $cbteTipoRef)) {
+				return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => 'Todas las ventas deben tener el mismo punto de venta y tipo de comprobante.'];
+			}
+			$ptoVtaRef = $ptoVta;
+			$cbteTipoRef = $tipoCbte;
+			$cliente = ModeloClientes::mdlMostrarClientes("clientes", "id", $venta['id_cliente']);
+			if (!$cliente) {
+				return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => "Cliente de venta #$idVenta no encontrado."];
+			}
+			$datosFactura = [
+				'fecha'      => $venta['fecha'] ?? date('Y-m-d H:i:s'),
+				'pto_vta'    => $ptoVta,
+				'cbte_tipo'  => $tipoCbte,
+				'concepto'   => (int) ($venta['concepto'] ?? 1),
+				'fec_desde'  => $venta['fec_desde'] ?? null,
+				'fec_hasta'  => $venta['fec_hasta'] ?? null,
+				'fec_vencimiento' => $venta['fec_vencimiento'] ?? null,
+				'total'      => $venta['total'],
+				'neto_gravado' => $venta['neto_gravado'] ?? 0,
+				'impuesto'   => $venta['impuesto'] ?? 0,
+				'impuesto_detalle' => $venta['impuesto_detalle'] ?? '[]',
+			];
+			$cbtesAsoc = null;
+			$cbtesAsociados = [2, 7, 12, 3, 8, 13, 202, 207, 212, 203, 208, 213];
+			if (in_array($tipoCbte, $cbtesAsociados) && !empty($venta['asociado_tipo_cbte']) && isset($venta['asociado_pto_vta'], $venta['asociado_nro_cbte'])) {
+				$cbtesAsoc = [0 => ['Tipo' => (int)$venta['asociado_tipo_cbte'], 'PtoVta' => (int)$venta['asociado_pto_vta'], 'Nro' => (int)$venta['asociado_nro_cbte']]];
+			}
+			$ventas[] = [
+				'id_venta' => $idVenta,
+				'datosFactura' => $datosFactura,
+				'cliente' => $cliente,
+				'cbtesAsoc' => $cbtesAsoc,
+			];
+		}
+
+		$n = count($ventas);
+		$condicionIvaEmisor = (int) ($arrEmpresa['condicion_iva'] ?? 1);
+		$items = array_map(function ($v) {
+			return [
+				'datosFactura' => $v['datosFactura'],
+				'cliente' => $v['cliente'],
+				'cbtesAsoc' => $v['cbtesAsoc'],
+			];
+		}, $ventas);
+
+		try {
+			$wsfe = new WSFE($arrEmpresa);
+			if (!$wsfe->openTA()) {
+				return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => 'No se pudo obtener Ticket de Acceso AFIP.'];
+			}
+			$ultComp = $wsfe->UltimoAutorizado($ptoVtaRef, $cbteTipoRef);
+			if ($ultComp === false) {
+				return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => 'Error al consultar último comprobante autorizado en AFIP.'];
+			}
+			$datosFacturacion = FacturacionAfipHelper::buildFeCAEReqLote($items, $condicionIvaEmisor, $ptoVtaRef, $cbteTipoRef, $ultComp);
+			$respAfip = $wsfe->CAESolicitar($ptoVtaRef, $cbteTipoRef, $datosFacturacion);
+		} catch (Exception $e) {
+			return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => 'Excepción AFIP: ' . $e->getMessage()];
+		}
+
+		if (!$respAfip || !isset($respAfip->FECAESolicitarResult)) {
+			return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => 'Respuesta AFIP inválida.'];
+		}
+
+		$result = $respAfip->FECAESolicitarResult;
+		$aprobadas = [];
+		$rechazadas = [];
+
+		if (!property_exists($result, 'FeCabResp') || $result->FeCabResp->Resultado !== 'A') {
+			$msg = 'AFIP rechazó el lote.';
+			if (property_exists($result, 'Errors') && isset($result->Errors->Err)) {
+				$err = is_array($result->Errors->Err) ? $result->Errors->Err[0] : $result->Errors->Err;
+				$msg .= ' ' . ($err->Code ?? '') . ': ' . ($err->Msg ?? '');
+			}
+			foreach ($idsVentas as $idVenta) {
+				$rechazadas[] = ['id_venta' => $idVenta, 'motivo' => $msg];
+			}
+			return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => $rechazadas, 'mensaje' => $msg];
+		}
+
+		$detResp = property_exists($result, 'FeDetResp') ? $result->FeDetResp->FECAEDetResponse : null;
+		if (!$detResp) {
+			return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => 'AFIP no devolvió detalle de comprobantes.'];
+		}
+		$respuestas = is_array($detResp) ? $detResp : [$detResp];
+
+		for ($i = 0; $i < $n && $i < count($respuestas); $i++) {
+			$r = $respuestas[$i];
+			$idVenta = $ventas[$i]['id_venta'];
+			$cae = $r->CAE ?? '';
+			$nroCbte = $r->CbteDesde ?? 0;
+			$fecCbte = $r->CbteFch ?? '';
+			$fecVtoCae = $r->CAEFchVto ?? '';
+			$datosFacturaInsert = [
+				'id_venta' => $idVenta,
+				'nro_cbte' => $nroCbte,
+				'fec_factura' => $fecCbte,
+				'cae' => $cae,
+				'fec_vto_cae' => $fecVtoCae,
+			];
+			if (ModeloVentas::mdlFacturarVenta("ventas_factura", $datosFacturaInsert)) {
+				$aprobadas[] = ['id_venta' => $idVenta, 'nro_cbte' => $nroCbte, 'cae' => $cae];
+			} else {
+				$rechazadas[] = ['id_venta' => $idVenta, 'motivo' => 'Error al guardar en ventas_factura'];
+			}
+		}
+
+		return [
+			'estado' => count($rechazadas) === 0 ? 'ok' : 'parcial',
+			'aprobadas' => $aprobadas,
+			'rechazadas' => $rechazadas,
+			'mensaje' => count($aprobadas) . ' facturada(s), ' . count($rechazadas) . ' rechazada(s).',
+		];
+	}
+
+	/*===========================================
 	AUTORIZAR COMPROBANTE (usado desde venta.php)
 	=============================================*/
 	static public function ctrFacturarVenta($idVenta, $tipo_comprobante, $idEmpresa = null){
@@ -1749,7 +1913,180 @@ class ControladorVentas{
 		
 		}
 
-	}	
+	}
+
+	/*=============================================
+	FACTURAR POR LOTE (varias ventas en una sola llamada AFIP)
+	=============================================*/
+	/**
+	 * Autoriza en AFIP varias ventas en una sola solicitud.
+	 * Todas deben tener mismo pto_vta y cbte_tipo (y misma empresa).
+	 * @param array $idsVenta array de id de ventas
+	 * @param int|null $idEmpresa
+	 * @return array { estado: 'ok'|'parcial'|'error', resultados: [ { id_venta, codigo, ok, nro_cbte?, cae?, mensaje? } ], mensaje: string }
+	 */
+	static public function ctrFacturarVentaLote(array $idsVenta, $idEmpresa = null) {
+		$resultados = [];
+		$idsVenta = array_values(array_unique(array_map('intval', $idsVenta)));
+		if (count($idsVenta) === 0) {
+			return ['estado' => 'error', 'resultados' => [], 'mensaje' => 'No se enviaron ventas.'];
+		}
+		$maxLote = 250;
+		if (count($idsVenta) > $maxLote) {
+			return ['estado' => 'error', 'resultados' => [], 'mensaje' => "Máximo $maxLote ventas por lote."];
+		}
+
+		if ($idEmpresa === null || $idEmpresa === '') {
+			$idEmpresa = isset($_SESSION['empresa']) ? (int)$_SESSION['empresa'] : 1;
+		} else {
+			$idEmpresa = (int) $idEmpresa;
+		}
+		$arrEmpresa = ModeloEmpresa::mdlMostrarEmpresa("empresa", "id", $idEmpresa);
+		if (!$arrEmpresa) {
+			return ['estado' => 'error', 'resultados' => [], 'mensaje' => 'Empresa no encontrada.'];
+		}
+
+		$ventas = [];
+		$ptoVta = null;
+		$cbteTipo = null;
+		foreach ($idsVenta as $id) {
+			if (ModeloVentas::mdlVentaFacturada($id)) {
+				$resultados[] = ['id_venta' => $id, 'codigo' => null, 'ok' => false, 'mensaje' => 'Ya facturada'];
+				continue;
+			}
+			$v = ModeloVentas::mdlMostrarVentas("ventas", "id", $id);
+			if (!$v) {
+				$resultados[] = ['id_venta' => $id, 'codigo' => null, 'ok' => false, 'mensaje' => 'Venta no encontrada'];
+				continue;
+			}
+			if ((int)$v['cbte_tipo'] === 0 || (int)$v['cbte_tipo'] === 999) {
+				$resultados[] = ['id_venta' => $id, 'codigo' => $v['codigo'] ?? null, 'ok' => false, 'mensaje' => 'Tipo X o Devolución no se factura'];
+				continue;
+			}
+			$clienteCheck = ModeloClientes::mdlMostrarClientes("clientes", "id", $v['id_cliente']);
+			if (!$clienteCheck) {
+				$resultados[] = ['id_venta' => $id, 'codigo' => $v['codigo'] ?? null, 'ok' => false, 'mensaje' => 'Cliente no encontrado'];
+				continue;
+			}
+			$p = (int)$v['pto_vta'];
+			$c = (int)$v['cbte_tipo'];
+			if ($ptoVta !== null && ($p !== $ptoVta || $c !== $cbteTipo)) {
+				$resultados[] = ['id_venta' => $id, 'codigo' => $v['codigo'] ?? null, 'ok' => false, 'mensaje' => 'Pto vta o tipo distinto al resto del lote'];
+				continue;
+			}
+			$ptoVta = $p;
+			$cbteTipo = $c;
+			$ventas[] = $v;
+		}
+
+		if (empty($ventas)) {
+			return ['estado' => 'error', 'resultados' => $resultados, 'mensaje' => 'Ninguna venta válida para facturar en lote.'];
+		}
+
+		date_default_timezone_set('America/Argentina/Mendoza');
+		$cbteFchYmd = date('Ymd');
+
+		try {
+			$wsfe = new WSFE($arrEmpresa);
+			$wsfe->openTA();
+		} catch (Exception $e) {
+			return ['estado' => 'error', 'resultados' => $resultados, 'mensaje' => 'Error TA AFIP: ' . $e->getMessage()];
+		}
+
+		$ultComp = $wsfe->UltimoAutorizado($ptoVta, $cbteTipo);
+		if ($ultComp === false) {
+			return ['estado' => 'error', 'resultados' => $resultados, 'mensaje' => 'No se pudo obtener último autorizado de AFIP.'];
+		}
+
+		$condicionIvaEmisor = (int) ($arrEmpresa['condicion_iva'] ?? 1);
+		$cbtesAsociados = [2, 7, 12, 3, 8, 13, 202, 207, 212, 203, 208, 213];
+		$dets = [];
+		foreach ($ventas as $venta) {
+			$cliente = ModeloClientes::mdlMostrarClientes("clientes", "id", $venta['id_cliente']);
+			$ultComp++;
+			$datosFactura = [
+				'pto_vta' => $ptoVta,
+				'cbte_tipo' => $cbteTipo,
+				'concepto' => (int)$venta['concepto'],
+				'fec_desde' => $venta['fec_desde'] ?? null,
+				'fec_hasta' => $venta['fec_hasta'] ?? null,
+				'fec_vencimiento' => $venta['fec_vencimiento'] ?? null,
+				'total' => $venta['total'],
+				'neto_gravado' => $venta['neto_gravado'] ?? 0,
+				'impuesto' => $venta['impuesto'] ?? 0,
+				'impuesto_detalle' => $venta['impuesto_detalle'] ?? '',
+			];
+			$cbtesAsoc = null;
+			if (in_array($cbteTipo, $cbtesAsociados) && !empty($venta['asociado_tipo_cbte']) && isset($venta['asociado_pto_vta'], $venta['asociado_nro_cbte'])) {
+				$cbtesAsoc = [0 => ['Tipo' => (int)$venta['asociado_tipo_cbte'], 'PtoVta' => (int)$venta['asociado_pto_vta'], 'Nro' => (int)$venta['asociado_nro_cbte']]];
+			}
+			$det = FacturacionAfipHelper::buildFECAEDetRequest($datosFactura, $cliente, $condicionIvaEmisor, $ultComp, $ultComp, $cbteFchYmd, $cbtesAsoc);
+			$dets[] = $det;
+		}
+
+		if (empty($dets)) {
+			return ['estado' => 'error', 'resultados' => $resultados, 'mensaje' => 'No se pudo armar request para ninguna venta.'];
+		}
+
+		$datosFacturacion = [
+			'FeCAEReq' => [
+				'FeCabReq' => [
+					'CantReg' => count($dets),
+					'PtoVta' => $ptoVta,
+					'CbteTipo' => $cbteTipo,
+				],
+				'FeDetReq' => [
+					'FECAEDetRequest' => $dets,
+				],
+			],
+		];
+
+		$respAfip = $wsfe->CAESolicitar($ptoVta, $cbteTipo, $datosFacturacion);
+		if (!$respAfip || !property_exists($respAfip, 'FECAESolicitarResult') || !property_exists($respAfip->FECAESolicitarResult, 'FeCabResp')) {
+			$msg = 'AFIP no devolvió respuesta válida.';
+			if ($respAfip && property_exists($respAfip->FECAESolicitarResult, 'Errors')) {
+				$err = $respAfip->FECAESolicitarResult->Errors;
+				$msg = is_array($err->Err) ? $err->Err[0]->Msg : $err->Err->Msg;
+			}
+			return ['estado' => 'error', 'resultados' => $resultados, 'mensaje' => $msg];
+		}
+
+		$feDetResp = $respAfip->FECAESolicitarResult->FeDetResp ?? null;
+		if (!$feDetResp || !property_exists($feDetResp, 'FECAEDetResponse')) {
+			return ['estado' => 'error', 'resultados' => $resultados, 'mensaje' => 'AFIP no devolvió detalle por comprobante.'];
+		}
+
+		$responses = $feDetResp->FECAEDetResponse;
+		if (!is_array($responses)) {
+			$responses = [$responses];
+		}
+
+		$ventasParaGuardar = array_values($ventas);
+		$okCount = 0;
+		foreach ($responses as $idx => $r) {
+			$idVenta = isset($ventasParaGuardar[$idx]) ? (int)$ventasParaGuardar[$idx]['id'] : 0;
+			$codigo = isset($ventasParaGuardar[$idx]) ? $ventasParaGuardar[$idx]['codigo'] : null;
+			if (!isset($r->Resultado) || $r->Resultado !== 'A') {
+				$obs = isset($r->Observaciones->Obs) ? (is_array($r->Observaciones->Obs) ? $r->Observaciones->Obs[0]->Msg : $r->Observaciones->Obs->Msg) : 'Rechazado';
+				$resultados[] = ['id_venta' => $idVenta, 'codigo' => $codigo, 'ok' => false, 'mensaje' => $obs];
+				continue;
+			}
+			$datosFactura = [
+				'id_venta' => $idVenta,
+				'fec_factura' => isset($r->CbteFch) ? $r->CbteFch : date('Ymd'),
+				'nro_cbte' => $r->CbteDesde,
+				'cae' => $r->CAE,
+				'fec_vto_cae' => $r->CAEFchVto ?? '',
+			];
+			ModeloVentas::mdlFacturarVenta("ventas_factura", $datosFactura);
+			$resultados[] = ['id_venta' => $idVenta, 'codigo' => $codigo, 'ok' => true, 'nro_cbte' => $r->CbteDesde, 'cae' => $r->CAE];
+			$okCount++;
+		}
+
+		$estado = ($okCount === count($ventas)) ? 'ok' : ($okCount > 0 ? 'parcial' : 'error');
+		$mensaje = $okCount === count($ventas) ? "Se autorizaron {$okCount} comprobante(s)." : "Autorizados: {$okCount} de " . count($ventas) . ".";
+		return ['estado' => $estado, 'resultados' => $resultados, 'mensaje' => $mensaje];
+	}
 
 	/*=============================================
 	TOTAL VENTAS POR RANGO FECHA

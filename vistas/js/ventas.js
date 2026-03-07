@@ -1531,7 +1531,7 @@ $("#tablaListarVentas tfoot th").each(function (i) {
 TABLA LISTAR VENTAS (ventas.php)
 =============================================*/
 var tablaListarVtas = $("#tablaListarVentas").DataTable({
-	"order": [[ 0, "desc" ]],
+	"order": [[ 1, "desc" ]],
 	"pageLength": 50,
 	"language": GL_DATATABLE_LENGUAJE,
 	"dom": 'Bfrtip',
@@ -1547,21 +1547,22 @@ var tablaListarVtas = $("#tablaListarVentas").DataTable({
                         i : 0;
             };
 
+            var colTotal = 9;
             var total = api
-                .column(8)
+                .column(colTotal)
                 .data()
                 .reduce(function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0);
 
             var totalPage = api
-                .column(8, {search:'applied'})
+                .column(colTotal, {search:'applied'})
                 .data()
                 .reduce(function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0);
 
-            $(api.column(8).footer()).html(
+            $(api.column(colTotal).footer()).html(
                 ` ${totalPage.toFixed(2)}`
             )
 
@@ -1608,7 +1609,70 @@ tablaListarVtas.on('draw.dt', function() {
   inicializarTooltipsAcciones();
 });
 
+/*=============================================
+FACTURAR POR LOTE
+=============================================*/
+$("#chkFacturarLoteTodos").on("change", function() {
+  var checked = $(this).prop("checked");
+  $("#tablaListarVentas").find(".chkFacturarLote:visible").prop("checked", checked);
+});
 
+$("#btnFacturarPorLote").on("click", function() {
+  var ids = [];
+  $("#tablaListarVentas").find(".chkFacturarLote:checked").each(function() {
+    ids.push($(this).val());
+  });
+  if (ids.length === 0) {
+    swal({
+      type: "warning",
+      title: "Facturar por lote",
+      text: "Seleccione al menos una venta (sin facturar, tipo distinto de X y Devolución).",
+      confirmButtonText: "Cerrar"
+    });
+    return;
+  }
+  var idEmpresa = $("#autorizarCbteIdEmpresa").length ? $("#autorizarCbteIdEmpresa").val() : "";
+  var datos = new FormData();
+  ids.forEach(function(id) { datos.append("facturarLoteIds[]", id); });
+  if (idEmpresa) datos.append("facturarLoteIdEmpresa", idEmpresa);
+  $.ajax({
+    url: "ajax/ventas.ajax.php",
+    method: "POST",
+    data: datos,
+    cache: false,
+    contentType: false,
+    processData: false,
+    dataType: "json",
+    success: function(resp) {
+      var msg = resp.mensaje || "";
+      if (resp.resultados && resp.resultados.length) {
+        var ok = resp.resultados.filter(function(r) { return r.ok; }).length;
+        var fail = resp.resultados.filter(function(r) { return !r.ok; });
+        if (fail.length) {
+          msg += "\n\nRechazados: " + fail.map(function(r) { return "Venta #" + (r.codigo || r.id_venta) + ": " + (r.mensaje || ""); }).join("; ");
+        }
+      }
+      swal({
+        type: resp.estado === "ok" ? "success" : (resp.estado === "parcial" ? "warning" : "error"),
+        title: "Facturar por lote",
+        text: msg,
+        confirmButtonText: "Cerrar"
+      }).then(function() {
+        if (resp.estado === "ok" || resp.estado === "parcial") {
+          window.location = "ventas";
+        }
+      });
+    },
+    error: function() {
+      swal({
+        type: "error",
+        title: "Facturar por lote",
+        text: "Error al conectar con el servidor.",
+        confirmButtonText: "Cerrar"
+      });
+    }
+  });
+});
 
 /*=============================================
 BOTON EDITAR VENTA

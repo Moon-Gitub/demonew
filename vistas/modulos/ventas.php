@@ -326,6 +326,9 @@
             <a href="libro-iva-ventas" class="btn ventas-btn-secondary" style="color: white; margin-bottom: 10px;">
               <i class="fa fa-file-text"></i> IVA Ventas
             </a>
+            <button type="button" class="btn btn-info" id="btnFacturarPorLote" style="margin-bottom: 10px;" title="Facturar en AFIP las ventas seleccionadas (mismo punto de venta y tipo de comprobante)">
+              <i class="fa fa-list-ol"></i> Facturar por lote
+            </button>
           </div>
           <div class="col-md-6 col-sm-12 text-right">
             <button type="button" class="btn ventas-btn-date pull-right" id="daterange-btn" style="color: white;">
@@ -364,6 +367,7 @@
          
          <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
 
+           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px; width: 36px;"><input type="checkbox" id="chkFacturarLoteTodos" title="Seleccionar para facturar por lote"></th>
            <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Fecha</th>
            <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Empresa</th>
            <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Nro. Int.</th>
@@ -382,6 +386,7 @@
         <tfoot>
 
           <tr>
+            <th></th>
             <th></th>
             <th>Empresa</th>
             <th>Nro. Int.</th>
@@ -524,9 +529,14 @@
             //$botonMail = ($value["id_cliente"] == 1) ? 'pointer-events: none;' : 'cursor: pointer;' ;
             //$botonMailLi = ($value["id_cliente"] == 1) ? 'cursor:not-allowed;' : '' ;
 
-             echo '<tr>
-
-                    <td>'.$value["fecha"].'</td>';
+            $puedeLote = !$facturada && (int)$value["cbte_tipo"] !== 0 && (int)$value["cbte_tipo"] !== 999;
+             echo '<tr>';
+            if ($puedeLote) {
+              echo '<td><input type="checkbox" class="chkFacturarLote" value="'.$value["id"].'" title="Incluir en facturación por lote"></td>';
+            } else {
+              echo '<td></td>';
+            }
+             echo '<td>'.$value["fecha"].'</td>';
                     $nomEmp = ControladorEmpresa::ctrMostrarempresa('id', $value['id_empresa']);
                       echo '<td>'.$nomEmp['titular'].'</td>';
 
