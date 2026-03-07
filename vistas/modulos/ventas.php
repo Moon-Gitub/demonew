@@ -126,15 +126,38 @@
     padding: 12px 8px;
   }
 
-  /* Columna checkbox facturar por lote: siempre clickeable */
+  /* Columna checkbox facturar por lote: siempre visible y clickeable */
+  #tablaListarVentas th.col-chk-lote,
   #tablaListarVentas td.col-chk-lote {
-    min-width: 36px;
+    min-width: 48px !important;
+    width: 48px !important;
+    max-width: 48px !important;
+    text-align: center !important;
     cursor: default;
-    pointer-events: auto;
+    pointer-events: auto !important;
+    box-sizing: border-box;
   }
-  #tablaListarVentas td.col-chk-lote .chkFacturarLote {
+  #tablaListarVentas td.col-chk-lote input.chkFacturarLote {
     cursor: pointer;
     margin: 0;
+    width: 18px;
+    height: 18px;
+  }
+  #tablaListarVentas td.col-chk-lote input:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  #tablaListarVentas thead th.col-chk-lote input,
+  #tablaListarVentas tbody td.col-chk-lote input:not(:disabled) {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+  }
+  /* Mantener columna de checkboxes siempre visible */
+  #tablaListarVentas thead th.col-chk-lote,
+  #tablaListarVentas tbody td.col-chk-lote {
+    display: table-cell !important;
+    min-width: 42px !important;
   }
 
   /* Mejorar buscador */
@@ -378,7 +401,7 @@
          
          <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
 
-           <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px; width: 36px;"><input type="checkbox" id="chkFacturarLoteTodos" title="Seleccionar para facturar por lote"></th>
+           <th class="col-chk-lote" style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px; min-width: 42px; width: 42px;" title="Seleccionar para facturar por lote"><input type="checkbox" id="chkFacturarLoteTodos" title="Seleccionar todas para facturar por lote" style="cursor: pointer;"></th>
            <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Fecha</th>
            <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Empresa</th>
            <th style="color: white; font-weight: 600; text-transform: uppercase; border: none; padding: 12px 8px;">Nro. Int.</th>
@@ -543,9 +566,9 @@
             $puedeLote = !$facturada && (int)$value["cbte_tipo"] !== 0 && (int)$value["cbte_tipo"] !== 999;
              echo '<tr>';
             if ($puedeLote) {
-              echo '<td class="col-chk-lote" style="vertical-align: middle;"><input type="checkbox" class="chkFacturarLote" value="'.$value["id"].'" title="Incluir en facturación por lote"></td>';
+              echo '<td class="col-chk-lote" style="vertical-align: middle; min-width: 42px;"><input type="checkbox" class="chkFacturarLote" name="chk_lote[]" value="'.$value["id"].'" title="Incluir en facturación por lote"></td>';
             } else {
-              echo '<td class="col-chk-lote"></td>';
+              echo '<td class="col-chk-lote" style="min-width: 42px;"><input type="checkbox" disabled title="Ya facturada o no aplica (X/Devolución)"></td>';
             }
              echo '<td>'.$value["fecha"].'</td>';
                     $nomEmp = ControladorEmpresa::ctrMostrarempresa('id', $value['id_empresa']);
@@ -561,7 +584,7 @@
               }
               //echo '<td>' .  $arrPuntos[$value["pto_vta"]] . '</td>';
 
-              echo '<td><center>' . $tpCbte .'<br>'. $numFact. '<c/enter></td>';
+              echo '<td><center>' . $tpCbte .'<br>'. $numFact. '</center></td>';
 
               $itemCliente = "id";
               $valorCliente = $value["id_cliente"];

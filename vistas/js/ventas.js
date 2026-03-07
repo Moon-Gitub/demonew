@@ -1536,8 +1536,9 @@ var tablaListarVtas = $("#tablaListarVentas").DataTable({
 	"language": GL_DATATABLE_LENGUAJE,
 	"dom": 'Bfrtip',
 	"buttons": GL_DATATABLE_BOTONES,
+	"responsive": false,
 	"columnDefs": [
-		{ "targets": 0, "orderable": false, "searchable": false, "className": "col-chk-lote" }
+		{ "targets": 0, "orderable": false, "searchable": false, "className": "col-chk-lote", "width": "42px" }
 	],
 	"footerCallback": function (row, data, start, end, display) {
           
@@ -1626,7 +1627,7 @@ $("#tablaListarVentas").on("change", ".chkFacturarLote", function(e) {
 $("#chkFacturarLoteTodos").on("click change", function(e) {
   e.stopPropagation();
   var checked = $(this).prop("checked");
-  $("#tablaListarVentas").find(".chkFacturarLote:visible").prop("checked", checked);
+  $("#tablaListarVentas").find(".chkFacturarLote:visible").not(":disabled").prop("checked", checked);
 });
 
 $("#btnFacturarPorLote").on("click", function() {
