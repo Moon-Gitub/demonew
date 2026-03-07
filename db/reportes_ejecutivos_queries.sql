@@ -2,6 +2,7 @@
 -- CONSULTAS PARA INFORMES EJECUTIVOS - SISTEMA POS MOON
 -- Esquema real: ventas, productos_venta, cajas, clientes, productos, etc.
 -- Exclusión ventas válidas: cbte_tipo NOT IN (3, 8, 13, 203, 208, 213, 999)
+--   (3,8,13,203,208,213 = notas de crédito; 999 = anuladas. No suman como ventas.)
 -- Cajas: tipo = 1 ingresos, tipo = 0 egresos
 -- =============================================================================
 

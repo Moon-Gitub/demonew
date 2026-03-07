@@ -239,10 +239,12 @@ class ModeloVentas{
 	/*=============================================
 	SUMAR EL TOTAL DE VENTAS
 	=============================================*/
+	/** En informes no suman como ventas: anuladas (999) y notas de crédito (3, 8, 13, 203, 208, 213) */
+	const CBTE_TIPO_EXCLUIDOS_INFORMES = '3, 8, 13, 203, 208, 213, 999';
 
 	static public function mdlSumaTotalVentas($tabla){	
 
-		$stmt = Conexion::conectar()->prepare("SELECT SUM(total) as total FROM $tabla ");
+		$stmt = Conexion::conectar()->prepare("SELECT SUM(total) as total FROM $tabla WHERE cbte_tipo NOT IN (" . self::CBTE_TIPO_EXCLUIDOS_INFORMES . ")");
 
 		$stmt -> execute();
 
@@ -512,14 +514,14 @@ class ModeloVentas{
 	TOTAL VENTAS RANGO FECHAS
 	=============================================*/	
 	static public function mdlRangoFechasTotalVentas($fechaInicial, $fechaFinal){
-
+		$excl = self::CBTE_TIPO_EXCLUIDOS_INFORMES;
 		if($fechaInicial == null){
 
-			$stmt = Conexion::conectar()->prepare("SELECT SUM(total) as total FROM ventas");
+			$stmt = Conexion::conectar()->prepare("SELECT SUM(total) as total FROM ventas WHERE cbte_tipo NOT IN ($excl)");
 
 		}else if($fechaInicial == $fechaFinal){
 
-			$stmt = Conexion::conectar()->prepare("SELECT SUM(total) as total FROM ventas WHERE fecha like '%$fechaFinal%'");
+			$stmt = Conexion::conectar()->prepare("SELECT SUM(total) as total FROM ventas WHERE cbte_tipo NOT IN ($excl) AND fecha like '%$fechaFinal%'");
 
 		}else{
 
@@ -533,11 +535,11 @@ class ModeloVentas{
 
 			if($fechaFinalMasUno == $fechaActualMasUno){
 
-				$stmt = Conexion::conectar()->prepare("SELECT  SUM(total) as total FROM ventas WHERE fecha BETWEEN '$fechaInicial' AND '$fechaFinalMasUno'");
+				$stmt = Conexion::conectar()->prepare("SELECT  SUM(total) as total FROM ventas WHERE cbte_tipo NOT IN ($excl) AND fecha BETWEEN '$fechaInicial' AND '$fechaFinalMasUno'");
 
 			}else{
 
-				$stmt = Conexion::conectar()->prepare("SELECT  SUM(total) as total FROM ventas WHERE fecha BETWEEN '$fechaInicial' AND '$fechaFinal'");
+				$stmt = Conexion::conectar()->prepare("SELECT  SUM(total) as total FROM ventas WHERE cbte_tipo NOT IN ($excl) AND fecha BETWEEN '$fechaInicial' AND '$fechaFinal'");
 
 			}
 
