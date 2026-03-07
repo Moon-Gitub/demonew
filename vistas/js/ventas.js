@@ -1536,6 +1536,9 @@ var tablaListarVtas = $("#tablaListarVentas").DataTable({
 	"language": GL_DATATABLE_LENGUAJE,
 	"dom": 'Bfrtip',
 	"buttons": GL_DATATABLE_BOTONES,
+	"columnDefs": [
+		{ "targets": 0, "orderable": false, "searchable": false, "className": "col-chk-lote" }
+	],
 	"footerCallback": function (row, data, start, end, display) {
           
             var api = this.api();
@@ -1612,7 +1615,16 @@ tablaListarVtas.on('draw.dt', function() {
 /*=============================================
 FACTURAR POR LOTE
 =============================================*/
-$("#chkFacturarLoteTodos").on("change", function() {
+// Evitar que el clic en el checkbox propague y sea capturado por DataTables u otros
+$("#tablaListarVentas").on("click", "td.col-chk-lote, .chkFacturarLote", function(e) {
+  e.stopPropagation();
+});
+$("#tablaListarVentas").on("change", ".chkFacturarLote", function(e) {
+  e.stopPropagation();
+});
+
+$("#chkFacturarLoteTodos").on("click change", function(e) {
+  e.stopPropagation();
   var checked = $(this).prop("checked");
   $("#tablaListarVentas").find(".chkFacturarLote:visible").prop("checked", checked);
 });

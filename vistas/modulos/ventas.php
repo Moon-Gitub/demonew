@@ -126,6 +126,17 @@
     padding: 12px 8px;
   }
 
+  /* Columna checkbox facturar por lote: siempre clickeable */
+  #tablaListarVentas td.col-chk-lote {
+    min-width: 36px;
+    cursor: default;
+    pointer-events: auto;
+  }
+  #tablaListarVentas td.col-chk-lote .chkFacturarLote {
+    cursor: pointer;
+    margin: 0;
+  }
+
   /* Mejorar buscador */
   #tablaListarVentas_filter {
     margin-bottom: 20px !important;
@@ -532,9 +543,9 @@
             $puedeLote = !$facturada && (int)$value["cbte_tipo"] !== 0 && (int)$value["cbte_tipo"] !== 999;
              echo '<tr>';
             if ($puedeLote) {
-              echo '<td><input type="checkbox" class="chkFacturarLote" value="'.$value["id"].'" title="Incluir en facturación por lote"></td>';
+              echo '<td class="col-chk-lote" style="vertical-align: middle;"><input type="checkbox" class="chkFacturarLote" value="'.$value["id"].'" title="Incluir en facturación por lote"></td>';
             } else {
-              echo '<td></td>';
+              echo '<td class="col-chk-lote"></td>';
             }
              echo '<td>'.$value["fecha"].'</td>';
                     $nomEmp = ControladorEmpresa::ctrMostrarempresa('id', $value['id_empresa']);
