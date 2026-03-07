@@ -1954,11 +1954,47 @@ $("#tablaListarVentas").on("click", ".btnAutorizarCbte", function(){
 	       if (defaultEmpresa != null && $("#autorizarCbteIdEmpresa").is("select")) {
 	         $("#autorizarCbteIdEmpresa").val(defaultEmpresa);
 	       }
+	       // Rellenar tipos de comprobante según la empresa: Monotributista solo C, RI solo A y B
+	       var idEmpresa = $("#autorizarCbteIdEmpresa").is("select") ? $("#autorizarCbteIdEmpresa").val() : $("#autorizarCbteIdEmpresa").val();
+	       if (typeof empresasTiposCbtes !== "undefined" && empresasTiposCbtes[idEmpresa]) {
+	         var condicionIva = (typeof condicionIvaPorEmpresa !== "undefined" && condicionIvaPorEmpresa[idEmpresa] != null) ? condicionIvaPorEmpresa[idEmpresa] : 1;
+	         var tiposFiltrados = (typeof filtrarTiposPorCondicionIva === "function") ? filtrarTiposPorCondicionIva(empresasTiposCbtes[idEmpresa], condicionIva) : empresasTiposCbtes[idEmpresa];
+	         var $sel = $("#autorizarCbteTipoCbte");
+	         var valorActual = respuesta["cbte_tipo"];
+	         $sel.find("option:not(:first):not([value='0'])").remove();
+	         $.each(tiposFiltrados, function (i, t) {
+	           if (t.codigo !== 0 && t.codigo !== "0") {
+	             var opt = $("<option></option>").attr("value", t.codigo).text(t.descripcion);
+	             if (String(t.codigo) === String(valorActual)) opt.prop("selected", true);
+	             $sel.append(opt);
+	           }
+	         });
+	         if ($sel.val() === "" && valorActual) $sel.val(valorActual);
+	       }
 
 	  }
 
   	})
 
+});
+
+// Al cambiar la empresa en el modal Autorizar: actualizar tipos filtrados (Monotributista solo C, RI solo A/B)
+$(document).on("change", "#autorizarCbteIdEmpresa", function () {
+  var idEmpresa = $(this).val();
+  if (typeof empresasTiposCbtes === "undefined" || !empresasTiposCbtes[idEmpresa]) return;
+  var condicionIva = (typeof condicionIvaPorEmpresa !== "undefined" && condicionIvaPorEmpresa[idEmpresa] != null) ? condicionIvaPorEmpresa[idEmpresa] : 1;
+  var tiposFiltrados = (typeof filtrarTiposPorCondicionIva === "function") ? filtrarTiposPorCondicionIva(empresasTiposCbtes[idEmpresa], condicionIva) : empresasTiposCbtes[idEmpresa];
+  var $sel = $("#autorizarCbteTipoCbte");
+  var valorAnterior = $sel.val();
+  $sel.find("option:not(:first):not([value='0'])").remove();
+  $.each(tiposFiltrados, function (i, t) {
+    if (t.codigo !== 0 && t.codigo !== "0") {
+      var opt = $("<option></option>").attr("value", t.codigo).text(t.descripcion);
+      if (String(t.codigo) === String(valorAnterior)) opt.prop("selected", true);
+      $sel.append(opt);
+    }
+  });
+  if ($sel.find("option[value='" + valorAnterior + "']").length === 0) $sel.val("");
 });
 
 /*=============================================

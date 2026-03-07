@@ -808,7 +808,42 @@ if (!is_array($listadoEmpresasModal)) {
 	$listadoEmpresasModal = [];
 }
 $mostrarSelectorEmpresa = (isset($_SESSION['perfil']) && $_SESSION['perfil'] === 'Administrador');
+// Tipos de comprobante por empresa (para filtrar en modal: Monotributista solo C/M, RI solo A/B según lo configurado en cada empresa)
+$empresasTiposCbtes = [];
+$condicionIvaPorEmpresa = [];
+// Códigos AFIP: A=1,2,3,4 | B=6,7,8,9,51,52,53,54,201,202,203,206,207,208 | C=11,12,13,15,211,212,213
+$codigosTipoA = [1, 2, 3, 4];
+$codigosTipoB = [6, 7, 8, 9, 51, 52, 53, 54, 201, 202, 203, 206, 207, 208];
+$codigosTipoC = [11, 12, 13, 15, 211, 212, 213];
+foreach ($listadoEmpresasModal as $emp) {
+	$idEmp = (int)$emp['id'];
+	$condicionIvaPorEmpresa[$idEmp] = (int)($emp['condicion_iva'] ?? 1);
+	$tipos = json_decode($emp['tipos_cbtes'] ?? '[]', true);
+	if (!is_array($tipos)) {
+		$tipos = [];
+	}
+	$lista = [];
+	foreach ($tipos as $t) {
+		$codigo = is_object($t) ? ($t->codigo ?? 0) : ($t['codigo'] ?? 0);
+		$descripcion = is_object($t) ? ($t->descripcion ?? '') : ($t['descripcion'] ?? '');
+		$lista[] = ['codigo' => (int)$codigo, 'descripcion' => $descripcion];
+	}
+	$empresasTiposCbtes[$idEmp] = $lista;
+}
 ?>
+<script>
+var empresasTiposCbtes = <?php echo json_encode($empresasTiposCbtes); ?>;
+var condicionIvaPorEmpresa = <?php echo json_encode($condicionIvaPorEmpresa); ?>;
+// Filtrar tipos por condición: Monotributista (6,13,16) solo C; RI (1,11) solo A y B
+var codigosTipoC = <?php echo json_encode($codigosTipoC); ?>;
+var codigosTipoAB = <?php echo json_encode(array_merge($codigosTipoA, $codigosTipoB)); ?>;
+function filtrarTiposPorCondicionIva(tipos, condicionIva) {
+	if (!tipos || !tipos.length) return [];
+	var esMonotributista = (condicionIva !== 1 && condicionIva !== 11);
+	var codigosPermitidos = esMonotributista ? codigosTipoC : codigosTipoAB;
+	return tipos.filter(function(t) { return codigosPermitidos.indexOf(parseInt(t.codigo, 10)) !== -1; });
+}
+</script>
 <div id="modalAutorizarComprobante" class="modal fade" role="dialog" data-id-empresa-default="<?php echo $idEmpresaPorDefectoModal; ?>">
   
   <div class="modal-dialog">
@@ -924,37 +959,18 @@ $mostrarSelectorEmpresa = (isset($_SESSION['perfil']) && $_SESSION['perfil'] ===
 
             </div>            
 
-            <!-- ENTRADA PARA TIPO COMPROBANTE -->
+            <!-- ENTRADA PARA TIPO COMPROBANTE (se rellena por JS según empresa seleccionada: solo tipos de esa empresa) -->
 
             <div class="row">
-              
               <div class="col-md-6">
                 <div class="form-group">
-
                   <div class="input-group">
-
-                    <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
-
-                    <?php
-
-                    $arrCbtes = json_decode($arrayEmpresa['tipos_cbtes']);
-
-                    echo '<select title="Seleccione el tipo de comprobante" class="form-control input-sm" name="autorizarCbteTipoCbte" id="autorizarCbteTipoCbte" required>';
-                    echo '<option value="">Seleccione comprobante</option>';
-                    echo '<option value="0">X</option>';
-                    foreach ($arrCbtes as $key => $value) {
-
-                    echo '<option value="' . $value->codigo . '">' . $value->descripcion . '</option>';
-
-                    }
-
-                    echo '</select>';
-
-                    ?>
+                    <span class="input-group-addon"><i class="fa fa-list-ul"></i></span>
+                    <select title="Seleccione el tipo de comprobante" class="form-control input-sm" name="autorizarCbteTipoCbte" id="autorizarCbteTipoCbte" required>
+                      <option value="">Seleccione comprobante</option>
+                      <option value="0">X</option>
                     </select>
-
                   </div>
-
                 </div>
               </div>
             </div>

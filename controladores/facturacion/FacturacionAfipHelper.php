@@ -40,11 +40,13 @@ class FacturacionAfipHelper {
 	 */
 	public static function buildFeCAEReq(array $datosFactura, array $cliente, $condicionIvaEmisor, $ultComp, $cbteFchYmd, array $cbtesAsoc = null) {
 		$impIVA = 0.0;
-		$impNeto = (double) ($datosFactura['neto_gravado'] ?? 0);
-		$impTotal = (double) ($datosFactura['total'] ?? 0);
-
-		if (!self::esMonotributista($condicionIvaEmisor)) {
-			$impIVA = (double) ($datosFactura['impuesto'] ?? 0);
+		$impTotal = round((float) ($datosFactura['total'] ?? 0), 2);
+		// AFIP exige ImpTotal = ImpNeto + ImpTrib (+ ImpIVA en comprobantes que discriminan). Para Monotributista: ImpIVA=0, ImpTrib=0 => ImpNeto debe ser igual a ImpTotal.
+		if (self::esMonotributista($condicionIvaEmisor)) {
+			$impNeto = $impTotal;
+		} else {
+			$impNeto = round((float) ($datosFactura['neto_gravado'] ?? 0), 2);
+			$impIVA = round((float) ($datosFactura['impuesto'] ?? 0), 2);
 		}
 
 		$det = [
@@ -91,8 +93,8 @@ class FacturacionAfipHelper {
 				foreach ($arrDet as $idx => $value) {
 					$det['Iva']['AlicIva'][$idx] = [
 						'Id' => (int) ($value['id'] ?? 0),
-						'BaseImp' => (float) ($value['baseImponible'] ?? 0),
-						'Importe' => (float) ($value['iva'] ?? 0),
+						'BaseImp' => round((float) ($value['baseImponible'] ?? 0), 2),
+						'Importe' => round((float) ($value['iva'] ?? 0), 2),
 					];
 				}
 			}

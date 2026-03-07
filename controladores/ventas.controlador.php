@@ -287,6 +287,9 @@ class ControladorVentas{
     			$facturar = false;
     			$datosFactura = array('factura' => 'no');
     			$arrEmpresa = ModeloEmpresa::mdlMostrarEmpresa("empresa", "id", $postVentaCaja["idEmpresa"]);
+    			if (!$arrEmpresa || !is_array($arrEmpresa)) {
+    				return array('estado' => 'error', 'modeloVentas' => 'Empresa no encontrada (id ' . ($postVentaCaja["idEmpresa"] ?? '') . ')', 'modeloCaja' => null, 'modeloVentFac' => null);
+    			}
     
     			//Si hay descuento a la venta tengo que aplicarlo a cada iva y cada base imponible
     			$descGeneral = (isset($postVentaCaja["nuevoDescuentoPorcentajeCaja"])) ? floatval($postVentaCaja["nuevoDescuentoPorcentajeCaja"]) : 0;
@@ -537,6 +540,15 @@ class ControladorVentas{
     						$ultComp = $wsfe->UltimoAutorizado($datosFactura['pto_vta'], $datosFactura["cbte_tipo"]);
     
     						$cliente = ModeloClientes::mdlMostrarClientes("clientes", "id", $postVentaCaja['seleccionarCliente']);
+    						if (!$cliente || !is_array($cliente)) {
+    							// Consumidor final por defecto (id 1 suele ser DNI 0, condicion 5 o 6)
+    							$cliente = array(
+    								'tipo_documento' => 96,
+    								'documento' => 0,
+    								'condicion_iva' => 5,
+    								'nombre' => 'Consumidor final'
+    							);
+    						}
     
     	    				// Fechas servicio/vto para concepto distinto de productos
     		    			$datosFacturaAfip = $datosFactura;

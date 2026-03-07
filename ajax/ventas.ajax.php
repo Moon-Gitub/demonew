@@ -23,6 +23,7 @@ require_once "../modelos/empresa.modelo.php";
 
 require_once "../controladores/facturacion/wsaa.class.php";
 require_once "../controladores/facturacion/wsfe.class.php";
+require_once "../controladores/facturacion/FacturacionAfipHelper.php";
 
 class AjaxVentas{
 
