@@ -1616,16 +1616,9 @@ tablaListarVtas.on('draw.dt', function() {
 /*=============================================
 FACTURAR POR LOTE
 =============================================*/
-// Evitar que el clic en el checkbox propague y sea capturado por DataTables u otros
-$("#tablaListarVentas").on("click", "td.col-chk-lote, .chkFacturarLote", function(e) {
+// Evitar que el clic en la celda/label/checkbox propague (DataTables u otro no debe capturarlo)
+$("#tablaListarVentas").on("click", "td.col-chk-lote, .chk-lote-label, .chkFacturarLote", function(e) {
   e.stopPropagation();
-  // Si se hizo clic en la celda (no en el input), toggle del checkbox para que siempre se pueda elegir
-  var $td = $(this).closest("td.col-chk-lote");
-  if ($td.length && !$(e.target).is("input.chkFacturarLote")) {
-    e.preventDefault();
-    var $chk = $td.find("input.chkFacturarLote:not(:disabled)");
-    if ($chk.length) $chk.prop("checked", !$chk.prop("checked"));
-  }
 });
 $("#tablaListarVentas").on("change", ".chkFacturarLote", function(e) {
   e.stopPropagation();

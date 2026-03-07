@@ -139,6 +139,15 @@
     position: relative;
     z-index: 2;
   }
+  /* Label que ocupa toda la celda: al hacer clic en cualquier parte se marca el checkbox */
+  #tablaListarVentas td.col-chk-lote .chk-lote-label {
+    display: block !important;
+    margin: 0;
+    padding: 0;
+    cursor: pointer !important;
+    min-height: 24px;
+    text-align: center;
+  }
   #tablaListarVentas td.col-chk-lote input.chkFacturarLote,
   #tablaListarVentas thead th.col-chk-lote input {
     cursor: pointer !important;
@@ -146,6 +155,7 @@
     width: 18px;
     height: 18px;
     pointer-events: auto !important;
+    vertical-align: middle;
   }
   #tablaListarVentas td.col-chk-lote input:disabled {
     cursor: not-allowed;
@@ -570,7 +580,7 @@
             $puedeLote = !$facturada && (int)$value["cbte_tipo"] !== 0 && (int)$value["cbte_tipo"] !== 999;
              echo '<tr>';
             if ($puedeLote) {
-              echo '<td class="col-chk-lote" style="vertical-align: middle; min-width: 42px;"><input type="checkbox" class="chkFacturarLote" name="chk_lote[]" value="'.$value["id"].'" title="Incluir en facturación por lote"></td>';
+              echo '<td class="col-chk-lote" style="vertical-align: middle; min-width: 42px;"><label class="chk-lote-label"><input type="checkbox" class="chkFacturarLote" name="chk_lote[]" value="'.$value["id"].'" title="Incluir en facturación por lote"></label></td>';
             } else {
               echo '<td class="col-chk-lote" style="min-width: 42px;"><input type="checkbox" disabled title="Ya facturada o no aplica (X/Devolución)"></td>';
             }
