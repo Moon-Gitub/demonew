@@ -133,15 +133,19 @@
     width: 48px !important;
     max-width: 48px !important;
     text-align: center !important;
-    cursor: default;
+    cursor: pointer !important;
     pointer-events: auto !important;
     box-sizing: border-box;
+    position: relative;
+    z-index: 2;
   }
-  #tablaListarVentas td.col-chk-lote input.chkFacturarLote {
-    cursor: pointer;
+  #tablaListarVentas td.col-chk-lote input.chkFacturarLote,
+  #tablaListarVentas thead th.col-chk-lote input {
+    cursor: pointer !important;
     margin: 0;
     width: 18px;
     height: 18px;
+    pointer-events: auto !important;
   }
   #tablaListarVentas td.col-chk-lote input:disabled {
     cursor: not-allowed;
@@ -149,7 +153,7 @@
   }
   #tablaListarVentas thead th.col-chk-lote input,
   #tablaListarVentas tbody td.col-chk-lote input:not(:disabled) {
-    cursor: pointer;
+    cursor: pointer !important;
     width: 18px;
     height: 18px;
   }
