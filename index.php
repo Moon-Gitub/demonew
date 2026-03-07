@@ -51,6 +51,7 @@ if(file_exists(__DIR__ . "/controladores/combos.controlador.php")){
 require_once "controladores/facturacion/wsaa.class.php";
 require_once "controladores/facturacion/wsaa_padron.class.php";
 require_once "controladores/facturacion/wsfe.class.php";
+require_once "controladores/facturacion/FacturacionAfipHelper.php";
 require_once "controladores/facturacion/padron.class.php";
 
 require_once "modelos/usuarios.modelo.php";

@@ -488,7 +488,9 @@ class ControladorVentas{
     				}
     				$impuestoDetalle = $impuestoDetalle . ']';
     			}
-    			
+
+    			// IVA de facturación: lo que se guarda aquí en la venta es la fuente de verdad para AFIP.
+    			// No se recalcula al facturar; FacturacionAfipHelper::buildFeCAEReq usa solo datos persistidos.
     			// Asegurar que impuesto_detalle tenga un valor válido antes de guardar
     			// NO sobrescribir si viene del sistema offline y es válido
     			if (!$usarImpuestoDetalleOffline && (empty($impuestoDetalle) || $impuestoDetalle == '[' || !isset($impuestoDetalle))) {
@@ -536,108 +538,35 @@ class ControladorVentas{
     
     						$cliente = ModeloClientes::mdlMostrarClientes("clientes", "id", $postVentaCaja['seleccionarCliente']);
     
-    	    				//Armo array para impactar en AFIP
-    	    				$datosFacturacion = array(
-    				          'FeCAEReq' => array
-    				          (
-    				            'FeCabReq' => array
-    				            (
-    				              'CantReg' => 1,
-    				              'PtoVta' => (int)$datosFactura["pto_vta"],
-    				              'CbteTipo' => (int)$datosFactura["cbte_tipo"]
-    				            ),
-    				            'FeDetReq' => array
-    				            (
-    				              'FECAEDetRequest' => array
-    				              (
-    				                'Concepto' => (int)$datosFactura['concepto'], 
-    								'DocTipo' => (int)$cliente['tipo_documento'], 
-    								'DocNro' => (float)$cliente['documento'], //pongo float porque con int se rompe con los cuit
-    								'CbteDesde' => $ultComp + 1,
-    								'CbteHasta' => $ultComp + 1, 
-    								'CbteFch' => date('Ymd', strtotime($fec_hor)),
-    								'ImpTotal' => (double)$datosFactura["total"],
-    								'ImpTotConc' => 0,
-    								'ImpNeto' => (double)$datosFactura["neto_gravado"],
-    								'ImpOpEx' => 0,
-    								'ImpTrib' => 0,
-    								'ImpIVA' => (double)$datosFactura["impuesto"],
-    								'MonId' => 'PES',
-    				                'MonCotiz' => 1,
-    				                'CondicionIVAReceptorId' => (int)$cliente["condicion_iva"]
-    								)
-    				          	 )
-    				           )
-    				      	);
-    
-    		    			//Si el concepto tiene servicio hay que agregar al array fechas
-    		    			if((int)$datosFactura['concepto'] <> 1){
-
+    	    				// Fechas servicio/vto para concepto distinto de productos
+    		    			$datosFacturaAfip = $datosFactura;
+    		    			if ((int)$datosFactura['concepto'] <> 1) {
     		    				$mDateDesde = DateTime::createFromFormat('d/m/Y', $postVentaCaja["nuevaFecDesde"]);
-                            	$mDateHasta = DateTime::createFromFormat('d/m/Y', $postVentaCaja["nuevaFecHasta"]);
-                            	$mDateVto = DateTime::createFromFormat('d/m/Y', $postVentaCaja["nuevaFecVto"]);
-    							
-    							$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"] += ["FchServDesde" => $mDateDesde->format('Ymd')];
-    							$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"] += ["FchServHasta" => $mDateHasta->format('Ymd')];
-    							$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"] += ["FchVtoPago" => $mDateVto->format('Ymd')];
-    						}
-    
-    						//tipos de comprobantes que deben informar comprobante asociado
-    						$cbtesAsociados = array(
-    							2, 
-    							7,
-    							12,
-    							3, 
-    							8, 
-    							13,
-    							202,
-    							207,
-    							212,
-    							203,
-    							208,
-    							213
-    						);
-    						//COMPROBANTES ASOCIADOS
-    		    			if(in_array($datosFactura["cbte_tipo"], $cbtesAsociados)) {
-    							
-    							$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"] += ["CbtesAsoc" => array(0 => array(
-    								'Tipo' => (int)$postVentaCaja["nuevotipoCbteAsociado"],
-    								'PtoVta' => $postVentaCaja["nuevaPtoVtaAsociado"],
-    								'Nro' => $postVentaCaja["nuevaNroCbteAsociado"]
-    								)
-    							)];
-    
-    						}
-    
-    						//tipos de comprobantes que discriminan IVA (A y B)
-    						$discriminarIVA = array(
-    							1, 
-    							2, 
-    							3,
-    							4,
-    							6,
-    							7,
-    							8,
-    							9
-    						);
-    
-    						//Agrego al array los detalles de iva (si son cbtes tipo A o B)
-    						if(in_array($datosFactura["cbte_tipo"], $discriminarIVA)) {
-    
-    							$arrDetImpuestos = json_decode($impuestoDetalle, true);
-    							$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"] += ["Iva" => array('AlicIva' => array())];
-    							$indice = 0;
-    
-    							foreach ($arrDetImpuestos as $key => $value) {
-        								$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"]["Iva"]["AlicIva"] += array($indice => array(
-    										'Id' => (int)$value["id"],
-    										'BaseImp' => $value["baseImponible"],
-    										'Importe' => $value["iva"]));
-    
-    								$indice++;
-    
-    							}
-    						}
+    		    				$mDateHasta = DateTime::createFromFormat('d/m/Y', $postVentaCaja["nuevaFecHasta"]);
+    		    				$mDateVto = DateTime::createFromFormat('d/m/Y', $postVentaCaja["nuevaFecVto"]);
+    		    				$datosFacturaAfip['fec_desde'] = $mDateDesde ? $mDateDesde->format('Ymd') : null;
+    		    				$datosFacturaAfip['fec_hasta'] = $mDateHasta ? $mDateHasta->format('Ymd') : null;
+    		    				$datosFacturaAfip['fec_vencimiento'] = $mDateVto ? $mDateVto->format('Ymd') : null;
+    		    			}
+    		    			$cbtesAsociados = array(2, 7, 12, 3, 8, 13, 202, 207, 212, 203, 208, 213);
+    		    			$cbtesAsoc = null;
+    		    			if (in_array($datosFactura["cbte_tipo"], $cbtesAsociados)) {
+    		    				$cbtesAsoc = [0 => array(
+    		    					'Tipo' => (int)$postVentaCaja["nuevotipoCbteAsociado"],
+    		    					'PtoVta' => $postVentaCaja["nuevaPtoVtaAsociado"],
+    		    					'Nro' => $postVentaCaja["nuevaNroCbteAsociado"]
+    		    				)];
+    		    			}
+    		    			// IVA y request AFIP: datos desde venta/impuesto_detalle ya calculados (FacturacionAfipHelper no recalcula)
+    		    			$condicionIvaEmisor = (int) ($arrEmpresa['condicion_iva'] ?? 1);
+    		    			$datosFacturacion = FacturacionAfipHelper::buildFeCAEReq(
+    		    				$datosFacturaAfip,
+    		    				$cliente,
+    		    				$condicionIvaEmisor,
+    		    				$ultComp,
+    		    				date('Ymd', strtotime($fec_hor)),
+    		    				$cbtesAsoc
+    		    			);
     
     						$pedidoAfip = json_encode($datosFacturacion);
     
@@ -1495,7 +1424,17 @@ class ControladorVentas{
 			//Actualizo el cliente
 			$actualizarVtaCli = ModeloVentas::mdlActualizarVenta('ventas', 'id_cliente', $idCliente, $idVenta);
 
-			$respuesta = self::ctrFacturarVenta($idVenta, $tipoCbte);
+			// Empresa con la que facturar: solo Administrador puede elegir otra
+			$idEmpresa = null;
+			if (isset($_POST['autorizarCbteIdEmpresa']) && $_POST['autorizarCbteIdEmpresa'] !== '') {
+				if (isset($_SESSION['perfil']) && $_SESSION['perfil'] === 'Administrador') {
+					$idEmpresa = (int) $_POST['autorizarCbteIdEmpresa'];
+				}
+			}
+			if ($idEmpresa === null) {
+				$idEmpresa = isset($_SESSION['empresa']) ? (int)$_SESSION['empresa'] : 1;
+			}
+			$respuesta = self::ctrFacturarVenta($idVenta, $tipoCbte, $idEmpresa);
 
 			if($respuesta){
 
@@ -1524,11 +1463,16 @@ class ControladorVentas{
 	/*===========================================
 	AUTORIZAR COMPROBANTE (usado desde venta.php)
 	=============================================*/
-	static public function ctrFacturarVenta($idVenta, $tipo_comprobante){
+	static public function ctrFacturarVenta($idVenta, $tipo_comprobante, $idEmpresa = null){
 
 		$msjAfip = array();
 
-		$arrEmpresa = ModeloEmpresa::mdlMostrarEmpresa("empresa", "id", 1);
+		if ($idEmpresa === null || $idEmpresa === '') {
+			$idEmpresa = isset($_SESSION['empresa']) ? (int)$_SESSION['empresa'] : 1;
+		} else {
+			$idEmpresa = (int) $idEmpresa;
+		}
+		$arrEmpresa = ModeloEmpresa::mdlMostrarEmpresa("empresa", "id", $idEmpresa);
 
 		$venta = ModeloVentas::mdlMostrarVentas("ventas", "id", $idVenta);
 
@@ -1573,77 +1517,26 @@ class ControladorVentas{
 
 				$cliente = ModeloClientes::mdlMostrarClientes("clientes", "id", $venta['id_cliente']);
 
-				// file_put_contents('cliente', json_encode($cliente));
-
-				//Armo array para impactar en AFIP
-				$datosFacturacion = array(
-		          'FeCAEReq' => array
-		          (
-		            'FeCabReq' => array
-		            (
-		              'CantReg' => 1,
-		              'PtoVta' => (int)$datosFactura["pto_vta"],
-					'CbteTipo' => (int)$datosFactura["cbte_tipo"]
-		            ),
-		            'FeDetReq' => array
-		            (
-		              'FECAEDetRequest' => array
-		              (
-		                'Concepto' => (int)$datosFactura['concepto'], 
-						'DocTipo' => (int)$cliente['tipo_documento'], 
-						'DocNro' => (float)$cliente['documento'], //pongo float porque con int se rompe con los cuit
-						'CbteDesde' => $ultComp + 1,
-						'CbteHasta' => $ultComp + 1, 
-						'CbteFch' => date('Ymd', strtotime($fec_hor)),
-						'ImpTotal' => (double)$datosFactura["total"],
-						'ImpTotConc' => 0,
-						'ImpNeto' => (double)$datosFactura["neto_gravado"],
-						'ImpOpEx' => 0,
-						'ImpTrib' => 0,
-						'ImpIVA' => (double)$datosFactura["impuesto"],
-						'MonId' => 'PES',
-		                'MonCotiz' => 1,
-		                'CondicionIVAReceptorId' => (int)$cliente["condicion_iva"]
-						)
-		          	 )
-		           )
-		      	);
-
-    			//Si el concepto tiene servicio hay que agregar al array fechas
-    			if((int)$datosFactura['concepto'] <> 1){
-						
-					$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"] += ["FchServDesde" => date('Ymd', strtotime($datosFactura["fec_desde"]))];
-					$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"] += ["FchServHasta" => date('Ymd', strtotime($datosFactura["fec_hasta"]))];
-					$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"] += ["FchVtoPago" => date('Ymd', strtotime($datosFactura["fec_vencimiento"]))];
+				$cbtesAsoc = null;
+				$cbtesAsociados = array(2, 7, 12, 3, 8, 13, 202, 207, 212, 203, 208, 213);
+				if (in_array($datosFactura["cbte_tipo"], $cbtesAsociados) && !empty($venta['asociado_tipo_cbte']) && isset($venta['asociado_pto_vta'], $venta['asociado_nro_cbte'])) {
+					$cbtesAsoc = [0 => array(
+						'Tipo' => (int) $venta['asociado_tipo_cbte'],
+						'PtoVta' => (int) $venta['asociado_pto_vta'],
+						'Nro' => (int) $venta['asociado_nro_cbte']
+					)];
 				}
 
-				//tipos de comprobantes que discriminan IVA (A y B)
-				$discriminarIVA = array(
-					1, 
-					2, 
-					3,
-					4,
-					6,
-					7,
-					8,
-					9
+				// IVA y request AFIP: siempre desde venta persistida (FacturacionAfipHelper no recalcula)
+				$condicionIvaEmisor = (int) ($arrEmpresa['condicion_iva'] ?? 1);
+				$datosFacturacion = FacturacionAfipHelper::buildFeCAEReq(
+					$datosFactura,
+					$cliente,
+					$condicionIvaEmisor,
+					$ultComp,
+					date('Ymd', strtotime($fec_hor)),
+					$cbtesAsoc
 				);
-
-				//Agrego al array los detalles de iva (si son cbtes tipo A o B)
-				if(in_array($datosFactura["cbte_tipo"], $discriminarIVA)) {
-					$arrDetImpuestos = json_decode($venta["impuesto_detalle"], true);
-					$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"] += ["Iva" => array('AlicIva' => array())];
-					$indice = 0;
-					foreach ($arrDetImpuestos as $key => $value) {
-
-							$datosFacturacion["FeCAEReq"]["FeDetReq"]["FECAEDetRequest"]["Iva"]["AlicIva"] += array($indice => array(
-								'Id' => (int)$value["id"],
-								'BaseImp' => $value["baseImponible"],
-								'Importe' => $value["iva"]));
-
-							$indice++;
-						}
-					}
 
 				$pedidoAfip = json_encode($datosFacturacion);
 

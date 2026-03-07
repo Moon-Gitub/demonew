@@ -800,7 +800,16 @@ MODAL COBRAR VENTA
 <!--=====================================
 MODAL AUTOTIZAR COMPROBANTE
 ======================================-->
-<div id="modalAutorizarComprobante" class="modal fade" role="dialog">
+<?php
+// Empresa por defecto para facturar (modal Autorizar): sesión o empresa de la página
+$idEmpresaPorDefectoModal = isset($_SESSION['empresa']) ? (int)$_SESSION['empresa'] : (isset($arrayEmpresa['id']) ? (int)$arrayEmpresa['id'] : 1);
+$listadoEmpresasModal = ModeloEmpresa::mdlMostrarEmpresa("empresa", null, null);
+if (!is_array($listadoEmpresasModal)) {
+	$listadoEmpresasModal = [];
+}
+$mostrarSelectorEmpresa = (isset($_SESSION['perfil']) && $_SESSION['perfil'] === 'Administrador');
+?>
+<div id="modalAutorizarComprobante" class="modal fade" role="dialog" data-id-empresa-default="<?php echo $idEmpresaPorDefectoModal; ?>">
   
   <div class="modal-dialog">
 
@@ -832,6 +841,23 @@ MODAL AUTOTIZAR COMPROBANTE
             <input type="hidden" name="autorizarCbteIdVenta" id="autorizarCbteIdVenta">
             <!-- Token CSRF -->
             <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : ''; ?>">
+
+            <!-- Facturar como: selector de empresa (solo Administrador) -->
+            <?php if ($mostrarSelectorEmpresa && count($listadoEmpresasModal) > 0): ?>
+            <div class="form-group">
+              <label>Facturar como (empresa)</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-building"></i></span>
+                <select name="autorizarCbteIdEmpresa" id="autorizarCbteIdEmpresa" class="form-control">
+                  <?php foreach ($listadoEmpresasModal as $emp): ?>
+                  <option value="<?php echo (int)$emp['id']; ?>"<?php echo ((int)$emp['id'] === $idEmpresaPorDefectoModal) ? ' selected="selected"' : ''; ?>><?php echo htmlspecialchars($emp['razon_social'] ?: $emp['titular'] ?: 'Empresa ' . $emp['id']); ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+            </div>
+            <?php else: ?>
+            <input type="hidden" name="autorizarCbteIdEmpresa" id="autorizarCbteIdEmpresa" value="<?php echo $idEmpresaPorDefectoModal; ?>">
+            <?php endif; ?>
 
             <div class="row">
 

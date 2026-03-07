@@ -1949,6 +1949,12 @@ $("#tablaListarVentas").on("click", ".btnAutorizarCbte", function(){
 	       $("#autocompletarClienteCaja").val(datosCliente);
 	       $("#seleccionarCliente").val(respuesta["id_cliente"]);
 
+	       // Restaurar empresa por defecto al abrir el modal (si existe el selector)
+	       var defaultEmpresa = $("#modalAutorizarComprobante").data("id-empresa-default");
+	       if (defaultEmpresa != null && $("#autorizarCbteIdEmpresa").is("select")) {
+	         $("#autorizarCbteIdEmpresa").val(defaultEmpresa);
+	       }
+
 	  }
 
   	})
