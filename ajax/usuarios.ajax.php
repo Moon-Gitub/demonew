@@ -10,6 +10,7 @@ SeguridadAjax::inicializar(false);
 
 require_once "../controladores/usuarios.controlador.php";
 require_once "../modelos/usuarios.modelo.php";
+require_once "../modelos/empresa.modelo.php";
 require_once "../controladores/empresa.controlador.php";
 
 class AjaxUsuarios{
