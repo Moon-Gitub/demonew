@@ -10,6 +10,7 @@ SeguridadAjax::inicializar(false);
 
 require_once "../controladores/usuarios.controlador.php";
 require_once "../modelos/usuarios.modelo.php";
+require_once "../controladores/empresa.controlador.php";
 
 class AjaxUsuarios{
 
@@ -45,6 +46,16 @@ class AjaxUsuarios{
 			}
 
 			error_log("[" . date('Y-m-d H:i:s') . "] ajaxEditarUsuario - Usuario encontrado: " . ($respuesta["usuario"] ?? "N/A") . "\n", 3, $logFile);
+			// Incluir almacenes de la empresa del usuario para el selector de sucursales
+			$idEmpresa = isset($respuesta["empresa"]) ? (int)$respuesta["empresa"] : 1;
+			$empresa = ControladorEmpresa::ctrMostrarempresa("id", $idEmpresa);
+			$almacenes = [];
+			if ($empresa && !empty($empresa["almacenes"])) {
+				$arr = json_decode($empresa["almacenes"], true);
+				if (is_array($arr)) $almacenes = $arr;
+			}
+			if (empty($almacenes)) $almacenes = [["stkProd" => "stock", "det" => "Depósito"]];
+			$respuesta["almacenes"] = $almacenes;
 			echo json_encode($respuesta);
 
 		} catch (Exception $e) {
@@ -145,4 +156,19 @@ if(isset( $_POST["validarUsuario"])){
 	$valUsuario -> validarUsuario = $_POST["validarUsuario"];
 	$valUsuario -> ajaxValidarUsuario();
 
+}
+
+/*=============================================
+OBTENER ALMACENES POR EMPRESA (para selector sucursales al editar usuario)
+=============================================*/
+if(isset($_POST["empresaId"]) && isset($_POST["getAlmacenes"])){
+	$idEmpresa = (int)$_POST["empresaId"];
+	$empresa = ControladorEmpresa::ctrMostrarempresa("id", $idEmpresa > 0 ? $idEmpresa : 1);
+	$almacenes = [];
+	if ($empresa && !empty($empresa["almacenes"])) {
+		$arr = json_decode($empresa["almacenes"], true);
+		if (is_array($arr)) $almacenes = $arr;
+	}
+	if (empty($almacenes)) $almacenes = [["stkProd" => "stock", "det" => "Depósito"]];
+	echo json_encode($almacenes);
 }

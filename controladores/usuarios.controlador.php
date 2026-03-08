@@ -334,11 +334,23 @@ class ControladorUsuarios{
                     $listasPrecio = substr($listasPrecio, 0, -1);
                 }
 
+				// Sucursales: una o más (editarSucursales[] o editarSucursal para compatibilidad)
+				$sucursal = '';
+				if (!empty($_POST['editarSucursales']) && is_array($_POST['editarSucursales'])) {
+					$sucursal = implode(',', array_map('trim', $_POST['editarSucursales']));
+				} elseif (!empty($_POST['editarSucursal'])) {
+					$sucursal = trim($_POST['editarSucursal']);
+				}
+				if ($sucursal === '') {
+					echo '<script>swal({type:"warning",title:"Usuarios",text:"Seleccione al menos una sucursal.",confirmButtonText:"Cerrar"});</script>';
+					return;
+				}
+
 				$datos = array("nombre" => $_POST["editarNombre"],
 							   "usuario" => $_POST["editarUsuario"],
 							   "password" => $encriptar,
 							   "perfil" => $_POST["editarPerfil"],
-							   "sucursal" => $_POST["editarSucursal"],
+							   "sucursal" => $sucursal,
 					           "puntos_venta" => $_POST["editarPuntoVenta"],
 					           "listas_precio" => $listasPrecio,
 							   "empresa" => $_POST["editarRazonSocial"],

@@ -354,15 +354,11 @@ MODAL EDITAR USUARIO
               </div>
             </div>
 
-            <!-- ENTRADA PARA SUCURSAL -->
-            <div class="form-group">
-              <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-building"></i></span> 
-                <select title="Sucursal desde donde se va a descontar STOCK" class="form-control" name="editarSucursal" required>
-                   <option value="" id="editarSucursal"></option>
-                  <option value="stock">Local</option>
-                </select>
-              </div>
+            <!-- ENTRADA PARA SUCURSALES (una o más) -->
+            <div class="form-group" id="editarSucursalesWrap">
+              <label><i class="fa fa-warehouse"></i> Sucursales (puede seleccionar una o más)</label>
+              <p class="help-block text-muted" style="margin-bottom:8px;">Desde qué almacén/depósito descontar stock. Seleccione al menos una.</p>
+              <div id="editarSucursalesCheckboxes"></div>
             </div>
             
             <!-- ENTRADA PARA PUNTOS DE VENTA -->

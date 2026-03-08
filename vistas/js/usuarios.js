@@ -50,6 +50,17 @@ $(".nuevaFoto").change(function(){
 /*=============================================
 EDITAR USUARIO
 =============================================*/
+function renderizarSucursalesCheckboxes(almacenes, sucursalActual) {
+	var arr = (sucursalActual || "").split(",").map(function(s) { return s.trim(); }).filter(Boolean);
+	var html = "";
+	(almacenes.length ? almacenes : [{ stkProd: "stock", det: "Depósito" }]).forEach(function(a) {
+		var val = a.stkProd || a.stk || "stock";
+		var det = a.det || a.denominacion || val;
+		var checked = arr.indexOf(val) >= 0 ? ' checked="checked"' : '';
+		html += '<label class="checkbox-inline" style="margin-right:12px;"><input type="checkbox" name="editarSucursales[]" value="' + val.replace(/"/g, '&quot;') + '"' + checked + '> ' + det + '</label>';
+	});
+	$("#editarSucursalesCheckboxes").html(html);
+}
 // Verificar que el documento esté listo
 $(document).ready(function(){
 	console.log("usuarios.js cargado correctamente");
@@ -122,16 +133,27 @@ $(".tablas").on("click", ".btnEditarUsuario", function(e){
 			$("#editarUsuario").val(respuesta["usuario"] || "");
 			$("#editarPerfil").html(respuesta["perfil"] || "");
 			$("#editarPerfil").val(respuesta["perfil"] || "");
-		    $("#editarRazonSocial").val(respuesta["empresa"]);
+			$("#editarRazonSocial").val(respuesta["empresa"]);
 		
-			$("#editarSucursal").html(respuesta["sucursal"] || "");
-			$("#editarSucursal").val(respuesta["sucursal"] || "");
+			// Renderizar checkboxes de sucursales (almacenes de la empresa)
+			renderizarSucursalesCheckboxes(respuesta["almacenes"] || [], respuesta["sucursal"] || "");
 			
 			console.log("Datos cargados:", {
 				nombre: respuesta["nombre"],
 				usuario: respuesta["usuario"],
 				perfil: respuesta["perfil"],
 				sucursal: respuesta["sucursal"]
+			});
+			
+			// Al cambiar empresa, recargar almacenes
+			$("#editarRazonSocial").off("change.sucursales").on("change.sucursales", function() {
+				var idEmpresa = $(this).val();
+				if (!idEmpresa) return;
+				$.post("ajax/usuarios.ajax.php", { empresaId: idEmpresa, getAlmacenes: 1 }, function(almacenes) {
+					if (Array.isArray(almacenes)) {
+						renderizarSucursalesCheckboxes(almacenes, "");
+					}
+				}, "json");
 			});
 			
 			//$("#editarListaPrecio").html(respuesta["listas_precio"]);
@@ -208,6 +230,21 @@ $(".tablas").on("click", ".btnEditarUsuario", function(e){
 		}
 	});
 })
+
+// Validar al menos una sucursal seleccionada al editar usuario
+$("#modalEditarUsuario form").on("submit", function(e) {
+	var checked = $("#editarSucursalesCheckboxes input[name='editarSucursales[]']:checked");
+	if (checked.length === 0) {
+		e.preventDefault();
+		swal({
+			type: "warning",
+			title: "Sucursales",
+			text: "Seleccione al menos una sucursal para el usuario.",
+			confirmButtonText: "Cerrar"
+		});
+		return false;
+	}
+});
 
 /*=============================================
 ACTIVAR USUARIO

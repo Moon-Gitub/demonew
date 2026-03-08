@@ -80,6 +80,44 @@ input[type="radio"]:checked {
     border: none !important;
 }
 
+/* Puntos de venta y Almacenes: mejor contraste de texto y botón + */
+#listaPtosVta .form-control,
+#listaAlmacenes .form-control {
+    background: #ffffff !important;
+    color: #2c3e50 !important;
+    font-weight: 600 !important;
+    border: 1px solid rgba(0,0,0,0.15) !important;
+}
+#listaPtosVta .form-control::placeholder,
+#listaAlmacenes .form-control::placeholder {
+    color: #5a6c7d !important;
+    opacity: 0.9;
+}
+.panel-config-ptos .help-block,
+.panel-config-almacenes .help-block {
+    color: #e8ecf5 !important;
+    font-weight: 500 !important;
+}
+#btnAgregarPtoVta,
+#btnAgregarAlmacen {
+    background: #2c3e50 !important;
+    color: #ffffff !important;
+    border: 1px solid #1a252f !important;
+    font-weight: 700 !important;
+    padding: 6px 10px !important;
+}
+#btnAgregarPtoVta:hover,
+#btnAgregarAlmacen:hover {
+    background: #1a252f !important;
+    color: #ffffff !important;
+    border-color: #0d1217 !important;
+}
+#btnAgregarPtoVta i,
+#btnAgregarAlmacen i {
+    color: #ffffff !important;
+    font-weight: bold;
+}
+
 /* Mejorar estilos de help-block */
 .help-block {
     color: #7f8c8d !important;
@@ -321,7 +359,7 @@ input[type="file"]:disabled {
       <!-- Puntos de venta y Almacenes: configuración visual -->
       <div class="row">
         <div class="col-md-6">
-          <div class="panel panel-default">
+          <div class="panel panel-default panel-config-ptos">
             <div class="panel-heading" style="background:#3c8dbc; color:white;">
               <i class="fa fa-map-marker"></i> Puntos de venta
               <button type="button" class="btn btn-xs btn-light pull-right" id="btnAgregarPtoVta" title="Agregar punto de venta"><i class="fa fa-plus"></i></button>
@@ -334,7 +372,7 @@ input[type="file"]:disabled {
           </div>
         </div>
         <div class="col-md-6">
-          <div class="panel panel-default">
+          <div class="panel panel-default panel-config-almacenes">
             <div class="panel-heading" style="background:#00a65a; color:white;">
               <i class="fa fa-warehouse"></i> Almacenes / Sucursales
               <button type="button" class="btn btn-xs btn-light pull-right" id="btnAgregarAlmacen" title="Agregar almacén"><i class="fa fa-plus"></i></button>
