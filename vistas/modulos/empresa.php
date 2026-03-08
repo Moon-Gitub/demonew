@@ -261,6 +261,7 @@ input[type="file"]:disabled {
                 ?>
                 <input type="hidden"  name="idEmpresa" id="idEmpresa" value="<?php echo $idEmpresa; ?>">
               </div>
+              <span class="help-block">Razón social o nombre de la empresa según AFIP</span>
             </div>  
           </div>
         
@@ -273,6 +274,7 @@ input[type="file"]:disabled {
                     echo '<input type="text" class="form-control " name="empTitular" id="empTitular" placeholder="Ingresar Titular" value= "'. $empArr['titular'] . '" required>';
                 ?>
               </div>
+              <span class="help-block">Nombre del titular o representante legal de la empresa</span>
             </div>              
           </div>          
 
@@ -285,6 +287,7 @@ input[type="file"]:disabled {
                     echo '<input type="text" class="form-control " name="empCuit" id="empCuit" placeholder="Ingresar C.U.I.T." value= "'. $empArr['cuit'] . '" required>';
                 ?>
               </div>
+              <span class="help-block">Número de CUIT de la empresa (11 dígitos, sin guiones)</span>
             </div>              
           </div>
         
@@ -300,6 +303,7 @@ input[type="file"]:disabled {
                 echo '<input type="text" class="form-control " name="empDomicilio" id="empDomicilio" placeholder="Ingresar domicilio" value= "'. $empArr['domicilio'] . '">';
               ?>
             </div>
+            <span class="help-block">Dirección fiscal de la empresa (calle y número)</span>
           </div>
         </div>
 
@@ -312,6 +316,7 @@ input[type="file"]:disabled {
                 echo '<input type="text" class="form-control " name="empLocalidad" id="empLocalidad" placeholder="Ingresar localidad" value= "'. $empArr['localidad'] . '">';
               ?>
             </div>
+            <span class="help-block">Ciudad o localidad donde está radicada la empresa</span>
           </div>
         </div>
 
@@ -324,6 +329,7 @@ input[type="file"]:disabled {
                   echo '<input type="text" class="form-control " name="empCodPostal" id="empCodPostal" placeholder="Ingresar codigo postal" value= "'. $empArr['codigo_postal'] . '">';
               ?>
             </div>
+            <span class="help-block">Código postal de la localidad</span>
           </div>
         </div>
       </div>
@@ -339,6 +345,7 @@ input[type="file"]:disabled {
                   echo '<input type="text" class="form-control " name="empMail" id="empMail" placeholder="Ingresar e-mail" value= "'. $empArr['mail'] . '">';
               ?>
             </div>
+            <span class="help-block">Correo electrónico de contacto de la empresa</span>
           </div>
         </div>
 
@@ -351,6 +358,7 @@ input[type="file"]:disabled {
                   echo '<input type="text" class="form-control " name="empTelefono" id="empTelefono" placeholder="Ingresar telefono" value= "'. $empArr['telefono'] . '">';
               ?>
             </div>
+            <span class="help-block">Teléfono de contacto de la empresa</span>
           </div>
         </div>
 
@@ -395,6 +403,7 @@ input[type="file"]:disabled {
               echo '<input type="text" class="form-control " name="empPtoVtaDefecto" id="empPtoVtaDefecto" placeholder="Ingresar punto de venta por defecto" value= "'. $empArr['pto_venta_defecto'] . '">';
               ?>
             </div>
+            <span class="help-block">Punto de venta que se usará por defecto al crear facturas</span>
           </div>
         </div>
         <div class="col-md-3">
@@ -426,6 +435,7 @@ input[type="file"]:disabled {
               echo '</select>';
               ?>
             </div>
+            <span class="help-block">Condición frente al IVA según AFIP (Responsable Inscripto, Monotributista, etc.)</span>
           </div>
         </div>
       </div>
@@ -433,7 +443,7 @@ input[type="file"]:disabled {
       <div class="row">
         <div class="col-md-3">
 
-          <!-- ENTRADA PARA CONDICION FRENTE A IVA-->
+          <!-- ENTRADA PARA CONDICION FRENTE A IIBB-->
           <div class="form-group">
 
             <div class="input-group">
@@ -467,6 +477,7 @@ input[type="file"]:disabled {
               ?>
 
             </div>
+            <span class="help-block">Condición frente a Ingresos Brutos (provincial o CABA)</span>
           </div>
         </div>
 
@@ -489,6 +500,7 @@ input[type="file"]:disabled {
               
 
             </div>
+            <span class="help-block">Número de inscripción en Ingresos Brutos</span>
 
           </div>
 
@@ -512,6 +524,7 @@ input[type="file"]:disabled {
               
 
             </div>
+            <span class="help-block">Fecha de inicio de actividades según AFIP (formato DD/MM/AAAA)</span>
 
           </div>
 
@@ -548,6 +561,7 @@ input[type="file"]:disabled {
               ?>
 
             </div>
+            <span class="help-block">Concepto por defecto para facturación (Productos, Servicios o ambos)</span>
           </div>
         </div>
       </div>
@@ -570,6 +584,7 @@ input[type="file"]:disabled {
                 ?>
 
             </div>
+            <span class="help-block">Número de establecimiento según AFIP (ej: 000000)</span>
           </div>
         </div>
 
@@ -592,6 +607,7 @@ input[type="file"]:disabled {
               
 
             </div>
+            <span class="help-block">Número de CBU para recibir transferencias bancarias (22 dígitos)</span>
 
           </div>
 
@@ -615,6 +631,7 @@ input[type="file"]:disabled {
               
 
             </div>
+            <span class="help-block">Alias CBU para transferencias (ej: aliasbanco.banco.cuenta)</span>
 
           </div>
 
