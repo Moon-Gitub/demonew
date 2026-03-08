@@ -1946,6 +1946,19 @@ class ControladorVentas{
 			return ['estado' => 'error', 'resultados' => [], 'mensaje' => 'Empresa no encontrada.'];
 		}
 
+		// Tipo por defecto cuando la venta tiene cbte_tipo 0 (X): primer tipo válido de la empresa
+		$tiposCbtesEmpresa = isset($arrEmpresa['tipos_cbtes']) ? json_decode($arrEmpresa['tipos_cbtes'], true) : [];
+		$cbteTipoDefectoLote = 11; // Factura C por defecto
+		if (is_array($tiposCbtesEmpresa)) {
+			foreach ($tiposCbtesEmpresa as $tc) {
+				$cod = (int)($tc['codigo'] ?? 0);
+				if ($cod !== 0 && $cod !== 999) {
+					$cbteTipoDefectoLote = $cod;
+					break;
+				}
+			}
+		}
+
 		$ventas = [];
 		$ptoVta = null;
 		$cbteTipo = null;
@@ -1959,8 +1972,8 @@ class ControladorVentas{
 				$resultados[] = ['id_venta' => $id, 'codigo' => null, 'ok' => false, 'mensaje' => 'Venta no encontrada'];
 				continue;
 			}
-			if ((int)$v['cbte_tipo'] === 0 || (int)$v['cbte_tipo'] === 999) {
-				$resultados[] = ['id_venta' => $id, 'codigo' => $v['codigo'] ?? null, 'ok' => false, 'mensaje' => 'Tipo X o Devolución no se factura'];
+			if ((int)$v['cbte_tipo'] === 999) {
+				$resultados[] = ['id_venta' => $id, 'codigo' => $v['codigo'] ?? null, 'ok' => false, 'mensaje' => 'Devolución no se factura en lote'];
 				continue;
 			}
 			$clienteCheck = ModeloClientes::mdlMostrarClientes("clientes", "id", $v['id_cliente']);
@@ -1970,12 +1983,15 @@ class ControladorVentas{
 			}
 			$p = (int)$v['pto_vta'];
 			$c = (int)$v['cbte_tipo'];
-			if ($ptoVta !== null && ($p !== $ptoVta || $c !== $cbteTipo)) {
+			$tipoEfectivo = ($c === 0) ? $cbteTipoDefectoLote : $c;
+			if ($ptoVta !== null && ($p !== $ptoVta || $tipoEfectivo !== $cbteTipo)) {
 				$resultados[] = ['id_venta' => $id, 'codigo' => $v['codigo'] ?? null, 'ok' => false, 'mensaje' => 'Pto vta o tipo distinto al resto del lote'];
 				continue;
 			}
-			$ptoVta = $p;
-			$cbteTipo = $c;
+			if ($ptoVta === null) {
+				$ptoVta = $p;
+				$cbteTipo = $tipoEfectivo;
+			}
 			$ventas[] = $v;
 		}
 
@@ -2079,6 +2095,9 @@ class ControladorVentas{
 				'fec_vto_cae' => $r->CAEFchVto ?? '',
 			];
 			ModeloVentas::mdlFacturarVenta("ventas_factura", $datosFactura);
+			if (isset($ventasParaGuardar[$idx]) && (int)($ventasParaGuardar[$idx]['cbte_tipo']) === 0) {
+				ModeloVentas::mdlActualizarVenta('ventas', 'cbte_tipo', $cbteTipo, $idVenta);
+			}
 			$resultados[] = ['id_venta' => $idVenta, 'codigo' => $codigo, 'ok' => true, 'nro_cbte' => $r->CbteDesde, 'cae' => $r->CAE];
 			$okCount++;
 		}

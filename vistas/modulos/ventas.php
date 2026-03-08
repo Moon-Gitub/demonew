@@ -157,6 +157,22 @@
     pointer-events: auto !important;
     vertical-align: middle;
   }
+  /* Celdas con checkbox deshabilitado: cursor normal y atenuado para que no parezca clickeable */
+  #tablaListarVentas td.col-chk-lote-disabled {
+    cursor: default !important;
+    opacity: 0.65;
+    pointer-events: auto !important;
+  }
+  #tablaListarVentas td.col-chk-lote-disabled input:disabled {
+    cursor: default !important;
+    opacity: 0.8;
+  }
+  /* Celdas seleccionables: siempre cursor pointer */
+  #tablaListarVentas td.col-chk-lote-activo,
+  #tablaListarVentas td.col-chk-lote-activo .chk-lote-label {
+    cursor: pointer !important;
+    opacity: 1;
+  }
   #tablaListarVentas td.col-chk-lote input:disabled {
     cursor: not-allowed;
     opacity: 0.5;
@@ -577,12 +593,14 @@
             //$botonMail = ($value["id_cliente"] == 1) ? 'pointer-events: none;' : 'cursor: pointer;' ;
             //$botonMailLi = ($value["id_cliente"] == 1) ? 'cursor:not-allowed;' : '' ;
 
-            $puedeLote = !$facturada && (int)$value["cbte_tipo"] !== 0 && (int)$value["cbte_tipo"] !== 999;
+            // Permitir facturar por lote: no facturada y no devolución (incluye ventas recién creadas con tipo X/0 u otro)
+            $cbteTipo = isset($value["cbte_tipo"]) ? (int)$value["cbte_tipo"] : 0;
+            $puedeLote = ($facturada === false || $facturada === null) && $cbteTipo !== 999;
              echo '<tr>';
             if ($puedeLote) {
-              echo '<td class="col-chk-lote" style="vertical-align: middle; min-width: 42px;"><label class="chk-lote-label"><input type="checkbox" class="chkFacturarLote" name="chk_lote[]" value="'.$value["id"].'" title="Incluir en facturación por lote"></label></td>';
+              echo '<td class="col-chk-lote col-chk-lote-activo" style="vertical-align: middle; min-width: 42px;"><label class="chk-lote-label"><input type="checkbox" class="chkFacturarLote" name="chk_lote[]" value="'.$value["id"].'" title="Incluir en facturación por lote"></label></td>';
             } else {
-              echo '<td class="col-chk-lote" style="min-width: 42px;"><input type="checkbox" disabled title="Ya facturada o no aplica (X/Devolución)"></td>';
+              echo '<td class="col-chk-lote col-chk-lote-disabled" style="min-width: 42px;"><input type="checkbox" disabled title="Ya facturada o no aplica (X/Devolución)"></td>';
             }
              echo '<td>'.$value["fecha"].'</td>';
                     $nomEmp = ControladorEmpresa::ctrMostrarempresa('id', $value['id_empresa']);
