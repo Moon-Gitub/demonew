@@ -1579,6 +1579,24 @@ class ControladorVentas{
 		}, $ventas);
 
 		try {
+			// Regenerar TA si está vencido (AFIP rechaza tokens expirados ~12h)
+			require_once __DIR__ . '/facturacion/wsaa.class.php';
+			$pathXml = dirname(__DIR__) . '/controladores/facturacion/xml/';
+			$taFile = $pathXml . 'TA' . $arrEmpresa['id'] . '.xml';
+			$regenerarTA = false;
+			if (!file_exists($taFile)) {
+				$regenerarTA = true;
+			} else {
+				$wsaa = new WSAA($arrEmpresa);
+				$exp = $wsaa->get_expiration();
+				if ($exp === false || strtotime($exp) <= (time() + 300)) {
+					$regenerarTA = true; // vencido o vence en menos de 5 min
+				}
+			}
+			if ($regenerarTA) {
+				$wsaa = new WSAA($arrEmpresa);
+				$wsaa->generar_TA();
+			}
 			$wsfe = new WSFE($arrEmpresa);
 			if (!$wsfe->openTA()) {
 				return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => 'No se pudo obtener Ticket de Acceso AFIP.'];
