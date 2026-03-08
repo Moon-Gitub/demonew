@@ -143,7 +143,8 @@ if(isset($_POST["facturarLoteIds"]) && is_array($_POST["facturarLoteIds"]) && co
 
 	$ids = array_map('intval', $_POST["facturarLoteIds"]);
 	$idEmpresa = isset($_POST["facturarLoteIdEmpresa"]) && $_POST["facturarLoteIdEmpresa"] !== '' ? (int)$_POST["facturarLoteIdEmpresa"] : null;
-	$respuesta = ControladorVentas::ctrFacturarVentasLote($ids, $idEmpresa);
+	$tipoCbteElegido = isset($_POST["facturarLoteTipoCbte"]) && $_POST["facturarLoteTipoCbte"] !== '' ? (int)$_POST["facturarLoteTipoCbte"] : null;
+	$respuesta = ControladorVentas::ctrFacturarVentasLote($ids, $idEmpresa, $tipoCbteElegido);
 	// Formato esperado por ventas.js: estado, mensaje, resultados (array con ok, id_venta, codigo?, mensaje?)
 	$resultados = [];
 	foreach ($respuesta['aprobadas'] as $a) {

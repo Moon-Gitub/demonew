@@ -950,8 +950,15 @@ function filtrarTiposPorCondicionIva(tipos, condicionIva) {
 
             <!-- ENTRADA PARA ID VENTA  -->
             <input type="hidden" name="autorizarCbteIdVenta" id="autorizarCbteIdVenta">
+            <!-- IDs para facturar por lote (cuando se abre el modal desde Facturar por lote) -->
+            <input type="hidden" id="autorizarCbteLoteIds" value="">
             <!-- Token CSRF -->
             <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : ''; ?>">
+
+            <!-- Mensaje modo lote: se muestra cuando se abre desde Facturar por lote -->
+            <div id="modalAutorizarLoteResumen" class="form-group" style="display:none;">
+              <p class="text-muted" id="modalAutorizarLoteResumenTexto">Facturar <strong id="modalAutorizarLoteCantidad">0</strong> ventas por lote. Elija la razón social y el tipo de comprobante.</p>
+            </div>
 
             <!-- Facturar como: selector de empresa (solo Administrador) -->
             <?php if ($mostrarSelectorEmpresa && count($listadoEmpresasModal) > 0): ?>
@@ -970,6 +977,8 @@ function filtrarTiposPorCondicionIva(tipos, condicionIva) {
             <input type="hidden" name="autorizarCbteIdEmpresa" id="autorizarCbteIdEmpresa" value="<?php echo $idEmpresaPorDefectoModal; ?>">
             <?php endif; ?>
 
+            <!-- Campos de una sola venta (ocultos en modo facturar por lote) -->
+            <div id="modalAutorizarUnaVenta">
             <div class="row">
 
               <div class="col-md-4">
@@ -1034,12 +1043,14 @@ function filtrarTiposPorCondicionIva(tipos, condicionIva) {
               </div> 
 
             </div>            
+            </div>
 
             <!-- ENTRADA PARA TIPO COMPROBANTE (se rellena por JS según empresa seleccionada: solo tipos de esa empresa) -->
 
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
+                  <label id="labelAutorizarTipoCbte">Tipo de comprobante</label>
                   <div class="input-group">
                     <span class="input-group-addon"><i class="fa fa-list-ul"></i></span>
                     <select title="Seleccione el tipo de comprobante" class="form-control input-sm" name="autorizarCbteTipoCbte" id="autorizarCbteTipoCbte" required>
@@ -1051,8 +1062,8 @@ function filtrarTiposPorCondicionIva(tipos, condicionIva) {
               </div>
             </div>
 
-            <!-- ENTRADA PARA MONTO -->            
-            <div class="form-group">
+            <!-- ENTRADA PARA MONTO (solo una venta) -->
+            <div id="modalAutorizarMontoWrap" class="form-group">
               
               <div class="input-group">
               

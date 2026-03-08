@@ -1639,15 +1639,58 @@ $("#btnFacturarPorLote").on("click", function() {
     swal({
       type: "warning",
       title: "Facturar por lote",
-      text: "Seleccione al menos una venta (sin facturar, tipo distinto de X y Devolución).",
+      text: "Seleccione al menos una venta.",
       confirmButtonText: "Cerrar"
     });
     return;
   }
+  $("#autorizarCbteLoteIds").val(ids.join(","));
+  $("#modalAutorizarComprobante .modal-title").text("Facturar por lote");
+  $("#modalAutorizarComprobante").modal("show");
+});
+
+// Al mostrar el modal: si hay IDs de lote, mostrar modo lote (empresa + tipo) y ocultar datos de una venta
+$("#modalAutorizarComprobante").on("shown.bs.modal", function() {
+  var loteIds = $("#autorizarCbteLoteIds").val();
+  if (loteIds && loteIds.length > 0) {
+    var arr = loteIds.split(",").filter(Boolean);
+    $("#modalAutorizarLoteResumen").show();
+    $("#modalAutorizarLoteCantidad").text(arr.length);
+    $("#modalAutorizarUnaVenta, #modalAutorizarMontoWrap").hide();
+    var defaultEmpresa = $("#modalAutorizarComprobante").data("id-empresa-default");
+    if (defaultEmpresa != null && $("#autorizarCbteIdEmpresa").is("select")) {
+      $("#autorizarCbteIdEmpresa").val(defaultEmpresa);
+    }
+    $("#autorizarCbteIdEmpresa").trigger("change");
+    $("#autorizarCbteTipoCbte").val("");
+  } else {
+    $("#modalAutorizarLoteResumen").hide();
+    $("#modalAutorizarUnaVenta, #modalAutorizarMontoWrap").show();
+    $("#modalAutorizarComprobante .modal-title").text("Autorizar Comprobante");
+  }
+});
+
+// Al abrir modal para una sola venta, limpiar modo lote
+$("#tablaListarVentas").on("click", ".btnAutorizarCbte", function() {
+  $("#autorizarCbteLoteIds").val("");
+});
+
+// Envío del modal: si es modo lote, enviar AJAX facturar por lote con empresa y tipo elegidos
+$("#modalAutorizarComprobante form").on("submit", function(e) {
+  var loteIds = $("#autorizarCbteLoteIds").val();
+  if (!loteIds || loteIds.length === 0) return;
+  e.preventDefault();
+  var ids = loteIds.split(",").filter(Boolean);
   var idEmpresa = $("#autorizarCbteIdEmpresa").length ? $("#autorizarCbteIdEmpresa").val() : "";
+  var tipoCbte = $("#autorizarCbteTipoCbte").val();
+  if (!tipoCbte || tipoCbte === "0") {
+    swal({ type: "warning", title: "Facturar por lote", text: "Seleccione el tipo de comprobante (Factura A, B o C según corresponda).", confirmButtonText: "Cerrar" });
+    return;
+  }
   var datos = new FormData();
   ids.forEach(function(id) { datos.append("facturarLoteIds[]", id); });
   if (idEmpresa) datos.append("facturarLoteIdEmpresa", idEmpresa);
+  datos.append("facturarLoteTipoCbte", tipoCbte);
   $.ajax({
     url: "ajax/ventas.ajax.php",
     method: "POST",
@@ -1657,9 +1700,10 @@ $("#btnFacturarPorLote").on("click", function() {
     processData: false,
     dataType: "json",
     success: function(resp) {
+      $("#modalAutorizarComprobante").modal("hide");
+      $("#autorizarCbteLoteIds").val("");
       var msg = resp.mensaje || "";
       if (resp.resultados && resp.resultados.length) {
-        var ok = resp.resultados.filter(function(r) { return r.ok; }).length;
         var fail = resp.resultados.filter(function(r) { return !r.ok; });
         if (fail.length) {
           msg += "\n\nRechazados: " + fail.map(function(r) { return "Venta #" + (r.codigo || r.id_venta) + ": " + (r.mensaje || ""); }).join("; ");

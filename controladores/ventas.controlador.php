@@ -1477,12 +1477,13 @@ class ControladorVentas{
 	=============================================*/
 	/**
 	 * Factura varias ventas en una sola solicitud a AFIP.
-	 * Todas deben tener mismo pto_vta y cbte_tipo (y no estar ya facturadas).
+	 * Todas deben tener mismo pto_vta (y mismo cbte_tipo si no se pasa $tipoCbteElegido).
 	 * @param array $idsVentas array de id de ventas
 	 * @param int|null $idEmpresa empresa con la que facturar (credenciales AFIP)
+	 * @param int|null $tipoCbteElegido si se pasa, se usa este tipo para todas (permite facturar ventas con tipo X eligiendo A/B/C)
 	 * @return array ['estado' => 'ok'|'error', 'aprobadas' => [...], 'rechazadas' => [...], 'mensaje' => string]
 	 */
-	static public function ctrFacturarVentasLote($idsVentas, $idEmpresa = null) {
+	static public function ctrFacturarVentasLote($idsVentas, $idEmpresa = null, $tipoCbteElegido = null) {
 		require_once __DIR__ . '/../modelos/ventas.modelo.php';
 		require_once __DIR__ . '/../modelos/clientes.modelo.php';
 		require_once __DIR__ . '/../modelos/empresa.modelo.php';
@@ -1505,6 +1506,11 @@ class ControladorVentas{
 			return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => 'Empresa no encontrada.'];
 		}
 
+		$usarTipoElegido = ($tipoCbteElegido !== null && $tipoCbteElegido !== '' && (int)$tipoCbteElegido !== 0 && (int)$tipoCbteElegido !== 999);
+		if ($usarTipoElegido) {
+			$tipoCbteElegido = (int) $tipoCbteElegido;
+		}
+
 		$ventas = [];
 		$ptoVtaRef = null;
 		$cbteTipoRef = null;
@@ -1516,9 +1522,12 @@ class ControladorVentas{
 			if (!$venta) {
 				return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => "Venta #$idVenta no encontrada."];
 			}
-			$tipoCbte = (int) ($venta['cbte_tipo'] ?? 0);
-			if ($tipoCbte === 0 || $tipoCbte === 999) {
+			$tipoCbte = $usarTipoElegido ? $tipoCbteElegido : (int) ($venta['cbte_tipo'] ?? 0);
+			if (!$usarTipoElegido && ($tipoCbte === 0 || $tipoCbte === 999)) {
 				return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => "Venta #$idVenta tiene tipo X o Devolución; no se puede facturar por AFIP."];
+			}
+			if ($usarTipoElegido && ($tipoCbte === 0 || $tipoCbte === 999)) {
+				return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => 'El tipo de comprobante elegido no es válido para facturar en AFIP.'];
 			}
 			$ptoVta = (int) ($venta['pto_vta'] ?? 0);
 			if ($ptoVtaRef !== null && ($ptoVta !== $ptoVtaRef || $tipoCbte !== $cbteTipoRef)) {
@@ -1526,6 +1535,9 @@ class ControladorVentas{
 			}
 			$ptoVtaRef = $ptoVta;
 			$cbteTipoRef = $tipoCbte;
+			if ($usarTipoElegido && (int)($venta['cbte_tipo'] ?? 0) !== $tipoCbteElegido) {
+				ModeloVentas::mdlActualizarVenta("ventas", "cbte_tipo", $tipoCbteElegido, $idVenta);
+			}
 			$cliente = ModeloClientes::mdlMostrarClientes("clientes", "id", $venta['id_cliente']);
 			if (!$cliente) {
 				return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => "Cliente de venta #$idVenta no encontrado."];
