@@ -318,29 +318,36 @@ input[type="file"]:disabled {
 
       </div>
 
+      <!-- Puntos de venta y Almacenes: configuración visual -->
       <div class="row">
-        <div class="col-md-3">
-          <!-- ENTRADA PARA EL PUNTO DE VENTA -->      
-          <div class="form-group">
-            <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
-              <?php 
-              echo '<input type="text" class="form-control " name="empPtosVta" id="empPtosVta" placeholder="Ingresar  todos los puntos de venta separados por coma. Ej. 2, 3, 4" value= "'. htmlspecialchars($empArr['ptos_venta']) . '">';
-              ?>
+        <div class="col-md-6">
+          <div class="panel panel-default">
+            <div class="panel-heading" style="background:#3c8dbc; color:white;">
+              <i class="fa fa-map-marker"></i> Puntos de venta
+              <button type="button" class="btn btn-xs btn-light pull-right" id="btnAgregarPtoVta" title="Agregar punto de venta"><i class="fa fa-plus"></i></button>
             </div>
-          </div>    
-        </div>
-        <div class="col-md-3">
-          <!-- ENTRADA PARA STOCK -->      
-          <div class="form-group">
-            <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-th"></i></span> 
-              <?php 
-              echo '<input type="text" class="form-control " name="empStock" id="empStock" placeholder="Ingresar almacenes (según tabla productos)" value= "'. htmlspecialchars($empArr['almacenes']) . '">';
-              ?>
+            <div class="panel-body">
+              <p class="help-block text-muted" style="margin-bottom:12px;">Número AFIP y denominación de cada punto de venta.</p>
+              <input type="hidden" name="empPtosVta" id="empPtosVta" value="<?php echo htmlspecialchars($empArr['ptos_venta'] ?? ''); ?>">
+              <div id="listaPtosVta"></div>
             </div>
-          </div>    
+          </div>
         </div>
+        <div class="col-md-6">
+          <div class="panel panel-default">
+            <div class="panel-heading" style="background:#00a65a; color:white;">
+              <i class="fa fa-warehouse"></i> Almacenes / Sucursales
+              <button type="button" class="btn btn-xs btn-light pull-right" id="btnAgregarAlmacen" title="Agregar almacén"><i class="fa fa-plus"></i></button>
+            </div>
+            <div class="panel-body">
+              <p class="help-block text-muted" style="margin-bottom:12px;">Columna de stock en tabla productos (ej. stock, stock1) y denominación.</p>
+              <input type="hidden" name="empStock" id="empStock" value="<?php echo htmlspecialchars($empArr['almacenes'] ?? ''); ?>">
+              <div id="listaAlmacenes"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-md-3">
           <!-- ENTRADA PARA EL PUNTO DE VENTA DEFECTO-->
           <div class="form-group">
