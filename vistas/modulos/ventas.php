@@ -608,11 +608,13 @@
 
               echo '<td><a href="index.php?ruta=editar-venta&idVenta='.$value["id"].'">' . $value["codigo"] . '</a></td>';
 
+              $ptoVtaNum = isset($value["pto_vta"]) ? (int)$value["pto_vta"] : 0;
               if (is_array($arrPuntos) && !empty($arrPuntos)) {
-                $buscoPto = array_search($value["pto_vta"], array_column($arrPuntos, 'pto'));
-                echo '<td>' . ($buscoPto !== false && isset($arrPuntos[$buscoPto]["det"]) ? $arrPuntos[$buscoPto]["det"] : '') . '</td>';
+                $buscoPto = array_search($ptoVtaNum, array_map('intval', array_column($arrPuntos, 'pto')));
+                $detPto = ($buscoPto !== false && isset($arrPuntos[$buscoPto]["det"]) && $arrPuntos[$buscoPto]["det"] !== '') ? $arrPuntos[$buscoPto]["det"] : '';
+                echo '<td title="Punto de venta AFIP: ' . $ptoVtaNum . '">' . ($detPto !== '' ? $detPto . ' <small class="text-muted">(' . $ptoVtaNum . ')</small>' : '<strong>' . $ptoVtaNum . '</strong>') . '</td>';
               } else {
-                echo '<td></td>';
+                echo '<td title="Punto de venta AFIP: ' . $ptoVtaNum . '"><strong>' . $ptoVtaNum . '</strong></td>';
               }
               //echo '<td>' .  $arrPuntos[$value["pto_vta"]] . '</td>';
 
