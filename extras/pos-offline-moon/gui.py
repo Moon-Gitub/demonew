@@ -202,20 +202,24 @@ class POSApp:
         
         menu_ayuda = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="Ayuda", menu=menu_ayuda)
-        menu_ayuda.add_command(label="Atajos: F7=Cobrar, F5=Recargar, F1=Catálogo", command=lambda: None)
+        menu_ayuda.add_command(label="Atajos: F8=Guardar e imprimir, F7=Cobrar, F5=Recargar, F1=Catálogo", command=lambda: None)
         
-        # Header
-        header = tk.Frame(self.root, bg="#2c3e50", height=60)
+        # Header con gradiente (similar a crear-venta-caja online)
+        header = tk.Frame(self.root, bg="#667eea", height=60)
         header.pack(fill=tk.X)
         
-        tk.Label(header, text="POS | Moon - Sistema Offline", font=("Arial", 18, "bold"),
-                bg="#2c3e50", fg="white").pack(side=tk.LEFT, padx=20, pady=15)
+        tk.Label(header, text="POS | Moon - Crear Venta", font=("Arial", 18, "bold"),
+                bg="#667eea", fg="white").pack(side=tk.LEFT, padx=20, pady=15)
         
-        self.status_label = tk.Label(header, text="🟢 En línea", bg="#2c3e50", fg="white",
+        sucursal_usuario = getattr(self.auth_manager.current_user, 'sucursal', None) or "Local"
+        tk.Label(header, text=f"Sucursal: {sucursal_usuario}", bg="#667eea",
+                fg="white", font=("Arial", 10)).pack(side=tk.LEFT, padx=10, pady=15)
+        
+        self.status_label = tk.Label(header, text="🟢 En línea", bg="#667eea", fg="white",
                                      font=("Arial", 11, "bold"))
         self.status_label.pack(side=tk.RIGHT, padx=10, pady=15)
         
-        tk.Label(header, text=f"👤 {self.auth_manager.current_user.nombre}", bg="#2c3e50",
+        tk.Label(header, text=f"👤 {self.auth_manager.current_user.nombre}", bg="#667eea",
                 fg="white", font=("Arial", 10)).pack(side=tk.RIGHT, padx=10, pady=15)
         
         # Contenedor principal - 3 columnas
