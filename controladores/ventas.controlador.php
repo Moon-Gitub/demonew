@@ -1568,6 +1568,13 @@ class ControladorVentas{
 			];
 		}
 
+		// AFIP exige que los comprobantes del lote estén ordenados por fecha ascendente (error 10016)
+		usort($ventas, function ($a, $b) {
+			$fA = $a['datosFactura']['fecha'] ?? '';
+			$fB = $b['datosFactura']['fecha'] ?? '';
+			return strcmp($fA, $fB);
+		});
+
 		$n = count($ventas);
 		$condicionIvaEmisor = (int) ($arrEmpresa['condicion_iva'] ?? 1);
 		$items = array_map(function ($v) {
