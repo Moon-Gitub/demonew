@@ -86,6 +86,7 @@ class ControladorUsuarios{
 									if (!$sucursalValida) {
 										if ($sucursalSeleccionada === 'stock1' && in_array('stock', $lista, true)) $sucursalValida = true;
 										if ($sucursalSeleccionada === 'stock2' && in_array('deposito', $lista, true)) $sucursalValida = true;
+									if ($sucursalSeleccionada === 'stock' && (in_array('stock1', $lista, true) || in_array('stock', $lista, true))) $sucursalValida = true;
 									}
 								}
 							}

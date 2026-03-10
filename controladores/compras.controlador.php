@@ -226,7 +226,7 @@ class ControladorCompras{
 					$esServicio = true;
 				}
 				// También verificar si el producto tiene stock total = 0 y descripción que sugiere servicio
-				$stockTotal = floatval($traerProducto["stock1"] ?? 0) + floatval($traerProducto["stock2"] ?? 0) + floatval($traerProducto["stock3"] ?? 0);
+				$stockTotal = floatval($traerProducto["stock"] ?? 0) + floatval($traerProducto["stock2"] ?? 0) + floatval($traerProducto["stock3"] ?? 0);
 				if(!$esServicio && $stockTotal == 0 && 
 				   isset($traerProducto["descripcion"]) && (stripos($traerProducto["descripcion"], "SERVICIO") !== false || 
 				   stripos($traerProducto["descripcion"], "EDEMSA") !== false || 
@@ -255,7 +255,7 @@ class ControladorCompras{
 				}
 
 				if(!$esServicio && $cantidadRecibida > 0){
-					$colDestino = $_SESSION["sucursal"] ?? 'stock1';
+					$colDestino = $_SESSION["sucursal"] ?? 'stock';
 					$stockActual = isset($traerProducto[$colDestino]) ? floatval($traerProducto[$colDestino]) : 0;
 					$modificoStock = $stockActual + $cantidadRecibida;
 					ModeloProductos::mdlActualizarProducto('productos', $colDestino, $modificoStock, $valor, 'Ingreso stock (Factura directa: '.$codigo.')');
@@ -395,7 +395,7 @@ class ControladorCompras{
 					$esServicio = true;
 				}
 				// También verificar si el producto tiene características de servicio
-				$stockTotalCompra = floatval($traerProducto["stock1"] ?? 0) + floatval($traerProducto["stock2"] ?? 0) + floatval($traerProducto["stock3"] ?? 0);
+				$stockTotalCompra = floatval($traerProducto["stock"] ?? 0) + floatval($traerProducto["stock2"] ?? 0) + floatval($traerProducto["stock3"] ?? 0);
 				if(!$esServicio && $stockTotalCompra == 0 && 
 				   isset($traerProducto["descripcion"]) && (stripos($traerProducto["descripcion"], "SERVICIO") !== false || 
 				   stripos($traerProducto["descripcion"], "EDEMSA") !== false || 
@@ -406,7 +406,7 @@ class ControladorCompras{
 				
 				// Actualizar stock SOLO si NO es servicio
 				if(!$esServicio && isset($value["recibidos"]) && floatval($value["recibidos"]) > 0){
-					$colDestino = $traerCompra["sucursalDestino"] ?? 'stock1';
+					$colDestino = $traerCompra["sucursalDestino"] ?? 'stock';
 					$stockActual = isset($traerProducto[$colDestino]) ? floatval($traerProducto[$colDestino]) : 0;
 					$modificoStock = $stockActual + $value["recibidos"];
 					$nuevoStockDestino = ModeloProductos::mdlActualizarProducto('productos', $colDestino, $modificoStock, $valor, 'Ingreso stock (Cbte: '.$traerCompra["id"].')');

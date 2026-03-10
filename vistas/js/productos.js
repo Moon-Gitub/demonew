@@ -1017,13 +1017,10 @@ function cargarSeleccionImpresion() {
 // Cargar selección al iniciar la página e inicializar DataTable
 $(document).ready(function() {
 	if ($("#tablaImpresionProductosImpresion").length > 0) {
-		console.log("Elemento tablaImpresionProductosImpresion encontrado, inicializando...");
 		setTimeout(function() {
 			inicializarDataTableImpresion();
 			cargarSeleccionImpresion();
 		}, 100);
-	} else {
-		console.log("Elemento tablaImpresionProductosImpresion NO encontrado");
 	}
 });
 

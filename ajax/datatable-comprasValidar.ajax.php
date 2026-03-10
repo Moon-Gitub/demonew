@@ -45,7 +45,7 @@ class TablaProductosCompras{
 		  	/*=============================================
  	 		STOCK
   			=============================================*/ 
-			$sumaStock = floatval($productos[$i]["stock1"] ?? 0) + floatval($productos[$i]["stock2"] ?? 0) + floatval($productos[$i]["stock3"] ?? 0);  
+			$sumaStock = floatval($productos[$i]["stock"] ?? 0) + floatval($productos[$i]["stock2"] ?? 0) + floatval($productos[$i]["stock3"] ?? 0);  
  			$stock = "<button class='btn btn-success agregarProductoCompraValidar recuperarBoton' idProducto='".$productos[$i]["id"]."'>".$sumaStock."</button>";
 			
 			/*=============================================

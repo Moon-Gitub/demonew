@@ -266,7 +266,7 @@ class AjaxProductos{
                                           'id' => $value["id"],
                                           'codigo' => $value["codigo"],
                                           'descripcion' => $value["descripcion"],
-                                          'stock' => floatval($value["stock1"] ?? 0) + floatval($value["stock2"] ?? 0) + floatval($value["stock3"] ?? 0),
+                                          'stock' => floatval($value["stock"] ?? 0) + floatval($value["stock2"] ?? 0) + floatval($value["stock3"] ?? 0),
                                           'tipo_iva' => $value["tipo_iva"] ?? 0,
                                           'precio_venta' => $value["precio_venta"] ?? 0                            
                                            )

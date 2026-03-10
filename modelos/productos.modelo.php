@@ -118,12 +118,12 @@ class ModeloProductos{
 	REGISTRO DE PRODUCTO
 	=============================================*/
 	static public function mdlIngresarProducto($tabla, $datos){
-		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(id_categoria, codigo, id_proveedor, descripcion, stock1, stock2, stock3, stock_medio, stock_bajo, precio_compra, precio_compra_dolar, margen_ganancia, tipo_iva, precio_venta, imagen, nombre_usuario, cambio_desde) VALUES (:id_categoria, :codigo, :id_proveedor, :descripcion, :stock1, 0, 0, :stock_medio, :stock_bajo, :precio_compra, :precio_compra_dolar, :margen_ganancia, :tipo_iva, :precio_venta, :imagen, :nombre_usuario, 'Administrar Productos')");
+		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(id_categoria, codigo, id_proveedor, descripcion, stock, stock2, stock3, stock_medio, stock_bajo, precio_compra, precio_compra_dolar, margen_ganancia, tipo_iva, precio_venta, imagen, nombre_usuario, cambio_desde) VALUES (:id_categoria, :codigo, :id_proveedor, :descripcion, :stock, 0, 0, :stock_medio, :stock_bajo, :precio_compra, :precio_compra_dolar, :margen_ganancia, :tipo_iva, :precio_venta, :imagen, :nombre_usuario, 'Administrar Productos')");
 		$stmt->bindParam(":id_categoria", $datos["id_categoria"], PDO::PARAM_INT);
 		$stmt->bindParam(":codigo", $datos["codigo"], PDO::PARAM_STR);
 		$stmt->bindParam(":id_proveedor", $datos["id_proveedor"], PDO::PARAM_INT);
 		$stmt->bindParam(":descripcion", $datos["descripcion"], PDO::PARAM_STR);
-		$stmt->bindParam(":stock1", $datos["stock"], PDO::PARAM_STR);
+		$stmt->bindParam(":stock", $datos["stock"], PDO::PARAM_STR);
 		$stmt->bindParam(":stock_medio", $datos["stock_medio"], PDO::PARAM_STR);
 		$stmt->bindParam(":stock_bajo", $datos["stock_bajo"], PDO::PARAM_STR);
 		$stmt->bindParam(":precio_compra", $datos["precio_compra"], PDO::PARAM_STR);
@@ -147,14 +147,14 @@ class ModeloProductos{
 	EDITAR PRODUCTO
 	=============================================*/
 	static public function mdlEditarProducto($tabla, $datos){
-		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET codigo = :codigo, id_categoria = :id_categoria, id_proveedor = :id_proveedor, descripcion = :descripcion, stock1 = :stock1, stock_medio = :stock_medio, stock_bajo = :stock_bajo, precio_compra = :precio_compra, precio_compra_dolar = :precio_compra_dolar, margen_ganancia = :margen_ganancia, tipo_iva = :tipo_iva, precio_venta = :precio_venta, imagen = :imagen, nombre_usuario = :nombre_usuario, cambio_desde = 'Administrar Productos' WHERE id = :id");
+		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET codigo = :codigo, id_categoria = :id_categoria, id_proveedor = :id_proveedor, descripcion = :descripcion, stock = :stock, stock_medio = :stock_medio, stock_bajo = :stock_bajo, precio_compra = :precio_compra, precio_compra_dolar = :precio_compra_dolar, margen_ganancia = :margen_ganancia, tipo_iva = :tipo_iva, precio_venta = :precio_venta, imagen = :imagen, nombre_usuario = :nombre_usuario, cambio_desde = 'Administrar Productos' WHERE id = :id");
 
 		$stmt->bindParam(":id", $datos["id"], PDO::PARAM_INT);
 		$stmt->bindParam(":id_categoria", $datos["id_categoria"], PDO::PARAM_INT);
 		$stmt->bindParam(":codigo", $datos["codigo"], PDO::PARAM_STR);
 		$stmt->bindParam(":id_proveedor", $datos["id_proveedor"], PDO::PARAM_INT);
 		$stmt->bindParam(":descripcion", $datos["descripcion"], PDO::PARAM_STR);
-		$stmt->bindParam(":stock1", $datos["stock"], PDO::PARAM_STR);
+		$stmt->bindParam(":stock", $datos["stock"], PDO::PARAM_STR);
 		$stmt->bindParam(":stock_medio", $datos["stock_medio"], PDO::PARAM_STR);
 		$stmt->bindParam(":stock_bajo", $datos["stock_bajo"], PDO::PARAM_STR);
 		$stmt->bindParam(":precio_compra", $datos["precio_compra"], PDO::PARAM_STR);
@@ -243,13 +243,12 @@ class ModeloProductos{
 			$nomUsuario = '(sin especificar)';
 		}
 
-		/*$txt = $_SERVER['HTTP_REFERER'];
-		$cambioDesde = '';
-		if(strpos($txt, 'venta') !== false){
-		    $cambioDesde = "Ventas";
-		} else{
-		    $cambioDesde = "(sin especificar)";
-		}*/
+		// Mapear sucursal a columna real (compatibilidad schema antigua stock/deposito vs nueva stock/stock2/stock3)
+		$col = Conexion::conectar()->query("SHOW COLUMNS FROM productos")->fetchAll(PDO::FETCH_COLUMN);
+		if (!in_array($item1, $col, true)) {
+			if ($item1 === 'stock2' && in_array('deposito', $col, true)) $item1 = 'deposito';
+			else return "ok"; // columna no existe, no actualizar
+		}
 
 		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET $item1 = :$item1, nombre_usuario = :nombre_usuario, cambio_desde = :cambio_desde WHERE id = :id");
 
@@ -449,7 +448,7 @@ class ModeloProductos{
 	LISTAR PRODUCTOS CON STOCK MEDIO (ENTRE BAJO Y MEDIO)
 	=============================================*/
 	static public function mdlMostrarStockMedio(){
-		$totalStock = "(IFNULL(IF(COALESCE(stock1,0)<0,0,COALESCE(stock1,0)),0) + IFNULL(IF(COALESCE(stock2,0)<0,0,COALESCE(stock2,0)),0) + IFNULL(IF(COALESCE(stock3,0)<0,0,COALESCE(stock3,0)),0))";
+		$totalStock = "(IFNULL(IF(COALESCE(stock,0)<0,0,COALESCE(stock,0)),0) + IFNULL(IF(COALESCE(stock2,0)<0,0,COALESCE(stock2,0)),0) + IFNULL(IF(COALESCE(stock3,0)<0,0,COALESCE(stock3,0)),0))";
 		$stmt = Conexion::conectar()->prepare("SELECT *, $totalStock as stock FROM productos WHERE activo = 1 AND $totalStock <= stock_medio AND $totalStock > stock_bajo ");
 		$stmt -> execute();
 		return $stmt -> fetchAll();
@@ -461,7 +460,7 @@ class ModeloProductos{
 	LISTAR PRODUCTOS CON STOCK BAJO
 	=============================================*/
 	static public function mdlMostrarStockBajo(){
-		$totalStock = "(IFNULL(IF(COALESCE(stock1,0)<0,0,COALESCE(stock1,0)),0) + IFNULL(IF(COALESCE(stock2,0)<0,0,COALESCE(stock2,0)),0) + IFNULL(IF(COALESCE(stock3,0)<0,0,COALESCE(stock3,0)),0))";
+		$totalStock = "(IFNULL(IF(COALESCE(stock,0)<0,0,COALESCE(stock,0)),0) + IFNULL(IF(COALESCE(stock2,0)<0,0,COALESCE(stock2,0)),0) + IFNULL(IF(COALESCE(stock3,0)<0,0,COALESCE(stock3,0)),0))";
 		$stmt = Conexion::conectar()->prepare("SELECT *, $totalStock as stock FROM productos WHERE activo = 1 AND $totalStock <= stock_bajo");
 		$stmt -> execute();
 		return $stmt -> fetchAll();
@@ -473,7 +472,7 @@ class ModeloProductos{
 	LISTAR PRODUCTOS STOCK VALORIZADO
 	=============================================*/
 	static public function mdlMostrarStockValorizado(){
-		$totalStock = "(IFNULL(IF(COALESCE(stock1,0)<0,0,COALESCE(stock1,0)),0) + IFNULL(IF(COALESCE(stock2,0)<0,0,COALESCE(stock2,0)),0) + IFNULL(IF(COALESCE(stock3,0)<0,0,COALESCE(stock3,0)),0))";
+		$totalStock = "(IFNULL(IF(COALESCE(stock,0)<0,0,COALESCE(stock,0)),0) + IFNULL(IF(COALESCE(stock2,0)<0,0,COALESCE(stock2,0)),0) + IFNULL(IF(COALESCE(stock3,0)<0,0,COALESCE(stock3,0)),0))";
 		$stmt = Conexion::conectar()->prepare("SELECT codigo, descripcion, $totalStock as stock, precio_compra, ROUND($totalStock * precio_compra, 2) as invertido, precio_venta, ROUND($totalStock * precio_venta, 2) as valorizado FROM productos WHERE activo = 1 AND $totalStock > 0");
 		$stmt -> execute();
 		return $stmt -> fetchAll();
@@ -485,7 +484,7 @@ class ModeloProductos{
 	LISTAR PRODUCTOS STOCK VALORIZADO TOTALES
 	=============================================*/
 	static public function mdlMostrarStockValorizadoTotales(){
-		$totalStock = "(IFNULL(IF(COALESCE(stock1,0)<0,0,COALESCE(stock1,0)),0) + IFNULL(IF(COALESCE(stock2,0)<0,0,COALESCE(stock2,0)),0) + IFNULL(IF(COALESCE(stock3,0)<0,0,COALESCE(stock3,0)),0))";
+		$totalStock = "(IFNULL(IF(COALESCE(stock,0)<0,0,COALESCE(stock,0)),0) + IFNULL(IF(COALESCE(stock2,0)<0,0,COALESCE(stock2,0)),0) + IFNULL(IF(COALESCE(stock3,0)<0,0,COALESCE(stock3,0)),0))";
 		$stmt = Conexion::conectar()->prepare("SELECT SUM(ROUND($totalStock * precio_compra,2)) as invertido, SUM(ROUND($totalStock * precio_venta,2)) as valorizado FROM productos WHERE activo = 1 AND $totalStock > 0");
 		$stmt -> execute();
 		return $stmt -> fetch();
@@ -498,7 +497,7 @@ class ModeloProductos{
 	AGREGAR PRODUCTO DESDE VENTA CAJA
 	=============================================*/
 	static public function mdlAgregarProductoVentaCaja($datos){
-	$stmt = Conexion::conectar()->prepare("INSERT INTO productos(id_categoria, codigo, id_proveedor, descripcion, stock1, stock2, stock3, stock_medio, stock_bajo, precio_compra, margen_ganancia, tipo_iva, precio_venta, imagen, nombre_usuario, cambio_desde) VALUES (1, :codigo, 1, :descripcion, 0, 0, 0, 0, 0, 0, 0, :tipo_iva, :precio_venta, 'vistas/img/productos/default/anonymous.png', :nombre_usuario, 'Crear Venta')");
+	$stmt = Conexion::conectar()->prepare("INSERT INTO productos(id_categoria, codigo, id_proveedor, descripcion, stock, stock2, stock3, stock_medio, stock_bajo, precio_compra, margen_ganancia, tipo_iva, precio_venta, imagen, nombre_usuario, cambio_desde) VALUES (1, :codigo, 1, :descripcion, 0, 0, 0, 0, 0, 0, 0, :tipo_iva, :precio_venta, 'vistas/img/productos/default/anonymous.png', :nombre_usuario, 'Crear Venta')");
 
 		// $stmt->bindParam(":id_categoria", 1, PDO::PARAM_INT);
 		$stmt->bindParam(":codigo", $datos["codigo"], PDO::PARAM_STR);

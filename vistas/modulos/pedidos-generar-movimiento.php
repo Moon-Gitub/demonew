@@ -114,7 +114,7 @@
 							<option value="">Seleccionar Origen</option>
 							<?php
 							$arrAlm = !empty($arrayEmpresa['almacenes']) ? json_decode($arrayEmpresa['almacenes'], true) : [];
-							if (!is_array($arrAlm)) $arrAlm = [['stkProd'=>'stock1','det'=>'Gutiérrez'],['stkProd'=>'stock2','det'=>'Irigoyen'],['stkProd'=>'stock3','det'=>'Ameghino']];
+							if (!is_array($arrAlm)) $arrAlm = [['stkProd'=>'stock','det'=>'Gutiérrez'],['stkProd'=>'stock2','det'=>'Irigoyen'],['stkProd'=>'stock3','det'=>'Ameghino']];
 							foreach ($arrAlm as $a) {
 								$v = htmlspecialchars($a['stkProd'] ?? 'stock1');
 								$l = htmlspecialchars($a['det'] ?? $v);

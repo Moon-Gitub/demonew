@@ -45,7 +45,7 @@ $table = <<<EOT
       c.categoria,
       pv.nombre,
       pd.descripcion,
-      pd.stock1,
+      pd.stock,
       pd.stock_medio,
       pd.stock_bajo,
 	  pd.stock2,
@@ -77,7 +77,7 @@ $columns = array(
     array( 'db' => 'categoria',     'dt' => 1 ),
     array( 'db' => 'descripcion',   'dt' => 2 ),
     array(
-        'db' => 'stock1',
+        'db' => 'stock',
         'dt' => 3,
         'formatter' => function( $d, $row ) {
             if($d <= $row["stock_bajo"]){

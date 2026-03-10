@@ -10,7 +10,7 @@ class ControladorVentas{
 	/*=============================================
 	PROCESAR PRODUCTO EN VENTA (CON DETECCIÓN DE COMBOS)
 	=============================================*/
-	static private function procesarProductoVenta($idProducto, $cantidad, $codigoVenta, $sucursal = "stock1", $tipoCbte = null, $devolverStock = false){
+	static private function procesarProductoVenta($idProducto, $cantidad, $codigoVenta, $sucursal = "stock", $tipoCbte = null, $devolverStock = false){
 		require_once __DIR__ . "/../modelos/productos.modelo.php";
 		
 		$tablaProductos = "productos";
@@ -37,7 +37,7 @@ class ControladorVentas{
 				$traerProductoComponente = ModeloProductos::mdlMostrarProductos($tablaProductos, 'id', $idComponente, 'codigo');
 				
 				if($traerProductoComponente){
-					$stockOriginal = isset($traerProductoComponente[$sucursal]) ? $traerProductoComponente[$sucursal] : ($traerProductoComponente["stock1"] ?? 0);
+					$stockOriginal = isset($traerProductoComponente[$sucursal]) ? $traerProductoComponente[$sucursal] : ($traerProductoComponente["stock"] ?? 0);
 					
 					if($idComponente > 9){ //productos del 1 al 10 no hacen movimientos en stock
 						if($devolverStock){
@@ -52,7 +52,7 @@ class ControladorVentas{
 			}
 		} else {
 			// Producto normal, descontar stock normalmente
-			$stockOriginal = isset($traerProducto[$sucursal]) ? $traerProducto[$sucursal] : ($traerProducto["stock1"] ?? 0);
+			$stockOriginal = isset($traerProducto[$sucursal]) ? $traerProducto[$sucursal] : ($traerProducto["stock"] ?? $traerProducto["stock1"] ?? 0);
 			
 			if($idProducto > 9){ //productos del 1 al 10 no hacen movimientos en stock
 				if($devolverStock){

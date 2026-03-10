@@ -46,18 +46,35 @@ $sql_details = array(
     'host' => $con["host"],
     'charset' => $con["charset"]
 );
-// DB table to use
-//$table = 'productos';
-$table = <<<EOT
- (
+
+// Detectar columnas de stock (compatible con schema antigua stock/deposito y nueva stock/stock2/stock3)
+$pdo = new PDO("mysql:host=".$con["host"].";dbname=".$con["db"].";charset=".($con["charset"] ?? "utf8"), $con["user"], $con["pass"]);
+$cols = $pdo->query("SHOW COLUMNS FROM productos")->fetchAll(PDO::FETCH_COLUMN);
+$tieneStock2 = in_array('stock2', $cols);
+$tieneStock3 = in_array('stock3', $cols);
+$tieneDeposito = in_array('deposito', $cols);
+
+$stockCols = "IFNULL(IF(COALESCE(pd.stock,0)<0,0,COALESCE(pd.stock,0)),0) as stock";
+if ($tieneStock2) {
+    $stockCols .= ", IFNULL(IF(COALESCE(pd.stock2,0)<0,0,COALESCE(pd.stock2,0)),0) as stock2";
+} elseif ($tieneDeposito) {
+    $stockCols .= ", IFNULL(IF(COALESCE(pd.deposito,0)<0,0,COALESCE(pd.deposito,0)),0) as stock2";
+} else {
+    $stockCols .= ", 0 as stock2";
+}
+if ($tieneStock3) {
+    $stockCols .= ", IFNULL(IF(COALESCE(pd.stock3,0)<0,0,COALESCE(pd.stock3,0)),0) as stock3";
+} else {
+    $stockCols .= ", 0 as stock3";
+}
+
+$table = " (
     SELECT
       pd.codigo,
       c.categoria,
       pv.nombre,
       pd.descripcion,
-      IFNULL(IF(COALESCE(pd.stock1,0)<0,0,COALESCE(pd.stock1,0)),0) as stock1,
-      IFNULL(IF(COALESCE(pd.stock2,0)<0,0,COALESCE(pd.stock2,0)),0) as stock2,
-      IFNULL(IF(COALESCE(pd.stock3,0)<0,0,COALESCE(pd.stock3,0)),0) as stock3,
+      $stockCols,
       pd.precio_compra,
       pd.precio_compra_dolar,
       pd.tipo_iva,
@@ -69,8 +86,7 @@ $table = <<<EOT
     LEFT JOIN categorias c ON pd.id_categoria = c.id
     LEFT JOIN proveedores pv ON pd.id_proveedor = pv.id
     WHERE pd.activo = 1
- ) temp
-EOT;
+ ) temp";
 
 // Table's primary key
 $primaryKey = 'id';
@@ -92,11 +108,10 @@ $columns = array(
     array( 'db' => 'nombre',        'dt' => 2 ),
     array( 'db' => 'descripcion',   'dt' => 3 ),
     array(
-        'db' => 'stock1',
+        'db' => 'stock',
         'dt' => 4,
         'formatter' => function( $d, $row ) {
-            $almacenDesde = $_SESSION["sucursal"] ?? 'stock1';
-            if ($almacenDesde === 'stock') $almacenDesde = 'stock1';
+            $almacenDesde = $_SESSION["sucursal"] ?? 'stock';
             if ($almacenDesde === 'deposito') $almacenDesde = 'stock2';
             $stk = isset($row[$almacenDesde]) ? (($row[$almacenDesde] < 0) ? 0 : $row[$almacenDesde]) : 0;
             if($row["id"]>9) {
@@ -115,8 +130,7 @@ $columns = array(
         'db'        => 'id',
         'dt'        => 5,
         'formatter' => function( $d, $row ) {
-            $almacenDesde = $_SESSION["sucursal"] ?? 'stock1';
-            if ($almacenDesde === 'stock') $almacenDesde = 'stock1';
+            $almacenDesde = $_SESSION["sucursal"] ?? 'stock';
             if ($almacenDesde === 'deposito') $almacenDesde = 'stock2';
             $stkDepo = isset($row[$almacenDesde]) ? (($row[$almacenDesde] < 0) ? 0 : $row[$almacenDesde]) : 0;
             $total = $stkDepo;

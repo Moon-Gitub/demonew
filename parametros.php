@@ -12,7 +12,7 @@ class ClaseParametros{
 
   public $LISTAS_DE_PRECIO_HABILITADAS = array('precio_venta'=>'Precio Publico');
 
-  public $SUCURSALES_HABILITADAS = array('stock1'=>'Gutiérrez','stock2'=>'Irigoyen','stock3'=>'Ameghino');
+  public $SUCURSALES_HABILITADAS = array('stock'=>'Gutiérrez','stock2'=>'Irigoyen','stock3'=>'Ameghino');
 
   public $PRECIO_DOLAR = false;
 
