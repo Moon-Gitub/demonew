@@ -64,6 +64,32 @@ class ControladorUsuarios{
 
 						if($respuesta["estado"] == 1){
 
+							// Validar sucursal seleccionada: debe estar en las permitidas para el usuario
+							$sucursalSeleccionada = trim($_POST["ingSucursal"] ?? '');
+							$sucursalesUsuario = trim($respuesta["sucursal"] ?? '');
+							$sucursalValida = false;
+
+							if ($sucursalSeleccionada !== '') {
+								if ($sucursalesUsuario === '' || $sucursalesUsuario === null) {
+									// Usuario sin sucursal asignada: permitir cualquiera de empresa
+									$empresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', $respuesta["empresa"] ?? 1);
+									$almacenes = !empty($empresa['almacenes']) ? json_decode($empresa['almacenes'], true) : [];
+									if (!is_array($almacenes)) $almacenes = [];
+									foreach ($almacenes as $a) {
+										if (($a['stkProd'] ?? '') === $sucursalSeleccionada) { $sucursalValida = true; break; }
+									}
+									if (empty($almacenes)) $sucursalValida = true; // fallback
+								} else {
+									$lista = array_map('trim', explode(',', $sucursalesUsuario));
+									$sucursalValida = in_array($sucursalSeleccionada, $lista, true);
+								}
+							}
+
+							if (!$sucursalValida) {
+								echo '<br><div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> No tiene acceso a la sucursal seleccionada.</div>';
+								return;
+							}
+
 							// Verificar si el hash necesita actualización
 							if(ModeloSeguridad::needsRehash($respuesta["password"])){
 								$nuevoHash = ModeloSeguridad::hashPassword($_POST["ingPassword"]);
@@ -76,7 +102,7 @@ class ControladorUsuarios{
 							$_SESSION["usuario"] = $respuesta["usuario"];
 							$_SESSION["foto"] = $respuesta["foto"];
 							$_SESSION["perfil"] = $respuesta["perfil"];
-							$_SESSION["sucursal"] = $respuesta["sucursal"];
+							$_SESSION["sucursal"] = $sucursalSeleccionada;
 							$_SESSION["puntos_venta"] = $respuesta["puntos_venta"];
 							$_SESSION["listas_precio"] = $respuesta["listas_precio"];
 							$_SESSION['token'] = session_create_id();

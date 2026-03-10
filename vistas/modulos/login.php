@@ -555,6 +555,25 @@ body.login-page .login-box-body,
                aria-label="Contraseña">
       </div>
 
+      <div class="form-group">
+        <select class="form-control" name="ingSucursal" id="sucursalInput" required aria-label="Sucursal">
+          <option value="">Seleccione sucursal</option>
+          <?php
+          $arrAlmacenes = [];
+          if (!empty($arrayEmpresa['almacenes'])) {
+            $arrAlmacenes = json_decode($arrayEmpresa['almacenes'], true);
+          }
+          if (!is_array($arrAlmacenes)) $arrAlmacenes = [];
+          if (empty($arrAlmacenes)) $arrAlmacenes = [['stkProd' => 'stock', 'det' => 'Depósito']];
+          foreach ($arrAlmacenes as $alm) {
+            $val = htmlspecialchars($alm['stkProd'] ?? 'stock');
+            $det = htmlspecialchars($alm['det'] ?? $val);
+            echo '<option value="' . $val . '">' . $det . '</option>';
+          }
+          ?>
+        </select>
+      </div>
+
       <div class="row">
         <div class="col-xs-12">
           <button type="submit" class="btn btn-block btn-login">
