@@ -14,7 +14,7 @@ class ClaseParametros{
 
   public $SUCURSALES_HABILITADAS = array('stock'=>'Gutiérrez','stock2'=>'Irigoyen','stock3'=>'Ameghino');
 
-  public $PRECIO_DOLAR = false;
+  public $PRECIO_DOLAR = true;  // Muestra "Última actualización dólar" en el navbar
 
   //==================================================//
                       //METODOS

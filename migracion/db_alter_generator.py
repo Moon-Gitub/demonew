@@ -6,13 +6,14 @@ NewMoon DB Alter Generator - Sincronizador de estructuras (GUI)
 Compara dos archivos SQL (DESTINO = modelo NewMoon, ORIGEN = sistema a adaptar)
 Y genera un archivo alter_table.sql con:
 - CREATE TABLE para tablas que faltan en ORIGEN
+- ALTER TABLE ... CHANGE COLUMN para renombrar columnas (ej. deposito→stock2, preserva datos)
 - ALTER TABLE ... ADD COLUMN para columnas que faltan en ORIGEN
 - ALTER TABLE ... MODIFY COLUMN para diferencias de tipo/NULL/DEFAULT/AUTO_INCREMENT
 - ALTER TABLE ... ADD INDEX / ADD UNIQUE KEY para índices faltantes
 
 Reglas:
-- NUNCA hace DROP COLUMN ni DROP TABLE
-- NUNCA elimina índices existentes
+- NUNCA hace DROP TABLE
+- RENAME usa CHANGE COLUMN (preserva datos); si origen y destino coexisten, copia datos y elimina origen
 
 Uso en terminal (opcional):
     python3 db_alter_generator.py
@@ -591,6 +592,18 @@ def validar_sintaxis_sql(sql: str) -> Dict[str, any]:
 
 
 # ----------------------------------------------------------------------
+# MAPEO DE RENOMBRADO DE COLUMNAS (preserva datos)
+# ----------------------------------------------------------------------
+# Cuando DESTINO tiene columna X y ORIGEN tiene columna Y (obsoleta),
+# se genera CHANGE COLUMN Y X en lugar de ADD COLUMN X.
+# Formato: {tabla: {columna_origen: columna_destino}}
+# Para agregar más: ej. "deposito2": "stock3", "ameghino": "stock3"
+COLUMN_RENAME_MAP = {
+    "productos": {"deposito": "stock2"},
+}
+
+
+# ----------------------------------------------------------------------
 # LÓGICA DE COMPARACIÓN
 # ----------------------------------------------------------------------
 
@@ -636,12 +649,28 @@ def comparar_estructuras(destino: Dict, origen: Dict) -> List[Dict]:
             
             # Buscar en el diccionario case-insensitive
             if campo_nombre_lower not in campos_ori_lower:
-                cambios.append({
-                    "tipo": "ADD_COLUMN",
-                    "tabla": tabla_nombre,
-                    "campo": campo_nombre,
-                    "definicion": campo_dest,
-                })
+                # ¿Existe columna a renombrar? (ej: deposito → stock2)
+                rename_map = COLUMN_RENAME_MAP.get(tabla_nombre, {})
+                col_origen = None
+                for orig, dest in rename_map.items():
+                    if dest.lower() == campo_nombre_lower and orig.lower() in campos_ori_lower:
+                        col_origen = orig
+                        break
+                if col_origen:
+                    cambios.append({
+                        "tipo": "RENAME_COLUMN",
+                        "tabla": tabla_nombre,
+                        "campo_origen": col_origen,
+                        "campo_destino": campo_nombre,
+                        "definicion": campo_dest,
+                    })
+                else:
+                    cambios.append({
+                        "tipo": "ADD_COLUMN",
+                        "tabla": tabla_nombre,
+                        "campo": campo_nombre,
+                        "definicion": campo_dest,
+                    })
             else:
                 # Usar el nombre real del campo en origen (puede tener diferente case)
                 campo_nombre_real, campo_ori = campos_ori_lower[campo_nombre_lower]
@@ -748,18 +777,22 @@ def generar_sql(cambios: List[Dict], destino: Dict, archivo_destino: str, archiv
 
     total_add = 0
     total_mod = 0
+    total_rename = 0
     total_idx = 0
 
     for tabla, lista in sorted(cambios_por_tabla.items()):
+        renames = [c for c in lista if c["tipo"] == "RENAME_COLUMN"]
         adds = [c for c in lista if c["tipo"] == "ADD_COLUMN"]
         mods = [c for c in lista if c["tipo"] == "MODIFY_COLUMN"]
         idxs = [c for c in lista if c["tipo"] == "ADD_INDEX"]
 
-        if not (adds or mods or idxs):
+        if not (renames or adds or mods or idxs):
             continue
 
         lineas.append("-- ================================================================")
         lineas.append(f"-- TABLA: {tabla}")
+        if renames:
+            lineas.append(f"-- Renombrar: {len(renames)} columna(s) (preserva datos)")
         if adds:
             lineas.append(f"-- Agregar: {len(adds)} campos")
         if mods:
@@ -768,6 +801,60 @@ def generar_sql(cambios: List[Dict], destino: Dict, archivo_destino: str, archiv
             lineas.append(f"-- Índices nuevos: {len(idxs)}")
         lineas.append("-- ================================================================")
         lineas.append("")
+
+        # RENAME_COLUMN: CHANGE COLUMN (preserva datos, idempotente)
+        for c in renames:
+            col_ori = c["campo_origen"]
+            col_dest = c["campo_destino"]
+            d = c["definicion"]
+            tipo = d["tipo"]
+            null_str = "NULL" if d["null"] else "NOT NULL"
+            default = d["default"]
+            if default is not None:
+                default_formateado = formatear_default_sql(default)
+                default_str = f" DEFAULT {default_formateado}"
+            else:
+                default_str = ""
+            change_stmt = f"ALTER TABLE `{tabla}` CHANGE COLUMN `{col_ori}` `{col_dest}` {tipo} {null_str}{default_str}"
+            change_stmt_escaped = change_stmt.replace("'", "''")
+            msg_ok = f"{tabla}: {col_ori}→{col_dest} ya aplicado o no aplicable".replace("'", "''")
+
+            lineas.append(f"-- Renombrar '{col_ori}' → '{col_dest}' (preserva datos)")
+            lineas.append(f"SET @tiene_ori = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS")
+            lineas.append(f"  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '{tabla}' AND COLUMN_NAME = '{col_ori}');")
+            lineas.append(f"SET @tiene_dest = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS")
+            lineas.append(f"  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '{tabla}' AND COLUMN_NAME = '{col_dest}');")
+            lineas.append(f"SET @sql = IF(@tiene_ori = 1 AND @tiene_dest = 0,")
+            lineas.append(f"  '{change_stmt_escaped}',")
+            lineas.append(f"  'SELECT ''{msg_ok}'' AS mensaje');")
+            lineas.append(f"PREPARE stmt FROM @sql;")
+            lineas.append(f"EXECUTE stmt;")
+            lineas.append(f"DEALLOCATE PREPARE stmt;")
+            lineas.append("")
+            total_rename += 1
+
+            # Caso: ambos existen (script anterior mal ejecutado) → copiar datos y eliminar origen
+            lineas.append(f"-- Si ambos existen: copiar datos de '{col_ori}' a '{col_dest}' y eliminar '{col_ori}'")
+            update_stmt = f"UPDATE `{tabla}` SET `{col_dest}` = COALESCE(NULLIF(`{col_dest}`, 0), `{col_ori}`) WHERE `{col_ori}` IS NOT NULL"
+            drop_stmt = f"ALTER TABLE `{tabla}` DROP COLUMN `{col_ori}`"
+            update_escaped = update_stmt.replace("'", "''")
+            drop_escaped = drop_stmt.replace("'", "''")
+            lineas.append(f"SET @tiene_ori = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS")
+            lineas.append(f"  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '{tabla}' AND COLUMN_NAME = '{col_ori}');")
+            lineas.append(f"SET @tiene_dest = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS")
+            lineas.append(f"  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '{tabla}' AND COLUMN_NAME = '{col_dest}');")
+            lineas.append(f"SET @sql = IF(@tiene_ori = 1 AND @tiene_dest = 1, '{update_escaped}', 'SELECT 1');")
+            lineas.append(f"PREPARE stmt FROM @sql;")
+            lineas.append(f"EXECUTE stmt;")
+            lineas.append(f"DEALLOCATE PREPARE stmt;")
+            lineas.append(f"SET @sql = IF(@tiene_ori = 1 AND @tiene_dest = 1, '{drop_escaped}', 'SELECT 1');")
+            lineas.append(f"PREPARE stmt FROM @sql;")
+            lineas.append(f"EXECUTE stmt;")
+            lineas.append(f"DEALLOCATE PREPARE stmt;")
+            lineas.append("")
+
+        if renames:
+            lineas.append("")
 
         # Columnas que pasan a NOT NULL y en DESTINO tienen UNIQUE sobre esa columna:
         # rellenar NULL/vacío antes de MODIFY para evitar #1062 (aunque el UNIQUE ya exista en origen)
@@ -919,6 +1006,7 @@ def generar_sql(cambios: List[Dict], destino: Dict, archivo_destino: str, archiv
     lineas.append("-- RESUMEN")
     lineas.append("-- ================================================================")
     lineas.append(f"-- Tablas creadas: {len(tablas_crear)}")
+    lineas.append(f"-- Columnas renombradas: {total_rename}")
     lineas.append(f"-- Columnas agregadas: {total_add}")
     lineas.append(f"-- Columnas modificadas: {total_mod}")
     lineas.append(f"-- Índices agregados: {total_idx}")
@@ -1455,6 +1543,7 @@ class AlterGeneratorApp:
             
             mensaje_exito = f"✅ Generado: {out_path}\n\n"
             mensaje_exito += f"Tablas: {len([c for c in cambios if c['tipo'] == 'CREATE_TABLE'])}\n"
+            mensaje_exito += f"Columnas renombradas: {sum(1 for c in cambios if c['tipo'] == 'RENAME_COLUMN')}\n"
             mensaje_exito += f"Columnas agregadas: {sum(1 for c in cambios if c['tipo'] == 'ADD_COLUMN')}\n"
             mensaje_exito += f"Columnas modificadas: {sum(1 for c in cambios if c['tipo'] == 'MODIFY_COLUMN')}\n"
             mensaje_exito += f"Índices agregados: {sum(1 for c in cambios if c['tipo'] == 'ADD_INDEX')}\n"
