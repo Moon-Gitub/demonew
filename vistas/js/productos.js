@@ -48,7 +48,37 @@ var tablaProd = $('#tablaProductos').DataTable({
         [10, 25, 50, -1],
         ['10 filas', '25 filas', '50 filas', 'Todas'],
     ],
-    "stateSave": true
+    "stateSave": true,
+    "stateKey": "tablaProductos_v2",
+    "stateLoadParams": function (settings, data) {
+        // Forzar ocultar columnas auxiliares (stock2, stock3, id, etc.) al cargar estado guardado
+        if (data.columns) {
+            [7, 11, 12, 13, 14, 15].forEach(function(i) {
+                if (data.columns[i]) data.columns[i].visible = false;
+            });
+        }
+    },
+    "stateSaveParams": function (settings, data) {
+        // Nunca guardar como visibles las columnas auxiliares
+        if (data.columns) {
+            [7, 11, 12, 13, 14, 15].forEach(function(i) {
+                if (data.columns[i]) data.columns[i].visible = false;
+            });
+        }
+    },
+    "initComplete": function(settings, json) {
+        // Sincronizar estado visual del selector de columnas con la visibilidad real
+        var api = new $.fn.dataTable.Api(settings);
+        $('a.toggle-vis').each(function() {
+            var colIdx = parseInt($(this).attr('data-column'), 10);
+            var col = api.column(colIdx);
+            if (col.visible()) {
+                $(this).addClass('active');
+            } else {
+                $(this).removeClass('active');
+            }
+        });
+    }
 });
 
 tablaProd.columns().every(function () {

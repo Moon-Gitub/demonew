@@ -364,7 +364,7 @@
             <span class="separator">|</span>
             <a class="toggle-vis active" data-column="2">Proveedor</a>
             <span class="separator">|</span>
-            <a class="toggle-vis active" data-column="3">Descripcion</a>
+            <a class="toggle-vis active" data-column="3">Descripción</a>
             <span class="separator">|</span>
             <a class="toggle-vis active" data-column="4">STK</a>
             <span class="separator">|</span>
@@ -372,7 +372,7 @@
             <span class="separator">|</span>
             <a class="toggle-vis active" data-column="6">$ Compra</a>
             <span class="separator">|</span>
-            <a class="toggle-vis active" data-column="7">US$ Compra</a>
+            <a class="toggle-vis" data-column="7">US$ Compra</a>
             <span class="separator">|</span>
             <a class="toggle-vis active" data-column="8">IVA</a>
             <span class="separator">|</span>
