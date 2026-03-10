@@ -865,6 +865,11 @@ class ModeloProductos{
 	static public function mdlIngresarAjusteStockProducto($datos){
 
         $almacen = $datos['almacen'];
+		// Mapear stock2 -> deposito si la tabla no tiene stock2 (schema antigua)
+		$cols = Conexion::conectar()->query("SHOW COLUMNS FROM productos")->fetchAll(PDO::FETCH_COLUMN);
+		if ($almacen === 'stock2' && !in_array('stock2', $cols) && in_array('deposito', $cols)) {
+			$almacen = 'deposito';
+		}
 		$stmtEditar = Conexion::conectar()->prepare("UPDATE productos SET $almacen = :stock, nombre_usuario = :nombre_usuario, cambio_desde = 'Ajuste de Stock' WHERE id = :id");
 
 		$stmtEditar->bindParam(":id", $datos["id"], PDO::PARAM_STR);

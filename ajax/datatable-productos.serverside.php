@@ -113,7 +113,9 @@ $columns = array(
         'formatter' => function( $d, $row ) {
             $almacenDesde = $_SESSION["sucursal"] ?? 'stock';
             if ($almacenDesde === 'deposito') $almacenDesde = 'stock2';
-            $stk = isset($row[$almacenDesde]) ? (($row[$almacenDesde] < 0) ? 0 : $row[$almacenDesde]) : 0;
+            if ($almacenDesde === 'stock1') $almacenDesde = 'stock';
+            if (!isset($row[$almacenDesde])) $almacenDesde = 'stock';
+            $stk = isset($row[$almacenDesde]) ? (($row[$almacenDesde] < 0) ? 0 : floatval($row[$almacenDesde])) : 0;
             if($row["id"]>9) {
                 if($stk <= $row["stock_bajo"]){
                     return '<h4><a class="btnEditarProductoAjusteStock" data-toggle="modal" data-target="#modalEditarProductoAjusteStock" idProducto="'.$row["id"].'" almacenDesde="'.htmlspecialchars($almacenDesde).'"><span class="label label-danger">'.number_format($stk,2).'</span></a></h4>';
@@ -132,8 +134,10 @@ $columns = array(
         'formatter' => function( $d, $row ) {
             $almacenDesde = $_SESSION["sucursal"] ?? 'stock';
             if ($almacenDesde === 'deposito') $almacenDesde = 'stock2';
-            $stkDepo = isset($row[$almacenDesde]) ? (($row[$almacenDesde] < 0) ? 0 : $row[$almacenDesde]) : 0;
-            $total = $stkDepo;
+            if ($almacenDesde === 'stock1') $almacenDesde = 'stock';
+            if (!isset($row[$almacenDesde])) $almacenDesde = 'stock';
+            $total = floatval($row["stock"] ?? 0) + floatval($row["stock2"] ?? 0) + floatval($row["stock3"] ?? 0);
+            if ($total < 0) $total = 0;
 
             if($total <= $row["stock_bajo"]){
 

@@ -85,9 +85,9 @@ class AjaxProductos{
               "imagen" => $combo["imagen"] ? $combo["imagen"] : ($productoBase["imagen"] ?? ""),
               "id_categoria" => $productoBase["id_categoria"] ?? null,
               "id_proveedor" => $productoBase["id_proveedor"] ?? null,
-              "stock" => ($productoBase["stock1"] ?? 0) + ($productoBase["stock2"] ?? 0) + ($productoBase["stock3"] ?? 0),
-              "stock_1" => $productoBase["stock1"] ?? 0,
-              "stock_2" => $productoBase["stock2"] ?? 0,
+              "stock" => ($productoBase["stock"] ?? 0) + ($productoBase["stock2"] ?? $productoBase["deposito"] ?? 0) + ($productoBase["stock3"] ?? 0),
+              "stock_1" => $productoBase["stock"] ?? 0,
+              "stock_2" => $productoBase["stock2"] ?? $productoBase["deposito"] ?? 0,
               "stock_3" => $productoBase["stock3"] ?? 0,
               "es_combo" => true, // Flag para indicar que es combo
               "id_combo" => $combo["id"] // ID del combo para referencia
@@ -132,19 +132,25 @@ class AjaxProductos{
 
       $respuesta = ControladorProductos::ctrMostrarProductos($item, $valor, $orden);
 
-      // Devolver solo el primer producto (debería ser único por ID)
-      if(is_array($respuesta) && !empty($respuesta) && isset($respuesta[0])){
-        echo json_encode($respuesta[0]);
-        exit; // Asegurar que no se ejecute más código
-      } else if(is_array($respuesta) && empty($respuesta)){
-        // Si el array está vacío, devolver error
+      // Devolver producto (puede ser array indexado o asociativo único)
+      $prod = null;
+      if(is_array($respuesta) && isset($respuesta[0]) && !isset($respuesta["id"])){
+        $prod = $respuesta[0];
+      } else if(is_array($respuesta) && (isset($respuesta["id"]) || !empty($respuesta))){
+        $prod = $respuesta;
+      } else if(!$respuesta || (is_array($respuesta) && empty($respuesta))){
         echo json_encode(array("error" => "Producto no encontrado"));
         exit;
-      } else {
-        // Si no es array, devolver tal cual
-        echo json_encode($respuesta);
-        exit;
       }
+      if ($prod) {
+        // Normalizar stock: siempre tener stock, stock2, stock3 (para modal ajuste y datatable)
+        if (!isset($prod["stock2"]) && isset($prod["deposito"])) $prod["stock2"] = $prod["deposito"];
+        if (!isset($prod["stock2"])) $prod["stock2"] = 0;
+        if (!isset($prod["stock3"])) $prod["stock3"] = 0;
+        if (!isset($prod["stock"])) $prod["stock"] = 0;
+        echo json_encode($prod);
+      }
+      exit;
 
     }else if($this->traerProductos == "ok"){
 
