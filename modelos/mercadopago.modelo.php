@@ -262,13 +262,14 @@ class ModeloMercadoPago {
 				return null;
 			}
 
-			// Buscar intentos pendientes recientes (últimos 60 minutos) para este cliente
-			// AUMENTADO A 60 MINUTOS para evitar crear nuevas preferencias innecesariamente
+			// Buscar intentos pendientes para este cliente
+			// NOTA: Sin filtro de fecha para evitar desajuste de zona horaria (PHP Argentina vs MySQL UTC)
+			// que hacía que no se encontraran intentos recién creados. El registrar expira intents >24h
+			// al intentar crear uno nuevo. Preferencias MP expiran ~72h; si está vencida, MP mostrará error.
 			$sql = "SELECT id, preference_id, monto, descripcion, fecha_creacion 
 				FROM mercadopago_intentos 
 				WHERE id_cliente_moon = :id_cliente 
-				AND estado = 'pendiente' 
-				AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 60 MINUTE)";
+				AND estado = 'pendiente'";
 			
 			$params = [":id_cliente" => $idCliente];
 			
