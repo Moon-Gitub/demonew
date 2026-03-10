@@ -244,9 +244,12 @@ class ModeloProductos{
 		}
 
 		// Mapear sucursal a columna real (compatibilidad schema antigua stock/deposito vs nueva stock/stock2/stock3)
+		if ($item1 === 'stock1') $item1 = 'stock';
+		if (empty($item1)) return "ok";
 		$col = Conexion::conectar()->query("SHOW COLUMNS FROM productos")->fetchAll(PDO::FETCH_COLUMN);
 		if (!in_array($item1, $col, true)) {
 			if ($item1 === 'stock2' && in_array('deposito', $col, true)) $item1 = 'deposito';
+			elseif ($item1 === 'deposito' && in_array('stock2', $col, true)) $item1 = 'stock2';
 			else return "ok"; // columna no existe, no actualizar
 		}
 
@@ -351,6 +354,14 @@ class ModeloProductos{
 			$nomUsuario = $_SERVER['nombre'];
 		} else {
 			$nomUsuario = '(sin especificar)';
+		}
+
+		// Mapear sucursal a columna real (stock1->stock, stock2->deposito si no existe stock2)
+		if ($sucursal === 'stock1') $sucursal = 'stock';
+		$col = Conexion::conectar()->query("SHOW COLUMNS FROM productos")->fetchAll(PDO::FETCH_COLUMN);
+		if (!in_array($sucursal, $col, true)) {
+			if ($sucursal === 'stock2' && in_array('deposito', $col, true)) $sucursal = 'deposito';
+			elseif ($sucursal === 'stock3' && !in_array('stock3', $col, true)) return "ok"; // stock3 no existe
 		}
 
 		$stmt = Conexion::conectar()->prepare("UPDATE productos SET $sucursal = :stock, cambio_desde = :cambio_desde, nombre_usuario = :nombre_usuario WHERE id = :id");
@@ -865,11 +876,10 @@ class ModeloProductos{
 	static public function mdlIngresarAjusteStockProducto($datos){
 
         $almacen = $datos['almacen'];
-		// Mapear stock2 -> deposito si la tabla no tiene stock2 (schema antigua)
+		// Mapear a columnas reales (schema antigua vs nueva)
 		$cols = Conexion::conectar()->query("SHOW COLUMNS FROM productos")->fetchAll(PDO::FETCH_COLUMN);
-		if ($almacen === 'stock2' && !in_array('stock2', $cols) && in_array('deposito', $cols)) {
-			$almacen = 'deposito';
-		}
+		if ($almacen === 'stock2' && !in_array('stock2', $cols) && in_array('deposito', $cols)) $almacen = 'deposito';
+		if ($almacen === 'stock3' && !in_array('stock3', $cols) && in_array('ameghino', $cols)) $almacen = 'ameghino';
 		$stmtEditar = Conexion::conectar()->prepare("UPDATE productos SET $almacen = :stock, nombre_usuario = :nombre_usuario, cambio_desde = 'Ajuste de Stock' WHERE id = :id");
 
 		$stmtEditar->bindParam(":id", $datos["id"], PDO::PARAM_STR);

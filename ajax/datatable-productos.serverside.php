@@ -111,10 +111,9 @@ $columns = array(
         'db' => 'stock',
         'dt' => 4,
         'formatter' => function( $d, $row ) {
-            $almacenDesde = $_SESSION["sucursal"] ?? 'stock';
-            if ($almacenDesde === 'deposito') $almacenDesde = 'stock2';
-            if ($almacenDesde === 'stock1') $almacenDesde = 'stock';
-            if (!isset($row[$almacenDesde])) $almacenDesde = 'stock';
+            $suc = $_SESSION["sucursal"] ?? 'stock';
+            $map = ['stock'=>'stock','stock1'=>'stock','deposito'=>'stock2','stock2'=>'stock2','stock3'=>'stock3','ameghino'=>'stock3','deposito2'=>'stock3'];
+            $almacenDesde = $map[$suc] ?? (isset($row[$suc]) ? $suc : 'stock');
             $stk = isset($row[$almacenDesde]) ? (($row[$almacenDesde] < 0) ? 0 : floatval($row[$almacenDesde])) : 0;
             if($row["id"]>9) {
                 if($stk <= $row["stock_bajo"]){
