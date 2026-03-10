@@ -131,10 +131,6 @@ $columns = array(
         'db'        => 'id',
         'dt'        => 5,
         'formatter' => function( $d, $row ) {
-            $almacenDesde = $_SESSION["sucursal"] ?? 'stock';
-            if ($almacenDesde === 'deposito') $almacenDesde = 'stock2';
-            if ($almacenDesde === 'stock1') $almacenDesde = 'stock';
-            if (!isset($row[$almacenDesde])) $almacenDesde = 'stock';
             $total = floatval($row["stock"] ?? 0) + floatval($row["stock2"] ?? 0) + floatval($row["stock3"] ?? 0);
             if ($total < 0) $total = 0;
 
