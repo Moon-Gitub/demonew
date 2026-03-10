@@ -67,6 +67,14 @@ $(document).ready(function(){
 	console.log("Registrando evento para .btnEditarUsuario");
 });
 
+// URL base para AJAX (funciona en subdirectorios y sistemas migrados)
+var _urlBaseAjax = (function(){
+	var path = window.location.pathname;
+	// Si estamos en /usuarios o /pos/usuarios, obtener / o /pos
+	var base = path.replace(/\/[^/]*$/, '') || '/';
+	return base + (base.endsWith('/') ? '' : '/') + 'ajax/usuarios.ajax.php';
+})();
+
 $(".tablas").on("click", ".btnEditarUsuario", function(e){
 	
 	// Prevenir comportamiento por defecto
@@ -93,11 +101,11 @@ $(".tablas").on("click", ".btnEditarUsuario", function(e){
 	var datos = new FormData();
 	datos.append("idUsuario", idUsuario);
 	
-	console.log("Enviando petición AJAX...");
+	console.log("Enviando petición AJAX a:", _urlBaseAjax);
 
 	$.ajax({
 
-		url:"ajax/usuarios.ajax.php",
+		url: _urlBaseAjax,
 		method: "POST",
 		data: datos,
 		cache: false,
@@ -149,7 +157,7 @@ $(".tablas").on("click", ".btnEditarUsuario", function(e){
 			$("#editarRazonSocial").off("change.sucursales").on("change.sucursales", function() {
 				var idEmpresa = $(this).val();
 				if (!idEmpresa) return;
-				$.post("ajax/usuarios.ajax.php", { empresaId: idEmpresa, getAlmacenes: 1 }, function(almacenes) {
+				$.post(_urlBaseAjax, { empresaId: idEmpresa, getAlmacenes: 1 }, function(almacenes) {
 					if (Array.isArray(almacenes)) {
 						renderizarSucursalesCheckboxes(almacenes, "");
 					}
@@ -260,7 +268,7 @@ $(".tablas").on("click", ".btnActivar", function(){
 
   	$.ajax({
 
-	  url:"ajax/usuarios.ajax.php",
+	  url: _urlBaseAjax,
 	  method: "POST",
 	  data: datos,
 	  cache: false,
@@ -297,7 +305,7 @@ $("#nuevoUsuario").change(function(){
 	var datos = new FormData();
 	datos.append("validarUsuario", usuario);
 	 $.ajax({
-	    url:"ajax/usuarios.ajax.php",
+	    url: _urlBaseAjax,
 	    method:"POST",
 	    data: datos,
 	    cache: false,

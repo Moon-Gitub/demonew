@@ -596,19 +596,20 @@ def validar_sintaxis_sql(sql: str) -> Dict[str, any]:
 # ----------------------------------------------------------------------
 # Cuando DESTINO tiene columna X y ORIGEN tiene columna Y (obsoleta),
 # se genera CHANGE COLUMN Y X en lugar de ADD COLUMN X.
-# Formato: {tabla: {columna_origen: columna_destino}}
+# Formato: {tabla: {columna_destino: [col_origen1, col_origen2, ...]}}
+# Orden de la lista = prioridad (se usa la primera que exista y no esté usada).
 #
-# Productos - columnas de stock/depósito:
-#   deposito  → stock2  (schema antigua: stock, deposito)
-#   deposito2 → stock3  (schema con 3 depósitos: stock, deposito, deposito2)
-#   ameghino  → stock3  (alternativa: stock, deposito, ameghino)
-#   stock2    → stock2  (ya correcto, no aplica)
-#   stock3    → stock3  (ya correcto, no aplica)
+# PRODUCTOS - La tabla destino SIEMPRE debe quedar con: stock, stock2, stock3
+# (stock = sucursal 1, stock2 = sucursal 2, stock3 = sucursal 3).
+# Se mapean variantes de origen a estas columnas estándar.
+#
+# deposito2 puede ser stock2 (si solo hay 2 cols) o stock3 (si hay deposito+deposito2).
+# Por eso stock2 incluye deposito2 como fallback; se procesa stock2 antes que stock3.
 COLUMN_RENAME_MAP = {
     "productos": {
-        "deposito": "stock2",
-        "deposito2": "stock3",
-        "ameghino": "stock3",
+        "stock": ["stock1", "almacen", "deposito1"],
+        "stock2": ["deposito", "almacen2", "sucursal", "deposito2"],
+        "stock3": ["deposito2", "deposito3", "almacen3", "ameghino", "sucursal2", "sucursal3"],
     },
 }
 
@@ -653,6 +654,9 @@ def comparar_estructuras(destino: Dict, origen: Dict) -> List[Dict]:
         # MySQL es case-insensitive para nombres de columnas (depende de la configuración)
         campos_ori_lower = {k.lower(): (k, v) for k, v in campos_ori.items()}
 
+        # Columnas origen ya usadas en un RENAME (cada origen solo puede mapear a un destino)
+        columnas_origen_usadas: set = set()
+
         # Campos
         for campo_nombre, campo_dest in campos_dest.items():
             campo_nombre_lower = campo_nombre.lower()
@@ -661,12 +665,16 @@ def comparar_estructuras(destino: Dict, origen: Dict) -> List[Dict]:
             if campo_nombre_lower not in campos_ori_lower:
                 # ¿Existe columna a renombrar? (ej: deposito → stock2)
                 rename_map = COLUMN_RENAME_MAP.get(tabla_nombre, {})
+                candidatos = rename_map.get(campo_nombre_lower, [])
                 col_origen = None
-                for orig, dest in rename_map.items():
-                    if dest.lower() == campo_nombre_lower and orig.lower() in campos_ori_lower:
+                for orig in candidatos:
+                    orig_lower = orig.lower()
+                    if (orig_lower in campos_ori_lower
+                            and orig_lower not in columnas_origen_usadas):
                         col_origen = orig
                         break
                 if col_origen:
+                    columnas_origen_usadas.add(col_origen.lower())
                     cambios.append({
                         "tipo": "RENAME_COLUMN",
                         "tabla": tabla_nombre,
@@ -904,8 +912,18 @@ def generar_sql(cambios: List[Dict], destino: Dict, archivo_destino: str, archiv
                 lineas.append(f"UPDATE `{tabla}` SET `{col}` = {expr} WHERE `{col}` IS NULL OR TRIM(IFNULL(`{col}`,'')) = '';")
                 lineas.append("")
 
+        # Orden de columnas en DESTINO (para ADD COLUMN ... AFTER y mantener orden correcto)
+        tabla_dest = destino.get(tabla, {})
+        campos_dest = tabla_dest.get("campos", {})
+        columnas_orden_dest = sorted(
+            campos_dest.items(),
+            key=lambda x: x[1].get("posicion", 999),
+        )
+
         # ADD COLUMN con verificación de existencia (idempotente)
-        for c in adds:
+        # Ordenar adds por posición en destino para que stock3 quede después de stock2, etc.
+        adds_ordenados = sorted(adds, key=lambda c: c["definicion"].get("posicion", 999))
+        for c in adds_ordenados:
             campo = c["campo"]
             d = c["definicion"]
             tipo = d["tipo"]
@@ -919,8 +937,17 @@ def generar_sql(cambios: List[Dict], destino: Dict, archivo_destino: str, archiv
             else:
                 default_str = ""
             
+            # Posición: AFTER columna_anterior para mantener orden (stock, stock2, stock3, ...)
+            after_col = None
+            for i, (nom, info) in enumerate(columnas_orden_dest):
+                if nom == campo:
+                    if i > 0:
+                        after_col = columnas_orden_dest[i - 1][0]
+                    break
+            posicion_sql = f" AFTER `{after_col}`" if after_col else ""
+            
             # Construir el ALTER TABLE statement
-            alter_stmt = f"ALTER TABLE `{tabla}` ADD COLUMN `{campo}` {tipo} {null_str}{default_str}"
+            alter_stmt = f"ALTER TABLE `{tabla}` ADD COLUMN `{campo}` {tipo} {null_str}{default_str}{posicion_sql}"
             
             # Escapar comillas simples dentro del string SQL para PREPARE
             # Las comillas simples dentro de un string SQL deben duplicarse

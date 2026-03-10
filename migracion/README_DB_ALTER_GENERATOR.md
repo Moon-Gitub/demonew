@@ -76,6 +76,7 @@ python3 db_alter_generator.py
 1. **Cargar DESTINO (modelo)**
    - Click en "📁 Cargar DESTINO (modelo)"
    - Seleccionar el archivo SQL que representa la estructura deseada (modelo)
+   - **Recomendado:** Usar `db/modelo-estructura-completa.sql` como DESTINO para que todas las migraciones converjan a la estructura estándar (productos con stock, stock2, stock3 en orden correcto, etc.)
 
 2. **Cargar ORIGEN**
    - Click en "📁 Cargar ORIGEN"
@@ -92,6 +93,17 @@ python3 db_alter_generator.py
    - Click en "🚀 Generar alter_table.sql"
    - Elegir ubicación y nombre del archivo
    - El script se generará con todas las validaciones aplicadas
+
+---
+
+## 📦 Archivo modelo estándar
+
+El archivo **`db/modelo-estructura-completa.sql`** contiene la estructura destino canónica para todas las migraciones. Incluye:
+
+- **productos:** stock, stock2, stock3 en orden correcto (después de imagen, antes de stock_medio)
+- Todas las tablas del sistema: balanzas_formatos, cajas, categorias, clientes, combos, compras, empresa, integraciones, listas_precio, medios_pago, pantallas, pedidos, permisos_rol, presupuestos, productos, productos_historial, productos_venta, proveedores, usuarios, ventas, etc.
+
+**Uso:** Seleccionar este archivo como DESTINO en la GUI para que el script genere ALTERs que transformen cualquier ORIGEN a esta estructura exacta.
 
 ---
 

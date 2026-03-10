@@ -93,21 +93,34 @@ class Conexion{
 			throw new Exception($mensaje);
 		}
 
-		try {
-			$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-			$options = [
-				PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-				PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-				PDO::ATTR_EMULATE_PREPARES => false,
-			];
-			
-			$link = new PDO($dsn, $user, $pass, $options);
-			$link->exec("set names utf8");
-			return $link;
-		} catch (PDOException $e) {
-			error_log("Error conectando a BD local: Host=$host, DB=$db, User=$user - " . $e->getMessage());
-			throw new Exception("Error de conexión a base de datos local: " . $e->getMessage());
+		$options = [
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+			PDO::ATTR_EMULATE_PREPARES => false,
+		];
+
+		$hosts = [$host];
+		// En algunos hostings (ej. Hostinger), localhost y 127.0.0.1 son tratados distinto por MySQL
+		if ($host === 'localhost') {
+			$hosts[] = '127.0.0.1';
+		} elseif ($host === '127.0.0.1') {
+			$hosts[] = 'localhost';
 		}
+
+		$lastError = null;
+		foreach ($hosts as $h) {
+			try {
+				$dsn = "mysql:host=$h;dbname=$db;charset=$charset";
+				$link = new PDO($dsn, $user, $pass, $options);
+				$link->exec("set names utf8");
+				return $link;
+			} catch (PDOException $e) {
+				$lastError = $e;
+				error_log("Error conectando a BD local: Host=$h, DB=$db, User=$user - " . $e->getMessage());
+			}
+		}
+
+		throw new Exception("Error de conexión a base de datos local: " . $lastError->getMessage());
 
 	}
 

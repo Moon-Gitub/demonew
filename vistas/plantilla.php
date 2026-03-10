@@ -104,8 +104,9 @@
     <script src="vistas/bower_components/datatables.net-bs/js/dataTables.buttons.min.js"></script>
     <script src="vistas/bower_components/datatables.net-bs/js/buttons.flash.min.js"></script>
     <script src="vistas/bower_components/datatables.net-bs/js/jszip.min.js"></script>
-    <script src="vistas/bower_components/datatables.net-bs/js/pdfmake.min.js"></script>
-    <script src="vistas/bower_components/datatables.net-bs/js/vfs_fonts.js"></script>
+    <!-- pdfmake y vfs_fonts desde CDN (más fiable en Hostinger/subcarpetas): evita error "savePath" por rutas relativas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.min.js"></script>
     <script src="vistas/bower_components/datatables.net-bs/js/buttons.html5.min.js"></script>
     <script src="vistas/bower_components/datatables.net-bs/js/buttons.print.min.js"></script>
     <script src="vistas/bower_components/datatables.net-bs/js/dataTables.select.min.js"></script>

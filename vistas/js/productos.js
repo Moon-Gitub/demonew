@@ -39,7 +39,7 @@ var tablaProd = $('#tablaProductos').DataTable({
 	"processing": true,
 	"serverSide": true,
 	"dom": 'Bfrtip',
-	"buttons":GL_DATATABLE_BOTONES , 
+	"buttons": GL_DATATABLE_BOTONES,
 	"language":GL_DATATABLE_LENGUAJE,
 	"columnDefs": [
 			{ "targets": [7,11,12,13,14,15], "visible": false, "searchable": false }
