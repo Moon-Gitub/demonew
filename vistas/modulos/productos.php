@@ -399,6 +399,8 @@
            <th>id</th>
            <th>stk medio</th>
            <th>stk bajo</th>
+           <th></th>
+           <th></th>
          </tr>
         </thead>
         <tfoot>
@@ -417,6 +419,8 @@
            <th>id</th>
            <th>stk medio</th>
            <th>stk bajo</th>
+           <th></th>
+           <th></th>
          </tr>
         </tfoot>
        </table>
