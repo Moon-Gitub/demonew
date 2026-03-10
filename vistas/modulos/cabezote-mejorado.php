@@ -885,15 +885,25 @@ MODAL COBRO MEJORADO
                         </div>
                     </div>
                     
-                    <!-- Botón Mercado Pago (id para selector único; renderizar cuando modal visible) -->
-                    <div id="checkout-btn-container" class="checkout-btn" style="margin-bottom: 15px; min-height: 60px;"></div>
-                    <?php $initPoint = isset($preference->init_point) ? $preference->init_point : (isset($preference->sandbox_init_point) ? $preference->sandbox_init_point : ''); ?>
-                    <?php if (!empty($initPoint)) { ?>
-                    <div id="link-pago-fallback" style="margin-top: 10px; text-align: center;">
-                        <a href="<?php echo htmlspecialchars($initPoint); ?>" target="_blank" class="btn btn-success btn-lg" style="background: #28a745 !important;">
-                            <i class="fa fa-external-link"></i> Ir a Mercado Pago a pagar
+                    <?php
+                    // URL de pago: init_point de la API o construida desde preference_id (siempre funciona)
+                    $pagoUrl = '';
+                    if (isset($preference->init_point) && !empty($preference->init_point)) {
+                        $pagoUrl = $preference->init_point;
+                    } elseif (isset($preference->sandbox_init_point) && !empty($preference->sandbox_init_point)) {
+                        $pagoUrl = $preference->sandbox_init_point;
+                    } elseif (isset($preference->id) && !empty($preference->id)) {
+                        $pagoUrl = 'https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=' . urlencode($preference->id);
+                    }
+                    ?>
+                    <!-- BOTÓN PRINCIPAL: enlace directo (100% fiable, no depende del SDK) -->
+                    <?php if (!empty($pagoUrl)) { ?>
+                    <p style="text-align: center; margin: 20px 0;">
+                        <a href="<?php echo htmlspecialchars($pagoUrl); ?>" target="_blank" class="btn btn-lg" style="background: linear-gradient(135deg, #009ee3 0%, #0077b6 100%) !important; color: white !important; font-size: 22px !important; font-weight: 700 !important; padding: 25px 40px !important; border: none !important; border-radius: 12px !important; box-shadow: 0 8px 25px rgba(0, 158, 227, 0.4) !important;">
+                            <i class="fa fa-credit-card"></i> Pagar con Mercado Pago
                         </a>
-                    </div>
+                    </p>
+                    <p style="text-align: center; font-size: 13px; color: #6c757d;">Se abrirá la página segura de Mercado Pago para completar el pago</p>
                     <?php } ?>
                     
                     <?php
@@ -940,75 +950,21 @@ MODAL COBRO MEJORADO
                     ?>
                 </div>
 
-                <script src="https://sdk.mercadopago.com/js/v2"></script>
                 <script type="text/javascript">
-                    var clavePublicaMP = document.getElementById('hiddenClavePublicaMP') ? document.getElementById('hiddenClavePublicaMP').value : '';
-                    var preferenceIdActual = '<?php echo $preference->id; ?>';
-                    var walletBrickController = null;
-
-                    // Migrado a Checkout Bricks (Wallet Brick) - API actual de MP 2025-2026
-                    // mp.checkout() está deprecado; bricks.create("wallet") es la integración soportada
-                    function renderizarBotonMP() {
-                        var container = document.getElementById('checkout-btn-container');
-                        if (!container) return;
-                        if (!clavePublicaMP || !preferenceIdActual) {
-                            container.innerHTML = '<div style="color:#dc3545;padding:15px;">Error: credenciales MP no configuradas. Verifique MP_PUBLIC_KEY en .env</div>';
-                            return;
-                        }
-                        if (typeof MercadoPago === 'undefined') {
-                            container.innerHTML = '<div style="color:#856404;padding:15px;">Cargando Mercado Pago... (recargue si tarda)</div>';
-                            setTimeout(renderizarBotonMP, 500);
-                            return;
-                        }
-                        container.innerHTML = '';
-                        var mp = new MercadoPago(clavePublicaMP, {locale: "es-AR"});
-                        var bricksBuilder = mp.bricks();
-                        bricksBuilder.create("wallet", "checkout-btn-container", {
-                            initialization: { preferenceId: preferenceIdActual },
-                            customization: { theme: "default" }
-                        }).then(function(controller) {
-                            walletBrickController = controller;
-                        }).catch(function(err) {
-                            console.error('Error MercadoPago Wallet Brick:', err);
-                            container.innerHTML = '<div style="color:#dc3545;padding:15px;">Error: ' + (err.message || err) + '</div>';
-                        });
-                    }
-
+                    // Verificación de pagos QR pendientes al abrir modal
                     $('#modalCobro').on('shown.bs.modal', function() {
-                        setTimeout(function() { renderizarBotonMP(); }, 200);
-                        // Verificar pagos QR pendientes
                         setTimeout(function() {
                             $.ajax({
                                 url: 'ajax/verificar-pagos-qr-pendientes.ajax.php',
                                 method: 'GET',
                                 dataType: 'json',
                                 success: function(resp) {
-                                    if (resp.pagos_registrados > 0) {
-                                        console.log('Pagos QR encontrados y registrados:', resp);
-                                        // Recargar para mostrar el saldo actualizado
+                                    if (resp && resp.pagos_registrados > 0) {
                                         location.reload();
                                     }
-                                },
-                                error: function() {
-                                    // Error silencioso
                                 }
                             });
                         }, 3000);
-                    });
-
-                    // Fallback: si el modal ya está visible al cargar (ej. cliente bloqueado), renderizar
-                    $(document).ready(function() {
-                        if ($('#modalCobro').hasClass('in') || $('#modalCobro').hasClass('show') || $('#modalCobro').is(':visible')) {
-                            setTimeout(renderizarBotonMP, 400);
-                        }
-                    });
-
-                    // Limpiar Brick al cerrar modal (evita fugas de memoria)
-                    $('#modalCobro').on('hidden.bs.modal', function() {
-                        if (typeof walletBrickController !== 'undefined' && walletBrickController && typeof walletBrickController.unmount === 'function') {
-                            try { walletBrickController.unmount(); } catch(e) {}
-                            walletBrickController = null;
-                        }
                     });
                 </script>
 
