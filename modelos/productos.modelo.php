@@ -654,7 +654,6 @@ class ModeloProductos{
 		$stmt = Conexion::conectar()->prepare("UPDATE productos SET precio_compra = (precio_compra_dolar * :pesos) WHERE precio_compra_dolar <> 0;");
 
 		$stmt->bindParam(":pesos", $pesos, PDO::PARAM_STR);
-		$stmt->bindParam(":nombre_usuario", $_SESSION["nombre"], PDO::PARAM_STR);
 		
 		if($stmt->execute()){
 
