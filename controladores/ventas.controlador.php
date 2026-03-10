@@ -10,7 +10,7 @@ class ControladorVentas{
 	/*=============================================
 	PROCESAR PRODUCTO EN VENTA (CON DETECCIÓN DE COMBOS)
 	=============================================*/
-	static private function procesarProductoVenta($idProducto, $cantidad, $codigoVenta, $sucursal = "stock", $tipoCbte = null, $devolverStock = false){
+	static private function procesarProductoVenta($idProducto, $cantidad, $codigoVenta, $sucursal = "stock1", $tipoCbte = null, $devolverStock = false){
 		require_once __DIR__ . "/../modelos/productos.modelo.php";
 		
 		$tablaProductos = "productos";
@@ -37,7 +37,7 @@ class ControladorVentas{
 				$traerProductoComponente = ModeloProductos::mdlMostrarProductos($tablaProductos, 'id', $idComponente, 'codigo');
 				
 				if($traerProductoComponente){
-					$stockOriginal = isset($traerProductoComponente[$sucursal]) ? $traerProductoComponente[$sucursal] : $traerProductoComponente["stock"];
+					$stockOriginal = isset($traerProductoComponente[$sucursal]) ? $traerProductoComponente[$sucursal] : ($traerProductoComponente["stock1"] ?? 0);
 					
 					if($idComponente > 9){ //productos del 1 al 10 no hacen movimientos en stock
 						if($devolverStock){
@@ -52,7 +52,7 @@ class ControladorVentas{
 			}
 		} else {
 			// Producto normal, descontar stock normalmente
-			$stockOriginal = isset($traerProducto[$sucursal]) ? $traerProducto[$sucursal] : $traerProducto["stock"];
+			$stockOriginal = isset($traerProducto[$sucursal]) ? $traerProducto[$sucursal] : ($traerProducto["stock1"] ?? 0);
 			
 			if($idProducto > 9){ //productos del 1 al 10 no hacen movimientos en stock
 				if($devolverStock){
@@ -98,12 +98,13 @@ class ControladorVentas{
     
     			$totalProductosComprados = array();
     
+    			$sucVenta = $_SESSION["sucursal"] ?? 'stock1';
     			foreach ($listaProductos as $key => $value) {
     
     			   array_push($totalProductosComprados, $value["cantidad"]);
     				
     			   // Procesar producto (detecta si es combo y descuenta stock de componentes)
-    			   self::procesarProductoVenta($value["id"], $value["cantidad"], $codigo, "stock", null, false);
+    			   self::procesarProductoVenta($value["id"], $value["cantidad"], $codigo, $sucVenta, null, false);
     
     			}
     
@@ -151,6 +152,9 @@ class ControladorVentas{
     
     			$tabla = "ventas";
     
+    			$sucVentaCrear = $_POST["sucursalVendedor"] ?? $_SESSION["sucursal"] ?? 'stock1';
+			if ($sucVentaCrear === 'stock') $sucVentaCrear = 'stock1';
+			if ($sucVentaCrear === 'deposito') $sucVentaCrear = 'stock2';
     			$datos = array(
     			    "uuid" => $_POST["tokenIdTablaVentas"],
     			    "id_empresa" => $_POST["idEmpresa"],
@@ -159,6 +163,7 @@ class ControladorVentas{
     				"codigo"=>$codigo,
     				"cbte_tipo" => $_POST["nuevotipoCbte"],
     				"productos"=>$_POST["listaProductos"],
+    				"sucursal"=>$sucVentaCrear,
     				"impuesto"=>$_POST["nuevoPrecioImpuesto"],
     				"neto"=>$_POST["nuevoPrecioNeto"],
     				"total"=>$_POST["totalVenta"],
@@ -827,6 +832,9 @@ class ControladorVentas{
     			GUARDAR LA VENTA
     			=============================================*/	
     			$tabla = "ventas";
+    			$sucVenta = $postVentaCaja["sucursalVendedor"] ?? $_SESSION["sucursal"] ?? 'stock1';
+    			if ($sucVenta === 'stock') $sucVenta = 'stock1';
+    			if ($sucVenta === 'deposito') $sucVenta = 'stock2';
     			$datos = array(
     			    "uuid" => $postVentaCaja["tokenIdTablaVentas"],
     			    "id_empresa" =>$postVentaCaja["idEmpresa"],
@@ -834,6 +842,7 @@ class ControladorVentas{
     			   	"id_cliente"=>$postVentaCaja["seleccionarCliente"],
     			   	"codigo"=>$codigoSiguiente, //$postVentaCaja["nuevaVentaCaja"],
     			   	"productos"=>$postVentaCaja["listaProductosCaja"],
+    			   	"sucursal"=>$sucVenta,
     			   	"neto"=>$postVentaCaja["nuevoPrecioNetoCaja"],
     			   	"neto_gravado"=>$netoGravado,
     				"base_imponible_0"=>$bimp0,
@@ -1083,7 +1092,10 @@ class ControladorVentas{
 						array_push($totalProductosComprados, $value["cantidad"]);
 						
 						// Devolver stock (editar venta - productos antiguos)
-						self::procesarProductoVenta($value["id"], $value["cantidad"], $traerVenta["codigo"], "stock", null, true);
+						$sucVta = $traerVenta["sucursal"] ?? 'stock1';
+						if ($sucVta === 'stock') $sucVta = 'stock1';
+						if ($sucVta === 'deposito') $sucVta = 'stock2';
+						self::procesarProductoVenta($value["id"], $value["cantidad"], $traerVenta["codigo"], $sucVta, null, true);
 
 					}
 				}
@@ -1113,7 +1125,10 @@ class ControladorVentas{
 					array_push($totalProductosComprados_2, $value["cantidad"]);
 					
 					// Procesar producto (editar venta - productos nuevos)
-					self::procesarProductoVenta($value["id"], $value["cantidad"], $traerVenta["codigo"], "stock", null, false);
+					$sucVtaEdit = $traerVenta["sucursal"] ?? 'stock1';
+					if ($sucVtaEdit === 'stock') $sucVtaEdit = 'stock1';
+					if ($sucVtaEdit === 'deposito') $sucVtaEdit = 'stock2';
+					self::procesarProductoVenta($value["id"], $value["cantidad"], $traerVenta["codigo"], $sucVtaEdit, null, false);
 
 				}
 
@@ -1261,7 +1276,10 @@ class ControladorVentas{
 				foreach ($productos as $key => $value) {
 					array_push($totalProductosComprados, $value["cantidad"]);
 					// Devolver stock al eliminar venta
-					self::procesarProductoVenta($value["id"], $value["cantidad"], $traerVenta["codigo"], "stock", null, true);
+					$sucVtaDel = $traerVenta["sucursal"] ?? 'stock1';
+					if ($sucVtaDel === 'stock') $sucVtaDel = 'stock1';
+					if ($sucVtaDel === 'deposito') $sucVtaDel = 'stock2';
+					self::procesarProductoVenta($value["id"], $value["cantidad"], $traerVenta["codigo"], $sucVtaDel, null, true);
 				}
 			}
 

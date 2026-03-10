@@ -469,7 +469,10 @@
                           continue;
                         }
 
-                        $stockAntiguo = (isset($respuesta["stock"]) ? floatval($respuesta["stock"]) : 0) + (isset($value["cantidad"]) ? floatval($value["cantidad"]) : 0);
+                        $sucVta = $_SESSION["sucursal"] ?? 'stock';
+                        if ($sucVta === 'deposito') $sucVta = 'stock2'; // compatibilidad
+                        $stockActual = isset($respuesta[$sucVta]) ? floatval($respuesta[$sucVta]) : floatval($respuesta["stock"] ?? 0);
+                        $stockAntiguo = $stockActual + (isset($value["cantidad"]) ? floatval($value["cantidad"]) : 0);
                         
                         // Obtener precio correcto (puede venir como "precio" o "precio_venta")
                         $precioProducto = isset($value["precio"]) ? floatval($value["precio"]) : (isset($value["precio_venta"]) ? floatval($value["precio_venta"]) : 0);
@@ -492,7 +495,7 @@
 
                               <div class="col-xs-3">
                     
-                                <input type="number" class="form-control nuevaCantidadProducto" name="nuevaCantidadProducto" min="1" value="'.htmlspecialchars($cantidadProducto).'" stock="'.htmlspecialchars($stockAntiguo).'" nuevoStock="'.htmlspecialchars($value["stock"] ?? 0).'" required>
+                                <input type="number" class="form-control nuevaCantidadProducto" name="nuevaCantidadProducto" min="1" value="'.htmlspecialchars($cantidadProducto).'" stock="'.htmlspecialchars($stockAntiguo).'" nuevoStock="'.htmlspecialchars($stockActual).'" required>
 
                               </div>
 

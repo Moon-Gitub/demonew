@@ -55,24 +55,18 @@ class TablaProductos{
     		  	// $categorias = ControladorCategorias::ctrMostrarCategorias($item, $valor);
     
     		  	/*=============================================
-     	 		STOCK
+     	 		STOCK (total stock1+stock2+stock3, compat: stock+deposito)
       			=============================================*/ 
       			if($productos[$i]["id"] != 1 && $productos[$i]["id"] != 2 && $productos[$i]["id"] != 3 && $productos[$i]["id"] != 4 && $productos[$i]["id"] != 5 && $productos[$i]["id"] != 6 && $productos[$i]["id"] != 7 && $productos[$i]["id"] != 8 && $productos[$i]["id"] != 9 && $productos[$i]["id"] != 10) {
     
-    	  			if($productos[$i]["stock"] <= $productos[$i]["stock_bajo"]){
-    
-    	  				$stock = "<button class='btn btn-danger'>".$productos[$i]["stock"]."</button>";
-    
-    	  			}else if($productos[$i]["stock"] > $productos[$i]["stock_bajo"] && $productos[$i]["stock"] <= $productos[$i]["stock_medio"]){
-    
-    	  				$stock = "<button class='btn btn-warning'>".$productos[$i]["stock"]."</button>";
-    
+    	  			$stockTotal = floatval($productos[$i]["stock1"] ?? 0) + floatval($productos[$i]["stock2"] ?? 0) + floatval($productos[$i]["stock3"] ?? 0);
+    	  			if($stockTotal <= $productos[$i]["stock_bajo"]){
+    	  				$stock = "<button class='btn btn-danger'>".number_format($stockTotal, 2)."</button>";
+    	  			}else if($stockTotal > $productos[$i]["stock_bajo"] && $stockTotal <= $productos[$i]["stock_medio"]){
+    	  				$stock = "<button class='btn btn-warning'>".number_format($stockTotal, 2)."</button>";
     	  			}else{
-    
-    	  				$stock = "<button class='btn btn-success'>".$productos[$i]["stock"]."</button>";
-    
+    	  				$stock = "<button class='btn btn-success'>".number_format($stockTotal, 2)."</button>";
     	  			}
-    
     			} else {
     
       				$stock = "-";

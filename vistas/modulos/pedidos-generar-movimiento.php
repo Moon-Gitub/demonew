@@ -112,8 +112,15 @@
 							<select class="form-control" id="nuevoOrigen" name="nuevoOrigen" required>
 
 							<option value="">Seleccionar Origen</option>
-							<option value="stock">Local</option>
-							<option value="deposito">Deposito</option>							
+							<?php
+							$arrAlm = !empty($arrayEmpresa['almacenes']) ? json_decode($arrayEmpresa['almacenes'], true) : [];
+							if (!is_array($arrAlm)) $arrAlm = [['stkProd'=>'stock1','det'=>'Gutiérrez'],['stkProd'=>'stock2','det'=>'Irigoyen'],['stkProd'=>'stock3','det'=>'Ameghino']];
+							foreach ($arrAlm as $a) {
+								$v = htmlspecialchars($a['stkProd'] ?? 'stock1');
+								$l = htmlspecialchars($a['det'] ?? $v);
+								echo '<option value="'.$v.'">'.$l.'</option>';
+							}
+							?>
 							</select>
 										  
 					  </div>
@@ -131,8 +138,11 @@
                     <select class="form-control" id="nuevoDestino" name="nuevoDestino" required>
 
                     <option value="">Seleccionar Destino</option>
-					<option value="stock">Local</option>
-					<option value="deposito">Deposito</option>
+					<?php foreach ($arrAlm as $a) {
+						$v = htmlspecialchars($a['stkProd'] ?? 'stock1');
+						$l = htmlspecialchars($a['det'] ?? $v);
+						echo '<option value="'.$v.'">'.$l.'</option>';
+					} ?>
                     </select>
                                       
                   </div>

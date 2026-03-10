@@ -157,28 +157,18 @@ class ControladorPedidos{
 
 					$traerProducto = ModeloProductos::mdlMostrarProductos($tablaProductos, $item, $valor, $orden);
 
-					switch($traerProducto){
-						case ($_POST['editarOrigen']=="deposito"):
-						$stockOriginalOrigen = $traerProducto['deposito'];
-						$origenDes = "deposito";
-						break;
-						case ($_POST['editarOrigen']=="stock"):
-						$stockOriginalOrigen = $traerProducto['stock'];
-						$origenDes = "stock";
-						break;
-					}
-						
-					switch($traerProducto){
-						case ($_POST['editarDestino']=="deposito"):
-						$stockOriginalDestino = $traerProducto['deposito'];
-						$destinoDes = "deposito";
-						break;
-						case ($_POST['editarDestino']=="stock"):
-						$stockOriginalDestino = $traerProducto['stock'];
-						$destinoDes = "stock";
-						break;
-								
-					}
+					$colOrigen = $_POST['editarOrigen'];
+					if ($colOrigen === 'stock') $colOrigen = 'stock1';
+					if ($colOrigen === 'deposito') $colOrigen = 'stock2';
+					// stock3 se usa tal cual
+					$stockOriginalOrigen = isset($traerProducto[$colOrigen]) ? $traerProducto[$colOrigen] : 0;
+					$origenDes = $colOrigen;
+
+					$colDestino = $_POST['editarDestino'];
+					if ($colDestino === 'stock') $colDestino = 'stock1';
+					if ($colDestino === 'deposito') $colDestino = 'stock2';
+					$stockOriginalDestino = isset($traerProducto[$colDestino]) ? $traerProducto[$colDestino] : 0;
+					$destinoDes = $colDestino;
 					
 					$item1a = "pedidos";
 					$valor1a = $stockOriginalOrigen - $value["recibida"];

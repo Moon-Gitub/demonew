@@ -82,6 +82,11 @@ class ControladorUsuarios{
 								} else {
 									$lista = array_map('trim', explode(',', $sucursalesUsuario));
 									$sucursalValida = in_array($sucursalSeleccionada, $lista, true);
+									// Compatibilidad: stock1↔stock, stock2↔deposito
+									if (!$sucursalValida) {
+										if ($sucursalSeleccionada === 'stock1' && in_array('stock', $lista, true)) $sucursalValida = true;
+										if ($sucursalSeleccionada === 'stock2' && in_array('deposito', $lista, true)) $sucursalValida = true;
+									}
 								}
 							}
 

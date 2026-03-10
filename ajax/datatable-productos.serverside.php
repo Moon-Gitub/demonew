@@ -20,6 +20,7 @@
  // ✅ Seguridad AJAX
 require_once "seguridad.ajax.php";
 SeguridadAjax::inicializar(false);
+if (session_status() === PHP_SESSION_NONE) session_start();
 
  // Cargar vendor autoload primero (necesario para Dotenv)
 require_once "../extensiones/vendor/autoload.php";
@@ -54,7 +55,9 @@ $table = <<<EOT
       c.categoria,
       pv.nombre,
       pd.descripcion,
-      pd.stock, 
+      IFNULL(IF(COALESCE(pd.stock1,0)<0,0,COALESCE(pd.stock1,0)),0) as stock1,
+      IFNULL(IF(COALESCE(pd.stock2,0)<0,0,COALESCE(pd.stock2,0)),0) as stock2,
+      IFNULL(IF(COALESCE(pd.stock3,0)<0,0,COALESCE(pd.stock3,0)),0) as stock3,
       pd.precio_compra,
       pd.precio_compra_dolar,
       pd.tipo_iva,
@@ -89,34 +92,33 @@ $columns = array(
     array( 'db' => 'nombre',        'dt' => 2 ),
     array( 'db' => 'descripcion',   'dt' => 3 ),
     array(
-        'db' => 'stock',
+        'db' => 'stock1',
         'dt' => 4,
         'formatter' => function( $d, $row ) {
-            
+            $almacenDesde = $_SESSION["sucursal"] ?? 'stock1';
+            if ($almacenDesde === 'stock') $almacenDesde = 'stock1';
+            if ($almacenDesde === 'deposito') $almacenDesde = 'stock2';
+            $stk = isset($row[$almacenDesde]) ? (($row[$almacenDesde] < 0) ? 0 : $row[$almacenDesde]) : 0;
             if($row["id"]>9) {
-                if($d <= $row["stock_bajo"]){
-    
-                    return '<h4><a class="btnEditarProductoAjusteStock" data-toggle="modal" data-target="#modalEditarProductoAjusteStock" idProducto="'.$row["id"].'" almacenDesde="stock"><span class="label label-danger">'.number_format($d,2).'</span></a></h4>';
-    
-                }else if($d > $row["stock_bajo"] && $d <= $row["stock_medio"]){
-    
-                    return '<h4><a class="btnEditarProductoAjusteStock" data-toggle="modal" data-target="#modalEditarProductoAjusteStock" idProducto="'.$row["id"].'" almacenDesde="stock"><span class="label label-warning">'.number_format($d,2).'</span></a></h4>';
-    
+                if($stk <= $row["stock_bajo"]){
+                    return '<h4><a class="btnEditarProductoAjusteStock" data-toggle="modal" data-target="#modalEditarProductoAjusteStock" idProducto="'.$row["id"].'" almacenDesde="'.htmlspecialchars($almacenDesde).'"><span class="label label-danger">'.number_format($stk,2).'</span></a></h4>';
+                }else if($stk > $row["stock_bajo"] && $stk <= $row["stock_medio"]){
+                    return '<h4><a class="btnEditarProductoAjusteStock" data-toggle="modal" data-target="#modalEditarProductoAjusteStock" idProducto="'.$row["id"].'" almacenDesde="'.htmlspecialchars($almacenDesde).'"><span class="label label-warning">'.number_format($stk,2).'</span></a></h4>';
                 }else{
-    
-                    return '<h4><a class="btnEditarProductoAjusteStock" data-toggle="modal" data-target="#modalEditarProductoAjusteStock" idProducto="'.$row["id"].'" almacenDesde="stock"><span class="label label-success">'.number_format($d,2).'</span></a></h4>';
-    
+                    return '<h4><a class="btnEditarProductoAjusteStock" data-toggle="modal" data-target="#modalEditarProductoAjusteStock" idProducto="'.$row["id"].'" almacenDesde="'.htmlspecialchars($almacenDesde).'"><span class="label label-success">'.number_format($stk,2).'</span></a></h4>';
                 }
             }
-
+            return '-';
         }
     ),
     array(
         'db'        => 'id',
         'dt'        => 5,
         'formatter' => function( $d, $row ) {
-            $stkDepo = ($row["stock"] < 0) ? 0 : $row["stock"];
-
+            $almacenDesde = $_SESSION["sucursal"] ?? 'stock1';
+            if ($almacenDesde === 'stock') $almacenDesde = 'stock1';
+            if ($almacenDesde === 'deposito') $almacenDesde = 'stock2';
+            $stkDepo = isset($row[$almacenDesde]) ? (($row[$almacenDesde] < 0) ? 0 : $row[$almacenDesde]) : 0;
             $total = $stkDepo;
 
             if($total <= $row["stock_bajo"]){

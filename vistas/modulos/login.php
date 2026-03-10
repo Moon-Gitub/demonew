@@ -564,9 +564,9 @@ body.login-page .login-box-body,
             $arrAlmacenes = json_decode($arrayEmpresa['almacenes'], true);
           }
           if (!is_array($arrAlmacenes)) $arrAlmacenes = [];
-          if (empty($arrAlmacenes)) $arrAlmacenes = [['stkProd' => 'stock', 'det' => 'Depósito']];
+          if (empty($arrAlmacenes)) $arrAlmacenes = [['stkProd' => 'stock1', 'det' => 'Gutiérrez'],['stkProd' => 'stock2', 'det' => 'Irigoyen'],['stkProd' => 'stock3', 'det' => 'Ameghino']];
           foreach ($arrAlmacenes as $alm) {
-            $val = htmlspecialchars($alm['stkProd'] ?? 'stock');
+            $val = htmlspecialchars($alm['stkProd'] ?? 'stock1');
             $det = htmlspecialchars($alm['det'] ?? $val);
             echo '<option value="' . $val . '">' . $det . '</option>';
           }

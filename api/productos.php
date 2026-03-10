@@ -46,7 +46,7 @@ try {
                 'descripcion' => $prod['descripcion'],
                 'precio_venta' => floatval($prod['precio_venta']),
                 'precio_compra' => floatval($prod['precio_compra'] ?? 0),
-                'stock' => floatval($prod['stock'] ?? 0),
+                'stock' => floatval($prod['stock'] ?? 0) + floatval($prod['stock2'] ?? 0) + floatval($prod['stock3'] ?? 0),
                 'categoria' => $prod['id_categoria'] ?? '',
                 'proveedor' => $prod['id_proveedor'] ?? '',
                 'tipo_iva' => floatval($prod['tipo_iva'] ?? 0)

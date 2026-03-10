@@ -27,7 +27,7 @@ $table = <<<EOT
       c.categoria,
       pv.nombre,
       pd.descripcion,
-      pd.stock,
+      pd.stock1,
       pd.id
     FROM productos pd
     LEFT JOIN categorias c ON pd.id_categoria = c.id
@@ -46,7 +46,7 @@ $columns = array(
     array( 'db' => 'nombre',     'dt' => 2 ),
     array( 'db' => 'descripcion','dt' => 3 ),
     array(
-        'db' => 'stock',
+        'db' => 'stock1',
         'dt' => 4,
         'formatter' => function( $d, $row ) {
             $d = is_null($d) ? 0 : $d;

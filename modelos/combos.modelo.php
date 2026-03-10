@@ -45,7 +45,7 @@ class ModeloCombos{
 	=============================================*/
 	static public function mdlMostrarProductosCombo($idCombo){
 		try {
-			$stmt = Conexion::conectar()->prepare("SELECT cp.*, p.descripcion, p.codigo, p.precio_venta, p.precio_compra, p.stock, p.tipo_iva 
+			$stmt = Conexion::conectar()->prepare("SELECT cp.*, p.descripcion, p.codigo, p.precio_venta, p.precio_compra, p.stock1, p.stock2, p.stock3, p.tipo_iva 
 				FROM combos_productos cp 
 				LEFT JOIN productos p ON cp.id_producto = p.id 
 				WHERE cp.id_combo = :id_combo 

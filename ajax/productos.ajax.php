@@ -85,10 +85,10 @@ class AjaxProductos{
               "imagen" => $combo["imagen"] ? $combo["imagen"] : ($productoBase["imagen"] ?? ""),
               "id_categoria" => $productoBase["id_categoria"] ?? null,
               "id_proveedor" => $productoBase["id_proveedor"] ?? null,
-              "stock" => $productoBase["stock"] ?? 0,
-              "stock_1" => $productoBase["stock_1"] ?? 0,
-              "stock_2" => $productoBase["stock_2"] ?? 0,
-              "stock_3" => $productoBase["stock_3"] ?? 0,
+              "stock" => ($productoBase["stock1"] ?? 0) + ($productoBase["stock2"] ?? 0) + ($productoBase["stock3"] ?? 0),
+              "stock_1" => $productoBase["stock1"] ?? 0,
+              "stock_2" => $productoBase["stock2"] ?? 0,
+              "stock_3" => $productoBase["stock3"] ?? 0,
               "es_combo" => true, // Flag para indicar que es combo
               "id_combo" => $combo["id"] // ID del combo para referencia
             );
@@ -266,7 +266,7 @@ class AjaxProductos{
                                           'id' => $value["id"],
                                           'codigo' => $value["codigo"],
                                           'descripcion' => $value["descripcion"],
-                                          'stock' => $value["stock"] ?? 0,
+                                          'stock' => floatval($value["stock1"] ?? 0) + floatval($value["stock2"] ?? 0) + floatval($value["stock3"] ?? 0),
                                           'tipo_iva' => $value["tipo_iva"] ?? 0,
                                           'precio_venta' => $value["precio_venta"] ?? 0                            
                                            )

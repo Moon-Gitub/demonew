@@ -303,13 +303,16 @@
 
                     $respuesta = ControladorProductos::ctrMostrarProductos($item, $valor, $orden);
 
-                    $stockAntiguo = (isset($respuesta["stock"]) && is_numeric($respuesta["stock"])) ? ($respuesta["stock"] + $value["cantidad"]) : $value["cantidad"];
+                    $sucVta = $_SESSION["sucursal"] ?? 'stock';
+                    if ($sucVta === 'deposito') $sucVta = 'stock2'; // compatibilidad
+                    $stockActual = isset($respuesta[$sucVta]) ? floatval($respuesta[$sucVta]) : floatval($respuesta["stock"] ?? 0);
+                    $stockAntiguo = $stockActual + (isset($value["cantidad"]) ? floatval($value["cantidad"]) : 0);
                     
                     echo '<div class="row" style="padding-left:25px;padding-bottom:5px;">
 					
 						<div class="col-xs-2 nuevaCantidad">
                 
-                            <input type="number" style="text-align:center;" class="form-control nuevaCantidadProductoCaja" name="nuevaCantidadProductoCaja" min="1" value="'.$value["cantidad"].'" stock="'.$stockAntiguo.'" nuevoStock="'.$value["stock"].'" required>
+                            <input type="number" style="text-align:center;" class="form-control nuevaCantidadProductoCaja" name="nuevaCantidadProductoCaja" min="1" value="'.$value["cantidad"].'" stock="'.$stockAntiguo.'" nuevoStock="'.$stockActual.'" required>
 
                           </div>
 					
@@ -357,12 +360,13 @@
                         </div>';
 
                   } else {
-
+                       $stockAntiguo = (isset($value["cantidad"]) ? floatval($value["cantidad"]) : 0);
+                       $stockActual = 0;
                        echo '<div class="row" style="padding-left:25px;padding-bottom:5px;">
 						
 							<div class="col-xs-2 nuevaCantidad">
                 
-                            <input type="number" style="text-align:center;" class="form-control nuevaCantidadProductoCaja" name="nuevaCantidadProductoCaja" min="1" value="'.$value["cantidad"].'" stock="'.$stockAntiguo.'" nuevoStock="'.$value["stock"].'" required>
+                            <input type="number" style="text-align:center;" class="form-control nuevaCantidadProductoCaja" name="nuevaCantidadProductoCaja" min="1" value="'.$value["cantidad"].'" stock="'.$stockAntiguo.'" nuevoStock="'.$stockActual.'" required>
 
                           </div>
 						  

@@ -173,10 +173,10 @@ try {
         $postVentaCaja['fechaActual'] = $fecha;
         
         $postVentaCaja['idVendedor'] = $_SESSION['id'] ?? 1;
-        // Mapear 'Local' a 'stock' ya que 'Local' no es una columna válida en productos
-        $sucursal = $datos['sucursal'] ?? 'stock';
+        // Mapear 'Local' a 'stock1' ya que 'Local' no es una columna válida en productos
+        $sucursal = $datos['sucursal'] ?? 'stock1';
         if ($sucursal === 'Local') {
-            $sucursal = 'stock';
+            $sucursal = 'stock1';
         }
         $postVentaCaja['sucursalVendedor'] = $sucursal;
         $postVentaCaja['nombreVendedor'] = $_SESSION['nombre'] ?? 'Sistema';
@@ -202,7 +202,7 @@ try {
                 'descripcion' => $prod['descripcion'] ?? '',
                 'cantidad' => floatval($prod['cantidad'] ?? 1),
                 'categoria' => $prod['categoria'] ?? '',
-                'stock' => floatval($prod['stock'] ?? 0),
+                'stock' => isset($prod['stock']) ? floatval($prod['stock']) : (floatval($prod['stock'] ?? 0) + floatval($prod['stock2'] ?? 0) + floatval($prod['stock3'] ?? 0)),
                 'precio_compra' => floatval($prod['precio_compra'] ?? 0),
                 'precio' => floatval($prod['precio'] ?? $prod['precio_venta'] ?? 0),
                 'total' => floatval($prod['total'] ?? $prod['subtotal'] ?? 0)

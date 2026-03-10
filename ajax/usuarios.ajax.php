@@ -55,7 +55,7 @@ class AjaxUsuarios{
 				$arr = json_decode($empresa["almacenes"], true);
 				if (is_array($arr)) $almacenes = $arr;
 			}
-			if (empty($almacenes)) $almacenes = [["stkProd" => "stock", "det" => "Depósito"]];
+			if (empty($almacenes)) $almacenes = [["stkProd" => "stock1", "det" => "Gutiérrez"],["stkProd" => "stock2", "det" => "Irigoyen"],["stkProd" => "stock3", "det" => "Ameghino"]];
 			$respuesta["almacenes"] = $almacenes;
 			echo json_encode($respuesta);
 
@@ -170,6 +170,6 @@ if(isset($_POST["empresaId"]) && isset($_POST["getAlmacenes"])){
 		$arr = json_decode($empresa["almacenes"], true);
 		if (is_array($arr)) $almacenes = $arr;
 	}
-	if (empty($almacenes)) $almacenes = [["stkProd" => "stock", "det" => "Depósito"]];
+	if (empty($almacenes)) $almacenes = [["stkProd" => "stock1", "det" => "Gutiérrez"],["stkProd" => "stock2", "det" => "Irigoyen"],["stkProd" => "stock3", "det" => "Ameghino"]];
 	echo json_encode($almacenes);
 }

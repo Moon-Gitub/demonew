@@ -388,16 +388,18 @@
 					</td>
 					<td>
                     <?php
-                     $arrSucursal = [ 
-                        'stock' => 'Local',
-                        '' => 'SIN SUCURSAL ASIGNADA'
-                      ];
+                     $arrSucursal = ['' => 'SIN SUCURSAL ASIGNADA'];
+                     if (!empty($arrayEmpresa['almacenes'])) {
+                       $alm = json_decode($arrayEmpresa['almacenes'], true);
+                       if (is_array($alm)) foreach ($alm as $a) $arrSucursal[$a['stkProd'] ?? ''] = $a['det'] ?? '';
+                     }
+                     if (empty($arrSucursal)) $arrSucursal = ['stock'=>'Gutiérrez','stock2'=>'Irigoyen','stock3'=>'Ameghino'];
 					?>
                     <input type="hidden" id="sucursalVendedor" value="<?php echo $_SESSION["sucursal"]; ?>">
                     <div class="form-group">
                          <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-building"></i></span> 
-                              <input type="text" class="form-control input-sm" value="Sucursal: <?php echo $arrSucursal[$_SESSION["sucursal"]]; ?>" readonly>
+                              <input type="text" class="form-control input-sm" value="Sucursal: <?php echo $arrSucursal[$_SESSION["sucursal"]] ?? $_SESSION["sucursal"]; ?>" readonly>
 						</div>
                     </div>
 				</td>

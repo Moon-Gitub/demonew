@@ -45,10 +45,11 @@ $table = <<<EOT
       c.categoria,
       pv.nombre,
       pd.descripcion,
-      pd.stock,
+      pd.stock1,
       pd.stock_medio,
       pd.stock_bajo,
-	  pd.deposito,
+	  pd.stock2,
+	  pd.stock3,
       pd.id
     FROM productos pd
     LEFT JOIN categorias c ON pd.id_categoria = c.id
@@ -76,7 +77,7 @@ $columns = array(
     array( 'db' => 'categoria',     'dt' => 1 ),
     array( 'db' => 'descripcion',   'dt' => 2 ),
     array(
-        'db' => 'stock',
+        'db' => 'stock1',
         'dt' => 3,
         'formatter' => function( $d, $row ) {
             if($d <= $row["stock_bajo"]){
@@ -96,9 +97,31 @@ $columns = array(
         }
     ),
 	 array(
-        'db' => 'deposito',
+        'db' => 'stock2',
         'dt' => 4,
         'formatter' => function( $d, $row ) {
+           $d = $d ?? 0;
+           if($d <= $row["stock_bajo"]){
+
+                return '<h4><span class="label label-danger" onclick=llamar('.$row["id"].')>'.number_format($d,2).'</span></h4>';
+
+            }else if($d > $row["stock_bajo"] && $d <= $row["stock_medio"]){
+
+                return '<h4><span class="label label-warning" onclick=llamar('.$row["id"].')>'.number_format($d,2).'</span></h4>';
+
+            }else{
+
+                return '<h4><span class="label label-success" onclick=llamar('.$row["id"].')>'.number_format($d,2).'</span></h4>';
+
+            }	
+
+        }
+    ),
+	 array(
+        'db' => 'stock3',
+        'dt' => 5,
+        'formatter' => function( $d, $row ) {
+           $d = $d ?? 0;
            if($d <= $row["stock_bajo"]){
 
                 return '<h4><span class="label label-danger" onclick=llamar('.$row["id"].')>'.number_format($d,2).'</span></h4>';
@@ -116,7 +139,7 @@ $columns = array(
         }
     ),
 		array( 'db' => 'id', 
-           'dt' => 5,
+           'dt' => 6,
            'formatter' => function( $d, $row ) {
                 return "<div class='btn-group'><button class='btn btn-warning btnEditarProducto' idProducto='".$row["id"]."' data-toggle='modal' data-target='#modalEditarProducto'><i class='fa fa-pencil'></i></button><button class='btn btn-danger btnEliminarProducto' idProducto='".$row["id"]."' codigo='".$row["codigo"]."' ><i class='fa fa-times'></i></button></div>";
         } 

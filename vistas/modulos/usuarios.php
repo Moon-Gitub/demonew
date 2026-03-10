@@ -221,8 +221,16 @@ MODAL AGREGAR USUARIO
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-building"></i></span> 
                 <select class="form-control" name="nuevaSucursal" required>
-                  <option value="">Selecionar Sucursal</option>
-                  <option value="stock">Local</option>
+                  <option value="">Seleccionar Sucursal</option>
+                  <?php
+                  $arrAlmUsr = !empty($arrayEmpresa['almacenes']) ? json_decode($arrayEmpresa['almacenes'], true) : [];
+                  if (!is_array($arrAlmUsr)) $arrAlmUsr = [['stkProd'=>'stock','det'=>'Gutiérrez'],['stkProd'=>'stock2','det'=>'Irigoyen'],['stkProd'=>'stock3','det'=>'Ameghino']];
+                  foreach ($arrAlmUsr as $a) {
+                    $v = htmlspecialchars($a['stkProd'] ?? 'stock');
+                    $l = htmlspecialchars($a['det'] ?? $v);
+                    echo '<option value="'.$v.'">'.$l.'</option>';
+                  }
+                  ?>
                 </select>
               </div>
             </div>
