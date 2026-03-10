@@ -565,10 +565,12 @@ body.login-page .login-box-body,
           }
           if (!is_array($arrAlmacenes)) $arrAlmacenes = [];
           if (empty($arrAlmacenes)) $arrAlmacenes = [['stkProd' => 'stock', 'det' => 'Gutiérrez'],['stkProd' => 'stock2', 'det' => 'Irigoyen'],['stkProd' => 'stock3', 'det' => 'Ameghino']];
+          $soloUnaSucursal = (count($arrAlmacenes) === 1);
           foreach ($arrAlmacenes as $alm) {
             $val = htmlspecialchars($alm['stkProd'] ?? 'stock1');
             $det = htmlspecialchars($alm['det'] ?? $val);
-            echo '<option value="' . $val . '">' . $det . '</option>';
+            $sel = $soloUnaSucursal ? ' selected' : '';
+            echo '<option value="' . $val . '"' . $sel . '>' . $det . '</option>';
           }
           ?>
         </select>

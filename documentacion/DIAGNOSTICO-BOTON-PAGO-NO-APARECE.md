@@ -133,6 +133,18 @@ Este script comprueba conexión a BD Moon, credenciales MP y otros puntos críti
 
 ---
 
+## 7. Migración a Checkout Bricks (2025-2026)
+
+Mercado Pago deprecó la API antigua `mp.checkout()` y migró a **Checkout Bricks** (Wallet Brick). Si el botón no aparece, puede ser que el SDK antiguo ya no funcione.
+
+**Solución:** El sistema usa `bricksBuilder.create("wallet", ...)` desde marzo 2026. Si persisten problemas:
+
+- Verificar que `MP_PUBLIC_KEY` sea la clave pública correcta (no la privada)
+- El sitio debe estar en **HTTPS**
+- Revisar consola del navegador para errores de MP
+
+---
+
 ## Archivos relevantes
 
 - `vistas/modulos/cabezote-mejorado.php` – Cabezote con sistema de cobro (principal)

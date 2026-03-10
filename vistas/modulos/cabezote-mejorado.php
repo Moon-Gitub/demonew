@@ -886,7 +886,15 @@ MODAL COBRO MEJORADO
                     </div>
                     
                     <!-- Botón Mercado Pago (id para selector único; renderizar cuando modal visible) -->
-                    <div id="checkout-btn-container" class="checkout-btn" style="margin-bottom: 15px;"></div>
+                    <div id="checkout-btn-container" class="checkout-btn" style="margin-bottom: 15px; min-height: 60px;"></div>
+                    <?php $initPoint = isset($preference->init_point) ? $preference->init_point : (isset($preference->sandbox_init_point) ? $preference->sandbox_init_point : ''); ?>
+                    <?php if (!empty($initPoint)) { ?>
+                    <div id="link-pago-fallback" style="margin-top: 10px; text-align: center;">
+                        <a href="<?php echo htmlspecialchars($initPoint); ?>" target="_blank" class="btn btn-success btn-lg" style="background: #28a745 !important;">
+                            <i class="fa fa-external-link"></i> Ir a Mercado Pago a pagar
+                        </a>
+                    </div>
+                    <?php } ?>
                     
                     <?php
                     /* ============================================
@@ -936,9 +944,10 @@ MODAL COBRO MEJORADO
                 <script type="text/javascript">
                     var clavePublicaMP = document.getElementById('hiddenClavePublicaMP') ? document.getElementById('hiddenClavePublicaMP').value : '';
                     var preferenceIdActual = '<?php echo $preference->id; ?>';
+                    var walletBrickController = null;
 
-                    // CRÍTICO: El SDK de MercadoPago NO renderiza en contenedores ocultos (modal display:none).
-                    // Debemos llamar a mp.checkout() cuando el modal sea VISIBLE (shown.bs.modal).
+                    // Migrado a Checkout Bricks (Wallet Brick) - API actual de MP 2025-2026
+                    // mp.checkout() está deprecado; bricks.create("wallet") es la integración soportada
                     function renderizarBotonMP() {
                         var container = document.getElementById('checkout-btn-container');
                         if (!container) return;
@@ -946,25 +955,28 @@ MODAL COBRO MEJORADO
                             container.innerHTML = '<div style="color:#dc3545;padding:15px;">Error: credenciales MP no configuradas. Verifique MP_PUBLIC_KEY en .env</div>';
                             return;
                         }
-                        container.innerHTML = ''; // Limpiar para evitar duplicados al reabrir modal
-                        try {
-                            var mp = new MercadoPago(clavePublicaMP, {locale: "es-AR"});
-                            mp.checkout({
-                                preference: { id: preferenceIdActual },
-                                render: {
-                                    container: '#checkout-btn-container',
-                                    label: 'Pagar con Mercado Pago',
-                                },
-                            });
-                        } catch (e) {
-                            console.error('Error MercadoPago checkout:', e);
-                            container.innerHTML = '<div style="color:#dc3545;padding:15px;">Error al cargar botón de pago: ' + e.message + '</div>';
+                        if (typeof MercadoPago === 'undefined') {
+                            container.innerHTML = '<div style="color:#856404;padding:15px;">Cargando Mercado Pago... (recargue si tarda)</div>';
+                            setTimeout(renderizarBotonMP, 500);
+                            return;
                         }
+                        container.innerHTML = '';
+                        var mp = new MercadoPago(clavePublicaMP, {locale: "es-AR"});
+                        var bricksBuilder = mp.bricks();
+                        bricksBuilder.create("wallet", "checkout-btn-container", {
+                            initialization: { preferenceId: preferenceIdActual },
+                            customization: { theme: "default" }
+                        }).then(function(controller) {
+                            walletBrickController = controller;
+                        }).catch(function(err) {
+                            console.error('Error MercadoPago Wallet Brick:', err);
+                            container.innerHTML = '<div style="color:#dc3545;padding:15px;">Error: ' + (err.message || err) + '</div>';
+                        });
                     }
 
                     $('#modalCobro').on('shown.bs.modal', function() {
-                        renderizarBotonMP();
-                        // Verificar una vez si hay pagos QR pendientes que no se registraron
+                        setTimeout(function() { renderizarBotonMP(); }, 200);
+                        // Verificar pagos QR pendientes
                         setTimeout(function() {
                             $.ajax({
                                 url: 'ajax/verificar-pagos-qr-pendientes.ajax.php',
@@ -981,9 +993,23 @@ MODAL COBRO MEJORADO
                                     // Error silencioso
                                 }
                             });
-                        }, 3000); // Esperar 3 segundos después de abrir el modal
+                        }, 3000);
                     });
-                    
+
+                    // Fallback: si el modal ya está visible al cargar (ej. cliente bloqueado), renderizar
+                    $(document).ready(function() {
+                        if ($('#modalCobro').hasClass('in') || $('#modalCobro').hasClass('show') || $('#modalCobro').is(':visible')) {
+                            setTimeout(renderizarBotonMP, 400);
+                        }
+                    });
+
+                    // Limpiar Brick al cerrar modal (evita fugas de memoria)
+                    $('#modalCobro').on('hidden.bs.modal', function() {
+                        if (typeof walletBrickController !== 'undefined' && walletBrickController && typeof walletBrickController.unmount === 'function') {
+                            try { walletBrickController.unmount(); } catch(e) {}
+                            walletBrickController = null;
+                        }
+                    });
                 </script>
 
                 <style>
