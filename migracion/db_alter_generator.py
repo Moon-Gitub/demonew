@@ -597,9 +597,19 @@ def validar_sintaxis_sql(sql: str) -> Dict[str, any]:
 # Cuando DESTINO tiene columna X y ORIGEN tiene columna Y (obsoleta),
 # se genera CHANGE COLUMN Y X en lugar de ADD COLUMN X.
 # Formato: {tabla: {columna_origen: columna_destino}}
-# Para agregar más: ej. "deposito2": "stock3", "ameghino": "stock3"
+#
+# Productos - columnas de stock/depósito:
+#   deposito  → stock2  (schema antigua: stock, deposito)
+#   deposito2 → stock3  (schema con 3 depósitos: stock, deposito, deposito2)
+#   ameghino  → stock3  (alternativa: stock, deposito, ameghino)
+#   stock2    → stock2  (ya correcto, no aplica)
+#   stock3    → stock3  (ya correcto, no aplica)
 COLUMN_RENAME_MAP = {
-    "productos": {"deposito": "stock2"},
+    "productos": {
+        "deposito": "stock2",
+        "deposito2": "stock3",
+        "ameghino": "stock3",
+    },
 }
 
 
