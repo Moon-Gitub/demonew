@@ -147,6 +147,7 @@ class AjaxProductos{
         if (!isset($prod["stock2"]) && isset($prod["deposito"])) $prod["stock2"] = $prod["deposito"];
         if (!isset($prod["stock2"])) $prod["stock2"] = 0;
         if (!isset($prod["stock3"]) && isset($prod["ameghino"])) $prod["stock3"] = $prod["ameghino"];
+        if (!isset($prod["stock3"]) && isset($prod["deposito2"])) $prod["stock3"] = $prod["deposito2"];
         if (!isset($prod["stock3"])) $prod["stock3"] = 0;
         if (!isset($prod["stock"])) $prod["stock"] = 0;
         echo json_encode($prod);

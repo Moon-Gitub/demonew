@@ -762,7 +762,8 @@ class ControladorVentas{
     			$totalProductosComprados = array();
     			$tablaProductos = "productos";
     			
-    			$sacoStockDe = $postVentaCaja["sucursalVendedor"]; //sucursal de donde muevo stock
+    			$sacoStockDe = trim($postVentaCaja["sucursalVendedor"] ?? '') ?: 'stock';
+    			if ($sacoStockDe === 'deposito') $sacoStockDe = 'stock2';
     
     			foreach ($listaProductos as $key => $value) {
     
@@ -832,9 +833,7 @@ class ControladorVentas{
     			GUARDAR LA VENTA
     			=============================================*/	
     			$tabla = "ventas";
-    			$sucVenta = $postVentaCaja["sucursalVendedor"] ?? $_SESSION["sucursal"] ?? 'stock1';
-    			if ($sucVenta === 'stock') $sucVenta = 'stock1';
-    			if ($sucVenta === 'deposito') $sucVenta = 'stock2';
+    			$sucVenta = $postVentaCaja["sucursalVendedor"] ?? $_SESSION["sucursal"] ?? 'stock';
     			$datos = array(
     			    "uuid" => $postVentaCaja["tokenIdTablaVentas"],
     			    "id_empresa" =>$postVentaCaja["idEmpresa"],

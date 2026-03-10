@@ -47,12 +47,14 @@ $sql_details = array(
     'charset' => $con["charset"]
 );
 
-// Detectar columnas de stock (compatible con schema antigua stock/deposito y nueva stock/stock2/stock3)
+// Detectar columnas de stock (compatible con schema antigua stock/deposito/deposito2 y nueva stock/stock2/stock3)
 $pdo = new PDO("mysql:host=".$con["host"].";dbname=".$con["db"].";charset=".($con["charset"] ?? "utf8"), $con["user"], $con["pass"]);
 $cols = $pdo->query("SHOW COLUMNS FROM productos")->fetchAll(PDO::FETCH_COLUMN);
 $tieneStock2 = in_array('stock2', $cols);
 $tieneStock3 = in_array('stock3', $cols);
 $tieneDeposito = in_array('deposito', $cols);
+$tieneDeposito2 = in_array('deposito2', $cols);
+$tieneAmeghino = in_array('ameghino', $cols);
 
 $stockCols = "IFNULL(IF(COALESCE(pd.stock,0)<0,0,COALESCE(pd.stock,0)),0) as stock";
 if ($tieneStock2) {
@@ -64,6 +66,10 @@ if ($tieneStock2) {
 }
 if ($tieneStock3) {
     $stockCols .= ", IFNULL(IF(COALESCE(pd.stock3,0)<0,0,COALESCE(pd.stock3,0)),0) as stock3";
+} elseif ($tieneDeposito2) {
+    $stockCols .= ", IFNULL(IF(COALESCE(pd.deposito2,0)<0,0,COALESCE(pd.deposito2,0)),0) as stock3";
+} elseif ($tieneAmeghino) {
+    $stockCols .= ", IFNULL(IF(COALESCE(pd.ameghino,0)<0,0,COALESCE(pd.ameghino,0)),0) as stock3";
 } else {
     $stockCols .= ", 0 as stock3";
 }
@@ -111,14 +117,22 @@ $columns = array(
         'db' => 'stock',
         'dt' => 4,
         'formatter' => function( $d, $row ) {
-            $suc = $_SESSION["sucursal"] ?? 'stock';
-            $map = ['stock'=>'stock','stock1'=>'stock','deposito'=>'stock2','stock2'=>'stock2','stock3'=>'stock3','ameghino'=>'stock3','deposito2'=>'stock3'];
+            $suc = trim($_SESSION["sucursal"] ?? 'stock');
+            // Mapeo sucursal → columna: stock=Gutiérrez, stock2=Irigoyen, stock3=Ameghino
+            $map = [
+                'stock'=>'stock','stock1'=>'stock','deposito'=>'stock2','stock2'=>'stock2','stock3'=>'stock3',
+                'ameghino'=>'stock3','Ameghino'=>'stock3','deposito2'=>'stock3',
+                'irigoyen'=>'stock2','Irigoyen'=>'stock2','yrigoyen'=>'stock2','Yrigoyen'=>'stock2',
+                'gutierrez'=>'stock','Gutiérrez'=>'stock','Gutierrez'=>'stock'
+            ];
             $almacenDesde = $map[$suc] ?? (isset($row[$suc]) ? $suc : 'stock');
             $stk = isset($row[$almacenDesde]) ? (($row[$almacenDesde] < 0) ? 0 : floatval($row[$almacenDesde])) : 0;
+            $bajo = floatval($row["stock_bajo"] ?? 0);
+            $medio = floatval($row["stock_medio"] ?? 0);
             if($row["id"]>9) {
-                if($stk <= $row["stock_bajo"]){
+                if($stk <= $bajo){
                     return '<h4><a class="btnEditarProductoAjusteStock" data-toggle="modal" data-target="#modalEditarProductoAjusteStock" idProducto="'.$row["id"].'" almacenDesde="'.htmlspecialchars($almacenDesde).'"><span class="label label-danger">'.number_format($stk,2).'</span></a></h4>';
-                }else if($stk > $row["stock_bajo"] && $stk <= $row["stock_medio"]){
+                }else if($stk > $bajo && $stk <= $medio){
                     return '<h4><a class="btnEditarProductoAjusteStock" data-toggle="modal" data-target="#modalEditarProductoAjusteStock" idProducto="'.$row["id"].'" almacenDesde="'.htmlspecialchars($almacenDesde).'"><span class="label label-warning">'.number_format($stk,2).'</span></a></h4>';
                 }else{
                     return '<h4><a class="btnEditarProductoAjusteStock" data-toggle="modal" data-target="#modalEditarProductoAjusteStock" idProducto="'.$row["id"].'" almacenDesde="'.htmlspecialchars($almacenDesde).'"><span class="label label-success">'.number_format($stk,2).'</span></a></h4>';
@@ -131,21 +145,20 @@ $columns = array(
         'db'        => 'id',
         'dt'        => 5,
         'formatter' => function( $d, $row ) {
-            $total = floatval($row["stock"] ?? 0) + floatval($row["stock2"] ?? 0) + floatval($row["stock3"] ?? 0);
-            if ($total < 0) $total = 0;
+            // STK TOTAL = suma de stock + stock2 + stock3 (valores ya normalizados en la subquery)
+            $s1 = isset($row["stock"]) ? max(0, floatval($row["stock"])) : 0;
+            $s2 = isset($row["stock2"]) ? max(0, floatval($row["stock2"])) : 0;
+            $s3 = isset($row["stock3"]) ? max(0, floatval($row["stock3"])) : 0;
+            $total = $s1 + $s2 + $s3;
+            $bajo = floatval($row["stock_bajo"] ?? 0);
+            $medio = floatval($row["stock_medio"] ?? 0);
 
-            if($total <= $row["stock_bajo"]){
-
+            if($total <= $bajo){
                 return '<h4><span class="label label-danger">'.number_format($total,2).'</span></h4>';
-
-            }else if($total > $row["stock_bajo"] && $total <= $row["stock_medio"]){
-
+            }else if($total > $bajo && $total <= $medio){
                 return '<h4><span class="label label-warning">'.number_format($total,2).'</span></h4>';
-
             }else{
-
                 return '<h4><span class="label label-success">'.number_format($total,2).'</span></h4>';
-
             }
         }
     ),
@@ -201,7 +214,9 @@ $columns = array(
     ),
     array( 'db' => 'id', 'dt' => 11 ),
     array( 'db' => 'stock_medio', 'dt' => 12 ),
-    array( 'db' => 'stock_bajo', 'dt' => 13 )
+    array( 'db' => 'stock_bajo', 'dt' => 13 ),
+    array( 'db' => 'stock2', 'dt' => 14 ),
+    array( 'db' => 'stock3', 'dt' => 15 )
 );
 
 ///PRUEBO RENDERIZAR DESDE EL FRONT (DE ACA MANDO EL DATO EN CRUDO)

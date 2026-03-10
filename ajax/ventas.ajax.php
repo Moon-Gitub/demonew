@@ -3,6 +3,8 @@
 require_once "seguridad.ajax.php";
 SeguridadAjax::inicializar();
 
+try {
+
 require_once "../controladores/ventas.controlador.php";
 require_once "../modelos/ventas.modelo.php";
 
@@ -156,4 +158,16 @@ if(isset($_POST["facturarLoteIds"]) && is_array($_POST["facturarLoteIds"]) && co
 	$respuesta['resultados'] = $resultados;
 	echo json_encode($respuesta);
 
+}
+
+} catch (Throwable $e) {
+	header('Content-Type: application/json; charset=utf-8');
+	http_response_code(200); // Para que el cliente reciba el JSON
+	echo json_encode([
+		'estado' => 'error',
+		'mensaje' => 'Error en el servidor: ' . $e->getMessage(),
+		'archivo' => basename($e->getFile()),
+		'linea' => $e->getLine()
+	]);
+	error_log("ventas.ajax.php ERROR: " . $e->getMessage() . " en " . $e->getFile() . ":" . $e->getLine());
 }

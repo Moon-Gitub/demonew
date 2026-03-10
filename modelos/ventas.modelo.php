@@ -31,19 +31,32 @@ class ModeloVentas{
 		$productosJson = '[]';
 
 		$conexion = Conexion::conectar();
-		// Usar INSERT normal (sin IGNORE); la unicidad se garantiza con UNIQUE(uuid) en la base
-		$sucursal = $datos["sucursal"] ?? 'stock1';
-		$stmt = $conexion->prepare("INSERT INTO $tabla(uuid, id_empresa, fecha, codigo, cbte_tipo, id_cliente, id_vendedor, productos, sucursal, impuesto, impuesto_detalle, neto, neto_gravado, base_imponible_0, base_imponible_2, base_imponible_5, base_imponible_10, base_imponible_21, base_imponible_27, iva_2, iva_5, iva_10, iva_21, iva_27, total, metodo_pago, pto_vta, concepto, fec_desde, fec_hasta, fec_vencimiento, asociado_tipo_cbte, asociado_pto_vta, asociado_nro_cbte, estado, observaciones_vta, pedido_afip, respuesta_afip) VALUES (:uuid, :id_empresa, :fecha, :codigo, :cbte_tipo, :id_cliente, :id_vendedor, :productos, :sucursal, :impuesto, :impuesto_detalle, :neto, :neto_gravado, :base_imponible_0, :base_imponible_2, :base_imponible_5, :base_imponible_10, :base_imponible_21, :base_imponible_27, :iva_2, :iva_5, :iva_10, :iva_21, :iva_27, :total, :metodo_pago, :pto_vta, :concepto, :fec_desde, :fec_hasta, :fec_vencimiento, :asociado_tipo_cbte, :asociado_pto_vta, :asociado_nro_cbte, :estado, :observaciones_vta, :pedido_afip, :respuesta_afip)");
+		// Detectar columnas existentes (compatibilidad con instalaciones sin sucursal/id_empresa)
+		$cols = $conexion->query("SHOW COLUMNS FROM $tabla")->fetchAll(PDO::FETCH_COLUMN);
+		$tieneSucursal = in_array('sucursal', $cols, true);
+		$tieneIdEmpresa = in_array('id_empresa', $cols, true);
+
+		$sucursal = $datos["sucursal"] ?? ($_SESSION["sucursal"] ?? 'stock');
+		$idEmpresa = $datos["id_empresa"] ?? ($_SESSION["empresa"] ?? 1);
+
+		$campos = ['uuid'];
+		if ($tieneIdEmpresa) $campos[] = 'id_empresa';
+		$campos = array_merge($campos, ['fecha','codigo','cbte_tipo','id_cliente','id_vendedor','productos']);
+		if ($tieneSucursal) $campos[] = 'sucursal';
+		$campos = array_merge($campos, ['impuesto','impuesto_detalle','neto','neto_gravado','base_imponible_0','base_imponible_2','base_imponible_5','base_imponible_10','base_imponible_21','base_imponible_27','iva_2','iva_5','iva_10','iva_21','iva_27','total','metodo_pago','pto_vta','concepto','fec_desde','fec_hasta','fec_vencimiento','asociado_tipo_cbte','asociado_pto_vta','asociado_nro_cbte','estado','observaciones_vta','pedido_afip','respuesta_afip']);
+		$placeholders = array_map(function($c){ return ":$c"; }, $campos);
+		$sql = "INSERT INTO $tabla(" . implode(',', $campos) . ") VALUES (" . implode(',', $placeholders) . ")";
+		$stmt = $conexion->prepare($sql);
 
 		$stmt->bindParam(":uuid", $datos["uuid"], PDO::PARAM_STR);
-		$stmt->bindParam(":id_empresa", $datos["id_empresa"], PDO::PARAM_INT);
+		if ($tieneIdEmpresa) $stmt->bindParam(":id_empresa", $idEmpresa, PDO::PARAM_INT);
 		$stmt->bindParam(":fecha", $datos["fecha"], PDO::PARAM_STR);
 		$stmt->bindParam(":codigo", $datos["codigo"], PDO::PARAM_INT);
 		$stmt->bindParam(":cbte_tipo", $datos["cbte_tipo"], PDO::PARAM_INT);
 		$stmt->bindParam(":id_cliente", $datos["id_cliente"], PDO::PARAM_INT);
 		$stmt->bindParam(":id_vendedor", $datos["id_vendedor"], PDO::PARAM_INT);
 		$stmt->bindParam(":productos", $productosJson, PDO::PARAM_STR);
-		$stmt->bindParam(":sucursal", $sucursal, PDO::PARAM_STR);
+		if ($tieneSucursal) $stmt->bindParam(":sucursal", $sucursal, PDO::PARAM_STR);
 		$stmt->bindParam(":impuesto", $datos["impuesto"], PDO::PARAM_STR);
 		$stmt->bindParam(":impuesto_detalle", $datos["impuesto_detalle"], PDO::PARAM_STR);
 		$stmt->bindParam(":neto", $datos["neto"], PDO::PARAM_STR);

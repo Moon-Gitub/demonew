@@ -2102,6 +2102,15 @@ function guardarVentaCaja(){
       	success:function(respuesta){
       		console.log(respuesta);
       		var mesajes = "";
+      		if (respuesta && respuesta['estado'] === 'error') {
+      			swal({
+      				title: "Error",
+      				text: respuesta['mensaje'] || "Error al guardar la venta",
+      				type: "error",
+      				confirmButtonText: "Cerrar"
+      			});
+      			return;
+      		}
       		if(respuesta['estado'] == "ok") {
       			// Limpiar localStorage cuando se completa la venta exitosamente
       			localStorage.removeItem("ventaCajaProductos");

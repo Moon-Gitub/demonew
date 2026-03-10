@@ -1483,15 +1483,18 @@ $(document).ready(function() {
                          <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-building"></i></span> 
                                 <?php 
-
-                                $arrSucursal = json_decode($arrayEmpresa['almacenes'], true);
+                                $sucursalSesion = $_SESSION["sucursal"] ?? 'stock';
+                                $arrSucursal = json_decode($arrayEmpresa['almacenes'] ?? '[]', true);
+                                if (!is_array($arrSucursal)) $arrSucursal = [];
+                                $detSucursal = 'Sucursal';
                                 foreach ($arrSucursal as $valueSuc) {
-                                    if ($_SESSION["sucursal"] === $valueSuc["stkProd"]) {
-                                        echo '<input type="text" class="form-control input-sm" value="Sucursal: '.$valueSuc["det"].'" readonly>';
-                                        echo '<input type="hidden" id="sucursalVendedor" value="'.$valueSuc["stkProd"].'">';
+                                    if ($sucursalSesion === ($valueSuc["stkProd"] ?? '')) {
+                                        $detSucursal = $valueSuc["det"] ?? $sucursalSesion;
+                                        break;
                                     }
                                 }
-
+                                echo '<input type="text" class="form-control input-sm" value="Sucursal: '.htmlspecialchars($detSucursal).'" readonly>';
+                                echo '<input type="hidden" id="sucursalVendedor" value="'.htmlspecialchars($sucursalSesion).'">';
                                 ?>
 
 						</div>

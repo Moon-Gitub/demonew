@@ -42,7 +42,7 @@ var tablaProd = $('#tablaProductos').DataTable({
 	"buttons":GL_DATATABLE_BOTONES , 
 	"language":GL_DATATABLE_LENGUAJE,
 	"columnDefs": [
-			{ "targets": [7,11,12,13], "visible": false, "searchable": false }
+			{ "targets": [7,11,12,13,14,15], "visible": false, "searchable": false }
 	],
 	"lengthMenu": [
         [10, 25, 50, -1],
@@ -819,9 +819,8 @@ function inicializarDataTableImpresion() {
 			console.error("Error al inicializar DataTable:", e);
 			console.error("Stack trace:", e.stack);
 		}
-	} else {
-		console.log("DataTable ya inicializado o elemento no encontrado");
 	}
+	// Si el elemento no existe (p. ej. no estamos en impresion-precios), no hacer nada ni loguear
 }
 
 // Búsqueda rápida eliminada - usar búsqueda nativa de DataTable
