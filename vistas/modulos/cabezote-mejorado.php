@@ -885,8 +885,8 @@ MODAL COBRO MEJORADO
                         </div>
                     </div>
                     
-                    <!-- Botón Mercado Pago -->
-                    <div class="checkout-btn" style="margin-bottom: 15px;"></div>
+                    <!-- Botón Mercado Pago (id para selector único; renderizar cuando modal visible) -->
+                    <div id="checkout-btn-container" class="checkout-btn" style="margin-bottom: 15px;"></div>
                     
                     <?php
                     /* ============================================
@@ -934,23 +934,36 @@ MODAL COBRO MEJORADO
 
                 <script src="https://sdk.mercadopago.com/js/v2"></script>
                 <script type="text/javascript">
-                    var clavePublicaMP = document.getElementById('hiddenClavePublicaMP').value;
-                    const mp = new MercadoPago(clavePublicaMP, {locale: "es-AR"});
+                    var clavePublicaMP = document.getElementById('hiddenClavePublicaMP') ? document.getElementById('hiddenClavePublicaMP').value : '';
                     var preferenceIdActual = '<?php echo $preference->id; ?>';
 
-                    mp.checkout({
-                        preference: {
-                            id: preferenceIdActual,
-                        },
-                        render: {
-                            container: '.checkout-btn',
-                            label: 'Pagar con Mercado Pago',
-                        },
-                    });
-                    
-                    // VERIFICACIÓN AUTOMÁTICA DE PAGOS QR PENDIENTES (solo cuando se abre el modal)
-                    // Esto es un respaldo al webhook que puede no estar recibiendo notificaciones
+                    // CRÍTICO: El SDK de MercadoPago NO renderiza en contenedores ocultos (modal display:none).
+                    // Debemos llamar a mp.checkout() cuando el modal sea VISIBLE (shown.bs.modal).
+                    function renderizarBotonMP() {
+                        var container = document.getElementById('checkout-btn-container');
+                        if (!container) return;
+                        if (!clavePublicaMP || !preferenceIdActual) {
+                            container.innerHTML = '<div style="color:#dc3545;padding:15px;">Error: credenciales MP no configuradas. Verifique MP_PUBLIC_KEY en .env</div>';
+                            return;
+                        }
+                        container.innerHTML = ''; // Limpiar para evitar duplicados al reabrir modal
+                        try {
+                            var mp = new MercadoPago(clavePublicaMP, {locale: "es-AR"});
+                            mp.checkout({
+                                preference: { id: preferenceIdActual },
+                                render: {
+                                    container: '#checkout-btn-container',
+                                    label: 'Pagar con Mercado Pago',
+                                },
+                            });
+                        } catch (e) {
+                            console.error('Error MercadoPago checkout:', e);
+                            container.innerHTML = '<div style="color:#dc3545;padding:15px;">Error al cargar botón de pago: ' + e.message + '</div>';
+                        }
+                    }
+
                     $('#modalCobro').on('shown.bs.modal', function() {
+                        renderizarBotonMP();
                         // Verificar una vez si hay pagos QR pendientes que no se registraron
                         setTimeout(function() {
                             $.ajax({
