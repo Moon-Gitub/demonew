@@ -46,7 +46,9 @@ class TablaProductosVentas{
 
   			if($productos[$i]["id"] != 1) {
 
-	  			$stockProd = floatval($productos[$i]["stock"] ?? 0) + floatval($productos[$i]["stock2"] ?? 0) + floatval($productos[$i]["stock3"] ?? 0);
+	  			$s2 = $productos[$i]["stock2"] ?? $productos[$i]["deposito"] ?? 0;
+	  			$s3 = $productos[$i]["stock3"] ?? $productos[$i]["ameghino"] ?? $productos[$i]["deposito2"] ?? 0;
+	  			$stockProd = floatval($productos[$i]["stock"] ?? 0) + floatval($s2) + floatval($s3);
   			if($stockProd <= $productos[$i]["stock_bajo"]){
 
 	  				$stock = "<button class='btn btn-danger'>".number_format($stockProd, 2)."</button>";

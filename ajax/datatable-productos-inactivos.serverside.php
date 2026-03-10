@@ -5,6 +5,7 @@
 // ✅ Seguridad AJAX
 require_once "seguridad.ajax.php";
 SeguridadAjax::inicializar(false);
+if (session_status() === PHP_SESSION_NONE) session_start();
 
 require_once "../modelos/conexion.php";
 $db = new Conexion;
@@ -19,22 +20,44 @@ $sql_details = array(
     'charset' => $con["charset"]
 );
 
+// Detectar columnas de stock (compatible stock/deposito/stock2/stock3)
+$pdo = new PDO("mysql:host=".$con["host"].";dbname=".$con["db"].";charset=".($con["charset"] ?? "utf8"), $con["user"], $con["pass"]);
+$cols = $pdo->query("SHOW COLUMNS FROM productos")->fetchAll(PDO::FETCH_COLUMN);
+$tieneStock2 = in_array('stock2', $cols);
+$tieneStock3 = in_array('stock3', $cols);
+$tieneDeposito = in_array('deposito', $cols);
+$tieneDeposito2 = in_array('deposito2', $cols);
+$tieneAmeghino = in_array('ameghino', $cols);
+
+$stockTotal = "(IFNULL(IF(COALESCE(pd.stock,0)<0,0,COALESCE(pd.stock,0)),0)";
+if ($tieneStock2) {
+    $stockTotal .= " + IFNULL(IF(COALESCE(pd.stock2,0)<0,0,COALESCE(pd.stock2,0)),0)";
+} elseif ($tieneDeposito) {
+    $stockTotal .= " + IFNULL(IF(COALESCE(pd.deposito,0)<0,0,COALESCE(pd.deposito,0)),0)";
+}
+if ($tieneStock3) {
+    $stockTotal .= " + IFNULL(IF(COALESCE(pd.stock3,0)<0,0,COALESCE(pd.stock3,0)),0)";
+} elseif ($tieneDeposito2) {
+    $stockTotal .= " + IFNULL(IF(COALESCE(pd.deposito2,0)<0,0,COALESCE(pd.deposito2,0)),0)";
+} elseif ($tieneAmeghino) {
+    $stockTotal .= " + IFNULL(IF(COALESCE(pd.ameghino,0)<0,0,COALESCE(pd.ameghino,0)),0)";
+}
+$stockTotal .= ")";
+
 // Subconsulta: solo productos inactivos (activo = 0)
-$table = <<<EOT
- (
+$table = " (
     SELECT
       pd.codigo,
       c.categoria,
       pv.nombre,
       pd.descripcion,
-      pd.stock1,
+      $stockTotal as stock_total,
       pd.id
     FROM productos pd
     LEFT JOIN categorias c ON pd.id_categoria = c.id
     LEFT JOIN proveedores pv ON pd.id_proveedor = pv.id
     WHERE pd.activo = 0
- ) temp
-EOT;
+ ) temp";
 
 // Clave primaria
 $primaryKey = 'id';
@@ -46,11 +69,11 @@ $columns = array(
     array( 'db' => 'nombre',     'dt' => 2 ),
     array( 'db' => 'descripcion','dt' => 3 ),
     array(
-        'db' => 'stock1',
+        'db' => 'stock_total',
         'dt' => 4,
         'formatter' => function( $d, $row ) {
-            $d = is_null($d) ? 0 : $d;
-            return number_format($d,2);
+            $d = is_null($d) ? 0 : floatval($d);
+            return number_format(max(0, $d), 2);
         }
     ),
     array(

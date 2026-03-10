@@ -59,7 +59,9 @@ class TablaProductos{
       			=============================================*/ 
       			if($productos[$i]["id"] != 1 && $productos[$i]["id"] != 2 && $productos[$i]["id"] != 3 && $productos[$i]["id"] != 4 && $productos[$i]["id"] != 5 && $productos[$i]["id"] != 6 && $productos[$i]["id"] != 7 && $productos[$i]["id"] != 8 && $productos[$i]["id"] != 9 && $productos[$i]["id"] != 10) {
     
-    	  			$stockTotal = floatval($productos[$i]["stock"] ?? 0) + floatval($productos[$i]["stock2"] ?? 0) + floatval($productos[$i]["stock3"] ?? 0);
+    	  			$s2 = $productos[$i]["stock2"] ?? $productos[$i]["deposito"] ?? 0;
+    	  			$s3 = $productos[$i]["stock3"] ?? $productos[$i]["ameghino"] ?? $productos[$i]["deposito2"] ?? 0;
+    	  			$stockTotal = floatval($productos[$i]["stock"] ?? 0) + floatval($s2) + floatval($s3);
     	  			if($stockTotal <= $productos[$i]["stock_bajo"]){
     	  				$stock = "<button class='btn btn-danger'>".number_format($stockTotal, 2)."</button>";
     	  			}else if($stockTotal > $productos[$i]["stock_bajo"] && $stockTotal <= $productos[$i]["stock_medio"]){

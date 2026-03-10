@@ -33,13 +33,15 @@ $sql_details = array(
     'db'   => $con["db"],
     'host' => $con["host"], 
     'charset' => $con["charset"]
-	
 );
 
-// DB table to use
-//$table = 'productos';
-$table = <<<EOT
- (
+// Detectar columnas de stock (compatible stock/deposito/stock2/stock3)
+$pdo = new PDO("mysql:host=".$con["host"].";dbname=".$con["db"].";charset=".($con["charset"] ?? "utf8"), $con["user"], $con["pass"]);
+$cols = $pdo->query("SHOW COLUMNS FROM productos")->fetchAll(PDO::FETCH_COLUMN);
+$col2 = in_array('stock2', $cols) ? 'pd.stock2' : (in_array('deposito', $cols) ? 'pd.deposito' : '0');
+$col3 = in_array('stock3', $cols) ? 'pd.stock3' : (in_array('ameghino', $cols) ? 'pd.ameghino' : (in_array('deposito2', $cols) ? 'pd.deposito2' : '0'));
+
+$table = " (
     SELECT
       pd.codigo,
       c.categoria,
@@ -48,15 +50,14 @@ $table = <<<EOT
       pd.stock,
       pd.stock_medio,
       pd.stock_bajo,
-	  pd.stock2,
-	  pd.stock3,
+      $col2 as stock2,
+      $col3 as stock3,
       pd.id
     FROM productos pd
     LEFT JOIN categorias c ON pd.id_categoria = c.id
     LEFT JOIN proveedores pv ON pd.id_proveedor = pv.id
     WHERE pd.activo = 1
- ) temp
-EOT;
+ ) temp";
  
 // Table's primary key
 $primaryKey = 'id';
