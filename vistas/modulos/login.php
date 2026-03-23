@@ -555,17 +555,21 @@ body.login-page .login-box-body,
                aria-label="Contraseña">
       </div>
 
-      <div class="form-group">
-        <select class="form-control" name="ingSucursal" id="sucursalInput" required aria-label="Sucursal">
+      <?php
+        $arrAlmacenes = [];
+        if (!empty($arrayEmpresa['almacenes'])) {
+          $arrAlmacenes = json_decode($arrayEmpresa['almacenes'], true);
+        }
+        if (!is_array($arrAlmacenes)) $arrAlmacenes = [];
+        if (empty($arrAlmacenes)) $arrAlmacenes = [['stkProd' => 'stock', 'det' => 'Gutiérrez'],['stkProd' => 'stock2', 'det' => 'Irigoyen'],['stkProd' => 'stock3', 'det' => 'Ameghino']];
+        $soloUnaSucursal = (count($arrAlmacenes) === 1);
+        $displaySucursal = $soloUnaSucursal ? 'style="display:none;"' : '';
+      ?>
+
+      <div class="form-group" id="sucursalGroup" <?php echo $displaySucursal; ?>>
+        <select class="form-control" name="ingSucursal" id="sucursalInput" aria-label="Sucursal">
           <option value="">Seleccione sucursal</option>
           <?php
-          $arrAlmacenes = [];
-          if (!empty($arrayEmpresa['almacenes'])) {
-            $arrAlmacenes = json_decode($arrayEmpresa['almacenes'], true);
-          }
-          if (!is_array($arrAlmacenes)) $arrAlmacenes = [];
-          if (empty($arrAlmacenes)) $arrAlmacenes = [['stkProd' => 'stock', 'det' => 'Gutiérrez'],['stkProd' => 'stock2', 'det' => 'Irigoyen'],['stkProd' => 'stock3', 'det' => 'Ameghino']];
-          $soloUnaSucursal = (count($arrAlmacenes) === 1);
           foreach ($arrAlmacenes as $alm) {
             $val = htmlspecialchars($alm['stkProd'] ?? 'stock1');
             $det = htmlspecialchars($alm['det'] ?? $val);

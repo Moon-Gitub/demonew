@@ -89,6 +89,7 @@ class ControladorCompras{
                 "fechaPago"=>$_POST["fechaPago"],
                 "codigo"=>$codigo,
                 "productos"=>$_POST["listaProductosCompras"],
+                "sucursalDestino"=>($_SESSION["sucursal"] ?? 'stock'),
                 "estado"=>0,
                 "total"=>$_POST["totalCompra"]);
 
@@ -281,6 +282,7 @@ class ControladorCompras{
                 "fechaPago"=>$_POST["fechaPago"] ?? $fecha,
                 "codigo"=>$codigo,
                 "productos"=>$_POST["listaProductosCompras"],
+                "sucursalDestino"=>($_SESSION["sucursal"] ?? 'stock'),
                 "estado"=>1, // Estado 1 = ingresada directamente
                 "total"=>$_POST["nuevoTotalFactura"] ?? $_POST["totalCompra"],
                 "tipo"=>$_POST["tipoFactura"] ?? "",
@@ -517,7 +519,22 @@ class ControladorCompras{
 							}
 						})
 				</script>';
-			}		
+			}else{
+				$msjError = "No se pudo eliminar la compra. Verificá stock y datos relacionados.";
+				echo'<script>
+				swal({
+					  type: "error",
+					  title: "Error al borrar compra",
+					  text: "'.$msjError.'",
+					  showConfirmButton: true,
+					  confirmButtonText: "Cerrar"
+					  }).then(function(result){
+							if (result.value) {
+								window.location = "compras";
+							}
+						})
+				</script>';
+			}
 		}
 	}
 

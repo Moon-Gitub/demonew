@@ -5,6 +5,7 @@ $raiz = dirname(__DIR__);
 require_once $raiz . "/modelos/seguridad.modelo.php";
 require_once $raiz . "/modelos/upload.modelo.php";
 require_once $raiz . "/modelos/login.modelo.php";
+require_once $raiz . "/modelos/empresa.modelo.php";
 
 class ControladorUsuarios{
 
@@ -68,6 +69,35 @@ class ControladorUsuarios{
 							$sucursalSeleccionada = trim($_POST["ingSucursal"] ?? '');
 							$sucursalesUsuario = trim($respuesta["sucursal"] ?? '');
 							$sucursalValida = false;
+
+							// Auto-selección de sucursal:
+							// - Si el usuario tiene 1 sola sucursal asignada, usarla aunque no la envíe el form.
+							// - Si el usuario tiene varias, debe elegir.
+							// - Si el usuario no tiene sucursal, se auto-selecciona solo si la empresa tiene 1 almacén; si no, debe elegir.
+							if ($sucursalSeleccionada === '') {
+								if ($sucursalesUsuario !== '' && $sucursalesUsuario !== null) {
+									$listaUsuario = array_values(array_filter(array_map('trim', explode(',', $sucursalesUsuario)), function ($v) {
+										return $v !== '';
+									}));
+									if (count($listaUsuario) === 1) {
+										$sucursalSeleccionada = $listaUsuario[0];
+									} elseif (count($listaUsuario) > 1) {
+										echo '<br><div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> Seleccione sucursal.</div>';
+										return;
+									}
+								} else {
+									$idEmpresa = (int)($respuesta["empresa"] ?? 1);
+									$empresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', $idEmpresa > 0 ? $idEmpresa : 1);
+									$almacenes = !empty($empresa['almacenes']) ? json_decode($empresa['almacenes'], true) : [];
+									if (!is_array($almacenes)) $almacenes = [];
+									if (count($almacenes) === 1) {
+										$sucursalSeleccionada = trim((string)($almacenes[0]['stkProd'] ?? ''));
+									} elseif (count($almacenes) > 1) {
+										echo '<br><div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> Seleccione sucursal.</div>';
+										return;
+									}
+								}
+							}
 
 							if ($sucursalSeleccionada !== '') {
 								if ($sucursalesUsuario === '' || $sucursalesUsuario === null) {
