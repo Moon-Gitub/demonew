@@ -900,6 +900,7 @@ $mostrarSelectorEmpresa = (isset($_SESSION['perfil']) && $_SESSION['perfil'] ===
 $empresasTiposCbtes = [];
 $condicionIvaPorEmpresa = [];
 $empresasPtoVta = [];
+$empresasPtosLista = [];
 // Códigos AFIP: A=1,2,3,4 | B=6,7,8,9,51,52,53,54,201,202,203,206,207,208 | C=11,12,13,15,211,212,213
 $codigosTipoA = [1, 2, 3, 4];
 $codigosTipoB = [6, 7, 8, 9, 51, 52, 53, 54, 201, 202, 203, 206, 207, 208];
@@ -908,6 +909,7 @@ $codigosTipoC = [11, 12, 13, 15, 211, 212, 213];
 	$idEmp = (int)$emp['id'];
 	$condicionIvaPorEmpresa[$idEmp] = (int)($emp['condicion_iva'] ?? 1);
 	$empresasPtoVta[$idEmp] = ControladorVentas::ctrResolverPtoVtaEmpresa($idEmp);
+	$empresasPtosLista[$idEmp] = ControladorVentas::ctrListarPtosVentaEmpresa($idEmp);
 	$tipos = json_decode($emp['tipos_cbtes'] ?? '[]', true);
 	if (!is_array($tipos)) {
 		$tipos = [];
@@ -925,6 +927,7 @@ $codigosTipoC = [11, 12, 13, 15, 211, 212, 213];
 var empresasTiposCbtes = <?php echo json_encode($empresasTiposCbtes); ?>;
 var condicionIvaPorEmpresa = <?php echo json_encode($condicionIvaPorEmpresa); ?>;
 var empresasPtoVta = <?php echo json_encode($empresasPtoVta); ?>;
+var empresasPtosLista = <?php echo json_encode($empresasPtosLista); ?>;
 // Filtrar tipos por condición: Monotributista (6,13,16) solo C; RI (1,11) solo A y B
 var codigosTipoC = <?php echo json_encode($codigosTipoC); ?>;
 var codigosTipoAB = <?php echo json_encode(array_merge($codigosTipoA, $codigosTipoB)); ?>;
@@ -1007,7 +1010,9 @@ function filtrarTiposPorCondicionIva(tipos, condicionIva) {
               <label for="autorizarCbtePtoVta">Punto de venta</label>
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-terminal"></i></span>
-                <input type="text" class="form-control" name="autorizarCbtePtoVta" id="autorizarCbtePtoVta" readonly>
+                <select class="form-control" name="autorizarCbtePtoVta" id="autorizarCbtePtoVta" title="Punto de venta de la empresa seleccionada">
+                  <option value="">Seleccione empresa primero</option>
+                </select>
               </div>
               <p class="help-block" id="modalAutorizarPtoVtaAyudaLote" style="display:none;">Se aplicará este punto de venta a todas las ventas del lote.</p>
             </div>

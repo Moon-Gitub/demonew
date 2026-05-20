@@ -1483,53 +1483,65 @@ $('#nuevaFecEmision').datepicker().datepicker("setDate", new Date());
 $('#nuevaFecEmision').datepicker( "option", "dateFormat", "dd/mm/yy" );
 
 /* Punto de venta por empresa (modal autorizar) */
-function ptoVtaDefectoEmpresa(idEmpresa) {
-  if (typeof empresasPtoVta === "undefined") {
-    return null;
-  }
+function poblarSelectPtoVtaEmpresa(idEmpresa, ptoPreferido, listaRemota) {
+  var $sel = $("#autorizarCbtePtoVta");
   var idNum = parseInt(idEmpresa, 10);
-  if (!isNaN(idNum) && empresasPtoVta[idNum] != null) {
-    return empresasPtoVta[idNum];
+  var lista = listaRemota || null;
+  if (!lista && typeof empresasPtosLista !== "undefined") {
+    lista = empresasPtosLista[idNum] || empresasPtosLista[idEmpresa] || null;
   }
-  if (empresasPtoVta[idEmpresa] != null) {
-    return empresasPtoVta[idEmpresa];
+  var defecto = 0;
+  var ptos = [];
+  if (lista && lista.ptos && lista.ptos.length) {
+    ptos = lista.ptos;
+    defecto = parseInt(lista.defecto, 10) || 0;
+  } else if (typeof empresasPtoVta !== "undefined") {
+    defecto = parseInt(empresasPtoVta[idNum] || empresasPtoVta[idEmpresa] || 0, 10) || 0;
+    if (defecto > 0) {
+      ptos = [{ pto: defecto, det: "" }];
+    }
   }
-  return null;
-}
-function aplicarPtoVtaEnModal(pto) {
-  var $campo = $("#autorizarCbtePtoVta");
-  if (pto != null && pto !== "" && !isNaN(parseInt(pto, 10)) && parseInt(pto, 10) > 0) {
-    $campo.val(parseInt(pto, 10));
+  $sel.empty();
+  if (!ptos.length) {
+    $sel.append($("<option></option>").val("").text("Sin punto de venta configurado"));
+    return;
+  }
+  $.each(ptos, function (i, p) {
+    var pto = parseInt(p.pto, 10);
+    var txt = p.det ? (pto + " - " + p.det) : String(pto);
+    $sel.append($("<option></option>").val(pto).text(txt));
+  });
+  var ptoSel = parseInt(ptoPreferido, 10);
+  if (!isNaN(ptoSel) && ptoSel > 0 && $sel.find('option[value="' + ptoSel + '"]').length) {
+    $sel.val(ptoSel);
+  } else if (defecto > 0 && $sel.find('option[value="' + defecto + '"]').length) {
+    $sel.val(defecto);
   } else {
-    $campo.val("");
+    $sel.val($sel.find("option:first").val());
   }
 }
-function actualizarPtoVtaModalAutorizar(idEmpresa) {
+function actualizarPtoVtaModalAutorizar(idEmpresa, ptoPreferido) {
   if (!idEmpresa) {
-    aplicarPtoVtaEnModal("");
+    poblarSelectPtoVtaEmpresa("", null);
     return;
   }
-  var ptoLocal = ptoVtaDefectoEmpresa(idEmpresa);
-  if (ptoLocal != null && parseInt(ptoLocal, 10) > 0) {
-    aplicarPtoVtaEnModal(ptoLocal);
-    return;
-  }
+  poblarSelectPtoVtaEmpresa(idEmpresa, ptoPreferido);
   $.ajax({
     url: "ajax/ventas.ajax.php",
     method: "POST",
     data: { idEmpresaPtoVta: idEmpresa },
     dataType: "json",
-    success: function (resp) {
-      if (resp && resp.pto_vta) {
-        aplicarPtoVtaEnModal(resp.pto_vta);
-        if (typeof empresasPtoVta !== "undefined") {
-          var idNum = parseInt(idEmpresa, 10);
-          empresasPtoVta[idNum] = parseInt(resp.pto_vta, 10);
-        }
-      } else {
-        aplicarPtoVtaEnModal("");
-      }
+    headers: { "X-Requested-With": "XMLHttpRequest" }
+  }).done(function (resp) {
+    if (!resp) return;
+    var idNum = parseInt(idEmpresa, 10);
+    if (typeof empresasPtosLista !== "undefined" && resp.ptos) {
+      empresasPtosLista[idNum] = { ptos: resp.ptos, defecto: resp.defecto || resp.pto_vta };
     }
+    if (typeof empresasPtoVta !== "undefined" && resp.pto_vta) {
+      empresasPtoVta[idNum] = parseInt(resp.pto_vta, 10);
+    }
+    poblarSelectPtoVtaEmpresa(idEmpresa, ptoPreferido, resp);
   });
 }
 
@@ -1769,8 +1781,13 @@ $("#modalAutorizarComprobante").on("shown.bs.modal", function() {
 });
 
 // Al abrir modal para una sola venta, limpiar modo lote
+var modalAutorizarCargaVentaActiva = false;
 $("#tablaListarVentas").on("click", ".btnAutorizarCbte", function() {
   $("#autorizarCbteLoteIds").val("");
+  modalAutorizarCargaVentaActiva = true;
+});
+$("#modalAutorizarComprobante").on("hidden.bs.modal", function () {
+  modalAutorizarCargaVentaActiva = false;
 });
 
 // Envío del modal: si es modo lote, enviar AJAX facturar por lote con empresa y tipo elegidos
@@ -2178,15 +2195,12 @@ $("#tablaListarVentas").on("click", ".btnAutorizarCbte", function(){
 	       // Empresa de la venta o la de sesión por defecto
 	       var idEmpresaVenta = respuesta["id_empresa"] != null ? respuesta["id_empresa"] : $("#modalAutorizarComprobante").data("id-empresa-default");
 	       if (idEmpresaVenta != null && $("#autorizarCbteIdEmpresa").length) {
-	         $("#autorizarCbteIdEmpresa").val(idEmpresaVenta).trigger("change");
-	       } else {
-	         $("#autorizarCbteIdEmpresa").trigger("change");
+	         $("#autorizarCbteIdEmpresa").val(idEmpresaVenta);
 	       }
-	       // Rellenar tipos de comprobante según la empresa: Monotributista solo C, RI solo A y B
 	       var idEmpresa = $("#autorizarCbteIdEmpresa").is("select") ? $("#autorizarCbteIdEmpresa").val() : $("#autorizarCbteIdEmpresa").val();
-	       if (!$("#autorizarCbtePtoVta").val() && respuesta["pto_vta"]) {
-	         aplicarPtoVtaEnModal(respuesta["pto_vta"]);
-	       }
+	       actualizarPtoVtaModalAutorizar(idEmpresa, null);
+	       modalAutorizarCargaVentaActiva = false;
+	       // Rellenar tipos de comprobante según la empresa: Monotributista solo C, RI solo A y B
 	       var idEmpresaTipos = parseInt(idEmpresa, 10);
 	       if (typeof empresasTiposCbtes !== "undefined" && empresasTiposCbtes[idEmpresaTipos]) {
 	         idEmpresa = idEmpresaTipos;
@@ -2215,7 +2229,9 @@ $("#tablaListarVentas").on("click", ".btnAutorizarCbte", function(){
 $(document).on("change", "#autorizarCbteIdEmpresa", function () {
   var idEmpresa = $(this).val();
   var idEmpresaNum = parseInt(idEmpresa, 10);
-  actualizarPtoVtaModalAutorizar(idEmpresa);
+  if (!modalAutorizarCargaVentaActiva) {
+    actualizarPtoVtaModalAutorizar(idEmpresa, null);
+  }
   if (typeof empresasTiposCbtes === "undefined") return;
   var tiposEmpresa = empresasTiposCbtes[idEmpresaNum] || empresasTiposCbtes[idEmpresa];
   if (!tiposEmpresa) return;

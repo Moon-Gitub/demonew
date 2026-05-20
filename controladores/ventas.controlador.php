@@ -1477,6 +1477,44 @@ class ControladorVentas{
 	}
 
 	/**
+	 * Lista de puntos de venta configurados para una empresa (modal autorizar).
+	 */
+	static public function ctrListarPtosVentaEmpresa($idEmpresa) {
+		$arrEmpresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', (int) $idEmpresa);
+		if (!$arrEmpresa) {
+			return ['ptos' => [], 'defecto' => 0];
+		}
+		$defecto = self::ctrResolverPtoVtaEmpresa((int) $idEmpresa);
+		$ptos = [];
+		$raw = trim((string) ($arrEmpresa['ptos_venta'] ?? ''));
+		if ($raw !== '') {
+			$ptosJson = json_decode($raw, true);
+			if (is_array($ptosJson)) {
+				foreach ($ptosJson as $item) {
+					if (is_array($item) && isset($item['pto']) && is_numeric($item['pto'])) {
+						$ptos[] = ['pto' => (int) $item['pto'], 'det' => (string) ($item['det'] ?? '')];
+					} elseif (is_numeric($item)) {
+						$ptos[] = ['pto' => (int) $item, 'det' => ''];
+					} elseif (is_string($item) && is_numeric(trim($item))) {
+						$ptos[] = ['pto' => (int) trim($item), 'det' => ''];
+					}
+				}
+			} elseif ($raw[0] !== '[' && $raw[0] !== '{') {
+				$partes = preg_split('/[,\s]+/', $raw, -1, PREG_SPLIT_NO_EMPTY);
+				foreach ($partes as $p) {
+					if (is_numeric($p)) {
+						$ptos[] = ['pto' => (int) $p, 'det' => ''];
+					}
+				}
+			}
+		}
+		if (empty($ptos) && $defecto > 0) {
+			$ptos[] = ['pto' => $defecto, 'det' => ''];
+		}
+		return ['ptos' => $ptos, 'defecto' => $defecto];
+	}
+
+	/**
 	 * Actualiza fecha, id_empresa y pto_vta en ventas antes de facturar.
 	 */
 	static private function actualizarVentaAntesFacturar($idVenta, $fechaInput, $idEmpresa, $fechaReferencia = null, $ptoVta = null) {

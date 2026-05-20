@@ -143,8 +143,12 @@ PTO VTA POR EMPRESA (modal autorizar comprobante)
 =============================================*/
 if (isset($_POST['idEmpresaPtoVta']) && $_POST['idEmpresaPtoVta'] !== '') {
 	header('Content-Type: application/json; charset=utf-8');
+	$idEmp = (int) $_POST['idEmpresaPtoVta'];
+	$lista = ControladorVentas::ctrListarPtosVentaEmpresa($idEmp);
 	echo json_encode([
-		'pto_vta' => ControladorVentas::ctrResolverPtoVtaEmpresa((int) $_POST['idEmpresaPtoVta']),
+		'pto_vta' => $lista['defecto'],
+		'ptos' => $lista['ptos'],
+		'defecto' => $lista['defecto'],
 	]);
 	exit;
 }
