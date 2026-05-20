@@ -1410,6 +1410,42 @@ class ControladorVentas{
 		return $respuesta;
 	}
 
+	/**
+	 * Normaliza fecha ingresada (dd/mm/yyyy o Y-m-d) a Y-m-d H:i:s para ventas.fecha.
+	 */
+	static private function parseFechaVentaInput($fechaInput, $fechaReferencia = null) {
+		date_default_timezone_set('America/Argentina/Mendoza');
+		$hora = '00:00:00';
+		if ($fechaReferencia) {
+			$tsRef = strtotime((string) $fechaReferencia);
+			if ($tsRef !== false) {
+				$hora = date('H:i:s', $tsRef);
+			}
+		}
+		$fechaInput = trim((string) $fechaInput);
+		if ($fechaInput === '') {
+			return date('Y-m-d') . ' ' . $hora;
+		}
+		if (preg_match('#^(\d{1,2})/(\d{1,2})/(\d{4})$#', $fechaInput, $m)) {
+			return sprintf('%04d-%02d-%02d %s', (int) $m[3], (int) $m[2], (int) $m[1], $hora);
+		}
+		$ts = strtotime($fechaInput);
+		return ($ts !== false) ? date('Y-m-d H:i:s', $ts) : (date('Y-m-d') . ' ' . $hora);
+	}
+
+	/**
+	 * Actualiza fecha e id_empresa en ventas antes de facturar.
+	 */
+	static private function actualizarVentaAntesFacturar($idVenta, $fechaInput, $idEmpresa, $fechaReferencia = null) {
+		$venta = ModeloVentas::mdlMostrarVentas('ventas', 'id', (int) $idVenta);
+		$fecHor = self::parseFechaVentaInput($fechaInput, $fechaReferencia ?: ($venta['fecha'] ?? null));
+		ModeloVentas::mdlActualizarVenta('ventas', 'fecha', $fecHor, (int) $idVenta);
+		if ($idEmpresa !== null && $idEmpresa !== '') {
+			ModeloVentas::mdlActualizarVenta('ventas', 'id_empresa', (int) $idEmpresa, (int) $idVenta);
+		}
+		return $fecHor;
+	}
+
 	/*=============================================
 	AUTORIZAR COMPROBANTE (desde ventas.php)
 	=============================================*/
@@ -1463,6 +1499,8 @@ class ControladorVentas{
 			if ($idEmpresa === null) {
 				$idEmpresa = isset($_SESSION['empresa']) ? (int)$_SESSION['empresa'] : 1;
 			}
+			$fechaInput = isset($_POST['autorizarCbteFecha']) ? $_POST['autorizarCbteFecha'] : '';
+			self::actualizarVentaAntesFacturar($idVenta, $fechaInput, $idEmpresa);
 			$respuesta = self::ctrFacturarVenta($idVenta, $tipoCbte, $idEmpresa);
 
 			if($respuesta){
@@ -1498,9 +1536,10 @@ class ControladorVentas{
 	 * @param array $idsVentas array de id de ventas
 	 * @param int|null $idEmpresa empresa con la que facturar (credenciales AFIP)
 	 * @param int|null $tipoCbteElegido si se pasa, se usa este tipo para todas (permite facturar ventas con tipo X eligiendo A/B/C)
+	 * @param string|null $fechaVenta fecha a guardar en ventas (dd/mm/yyyy o Y-m-d)
 	 * @return array ['estado' => 'ok'|'error', 'aprobadas' => [...], 'rechazadas' => [...], 'mensaje' => string]
 	 */
-	static public function ctrFacturarVentasLote($idsVentas, $idEmpresa = null, $tipoCbteElegido = null) {
+	static public function ctrFacturarVentasLote($idsVentas, $idEmpresa = null, $tipoCbteElegido = null, $fechaVenta = null) {
 		require_once __DIR__ . '/../modelos/ventas.modelo.php';
 		require_once __DIR__ . '/../modelos/clientes.modelo.php';
 		require_once __DIR__ . '/../modelos/empresa.modelo.php';
@@ -1528,12 +1567,22 @@ class ControladorVentas{
 			$tipoCbteElegido = (int) $tipoCbteElegido;
 		}
 
+		$fecHorLote = null;
+		if ($fechaVenta !== null && $fechaVenta !== '') {
+			$fecHorLote = self::parseFechaVentaInput($fechaVenta);
+		}
+
 		$ventas = [];
 		$ptoVtaRef = null;
 		$cbteTipoRef = null;
 		foreach ($idsVentas as $idVenta) {
 			if (ModeloVentas::mdlVentaFacturada($idVenta)) {
 				return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => "La venta #$idVenta ya está facturada."];
+			}
+			if ($fecHorLote !== null) {
+				self::actualizarVentaAntesFacturar($idVenta, $fechaVenta, $idEmpresa, null);
+			} elseif ($idEmpresa !== null) {
+				ModeloVentas::mdlActualizarVenta('ventas', 'id_empresa', (int) $idEmpresa, (int) $idVenta);
 			}
 			$venta = ModeloVentas::mdlMostrarVentas("ventas", "id", $idVenta);
 			if (!$venta) {
@@ -1707,9 +1756,7 @@ class ControladorVentas{
 		$venta = ModeloVentas::mdlMostrarVentas("ventas", "id", $idVenta);
 
 		date_default_timezone_set('America/Argentina/Mendoza');
-		$fecha = date('Y-m-d');
-		$hora = date('H:i:s');
-		$fec_hor = $fecha.' '.$hora;
+		$fec_hor = !empty($venta['fecha']) ? $venta['fecha'] : (date('Y-m-d') . ' ' . date('H:i:s'));
 
 		/*=============================================
 				FACTURACION ELECTRONICA

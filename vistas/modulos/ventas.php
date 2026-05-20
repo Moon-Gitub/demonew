@@ -959,7 +959,7 @@ function filtrarTiposPorCondicionIva(tipos, condicionIva) {
 
             <!-- Mensaje modo lote: se muestra cuando se abre desde Facturar por lote -->
             <div id="modalAutorizarLoteResumen" class="form-group" style="display:none;">
-              <p class="text-muted" id="modalAutorizarLoteResumenTexto">Facturar <strong id="modalAutorizarLoteCantidad">0</strong> ventas por lote. Elija la razón social y el tipo de comprobante.</p>
+              <p class="text-muted" id="modalAutorizarLoteResumenTexto">Facturar <strong id="modalAutorizarLoteCantidad">0</strong> ventas por lote. Elija empresa, fecha, y tipo de comprobante.</p>
             </div>
 
             <!-- Facturar como: selector de empresa (solo Administrador) -->
@@ -979,11 +979,21 @@ function filtrarTiposPorCondicionIva(tipos, condicionIva) {
             <input type="hidden" name="autorizarCbteIdEmpresa" id="autorizarCbteIdEmpresa" value="<?php echo $idEmpresaPorDefectoModal; ?>">
             <?php endif; ?>
 
+            <!-- Fecha de la venta (individual y por lote) -->
+            <div class="form-group" id="modalAutorizarFechaWrap">
+              <label for="autorizarCbteFecha">Fecha de la venta</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                <input type="text" class="form-control" name="autorizarCbteFecha" id="autorizarCbteFecha" autocomplete="off" placeholder="dd/mm/aaaa">
+              </div>
+              <p class="help-block" id="modalAutorizarFechaAyudaLote" style="display:none;">Se aplicará esta fecha a todas las ventas del lote.</p>
+            </div>
+
             <!-- Campos de una sola venta (ocultos en modo facturar por lote) -->
             <div id="modalAutorizarUnaVenta">
             <div class="row">
 
-              <div class="col-md-4">
+              <div class="col-md-6">
                 <!-- ENTRADA PARA CODDIGO VENTA -->
                 <div class="form-group">
                   
@@ -999,7 +1009,7 @@ function filtrarTiposPorCondicionIva(tipos, condicionIva) {
                 </div>
               </div>
 
-              <div class="col-md-4">
+              <div class="col-md-6">
                 <!-- ENTRADA PARA CODDIGO VENTA -->
                 <div class="form-group">
                   
@@ -1013,21 +1023,6 @@ function filtrarTiposPorCondicionIva(tipos, condicionIva) {
                   </div> 
 
                 </div>
-              </div>
-              <div class="col-md-4">
-                <!-- ENTRADA PARA CODDIGO VENTA -->
-            <div class="form-group">
-              
-              Fecha:
-              <div class="input-group">
-
-                <span class="input-group-addon"><i class="fa fa-calendar"></i></span> 
-
-                <input type="text" class="form-control" name="autorizarCbteFecha" id="autorizarCbteFecha" readonly>
-
-              </div> 
-
-            </div>
               </div>
             </div>
 

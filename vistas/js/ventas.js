@@ -1482,6 +1482,24 @@ DETALLES PRODUCTO
 $('#nuevaFecEmision').datepicker().datepicker("setDate", new Date());
 $('#nuevaFecEmision').datepicker( "option", "dateFormat", "dd/mm/yy" );
 
+/* Datepicker: fecha de venta al autorizar / facturar por lote */
+function fechaVentaParaDatepicker(fechaDb) {
+  if (!fechaDb) {
+    return $.datepicker.formatDate("dd/mm/yy", new Date());
+  }
+  var parte = String(fechaDb).split(" ")[0];
+  var p = parte.split("-");
+  if (p.length === 3) {
+    return p[2] + "/" + p[1] + "/" + p[0];
+  }
+  return fechaDb;
+}
+$("#autorizarCbteFecha").datepicker({
+  dateFormat: "dd/mm/yy",
+  changeMonth: true,
+  changeYear: true
+});
+
 //$('#editarFecEmision').datepicker().datepicker({ dateFormat: 'dd-mm-yy' }).val($('#editarFecEmision').val());
 //$('#editarFecEmision').datepicker( "option", "dateFormat", "dd/mm/yy" );
 
@@ -1657,6 +1675,8 @@ $("#modalAutorizarComprobante").on("shown.bs.modal", function() {
     $("#modalAutorizarLoteResumen").show();
     $("#modalAutorizarLoteCantidad").text(arr.length);
     $("#modalAutorizarUnaVenta, #modalAutorizarMontoWrap").hide();
+    $("#modalAutorizarFechaAyudaLote").show();
+    $("#autorizarCbteFecha").datepicker("setDate", new Date());
     var defaultEmpresa = $("#modalAutorizarComprobante").data("id-empresa-default");
     if (defaultEmpresa != null && $("#autorizarCbteIdEmpresa").is("select")) {
       $("#autorizarCbteIdEmpresa").val(defaultEmpresa);
@@ -1665,6 +1685,7 @@ $("#modalAutorizarComprobante").on("shown.bs.modal", function() {
     $("#autorizarCbteTipoCbte").val("");
   } else {
     $("#modalAutorizarLoteResumen").hide();
+    $("#modalAutorizarFechaAyudaLote").hide();
     $("#modalAutorizarUnaVenta, #modalAutorizarMontoWrap").show();
     $("#modalAutorizarComprobante .modal-title").text("Autorizar Comprobante");
   }
@@ -1687,10 +1708,16 @@ $("#modalAutorizarComprobante form").on("submit", function(e) {
     swal({ type: "warning", title: "Facturar por lote", text: "Seleccione el tipo de comprobante (Factura A, B o C según corresponda).", confirmButtonText: "Cerrar" });
     return;
   }
+  var fechaVenta = $("#autorizarCbteFecha").val();
+  if (!fechaVenta) {
+    swal({ type: "warning", title: "Facturar por lote", text: "Indique la fecha de la venta.", confirmButtonText: "Cerrar" });
+    return;
+  }
   var datos = new FormData();
   ids.forEach(function(id) { datos.append("facturarLoteIds[]", id); });
   if (idEmpresa) datos.append("facturarLoteIdEmpresa", idEmpresa);
   datos.append("facturarLoteTipoCbte", tipoCbte);
+  datos.append("facturarLoteFecha", fechaVenta);
   $.ajax({
     url: "ajax/ventas.ajax.php",
     method: "POST",
@@ -2064,16 +2091,16 @@ $("#tablaListarVentas").on("click", ".btnAutorizarCbte", function(){
 	       $("#autorizarCbteCliente").val(respuesta["id_cliente"]);
 	       $("#autorizarCbteTipoCbte").val(respuesta["cbte_tipo"]);
 	       $("#autorizarCbteCodVenta").val(respuesta["codigo"]);
-	       $("#autorizarCbteFecha").val(respuesta["fecha"]);
+	       $("#autorizarCbteFecha").datepicker("setDate", fechaVentaParaDatepicker(respuesta["fecha"]));
 
 	       var datosCliente = respuesta["id_cliente"] + "-" +respuesta["nombre"] + " " + respuesta["documento"];
 	       $("#autocompletarClienteCaja").val(datosCliente);
 	       $("#seleccionarCliente").val(respuesta["id_cliente"]);
 
-	       // Restaurar empresa por defecto al abrir el modal (si existe el selector)
-	       var defaultEmpresa = $("#modalAutorizarComprobante").data("id-empresa-default");
-	       if (defaultEmpresa != null && $("#autorizarCbteIdEmpresa").is("select")) {
-	         $("#autorizarCbteIdEmpresa").val(defaultEmpresa);
+	       // Empresa de la venta o la de sesión por defecto
+	       var idEmpresaVenta = respuesta["id_empresa"] != null ? respuesta["id_empresa"] : $("#modalAutorizarComprobante").data("id-empresa-default");
+	       if (idEmpresaVenta != null && $("#autorizarCbteIdEmpresa").length) {
+	         $("#autorizarCbteIdEmpresa").val(idEmpresaVenta);
 	       }
 	       // Rellenar tipos de comprobante según la empresa: Monotributista solo C, RI solo A y B
 	       var idEmpresa = $("#autorizarCbteIdEmpresa").is("select") ? $("#autorizarCbteIdEmpresa").val() : $("#autorizarCbteIdEmpresa").val();
