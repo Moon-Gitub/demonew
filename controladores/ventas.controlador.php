@@ -1435,8 +1435,9 @@ class ControladorVentas{
 
 	/**
 	 * Punto de venta por defecto de la empresa (pto_venta_defecto o primer pto en ptos_venta).
+	 * Soporta JSON [{pto,det}], ["1","2"] o lista separada por comas.
 	 */
-	static private function ptoVtaDesdeEmpresa($idEmpresa) {
+	static public function ctrResolverPtoVtaEmpresa($idEmpresa) {
 		$arrEmpresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', (int) $idEmpresa);
 		if (!$arrEmpresa) {
 			return 0;
@@ -1445,15 +1446,34 @@ class ControladorVentas{
 		if ($ptoDefecto !== '' && is_numeric($ptoDefecto)) {
 			return (int) $ptoDefecto;
 		}
-		$ptosJson = json_decode($arrEmpresa['ptos_venta'] ?? '[]', true);
+		$rawPtos = trim((string) ($arrEmpresa['ptos_venta'] ?? ''));
+		if ($rawPtos === '') {
+			return 0;
+		}
+		$ptosJson = json_decode($rawPtos, true);
 		if (is_array($ptosJson) && count($ptosJson) > 0) {
 			$primero = $ptosJson[0];
-			$pto = is_array($primero) ? ($primero['pto'] ?? null) : $primero;
-			if ($pto !== null && $pto !== '' && is_numeric($pto)) {
-				return (int) $pto;
+			if (is_array($primero) && isset($primero['pto']) && is_numeric($primero['pto'])) {
+				return (int) $primero['pto'];
+			}
+			if (is_numeric($primero)) {
+				return (int) $primero;
+			}
+			if (is_string($primero) && is_numeric(trim($primero))) {
+				return (int) trim($primero);
+			}
+		}
+		if ($rawPtos[0] !== '[' && $rawPtos[0] !== '{') {
+			$partes = preg_split('/[,\s]+/', $rawPtos, -1, PREG_SPLIT_NO_EMPTY);
+			if (!empty($partes[0]) && is_numeric($partes[0])) {
+				return (int) $partes[0];
 			}
 		}
 		return 0;
+	}
+
+	static private function ptoVtaDesdeEmpresa($idEmpresa) {
+		return self::ctrResolverPtoVtaEmpresa($idEmpresa);
 	}
 
 	/**
@@ -1571,9 +1591,10 @@ class ControladorVentas{
 	 * @param int|null $idEmpresa empresa con la que facturar (credenciales AFIP)
 	 * @param int|null $tipoCbteElegido si se pasa, se usa este tipo para todas (permite facturar ventas con tipo X eligiendo A/B/C)
 	 * @param string|null $fechaVenta fecha a guardar en ventas (dd/mm/yyyy o Y-m-d)
+	 * @param int|null $ptoVtaLote punto de venta elegido en el modal
 	 * @return array ['estado' => 'ok'|'error', 'aprobadas' => [...], 'rechazadas' => [...], 'mensaje' => string]
 	 */
-	static public function ctrFacturarVentasLote($idsVentas, $idEmpresa = null, $tipoCbteElegido = null, $fechaVenta = null) {
+	static public function ctrFacturarVentasLote($idsVentas, $idEmpresa = null, $tipoCbteElegido = null, $fechaVenta = null, $ptoVtaLote = null) {
 		require_once __DIR__ . '/../modelos/ventas.modelo.php';
 		require_once __DIR__ . '/../modelos/clientes.modelo.php';
 		require_once __DIR__ . '/../modelos/empresa.modelo.php';
@@ -1614,13 +1635,9 @@ class ControladorVentas{
 				return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => "La venta #$idVenta ya está facturada."];
 			}
 			if ($fecHorLote !== null) {
-				self::actualizarVentaAntesFacturar($idVenta, $fechaVenta, $idEmpresa, null, null);
+				self::actualizarVentaAntesFacturar($idVenta, $fechaVenta, $idEmpresa, null, $ptoVtaLote);
 			} elseif ($idEmpresa !== null) {
-				ModeloVentas::mdlActualizarVenta('ventas', 'id_empresa', (int) $idEmpresa, (int) $idVenta);
-				$ptoLote = self::ptoVtaDesdeEmpresa((int) $idEmpresa);
-				if ($ptoLote > 0) {
-					ModeloVentas::mdlActualizarVenta('ventas', 'pto_vta', $ptoLote, (int) $idVenta);
-				}
+				self::actualizarVentaAntesFacturar($idVenta, '', $idEmpresa, null, $ptoVtaLote);
 			}
 			$venta = ModeloVentas::mdlMostrarVentas("ventas", "id", $idVenta);
 			if (!$venta) {

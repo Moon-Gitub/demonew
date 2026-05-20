@@ -1484,14 +1484,53 @@ $('#nuevaFecEmision').datepicker( "option", "dateFormat", "dd/mm/yy" );
 
 /* Punto de venta por empresa (modal autorizar) */
 function ptoVtaDefectoEmpresa(idEmpresa) {
-  if (typeof empresasPtoVta === "undefined" || empresasPtoVta[idEmpresa] == null) {
-    return "";
+  if (typeof empresasPtoVta === "undefined") {
+    return null;
   }
-  return empresasPtoVta[idEmpresa];
+  var idNum = parseInt(idEmpresa, 10);
+  if (!isNaN(idNum) && empresasPtoVta[idNum] != null) {
+    return empresasPtoVta[idNum];
+  }
+  if (empresasPtoVta[idEmpresa] != null) {
+    return empresasPtoVta[idEmpresa];
+  }
+  return null;
+}
+function aplicarPtoVtaEnModal(pto) {
+  var $campo = $("#autorizarCbtePtoVta");
+  if (pto != null && pto !== "" && !isNaN(parseInt(pto, 10)) && parseInt(pto, 10) > 0) {
+    $campo.val(parseInt(pto, 10));
+  } else {
+    $campo.val("");
+  }
 }
 function actualizarPtoVtaModalAutorizar(idEmpresa) {
-  var pto = ptoVtaDefectoEmpresa(idEmpresa);
-  $("#autorizarCbtePtoVta").val(pto !== "" && pto != null ? pto : "");
+  if (!idEmpresa) {
+    aplicarPtoVtaEnModal("");
+    return;
+  }
+  var ptoLocal = ptoVtaDefectoEmpresa(idEmpresa);
+  if (ptoLocal != null && parseInt(ptoLocal, 10) > 0) {
+    aplicarPtoVtaEnModal(ptoLocal);
+    return;
+  }
+  $.ajax({
+    url: "ajax/ventas.ajax.php",
+    method: "POST",
+    data: { idEmpresaPtoVta: idEmpresa },
+    dataType: "json",
+    success: function (resp) {
+      if (resp && resp.pto_vta) {
+        aplicarPtoVtaEnModal(resp.pto_vta);
+        if (typeof empresasPtoVta !== "undefined") {
+          var idNum = parseInt(idEmpresa, 10);
+          empresasPtoVta[idNum] = parseInt(resp.pto_vta, 10);
+        }
+      } else {
+        aplicarPtoVtaEnModal("");
+      }
+    }
+  });
 }
 
 /* Datepicker: fecha de venta al autorizar / facturar por lote */
@@ -1756,6 +1795,8 @@ $("#modalAutorizarComprobante form").on("submit", function(e) {
   if (idEmpresa) datos.append("facturarLoteIdEmpresa", idEmpresa);
   datos.append("facturarLoteTipoCbte", tipoCbte);
   datos.append("facturarLoteFecha", fechaVenta);
+  var ptoVtaLote = $("#autorizarCbtePtoVta").val();
+  if (ptoVtaLote) datos.append("facturarLotePtoVta", ptoVtaLote);
   $.ajax({
     url: "ajax/ventas.ajax.php",
     method: "POST",
@@ -2125,7 +2166,6 @@ $("#tablaListarVentas").on("click", ".btnAutorizarCbte", function(){
 
      	   $("#autorizarCbteIdVenta").val(respuesta["id"]);
 	       $("#autorizarCbteMonto").val(respuesta["total"]);
-	       $("#autorizarCbtePtoVta").val(respuesta["pto_vta"]);
 	       $("#autorizarCbteCliente").val(respuesta["id_cliente"]);
 	       $("#autorizarCbteTipoCbte").val(respuesta["cbte_tipo"]);
 	       $("#autorizarCbteCodVenta").val(respuesta["codigo"]);
@@ -2145,9 +2185,11 @@ $("#tablaListarVentas").on("click", ".btnAutorizarCbte", function(){
 	       // Rellenar tipos de comprobante según la empresa: Monotributista solo C, RI solo A y B
 	       var idEmpresa = $("#autorizarCbteIdEmpresa").is("select") ? $("#autorizarCbteIdEmpresa").val() : $("#autorizarCbteIdEmpresa").val();
 	       if (!$("#autorizarCbtePtoVta").val() && respuesta["pto_vta"]) {
-	         $("#autorizarCbtePtoVta").val(respuesta["pto_vta"]);
+	         aplicarPtoVtaEnModal(respuesta["pto_vta"]);
 	       }
-	       if (typeof empresasTiposCbtes !== "undefined" && empresasTiposCbtes[idEmpresa]) {
+	       var idEmpresaTipos = parseInt(idEmpresa, 10);
+	       if (typeof empresasTiposCbtes !== "undefined" && empresasTiposCbtes[idEmpresaTipos]) {
+	         idEmpresa = idEmpresaTipos;
 	         var condicionIva = (typeof condicionIvaPorEmpresa !== "undefined" && condicionIvaPorEmpresa[idEmpresa] != null) ? condicionIvaPorEmpresa[idEmpresa] : 1;
 	         var tiposFiltrados = (typeof filtrarTiposPorCondicionIva === "function") ? filtrarTiposPorCondicionIva(empresasTiposCbtes[idEmpresa], condicionIva) : empresasTiposCbtes[idEmpresa];
 	         var $sel = $("#autorizarCbteTipoCbte");
@@ -2172,10 +2214,15 @@ $("#tablaListarVentas").on("click", ".btnAutorizarCbte", function(){
 // Al cambiar la empresa en el modal Autorizar: actualizar pto de venta y tipos de comprobante
 $(document).on("change", "#autorizarCbteIdEmpresa", function () {
   var idEmpresa = $(this).val();
+  var idEmpresaNum = parseInt(idEmpresa, 10);
   actualizarPtoVtaModalAutorizar(idEmpresa);
-  if (typeof empresasTiposCbtes === "undefined" || !empresasTiposCbtes[idEmpresa]) return;
-  var condicionIva = (typeof condicionIvaPorEmpresa !== "undefined" && condicionIvaPorEmpresa[idEmpresa] != null) ? condicionIvaPorEmpresa[idEmpresa] : 1;
-  var tiposFiltrados = (typeof filtrarTiposPorCondicionIva === "function") ? filtrarTiposPorCondicionIva(empresasTiposCbtes[idEmpresa], condicionIva) : empresasTiposCbtes[idEmpresa];
+  if (typeof empresasTiposCbtes === "undefined") return;
+  var tiposEmpresa = empresasTiposCbtes[idEmpresaNum] || empresasTiposCbtes[idEmpresa];
+  if (!tiposEmpresa) return;
+  var condicionIva = (typeof condicionIvaPorEmpresa !== "undefined" && condicionIvaPorEmpresa[idEmpresaNum] != null)
+    ? condicionIvaPorEmpresa[idEmpresaNum]
+    : ((typeof condicionIvaPorEmpresa !== "undefined" && condicionIvaPorEmpresa[idEmpresa] != null) ? condicionIvaPorEmpresa[idEmpresa] : 1);
+  var tiposFiltrados = (typeof filtrarTiposPorCondicionIva === "function") ? filtrarTiposPorCondicionIva(tiposEmpresa, condicionIva) : tiposEmpresa;
   var $sel = $("#autorizarCbteTipoCbte");
   var valorAnterior = $sel.val();
   $sel.find("option:not(:first):not([value='0'])").remove();

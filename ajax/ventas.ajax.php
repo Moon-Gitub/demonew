@@ -139,6 +139,17 @@ if(isset($_POST["idVentaConCliente"])){
 }
 
 /*=============================================
+PTO VTA POR EMPRESA (modal autorizar comprobante)
+=============================================*/
+if (isset($_POST['idEmpresaPtoVta']) && $_POST['idEmpresaPtoVta'] !== '') {
+	header('Content-Type: application/json; charset=utf-8');
+	echo json_encode([
+		'pto_vta' => ControladorVentas::ctrResolverPtoVtaEmpresa((int) $_POST['idEmpresaPtoVta']),
+	]);
+	exit;
+}
+
+/*=============================================
 FACTURAR POR LOTE
 =============================================*/
 if(isset($_POST["facturarLoteIds"]) && is_array($_POST["facturarLoteIds"]) && count($_POST["facturarLoteIds"]) > 0){
@@ -147,7 +158,8 @@ if(isset($_POST["facturarLoteIds"]) && is_array($_POST["facturarLoteIds"]) && co
 	$idEmpresa = isset($_POST["facturarLoteIdEmpresa"]) && $_POST["facturarLoteIdEmpresa"] !== '' ? (int)$_POST["facturarLoteIdEmpresa"] : null;
 	$tipoCbteElegido = isset($_POST["facturarLoteTipoCbte"]) && $_POST["facturarLoteTipoCbte"] !== '' ? (int)$_POST["facturarLoteTipoCbte"] : null;
 	$fechaVenta = isset($_POST["facturarLoteFecha"]) && $_POST["facturarLoteFecha"] !== '' ? trim($_POST["facturarLoteFecha"]) : null;
-	$respuesta = ControladorVentas::ctrFacturarVentasLote($ids, $idEmpresa, $tipoCbteElegido, $fechaVenta);
+	$ptoVtaLote = isset($_POST["facturarLotePtoVta"]) && $_POST["facturarLotePtoVta"] !== '' ? (int)$_POST["facturarLotePtoVta"] : null;
+	$respuesta = ControladorVentas::ctrFacturarVentasLote($ids, $idEmpresa, $tipoCbteElegido, $fechaVenta, $ptoVtaLote);
 	// Formato esperado por ventas.js: estado, mensaje, resultados (array con ok, id_venta, codigo?, mensaje?)
 	$resultados = [];
 	foreach ($respuesta['aprobadas'] as $a) {

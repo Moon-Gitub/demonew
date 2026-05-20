@@ -907,15 +907,7 @@ $codigosTipoC = [11, 12, 13, 15, 211, 212, 213];
 	foreach ($listadoEmpresasModal as $emp) {
 	$idEmp = (int)$emp['id'];
 	$condicionIvaPorEmpresa[$idEmp] = (int)($emp['condicion_iva'] ?? 1);
-	$ptoDefecto = isset($emp['pto_venta_defecto']) ? trim((string)$emp['pto_venta_defecto']) : '';
-	if ($ptoDefecto === '' || !is_numeric($ptoDefecto)) {
-		$ptosJson = json_decode($emp['ptos_venta'] ?? '[]', true);
-		if (is_array($ptosJson) && count($ptosJson) > 0) {
-			$primero = $ptosJson[0];
-			$ptoDefecto = is_array($primero) ? (string)($primero['pto'] ?? '') : (string)$primero;
-		}
-	}
-	$empresasPtoVta[$idEmp] = is_numeric($ptoDefecto) ? (int)$ptoDefecto : 0;
+	$empresasPtoVta[$idEmp] = ControladorVentas::ctrResolverPtoVtaEmpresa($idEmp);
 	$tipos = json_decode($emp['tipos_cbtes'] ?? '[]', true);
 	if (!is_array($tipos)) {
 		$tipos = [];
