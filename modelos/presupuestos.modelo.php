@@ -9,43 +9,38 @@ class ModeloPresupuestos{
 	=============================================*/	
 	static public function mdlRangoFechasPresupuestos($tabla, $fechaInicial, $fechaFinal){
 
-		if($fechaInicial == null){
+		$sqlBase = "SELECT pre.*, cli.nombre as cliente FROM presupuestos pre INNER JOIN clientes cli ON pre.id_cliente = cli.id";
 
-			$stmt = Conexion::conectar()->prepare("SELECT pre.*, cli.nombre as cliente FROM presupuestos pre INNER JOIN clientes cli ON pre.id_cliente = cli.id ORDER BY pre.id DESC");
+		if ($fechaInicial == null) {
 
-		}else if($fechaInicial == $fechaFinal){
+			$stmt = Conexion::conectar()->prepare($sqlBase . " ORDER BY pre.id DESC");
 
-			$stmt = Conexion::conectar()->prepare("SELECT pre.*, cli.nombre as cliente FROM presupuestos pre INNER JOIN clientes cli ON pre.id_cliente = cli.id WHERE pre.fecha like '%$fechaFinal%' ORDER BY pre.id DESC");
+		} elseif ($fechaInicial == $fechaFinal) {
 
-			$stmt -> bindParam(":fecha", $fechaFinal, PDO::PARAM_STR);
+			$stmt = Conexion::conectar()->prepare($sqlBase . " WHERE pre.fecha LIKE :fecha ORDER BY pre.id DESC");
+			$likeFecha = '%' . $fechaFinal . '%';
+			$stmt->bindParam(':fecha', $likeFecha, PDO::PARAM_STR);
 
-		}else{
+		} else {
 
 			$fechaActual = new DateTime();
-			$fechaActual ->add(new DateInterval("P1D"));
+			$fechaActual->add(new DateInterval("P1D"));
 			$fechaActualMasUno = $fechaActual->format("Y-m-d");
 
 			$fechaFinal2 = new DateTime($fechaFinal);
-			$fechaFinal2 ->add(new DateInterval("P1D"));
+			$fechaFinal2->add(new DateInterval("P1D"));
 			$fechaFinalMasUno = $fechaFinal2->format("Y-m-d");
 
-			if($fechaFinalMasUno == $fechaActualMasUno){
+			$fechaFin = ($fechaFinalMasUno == $fechaActualMasUno) ? $fechaFinalMasUno : $fechaFinal;
 
-				$stmt = Conexion::conectar()->prepare("SELECT pre.*, cli.nombre as cliente FROM presupuestos pre INNER JOIN clientes cli ON pre.id_cliente = cli.id WHERE pre.fecha BETWEEN '$fechaInicial' AND '$fechaFinalMasUno' ORDER BY pre.id DESC");
-
-			}else{
-
-
-				$stmt = Conexion::conectar()->prepare("SELECT pre.*, cli.nombre as cliente FROM presupuestos pre INNER JOIN clientes cli ON pre.id_cliente = cli.id WHERE pre.fecha BETWEEN '$fechaInicial' AND '$fechaFinal' ORDER BY pre.id DESC");
-
-			}
-
+			$stmt = Conexion::conectar()->prepare($sqlBase . " WHERE pre.fecha BETWEEN :fechaInicial AND :fechaFinal ORDER BY pre.id DESC");
+			$stmt->bindParam(':fechaInicial', $fechaInicial, PDO::PARAM_STR);
+			$stmt->bindParam(':fechaFinal', $fechaFin, PDO::PARAM_STR);
 		}
 
-		$stmt -> execute();
+		$stmt->execute();
 
-		return $stmt -> fetchAll();
-
+		return $stmt->fetchAll();
 	}
 
 	/*=============================================
