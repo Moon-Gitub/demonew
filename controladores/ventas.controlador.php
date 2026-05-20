@@ -1434,14 +1434,47 @@ class ControladorVentas{
 	}
 
 	/**
-	 * Actualiza fecha e id_empresa en ventas antes de facturar.
+	 * Punto de venta por defecto de la empresa (pto_venta_defecto o primer pto en ptos_venta).
 	 */
-	static private function actualizarVentaAntesFacturar($idVenta, $fechaInput, $idEmpresa, $fechaReferencia = null) {
+	static private function ptoVtaDesdeEmpresa($idEmpresa) {
+		$arrEmpresa = ModeloEmpresa::mdlMostrarEmpresa('empresa', 'id', (int) $idEmpresa);
+		if (!$arrEmpresa) {
+			return 0;
+		}
+		$ptoDefecto = isset($arrEmpresa['pto_venta_defecto']) ? trim((string) $arrEmpresa['pto_venta_defecto']) : '';
+		if ($ptoDefecto !== '' && is_numeric($ptoDefecto)) {
+			return (int) $ptoDefecto;
+		}
+		$ptosJson = json_decode($arrEmpresa['ptos_venta'] ?? '[]', true);
+		if (is_array($ptosJson) && count($ptosJson) > 0) {
+			$primero = $ptosJson[0];
+			$pto = is_array($primero) ? ($primero['pto'] ?? null) : $primero;
+			if ($pto !== null && $pto !== '' && is_numeric($pto)) {
+				return (int) $pto;
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * Actualiza fecha, id_empresa y pto_vta en ventas antes de facturar.
+	 */
+	static private function actualizarVentaAntesFacturar($idVenta, $fechaInput, $idEmpresa, $fechaReferencia = null, $ptoVta = null) {
 		$venta = ModeloVentas::mdlMostrarVentas('ventas', 'id', (int) $idVenta);
-		$fecHor = self::parseFechaVentaInput($fechaInput, $fechaReferencia ?: ($venta['fecha'] ?? null));
-		ModeloVentas::mdlActualizarVenta('ventas', 'fecha', $fecHor, (int) $idVenta);
+		$fecHor = $venta['fecha'] ?? date('Y-m-d H:i:s');
+		if ($fechaInput !== null && trim((string) $fechaInput) !== '') {
+			$fecHor = self::parseFechaVentaInput($fechaInput, $fechaReferencia ?: ($venta['fecha'] ?? null));
+			ModeloVentas::mdlActualizarVenta('ventas', 'fecha', $fecHor, (int) $idVenta);
+		}
 		if ($idEmpresa !== null && $idEmpresa !== '') {
 			ModeloVentas::mdlActualizarVenta('ventas', 'id_empresa', (int) $idEmpresa, (int) $idVenta);
+		}
+		$pto = ($ptoVta !== null && $ptoVta !== '' && is_numeric($ptoVta)) ? (int) $ptoVta : 0;
+		if ($pto <= 0 && $idEmpresa !== null && $idEmpresa !== '') {
+			$pto = self::ptoVtaDesdeEmpresa((int) $idEmpresa);
+		}
+		if ($pto > 0) {
+			ModeloVentas::mdlActualizarVenta('ventas', 'pto_vta', $pto, (int) $idVenta);
 		}
 		return $fecHor;
 	}
@@ -1500,7 +1533,8 @@ class ControladorVentas{
 				$idEmpresa = isset($_SESSION['empresa']) ? (int)$_SESSION['empresa'] : 1;
 			}
 			$fechaInput = isset($_POST['autorizarCbteFecha']) ? $_POST['autorizarCbteFecha'] : '';
-			self::actualizarVentaAntesFacturar($idVenta, $fechaInput, $idEmpresa);
+			$ptoVta = isset($_POST['autorizarCbtePtoVta']) ? $_POST['autorizarCbtePtoVta'] : null;
+			self::actualizarVentaAntesFacturar($idVenta, $fechaInput, $idEmpresa, null, $ptoVta);
 			$respuesta = self::ctrFacturarVenta($idVenta, $tipoCbte, $idEmpresa);
 
 			if($respuesta){
@@ -1580,9 +1614,13 @@ class ControladorVentas{
 				return ['estado' => 'error', 'aprobadas' => [], 'rechazadas' => [], 'mensaje' => "La venta #$idVenta ya está facturada."];
 			}
 			if ($fecHorLote !== null) {
-				self::actualizarVentaAntesFacturar($idVenta, $fechaVenta, $idEmpresa, null);
+				self::actualizarVentaAntesFacturar($idVenta, $fechaVenta, $idEmpresa, null, null);
 			} elseif ($idEmpresa !== null) {
 				ModeloVentas::mdlActualizarVenta('ventas', 'id_empresa', (int) $idEmpresa, (int) $idVenta);
+				$ptoLote = self::ptoVtaDesdeEmpresa((int) $idEmpresa);
+				if ($ptoLote > 0) {
+					ModeloVentas::mdlActualizarVenta('ventas', 'pto_vta', $ptoLote, (int) $idVenta);
+				}
 			}
 			$venta = ModeloVentas::mdlMostrarVentas("ventas", "id", $idVenta);
 			if (!$venta) {

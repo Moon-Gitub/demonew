@@ -355,6 +355,16 @@
     cursor: help;
   }
 
+  /* Datepicker sobre el modal de autorizar comprobante */
+  #modalAutorizarComprobante .ui-datepicker,
+  #ui-datepicker-div {
+    z-index: 10060 !important;
+  }
+
+  #modalAutorizarComprobante .fecha-venta-picker-trigger {
+    cursor: pointer;
+  }
+
   /* Responsive para móviles */
   @media (max-width: 768px) {
     .acciones-ventas {
@@ -889,13 +899,23 @@ $mostrarSelectorEmpresa = (isset($_SESSION['perfil']) && $_SESSION['perfil'] ===
 // Tipos de comprobante por empresa (para filtrar en modal: Monotributista solo C/M, RI solo A/B según lo configurado en cada empresa)
 $empresasTiposCbtes = [];
 $condicionIvaPorEmpresa = [];
+$empresasPtoVta = [];
 // Códigos AFIP: A=1,2,3,4 | B=6,7,8,9,51,52,53,54,201,202,203,206,207,208 | C=11,12,13,15,211,212,213
 $codigosTipoA = [1, 2, 3, 4];
 $codigosTipoB = [6, 7, 8, 9, 51, 52, 53, 54, 201, 202, 203, 206, 207, 208];
 $codigosTipoC = [11, 12, 13, 15, 211, 212, 213];
-foreach ($listadoEmpresasModal as $emp) {
+	foreach ($listadoEmpresasModal as $emp) {
 	$idEmp = (int)$emp['id'];
 	$condicionIvaPorEmpresa[$idEmp] = (int)($emp['condicion_iva'] ?? 1);
+	$ptoDefecto = isset($emp['pto_venta_defecto']) ? trim((string)$emp['pto_venta_defecto']) : '';
+	if ($ptoDefecto === '' || !is_numeric($ptoDefecto)) {
+		$ptosJson = json_decode($emp['ptos_venta'] ?? '[]', true);
+		if (is_array($ptosJson) && count($ptosJson) > 0) {
+			$primero = $ptosJson[0];
+			$ptoDefecto = is_array($primero) ? (string)($primero['pto'] ?? '') : (string)$primero;
+		}
+	}
+	$empresasPtoVta[$idEmp] = is_numeric($ptoDefecto) ? (int)$ptoDefecto : 0;
 	$tipos = json_decode($emp['tipos_cbtes'] ?? '[]', true);
 	if (!is_array($tipos)) {
 		$tipos = [];
@@ -912,6 +932,7 @@ foreach ($listadoEmpresasModal as $emp) {
 <script>
 var empresasTiposCbtes = <?php echo json_encode($empresasTiposCbtes); ?>;
 var condicionIvaPorEmpresa = <?php echo json_encode($condicionIvaPorEmpresa); ?>;
+var empresasPtoVta = <?php echo json_encode($empresasPtoVta); ?>;
 // Filtrar tipos por condición: Monotributista (6,13,16) solo C; RI (1,11) solo A y B
 var codigosTipoC = <?php echo json_encode($codigosTipoC); ?>;
 var codigosTipoAB = <?php echo json_encode(array_merge($codigosTipoA, $codigosTipoB)); ?>;
@@ -983,33 +1004,27 @@ function filtrarTiposPorCondicionIva(tipos, condicionIva) {
             <div class="form-group" id="modalAutorizarFechaWrap">
               <label for="autorizarCbteFecha">Fecha de la venta</label>
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                <input type="text" class="form-control" name="autorizarCbteFecha" id="autorizarCbteFecha" autocomplete="off" placeholder="dd/mm/aaaa">
+                <span class="input-group-addon fecha-venta-picker-trigger" title="Abrir calendario"><i class="fa fa-calendar"></i></span>
+                <input type="text" class="form-control" name="autorizarCbteFecha" id="autorizarCbteFecha" autocomplete="off" placeholder="dd/mm/aaaa" readonly>
               </div>
               <p class="help-block" id="modalAutorizarFechaAyudaLote" style="display:none;">Se aplicará esta fecha a todas las ventas del lote.</p>
+            </div>
+
+            <!-- Punto de venta según empresa (individual y por lote) -->
+            <div class="form-group" id="modalAutorizarPtoVtaWrap">
+              <label for="autorizarCbtePtoVta">Punto de venta</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-terminal"></i></span>
+                <input type="text" class="form-control" name="autorizarCbtePtoVta" id="autorizarCbtePtoVta" readonly>
+              </div>
+              <p class="help-block" id="modalAutorizarPtoVtaAyudaLote" style="display:none;">Se aplicará este punto de venta a todas las ventas del lote.</p>
             </div>
 
             <!-- Campos de una sola venta (ocultos en modo facturar por lote) -->
             <div id="modalAutorizarUnaVenta">
             <div class="row">
 
-              <div class="col-md-6">
-                <!-- ENTRADA PARA CODDIGO VENTA -->
-                <div class="form-group">
-                  
-                  Punto Vta N°:
-                  <div class="input-group">
-
-                    <span class="input-group-addon"><i class="fa fa-terminal"></i></span> 
-
-                    <input type="text" class="form-control" name="autorizarCbtePtoVta" id="autorizarCbtePtoVta" readonly>
-
-                  </div> 
-
-                </div>
-              </div>
-
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <!-- ENTRADA PARA CODDIGO VENTA -->
                 <div class="form-group">
                   

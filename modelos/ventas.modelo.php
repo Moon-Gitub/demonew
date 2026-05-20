@@ -311,22 +311,22 @@ class ModeloVentas{
 
 	static public function mdlActualizarVenta($tabla, $item1, $valor1, $id){
 
-		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET $item1 = $valor1 WHERE id = $id");
+		$tablasPermitidas = ['ventas'];
+		$columnasPermitidas = ['estado', 'fecha', 'id_empresa', 'pto_vta', 'cbte_tipo', 'id_cliente'];
 
-		if($stmt -> execute()){
-
-			return "ok";
-		
-		}else{
-
-			return $stmt -> errorInfo();	
-
+		if (!in_array($tabla, $tablasPermitidas, true) || !in_array($item1, $columnasPermitidas, true)) {
+			return 'error';
 		}
 
-		$stmt -> closeCursor();
+		$stmt = Conexion::conectar()->prepare("UPDATE `$tabla` SET `$item1` = :valor WHERE id = :id");
+		$stmt->bindParam(':valor', $valor1);
+		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
-		$stmt = null;
+		if ($stmt->execute()) {
+			return 'ok';
+		}
 
+		return $stmt->errorInfo();
 	}
 
 	/*=============================================

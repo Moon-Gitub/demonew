@@ -1482,6 +1482,18 @@ DETALLES PRODUCTO
 $('#nuevaFecEmision').datepicker().datepicker("setDate", new Date());
 $('#nuevaFecEmision').datepicker( "option", "dateFormat", "dd/mm/yy" );
 
+/* Punto de venta por empresa (modal autorizar) */
+function ptoVtaDefectoEmpresa(idEmpresa) {
+  if (typeof empresasPtoVta === "undefined" || empresasPtoVta[idEmpresa] == null) {
+    return "";
+  }
+  return empresasPtoVta[idEmpresa];
+}
+function actualizarPtoVtaModalAutorizar(idEmpresa) {
+  var pto = ptoVtaDefectoEmpresa(idEmpresa);
+  $("#autorizarCbtePtoVta").val(pto !== "" && pto != null ? pto : "");
+}
+
 /* Datepicker: fecha de venta al autorizar / facturar por lote */
 function fechaVentaParaDatepicker(fechaDb) {
   if (!fechaDb) {
@@ -1494,10 +1506,34 @@ function fechaVentaParaDatepicker(fechaDb) {
   }
   return fechaDb;
 }
-$("#autorizarCbteFecha").datepicker({
-  dateFormat: "dd/mm/yy",
-  changeMonth: true,
-  changeYear: true
+function initAutorizarCbteDatepicker() {
+  var $input = $("#autorizarCbteFecha");
+  if (!$input.length || $input.hasClass("hasDatepicker")) {
+    return;
+  }
+  $input.datepicker({
+    dateFormat: "dd/mm/yy",
+    changeMonth: true,
+    changeYear: true,
+    showButtonPanel: true,
+    appendTo: "#modalAutorizarComprobante",
+    beforeShow: function () {
+      setTimeout(function () {
+        $("#ui-datepicker-div").css("z-index", 10060);
+      }, 0);
+    }
+  });
+}
+initAutorizarCbteDatepicker();
+
+$(document).on("click", "#modalAutorizarFechaWrap .fecha-venta-picker-trigger, #autorizarCbteFecha", function (e) {
+  e.preventDefault();
+  $("#autorizarCbteFecha").datepicker("show");
+});
+
+$("#modalAutorizarComprobante").on("shown.bs.modal", function () {
+  initAutorizarCbteDatepicker();
+  $("#autorizarCbteFecha").datepicker("option", "appendTo", "#modalAutorizarComprobante");
 });
 
 //$('#editarFecEmision').datepicker().datepicker({ dateFormat: 'dd-mm-yy' }).val($('#editarFecEmision').val());
@@ -1676,6 +1712,7 @@ $("#modalAutorizarComprobante").on("shown.bs.modal", function() {
     $("#modalAutorizarLoteCantidad").text(arr.length);
     $("#modalAutorizarUnaVenta, #modalAutorizarMontoWrap").hide();
     $("#modalAutorizarFechaAyudaLote").show();
+    $("#modalAutorizarPtoVtaAyudaLote").show();
     $("#autorizarCbteFecha").datepicker("setDate", new Date());
     var defaultEmpresa = $("#modalAutorizarComprobante").data("id-empresa-default");
     if (defaultEmpresa != null && $("#autorizarCbteIdEmpresa").is("select")) {
@@ -1686,6 +1723,7 @@ $("#modalAutorizarComprobante").on("shown.bs.modal", function() {
   } else {
     $("#modalAutorizarLoteResumen").hide();
     $("#modalAutorizarFechaAyudaLote").hide();
+    $("#modalAutorizarPtoVtaAyudaLote").hide();
     $("#modalAutorizarUnaVenta, #modalAutorizarMontoWrap").show();
     $("#modalAutorizarComprobante .modal-title").text("Autorizar Comprobante");
   }
@@ -2100,10 +2138,15 @@ $("#tablaListarVentas").on("click", ".btnAutorizarCbte", function(){
 	       // Empresa de la venta o la de sesión por defecto
 	       var idEmpresaVenta = respuesta["id_empresa"] != null ? respuesta["id_empresa"] : $("#modalAutorizarComprobante").data("id-empresa-default");
 	       if (idEmpresaVenta != null && $("#autorizarCbteIdEmpresa").length) {
-	         $("#autorizarCbteIdEmpresa").val(idEmpresaVenta);
+	         $("#autorizarCbteIdEmpresa").val(idEmpresaVenta).trigger("change");
+	       } else {
+	         $("#autorizarCbteIdEmpresa").trigger("change");
 	       }
 	       // Rellenar tipos de comprobante según la empresa: Monotributista solo C, RI solo A y B
 	       var idEmpresa = $("#autorizarCbteIdEmpresa").is("select") ? $("#autorizarCbteIdEmpresa").val() : $("#autorizarCbteIdEmpresa").val();
+	       if (!$("#autorizarCbtePtoVta").val() && respuesta["pto_vta"]) {
+	         $("#autorizarCbtePtoVta").val(respuesta["pto_vta"]);
+	       }
 	       if (typeof empresasTiposCbtes !== "undefined" && empresasTiposCbtes[idEmpresa]) {
 	         var condicionIva = (typeof condicionIvaPorEmpresa !== "undefined" && condicionIvaPorEmpresa[idEmpresa] != null) ? condicionIvaPorEmpresa[idEmpresa] : 1;
 	         var tiposFiltrados = (typeof filtrarTiposPorCondicionIva === "function") ? filtrarTiposPorCondicionIva(empresasTiposCbtes[idEmpresa], condicionIva) : empresasTiposCbtes[idEmpresa];
@@ -2126,9 +2169,10 @@ $("#tablaListarVentas").on("click", ".btnAutorizarCbte", function(){
 
 });
 
-// Al cambiar la empresa en el modal Autorizar: actualizar tipos filtrados (Monotributista solo C, RI solo A/B)
+// Al cambiar la empresa en el modal Autorizar: actualizar pto de venta y tipos de comprobante
 $(document).on("change", "#autorizarCbteIdEmpresa", function () {
   var idEmpresa = $(this).val();
+  actualizarPtoVtaModalAutorizar(idEmpresa);
   if (typeof empresasTiposCbtes === "undefined" || !empresasTiposCbtes[idEmpresa]) return;
   var condicionIva = (typeof condicionIvaPorEmpresa !== "undefined" && condicionIvaPorEmpresa[idEmpresa] != null) ? condicionIvaPorEmpresa[idEmpresa] : 1;
   var tiposFiltrados = (typeof filtrarTiposPorCondicionIva === "function") ? filtrarTiposPorCondicionIva(empresasTiposCbtes[idEmpresa], condicionIva) : empresasTiposCbtes[idEmpresa];
