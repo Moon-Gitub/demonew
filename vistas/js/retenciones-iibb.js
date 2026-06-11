@@ -8,11 +8,15 @@ if ($('.tablasRetencionesIibb').length) {
   });
 }
 
-function urlRetencionesExport(tipo) {
+	function urlRetencionesExport(tipo) {
   var ini = $('#fechaInicialRetenciones').val() || moment().startOf('month').format('YYYY-MM-DD');
   var fin = $('#fechaFinalRetenciones').val() || moment().format('YYYY-MM-DD');
   var prov = $('#filtroProveedorRetenciones').val() || '';
-  var url = 'ajax/retenciones_iibb.ajax.php?accion=exportar_' + tipo +
+  var base = window.location.pathname.replace(/\/[^/]*$/, '/');
+  if (base.slice(-1) !== '/') {
+    base += '/';
+  }
+  var url = base + 'ajax/retenciones_iibb.ajax.php?accion=exportar_' + tipo +
     '&fechaInicial=' + encodeURIComponent(ini) +
     '&fechaFinal=' + encodeURIComponent(fin);
   if (prov) {

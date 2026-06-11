@@ -1,10 +1,24 @@
 <?php
 
-require_once "conexion.php";
+require_once __DIR__ . "/conexion.php";
 
 class ModeloRetencionesIibb {
 
 	static public function mdlListarRetenciones($fechaInicial, $fechaFinal, $idProveedor = null) {
+
+		try {
+			$pdo = Conexion::conectar();
+			$check = $pdo->query("SHOW COLUMNS FROM proveedores_cuenta_corriente LIKE 'monto_retencion'");
+			if (!$check || !$check->fetch()) {
+				throw new RuntimeException(
+					'Faltan columnas de retenciones en la base de datos. Ejecute migracion/retenciones_iibb.sql'
+				);
+			}
+		} catch (RuntimeException $e) {
+			throw $e;
+		} catch (Throwable $e) {
+			throw new RuntimeException('Error de conexión al listar retenciones: ' . $e->getMessage(), 0, $e);
+		}
 
 		$sql = "SELECT cc.*, p.nombre AS proveedor_nombre, p.cuit
 			FROM proveedores_cuenta_corriente cc
@@ -32,13 +46,35 @@ class ModeloRetencionesIibb {
 	}
 
 	static public function mdlObtenerConfigEmpresa($idEmpresa = 1) {
-		$stmt = Conexion::conectar()->prepare(
-			"SELECT agente_retencion_iibb, codigo_jurisdiccion_iibb, tipo_regimen_retencion_default, proximo_numero_recibo
-			FROM empresa WHERE id = :id LIMIT 1"
-		);
-		$stmt->bindParam(":id", $idEmpresa, PDO::PARAM_INT);
-		$stmt->execute();
-		return $stmt->fetch();
+		$defaults = [
+			'agente_retencion_iibb' => 0,
+			'codigo_jurisdiccion_iibb' => 913,
+			'tipo_regimen_retencion_default' => 101,
+			'proximo_numero_recibo' => 1,
+		];
+
+		try {
+			$pdo = Conexion::conectar();
+			$check = $pdo->query("SHOW COLUMNS FROM empresa LIKE 'codigo_jurisdiccion_iibb'");
+			if (!$check || !$check->fetch()) {
+				return $defaults;
+			}
+
+			$stmt = $pdo->prepare(
+				"SELECT agente_retencion_iibb, codigo_jurisdiccion_iibb, tipo_regimen_retencion_default, proximo_numero_recibo
+				FROM empresa WHERE id = :id LIMIT 1"
+			);
+			$stmt->bindParam(":id", $idEmpresa, PDO::PARAM_INT);
+			$stmt->execute();
+			$row = $stmt->fetch();
+			if (!$row || !is_array($row)) {
+				return $defaults;
+			}
+			return array_merge($defaults, $row);
+		} catch (Throwable $e) {
+			error_log('mdlObtenerConfigEmpresa retenciones: ' . $e->getMessage());
+			return $defaults;
+		}
 	}
 
 	static public function mdlReservarNumeroRecibo($idEmpresa = 1) {

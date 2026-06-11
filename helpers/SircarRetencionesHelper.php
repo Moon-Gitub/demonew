@@ -78,7 +78,7 @@ class SircarRetencionesHelper {
 				1,
 				isset($row['factura_numero']) ? $row['factura_numero'] : '',
 				isset($row['cuit']) ? $row['cuit'] : '',
-				isset($row['fecha_retencion']) ? $row['fecha_retencion'] : $row['fecha_movimiento'],
+				!empty($row['fecha_retencion']) ? $row['fecha_retencion'] : ($row['fecha_movimiento'] ?? ''),
 				$montoSujeto,
 				isset($row['alicuota_retencion']) ? $row['alicuota_retencion'] : 0,
 				isset($row['monto_retencion']) ? $row['monto_retencion'] : 0,

@@ -10,7 +10,8 @@ class ControladorRetencionesIibb {
 
 	static public function ctrExportarTxt($fechaInicial, $fechaFinal, $idProveedor = null) {
 		$retenciones = self::ctrListarRetenciones($fechaInicial, $fechaFinal, $idProveedor);
-		$config = ModeloRetencionesIibb::mdlObtenerConfigEmpresa();
+		$idEmpresa = isset($_SESSION['empresa']) ? (int)$_SESSION['empresa'] : 1;
+		$config = ModeloRetencionesIibb::mdlObtenerConfigEmpresa($idEmpresa);
 		$tipoRegimen = isset($config['tipo_regimen_retencion_default']) ? (int)$config['tipo_regimen_retencion_default'] : 101;
 		$jurisdiccion = isset($config['codigo_jurisdiccion_iibb']) ? (int)$config['codigo_jurisdiccion_iibb'] : 913;
 		return SircarRetencionesHelper::generarArchivo($retenciones, $tipoRegimen, $jurisdiccion);
