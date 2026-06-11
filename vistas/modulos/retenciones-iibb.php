@@ -74,10 +74,7 @@ $proveedoresLista = ControladorProveedores::ctrMostrarProveedores(null, null);
             </tr>
           </thead>
           <tbody>
-            <?php if (empty($retenciones)): ?>
-              <tr><td colspan="8" class="text-center text-muted">No hay retenciones en el período seleccionado.</td></tr>
-            <?php else: ?>
-              <?php foreach ($retenciones as $row):
+            <?php foreach ($retenciones as $row):
                 $fechaRet = !empty($row['fecha_retencion']) ? $row['fecha_retencion'] : substr($row['fecha_movimiento'], 0, 10);
                 $montoSujeto = $row['factura_neto'] !== null ? $row['factura_neto'] : $row['importe'];
               ?>
@@ -91,8 +88,7 @@ $proveedoresLista = ControladorProveedores::ctrMostrarProveedores(null, null);
                 <td><?php echo number_format((float)$row['alicuota_retencion'], 2, ',', '.'); ?></td>
                 <td>$ <?php echo number_format((float)$row['monto_retencion'], 2, ',', '.'); ?></td>
               </tr>
-              <?php endforeach; ?>
-            <?php endif; ?>
+            <?php endforeach; ?>
           </tbody>
         </table>
       </div>

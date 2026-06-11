@@ -245,7 +245,7 @@
   <script src="vistas/js/combos.js"></script>
   <script src="vistas/js/compras.js"></script>
   <script src="vistas/js/proveedores.js"></script>
-  <script src="vistas/js/retenciones-iibb.js"></script>
+  <script src="vistas/js/retenciones-iibb.js?v=2"></script>
   <script src="vistas/js/clientes.js"></script>
   <script src="vistas/js/ventas.js?v=1"></script>
   <script src="vistas/js/venta-caja.js?v=3"></script>
