@@ -245,17 +245,23 @@ class ModeloCompras{
 				if($sucursal === 'stock1') $sucursal = 'stock';
 				if(in_array($sucursal, $cols, true)) return $sucursal;
 
+				if($sucursal === 'stock2' && in_array('stock2', $cols, true)) return 'stock2';
 				if($sucursal === 'stock2' && in_array('deposito', $cols, true)) return 'deposito';
 				if($sucursal === 'deposito' && in_array('stock2', $cols, true)) return 'stock2';
 
+				if($sucursal === 'stock3' && in_array('stock3', $cols, true)) return 'stock3';
 				if($sucursal === 'stock3'){
 					if(in_array('deposito2', $cols, true)) return 'deposito2';
 					if(in_array('ameghino', $cols, true)) return 'ameghino';
+				}
+				if($sucursal === 'deposito2'){
+					if(in_array('deposito2', $cols, true)) return 'deposito2';
 					if(in_array('stock3', $cols, true)) return 'stock3';
 				}
-
-				if($sucursal === 'deposito2' && in_array('stock3', $cols, true)) return 'stock3';
-				if($sucursal === 'ameghino' && in_array('stock3', $cols, true)) return 'stock3';
+				if($sucursal === 'ameghino'){
+					if(in_array('ameghino', $cols, true)) return 'ameghino';
+					if(in_array('stock3', $cols, true)) return 'stock3';
+				}
 
 				return null;
 			};
@@ -280,12 +286,15 @@ class ModeloCompras{
 			if($estado === 1 || $estado === 2){
 				$cols = $conexion->query("SHOW COLUMNS FROM productos")->fetchAll(PDO::FETCH_COLUMN);
 
-				// Mantener consistencia con el comportamiento actual del sistema.
-				$sucursalDestino = $sucursalDestinoOriginal !== '' ? $sucursalDestinoOriginal : 'stock';
-				$colDestino = $mapearColumnaStock($sucursalDestino, $cols);
-				if(empty($colDestino)){
-					throw new Exception("No se pudo mapear sucursalDestino='$sucursalDestino' a una columna válida.");
+				// Candidatos de sucursal para determinar la columna real de stock.
+				$candidatosSuc = [];
+				if($sucursalDestinoOriginal !== ''){
+					$candidatosSuc[] = $sucursalDestinoOriginal;
 				}
+				if(isset($_SESSION["sucursal"]) && $_SESSION["sucursal"] !== ''){
+					$candidatosSuc[] = (string)$_SESSION["sucursal"];
+				}
+				$candidatosSuc[] = 'stock';
 
 				// Consolidar cantidades a revertir por producto.
 				$cantPorProducto = [];
@@ -316,36 +325,55 @@ class ModeloCompras{
 					$ids = array_map('intval', array_keys($cantPorProducto));
 					$placeholders = implode(',', array_fill(0, count($ids), '?'));
 
-					$stmtStock = $conexion->prepare("SELECT id, $colDestino AS stock_actual FROM productos WHERE id IN ($placeholders)");
-					$stmtStock->execute($ids);
+					$colDestino = null;
+					$sucursalElegida = null;
 
-					$stockMap = [];
-					while($row = $stmtStock->fetch()){
-						$stockMap[(int)$row["id"]] = floatval($row["stock_actual"]);
+					foreach($candidatosSuc as $cand){
+						$candCol = $mapearColumnaStock($cand, $cols);
+						if(empty($candCol)) continue;
+
+						$stmtStock = $conexion->prepare("SELECT id, $candCol AS stock_actual FROM productos WHERE id IN ($placeholders)");
+						$stmtStock->execute($ids);
+
+						$stockMap = [];
+						while($row = $stmtStock->fetch()){
+							$stockMap[(int)$row["id"]] = floatval($row["stock_actual"]);
+						}
+
+						$valido = true;
+						foreach($cantPorProducto as $idProd => $qty){
+							if(!array_key_exists($idProd, $stockMap)){
+								$valido = false;
+								break;
+							}
+							$nuevoStock = $stockMap[$idProd] - $qty;
+							if($nuevoStock < 0){
+								$valido = false;
+								break;
+							}
+						}
+
+						if($valido){
+							$colDestino = $candCol;
+							$sucursalElegida = $cand;
+
+							$stmtUpdate = $conexion->prepare("UPDATE productos SET $colDestino = :nuevo_stock, nombre_usuario = :nombre_usuario, cambio_desde = :cambio_desde WHERE id = :id");
+							$cambioDesde = "Borrado compra (ID: $idCompra, sucursal=$sucursalElegida)";
+							foreach($cantPorProducto as $idProd => $qty){
+								$nuevoStock = $stockMap[$idProd] - $qty;
+								$stmtUpdate->execute([
+									":nuevo_stock" => $nuevoStock,
+									":nombre_usuario" => $usuario,
+									":cambio_desde" => $cambioDesde,
+									":id" => $idProd
+								]);
+							}
+							break;
+						}
 					}
 
-					// Validar stock no negativo.
-					foreach($cantPorProducto as $idProd => $qty){
-						if(!array_key_exists($idProd, $stockMap)){
-							throw new Exception("Producto $idProd no encontrado en productos para validar stock.");
-						}
-						$nuevoStock = $stockMap[$idProd] - $qty;
-						if($nuevoStock < 0){
-							throw new Exception("No se puede eliminar: stock negativo en producto=$idProd, columna=$colDestino.");
-						}
-					}
-
-					// Aplicar reversión.
-					$stmtUpdate = $conexion->prepare("UPDATE productos SET $colDestino = :nuevo_stock, nombre_usuario = :nombre_usuario, cambio_desde = :cambio_desde WHERE id = :id");
-					$cambioDesde = "Borrado compra (ID: $idCompra)";
-					foreach($cantPorProducto as $idProd => $qty){
-						$nuevoStock = $stockMap[$idProd] - $qty;
-						$stmtUpdate->execute([
-							":nuevo_stock" => $nuevoStock,
-							":nombre_usuario" => $usuario,
-							":cambio_desde" => $cambioDesde,
-							":id" => $idProd
-						]);
+					if(empty($colDestino)){
+						throw new Exception("No se pudo determinar columna de stock para revertir compra id=$idCompra (candidatos: ".implode(',', $candidatosSuc).").");
 					}
 				}
 			}
@@ -353,6 +381,8 @@ class ModeloCompras{
 			// 2) Eliminar cta cte vinculada a la compra (si existe).
 			$stmtCta = $conexion->prepare("DELETE FROM proveedores_cuenta_corriente WHERE id_compra = :id_compra");
 			$stmtCta->execute([":id_compra" => $idCompra]);
+			$filasCta = $stmtCta->rowCount();
+			error_log("Eliminar compra id=$idCompra: filas cta_cte borradas=$filasCta");
 
 			// 3) Eliminar la compra.
 			$stmtDel = $conexion->prepare("DELETE FROM $tabla WHERE id = :id");

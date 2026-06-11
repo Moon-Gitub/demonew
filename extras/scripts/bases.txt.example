@@ -1,0 +1,5 @@
+# Una conexión por línea. Formato:
+# host=servidor;dbname=nombre_bd;user=usuario;pass=clave
+#
+# Ejemplo:
+# host=localhost;dbname=miempresa_db;user=miempresa_user;pass=mi_clave

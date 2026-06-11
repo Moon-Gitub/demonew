@@ -13,6 +13,17 @@ from connection import ConnectionMonitor
 from auth import AuthManager
 from config import config
 
+
+def normalizar_sucursal(sucursal, fallback='stock'):
+    """Evita guardar sucursal vacía en el servidor."""
+    s = (sucursal or '').strip()
+    if not s or s.lower() == 'local':
+        return fallback
+    if s == 'deposito':
+        return 'stock2'
+    return s
+
+
 class SyncManager:
     def __init__(self):
         self.connection_monitor = ConnectionMonitor(callback=self.on_connection_change)
@@ -116,10 +127,7 @@ class SyncManager:
                         except:
                             cliente_id = 1
                 
-                # Mapear sucursal: 'Local' debe ser 'stock' para el servidor
-                sucursal_servidor = venta.sucursal or 'stock'
-                if sucursal_servidor == 'Local':
-                    sucursal_servidor = 'stock'
+                sucursal_servidor = normalizar_sucursal(venta.sucursal, 'stock')
                 
                 # Calcular impuesto_detalle correctamente basado en productos
                 # Mapeo de tipos de IVA a IDs y porcentajes

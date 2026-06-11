@@ -36,7 +36,13 @@ class ModeloVentas{
 		$tieneSucursal = in_array('sucursal', $cols, true);
 		$tieneIdEmpresa = in_array('id_empresa', $cols, true);
 
-		$sucursal = $datos["sucursal"] ?? ($_SESSION["sucursal"] ?? 'stock');
+		$sucursal = trim((string)($datos["sucursal"] ?? ''));
+		if ($sucursal === '' || strcasecmp($sucursal, 'Local') === 0) {
+			$sucursal = trim((string)($_SESSION["sucursal"] ?? ''));
+		}
+		if ($sucursal === '' || strcasecmp($sucursal, 'Local') === 0) {
+			$sucursal = 'stock';
+		}
 		$idEmpresa = $datos["id_empresa"] ?? ($_SESSION["empresa"] ?? 1);
 
 		$campos = ['uuid'];

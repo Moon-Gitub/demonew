@@ -1,54 +1,77 @@
 <?php 
 
-  date_default_timezone_set('America/Argentina/Mendoza'); 
+  date_default_timezone_set('America/Argentina/Mendoza');
+  $btnPadronAfip = (isset($arrayEmpresa["ws_padron"])) ? '' : 'disabled';
 
 ?>
+<link rel="stylesheet" href="vistas/css/crear-presupuesto-caja.css?v=1">
 
-<div class="content-wrapper">
+<div class="content-wrapper crear-presupuesto-caja">
 
   <section class="content">
 
-    <div class="row">
+    <div class="row crear-presupuesto-caja-fila">
 
-      <!--=====================================
-      EL FORMULARIO
-      ======================================-->
-      <div class="col-lg-7 col-xs-12" >
-        
-        <div class="box box-success">
-          
-        <div class="box-header with-border" style="background-color: #000; color: #fff;">
-          <div class="col-md-3 " style=" font-size: 20px">
-                  <div class="form-group">
-                    <label for="gross_amount" class="col-sm-12 control-label">Presupuesto</label>
-                  </div>  
-                </div>
+      <!-- Búsqueda de productos (primero en móvil) -->
+      <div class="col-lg-5 col-xs-12 presupuesto-col-buscar">
+
+        <div class="box box-warning presupuesto-buscar-panel">
+
+          <div class="panel-label"><i class="fa fa-barcode"></i> Agregar artículo</div>
+
+          <div class="form-group" style="margin-bottom:10px;">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+              <input type="text" class="form-control input-sm" id="nuevoVendedor" value="<?php echo $_SESSION["nombre"]; ?>" readonly>
+            </div>
+          </div>
+
+          <div class="presupuesto-buscar-grid">
+            <div>
+              <label for="ventaCajaDetalle" class="sr-only">Código artículo</label>
+              <input type="text" class="form-control ventaCajaInputs" id="ventaCajaDetalle" name="ventaCajaDetalle" placeholder="Código o descripción" autocomplete="off" inputmode="search">
+              <input type="hidden" id="ventaCajaDetalleHidden" name="ventaCajaDetalleHidden">
+              <input type="hidden" id="seleccionarProducto" name="seleccionarProducto">
+            </div>
+            <div>
+              <label for="ventaCajaCantidad" class="sr-only">Cantidad</label>
+              <input type="number" class="form-control ventaCajaInputs" onfocus="this.select();" id="ventaCajaCantidad" name="ventaCajaCantidad" placeholder="Cant." value="1" inputmode="decimal" min="0" step="any">
+            </div>
+          </div>
+
         </div>
-        <div class="box-header with-border">
+
+      </div>
+
+      <!-- Carrito / presupuesto -->
+      <div class="col-lg-7 col-xs-12 presupuesto-col-carrito">
+
+        <div class="box box-success">
+
+          <div class="box-header presupuesto-box-header">
+            <h3 class="titulo-pantalla"><i class="fa fa-file-text-o"></i> Presupuesto</h3>
+          </div>
 
           <form role="form" method="post" class="formularioVentaCaja" id="ventaCajaFormulario">
 
-            <!-- <div class="pull-right">
-              
-            </div> -->
+            <div class="box-body">
 
-            <div class="row">
-                <div class="col-md-3">
-                  <div class="form-group">
-                    <label for="gross_amount" class="col-sm-12 control-label">Día: <?php echo date('d-m-Y') ?></label>
-                  </div>  
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group">
-                    <label for="gross_amount" class="col-sm-12 control-label">Hora: <?php echo date('h:i a') ?></label>
-                  </div>  
-                </div>
-
-             
-			  
-			  <div class="col-md-4">
+              <div class="presupuesto-meta-row">
+                <div class="meta-item">
                   <div class="input-group">
-                    <span title="Listas de precio" class="input-group-addon" style="background-color: #ddd">Listas $</span>
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <input type="text" class="form-control input-sm" value="<?php echo date('d-m-Y'); ?>" readonly>
+                  </div>
+                </div>
+                <div class="meta-item">
+                  <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+                    <input type="text" class="form-control input-sm" value="<?php echo date('H:i'); ?>" readonly>
+                  </div>
+                </div>
+                <div class="meta-item">
+                  <div class="input-group">
+                    <span title="Listas de precio" class="input-group-addon">Listas $</span>
                       <?php 
                       if (class_exists('ModeloListasPrecio') && ModeloListasPrecio::tablaExiste()) {
                         $arrListasPrecio = ModeloListasPrecio::mdlListarParaVenta();
@@ -61,93 +84,56 @@
 
                       echo '<select class="form-control input-sm" name="radioPrecio" id="radioPrecio">';
                       foreach ($arrListasPrecio as $key => $value) {
-
                         if (in_array($key, $arrListasPrecioHabilitadas)) {
                           echo '<option value="' . $key . '" selected>' . $value . '</option>';
                         } else {
                           echo '<option value="' . $key . '" disabled>' . $value . '</option>';
                         }
-
-                      }  
-
+                      }
                       echo '</select>';
-
                       ?>
                   </div>
                 </div>
-				 </div>
+              </div>
+
               <script type="text/javascript">var listasPrecioConfig = <?php echo json_encode(isset($listasPrecioConfigPresup) ? $listasPrecioConfigPresup : []); ?>;</script>
               <input type="hidden" id="fechaActual" name="fechaActual" value="<?php echo date("Y-m-d H:i:s");?>">
-
               <input type="hidden" name="idVendedor" id="idVendedor" value="<?php echo $_SESSION["id"]; ?>">
+              <input type="hidden" id="nuevotipoCbte" name="nuevotipoCbte" value="0">
+              <input type="hidden" id="nuevaPtoVta" name="nuevaPtoVta" value="0">
+              <input type="hidden" id="nuevaConcepto" name="nuevaConcepto" value="1">
+              <input type="hidden" id="nuevaFecDesde" name="nuevaFecDesde" value="">
+              <input type="hidden" id="nuevaFecHasta" name="nuevaFecHasta" value="">
+              <input type="hidden" id="nuevaFecVto" name="nuevaFecVto" value="">
+              <input type="hidden" id="mxMediosPagos" name="mxMediosPagos" value="">
 
-            </div>
-
-            <div class="box-body">
-
-           <!--=====================================
-            ENTRADA DEL CLIENTE
-            ======================================-->
-
-            <div class="row"  style="padding-top: 10px;">
-
-              <div class="col-md-12">
-
-                <div class="input-group">
-
-                  <input type="text" class="form-control ui-autocomplete-input input-sm" id="autocompletarClienteCaja" name="autocompletarCliente" placeholder="1-Consumidor Final" autocomplete="off">
-                  <input type="hidden" id="seleccionarCliente" name="seleccionarCliente" value="1">
-
-                  <span class="input-group-btn"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modalAgregarCliente" data-dismiss="modal">Agregar cliente</button></span>
-
+              <div class="form-group">
+                <input type="text" class="form-control ui-autocomplete-input" id="autocompletarClienteCaja" name="autocompletarCliente" placeholder="Cliente (ej: Consumidor Final)" autocomplete="off">
+                <input type="hidden" id="seleccionarCliente" name="seleccionarCliente" value="1">
+                <div class="btn-agregar-cliente-wrap">
+                  <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modalAgregarCliente"><i class="fa fa-user-plus"></i> Agregar cliente</button>
                 </div>
-
               </div>
 
-            </div>
-
-            <!--=====================================
-            ENTRADA PARA AGREGAR PRODUCTO
-            ======================================--> 
-                
-              <div class="row" style="padding-top: 10px">
-                
-                <div class="col-xs-2" ><center>Cantidad</center></div>
-                <div class="col-xs-6" ><center>Artículo</center></div>
-				<div class="col-xs-2" ><center>P. Unitario</center></div>
-				<div class="col-xs-2" ><center>Precio</center></div>
-
+              <div class="presupuesto-lista-headers hidden-xs">
+                <span>Cant.</span><span>Artículo</span><span>P. Unit.</span><span>Total</span>
               </div>
-              <hr>
 
-              <div class="form-group row nuevoProductoCaja" style="width:100%; height:200px; overflow-y:auto; overflow-x: text;"></div>
+              <div class="form-group nuevoProductoCaja"></div>
 
-              <!-- CAMPOS NECESARIOS PARA ENVIAR POR POST PARA GUARDAR LA VENTA -->
               <input type="hidden" id="nuevaVentaCajaForm" name="nuevoPresupuestoCaja">
-              
               <input type="hidden" id="listaProductosCaja" name="listaProductosCaja">
-
-      	      <input type="hidden" id="listaDescuentoCaja" name="listaDescuentoCaja">
-
-              <input type="hidden" id="nuevoPrecioImpuestoCaja" name="nuevoPrecioImpuestoCaja"> <!-- No se para que se usa -->
-
+              <input type="hidden" id="listaDescuentoCaja" name="listaDescuentoCaja">
+              <input type="hidden" id="nuevoPrecioImpuestoCaja" name="nuevoPrecioImpuestoCaja">
               <input type="hidden" id="listaMetodoPagoCajaForm" name="listaMetodoPagoCaja">
-
               <input type="hidden" id="nuevoTotalVentaCajaForm" name="nuevoTotalVentaCaja">
-
               <input type="hidden" id="nuevoInteresPorcentajeCajaForm" name="nuevoInteresPorcentajeCaja">
-
               <input type="hidden" id="nuevoDescuentoPorcentajeCajaForm" name="nuevoDescuentoPorcentajeCaja">
-
-              <!-- Campos IVA -->
-              <!-- <input type="hidden" id="nuevoVtaCajaIva0" name="nuevoVtaCajaIva0" value="0"> -->
               <input type="hidden" id="nuevoVtaCajaIva2" name="nuevoVtaCajaIva2" value="0">
               <input type="hidden" id="nuevoVtaCajaIva5" name="nuevoVtaCajaIva5" value="0">
               <input type="hidden" id="nuevoVtaCajaIva10" name="nuevoVtaCajaIva10" value="0">
               <input type="hidden" id="nuevoVtaCajaIva21" name="nuevoVtaCajaIva21" value="0">
               <input type="hidden" id="nuevoVtaCajaIva27" name="nuevoVtaCajaIva27" value="0">
-
-              <!-- Campos base imponible -->
               <input type="hidden" id="nuevoVtaCajaBaseImp0" name="nuevoVtaCajaBaseImp0" value="0">
               <input type="hidden" id="nuevoVtaCajaBaseImp2" name="nuevoVtaCajaBaseImp2" value="0">
               <input type="hidden" id="nuevoVtaCajaBaseImp5" name="nuevoVtaCajaBaseImp5" value="0">
@@ -155,125 +141,17 @@
               <input type="hidden" id="nuevoVtaCajaBaseImp21" name="nuevoVtaCajaBaseImp21" value="0">
               <input type="hidden" id="nuevoVtaCajaBaseImp27" name="nuevoVtaCajaBaseImp27" value="0">
 
-              <hr>
-
-				<div class="row">
-					<div class="col-lg-3 col-xs-12">
-					</div>
-					<div class="col-lg-6 col-xs-6">
-					<div class="input-group">
-						 <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
-
-						<input type="number" step="0.01" min="0" class="form-control input-lg" id="nuevoPrecioNetoCajaForm" name="nuevoPrecioNetoCaja" placeholder="0,00" readonly style="font-size: 60px; text-align: center; height:85px;">
-
-				  </div>
-				 </div>
-				 <div class="col-lg-3 col-xs-12">
-				</div>
-				</div>
-
-          </div>
-
-          <div class="box-footer">
-         
-            <center><button type="submit" class="btn btn-primary" id="btnGuardarVentaCaja">Guardar</button></center>
-
-          </div>
-
-        </form>
-
-        </div>
-            
-      </div>
-      <!--=====================================
-      LA TABLA DE PRODUCTOS
-      ======================================-->
-
-      <div class="col-lg-5 text-md text-sm text-xs">
-
-        <div class="box box-warning">
-
-          <div class="box-header with-border"></div>
-      
-            <div class="box-body">
-      
-              <div class="row">
-                          
-                <div class="col-md-6">
-                  
-                  <!--=====================================
-                  ENTRADA DEL VENDEDOR
-                  ======================================-->
-              
-                  <div class="form-group">
-                  
-                    <div class="input-group">
-                      
-                      <span class="input-group-addon"><i class="fa fa-user"></i></span> 
-
-                      <input type="text" class="form-control input-sm" id="nuevoVendedor" value="<?php echo $_SESSION["nombre"]; ?>" readonly>
-
-                    </div>
-
-                  </div> 
-
+              <div class="presupuesto-barra-accion">
+                <div class="input-group" style="margin-bottom:12px;">
+                  <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
+                  <input type="number" step="0.01" min="0" class="form-control" id="nuevoPrecioNetoCajaForm" name="nuevoPrecioNetoCaja" placeholder="0,00" readonly>
                 </div>
-
-                <div class="col-md-6">
-                  
-                  <!--=====================================
-                  ENTRADA DEL CÓDIGO
-                  ======================================--> 
-
-                  <div class="form-group">
-                    
-                
-                  </div>
-
-                </div>
-
+                <center><button type="submit" class="btn btn-primary" id="btnGuardarVentaCaja"><i class="fa fa-check"></i> Guardar presupuesto</button></center>
               </div>
-              
-              <div class="box-body">
 
-                <div class="row">
-                          
-                  <div class="col-xs-6" ><center>Cod. artículo</center></div>
+            </div>
 
-                  <div class="col-xs-6" ><center>Cantidad</center></div>
-
-                </div>
-
-                <hr>
-                <div class="col-md-6">
-
-                  <input type="text" class="form-control input-sm ventaCajaInputs" id="ventaCajaDetalle" name="ventaCajaDetalle" style="text-align:center;">
-
-                  <input type="hidden" id="ventaCajaDetalleHidden" name="ventaCajaDetalleHidden" >  
-
-                  <input type="hidden" id="seleccionarProducto" name="seleccionarProducto" >
-
-                </div>
-
-                <div class="col-md-6">
-                
-                  <input type="number" class="form-control input-sm ventaCajaInputs" onfocus="this.select();" id="ventaCajaCantidad" name="ventaCajaCantidad" style="text-align:center;" value="1">
-
-                </div>
-
-             </div>
-
-              
-   
-                <!--=====================================
-                BOTÓN PARA AGREGAR PRODUCTO - este boton se usa en disponsitivos moviles, lo comento por las dudas
-                ======================================-->
-
-                <!-- <button type="button" class="btn btn-default text-lg btnAgregarProducto">Agregar producto</button> -->
-
-                <!--=====================================
-                ENTRADA MÉTODO DE PAGO
-                ======================================-->
+          </form>
 
         </div>
 
@@ -281,40 +159,26 @@
 
     </div>
 
-<!--precioProducto-->
-<div class="col-lg-5 text-md text-sm text-xs" id="consultarPrecio"  style="display:none"  >
-
+<!-- Consulta de precio (opcional) -->
+<div class="row" id="consultarPrecio" style="display:none">
+  <div class="col-xs-12">
    <div class="box box-success">
-
-    <div class="box-header with-border"></div>
-    <section class="content-header">
-    	<center><h1>Ingresar Codigo Producto</h1></center>
-    	<hr>
- 	
+    <div class="box-body">
+    	<center><h4>Consultar precio</h4></center>
   <div class="form-group">
-                  
   <center><div class="input-group">
-                    
-<input type="text" autofocus class="form-control input-lg " onkeyup="borrarCodigoOculto(this.value);" id="precioProducto" name="precioProducto" style="text-align:center;">
-
-			<input type="text" id="precioProductotext" name="precioProductotext" > 	
+<input type="text" autofocus class="form-control input-lg" onkeyup="borrarCodigoOculto(this.value);" id="precioProducto" name="precioProducto" style="text-align:center;">
+			<input type="text" id="precioProductotext" name="precioProductotext" style="display:none;">
 			<hr> 
-			<center><h2 id="descripcionConsultaPrecio"></h2></center>
-			<hr>
-			<center><h1 id="consultaPrecioProducto"></h1></center>  
-			<hr>									
+			<h2 id="descripcionConsultaPrecio"></h2>
+			<h1 id="consultaPrecioProducto"></h1>
+    </div></center>
+   </div>
     </div>
-    </center>            
-   </div>      
+   </div>
+  </div>
+</div>
 
- </section>
-
-    </div>
-
-    </div>
-
-    </div>
-  
   </section>
 
 </div>
@@ -457,7 +321,7 @@ MODAL COBRAR VENTA
 
 <div id="modalCobrarVenta" class="modal fade" role="dialog">
   
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
 
     <div class="modal-content">
 
@@ -471,7 +335,7 @@ MODAL COBRAR VENTA
 
           <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
 
-          <h4 class="modal-title">Cobro de venta</h4>
+          <h4 class="modal-title">Confirmar presupuesto</h4>
 
         </div>
 

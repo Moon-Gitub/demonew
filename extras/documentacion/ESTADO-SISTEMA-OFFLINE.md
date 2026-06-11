@@ -7,7 +7,15 @@ El sistema offline se encuentra en dos ubicaciones:
 1. **`pos-offline/`** (raíz del proyecto) - Versión con configuración local
 2. **`extras/pos-offline-moon/`** - Versión completa con mejoras y documentación
 
-**Recomendación**: Usar `extras/pos-offline-moon/` como versión principal.
+**Recomendación**: Usar `extras/pos-offline-moon/` como versión principal. `extras/pos-offline/` está deprecada (ver `DEPRECATED.md`).
+
+### Actualización (plan POS Offline completo)
+
+- **Fase 1:** `secrets.env`, auto-login (`--auto-login`), scheduler matutino, sesión local SQLite.
+- **Fase 2:** APIs `catalogo-offline.php`, `medios-pago.php`, `empresa-offline.php`; sync maestros (clientes, medios, listas, catálogo).
+- **Fase 3:** UI modular en `ui/` (login, pos_app, theme); listas de precio, medios desde BD, atajos F1/F5/F7/F9.
+- **Fase 4:** Stock local al cobrar, parser balanza, acciones online (AFIP/MP/impresión).
+- **Fase 5:** `build_exe.py` actualizado, documentación wiki, `secrets.env.example`.
 
 ---
 

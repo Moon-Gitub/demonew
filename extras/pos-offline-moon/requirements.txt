@@ -1,5 +1,6 @@
-requests==2.31.0
-sqlalchemy==2.0.23
-bcrypt==4.1.2
-Pillow==10.1.0
-pyinstaller==6.3.0
+# Python 3.10–3.13 (probado en 3.13). Pillow eliminado: no se usa y 10.1.0 no compila en 3.13.
+requests>=2.31.0,<3
+sqlalchemy>=2.0.23,<3
+bcrypt>=4.1.2,<5
+python-dotenv>=1.0.0,<2
+pyinstaller>=6.6.0

@@ -38,9 +38,12 @@ class ControladorPresupuestos{
 			/*=============================================
 			ACTUALIZAR LAS COMPRAS DEL CLIENTE Y REDUCIR EL STOCK Y AUMENTAR LAS VENTAS DE LOS PRODUCTOS
 			=============================================*/
-			if($postPresupuestoCaja["listaProductosCaja"] == "" && $postPresupuestoCaja["listaDescuentoCaja"] == "") {
+			if(empty($postPresupuestoCaja["listaProductosCaja"]) && empty($postPresupuestoCaja["listaDescuentoCaja"] ?? '')) {
 
-				return "La venta no se ha ejecuta si no hay productos";
+				return array(
+					'estado' => 'error',
+					'mensaje' => 'La venta no se ha ejecuta si no hay productos'
+				);
 
 			}
 
@@ -155,7 +158,7 @@ class ControladorPresupuestos{
 
 			if($postPresupuestoCaja["listaMetodoPagoCaja"] == "Mixto") {
 
-				$lstMetodoPago = json_decode($postPresupuestoCaja["mxMediosPagos"]);
+				$lstMetodoPago = json_decode($postPresupuestoCaja["mxMediosPagos"] ?? '[]', true);
 
 			} else {
 
@@ -211,7 +214,8 @@ class ControladorPresupuestos{
 						   	"total"=>$postPresupuestoCaja["nuevoTotalVentaCaja"],
 						   	"metodo_pago"=> json_encode($lstMetodoPago),
 						   	"estado" => $estado,
-						   	"fecha" => $postPresupuestoCaja["fechaActual"], 
+						   	"fecha" => $postPresupuestoCaja["fechaActual"],
+						   	"observaciones" => $postPresupuestoCaja["nuevaObservacionVenta"] ?? "",
 							);
 
 			$respuesta = ModeloPresupuestos::mdlIngresarPresupuesto($tabla, $datos);

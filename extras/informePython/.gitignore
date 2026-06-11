@@ -1,0 +1,5 @@
+bases.txt
+.env
+reportes/
+__pycache__/
+*.pyc

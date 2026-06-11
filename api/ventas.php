@@ -45,8 +45,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Si no hay sesión, verificar si es del sistema offline
         if (isset($datos_temp['creado_local']) && $datos_temp['creado_local'] === true) {
             // Permitir desde sistema offline, usar valores por defecto
-            $_SESSION['id'] = 1; // Usuario por defecto
+            $_SESSION['id'] = isset($datos_temp['id_vendedor']) ? intval($datos_temp['id_vendedor']) : 1;
             $_SESSION['nombre'] = 'Sistema Offline';
+            $sucOff = trim((string)($datos_temp['sucursal'] ?? ''));
+            if ($sucOff === '' || strcasecmp($sucOff, 'Local') === 0) {
+                $sucOff = 'stock';
+            }
+            if ($sucOff === 'deposito') {
+                $sucOff = 'stock2';
+            }
+            $_SESSION['sucursal'] = $sucOff;
             error_log("Permitiendo venta desde sistema offline sin sesión activa");
         } else {
             // Requerir sesión para otros casos
@@ -173,11 +181,18 @@ try {
         $postVentaCaja['fechaActual'] = $fecha;
         
         $postVentaCaja['idVendedor'] = $_SESSION['id'] ?? 1;
-        // Mapear 'Local' a 'stock1' ya que 'Local' no es una columna válida en productos
-        $sucursal = $datos['sucursal'] ?? 'stock1';
-        if ($sucursal === 'Local') {
-            $sucursal = 'stock1';
+        // Sucursal: no guardar vacío (offline a veces enviaba "")
+        $sucursal = trim((string)($datos['sucursal'] ?? ''));
+        if ($sucursal === '' || strcasecmp($sucursal, 'Local') === 0) {
+            $sucursal = trim((string)($_SESSION['sucursal'] ?? ''));
         }
+        if ($sucursal === '' || strcasecmp($sucursal, 'Local') === 0) {
+            $sucursal = 'stock';
+        }
+        if ($sucursal === 'deposito') {
+            $sucursal = 'stock2';
+        }
+        $_SESSION['sucursal'] = $sucursal;
         $postVentaCaja['sucursalVendedor'] = $sucursal;
         $postVentaCaja['nombreVendedor'] = $_SESSION['nombre'] ?? 'Sistema';
         

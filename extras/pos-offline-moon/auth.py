@@ -9,12 +9,61 @@ from database import get_session, Usuario, EstadoCuenta, verify_password
 from datetime import datetime
 import requests
 from config import config
+import session_store
 
 class AuthManager:
     def __init__(self):
         self.current_user = None
         self.id_cliente_moon = config.ID_CLIENTE_MOON
     
+    def try_auto_login(self, sync_first=True):
+        """Login sin UI usando secrets.env o sesión válida del día."""
+        if not config.AUTO_LOGIN_ENABLED:
+            return {"success": False, "message": "Auto-login deshabilitado"}
+
+        sess = session_store.load_session()
+        if sess and sess.get("usuario"):
+            session = get_session()
+            try:
+                user = session.query(Usuario).filter_by(usuario=sess["usuario"]).first()
+                if user and user.estado == 1:
+                    chk = self._check_cuenta(session)
+                    if not chk["success"]:
+                        return chk
+                    self.current_user = user
+                    return {"success": True, "user": user, "via": "session"}
+            finally:
+                session.close()
+
+        if not config.has_auto_credentials():
+            return {"success": False, "message": "Sin credenciales en secrets.env"}
+
+        if sync_first:
+            try:
+                self.sync_usuarios()
+            except Exception:
+                pass
+
+        result = self.login(config.AUTO_LOGIN_USER, config.AUTO_LOGIN_PASSWORD)
+        if result.get("success"):
+            result["via"] = "secrets"
+        return result
+
+    def _check_cuenta(self, session):
+        estado_cuenta = session.query(EstadoCuenta).filter_by(
+            id_cliente_moon=self.id_cliente_moon
+        ).first()
+        if estado_cuenta and estado_cuenta.estado_bloqueo == 1:
+            return {
+                "success": False,
+                "message": "Cuenta bloqueada por falta de pago.",
+                "bloqueado": True,
+            }
+        if estado_cuenta and estado_cuenta.fecha_vencimiento and estado_cuenta.fecha_vencimiento < datetime.now():
+            if estado_cuenta.saldo_cuenta > 0:
+                return {"success": False, "message": "Cuenta vencida.", "bloqueado": True}
+        return {"success": True}
+
     def login(self, usuario, password):
         """Autentica usuario localmente y valida estado de cuenta"""
         session = get_session()
@@ -73,6 +122,10 @@ class AuthManager:
             
             # Login exitoso
             self.current_user = user
+            session_store.save_session(
+                user.id, user.usuario, user.perfil or "", user.sucursal or ""
+            )
+            session_store._set("ultimo_login_ok", datetime.now().isoformat())
             session.close()
             return {"success": True, "user": user}
             
@@ -84,7 +137,8 @@ class AuthManager:
         """Sincroniza usuarios desde servidor"""
         try:
             # Incluir ID de cliente como parámetro para autenticación básica
-            params = {'id_cliente': config.ID_CLIENTE_MOON}
+            from api_client import offline_params
+            params = offline_params()
             # Usar ruta directa al archivo PHP
             url = f"{config.SERVER_URL}/api/usuarios.php"
             print(f"🔍 Sincronizando usuarios desde: {url}")

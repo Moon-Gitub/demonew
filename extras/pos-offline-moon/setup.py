@@ -91,14 +91,24 @@ def main():
         validator=lambda x: x.isdigit()
     )
     
+    auto = get_input("¿Habilitar login automático? (s/n)", default="s").strip().lower() == "s"
+    auto_time = "08:00"
+    if auto:
+        auto_time = get_input("Hora de auto-login (HH:MM)", default="08:00")
+
     # Guardar configuración
     config = {
         "server_url": server_url,
         "api_base": api_base,
         "id_cliente_moon": int(id_cliente),
+        "id_empresa": int(get_input("ID Empresa", default="1", validator=lambda x: x.isdigit())),
         "sync_interval": int(sync_interval),
         "connection_check_interval": 5,
         "account_check_interval": 300,
+        "auto_login_enabled": auto,
+        "auto_login_time": auto_time,
+        "auto_sync_on_login": True,
+        "session_ttl_hours": 12,
         "configurado_en": datetime.now().isoformat()
     }
     
@@ -106,7 +116,18 @@ def main():
         json.dump(config, f, indent=4, ensure_ascii=False)
     
     print("\n✅ Configuración guardada en config.json")
-    
+
+    if auto:
+        guardar = get_input("¿Guardar usuario/contraseña en secrets.env? (s/n)", default="s").strip().lower()
+        if guardar == "s":
+            import getpass
+            from config import config as app_config
+            u = get_input("Usuario POS")
+            p = getpass.getpass("Contraseña: ")
+            if u and p:
+                app_config.save_secrets(u, p)
+                print("✅ secrets.env creado (no subir a git)")
+
     # Intentar sincronización inicial
     print("\n🔄 Intentando sincronización inicial...")
     try:

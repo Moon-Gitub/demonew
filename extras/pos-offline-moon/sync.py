@@ -8,10 +8,14 @@ Sincroniza productos, ventas, usuarios y estado de cuenta con servidor
 import requests
 import json
 from datetime import datetime, timedelta
-from database import get_session, Producto, Venta
+from database import (
+    get_session, Producto, Venta, Cliente, MedioPago, ListaPrecio,
+    Categoria, EmpresaConfig,
+)
 from connection import ConnectionMonitor
 from auth import AuthManager
 from config import config
+from api_client import api_get, offline_params
 
 class SyncManager:
     def __init__(self):
@@ -34,12 +38,203 @@ class SyncManager:
         id_cliente = id_cliente_moon or config.ID_CLIENTE_MOON
         return self.auth_manager.sync_estado_cuenta(id_cliente)
     
+    def sync_empresa(self):
+        try:
+            r = api_get("empresa-offline.php", timeout=15)
+            if r.status_code != 200:
+                return False
+            data = r.json()
+            session = get_session()
+            emp = data.get("empresa") or {}
+            row = session.query(EmpresaConfig).filter_by(id_empresa=config.ID_EMPRESA).first()
+            import json as _json
+            payload = _json.dumps(data, ensure_ascii=False)
+            if row:
+                row.nombre = emp.get("nombre", "")
+                row.pto_vta = emp.get("pto_vta", 1)
+                row.concepto_defecto = emp.get("concepto_defecto", 1)
+                row.json_config = payload
+            else:
+                session.add(EmpresaConfig(
+                    id_empresa=config.ID_EMPRESA,
+                    nombre=emp.get("nombre", ""),
+                    pto_vta=emp.get("pto_vta", 1),
+                    concepto_defecto=emp.get("concepto_defecto", 1),
+                    json_config=payload,
+                ))
+            for lista in data.get("listas", []):
+                lp = session.query(ListaPrecio).filter_by(
+                    codigo=lista["codigo"], id_empresa=config.ID_EMPRESA
+                ).first()
+                if lp:
+                    lp.nombre = lista.get("nombre", lp.nombre)
+                    lp.base_precio = lista.get("base_precio", "precio_venta")
+                    lp.tipo_descuento = lista.get("tipo_descuento", "")
+                    lp.valor_descuento = lista.get("valor_descuento", 0)
+                else:
+                    session.add(ListaPrecio(
+                        id_servidor=lista.get("id"),
+                        codigo=lista["codigo"],
+                        nombre=lista.get("nombre", lista["codigo"]),
+                        id_empresa=config.ID_EMPRESA,
+                        base_precio=lista.get("base_precio", "precio_venta"),
+                        tipo_descuento=lista.get("tipo_descuento", ""),
+                        valor_descuento=lista.get("valor_descuento", 0),
+                        orden=lista.get("orden", 0),
+                    ))
+            session.commit()
+            session.close()
+            return True
+        except Exception as e:
+            print(f"Error sync empresa: {e}")
+            return False
+
+    def sync_medios_pago(self):
+        try:
+            r = api_get("medios-pago.php", timeout=15)
+            if r.status_code != 200:
+                return False
+            medios = r.json()
+            session = get_session()
+            for m in medios:
+                row = session.query(MedioPago).filter_by(codigo=m["codigo"]).first()
+                if row:
+                    row.nombre = m.get("nombre", row.nombre)
+                    row.activo = m.get("activo", 1)
+                    row.orden = m.get("orden", 0)
+                else:
+                    session.add(MedioPago(
+                        id_servidor=m.get("id"),
+                        codigo=m["codigo"],
+                        nombre=m.get("nombre", m["codigo"]),
+                        descripcion=m.get("descripcion", ""),
+                        activo=m.get("activo", 1),
+                        orden=m.get("orden", 0),
+                        requiere_codigo=m.get("requiere_codigo", 0),
+                        requiere_banco=m.get("requiere_banco", 0),
+                        requiere_numero=m.get("requiere_numero", 0),
+                        requiere_fecha=m.get("requiere_fecha", 0),
+                    ))
+            session.commit()
+            session.close()
+            return True
+        except Exception as e:
+            print(f"Error sync medios: {e}")
+            return False
+
+    def sync_clientes(self):
+        try:
+            url = f"{config.SERVER_URL}/api/clientes.php"
+            response = requests.get(url, params=offline_params(), timeout=60)
+            if response.status_code != 200:
+                return False
+            clientes = response.json()
+            session = get_session()
+            for c in clientes:
+                cid = int(c["id"])
+                row = session.query(Cliente).filter_by(id_servidor=cid).first()
+                display = c.get("display", f"{cid}-{c.get('nombre', '')}")
+                if row:
+                    row.nombre = c.get("nombre", "")
+                    row.documento = c.get("documento", "")
+                    row.display = display
+                else:
+                    session.add(Cliente(
+                        id_servidor=cid,
+                        nombre=c.get("nombre", ""),
+                        documento=c.get("documento", ""),
+                        tipo_documento=c.get("tipo_documento", 0),
+                        condicion_iva=c.get("condicion_iva", 0),
+                        email=c.get("email", ""),
+                        telefono=c.get("telefono", ""),
+                        direccion=c.get("direccion", ""),
+                        display=display,
+                    ))
+            session.commit()
+            session.close()
+            return True
+        except Exception as e:
+            print(f"Error sync clientes: {e}")
+            return False
+
+    def sync_catalogo(self):
+        """Catálogo unificado: productos + categorías + listas."""
+        try:
+            r = api_get(
+                "catalogo-offline.php",
+                timeout=120,
+            )
+            if r.status_code != 200:
+                return self.sync_productos()
+            data = r.json()
+            session = get_session()
+            for prod_data in data.get("productos", []):
+                producto = session.query(Producto).filter_by(codigo=prod_data["codigo"]).first()
+                if producto:
+                    producto.descripcion = prod_data["descripcion"]
+                    producto.precio_venta = prod_data["precio_venta"]
+                    producto.precio_compra = prod_data.get("precio_compra", 0)
+                    producto.stock = prod_data.get("stock", 0)
+                    producto.iva = prod_data.get("tipo_iva", 21)
+                    producto.ultima_actualizacion = datetime.now()
+                else:
+                    session.add(Producto(
+                        id=prod_data["id"],
+                        codigo=prod_data["codigo"],
+                        descripcion=prod_data["descripcion"],
+                        precio_venta=prod_data["precio_venta"],
+                        precio_compra=prod_data.get("precio_compra", 0),
+                        stock=prod_data.get("stock", 0),
+                        categoria=str(prod_data.get("categoria", "")),
+                        iva=prod_data.get("tipo_iva", 21),
+                    ))
+            for cat in data.get("categorias", []):
+                nombre = cat.get("nombre", "")
+                if not nombre:
+                    continue
+                row = session.query(Categoria).filter_by(nombre=nombre).first()
+                if not row:
+                    session.add(Categoria(id_servidor=cat.get("id"), nombre=nombre))
+            for lista in data.get("listas", []):
+                lp = session.query(ListaPrecio).filter_by(
+                    codigo=lista["codigo"], id_empresa=config.ID_EMPRESA
+                ).first()
+                if lp:
+                    lp.nombre = lista.get("nombre", lp.nombre)
+                    lp.base_precio = lista.get("base_precio", "precio_venta")
+                    lp.tipo_descuento = lista.get("tipo_descuento", "")
+                    lp.valor_descuento = lista.get("valor_descuento", 0)
+                else:
+                    session.add(ListaPrecio(
+                        id_servidor=lista.get("id"),
+                        codigo=lista["codigo"],
+                        nombre=lista.get("nombre", lista["codigo"]),
+                        id_empresa=config.ID_EMPRESA,
+                        base_precio=lista.get("base_precio", "precio_venta"),
+                        tipo_descuento=lista.get("tipo_descuento", ""),
+                        valor_descuento=lista.get("valor_descuento", 0),
+                    ))
+            session.commit()
+            session.close()
+            session_store_set = datetime.now().isoformat()
+            from database import Configuracion
+            s2 = get_session()
+            row = s2.query(Configuracion).filter_by(clave="ultima_sincronizacion_catalogo").first()
+            if row:
+                row.valor = session_store_set
+            else:
+                s2.add(Configuracion(clave="ultima_sincronizacion_catalogo", valor=session_store_set))
+            s2.commit()
+            s2.close()
+            return True
+        except Exception as e:
+            print(f"Error sync catalogo: {e}")
+            return self.sync_productos()
+
     def sync_productos(self):
         """Descarga productos desde el servidor"""
         try:
-            # Incluir ID de cliente como parámetro para autenticación básica
-            params = {'id_cliente': config.ID_CLIENTE_MOON}
-            # Usar ruta directa al archivo PHP
+            params = offline_params()
             url = f"{config.SERVER_URL}/api/productos.php"
             response = requests.get(url, params=params, timeout=10)
             
@@ -337,8 +532,17 @@ class SyncManager:
         self.sync_estado_cuenta(id_cliente)
         
         if not silent:
-            print("🔄 Sincronizando productos...")
-        self.sync_productos()
+            print("🔄 Sincronizando empresa y medios...")
+        self.sync_empresa()
+        self.sync_medios_pago()
+
+        if not silent:
+            print("🔄 Sincronizando clientes...")
+        self.sync_clientes()
+
+        if not silent:
+            print("🔄 Sincronizando catálogo...")
+        self.sync_catalogo()
         
         if not silent:
             print("🔄 Sincronizando ventas pendientes...")

@@ -50,13 +50,21 @@ Debe ejecutarse **una sola vez** (o cada vez que se actualicen las dependencias)
 
 Al terminar, se guarda un archivo `config.json` con esos datos. Sin este paso, el sistema no sabe a qué servidor conectarse.
 
+Opcionalmente el asistente puede crear **`secrets.env`** (usuario/contraseña para **login automático**) y configurar `auto_login_time` (ej. `08:00`). Ese archivo **no debe subirse a git**.
+
 ---
 
 ### 3. Ejecutar la aplicación
 
 **Comando:** `python main.py` (o `run.bat` en Windows)
 
-**Qué hace:** inicia la aplicación. Primero se abre una **ventana de login**; después de ingresar correctamente, se abre la **pantalla principal de ventas**.
+**Login automático:** `python main.py --auto-login` o el script `scripts/iniciar-pos-matutino.sh` / `.bat` en el Programador de tareas / cron.
+
+**Credenciales:** `python main.py --setup-secrets` o `python setup.py` (pregunta al final).
+
+**Qué hace:** si hay `secrets.env` y `auto_login_enabled`, entra directo a caja; si no, muestra **ventana de login**. Luego abre la pantalla principal (listas de precio, medios desde BD, clientes locales, atajos F1/F5/F7/F9).
+
+**Carpeta canónica:** `extras/pos-offline-moon/` (la carpeta `extras/pos-offline/` está deprecada).
 
 ---
 

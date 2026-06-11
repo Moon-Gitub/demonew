@@ -2,7 +2,13 @@
     "server_url": "https://newmoon.posmoon.com.ar",
     "api_base": "https://newmoon.posmoon.com.ar/api",
     "id_cliente_moon": 14,
+    "id_empresa": 1,
     "sync_interval": 60,
     "connection_check_interval": 5,
-    "account_check_interval": 300
+    "account_check_interval": 300,
+    "auto_login_enabled": false,
+    "auto_login_time": "08:00",
+    "auto_sync_on_login": true,
+    "session_ttl_hours": 12,
+    "pos_api_key": ""
 }

@@ -35,6 +35,8 @@ data/*.db-journal
 
 # Configuración (no subir config.json real)
 config.json
+secrets.env
+.env.offline
 
 # Logs
 logs/*.log

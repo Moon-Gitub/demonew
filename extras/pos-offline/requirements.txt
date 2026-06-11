@@ -1,5 +1,5 @@
-requests==2.31.0
-sqlalchemy==2.0.23
-bcrypt==4.1.2
-Pillow==10.1.0
-pyinstaller==6.3.0
+# Usar con venv: ./venv/bin/pip install -r requirements.txt
+requests>=2.31.0,<3
+sqlalchemy>=2.0.23,<3
+bcrypt>=4.1.2,<5
+pyinstaller>=6.6.0

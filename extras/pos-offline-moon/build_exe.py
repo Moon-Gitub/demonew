@@ -24,16 +24,18 @@ def build_executable():
         '--windowed',  # Sin consola (GUI)
         '--hidden-import=sqlalchemy.dialects.sqlite',
         '--hidden-import=bcrypt',
+        '--hidden-import=dotenv',
+        '--collect-submodules=ui',
         '--collect-all=tkinter',
         '--noconfirm',  # No preguntar
         '--clean'  # Limpiar cache
     ]
     
     # Agregar datos adicionales según plataforma
-    if sys.platform == 'win32':
-        options.append('--add-data=config.json.example;.')
-    else:
-        options.append('--add-data=config.json.example:.')
+    sep = ';' if sys.platform == 'win32' else ':'
+    for fname in ('config.json.example', 'secrets.env.example'):
+        if Path(fname).exists():
+            options.append(f'--add-data={fname}{sep}.')
     
     print("🔨 Compilando ejecutable...")
     print("   Esto puede tardar varios minutos...\n")

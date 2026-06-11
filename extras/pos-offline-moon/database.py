@@ -75,14 +75,94 @@ class Configuracion(Base):
     clave = Column(String, primary_key=True)
     valor = Column(Text)
 
-# Inicializar base de datos
-print(f"🔍 Inicializando base de datos en: {config.DB_PATH}")
-engine = create_engine(f'sqlite:///{config.DB_PATH}', echo=False)
 
-# Crear todas las tablas
-print(f"🔍 Creando tablas...")
+class Cliente(Base):
+    __tablename__ = 'clientes'
+
+    id = Column(Integer, primary_key=True)
+    id_servidor = Column(Integer, unique=True, nullable=False)
+    nombre = Column(String, default="")
+    documento = Column(String, default="")
+    tipo_documento = Column(Integer, default=0)
+    condicion_iva = Column(Integer, default=0)
+    email = Column(String, default="")
+    telefono = Column(String, default="")
+    direccion = Column(String, default="")
+    display = Column(String, default="")
+    ultima_sincronizacion = Column(DateTime, default=datetime.now)
+
+
+class MedioPago(Base):
+    __tablename__ = 'medios_pago'
+
+    id = Column(Integer, primary_key=True)
+    id_servidor = Column(Integer, nullable=True)
+    codigo = Column(String, unique=True, nullable=False)
+    nombre = Column(String, nullable=False)
+    descripcion = Column(String, default="")
+    activo = Column(Integer, default=1)
+    orden = Column(Integer, default=0)
+    requiere_codigo = Column(Integer, default=0)
+    requiere_banco = Column(Integer, default=0)
+    requiere_numero = Column(Integer, default=0)
+    requiere_fecha = Column(Integer, default=0)
+
+
+class ListaPrecio(Base):
+    __tablename__ = 'listas_precio'
+
+    id = Column(Integer, primary_key=True)
+    id_servidor = Column(Integer, nullable=True)
+    codigo = Column(String, nullable=False)
+    nombre = Column(String, nullable=False)
+    id_empresa = Column(Integer, default=1)
+    activo = Column(Integer, default=1)
+    orden = Column(Integer, default=0)
+    base_precio = Column(String, default="venta")
+    tipo_descuento = Column(String, default="")
+    valor_descuento = Column(Float, default=0)
+
+
+class ProductoPrecio(Base):
+    __tablename__ = 'producto_precios'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    codigo_lista = Column(String, nullable=False)
+    id_producto = Column(Integer, nullable=False)
+    precio = Column(Float, nullable=False)
+
+
+class Categoria(Base):
+    __tablename__ = 'categorias'
+
+    id = Column(Integer, primary_key=True)
+    id_servidor = Column(Integer, nullable=True)
+    nombre = Column(String, nullable=False)
+
+
+class EmpresaConfig(Base):
+    __tablename__ = 'empresa_config'
+
+    id = Column(Integer, primary_key=True)
+    id_empresa = Column(Integer, unique=True, nullable=False)
+    nombre = Column(String, default="")
+    pto_vta = Column(Integer, default=1)
+    concepto_defecto = Column(Integer, default=1)
+    json_config = Column(Text, default="{}")
+
+
+# Inicializar base de datos
+import os
+_VERBOSE_DB = os.environ.get("POS_OFFLINE_DEBUG", "").lower() in ("1", "true", "yes")
+
+def _db_log(msg):
+    if _VERBOSE_DB:
+        print(msg)
+
+_db_log(f"Inicializando base de datos en: {config.DB_PATH}")
+engine = create_engine(f'sqlite:///{config.DB_PATH}', echo=False)
 Base.metadata.create_all(engine)
-print(f"✅ Tablas creadas/verificadas")
+_db_log("Tablas SQLite listas")
 
 # Migración: agregar columna id_cliente si no existe
 try:
@@ -91,20 +171,18 @@ try:
     columns = [col['name'] for col in inspector.get_columns('ventas')]
     
     if 'id_cliente' not in columns:
-        print("🔧 Agregando columna id_cliente a tabla ventas...")
+        _db_log("Agregando columna id_cliente a tabla ventas...")
         with engine.connect() as conn:
             conn.execute(text("ALTER TABLE ventas ADD COLUMN id_cliente INTEGER DEFAULT 1"))
             conn.commit()
-        print("✅ Columna id_cliente agregada")
+        _db_log("Columna id_cliente agregada")
 except Exception as e:
-    print(f"⚠️  Error al agregar columna id_cliente (puede que ya exista): {e}")
+    _db_log(f"Columna id_cliente: {e}")
 
 Session = sessionmaker(bind=engine)
 
 def get_session():
-    session = Session()
-    print(f"🔍 Nueva sesión creada")
-    return session
+    return Session()
 
 def hash_password(password):
     """Hashea la contraseña usando bcrypt"""

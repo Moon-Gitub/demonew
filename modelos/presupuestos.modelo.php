@@ -103,7 +103,8 @@ class ModeloPresupuestos{
 		$stmt->bindParam(":total", $datos["total"], PDO::PARAM_STR);
 		$stmt->bindParam(":metodo_pago", $datos["metodo_pago"], PDO::PARAM_STR);
 		$stmt->bindParam(":estado", $datos["estado"], PDO::PARAM_INT);
-		$stmt->bindParam(":observaciones", $datos["observaciones"], PDO::PARAM_STR);
+		$observaciones = $datos["observaciones"] ?? '';
+		$stmt->bindParam(":observaciones", $observaciones, PDO::PARAM_STR);
 
 		if($stmt->execute()){
 

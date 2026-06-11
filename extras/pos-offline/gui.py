@@ -159,7 +159,9 @@ class POSApp:
         self.id_cliente_moon = id_cliente_moon
         self.productos_carrito = []
         self.total_venta = 0.0
-        self.clientes_disponibles = [{'id': 1, 'display': '1-Consumidor Final'}]  # Inicializar con valor por defecto
+        self.clientes_disponibles = [{'id': 1, 'display': '1-Consumidor Final'}]
+        self._resize_job = None
+        self._paned = None
         
         self.setup_ui()
         self.connection_monitor.start_monitoring()
@@ -178,8 +180,20 @@ class POSApp:
     def setup_ui(self):
         """Interfaz principal funcional y visualmente atractiva"""
         self.root.title("POS Offline Moon")
-        self.root.geometry("1600x1000")
+        sw = self.root.winfo_screenwidth()
+        sh = self.root.winfo_screenheight()
+        w = min(1600, max(900, sw - 40))
+        h = min(900, max(600, sh - 80))
+        self.root.geometry(f"{w}x{h}")
+        self.root.minsize(900, 600)
         self.root.configure(bg="#ecf0f5")
+        try:
+            self.root.state("zoomed")
+        except tk.TclError:
+            try:
+                self.root.attributes("-zoomed", True)
+            except tk.TclError:
+                pass
         
         # Menú superior
         menu_bar = tk.Menu(self.root)
@@ -218,14 +232,16 @@ class POSApp:
         tk.Label(header, text=f"👤 {self.auth_manager.current_user.nombre}", bg="#2c3e50",
                 fg="white", font=("Arial", 10)).pack(side=tk.RIGHT, padx=10, pady=15)
         
-        # Contenedor principal - 3 columnas
+        # Contenedor principal — PanedWindow: 3 columnas redimensionables
         main_container = tk.Frame(self.root, bg="#ecf0f5")
-        main_container.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-        
+        main_container.pack(fill=tk.BOTH, expand=True, padx=8, pady=8)
+
+        self._paned = ttk.PanedWindow(main_container, orient=tk.HORIZONTAL)
+        self._paned.pack(fill=tk.BOTH, expand=True)
+
         # COLUMNA IZQUIERDA: Búsqueda y lista de productos
-        left_col = tk.Frame(main_container, bg="white", relief=tk.RAISED, bd=1)
-        left_col.pack(side=tk.LEFT, fill=tk.BOTH, expand=False, padx=(0, 5))
-        left_col.config(width=400)
+        left_col = tk.Frame(self._paned, bg="white", relief=tk.RAISED, bd=1)
+        self._paned.add(left_col, weight=1)
         
         tk.Label(left_col, text="🔍 BUSCAR PRODUCTO", font=("Arial", 14, "bold"),
                 bg="white", fg="#2c3e50").pack(pady=15)
@@ -255,7 +271,7 @@ class POSApp:
         style.theme_use("clam")
         
         self.productos_tree = ttk.Treeview(productos_frame, columns=("codigo", "descripcion", "precio", "stock"),
-                                          show="headings", height=22)
+                                          show="headings", height=8)
         self.productos_tree.heading("codigo", text="Código")
         self.productos_tree.heading("descripcion", text="Descripción")
         self.productos_tree.heading("precio", text="Precio")
@@ -288,13 +304,39 @@ class POSApp:
         # Enfocar en la lista de productos al cargar
         self.productos_tree.focus_set()
         
-        # COLUMNA CENTRAL: Cliente y Carrito de venta
-        center_col = tk.Frame(main_container, bg="white", relief=tk.RAISED, bd=1)
-        center_col.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5)
-        
-        # Sección de cliente
+        self.productos_frame = productos_frame
+
+        # COLUMNA CENTRAL: Cliente y Carrito (grid responsive)
+        center_col = tk.Frame(self._paned, bg="white", relief=tk.RAISED, bd=1)
+        self._paned.add(center_col, weight=4)
+        center_col.grid_rowconfigure(2, weight=1)
+        center_col.grid_columnconfigure(0, weight=1)
+
+        # COLUMNA DERECHA: scroll si la pantalla es baja
+        right_outer = tk.Frame(self._paned, bg="white", relief=tk.RAISED, bd=1)
+        self._paned.add(right_outer, weight=1)
+        right_canvas = tk.Canvas(right_outer, bg="white", highlightthickness=0)
+        right_scroll = ttk.Scrollbar(right_outer, orient=tk.VERTICAL, command=right_canvas.yview)
+        right_col = tk.Frame(right_canvas, bg="white")
+        self._right_canvas = right_canvas
+        self._right_inner = right_col
+        right_win = right_canvas.create_window((0, 0), window=right_col, anchor="nw")
+
+        def _right_scroll_region(_=None):
+            right_canvas.configure(scrollregion=right_canvas.bbox("all"))
+
+        def _right_canvas_resize(event):
+            right_canvas.itemconfig(right_win, width=event.width)
+
+        right_col.bind("<Configure>", _right_scroll_region)
+        right_canvas.bind("<Configure>", _right_canvas_resize)
+        right_canvas.configure(yscrollcommand=right_scroll.set)
+        right_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        right_scroll.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Sección de cliente (centro, fila 0)
         cliente_frame = tk.Frame(center_col, bg="#f8f9fa", relief=tk.RAISED, bd=1)
-        cliente_frame.pack(fill=tk.X, padx=15, pady=(15, 10))
+        cliente_frame.grid(row=0, column=0, sticky="ew", padx=12, pady=(12, 8))
         
         tk.Label(cliente_frame, text="👤 CLIENTE", font=("Arial", 12, "bold"),
                 bg="#f8f9fa", fg="#2c3e50").pack(side=tk.LEFT, padx=10, pady=10)
@@ -313,15 +355,15 @@ class POSApp:
                  font=("Arial", 9, "bold"), command=self.buscar_cliente, relief=tk.FLAT,
                  padx=15, pady=5, cursor="hand2").pack(side=tk.LEFT, padx=(5, 0))
         
-        tk.Label(center_col, text="🛒 CARRITO DE VENTA", font=("Arial", 16, "bold"),
-                bg="#667eea", fg="white").pack(fill=tk.X, pady=0, ipady=15)
-        
-        # Tabla del carrito
+        tk.Label(center_col, text="🛒 CARRITO DE VENTA", font=("Arial", 15, "bold"),
+                bg="#667eea", fg="white").grid(row=1, column=0, sticky="ew", ipady=8)
+
         carrito_frame = tk.Frame(center_col, bg="white")
-        carrito_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=15)
-        
+        carrito_frame.grid(row=2, column=0, sticky="nsew", padx=12, pady=6)
+        self.carrito_frame = carrito_frame
+
         self.carrito_tree = ttk.Treeview(carrito_frame, columns=("cantidad", "producto", "precio", "subtotal"),
-                                        show="headings", height=20)
+                                        show="headings", height=6)
         self.carrito_tree.heading("cantidad", text="Cant.")
         self.carrito_tree.heading("producto", text="Producto")
         self.carrito_tree.heading("precio", text="P. Unit.")
@@ -337,50 +379,37 @@ class POSApp:
         
         self.carrito_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar_carrito.pack(side=tk.RIGHT, fill=tk.Y)
-        
-        # Botones de acción del carrito
+
         carrito_actions = tk.Frame(center_col, bg="white")
-        carrito_actions.pack(fill=tk.X, padx=15, pady=5)
-        
+        carrito_actions.grid(row=3, column=0, sticky="ew", padx=12, pady=4)
+
         tk.Button(carrito_actions, text="➕ Aumentar", bg="#27ae60", fg="white",
-                 font=("Arial", 10, "bold"), command=self.aumentar_cantidad, relief=tk.FLAT,
-                 padx=15, pady=8, cursor="hand2").pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
-        
+                 font=("Arial", 9, "bold"), command=self.aumentar_cantidad, relief=tk.FLAT,
+                 padx=6, pady=5, cursor="hand2").pack(side=tk.LEFT, padx=2, fill=tk.X, expand=True)
         tk.Button(carrito_actions, text="➖ Disminuir", bg="#f39c12", fg="white",
-                 font=("Arial", 10, "bold"), command=self.disminuir_cantidad, relief=tk.FLAT,
-                 padx=15, pady=8, cursor="hand2").pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
-        
+                 font=("Arial", 9, "bold"), command=self.disminuir_cantidad, relief=tk.FLAT,
+                 padx=6, pady=5, cursor="hand2").pack(side=tk.LEFT, padx=2, fill=tk.X, expand=True)
         tk.Button(carrito_actions, text="🗑️ Eliminar", bg="#e74c3c", fg="white",
-                 font=("Arial", 10, "bold"), command=self.eliminar_item, relief=tk.FLAT,
-                 padx=15, pady=8, cursor="hand2").pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
-        
-        tk.Button(carrito_actions, text="🗑️ Limpiar Todo", bg="#c0392b", fg="white",
-                 font=("Arial", 10, "bold"), command=self.limpiar_carrito, relief=tk.FLAT,
-                 padx=15, pady=8, cursor="hand2").pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
-        
-        # Total destacado
+                 font=("Arial", 9, "bold"), command=self.eliminar_item, relief=tk.FLAT,
+                 padx=6, pady=5, cursor="hand2").pack(side=tk.LEFT, padx=2, fill=tk.X, expand=True)
+        tk.Button(carrito_actions, text="🗑️ Limpiar", bg="#c0392b", fg="white",
+                 font=("Arial", 9, "bold"), command=self.limpiar_carrito, relief=tk.FLAT,
+                 padx=6, pady=5, cursor="hand2").pack(side=tk.LEFT, padx=2, fill=tk.X, expand=True)
+
         total_frame = tk.Frame(center_col, bg="#34495e", relief=tk.RAISED, bd=2)
-        total_frame.pack(fill=tk.X, padx=15, pady=10)
-        
-        tk.Label(total_frame, text="TOTAL A COBRAR:", font=("Arial", 16, "bold"),
-                bg="#34495e", fg="white").pack(side=tk.LEFT, padx=20, pady=15)
-        
-        self.total_label = tk.Label(total_frame, text="$ 0.00", font=("Arial", 28, "bold"),
+        total_frame.grid(row=4, column=0, sticky="ew", padx=12, pady=4)
+        tk.Label(total_frame, text="TOTAL A COBRAR:", font=("Arial", 13, "bold"),
+                bg="#34495e", fg="white").pack(side=tk.LEFT, padx=12, pady=8)
+        self.total_label = tk.Label(total_frame, text="$ 0.00", font=("Arial", 20, "bold"),
                                     fg="#2ecc71", bg="#34495e")
-        self.total_label.pack(side=tk.RIGHT, padx=20, pady=15)
-        
-        # Botón cobrar grande
+        self.total_label.pack(side=tk.RIGHT, padx=12, pady=8)
+
         btn_cobrar = tk.Button(center_col, text="💳 COBRAR VENTA (F7)", bg="#27ae60", fg="white",
-                              font=("Arial", 18, "bold"), command=self.cobrar_venta, relief=tk.FLAT,
-                              padx=40, pady=20, cursor="hand2")
-        btn_cobrar.pack(fill=tk.X, padx=15, pady=15)
-        
-        # COLUMNA DERECHA: Acciones, método de pago y resumen
-        right_col = tk.Frame(main_container, bg="white", relief=tk.RAISED, bd=1)
-        right_col.pack(side=tk.LEFT, fill=tk.BOTH, expand=False, padx=(5, 0))
-        right_col.config(width=320)
-        
-        # Sección: Método de Pago (PRIMERO, más visible)
+                              font=("Arial", 15, "bold"), command=self.cobrar_venta, relief=tk.FLAT,
+                              padx=16, pady=12, cursor="hand2")
+        btn_cobrar.grid(row=5, column=0, sticky="ew", padx=12, pady=(4, 12))
+
+        # Contenido columna derecha (medios de pago, acciones)
         pago_header = tk.Frame(right_col, bg="#667eea", height=50)
         pago_header.pack(fill=tk.X, pady=(0, 0))
         
@@ -439,7 +468,11 @@ class POSApp:
         self.resumen_label = tk.Label(resumen_frame, text="Productos: 0\nTotal: $0.00",
                                      font=("Arial", 11), bg="#ecf0f5", fg="#7f8c8d", justify=tk.LEFT)
         self.resumen_label.pack(pady=(0, 10), padx=10)
-        
+
+        self.root.bind("<Configure>", self._schedule_layout_refresh)
+        self.root.after(250, self._init_paned_sashes)
+        self.root.after(400, self._refresh_responsive_layout)
+
         # Atajos de teclado globales
         self.root.bind('<F7>', lambda e: self.cobrar_venta())
         self.root.bind('<F5>', lambda e: self.cargar_productos())
@@ -458,6 +491,51 @@ class POSApp:
         self.cargar_productos()
         # Cargar clientes después de crear la UI (con delay para no bloquear)
         self.root.after(500, self.cargar_clientes)
+
+    def _init_paned_sashes(self):
+        if not self._paned:
+            return
+        try:
+            pw = self._paned.winfo_width()
+            if pw > 400:
+                self._paned.sashpos(0, min(340, int(pw * 0.28)))
+                self._paned.sashpos(1, max(pw - 280, int(pw * 0.72)))
+        except tk.TclError:
+            pass
+
+    def _schedule_layout_refresh(self, event=None):
+        if event is not None and event.widget is not self.root:
+            return
+        if self._resize_job:
+            self.root.after_cancel(self._resize_job)
+        self._resize_job = self.root.after(120, self._refresh_responsive_layout)
+
+    def _sucursal_para_venta(self):
+        """Sucursal del vendedor logueado (misma lógica que crear-venta-caja)."""
+        u = getattr(self.auth_manager, 'current_user', None)
+        suc = (getattr(u, 'sucursal', None) or '').strip()
+        if not suc or suc.lower() == 'local':
+            suc = 'stock'
+        if suc == 'deposito':
+            suc = 'stock2'
+        return suc
+
+    def _refresh_responsive_layout(self):
+        self._resize_job = None
+        try:
+            if hasattr(self, "carrito_frame") and self.carrito_frame.winfo_height() > 30:
+                rows = max(3, min(18, self.carrito_frame.winfo_height() // 24))
+                self.carrito_tree.configure(height=rows)
+            if hasattr(self, "productos_frame") and self.productos_frame.winfo_height() > 30:
+                rows_p = max(3, min(22, self.productos_frame.winfo_height() // 24))
+                self.productos_tree.configure(height=rows_p)
+            w = self.root.winfo_width()
+            if w > 600:
+                desc_w = max(100, int(w * 0.22))
+                self.productos_tree.column("descripcion", width=desc_w)
+                self.carrito_tree.column("producto", width=max(120, int(w * 0.28)))
+        except tk.TclError:
+            pass
     
     def on_connection_change(self, is_online):
         if is_online:
@@ -1038,6 +1116,8 @@ class POSApp:
                         cliente_nombre = cliente.get('nombre', cliente.get('display', 'Consumidor Final').split('-', 1)[-1] if '-' in cliente.get('display', '') else 'Consumidor Final')
                         break
             
+            sucursal_vta = self._sucursal_para_venta()
+
             session = get_session()
             venta = Venta(
                 fecha=datetime.now(),
@@ -1046,6 +1126,7 @@ class POSApp:
                 productos=productos_json,
                 total=self.total_venta,
                 metodo_pago=self.medio_pago,
+                sucursal=sucursal_vta,
                 sincronizado=False,
                 creado_local=True
             )

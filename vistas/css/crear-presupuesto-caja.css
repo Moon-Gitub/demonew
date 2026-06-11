@@ -1,0 +1,342 @@
+/* Crear presupuesto caja — layout responsive (mobile-first) */
+
+.crear-presupuesto-caja.content-wrapper {
+  overflow-x: hidden;
+}
+
+.crear-presupuesto-caja .content {
+  padding-left: 8px;
+  padding-right: 8px;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+.crear-presupuesto-caja .crear-presupuesto-caja-fila {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.crear-presupuesto-caja .presupuesto-col-carrito,
+.crear-presupuesto-caja .presupuesto-col-buscar {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+@media (min-width: 992px) {
+  .crear-presupuesto-caja .presupuesto-col-carrito {
+    order: 1;
+    flex: 1 1 58%;
+    max-width: 58%;
+    min-width: 0;
+  }
+  .crear-presupuesto-caja .presupuesto-col-buscar {
+    order: 2;
+    flex: 0 0 42%;
+    max-width: 42%;
+    min-width: 300px;
+  }
+}
+
+@media (max-width: 991px) {
+  .crear-presupuesto-caja .presupuesto-col-buscar {
+    order: 1;
+    width: 100%;
+    max-width: 100%;
+  }
+  .crear-presupuesto-caja .presupuesto-col-carrito {
+    order: 2;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.crear-presupuesto-caja .box {
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.crear-presupuesto-caja .presupuesto-box-header {
+  background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+  color: #fff;
+  border-radius: 12px 12px 0 0;
+  padding: 12px 16px;
+}
+
+.crear-presupuesto-caja .presupuesto-box-header .titulo-pantalla {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.crear-presupuesto-caja .presupuesto-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.crear-presupuesto-caja .presupuesto-meta-row .meta-item {
+  flex: 1 1 auto;
+  min-width: 120px;
+}
+
+.crear-presupuesto-caja .input-group-addon {
+  background: #f0f0f0;
+  font-weight: 600;
+}
+
+.crear-presupuesto-caja .presupuesto-buscar-panel {
+  background: #fffbf0;
+  border: 2px solid #f39c12;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.crear-presupuesto-caja .presupuesto-buscar-panel .panel-label {
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.crear-presupuesto-caja .presupuesto-buscar-grid {
+  display: grid;
+  grid-template-columns: 1fr 100px;
+  gap: 10px;
+  align-items: end;
+}
+
+.crear-presupuesto-caja .presupuesto-lista-headers {
+  display: grid;
+  grid-template-columns: 56px 1fr 88px 88px;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #555;
+  text-align: center;
+  padding: 6px 4px;
+}
+
+.crear-presupuesto-caja .nuevoProductoCaja {
+  width: 100%;
+  min-height: 160px;
+  max-height: none;
+  overflow-x: hidden;
+  overflow-y: visible;
+  padding: 8px 4px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
+}
+
+.crear-presupuesto-caja .nuevoProductoCaja:empty::before {
+  content: "Los productos agregados aparecerán aquí";
+  color: #95a5a6;
+  font-style: italic;
+  display: block;
+  text-align: center;
+  padding: 40px 16px;
+}
+
+.crear-presupuesto-caja #nuevoPrecioNetoCajaForm {
+  font-size: min(2.75rem, 10vw) !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  min-height: 64px !important;
+  height: auto !important;
+  border: 3px solid #3c8dbc !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%) !important;
+}
+
+.crear-presupuesto-caja .presupuesto-barra-accion {
+  padding: 12px 8px 16px;
+}
+
+.crear-presupuesto-caja #btnGuardarVentaCaja {
+  width: 100%;
+  max-width: 420px;
+  min-height: 52px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 14px 24px;
+}
+
+.crear-presupuesto-caja .box,
+.crear-presupuesto-caja .box-body,
+.crear-presupuesto-caja .input-group {
+  overflow: visible;
+}
+
+.crear-presupuesto-caja #autocompletarClienteCaja,
+.crear-presupuesto-caja #ventaCajaDetalle,
+.crear-presupuesto-caja #ventaCajaCantidad {
+  border-radius: 8px;
+}
+
+.crear-presupuesto-caja .btn-agregar-cliente-wrap {
+  margin-top: 8px;
+}
+
+.crear-presupuesto-caja .btn-agregar-cliente-wrap .btn {
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .crear-presupuesto-caja .content {
+    padding: 8px 6px 80px;
+  }
+
+  .crear-presupuesto-caja .form-control,
+  .crear-presupuesto-caja select.form-control,
+  .crear-presupuesto-caja .input-group-addon,
+  .crear-presupuesto-caja .btn {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  .crear-presupuesto-caja .presupuesto-buscar-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .crear-presupuesto-caja .presupuesto-lista-headers {
+    grid-template-columns: 48px 1fr 72px 72px;
+    font-size: 11px;
+  }
+
+  .crear-presupuesto-caja .presupuesto-meta-row .meta-item {
+    flex: 1 1 100%;
+  }
+
+  .crear-presupuesto-caja .presupuesto-barra-accion {
+    position: sticky;
+    bottom: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.97);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
+    margin: 0 -6px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .crear-presupuesto-caja #btnGuardarVentaCaja {
+    max-width: none;
+  }
+
+  .crear-presupuesto-caja .nuevoProductoCaja .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .crear-presupuesto-caja .nuevoProductoCaja .row > [class*="col-"] {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+}
+
+@media (max-width: 576px) {
+  .crear-presupuesto-caja .nuevoProductoCaja > .row {
+    padding: 10px 4px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #e8e8e8;
+    background: #fff;
+    border-radius: 8px;
+  }
+
+  .crear-presupuesto-caja .nuevoProductoCaja .form-control {
+    font-size: 15px;
+    min-height: 40px;
+  }
+
+  .crear-presupuesto-caja .presupuesto-lista-headers {
+    display: none;
+  }
+
+  .crear-presupuesto-caja .input-group-btn {
+    display: block;
+    width: 100%;
+  }
+
+  .crear-presupuesto-caja .input-group-btn > .btn {
+    width: 100%;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .crear-presupuesto-caja .input-group .form-control {
+    border-radius: 8px 8px 0 0;
+  }
+}
+
+/* Modales en pantalla presupuesto */
+@media (max-width: 991px) {
+  .crear-presupuesto-caja ~ #modalCobrarVenta .modal-dialog,
+  #modalCobrarVenta .modal-dialog {
+    margin: 10px auto;
+    width: calc(100% - 20px);
+    max-width: 100%;
+  }
+
+  #modalCobrarVenta .col-md-3,
+  #modalCobrarVenta .col-md-6,
+  #modalCobrarVenta .col-xs-6 {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 12px;
+  }
+
+  #modalCobrarVenta .modal-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  #modalCobrarVenta .modal-footer .btn {
+    width: 100%;
+    min-height: 48px;
+    margin: 0 !important;
+  }
+
+  #modalCobrarVenta .form-control,
+  #modalCobrarVenta select.form-control {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  #modalImprimirTicketCaja .modal-dialog {
+    margin: 10px auto;
+    width: calc(100% - 20px);
+    max-width: 100%;
+  }
+
+  #modalImprimirTicketCaja .modal-footer {
+    flex-direction: column;
+  }
+
+  #modalImprimirTicketCaja .modal-footer .btn {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  #modalAgregarProductoCaja .modal-dialog,
+  #modalAgregarCliente .modal-dialog {
+    margin: 10px auto;
+    width: calc(100% - 20px);
+  }
+
+  #modalAgregarProductoCaja .col-xs-4 {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+@supports (padding: max(0px)) {
+  @media (max-width: 767px) {
+    .crear-presupuesto-caja .content {
+      padding-left: max(6px, env(safe-area-inset-left));
+      padding-right: max(6px, env(safe-area-inset-right));
+    }
+  }
+}

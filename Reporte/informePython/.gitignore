@@ -1,0 +1,10 @@
+bases.txt
+bases2.txt
+bases-2.txt
+mail_config.env
+reportes/
+logs/
+venv/
+__pycache__/
+*.pyc
+stderr.log

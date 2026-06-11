@@ -2439,6 +2439,7 @@ $("#btnGuardarPresupuestoCaja").click(function(e){
 	datosVentaCaja.append("nuevoPrecioNetoCaja", $("#nuevoPrecioNetoCaja").val());
 	datosVentaCaja.append("nuevoTotalVentaCaja", $("#nuevoTotalVentaCaja").val());
 	datosVentaCaja.append("listaMetodoPagoCaja", $("#listaMetodoPagoCaja").val());
+	datosVentaCaja.append("mxMediosPagos", $("#mxMediosPagos").val());
 	datosVentaCaja.append("nuevoInteresPorcentajeCaja", $("#nuevoInteresPorcentajeCaja").val());
 	datosVentaCaja.append("nuevoDescuentoPorcentajeCaja", $("#nuevoDescuentoPorcentajeCaja").val());
 		
@@ -2449,10 +2450,16 @@ $("#btnGuardarPresupuestoCaja").click(function(e){
 	datosVentaCaja.append("nuevaFecHasta", $("#nuevaFecHasta").val());
 	datosVentaCaja.append("nuevaFecVto", $("#nuevaFecVto").val());
 
+	var token = $('meta[name="csrf-token"]').attr('content') || '';
+	datosVentaCaja.append('csrf_token', token);
+
   	$.ajax({
 
      	url:"ajax/presupuestos.ajax.php",
       	method: "POST",
+      	headers: {
+      		'X-CSRF-TOKEN': token
+      	},
       	data: datosVentaCaja,
       	cache: false,
       	contentType: false,
@@ -2513,28 +2520,13 @@ $("#btnGuardarPresupuestoCaja").click(function(e){
       		} else {
 
       			swal({
-			      title: "Ventas",
-			      text: "Error al procesar la venta",
+			      title: "Presupuestos",
+			      text: respuesta['mensaje'] || "Error al guardar el presupuesto",
 			      type: "error",
 				  toast: true,
 				  position: 'top',
 				  showConfirmButton: false,
 				  timer: 3000
-				});
-
-				$("#btnCobrarMedioPagoCajaFac").removeAttr('disabled');
-				var mesajes = "";
-				if (respuesta.hasOwnProperty('factura')) {
-					if (respuesta['factura'].hasOwnProperty('observaciones')) mesajes = 'Observaciones: ' + respuesta['factura']['observaciones'];
-					if (respuesta['factura'].hasOwnProperty('errores')) mesajes = mesajes + ' Errores: ' + respuesta['factura']['errores'];
-					if (respuesta['factura'].hasOwnProperty('eventos')) mesajes = mesajes + ' Eventos: ' + respuesta['factura']['eventos'];
-				}
-				$("#impTicketCobroCajaObservacionFact").text(mesajes);
-				swal({
-					title: "No se pudo autorizar el comprobante",
-					text: mesajes || "Revise los datos e intente de nuevo.",
-					type: "error",
-					confirmButtonText: "Cerrar"
 				});
 
       		}
@@ -4193,3 +4185,51 @@ function mostrarAyudaAtajos() {
 	
 	$('#modalAyudaAtajos').modal('show');
 }
+
+/*=============================================
+CREAR PRESUPUESTO CAJA — UX móvil y apertura modal cobro
+=============================================*/
+function initPresupuestoCajaPagina() {
+	if (!window.location.href.includes('crear-presupuesto-caja')) {
+		return;
+	}
+
+	$("#ventaCajaFormulario").on("submit", function(e) {
+		e.preventDefault();
+
+		if ($(".nuevoProductoCaja").children().length === 0) {
+			swal({
+				title: "Presupuestos",
+				text: "Agregue productos al presupuesto",
+				type: "warning",
+				toast: true,
+				position: 'top',
+				showConfirmButton: false,
+				timer: 3000
+			});
+			return;
+		}
+
+		var neto = $("#nuevoPrecioNetoCajaForm").val() || "0";
+		$("#nuevoPrecioNetoCaja").val(neto);
+		if (!$("#nuevoTotalVentaCaja").val()) {
+			$("#nuevoTotalVentaCaja").val(neto);
+		}
+		$("#nuevoTotalVentaCajaForm").val($("#nuevoTotalVentaCaja").val() || neto);
+
+		if (!$("#listaMetodoPagoCaja").val()) {
+			$("#nuevoMetodoPagoCaja").prop("selectedIndex", 0).trigger("change");
+		}
+
+		$("#btnGuardarPresupuestoCaja").prop("disabled", false);
+		$("#modalCobrarVenta").modal("show");
+	});
+
+	if (window.matchMedia("(max-width: 767px)").matches) {
+		setTimeout(function() {
+			$("#ventaCajaDetalle").focus();
+		}, 500);
+	}
+}
+
+$(document).ready(initPresupuestoCajaPagina);
