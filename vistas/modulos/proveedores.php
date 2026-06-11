@@ -40,7 +40,7 @@
            <th>Email</th>
            <th>Teléfono</th>
            <th>Dirección</th>
-           <th style="width:200px"></th>
+           <th style="min-width:230px">Acciones</th>
          </tr> 
         </thead>
         <tbody>
@@ -55,10 +55,10 @@
                     <td>'.$value["nombre"].'</td>
                     <td>'.$value["id"].'</td>
                     <td>'.$value["cuit"].'</td>
-                    <td>'.$value["telefono"].'</td>             
-                    <td>'.$value["direccion"].'</td>
                     <td>'.$value["email"].'</td>
-                    <td class="text-center">
+                    <td>'.$value["telefono"].'</td>
+                    <td>'.$value["direccion"].'</td>
+                    <td class="text-center td-acciones-tabla">
                       <div class="acciones-tabla">
                         <a class="btn-accion btn-info" title="Cuenta corriente" href="index.php?ruta=proveedores_cuenta&id_proveedor='.$value["id"].'"><i class="fa fa-book"></i></a>';
                        if($agenteRetencionIibb){

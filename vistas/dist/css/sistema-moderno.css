@@ -707,10 +707,15 @@ table.dt-responsive {
 .acciones-ventas,
 .acciones-tabla {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 5px;
     justify-content: center;
     align-items: center;
+}
+
+.td-acciones-tabla {
+    white-space: nowrap;
+    vertical-align: middle !important;
 }
 
 /* Botones de acción individuales */
@@ -836,6 +841,7 @@ table.dt-responsive {
 @media (max-width: 768px) {
     .acciones-ventas,
     .acciones-tabla {
+        flex-wrap: wrap;
         gap: 3px;
     }
     
