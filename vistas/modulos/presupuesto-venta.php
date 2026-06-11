@@ -91,6 +91,17 @@
               <input type="hidden" id="fechaActual" name="fechaActual" value="<?php echo date("Y-m-d H:i:s");?>">
 
               <input type="hidden" name="idVendedor" id="idVendedor" value="<?php echo $_SESSION["id"]; ?>">
+              <input type="hidden" name="idEmpresa" id="idEmpresa" value="<?php echo isset($_SESSION["empresa"]) ? (int)$_SESSION["empresa"] : 1; ?>">
+              <input type="hidden" id="tokenIdTablaVentas">
+              <input type="hidden" id="nuevaVentaCaja" name="nuevaVentaCaja" value="1">
+              <input type="hidden" id="mxMediosPagos">
+              <?php
+                $sucursalPresupVenta = $_SESSION['sucursal'] ?? 'stock';
+                if ($sucursalPresupVenta === 'deposito') {
+                  $sucursalPresupVenta = 'stock2';
+                }
+                echo '<input type="hidden" id="sucursalVendedor" value="' . htmlspecialchars($sucursalPresupVenta) . '">';
+              ?>
 
             </div>
 
@@ -470,7 +481,7 @@
 					<div class="col-lg-6 col-xs-6">
 					<div class="input-group">
 						 <span class="input-group-addon"><i class="ion ion-social-usd"></i></span>
-						<input type="number" step="0.01" min="0" class="form-control input-lg" id="nuevoPrecioNetoCajaForm" value="<?php echo $venta["total"]?>"value="<?php echo $venta["total"]?>" name="nuevoPrecioNetoCaja" placeholder="0,00" readonly style="font-size: 60px; text-align: center; height:85px;">
+						<input type="number" step="0.01" min="0" class="form-control input-lg" id="nuevoPrecioNetoCajaForm" value="<?php echo $venta["total"]; ?>" name="nuevoPrecioNetoCaja" placeholder="0,00" readonly style="font-size: 60px; text-align: center; height:85px;">
 
 
 				  </div>
@@ -483,7 +494,7 @@
 
           <div class="box-footer">
          
-            <center><button type="submit" class="btn btn-primary" id="btnGuardarVentaCaja">Guardar</button></center>
+            <center><button type="button" class="btn btn-primary" id="btnGuardarVentaCaja">Guardar</button></center>
 
           </div>
 
@@ -1463,3 +1474,19 @@ AGREGAR PRODUCTO
   </div>
 
 </div>
+
+<script>
+(function() {
+  function create_UUID() {
+    var dt = new Date().getTime();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = (dt + Math.random() * 16) % 16 | 0;
+      dt = Math.floor(dt / 16);
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  }
+  if ($("#tokenIdTablaVentas").length) {
+    $("#tokenIdTablaVentas").val(create_UUID());
+  }
+})();
+</script>

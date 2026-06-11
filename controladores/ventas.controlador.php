@@ -1016,6 +1016,12 @@ class ControladorVentas{
     			}
     			
     		   	if ($respuestaOk && $respuestaDos == "ok") {
+
+    				if (isset($postVentaCaja["idPresupuesto"]) && !empty($postVentaCaja["idPresupuesto"])) {
+    					require_once __DIR__ . "/../modelos/presupuestos.modelo.php";
+    					ModeloPresupuestos::mdlEliminarPresupuesto('presupuestos', (int)$postVentaCaja["idPresupuesto"]);
+    				}
+
     		   		$devuelvo = array('estado' => 'ok',
     		   						  'codigoVta' => $codigoSiguiente,
     		   						  'factura' => (isset($datosFactura)) ? $datosFactura : false,

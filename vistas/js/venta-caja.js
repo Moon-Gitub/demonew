@@ -2090,6 +2090,15 @@ function guardarVentaCaja(){
 
 	datosVentaCaja.append("tokenIdTablaVentas", $("#tokenIdTablaVentas").val());
 
+	if ($("#idPresupuesto").length && $("#idPresupuesto").val()) {
+		datosVentaCaja.append("idPresupuesto", $("#idPresupuesto").val());
+	}
+
+	var tokenCsrf = $('meta[name="csrf-token"]').attr('content') || '';
+	if (tokenCsrf) {
+		datosVentaCaja.append('csrf_token', tokenCsrf);
+	}
+
   	$.ajax({
 
      	url:"ajax/ventas.ajax.php",
@@ -2616,6 +2625,8 @@ $("#btnSalirTicketControl").click(function(){
     	// Limpiar localStorage antes de redirigir
     	localStorage.removeItem("ventaCajaProductos");
     	window.location = 'crear-venta-caja';
+    } else if (pathname.includes('presupuesto-venta')) {
+    	window.location = 'ventas';
     } else {
         window.location = 'crear-venta';
     }
@@ -4233,3 +4244,54 @@ function initPresupuestoCajaPagina() {
 }
 
 $(document).ready(initPresupuestoCajaPagina);
+
+/*=============================================
+PRESUPUESTO → VENTA (presupuesto-venta.php)
+=============================================*/
+function initPresupuestoVentaPagina() {
+	if (!window.location.href.includes('presupuesto-venta')) {
+		return;
+	}
+
+	function abrirModalCobroPresupuestoVenta() {
+		if ($(".nuevoProductoCaja").children().length === 0) {
+			swal({
+				title: "Ventas",
+				text: "Agregue productos a la venta",
+				type: "warning",
+				toast: true,
+				position: 'top',
+				showConfirmButton: false,
+				timer: 3000
+			});
+			return;
+		}
+
+		var neto = $("#nuevoPrecioNetoCajaForm").val() || $("#nuevoPrecioNetoCaja").val() || "0";
+		$("#nuevoPrecioNetoCaja").val(neto);
+		$("#nuevoPrecioNetoCajaForm").val(neto);
+		if (!$("#nuevoTotalVentaCaja").val()) {
+			$("#nuevoTotalVentaCaja").val(neto);
+		}
+		$("#nuevoTotalVentaCajaForm").val($("#nuevoTotalVentaCaja").val() || neto);
+
+		if (!$("#listaMetodoPagoCaja").val() && $("#nuevoMetodoPagoCaja option").length > 1) {
+			$("#nuevoMetodoPagoCaja").prop("selectedIndex", 1).trigger("change");
+		}
+
+		$("#btnCobrarMedioPagoCaja").prop("disabled", false);
+		$("#modalCobrarVenta").modal("show");
+	}
+
+	$("#ventaCajaFormulario").on("submit", function(e) {
+		e.preventDefault();
+		abrirModalCobroPresupuestoVenta();
+	});
+
+	$("#btnGuardarVentaCaja").on("click", function(e) {
+		e.preventDefault();
+		abrirModalCobroPresupuestoVenta();
+	});
+}
+
+$(document).ready(initPresupuestoVentaPagina);
