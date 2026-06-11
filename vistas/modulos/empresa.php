@@ -566,6 +566,60 @@ input[type="file"]:disabled {
         </div>
       </div>
 
+      <div class="row">
+        <div class="col-md-12">
+          <h4 style="margin-top:0">Retenciones IIBB (SIRCAR)</h4>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <div class="checkbox">
+              <label>
+                <?php $agenteRet = !empty($empArr['agente_retencion_iibb']); ?>
+                <input type="checkbox" name="empAgenteRetencionIibb" value="1" <?php echo $agenteRet ? 'checked' : ''; ?>>
+                Agente de retención de Ingresos Brutos
+              </label>
+            </div>
+            <span class="help-block">Habilita retenciones en pagos a proveedores y el módulo de exportación SIRCAR.</span>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
+              <?php
+              $codJuris = isset($empArr['codigo_jurisdiccion_iibb']) ? (int)$empArr['codigo_jurisdiccion_iibb'] : 913;
+              echo '<input type="number" class="form-control" name="empCodigoJurisdiccionIibb" placeholder="Código jurisdicción CM" value="' . $codJuris . '">';
+              ?>
+            </div>
+            <span class="help-block">Código CM SIRCAR (913 = Mendoza)</span>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-list-ol"></i></span>
+              <?php
+              $tipoReg = isset($empArr['tipo_regimen_retencion_default']) ? (int)$empArr['tipo_regimen_retencion_default'] : 101;
+              echo '<input type="number" class="form-control" name="empTipoRegimenRetencion" placeholder="Tipo régimen" value="' . $tipoReg . '">';
+              ?>
+            </div>
+            <span class="help-block">Tipo régimen retención (campo 10 del TXT)</span>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-file-text-o"></i></span>
+              <?php
+              $proxRec = isset($empArr['proximo_numero_recibo']) ? (int)$empArr['proximo_numero_recibo'] : 1;
+              echo '<input type="number" min="1" class="form-control" name="empProximoNumeroRecibo" placeholder="Próximo nº recibo" value="' . $proxRec . '">';
+              ?>
+            </div>
+            <span class="help-block">Próximo número de recibo interno de retención</span>
+          </div>
+        </div>
+      </div>
+
 
       <div class="row">
         <div class="col-md-3">

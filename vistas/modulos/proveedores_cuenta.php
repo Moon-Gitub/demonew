@@ -6,6 +6,9 @@
 
     $proveedor = ControladorProveedores::ctrMostrarProveedores($item, $valor);
 
+    $agenteRetencionIibb = !empty($arrayEmpresa['agente_retencion_iibb']);
+    $alicuotaProveedorIibb = isset($proveedor['tipo_alicuota_iibb']) ? $proveedor['tipo_alicuota_iibb'] : '';
+
     // Medios de pago: desde BD (tabla medios_pago), mismo criterio que crear-venta-caja y clientes cta cte
     $listaMediosPagoProveedor = [];
     if (class_exists('ModeloMediosPago')) {
@@ -141,7 +144,7 @@
 
           <div class="inner">
 
-            <p><b>II.BB.</b>: <?php echo $proveedor["ingresos_brutos"]; ?>- <b>Inicio Act.</b>: <?php echo $proveedor["inicio_actividades"]; ?></p>
+            <p><b>II.BB.</b>: <?php echo $proveedor["ingresos_brutos"]; ?> - <b>Alícuota ret.</b>: <?php echo ($alicuotaProveedorIibb !== '' && $alicuotaProveedorIibb !== null) ? number_format((float)$alicuotaProveedorIibb, 2, ',', '.') . '%' : '-'; ?> - <b>Inicio Act.</b>: <?php echo $proveedor["inicio_actividades"]; ?></p>
             <p><b>Domicilio</b>: <?php echo $proveedor["direccion"]; ?>  - <b>Localidad</b>: <?php echo $proveedor["localidad"]; ?></p>
             <p><b>Email</b>: <?php echo $proveedor["email"]; ?> - <b>Telefono</b>: <?php echo $proveedor["telefono"]; ?></p>
             <p><b>Observaciones</b>: <?php echo $proveedor["observaciones"]; ?> </p>
@@ -206,11 +209,19 @@
   <div class="box">
      <div class="box-header with-border">
   
-        <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarMovimiento">
-          
-          Agregar movimiento
-
+        <button class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarFactura">
+          + Factura
         </button>
+
+        <button class="btn btn-success" data-toggle="modal" data-target="#modalAgregarPago">
+          + Pago
+        </button>
+
+        <?php if ($agenteRetencionIibb): ?>
+        <a class="btn btn-warning" href="index.php?ruta=retenciones-iibb&id_proveedor=<?php echo (int)$proveedor['id']; ?>">
+          Retenciones
+        </a>
+        <?php endif; ?>
 
         <!--<a class="btn btn-primary" href="proveedores">
           
@@ -368,109 +379,212 @@
 </div>
 
 <!--=====================================
-MODAL INGRESAR MOVIMIENTO
+MODAL AGREGAR FACTURA
 ======================================-->
-<div id="modalAgregarMovimiento" class="modal fade" role="dialog">
-  
-  <div class="modal-dialog">
-
+<div id="modalAgregarFactura" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
-
       <form role="form" method="post">
-
-        <!--=====================================
-        CABEZA DEL MODAL
-        ======================================-->
+        <input type="hidden" name="accionCtaCteProveedor" value="factura">
+        <input type="hidden" name="idUsuarioMovimientoCtaCteProveedor" value="<?php echo $_SESSION["id"]; ?>">
+        <input type="hidden" name="idProveedorMovimientoCtaCteProveedor" value="<?php echo $proveedor["id"]; ?>">
 
         <div class="modal-header" style="background:#3c8dbc; color:white">
-
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-
-          <h4 class="modal-title">Movimientos Cta. Cte</h4>
-
+          <h4 class="modal-title">Agregar factura — <?php echo $proveedor["nombre"]; ?></h4>
         </div>
 
-        <!--=====================================
-        CUERPO DEL MODAL
-        ======================================-->
+        <div class="modal-body">
+          <div class="box-body">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Fecha factura</label>
+                  <input type="date" class="form-control" name="fechaFacturaCtaCte" value="<?php echo date('Y-m-d'); ?>" required>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Nº factura</label>
+                  <input type="text" class="form-control" name="numeroFacturaCtaCte" placeholder="Ej: 0001-00000241" required>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Descripción</label>
+                  <input type="text" class="form-control" name="detalleFacturaCtaCte" placeholder="Opcional">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Neto previo</label>
+                  <input type="number" min="0" step="0.01" class="form-control calcFacturaCtaCte" name="netoPrevioFacturaCtaCte" id="netoPrevioFacturaCtaCte" required>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Descuento</label>
+                  <input type="number" min="0" step="0.01" class="form-control calcFacturaCtaCte" name="descuentoFacturaCtaCte" id="descuentoFacturaCtaCte" value="0">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Neto</label>
+                  <input type="number" min="0" step="0.01" class="form-control" name="netoFacturaCtaCte" id="netoFacturaCtaCte" readonly>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>IVA</label>
+                  <input type="number" min="0" step="0.01" class="form-control calcFacturaCtaCte" name="ivaFacturaCtaCte" id="ivaFacturaCtaCte" value="0">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Total</label>
+                  <input type="number" min="0" step="0.01" class="form-control" name="totalFacturaCtaCte" id="totalFacturaCtaCte" readonly>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+          <button type="submit" class="btn btn-primary">Guardar factura</button>
+        </div>
+      </form>
+      <?php
+        $facturaCtaCte = new ControladorProveedoresCtaCte();
+        $facturaCtaCte->ctrCrearFacturaProveedor();
+      ?>
+    </div>
+  </div>
+</div>
+
+<!--=====================================
+MODAL AGREGAR PAGO
+======================================-->
+<div id="modalAgregarPago" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form role="form" method="post" id="formPagoCtaCteProveedor">
+        <input type="hidden" name="accionCtaCteProveedor" value="pago">
+        <input type="hidden" name="idUsuarioMovimientoCtaCteProveedor" value="<?php echo $_SESSION["id"]; ?>">
+        <input type="hidden" name="idProveedorMovimientoCtaCteProveedor" value="<?php echo $proveedor["id"]; ?>">
+        <input type="hidden" id="agenteRetencionIibbActivo" value="<?php echo $agenteRetencionIibb ? '1' : '0'; ?>">
+        <input type="hidden" id="alicuotaDefaultProveedor" value="<?php echo htmlspecialchars($alicuotaProveedorIibb); ?>">
+
+        <div class="modal-header" style="background:#00a65a; color:white">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Agregar pago — <?php echo $proveedor["nombre"]; ?></h4>
+        </div>
 
         <div class="modal-body">
-
           <div class="box-body">
-
-            <!-- ENTRADA PARA USUARIO QUE REALIZA OPERACION  -->
-            <input type="hidden" name="idUsuarioMovimientoCtaCteProveedor" value="<?php echo $_SESSION["id"]; ?>">
-
-            <!-- ENTRADA PARA PROVEEDOR -->
-            <input type="hidden" name="idProveedorMovimientoCtaCteProveedor" value="<?php echo $proveedor["id"]; ?>">
-
-            <!-- ENTRADA PARA NOMBRE Proveedor --->
-            <div class="form-group">
-              
-              <div class="input-group">
-              
-                <span class="input-group-addon"><i class="fa fa-user"></i></span> 
-
-                <input type="text" class="form-control" name="ingresoCajaProveedor" value="<?php echo $proveedor["nombre"];?>" id="ingresoCajaProveedor" readonly> 
-
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Fecha pago</label>
+                  <input type="date" class="form-control" name="fechaPagoCtaCte" id="fechaPagoCtaCte" value="<?php echo date('Y-m-d'); ?>" required>
+                </div>
               </div>
-
+              <div class="col-md-8">
+                <div class="form-group">
+                  <label>Descripción</label>
+                  <input type="text" class="form-control" name="detalleMovimientoCtaCteProveedor" id="detalleMovimientoCtaCteProveedor" placeholder="Descripción del pago">
+                </div>
+              </div>
             </div>
 
-            <!-- ENTRADA PARA TIPO MOVIMIENTO -->
-            <div class="form-group">
-              
-              <div class="input-group">
-
-                <span class="input-group-addon"><i class="fa fa-code"></i></span> 
-
-                <select class="form-control" name="tipoMovimientoCtaCteProveedor" id="tipoMovimientoCtaCteProveedor">
-
-                  <option value="1">Débitos</option> 
-                  <option value="0">Pagos</option>
-
-                </select> 
-              </div> 
-
+            <?php if ($agenteRetencionIibb): ?>
+            <div class="panel panel-default">
+              <div class="panel-heading"><strong>Retención IIBB</strong></div>
+              <div class="panel-body">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" name="aplicarRetencionCtaCte" id="aplicarRetencionCtaCte" value="1">
+                    Aplicar retención de Ingresos Brutos
+                  </label>
+                </div>
+                <div id="camposRetencionPago" style="display:none">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label>Nº factura (SIRCAR)</label>
+                        <input type="text" class="form-control" name="numeroFacturaPagoCtaCte" id="numeroFacturaPagoCtaCte" placeholder="0001-00000241">
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label>Fecha retención</label>
+                        <input type="date" class="form-control" name="fechaRetencionCtaCte" id="fechaRetencionCtaCte" value="<?php echo date('Y-m-d'); ?>">
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label>Monto sujeto</label>
+                        <input type="number" min="0" step="0.01" class="form-control calcRetencionPago" name="montoSujetoPagoCtaCte" id="montoSujetoPagoCtaCte">
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label>Alícuota %</label>
+                        <input type="number" min="0" step="0.01" class="form-control calcRetencionPago" name="alicuotaRetencionCtaCte" id="alicuotaRetencionCtaCte" value="<?php echo htmlspecialchars($alicuotaProveedorIibb); ?>">
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label>Monto retenido</label>
+                        <input type="number" min="0" step="0.01" class="form-control" name="montoRetencionCtaCte" id="montoRetencionCtaCte" readonly>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label>Monto neto pagado (egreso caja)</label>
+                        <input type="number" min="0" step="0.01" class="form-control" name="montoNetoPagoCtaCte" id="montoNetoPagoCtaCte" readonly>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label>Total aplicado a cta. cte.</label>
+                        <input type="number" min="0" step="0.01" class="form-control" id="totalAplicadoPagoCtaCte" readonly>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+            <?php endif; ?>
 
-            <!--PUNTO VENTA / COBRO -->
-            <div class="form-group ctacteProveedorCaja" style="display: none">
-
+            <div class="form-group ctacteProveedorCaja">
               <div class="input-group">
-
                 <span title="Puntos de venta" class="input-group-addon"><i class="fa fa-terminal"></i></span>
                 <?php
-
                   $arrPuntos = json_decode($arrayEmpresa['ptos_venta'], true);
                   $arrPuntosHabilitados = explode(',', $_SESSION['puntos_venta']);
-
-                  echo '<select title="Seleccione el punto de venta" class="form-control input-sm" id="nuevaPtoVta" name="puntoVentaMovimientoCtaCteProveedor">';
+                  echo '<select title="Seleccione el punto de venta" class="form-control input-sm" id="nuevaPtoVta" name="puntoVentaMovimientoCtaCteProveedor" required>';
                   echo '<option value="0">Seleccione punto de venta</option>';
-
                   foreach ($arrPuntos as $key => $value) {
-
                     if (in_array($value["pto"], $arrPuntosHabilitados)) {
                       echo '<option value="' . $value["pto"] . '" selected>' . $value["pto"] . "-" . $value["det"]  . '</option>';
                     } else {
                       echo '<option value="' . $value["pto"] . '" disabled>' . $value["pto"] . "-" . $value["det"]  . '</option>';
                     }
-
                   }
-                  
-                echo '</select>';
-
+                  echo '</select>';
                 ?>
-
               </div>
-
             </div>
 
-            <div class="form-group ctacteProveedorCaja" style="display: none">
-
+            <div class="form-group ctacteProveedorCaja">
               <div class="input-group">
                 <span title="Agregar medio de pago" class="input-group-btn"><button id="agregarMedioPagoProveedor" type="button" class="btn btn-success"><i class="fa fa-plus"></i></button></span>
-                <select class="form-control" id="nuevoMetodoPagoCtaCteProveedor" name="nuevoMetodoPagoCtaCteProveedor">
+                <select class="form-control" id="nuevoMetodoPagoCtaCteProveedor" name="nuevoMetodoPagoCtaCteProveedor" required>
                   <option value="">Medio de pago</option>
                   <?php
                   if (!empty($listaMediosPagoProveedor)) {
@@ -487,94 +601,38 @@ MODAL INGRESAR MOVIMIENTO
                   ?>
                 </select>
               </div>
-
               <div class="cajasMetodoPagoCtaCteProveedor"></div>
-
               <div class="row" style="display: none;" id="divImportesPagoMixtoProveedor">
                 <table class="table" id="listadoMetodosPagoMixtoProveedor" cantidadFilas="0">
-                  <thead>
-                    <tr>
-                      <th><i class="fa fa-minus-square"></i></th>
-                      <th>Método</th>
-                      <th>Importe</th>
-                    </tr>
-                  </thead>
+                  <thead><tr><th><i class="fa fa-minus-square"></i></th><th>Método</th><th>Importe</th></tr></thead>
                   <tbody></tbody>
-                  <tfoot>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td style="font-size: 18px">
-                        <b>TOTAL: $</b> <span id="nuevoValorSaldoProveedor" style="color:green">0</span>
-                        <input type="hidden" id="nuevoValorSaldoProveedorPost">
-                      </td>
-                    </tr>
-                  </tfoot>
+                  <tfoot><tr><td></td><td></td><td style="font-size: 18px"><b>TOTAL: $</b> <span id="nuevoValorSaldoProveedor" style="color:green">0</span><input type="hidden" id="nuevoValorSaldoProveedorPost"></td></tr></tfoot>
                 </table>
               </div>
-
               <input type="hidden" id="metodoPagoCtaCteProveedor" name="ingresoMedioPagoCtaCteProveedor">
               <input type="hidden" id="mxMediosPagosProveedor">
             </div>
 
-            <div class="form-group row">
-              <div class="cajasMetodoPagoCtaCteProveedor"></div>
-            </div>
-
-            <!-- ENTRADA PARA DESCRIPCION -->
-            <div class="form-group">
-              
+            <div class="form-group" id="grupoMontoSimplePago" <?php echo $agenteRetencionIibb ? 'style="display:none"' : ''; ?>>
               <div class="input-group">
-              
-                <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
-
-                <input type="text" class="form-control" name="detalleMovimientoCtaCteProveedor" id="detalleMovimientoCtaCteProveedor" placeholder="Ingrese descripcion"> 
-
+                <span class="input-group-addon"><i class="fa fa-usd"></i></span>
+                <input type="number" min="0" step="0.01" class="form-control input-lg" style="text-align:center;font-size:20px;font-weight:bold" name="montoMovimientoCtaCteProveedor" id="montoMovimientoCtaCteProveedor" placeholder="Monto del pago" <?php echo $agenteRetencionIibb ? '' : 'required'; ?>>
               </div>
-
             </div>
-
-            <!-- ENTRADA PARA MONTO -->            
-            <div class="form-group">
-              
-              <div class="input-group">
-              
-                <span class="input-group-addon"><i class="fa fa-usd"></i></span> 
-
-                <input type="number" min="0" step="0.01" class="form-control input-lg" style="text-align: center; font-size: 20px; font-weight:bold" name="montoMovimientoCtaCteProveedor" id="montoMovimientoCtaCteProveedor" placeholder="Ingrese monto" >
-
-              </div>
-
-            </div>
-  
           </div>
-
         </div>
 
-        <!--=====================================
-        PIE DEL MODAL
-        ======================================-->
         <div class="modal-footer">
-
           <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
-
-          <button type="submit" class="btn btn-primary">Guardar</button>
-
+          <button type="submit" class="btn btn-success">Guardar pago</button>
         </div>
-
       </form>
-
       <?php
-
-        $movimiento = new ControladorProveedoresCtaCte();
-        $movimiento -> ctrCrearRegistroProveedores();
-
+        $pagoCtaCte = new ControladorProveedoresCtaCte();
+        $pagoCtaCte->ctrCrearPagoProveedor();
       ?>
-
     </div>
-
   </div>
-
 </div>
 
 <?php

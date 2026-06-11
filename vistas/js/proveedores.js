@@ -38,6 +38,7 @@ $(".tablas").on("click", ".btnEditarProveedor", function(){
         $("#editarDireccion").val(respuesta["direccion"]);
         $("#editarEmail").val(respuesta["email"]);
         $("#editarObservacionesProveedor").val(respuesta["observaciones"]);
+        $("#editarAlicuotaIibb").val(respuesta["tipo_alicuota_iibb"]);
       }
 
     })
@@ -207,23 +208,58 @@ $(".tablasBotonesCtaCteProveedor").DataTable({
 });
 
 $("#tipoMovimientoCtaCteProveedor").change(function(){
-
   if($(this).val() == 1) {
-
-    //Debito (no se agrega en caja)
     $(".ctacteProveedorCaja").css('display', 'none');
     $("#nuevoMetodoPagoCtaCteProveedor").prop('required',false);
     $("#detalleMovimientoCtaCteProveedor").val('');
-
   } else {
-
-    //Pago (agrega tambien en caja)
     $(".ctacteProveedorCaja").css('display', 'block');
     $("#nuevoMetodoPagoCtaCteProveedor").prop('required',true);
     $("#detalleMovimientoCtaCteProveedor").val('Egreso por pago Cta. Cte. proveedor: ' + $("#spanNombreProveedorCtaCte").text());
-  
   }
+});
 
+function recalcularFacturaCtaCte() {
+  var previo = parseFloat($('#netoPrevioFacturaCtaCte').val()) || 0;
+  var desc = parseFloat($('#descuentoFacturaCtaCte').val()) || 0;
+  var neto = Math.max(0, previo - desc);
+  var iva = parseFloat($('#ivaFacturaCtaCte').val()) || 0;
+  $('#netoFacturaCtaCte').val(neto.toFixed(2));
+  $('#totalFacturaCtaCte').val((neto + iva).toFixed(2));
+}
+
+$(document).on('input change', '.calcFacturaCtaCte', recalcularFacturaCtaCte);
+
+function recalcularRetencionPagoCtaCte() {
+  var sujeto = parseFloat($('#montoSujetoPagoCtaCte').val()) || 0;
+  var alicuota = parseFloat($('#alicuotaRetencionCtaCte').val()) || 0;
+  var retenido = Math.round(sujeto * alicuota / 100 * 100) / 100;
+  var neto = Math.max(0, sujeto - retenido);
+  $('#montoRetencionCtaCte').val(retenido.toFixed(2));
+  $('#montoNetoPagoCtaCte').val(neto.toFixed(2));
+  $('#totalAplicadoPagoCtaCte').val((neto + retenido).toFixed(2));
+  $('#montoMovimientoCtaCteProveedor').val(neto.toFixed(2));
+}
+
+$(document).on('input change', '.calcRetencionPago', recalcularRetencionPagoCtaCte);
+
+$('#aplicarRetencionCtaCte').on('change', function() {
+  if ($(this).is(':checked')) {
+    $('#camposRetencionPago').slideDown();
+    $('#grupoMontoSimplePago').hide();
+    $('#montoMovimientoCtaCteProveedor').prop('required', false);
+    recalcularRetencionPagoCtaCte();
+  } else {
+    $('#camposRetencionPago').slideUp();
+    $('#grupoMontoSimplePago').show();
+    $('#montoMovimientoCtaCteProveedor').prop('required', true);
+  }
+});
+
+$('#modalAgregarPago').on('shown.bs.modal', function() {
+  if ($('#detalleMovimientoCtaCteProveedor').val() === '') {
+    $('#detalleMovimientoCtaCteProveedor').val('Egreso por pago Cta. Cte. proveedor: ' + $('#spanNombreProveedorCtaCte').text());
+  }
 });
 
 $("#nuevoMetodoPagoCtaCteProveedor").change(function(){

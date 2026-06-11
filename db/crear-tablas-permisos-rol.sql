@@ -79,6 +79,7 @@ INSERT IGNORE INTO `pantallas` (`codigo`, `nombre`, `agrupacion`, `orden`) VALUE
 ('proveedores-cuenta-saldos', 'Proveedores Cuenta Saldos', 'Proveedores', 820),
 ('proveedores-saldo', 'Proveedores Saldo', 'Proveedores', 830),
 ('proveedores-pagos', 'Proveedores Pagos', 'Proveedores', 840),
+('retenciones-iibb', 'Retenciones IIBB', 'Proveedores', 835),
 ('integraciones', 'Gestionar Integraciones', 'Integraciones', 900),
 ('chat', 'Asistente Virtual', 'Integraciones', 910),
 ('reportes', 'Reportes', 'Reportes', 1000),

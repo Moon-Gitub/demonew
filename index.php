@@ -37,6 +37,7 @@ require_once "controladores/cotizacion.controlador.php";
 require_once "controladores/presupuestos.controlador.php";
 require_once "controladores/pedidos.controlador.php";
 require_once "controladores/integraciones.controlador.php";
+require_once "controladores/retenciones_iibb.controlador.php";
 
 // Cargar modelo de combos ANTES del controlador (para compatibilidad)
 if(file_exists(__DIR__ . "/modelos/combos.modelo.php")){
@@ -74,6 +75,7 @@ require_once "modelos/medios_pago.modelo.php";
 require_once "modelos/presupuestos.modelo.php";
 require_once "modelos/pedidos.modelo.php";
 require_once "modelos/integraciones.modelo.php";
+require_once "modelos/retenciones_iibb.modelo.php";
 require_once "modelos/reporte-dashboard-ejecutivo.modelo.php";
 require_once "modelos/reporte-gestion-pedidos.modelo.php";
 

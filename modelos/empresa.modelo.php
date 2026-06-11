@@ -29,7 +29,7 @@ class ModeloEmpresa{
 	=============================================*/
 	static public function mdlEditarEmpresa($tabla, $datos){
 
-		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET razon_social = :razon_social, titular = :titular, cuit = :cuit, domicilio = :domicilio, localidad = :localidad, codigo_postal = :codigo_postal, mail = :mail, telefono = :telefono, ptos_venta = :ptos_venta, almacenes = :almacenes, pto_venta_defecto = :pto_venta_defecto, condicion_iva = :condicion_iva, condicion_iibb = :condicion_iibb, numero_iibb = :numero_iibb, inicio_actividades = :inicio_actividades, numero_establecimiento = :numero_establecimiento, cbu = :cbu, cbu_alias = :cbu_alias, concepto_defecto = :concepto_defecto, tipos_cbtes = :tipos_cbtes, entorno_facturacion = :entorno_facturacion, ws_padron = :ws_padron, csr = :csr, passphrase = :passphrase, pem = :pem, logo = :logo, login_fondo = :login_fondo, login_logo = :login_logo, login_fondo_form = :login_fondo_form, login_color_boton = :login_color_boton, login_fuente = :login_fuente, login_color_texto_titulo = :login_color_texto_titulo, mp_public_key = :mp_public_key, mp_access_token = :mp_access_token, mp_pos_id = :mp_pos_id, mp_pos_external_id = :mp_pos_external_id WHERE id = :id");
+		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET razon_social = :razon_social, titular = :titular, cuit = :cuit, domicilio = :domicilio, localidad = :localidad, codigo_postal = :codigo_postal, mail = :mail, telefono = :telefono, ptos_venta = :ptos_venta, almacenes = :almacenes, pto_venta_defecto = :pto_venta_defecto, condicion_iva = :condicion_iva, condicion_iibb = :condicion_iibb, numero_iibb = :numero_iibb, agente_retencion_iibb = :agente_retencion_iibb, codigo_jurisdiccion_iibb = :codigo_jurisdiccion_iibb, tipo_regimen_retencion_default = :tipo_regimen_retencion_default, proximo_numero_recibo = :proximo_numero_recibo, inicio_actividades = :inicio_actividades, numero_establecimiento = :numero_establecimiento, cbu = :cbu, cbu_alias = :cbu_alias, concepto_defecto = :concepto_defecto, tipos_cbtes = :tipos_cbtes, entorno_facturacion = :entorno_facturacion, ws_padron = :ws_padron, csr = :csr, passphrase = :passphrase, pem = :pem, logo = :logo, login_fondo = :login_fondo, login_logo = :login_logo, login_fondo_form = :login_fondo_form, login_color_boton = :login_color_boton, login_fuente = :login_fuente, login_color_texto_titulo = :login_color_texto_titulo, mp_public_key = :mp_public_key, mp_access_token = :mp_access_token, mp_pos_id = :mp_pos_id, mp_pos_external_id = :mp_pos_external_id WHERE id = :id");
 
 		$stmt -> bindParam(":razon_social", $datos["razon_social"], PDO::PARAM_STR);
 		$stmt -> bindParam(":titular", $datos["titular"], PDO::PARAM_STR);
@@ -45,6 +45,10 @@ class ModeloEmpresa{
 		$stmt -> bindParam(":condicion_iva", $datos["condicion_iva"], PDO::PARAM_STR);
 		$stmt -> bindParam(":condicion_iibb", $datos["condicion_iibb"], PDO::PARAM_STR);
 		$stmt -> bindParam(":numero_iibb", $datos["numero_iibb"], PDO::PARAM_STR);
+		$stmt -> bindParam(":agente_retencion_iibb", $datos["agente_retencion_iibb"], PDO::PARAM_INT);
+		$stmt -> bindParam(":codigo_jurisdiccion_iibb", $datos["codigo_jurisdiccion_iibb"], PDO::PARAM_INT);
+		$stmt -> bindParam(":tipo_regimen_retencion_default", $datos["tipo_regimen_retencion_default"], PDO::PARAM_INT);
+		$stmt -> bindParam(":proximo_numero_recibo", $datos["proximo_numero_recibo"], PDO::PARAM_INT);
 		$stmt -> bindParam(":inicio_actividades", $datos["inicio_actividades"], PDO::PARAM_STR);
 		$stmt -> bindParam(":numero_establecimiento", $datos["numero_establecimiento"], PDO::PARAM_STR);
 		$stmt -> bindParam(":cbu", $datos["cbu"], PDO::PARAM_STR);

@@ -9,13 +9,15 @@ class ModeloProveedores{
 	=============================================*/
 	static public function mdlIngresarProveedor($tabla, $datos){
 
-		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(nombre, inicio_actividades, tipo_documento, cuit, ingresos_brutos, localidad, telefono, direccion, email, observaciones) VALUES (:nombre, :inicio_actividades, :tipo_documento, :cuit, :ingresos_brutos, :localidad, :telefono, :direccion, :email, :observaciones)");
+		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(nombre, inicio_actividades, tipo_documento, cuit, ingresos_brutos, tipo_alicuota_iibb, localidad, telefono, direccion, email, observaciones) VALUES (:nombre, :inicio_actividades, :tipo_documento, :cuit, :ingresos_brutos, :tipo_alicuota_iibb, :localidad, :telefono, :direccion, :email, :observaciones)");
 
 		$stmt->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
 		$stmt->bindParam(":inicio_actividades", $datos["inicio_actividades"], PDO::PARAM_STR);
 		$stmt->bindParam(":tipo_documento", $datos["tipo_documento"], PDO::PARAM_INT);
 		$stmt->bindParam(":cuit", $datos["cuit"], PDO::PARAM_STR);
 		$stmt->bindParam(":ingresos_brutos", $datos["ingresos_brutos"], PDO::PARAM_STR);
+		$tipoAlicuota = isset($datos["tipo_alicuota_iibb"]) ? $datos["tipo_alicuota_iibb"] : null;
+		$stmt->bindValue(":tipo_alicuota_iibb", $tipoAlicuota, $tipoAlicuota === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
 		$stmt->bindParam(":localidad", $datos["localidad"], PDO::PARAM_STR);
 		$stmt->bindParam(":telefono", $datos["telefono"], PDO::PARAM_STR);
 		$stmt->bindParam(":direccion", $datos["direccion"], PDO::PARAM_STR);
@@ -167,7 +169,7 @@ class ModeloProveedores{
 	=============================================*/
 	static public function mdlEditarProveedor($tabla, $datos){
 
-		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET nombre = :nombre, inicio_actividades = :inicio_actividades, tipo_documento = :tipo_documento, cuit = :cuit, ingresos_brutos = :ingresos_brutos, localidad = :localidad, direccion = :direccion, telefono = :telefono, email = :email, observaciones = :observaciones WHERE id = :id");
+		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET nombre = :nombre, inicio_actividades = :inicio_actividades, tipo_documento = :tipo_documento, cuit = :cuit, ingresos_brutos = :ingresos_brutos, tipo_alicuota_iibb = :tipo_alicuota_iibb, localidad = :localidad, direccion = :direccion, telefono = :telefono, email = :email, observaciones = :observaciones WHERE id = :id");
 
 		$stmt->bindParam(":id", $datos["id"], PDO::PARAM_INT);
 		$stmt->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
@@ -175,6 +177,8 @@ class ModeloProveedores{
 		$stmt->bindParam(":tipo_documento", $datos["tipo_documento"], PDO::PARAM_INT);
 		$stmt->bindParam(":cuit", $datos["cuit"], PDO::PARAM_STR);
 		$stmt->bindParam(":ingresos_brutos", $datos["ingresos_brutos"], PDO::PARAM_STR);
+		$tipoAlicuota = isset($datos["tipo_alicuota_iibb"]) ? $datos["tipo_alicuota_iibb"] : null;
+		$stmt->bindValue(":tipo_alicuota_iibb", $tipoAlicuota, $tipoAlicuota === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
 		$stmt->bindParam(":localidad", $datos["localidad"], PDO::PARAM_STR);
 		$stmt->bindParam(":telefono", $datos["telefono"], PDO::PARAM_STR);
 		$stmt->bindParam(":direccion", $datos["direccion"], PDO::PARAM_STR);

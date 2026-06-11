@@ -41,7 +41,7 @@ class ModeloProveedoresCtaCte{
 	=============================================*/
 	static public function mdlSumarCompras($tablaCtaCte, $valor){
 
-		$stmt = Conexion::conectar()->prepare("SELECT SUM(importe) as compras FROM $tablaCtaCte WHERE id_proveedor = $valor AND tipo=0 ");
+		$stmt = Conexion::conectar()->prepare("SELECT SUM(importe) as compras FROM $tablaCtaCte WHERE id_proveedor = $valor AND tipo=1 ");
 
 		$stmt -> execute();
 
@@ -57,7 +57,7 @@ class ModeloProveedoresCtaCte{
 	=============================================*/
 	static public function mdlSumarComprasListado($tablaCtaCte, $valor, $fecha){
 
-		$stmt = Conexion::conectar()->prepare("SELECT SUM(importe) as compras FROM $tablaCtaCte WHERE id_proveedor = $valor AND tipo=0 AND fecha_movimiento <= '$fecha'");
+		$stmt = Conexion::conectar()->prepare("SELECT SUM(importe) as compras FROM $tablaCtaCte WHERE id_proveedor = $valor AND tipo=1 AND fecha_movimiento <= '$fecha'");
 
 		$stmt -> execute();
 
@@ -105,7 +105,7 @@ class ModeloProveedoresCtaCte{
 	=============================================*/
 	static public function mdlSumarPagos($tablaCtaCte, $valor){
 
-		$stmt = Conexion::conectar()->prepare("SELECT SUM(importe) as pagos FROM $tablaCtaCte WHERE id_proveedor = $valor AND (tipo=1 OR tipo=4)");
+		$stmt = Conexion::conectar()->prepare("SELECT SUM(importe) as pagos FROM $tablaCtaCte WHERE id_proveedor = $valor AND (tipo=0 OR tipo=4)");
 
 		$stmt -> execute();
 
@@ -122,7 +122,7 @@ class ModeloProveedoresCtaCte{
 	=============================================*/
 	static public function mdlSumarPagosListado($tablaCtaCte, $valor, $fecha){
 
-		$stmt = Conexion::conectar()->prepare("SELECT SUM(importe) as pagos FROM $tablaCtaCte WHERE id_proveedor = $valor AND (tipo=1 OR tipo=4) AND fecha_movimiento <= '$fecha'");
+		$stmt = Conexion::conectar()->prepare("SELECT SUM(importe) as pagos FROM $tablaCtaCte WHERE id_proveedor = $valor AND (tipo=0 OR tipo=4) AND fecha_movimiento <= '$fecha'");
 
 		$stmt -> execute();
 
@@ -223,6 +223,48 @@ class ModeloProveedoresCtaCte{
 		$stmt->close();
 		$stmt = null;
 
+	}
+
+	/*=============================================
+	INGRESAR REGISTRO EXTENDIDO (factura / pago con retención)
+	=============================================*/
+	static public function mdlIngresarCtaCteProveedorExtendido($tabla, $datos){
+
+		$stmt = Conexion::conectar()->prepare(
+			"INSERT INTO $tabla(
+				fecha_movimiento, id_proveedor, tipo, descripcion, id_compra, importe, metodo_pago, id_usuario,
+				factura_numero, factura_neto_previo, factura_descuento, factura_neto, factura_iva, total,
+				fecha_retencion, numero_recibo, alicuota_retencion, monto_retencion
+			) VALUES (
+				:fecha_movimiento, :id_proveedor, :tipo, :descripcion, :id_compra, :importe, :metodo_pago, :id_usuario,
+				:factura_numero, :factura_neto_previo, :factura_descuento, :factura_neto, :factura_iva, :total,
+				:fecha_retencion, :numero_recibo, :alicuota_retencion, :monto_retencion
+			)"
+		);
+
+		$stmt->bindParam(":fecha_movimiento", $datos["fecha_movimiento"], PDO::PARAM_STR);
+		$stmt->bindParam(":id_proveedor", $datos["id_proveedor"], PDO::PARAM_INT);
+		$stmt->bindParam(":tipo", $datos["tipo"], PDO::PARAM_INT);
+		$stmt->bindParam(":descripcion", $datos["descripcion"], PDO::PARAM_STR);
+		$stmt->bindParam(":id_compra", $datos["id_compra"], PDO::PARAM_INT);
+		$stmt->bindParam(":importe", $datos["importe"], PDO::PARAM_STR);
+		$stmt->bindParam(":metodo_pago", $datos["metodo_pago"], PDO::PARAM_STR);
+		$stmt->bindParam(":id_usuario", $datos["id_usuario"], PDO::PARAM_INT);
+		$stmt->bindParam(":factura_numero", $datos["factura_numero"], PDO::PARAM_STR);
+		$stmt->bindValue(":factura_neto_previo", $datos["factura_neto_previo"], $datos["factura_neto_previo"] === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+		$stmt->bindValue(":factura_descuento", $datos["factura_descuento"], $datos["factura_descuento"] === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+		$stmt->bindValue(":factura_neto", $datos["factura_neto"], $datos["factura_neto"] === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+		$stmt->bindValue(":factura_iva", $datos["factura_iva"], $datos["factura_iva"] === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+		$stmt->bindValue(":total", $datos["total"], $datos["total"] === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+		$stmt->bindValue(":fecha_retencion", $datos["fecha_retencion"], $datos["fecha_retencion"] === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+		$stmt->bindValue(":numero_recibo", $datos["numero_recibo"], $datos["numero_recibo"] === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+		$stmt->bindValue(":alicuota_retencion", $datos["alicuota_retencion"], $datos["alicuota_retencion"] === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+		$stmt->bindValue(":monto_retencion", $datos["monto_retencion"], $datos["monto_retencion"] === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+
+		if($stmt->execute()){
+			return "ok";
+		}
+		return $stmt->errorInfo();
 	}
 
 	/*=============================================

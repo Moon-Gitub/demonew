@@ -1,6 +1,7 @@
 <?php 
 
   $btnPadronAfip = (isset($arrayEmpresa["ws_padron"])) ? '' : 'disabled';
+  $agenteRetencionIibb = !empty($arrayEmpresa['agente_retencion_iibb']);
 
 ?>
 
@@ -23,6 +24,11 @@
         <a href="proveedores-cuenta-saldos" class="btn btn-primary" title="Lista los proveedores que se encuentran con saldo en cuenta corriente">
           Saldos Cta. Cte.
         </a>
+        <?php if ($agenteRetencionIibb): ?>
+        <a href="retenciones-iibb" class="btn btn-warning" title="Listado y exportación SIRCAR de retenciones IIBB">
+          Retenciones IIBB
+        </a>
+        <?php endif; ?>
       </div>
       <div class="box-body">
        <table class="table table-bordered table-striped dt-responsive tablas" width="100%">
@@ -54,8 +60,11 @@
                     <td>'.$value["email"].'</td>
                     <td class="text-center">
                       <div class="acciones-tabla">
-                        <a class="btn-accion btn-info" title="Cuenta corriente" href="index.php?ruta=proveedores_cuenta&id_proveedor='.$value["id"].'"><i class="fa fa-book"></i></a>
-                        <a class="btn-accion btnEditarProveedor" title="Editar proveedor" data-toggle="modal" data-target="#modalEditarProveedor" idProveedor="'.$value["id"].'"><i class="fa fa-pencil"></i></a>
+                        <a class="btn-accion btn-info" title="Cuenta corriente" href="index.php?ruta=proveedores_cuenta&id_proveedor='.$value["id"].'"><i class="fa fa-book"></i></a>';
+                       if($agenteRetencionIibb){
+                          echo '<a class="btn-accion btn-warning" title="Retenciones IIBB" href="index.php?ruta=retenciones-iibb&id_proveedor='.$value["id"].'"><i class="fa fa-file-text-o"></i></a>';
+                       }
+                       echo '<a class="btn-accion btnEditarProveedor" title="Editar proveedor" data-toggle="modal" data-target="#modalEditarProveedor" idProveedor="'.$value["id"].'"><i class="fa fa-pencil"></i></a>
                         <a class="btn-accion btn-warning btnModificarPrecioProveedor" title="Modificar precio productos" data-toggle="modal" data-target="#modalModificarPrecioProveedor" idProveedor="'.$value["id"].'" nombreProveedor="'.$value["nombre"].'"><i class="fa fa-sort"></i></a>';
                        if($_SESSION["perfil"] == "Administrador"){
                           echo '<a class="btn-accion btn-danger btnEliminarProveedor" title="Borrar proveedor" idProveedor="'.$value["id"].'" href="#"><i class="fa fa-times"></i></a>';
@@ -155,6 +164,13 @@ MODAL AGREGAR PROVEEDOR
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-key"></i></span> 
                 <input type="text" class="form-control" name="nuevoIngresosBrutos" placeholder="Ingresar num. ingresos brutos">
+              </div>
+            </div>
+            <!-- ENTRADA PARA ALICUOTA IIBB -->
+            <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-percent"></i></span>
+                <input type="number" min="0" step="0.01" class="form-control" name="nuevoAlicuotaIibb" placeholder="Alícuota retención IIBB (%)">
               </div>
             </div>
             <!-- ENTRADA PARA OBSERVACIONES -->
@@ -263,6 +279,13 @@ MODAL EDITAR PROVEEDOR
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-key"></i></span> 
                 <input type="text" class="form-control" name="editarIngresosBrutos" id="editarIngresosBrutos" placeholder="Ingresar num. ingresos brutos">
+              </div>
+            </div>
+            <!-- ENTRADA PARA ALICUOTA IIBB -->
+            <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-percent"></i></span>
+                <input type="number" min="0" step="0.01" class="form-control" name="editarAlicuotaIibb" id="editarAlicuotaIibb" placeholder="Alícuota retención IIBB (%)">
               </div>
             </div>
             <!-- ENTRADA PARA OBSERVACIONES -->

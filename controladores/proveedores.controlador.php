@@ -19,7 +19,8 @@ class ControladorProveedores{
 				           "telefono"=>$_POST["nuevoTelefono"],
 				           "direccion"=>$_POST["nuevaDireccion"],
 						   "email"=>$_POST["nuevoEmail"],
-						   "observaciones" => $_POST["nuevaObservaciones"]);
+						   "observaciones" => $_POST["nuevaObservaciones"],
+						   "tipo_alicuota_iibb" => isset($_POST["nuevoAlicuotaIibb"]) && $_POST["nuevoAlicuotaIibb"] !== '' ? $_POST["nuevoAlicuotaIibb"] : null);
 
 		   	$respuesta = ModeloProveedores::mdlIngresarProveedor($tabla, $datos);
 
@@ -160,7 +161,8 @@ class ControladorProveedores{
 				           "telefono"=>$_POST["editarTelefono"],
 				           "direccion"=>$_POST["editarDireccion"],
 				           "email"=>$_POST["editarEmail"],
-				       	   "observaciones" => $_POST["editarObservaciones"]);
+				       	   "observaciones" => $_POST["editarObservaciones"],
+				       	   "tipo_alicuota_iibb" => isset($_POST["editarAlicuotaIibb"]) && $_POST["editarAlicuotaIibb"] !== '' ? $_POST["editarAlicuotaIibb"] : null);
 
 		   	$respuesta = ModeloProveedores::mdlEditarProveedor($tabla, $datos);
 

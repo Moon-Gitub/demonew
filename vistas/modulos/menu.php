@@ -84,7 +84,8 @@ $verIntegraciones = _menuPuedeVer('integraciones') || _menuPuedeVer('chat');
 				</ul>
 			</li>
 
-			<li class="<?php echo (in_array($paginaActualMenu, ['proveedores', 'proveedores_cuenta'])) ? 'active' : ''; ?>"><a href="proveedores"><i class="fa fa-address-book-o" aria-hidden="true"></i><span>Proveedores</span></a></li>
+			<li class="<?php echo (in_array($paginaActualMenu, ['proveedores', 'proveedores_cuenta', 'retenciones-iibb'])) ? 'active' : ''; ?>"><a href="proveedores"><i class="fa fa-address-book-o" aria-hidden="true"></i><span>Proveedores</span></a></li>
+			<?php if (_menuPuedeVer('retenciones-iibb')) { ?><li class="<?php echo ($paginaActualMenu === 'retenciones-iibb') ? 'active' : ''; ?>"><a href="retenciones-iibb"><i class="fa fa-file-text-o" aria-hidden="true"></i><span>Retenciones IIBB</span></a></li><?php } ?>
 
 			<?php if ($verInformes) { ?>
 			<li class="treeview <?php echo (in_array($paginaActualMenu, ['productos-stock-bajo', 'productos-stock-medio', 'productos-stock-valorizado', 'ventas-rentabilidad', 'ventas-categoria-proveedor-informe', 'ventas-productos', 'proveedores-saldo', 'proveedores-cuenta-saldos', 'clientes-cuenta-saldos', 'informe-dashboard-ejecutivo', 'informe-gestion-pedidos'])) ? 'active' : ''; ?>">
