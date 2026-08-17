@@ -337,7 +337,6 @@ class SyncManager:
                     # Si no viene en el producto, intentar obtenerlo de la BD local
                     if 'tipo_iva' not in prod or prod.get('tipo_iva') is None:
                         try:
-                            from database import get_session, Producto
                             session_temp = get_session()
                             producto_bd = session_temp.query(Producto).filter_by(id=prod.get('id', 0)).first()
                             if producto_bd and producto_bd.iva is not None:
