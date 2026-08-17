@@ -6,6 +6,7 @@ APLICACIÓN PRINCIPAL - POS OFFLINE MOON
 
 import argparse
 import sys
+import threading
 import tkinter as tk
 from tkinter import messagebox
 
@@ -85,8 +86,15 @@ def main():
 
     auto = args.auto_login or config.AUTO_LOGIN_ENABLED
     if auto:
-        if conn.check_connection() and config.AUTO_SYNC_ON_LOGIN:
-            sync.sync_all(silent=True)
+        # El login se resuelve contra la base local, así que la sincronización
+        # nunca debe bloquear el arranque: con catálogos grandes tarda minutos
+        # y la ventana no llega a dibujarse.
+        if config.AUTO_SYNC_ON_LOGIN:
+            def sync_en_segundo_plano():
+                if conn.check_connection():
+                    sync.sync_all(silent=True)
+
+            threading.Thread(target=sync_en_segundo_plano, daemon=True).start()
         result = auth.try_auto_login(sync_first=False)
         if result.get("success"):
             open_pos(auth, sync, conn, root)
