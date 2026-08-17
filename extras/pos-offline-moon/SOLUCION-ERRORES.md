@@ -7,7 +7,7 @@
 **Solución:**
 
 ```bash
-cd /home/cluna/Documentos/7-Moon-Desarrollos/demonew/demonew/pos-offline
+cd /home/cluna/Documentos/7-Moon-Desarrollos/demonew/demonew/extras/pos-offline-moon
 
 # Opción 1: Reinstalar el entorno virtual completo
 rm -rf venv
@@ -25,7 +25,7 @@ venv/bin/python -m pip install -r requirements.txt
 **Solución:** El script `run.sh` ahora usa `venv/bin/python` directamente, así que debería funcionar. Si aún tienes problemas:
 
 ```bash
-cd /home/cluna/Documentos/7-Moon-Desarrollos/demonew/demonew/pos-offline
+cd /home/cluna/Documentos/7-Moon-Desarrollos/demonew/demonew/extras/pos-offline-moon
 venv/bin/python main.py
 ```
 
@@ -60,7 +60,7 @@ venv/bin/python -m pip install -r requirements.txt
 Para verificar que todo está bien:
 
 ```bash
-cd /home/cluna/Documentos/7-Moon-Desarrollos/demonew/demonew/pos-offline
+cd /home/cluna/Documentos/7-Moon-Desarrollos/demonew/demonew/extras/pos-offline-moon
 
 # 1. Verificar que el venv existe
 ls -la venv/bin/python
@@ -77,7 +77,7 @@ venv/bin/python -c "import sqlalchemy, requests, bcrypt, PIL; print('✅ OK')"
 Si nada funciona, reinstala todo desde cero:
 
 ```bash
-cd /home/cluna/Documentos/7-Moon-Desarrollos/demonew/demonew/pos-offline
+cd /home/cluna/Documentos/7-Moon-Desarrollos/demonew/demonew/extras/pos-offline-moon
 
 # 1. Eliminar venv antiguo
 rm -rf venv

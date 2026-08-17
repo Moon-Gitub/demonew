@@ -50,15 +50,11 @@ Scripts de migración y mejoras ya aplicadas:
 - Scripts de migración de passwords
 - Otros scripts de mejoras
 
-### 📁 pos-offline/
-Sistema POS offline (carpeta movida desde la raíz del proyecto):
-- Módulo o scripts independientes del POS principal
-
 ### 📁 pos-offline-moon/
-Sistema POS offline desarrollado en Python:
+Sistema POS offline desarrollado en Python. Es la única versión vigente:
 - Aplicación desktop independiente
 - Documentación de instalación y uso
-- Scripts de configuración
+- Scripts de configuración y de servicio systemd
 
 ## Notas
 

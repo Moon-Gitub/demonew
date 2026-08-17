@@ -79,11 +79,16 @@ fi
 echo "→ Actualizando pip en el venv..."
 "$VENV_PIP" install --upgrade pip
 
-echo "→ Instalando dependencias (sin Pillow, no se usa)..."
-"$VENV_PIP" install "requests>=2.31.0" "sqlalchemy>=2.0.23" "bcrypt>=4.1.2"
+echo "→ Instalando dependencias desde requirements.txt..."
+if [[ -f "$APP_DIR/requirements.txt" ]]; then
+  "$VENV_PIP" install -r "$APP_DIR/requirements.txt"
+else
+  echo "⚠️ Falta requirements.txt; instalando el mínimo conocido."
+  "$VENV_PIP" install "requests>=2.31.0" "sqlalchemy>=2.0.23" "bcrypt>=4.1.2" "python-dotenv>=1.0.0"
+fi
 
 echo "→ Verificando imports..."
-"$VENV_PY" -c "import sqlalchemy, bcrypt, requests; print('OK: dependencias listas')"
+"$VENV_PY" -c "import sqlalchemy, bcrypt, requests, dotenv; print('OK: dependencias listas')"
 
 if ! "$VENV_PY" -c "import tkinter" 2>/dev/null; then
   echo "⚠️ Falta Tkinter (python3-tk). La GUI no abrirá hasta instalarlo."

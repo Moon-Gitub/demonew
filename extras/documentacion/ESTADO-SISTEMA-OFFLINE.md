@@ -2,12 +2,9 @@
 
 ## 📍 Ubicación del Sistema
 
-El sistema offline se encuentra en dos ubicaciones:
+El sistema offline vive en una sola ubicación: **`extras/pos-offline-moon/`**.
 
-1. **`pos-offline/`** (raíz del proyecto) - Versión con configuración local
-2. **`extras/pos-offline-moon/`** - Versión completa con mejoras y documentación
-
-**Recomendación**: Usar `extras/pos-offline-moon/` como versión principal. `extras/pos-offline/` está deprecada (ver `DEPRECATED.md`).
+La carpeta `extras/pos-offline/` fue eliminada en agosto de 2026. Era una versión previa sin listas de precio, balanza, medios de pago desde la base, auto-login ni scheduler. Su manual de instalación, su guía de errores y sus scripts de servicio systemd se migraron a `extras/pos-offline-moon/`. Si hace falta consultarla, está en el historial de git.
 
 ### Actualización (plan POS Offline completo)
 
@@ -466,8 +463,9 @@ chmod +x *.sh
 ### 📘 Recomendación
 
 **Para instalación completa y detallada, consulta:**
-- `pos-offline/MANUAL-INSTALACION-COMPLETO.md` - Manual completo con instrucciones paso a paso para Windows y Linux
+- `extras/pos-offline-moon/MANUAL-INSTALACION-COMPLETO.md` - Manual completo con instrucciones paso a paso para Windows y Linux
+- `extras/pos-offline-moon/SOLUCION-ERRORES.md` - Errores frecuentes y cómo resolverlos
 
 ---
 
-**Última actualización**: Enero 2025
+**Última actualización**: Agosto 2026

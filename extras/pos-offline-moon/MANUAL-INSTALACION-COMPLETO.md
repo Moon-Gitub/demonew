@@ -58,12 +58,12 @@
 
 2. **Ir a la carpeta del sistema:**
    ```cmd
-   cd C:\ruta\a\tu\proyecto\pos-offline
+   cd C:\ruta\a\tu\proyecto\extras\pos-offline-moon
    ```
    
    O si estás en la raíz del proyecto:
    ```cmd
-   cd pos-offline
+   cd pos-offline-moon
    ```
 
 3. **Verificar que estás en la carpeta correcta:**
@@ -230,12 +230,12 @@ Debe mostrar: `Python 3.7.x` o superior.
 ### Paso 3: Navegar a la Carpeta del Sistema
 
 ```bash
-cd /ruta/a/tu/proyecto/pos-offline
+cd /ruta/a/tu/proyecto/extras/pos-offline-moon
 ```
 
 O si estás en la raíz del proyecto:
 ```bash
-cd pos-offline
+cd pos-offline-moon
 ```
 
 **Verificar que estás en la carpeta correcta:**
@@ -422,13 +422,13 @@ gedit config.json
 
 **Windows:**
 ```cmd
-cd pos-offline
+cd pos-offline-moon
 run.bat
 ```
 
 **Linux:**
 ```bash
-cd pos-offline
+cd pos-offline-moon
 ./run.sh
 ```
 
