@@ -1,0 +1,7 @@
+Base precargada de Esquina 53 para el POS offline.
+
+Copiar `pos_local.db` a `data/pos_local.db` y `config.json` a la raíz
+de pos-offline-moon. No correr setup.py: pisa esta configuración.
+
+Cuenta: desbloqueada, saldo 0, vencimiento 2027-12-31.
+Usuarios de login: los mismos del sistema online (fabian, cluna, moondesa).
