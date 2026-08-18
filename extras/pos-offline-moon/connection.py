@@ -10,6 +10,13 @@ import time
 from threading import Thread, Event
 from config import config
 
+# Sesión propia: en Windows el auto-detect de proxy (WPAD) y el DNS
+# pueden dejar requests.get colgado mucho más que el timeout, y la
+# ventana nunca llega a dibujarse.
+_http = requests.Session()
+_http.trust_env = False
+
+
 class ConnectionMonitor:
     def __init__(self, callback=None):
         self.is_online = False
@@ -18,11 +25,15 @@ class ConnectionMonitor:
         self.check_interval = config.CONNECTION_CHECK_INTERVAL
         
     def check_connection(self):
-        """Verifica si hay conexión a internet"""
+        """Verifica si hay conexión al servidor. Nunca debe bloquear la UI."""
         try:
-            response = requests.get(f"{config.SERVER_URL}/", timeout=3)
-            return response.status_code == 200
-        except:
+            response = _http.get(
+                f"{config.SERVER_URL}/",
+                timeout=(1, 2),
+                allow_redirects=False,
+            )
+            return response.status_code < 500
+        except Exception:
             return False
     
     def start_monitoring(self):

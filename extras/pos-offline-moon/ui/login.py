@@ -54,10 +54,9 @@ class LoginWindow:
         self.password_entry.pack(padx=20, pady=(0, 20))
         self.password_entry.bind("<Return>", lambda e: self.login())
 
-        online = self.connection_monitor.check_connection()
         self.connection_status = tk.Label(
             login_frame,
-            text="🟢 En línea" if online else "🔴 Sin conexión",
+            text="⚪ Comprobando conexión...",
             bg="white", fg="#666", font=("Arial", 9),
         )
         self.connection_status.pack(pady=5)
@@ -85,21 +84,33 @@ class LoginWindow:
         self.window.focus_force()
 
     def check_initial_sync(self):
-        if self.connection_monitor.check_connection():
-            self.connection_status.config(text="🟢 En línea - Sincronizando...")
+        def en_segundo_plano():
+            online = self.connection_monitor.check_connection()
+            def actualizar():
+                if not online:
+                    self.connection_status.config(text="🔴 Sin conexión")
+                    return
+                self.connection_status.config(text="🟢 En línea - Sincronizando...")
+                self._sync_if_online()
+            try:
+                self.window.after(0, actualizar)
+            except tk.TclError:
+                pass
+        threading.Thread(target=en_segundo_plano, daemon=True).start()
 
-            def sync_thread():
-                try:
-                    self.sync_manager.sync_all(id_cliente_moon=self.id_cliente_moon, silent=True)
-                    from database import get_session, Usuario
-                    session = get_session()
-                    count = session.query(Usuario).count()
-                    session.close()
-                    self.window.after(0, lambda: self.connection_status.config(text=f"🟢 En línea ({count} usuarios)"))
-                except Exception:
-                    self.window.after(0, lambda: self.connection_status.config(text="🟢 En línea - Error sync"))
+    def _sync_if_online(self):
+        def sync_thread():
+            try:
+                self.sync_manager.sync_all(id_cliente_moon=self.id_cliente_moon, silent=True)
+                from database import get_session, Usuario
+                session = get_session()
+                count = session.query(Usuario).count()
+                session.close()
+                self.window.after(0, lambda: self.connection_status.config(text=f"🟢 En línea ({count} usuarios)"))
+            except Exception:
+                self.window.after(0, lambda: self.connection_status.config(text="🟢 En línea - Error sync"))
 
-            threading.Thread(target=sync_thread, daemon=True).start()
+        threading.Thread(target=sync_thread, daemon=True).start()
 
     def manual_sync(self, show_message=True):
         if not self.connection_monitor.check_connection():

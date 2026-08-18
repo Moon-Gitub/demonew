@@ -5,6 +5,9 @@
 import requests
 from config import config
 
+_http = requests.Session()
+_http.trust_env = False
+
 
 def offline_params(extra=None):
     p = {"id_cliente": config.ID_CLIENTE_MOON}
@@ -21,4 +24,4 @@ def api_get(path, timeout=30, extra=None):
     if extra:
         ex.update(extra)
     params = offline_params(ex)
-    return requests.get(url, params=params, timeout=timeout, headers={"X-Requested-With": "XMLHttpRequest"})
+    return _http.get(url, params=params, timeout=timeout, headers={"X-Requested-With": "XMLHttpRequest"})
