@@ -5,7 +5,7 @@ import tkinter as tk
 from tkinter import messagebox
 import threading
 from config import config
-from ui import theme
+from ui import theme, responsive
 
 
 class LoginWindow:
@@ -22,9 +22,7 @@ class LoginWindow:
     def setup_login_ui(self):
         self.window = tk.Toplevel(self.parent)
         self.window.title("POS Offline Moon - Login")
-        self.window.geometry("450x580")
         self.window.configure(bg=theme.COLOR_PRIMARY)
-        self.window.resizable(False, False)
         self.window.transient(self.parent)
         self.window.grab_set()
 
@@ -70,10 +68,15 @@ class LoginWindow:
                   command=self.manual_sync, relief=tk.FLAT, padx=20, pady=5, cursor="hand2").pack(pady=5)
 
         self.window.update_idletasks()
-        w, h = max(450, self.window.winfo_reqwidth()), max(580, self.window.winfo_reqheight())
-        x = (self.window.winfo_screenwidth() // 2) - (w // 2)
-        y = (self.window.winfo_screenheight() // 2) - (h // 2)
-        self.window.geometry(f"{w}x{h}+{x}+{y}")
+        # En netbooks de 1024x600 la altura fija dejaba el botón Ingresar debajo
+        # del borde y la ventana no se podía achicar.
+        responsive.ajustar_ventana(
+            self.window,
+            max(450, self.window.winfo_reqwidth()),
+            max(580, self.window.winfo_reqheight()),
+            min_ancho=420,
+            min_alto=380,
+        )
         # Obligatorio si la ventana raíz está en withdraw() (si no, no se ve nada en Linux)
         self.window.deiconify()
         self.window.lift()

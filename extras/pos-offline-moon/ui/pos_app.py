@@ -10,6 +10,7 @@ from config import config
 from lista_precio import precio_con_lista
 from scale_parser import parse_scale_barcode
 import online_actions
+from ui import responsive
 
 
 class POSApp:
@@ -45,7 +46,11 @@ class POSApp:
     def setup_ui(self):
         """Interfaz principal funcional y visualmente atractiva"""
         self.root.title("POS Offline Moon")
-        self.root.geometry("1600x1000")
+        # Con una medida fija de 1600x1000, en las notebooks de 1366x768 quedaban
+        # fuera de pantalla la columna de pago y el botón de cobrar.
+        responsive.ajustar_ventana(self.root, 1600, 1000, min_ancho=900, min_alto=560)
+        self.esc = responsive.escala(self.root)
+        esc = self.esc
         self.root.configure(bg="#ecf0f5")
         
         # Menú superior
@@ -74,82 +79,99 @@ class POSApp:
         menu_ventas.add_command(label="Mercado Pago", command=online_actions.abrir_mercado_pago)
         
         # Header con gradiente (similar a crear-venta-caja online)
-        header = tk.Frame(self.root, bg="#667eea", height=60)
-        header.pack(fill=tk.X)
+        header = tk.Frame(self.root, bg="#667eea")
+        header.pack(fill=tk.X, side=tk.TOP)
         
-        tk.Label(header, text="POS | Moon - Crear Venta", font=("Arial", 18, "bold"),
-                bg="#667eea", fg="white").pack(side=tk.LEFT, padx=20, pady=15)
+        tk.Label(header, text="POS | Moon - Crear Venta", font=esc.fuente(18, True),
+                bg="#667eea", fg="white").pack(side=tk.LEFT, padx=esc.px(20), pady=esc.px(15))
         
         sucursal_usuario = getattr(self.auth_manager.current_user, 'sucursal', None) or "Local"
         tk.Label(header, text=f"Sucursal: {sucursal_usuario}", bg="#667eea",
-                fg="white", font=("Arial", 10)).pack(side=tk.LEFT, padx=10, pady=15)
+                fg="white", font=esc.fuente(10)).pack(side=tk.LEFT, padx=esc.px(10), pady=esc.px(15))
         
         self.status_label = tk.Label(header, text="🟢 En línea", bg="#667eea", fg="white",
-                                     font=("Arial", 11, "bold"))
-        self.status_label.pack(side=tk.RIGHT, padx=10, pady=15)
+                                     font=esc.fuente(11, True))
+        self.status_label.pack(side=tk.RIGHT, padx=esc.px(10), pady=esc.px(15))
         
         tk.Label(header, text=f"👤 {self.auth_manager.current_user.nombre}", bg="#667eea",
-                fg="white", font=("Arial", 10)).pack(side=tk.RIGHT, padx=10, pady=15)
+                fg="white", font=esc.fuente(10)).pack(side=tk.RIGHT, padx=esc.px(10), pady=esc.px(15))
         
         # Contenedor principal - 3 columnas
         main_container = tk.Frame(self.root, bg="#ecf0f5")
-        main_container.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        main_container.pack(fill=tk.BOTH, expand=True, padx=esc.px(10), pady=esc.px(10))
+        
+        # Las tres columnas se ubican antes de llenarlas: las laterales reservan
+        # su ancho y la central se queda con lo que sobre. Si se dejaba para el
+        # final, en pantallas angostas la columna de pago desaparecía.
+        left_col = tk.Frame(main_container, bg="white", relief=tk.RAISED, bd=1, width=esc.px(400))
+        left_col.pack(side=tk.LEFT, fill=tk.Y, padx=(0, 5))
+        left_col.pack_propagate(False)
+        
+        right_col, right_body = responsive.columna_scrollable(
+            main_container, bg="white", ancho=esc.px(330)
+        )
+        right_col.pack(side=tk.RIGHT, fill=tk.Y, padx=(5, 0))
+        
+        center_col = tk.Frame(main_container, bg="white", relief=tk.RAISED, bd=1)
+        center_col.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5)
         
         # COLUMNA IZQUIERDA: Búsqueda y lista de productos
-        left_col = tk.Frame(main_container, bg="white", relief=tk.RAISED, bd=1)
-        left_col.pack(side=tk.LEFT, fill=tk.BOTH, expand=False, padx=(0, 5))
-        left_col.config(width=400)
-        
-        tk.Label(left_col, text="🔍 BUSCAR PRODUCTO", font=("Arial", 14, "bold"),
-                bg="white", fg="#2c3e50").pack(pady=15)
+        tk.Label(left_col, text="🔍 BUSCAR PRODUCTO", font=esc.fuente(14, True),
+                bg="white", fg="#2c3e50").pack(pady=esc.px(15))
         
         search_frame = tk.Frame(left_col, bg="white")
-        search_frame.pack(fill=tk.X, padx=15, pady=10)
+        search_frame.pack(fill=tk.X, padx=esc.px(15), pady=esc.px(10))
         
         self.search_var = tk.StringVar()
-        search_entry = tk.Entry(search_frame, textvariable=self.search_var, font=("Arial", 13),
+        search_entry = tk.Entry(search_frame, textvariable=self.search_var, font=esc.fuente(13),
                                relief=tk.SOLID, bd=2, bg="#f8f9fa")
-        search_entry.pack(fill=tk.X, ipady=10)
+        search_entry.pack(fill=tk.X, ipady=esc.px(10))
         search_entry.focus()
         self.search_var.trace("w", lambda *args: self.buscar_producto())
         
         tk.Button(search_frame, text="📋 Ver Catálogo Completo", bg="#3498db", fg="white",
-                 font=("Arial", 10, "bold"), command=self.mostrar_catalogo, relief=tk.FLAT,
-                 padx=15, pady=8, cursor="hand2").pack(fill=tk.X, pady=(10, 0))
+                 font=esc.fuente(10, True), command=self.mostrar_catalogo, relief=tk.FLAT,
+                 padx=esc.px(15), pady=esc.px(8), cursor="hand2").pack(fill=tk.X, pady=(esc.px(10), 0))
         
-        tk.Label(left_col, text="LISTA DE PRODUCTOS", font=("Arial", 12, "bold"),
-                bg="white", fg="#7f8c8d").pack(pady=(15, 5))
+        tk.Label(left_col, text="LISTA DE PRODUCTOS", font=esc.fuente(12, True),
+                bg="white", fg="#7f8c8d").pack(pady=(esc.px(15), esc.px(5)))
+        
+        # Botón Agregar producto: se ubica antes que la lista porque pack recorta
+        # lo último que se agrega cuando falta lugar, y este botón no puede faltar.
+        btn_agregar = tk.Button(left_col, text="➕ Agregar Producto Seleccionado (Enter)", bg="#27ae60", fg="white",
+                               font=esc.fuente(10, True), command=self.agregar_producto_seleccionado,
+                               relief=tk.FLAT, padx=esc.px(15), pady=esc.px(8), cursor="hand2")
+        btn_agregar.pack(side=tk.BOTTOM, fill=tk.X, padx=esc.px(15), pady=(esc.px(5), esc.px(15)))
         
         productos_frame = tk.Frame(left_col, bg="white")
-        productos_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=(0, 10))
+        productos_frame.pack(fill=tk.BOTH, expand=True, padx=esc.px(15), pady=(0, esc.px(5)))
         
         # Treeview de productos
         style = ttk.Style()
         style.theme_use("clam")
+        style.configure("Treeview", rowheight=esc.px(24, minimo=17), font=esc.fuente(9))
+        style.configure("Treeview.Heading", font=esc.fuente(9, True))
         
+        # La altura va en filas y fija el mínimo que pide la tabla: con 22 el
+        # bloque no entraba en pantallas bajas. Con fill/expand igual se estira.
         self.productos_tree = ttk.Treeview(productos_frame, columns=("codigo", "descripcion", "precio", "stock"),
-                                          show="headings", height=22)
+                                          show="headings", height=6)
         self.productos_tree.heading("codigo", text="Código")
         self.productos_tree.heading("descripcion", text="Descripción")
         self.productos_tree.heading("precio", text="Precio")
         self.productos_tree.heading("stock", text="Stock")
         
-        self.productos_tree.column("codigo", width=90, anchor=tk.CENTER)
-        self.productos_tree.column("descripcion", width=200)
-        self.productos_tree.column("precio", width=90, anchor=tk.CENTER)
-        self.productos_tree.column("stock", width=70, anchor=tk.CENTER)
+        self.productos_tree.column("codigo", width=esc.px(80), minwidth=35, anchor=tk.CENTER, stretch=False)
+        self.productos_tree.column("descripcion", width=esc.px(170), minwidth=35, stretch=False)
+        self.productos_tree.column("precio", width=esc.px(85), minwidth=35, anchor=tk.CENTER, stretch=False)
+        self.productos_tree.column("stock", width=esc.px(60), minwidth=35, anchor=tk.CENTER, stretch=False)
+        responsive.columnas_proporcionales(self.productos_tree, (0.20, 0.45, 0.22, 0.13))
         
         scrollbar_prod = ttk.Scrollbar(productos_frame, orient=tk.VERTICAL, command=self.productos_tree.yview)
         self.productos_tree.configure(yscrollcommand=scrollbar_prod.set)
         
         self.productos_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar_prod.pack(side=tk.RIGHT, fill=tk.Y)
-        
-        # Botón Agregar producto
-        btn_agregar = tk.Button(left_col, text="➕ Agregar Producto Seleccionado (Enter)", bg="#27ae60", fg="white",
-                               font=("Arial", 10, "bold"), command=self.agregar_producto_seleccionado,
-                               relief=tk.FLAT, padx=15, pady=8, cursor="hand2")
-        btn_agregar.pack(fill=tk.X, padx=15, pady=(0, 15))
         
         # Eventos para productos
         self.productos_tree.bind("<Double-1>", self.agregar_al_carrito)
@@ -162,60 +184,92 @@ class POSApp:
         self.productos_tree.focus_set()
         
         # COLUMNA CENTRAL: Cliente y Carrito de venta
-        center_col = tk.Frame(main_container, bg="white", relief=tk.RAISED, bd=1)
-        center_col.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5)
-        
         # Lista de precio
         lista_frame = tk.Frame(center_col, bg="#f8f9fa", relief=tk.RAISED, bd=1)
-        lista_frame.pack(fill=tk.X, padx=15, pady=(15, 5))
-        tk.Label(lista_frame, text="📋 LISTA DE PRECIO", font=("Arial", 11, "bold"),
-                bg="#f8f9fa", fg="#2c3e50").pack(side=tk.LEFT, padx=10, pady=8)
+        lista_frame.pack(fill=tk.X, padx=esc.px(15), pady=(esc.px(15), esc.px(5)))
+        tk.Label(lista_frame, text="📋 LISTA DE PRECIO", font=esc.fuente(11, True),
+                bg="#f8f9fa", fg="#2c3e50").pack(side=tk.LEFT, padx=esc.px(10), pady=esc.px(8))
         self.lista_combo = ttk.Combobox(lista_frame, textvariable=self.lista_precio_codigo,
-                                        state="readonly", width=28, font=("Arial", 10))
-        self.lista_combo.pack(side=tk.LEFT, padx=10, pady=8)
+                                        state="readonly", width=24, font=esc.fuente(10))
+        self.lista_combo.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=esc.px(10), pady=esc.px(8))
         self.lista_combo.bind("<<ComboboxSelected>>", lambda e: self._aplicar_lista_carrito())
         if hasattr(self, '_listas_combo_values'):
             self.lista_combo['values'] = self._listas_combo_values
 
         # Sección de cliente
         cliente_frame = tk.Frame(center_col, bg="#f8f9fa", relief=tk.RAISED, bd=1)
-        cliente_frame.pack(fill=tk.X, padx=15, pady=(5, 10))
+        cliente_frame.pack(fill=tk.X, padx=esc.px(15), pady=(esc.px(5), esc.px(10)))
         
-        tk.Label(cliente_frame, text="👤 CLIENTE", font=("Arial", 12, "bold"),
-                bg="#f8f9fa", fg="#2c3e50").pack(side=tk.LEFT, padx=10, pady=10)
+        tk.Label(cliente_frame, text="👤 CLIENTE", font=esc.fuente(12, True),
+                bg="#f8f9fa", fg="#2c3e50").pack(side=tk.LEFT, padx=esc.px(10), pady=esc.px(10))
         
         self.cliente_seleccionado = tk.StringVar(value="1-Consumidor Final")
         self.cliente_id = 1  # ID por defecto
         
         cliente_entry_frame = tk.Frame(cliente_frame, bg="#f8f9fa")
-        cliente_entry_frame.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=10, pady=10)
+        cliente_entry_frame.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=esc.px(10), pady=esc.px(10))
         
         self.cliente_entry = tk.Entry(cliente_entry_frame, textvariable=self.cliente_seleccionado,
-                                     font=("Arial", 11), relief=tk.SOLID, bd=1, state="readonly")
-        self.cliente_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, ipady=5)
+                                     font=esc.fuente(11), relief=tk.SOLID, bd=1, state="readonly")
+        self.cliente_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, ipady=esc.px(5))
         
         tk.Button(cliente_entry_frame, text="🔍 Buscar", bg="#3498db", fg="white",
-                 font=("Arial", 9, "bold"), command=self.buscar_cliente, relief=tk.FLAT,
-                 padx=15, pady=5, cursor="hand2").pack(side=tk.LEFT, padx=(5, 0))
+                 font=esc.fuente(9, True), command=self.buscar_cliente, relief=tk.FLAT,
+                 padx=esc.px(15), pady=esc.px(5), cursor="hand2").pack(side=tk.LEFT, padx=(esc.px(5), 0))
         
-        tk.Label(center_col, text="🛒 CARRITO DE VENTA", font=("Arial", 16, "bold"),
-                bg="#667eea", fg="white").pack(fill=tk.X, pady=0, ipady=15)
+        tk.Label(center_col, text="🛒 CARRITO DE VENTA", font=esc.fuente(16, True),
+                bg="#667eea", fg="white").pack(fill=tk.X, pady=0, ipady=esc.px(15))
+        
+        # El pie de la columna (cobrar, total y botones del carrito) se ubica
+        # antes que la tabla: así el carrito cede alto y nada queda cortado.
+        btn_cobrar = tk.Button(center_col, text="💳 COBRAR VENTA (F7)", bg="#27ae60", fg="white",
+                              font=esc.fuente(18, True), command=self.cobrar_venta, relief=tk.FLAT,
+                              padx=esc.px(40), pady=esc.px(18), cursor="hand2")
+        btn_cobrar.pack(side=tk.BOTTOM, fill=tk.X, padx=esc.px(15), pady=(esc.px(5), esc.px(15)))
+        
+        # Total destacado
+        total_frame = tk.Frame(center_col, bg="#34495e", relief=tk.RAISED, bd=2)
+        total_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=esc.px(15), pady=esc.px(8))
+        
+        tk.Label(total_frame, text="TOTAL A COBRAR:", font=esc.fuente(16, True),
+                bg="#34495e", fg="white").pack(side=tk.LEFT, padx=esc.px(20), pady=esc.px(12))
+        
+        self.total_label = tk.Label(total_frame, text="$ 0.00", font=esc.fuente(28, True),
+                                    fg="#2ecc71", bg="#34495e")
+        self.total_label.pack(side=tk.RIGHT, padx=esc.px(20), pady=esc.px(12))
+        
+        # Botones de acción del carrito
+        carrito_actions = tk.Frame(center_col, bg="white")
+        carrito_actions.pack(side=tk.BOTTOM, fill=tk.X, padx=esc.px(15), pady=esc.px(5))
+        
+        # width=1 hace que cada botón pida lo mínimo y que pack les reparta el
+        # ancho en partes iguales; si no, el último se recorta al no haber lugar.
+        for texto, color, accion in (
+            ("➕ Aumentar", "#27ae60", self.aumentar_cantidad),
+            ("➖ Disminuir", "#f39c12", self.disminuir_cantidad),
+            ("🗑️ Eliminar", "#e74c3c", self.eliminar_item),
+            ("🗑️ Limpiar", "#c0392b", self.limpiar_carrito),
+        ):
+            tk.Button(carrito_actions, text=texto, bg=color, fg="white", width=1,
+                     font=esc.fuente(10, True), command=accion, relief=tk.FLAT,
+                     pady=esc.px(8), cursor="hand2").pack(side=tk.LEFT, padx=esc.px(3), fill=tk.X, expand=True)
         
         # Tabla del carrito
         carrito_frame = tk.Frame(center_col, bg="white")
-        carrito_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=15)
+        carrito_frame.pack(fill=tk.BOTH, expand=True, padx=esc.px(15), pady=esc.px(10))
         
         self.carrito_tree = ttk.Treeview(carrito_frame, columns=("cantidad", "producto", "precio", "subtotal"),
-                                        show="headings", height=20)
+                                        show="headings", height=5)
         self.carrito_tree.heading("cantidad", text="Cant.")
         self.carrito_tree.heading("producto", text="Producto")
         self.carrito_tree.heading("precio", text="P. Unit.")
         self.carrito_tree.heading("subtotal", text="Subtotal")
         
-        self.carrito_tree.column("cantidad", width=80, anchor=tk.CENTER)
-        self.carrito_tree.column("producto", width=350)
-        self.carrito_tree.column("precio", width=120, anchor=tk.CENTER)
-        self.carrito_tree.column("subtotal", width=120, anchor=tk.CENTER)
+        self.carrito_tree.column("cantidad", width=esc.px(70), minwidth=35, anchor=tk.CENTER, stretch=False)
+        self.carrito_tree.column("producto", width=esc.px(280), minwidth=35, stretch=False)
+        self.carrito_tree.column("precio", width=esc.px(110), minwidth=35, anchor=tk.CENTER, stretch=False)
+        self.carrito_tree.column("subtotal", width=esc.px(110), minwidth=35, anchor=tk.CENTER, stretch=False)
+        responsive.columnas_proporcionales(self.carrito_tree, (0.13, 0.50, 0.185, 0.185))
         
         scrollbar_carrito = ttk.Scrollbar(carrito_frame, orient=tk.VERTICAL, command=self.carrito_tree.yview)
         self.carrito_tree.configure(yscrollcommand=scrollbar_carrito.set)
@@ -223,57 +277,17 @@ class POSApp:
         self.carrito_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar_carrito.pack(side=tk.RIGHT, fill=tk.Y)
         
-        # Botones de acción del carrito
-        carrito_actions = tk.Frame(center_col, bg="white")
-        carrito_actions.pack(fill=tk.X, padx=15, pady=5)
-        
-        tk.Button(carrito_actions, text="➕ Aumentar", bg="#27ae60", fg="white",
-                 font=("Arial", 10, "bold"), command=self.aumentar_cantidad, relief=tk.FLAT,
-                 padx=15, pady=8, cursor="hand2").pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
-        
-        tk.Button(carrito_actions, text="➖ Disminuir", bg="#f39c12", fg="white",
-                 font=("Arial", 10, "bold"), command=self.disminuir_cantidad, relief=tk.FLAT,
-                 padx=15, pady=8, cursor="hand2").pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
-        
-        tk.Button(carrito_actions, text="🗑️ Eliminar", bg="#e74c3c", fg="white",
-                 font=("Arial", 10, "bold"), command=self.eliminar_item, relief=tk.FLAT,
-                 padx=15, pady=8, cursor="hand2").pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
-        
-        tk.Button(carrito_actions, text="🗑️ Limpiar Todo", bg="#c0392b", fg="white",
-                 font=("Arial", 10, "bold"), command=self.limpiar_carrito, relief=tk.FLAT,
-                 padx=15, pady=8, cursor="hand2").pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
-        
-        # Total destacado
-        total_frame = tk.Frame(center_col, bg="#34495e", relief=tk.RAISED, bd=2)
-        total_frame.pack(fill=tk.X, padx=15, pady=10)
-        
-        tk.Label(total_frame, text="TOTAL A COBRAR:", font=("Arial", 16, "bold"),
-                bg="#34495e", fg="white").pack(side=tk.LEFT, padx=20, pady=15)
-        
-        self.total_label = tk.Label(total_frame, text="$ 0.00", font=("Arial", 28, "bold"),
-                                    fg="#2ecc71", bg="#34495e")
-        self.total_label.pack(side=tk.RIGHT, padx=20, pady=15)
-        
-        # Botón cobrar grande
-        btn_cobrar = tk.Button(center_col, text="💳 COBRAR VENTA (F7)", bg="#27ae60", fg="white",
-                              font=("Arial", 18, "bold"), command=self.cobrar_venta, relief=tk.FLAT,
-                              padx=40, pady=20, cursor="hand2")
-        btn_cobrar.pack(fill=tk.X, padx=15, pady=15)
-        
         # COLUMNA DERECHA: Acciones, método de pago y resumen
-        right_col = tk.Frame(main_container, bg="white", relief=tk.RAISED, bd=1)
-        right_col.pack(side=tk.LEFT, fill=tk.BOTH, expand=False, padx=(5, 0))
-        right_col.config(width=320)
-        
         # Sección: Método de Pago (PRIMERO, más visible)
-        pago_header = tk.Frame(right_col, bg="#667eea", height=50)
+        pago_header = tk.Frame(right_body, bg="#667eea")
         pago_header.pack(fill=tk.X, pady=(0, 0))
         
-        tk.Label(pago_header, text="💳 MÉTODO DE PAGO", font=("Arial", 14, "bold"),
-                bg="#667eea", fg="white").pack(pady=12)
+        titulo_pago = tk.Label(pago_header, text="💳 MÉTODO DE PAGO", font=esc.fuente(12, True),
+                bg="#667eea", fg="white")
+        titulo_pago.pack(pady=esc.px(12))
         
-        self.pago_frame = tk.Frame(right_col, bg="white", relief=tk.RAISED, bd=1)
-        self.pago_frame.pack(fill=tk.X, padx=15, pady=15)
+        self.pago_frame = tk.Frame(right_body, bg="white", relief=tk.RAISED, bd=1)
+        self.pago_frame.pack(fill=tk.X, padx=esc.px(12), pady=esc.px(12))
         pago_frame = self.pago_frame
         
         self.medio_pago_seleccionado = tk.StringVar(value="EF")
@@ -282,34 +296,56 @@ class POSApp:
         self._build_medios_pago(pago_frame)
         
         # Sección: Acciones Rápidas
-        tk.Label(right_col, text="⚡ ACCIONES RÁPIDAS", font=("Arial", 14, "bold"),
-                bg="#764ba2", fg="white").pack(fill=tk.X, pady=(10, 0), ipady=15)
+        titulo_acciones = tk.Label(right_body, text="⚡ ACCIONES RÁPIDAS", font=esc.fuente(12, True),
+                bg="#764ba2", fg="white")
+        titulo_acciones.pack(fill=tk.X, pady=(esc.px(10), 0), ipady=esc.px(12))
+        self._titulos_derecha = (titulo_pago, titulo_acciones)
         
-        actions_frame = tk.Frame(right_col, bg="white")
-        actions_frame.pack(fill=tk.X, padx=15, pady=15)
+        actions_frame = tk.Frame(right_body, bg="white")
+        actions_frame.pack(fill=tk.X, padx=esc.px(12), pady=esc.px(12))
         
-        tk.Button(actions_frame, text="📊 Ver Ventas\n(Últimos 30 días)", bg="#9b59b6", fg="white",
-                 font=("Arial", 11, "bold"), command=self.mostrar_ventas, relief=tk.FLAT,
-                 padx=15, pady=12, cursor="hand2", width=25).pack(fill=tk.X, pady=5)
+        tk.Button(actions_frame, text="📊 Ver Ventas (30 días)", bg="#9b59b6", fg="white",
+                 font=esc.fuente(11, True), command=self.mostrar_ventas, relief=tk.FLAT,
+                 pady=esc.px(10), cursor="hand2").pack(fill=tk.X, pady=esc.px(4))
         
         tk.Button(actions_frame, text="🔄 Sincronizar", bg="#3498db", fg="white",
-                 font=("Arial", 11, "bold"), command=self.manual_sync, relief=tk.FLAT,
-                 padx=15, pady=12, cursor="hand2", width=25).pack(fill=tk.X, pady=5)
+                 font=esc.fuente(11, True), command=self.manual_sync, relief=tk.FLAT,
+                 pady=esc.px(10), cursor="hand2").pack(fill=tk.X, pady=esc.px(4))
         
-        tk.Button(actions_frame, text="📋 Catálogo\nCompleto", bg="#16a085", fg="white",
-                 font=("Arial", 11, "bold"), command=self.mostrar_catalogo, relief=tk.FLAT,
-                 padx=15, pady=12, cursor="hand2", width=25).pack(fill=tk.X, pady=5)
+        tk.Button(actions_frame, text="📋 Catálogo Completo", bg="#16a085", fg="white",
+                 font=esc.fuente(11, True), command=self.mostrar_catalogo, relief=tk.FLAT,
+                 pady=esc.px(10), cursor="hand2").pack(fill=tk.X, pady=esc.px(4))
         
         # Resumen de sesión
-        resumen_frame = tk.Frame(right_col, bg="#ecf0f5", relief=tk.RAISED, bd=1)
-        resumen_frame.pack(fill=tk.X, padx=15, pady=15)
+        resumen_frame = tk.Frame(right_body, bg="#ecf0f5", relief=tk.RAISED, bd=1)
+        resumen_frame.pack(fill=tk.X, padx=esc.px(12), pady=esc.px(12))
         
-        tk.Label(resumen_frame, text="📈 RESUMEN", font=("Arial", 12, "bold"),
-                bg="#ecf0f5", fg="#2c3e50").pack(pady=10)
+        tk.Label(resumen_frame, text="📈 RESUMEN", font=esc.fuente(12, True),
+                bg="#ecf0f5", fg="#2c3e50").pack(pady=esc.px(8))
         
         self.resumen_label = tk.Label(resumen_frame, text="Productos: 0\nTotal: $0.00",
-                                     font=("Arial", 11), bg="#ecf0f5", fg="#7f8c8d", justify=tk.LEFT)
-        self.resumen_label.pack(pady=(0, 10), padx=10)
+                                     font=esc.fuente(11), bg="#ecf0f5", fg="#7f8c8d", justify=tk.LEFT)
+        self.resumen_label.pack(pady=(0, esc.px(10)), padx=esc.px(10))
+        
+        # Las columnas laterales se reparten según el ancho real de la ventana,
+        # así el carrito no queda aplastado en pantallas angostas ni desperdicia
+        # lugar en las grandes, y acompaña si el usuario redimensiona.
+        def ajustar_columnas(_evento=None):
+            ancho = self.root.winfo_width()
+            if ancho <= 1:
+                return
+            izquierda = max(230, min(esc.px(400), int(ancho * 0.26)))
+            derecha = max(195, min(esc.px(330), int(ancho * 0.22)))
+            if (izquierda, derecha) != getattr(self, "_anchos_columnas", None):
+                self._anchos_columnas = (izquierda, derecha)
+                left_col.configure(width=izquierda)
+                right_col.configure(width=derecha)
+                # Los títulos cortan en dos líneas antes que recortarse.
+                for titulo in getattr(self, "_titulos_derecha", ()):
+                    titulo.configure(wraplength=max(120, derecha - 16))
+
+        self.root.bind("<Configure>", ajustar_columnas)
+        self.root.after(60, ajustar_columnas)
         
         # Atajos de teclado globales
         self.root.bind('<F1>', lambda e: self.nueva_venta())
@@ -462,15 +498,11 @@ class POSApp:
         
         ventana_cliente = tk.Toplevel(self.root)
         ventana_cliente.title("🔍 Buscar Cliente")
-        ventana_cliente.geometry("700x600")
         ventana_cliente.configure(bg="#ecf0f5")
         ventana_cliente.transient(self.root)
         ventana_cliente.grab_set()
         
-        ventana_cliente.update_idletasks()
-        x = (ventana_cliente.winfo_screenwidth() // 2) - (700 // 2)
-        y = (ventana_cliente.winfo_screenheight() // 2) - (600 // 2)
-        ventana_cliente.geometry(f'700x600+{x}+{y}')
+        responsive.ajustar_ventana(ventana_cliente, 700, 600, min_ancho=520, min_alto=420)
         
         header = tk.Frame(ventana_cliente, bg="#667eea", height=50)
         header.pack(fill=tk.X)
@@ -649,15 +681,17 @@ class POSApp:
         session = get_session()
         medios = session.query(MedioPago).filter_by(activo=1).order_by(MedioPago.orden).all()
         session.close()
+        esc = getattr(self, "esc", None) or responsive.Escala(1.0)
         if not medios:
             medios_data = [("EF", "Efectivo"), ("TD", "Tarjeta Débito"), ("TC", "Tarjeta Crédito")]
             for cod, nom in medios_data:
                 rb = tk.Radiobutton(
                     parent, text=nom, variable=self.medio_pago_seleccionado, value=cod,
-                    font=("Arial", 11), bg="white", padx=15, pady=6, cursor="hand2",
+                    font=esc.fuente(11), bg="white", padx=esc.px(12), pady=esc.px(5), cursor="hand2",
+                    anchor=tk.W, justify=tk.LEFT,
                     command=lambda v=cod: setattr(self, 'medio_pago', v),
                 )
-                rb.pack(anchor=tk.W, pady=2)
+                rb.pack(fill=tk.X, pady=1)
                 self._medios_pago_widgets.append(rb)
             return
         first = medios[0].codigo
@@ -667,10 +701,11 @@ class POSApp:
             label = f"{m.nombre} ({m.codigo})"
             rb = tk.Radiobutton(
                 parent, text=label, variable=self.medio_pago_seleccionado, value=m.codigo,
-                font=("Arial", 11), bg="white", padx=15, pady=6, cursor="hand2",
+                font=esc.fuente(11), bg="white", padx=esc.px(12), pady=esc.px(5), cursor="hand2",
+                anchor=tk.W, justify=tk.LEFT,
                 command=lambda v=m.codigo: setattr(self, 'medio_pago', v),
             )
-            rb.pack(anchor=tk.W, pady=2)
+            rb.pack(fill=tk.X, pady=1)
             self._medios_pago_widgets.append(rb)
 
     def _precio_producto(self, producto):
@@ -774,8 +809,8 @@ class POSApp:
         """Ventana de catálogo completo"""
         cat_window = tk.Toplevel(self.root)
         cat_window.title("📋 Catálogo de Productos")
-        cat_window.geometry("1000x700")
         cat_window.configure(bg="#ecf0f5")
+        responsive.ajustar_ventana(cat_window, 1000, 700, min_ancho=640, min_alto=440)
         
         header = tk.Frame(cat_window, bg="#667eea", height=60)
         header.pack(fill=tk.X)
@@ -1146,8 +1181,8 @@ class POSApp:
         """Muestra ventas de últimos 30 días"""
         ventana = tk.Toplevel(self.root)
         ventana.title("📊 Ventas - Últimos 30 días")
-        ventana.geometry("1200x700")
         ventana.configure(bg="#ecf0f5")
+        responsive.ajustar_ventana(ventana, 1200, 700, min_ancho=700, min_alto=440)
         
         header = tk.Frame(ventana, bg="#667eea", height=60)
         header.pack(fill=tk.X)
